@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Healthy Plate 🍽️ — Class 1 Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--green:#2E7D32;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#F1F8E9,#DCEDC8,#C5E1A5,#F1F8E9);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* BG */
+.kitchen-bg{position:fixed;bottom:0;left:0;right:0;height:70px;background:linear-gradient(180deg,#8D6E63,#5D4037);z-index:1;}
+.kitchen-bg::before{content:'';position:absolute;top:0;left:0;right:0;height:12px;background:#A1887F;}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#1B5E20;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#1B5E20;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#1B5E20;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* TASK CARD */
+.task-card{position:relative;z-index:20;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.95);border-radius:24px;padding:10px 22px;margin:6px 16px;text-align:center;max-width:640px;width:calc(100% - 32px);}
+.task-main{font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4.5vw,1.7rem);color:#1B5E20;}
+.task-sub{font-size:clamp(.78rem,2.8vw,.98rem);color:#388E3C;font-weight:700;margin-top:3px;}
+
+/* MAIN AREA */
+.main-row{position:relative;z-index:15;display:flex;align-items:flex-start;justify-content:center;gap:clamp(10px,3vw,24px);padding:0 12px;flex:1;flex-wrap:wrap;margin-top:6px;}
+
+/* THE PLATE */
+.plate-wrap{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.plate{
+  position:relative;
+  width:clamp(160px,38vw,220px);
+  height:clamp(160px,38vw,220px);
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#fff,#F5F5F5);
+  border:clamp(8px,2vw,14px) solid #BDBDBD;
+  box-shadow:0 8px 30px rgba(0,0,0,.15),inset 0 2px 8px rgba(0,0,0,.05);
+  display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:4px;
+  padding:14px;overflow:hidden;
+}
+.plate::after{content:'';position:absolute;inset:-2px;border-radius:50%;border:3px solid rgba(255,255,255,.5);pointer-events:none;}
+.plate-item{
+  font-size:clamp(1.5rem,5vw,2.2rem);
+  animation:plateItemIn .4s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes plateItemIn{from{transform:scale(0) rotate(-20deg);opacity:0;}to{transform:scale(1) rotate(0deg);opacity:1;}}
+.plate-empty{color:rgba(0,0,0,.15);font-size:clamp(.8rem,3vw,1rem);font-weight:700;text-align:center;padding:10px;}
+.plate-count{font-family:'Fredoka One',cursive;font-size:clamp(.9rem,3.5vw,1.2rem);color:#1B5E20;background:rgba(255,255,255,.8);border-radius:50px;padding:4px 14px;}
+.plate-status{font-size:clamp(.7rem,2.5vw,.88rem);color:#388E3C;font-weight:700;}
+
+/* HEALTH METER */
+.health-meter{width:clamp(140px,35vw,200px);background:rgba(255,255,255,.6);border-radius:50px;height:14px;overflow:hidden;margin-top:4px;border:2px solid rgba(255,255,255,.8);}
+.health-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,#E53935,#FF9800,#43A047);transition:width .5s ease;}
+
+/* FOOD GROUPS AREA */
+.food-groups{flex-shrink:0;display:flex;flex-direction:column;gap:clamp(8px,2vw,12px);max-width:clamp(180px,45vw,280px);}
+.food-group-card{background:rgba(255,255,255,.75);backdrop-filter:blur(8px);border:2px solid rgba(255,255,255,.9);border-radius:18px;padding:8px 12px;box-shadow:0 4px 12px rgba(0,0,0,.08);}
+.fgc-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.fgc-icon{font-size:1.2rem;}
+.fgc-name{font-family:'Fredoka One',cursive;font-size:clamp(.75rem,2.8vw,1rem);color:#1B5E20;}
+.fgc-items{display:flex;flex-wrap:wrap;gap:5px;}
+.food-btn{
+  padding:clamp(6px,1.5vw,9px) clamp(8px,2vw,12px);
+  border-radius:12px;border:none;cursor:pointer;
+  font-size:clamp(1rem,3.5vw,1.4rem);
+  box-shadow:0 3px 0 rgba(0,0,0,.18);
+  transition:all .15s;position:relative;top:0;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+}
+.food-btn:hover{top:-2px;box-shadow:0 5px 0 rgba(0,0,0,.15);}
+.food-btn:active{top:2px;box-shadow:0 1px 0 rgba(0,0,0,.18);}
+.food-btn.used{opacity:.2;pointer-events:none;}
+.food-btn.junk{border:2px solid rgba(229,57,53,.5);}
+.food-btn.healthy{border:2px solid rgba(67,160,71,.4);}
+.food-btn-label{font-size:clamp(.5rem,1.8vw,.65rem);font-weight:800;color:rgba(0,0,0,.5);}
+
+/* CHECK ROW */
+.check-row{position:relative;z-index:20;display:flex;gap:10px;margin:6px 0;}
+.ck-btn{padding:10px 22px;border-radius:50px;border:none;font-family:'Fredoka One',cursive;font-size:clamp(.9rem,3.5vw,1.2rem);cursor:pointer;transition:transform .2s;box-shadow:0 4px 12px rgba(0,0,0,.1);}
+.ck-btn:hover{transform:scale(1.05);}
+.ck-btn.check{background:linear-gradient(135deg,#43A047,#76FF03);color:#fff;}
+.ck-btn.clear{background:rgba(255,255,255,.75);color:#1B5E20;}
+
+/* FACT */
+.fact-box{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(27,94,32,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:400px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.88rem,3vw,1.1rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:1.9;}
+.ov-btn{background:linear-gradient(135deg,#2E7D32,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(46,125,50,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="kitchen-bg"></div>
+
+<div class="header">
+  <div class="title">🍽️ Healthy Plate</div>
+  <div class="lvchip" id="lvChip">Level 1 · Healthy vs Junk</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">🍽️ Round: <span id="roundVal">1</span>/8</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="task-card">
+  <div class="task-main" id="taskMain">Build a <span style="color:#E53935;">Healthy</span> plate! Add 4 healthy foods!</div>
+  <div class="task-sub" id="taskSub">Choose fruits, vegetables, grains and protein! Avoid junk food!</div>
+</div>
+
+<div class="main-row">
+  <div class="plate-wrap">
+    <div class="plate" id="plate">
+      <div class="plate-empty">Add healthy foods!</div>
+    </div>
+    <div class="plate-count" id="plateCount">0 / 4 added</div>
+    <div class="health-meter"><div class="health-fill" id="healthFill" style="width:0%"></div></div>
+    <div class="plate-status" id="plateStatus">Add healthy foods!</div>
+  </div>
+  <div class="food-groups" id="foodGroups"></div>
+</div>
+
+<div class="check-row">
+  <button class="ck-btn check" onclick="checkPlate()">✅ Done!</button>
+  <button class="ck-btn clear" onclick="clearPlate()">🗑 Clear</button>
+</div>
+
+<script>
+const FOOD_GROUPS=[
+  {
+    name:'🌾 Grains',color:'#FF8F00',
+    healthy:[{e:'🍚',n:'Rice'},{e:'🍞',n:'Bread'},{e:'🌽',n:'Corn'},{e:'🥣',n:'Oats'}],
+    junk:[]
+  },
+  {
+    name:'🥦 Vegetables',color:'#388E3C',
+    healthy:[{e:'🥦',n:'Broccoli'},{e:'🥕',n:'Carrot'},{e:'🍅',n:'Tomato'},{e:'🥬',n:'Spinach'}],
+    junk:[]
+  },
+  {
+    name:'🍎 Fruits',color:'#E53935',
+    healthy:[{e:'🍎',n:'Apple'},{e:'🍌',n:'Banana'},{e:'🍊',n:'Orange'},{e:'🥭',n:'Mango'}],
+    junk:[]
+  },
+  {
+    name:'🥚 Protein',color:'#5D4037',
+    healthy:[{e:'🥚',n:'Egg'},{e:'🐟',n:'Fish'},{e:'🫘',n:'Dal'},{e:'🥜',n:'Nuts'}],
+    junk:[]
+  },
+  {
+    name:'🍔 Junk Food',color:'#B71C1C',
+    healthy:[],
+    junk:[{e:'🍔',n:'Burger'},{e:'🍟',n:'Fries'},{e:'🍕',n:'Pizza'},{e:'🍭',n:'Candy'},{e:'🥤',n:'Soda'}]
+  },
+];
+
+const TASKS=[
+  {task:'Build a HEALTHY plate!',need:4,type:'healthy',target:4,maxJunk:0},
+  {task:'Build a BALANCED plate with grains, fruit, veggie & protein!',need:4,type:'balanced',target:4,maxJunk:0},
+  {task:'Which foods are JUNK? Add 3 junk foods to the plate.',need:3,type:'junk',target:3,maxHealthy:0},
+  {task:'Build a HEALTHY plate!',need:4,type:'healthy',target:4,maxJunk:0},
+  {task:'A HEALTHY breakfast — add 3 healthy foods!',need:3,type:'healthy',target:3,maxJunk:0},
+  {task:'Find the 3 JUNK foods and put them on the plate.',need:3,type:'junk',target:3,maxHealthy:0},
+  {task:'Build the BEST healthy plate — 5 foods!',need:5,type:'healthy',target:5,maxJunk:0},
+  {task:'Build a plate. How many healthy vs junk?',need:5,type:'any',target:5,maxJunk:2},
+];
+
+const TOTAL=8;
+let score=0,round=0,currentTask=null,plateItems=[],answered=false;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playPlop(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(400,c.currentTime);o.frequency.exponentialRampToValueAtTime(250,c.currentTime+.15);g.gain.setValueAtTime(.2,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.2);o.start();o.stop(c.currentTime+.2);}
+function playCorrect(){const c=ac();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*100));}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;window.speechSynthesis.speak(u);}
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#2E7D32','#FFD700','#E53935','#1E88E5','#FF8F00'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showFact(txt){document.querySelector('.fact-box')?.remove();const el=document.createElement('div');el.className='fact-box';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+
+function buildFoodGroups(){
+  const container=document.getElementById('foodGroups');container.innerHTML='';
+  FOOD_GROUPS.forEach(group=>{
+    const card=document.createElement('div');card.className='food-group-card';
+    card.innerHTML=`<div class="fgc-header"><span class="fgc-icon"></span><span class="fgc-name" style="color:${group.color};">${group.name}</span></div><div class="fgc-items" id="fg_${group.name.replace(/\W/g,'')}"></div>`;
+    container.appendChild(card);
+    const row=card.querySelector('.fgc-items');
+    const allFoods=[...group.healthy.map(f=>({...f,isJunk:false})),...group.junk.map(f=>({...f,isJunk:true}))];
+    allFoods.forEach((food,i)=>{
+      const btn=document.createElement('div');
+      btn.className=`food-btn ${food.isJunk?'junk':'healthy'}`;
+      btn.id=`fb_${food.e}`;
+      btn.innerHTML=`${food.e}<span class="food-btn-label">${food.n}</span>`;
+      btn.style.background=food.isJunk?'linear-gradient(135deg,#FFCDD2,#EF9A9A)':'linear-gradient(135deg,#DCEDC8,#AED581)';
+      btn.onclick=()=>addToPlate(btn,food);
+      row.appendChild(btn);
+    });
+  });
+}
+
+function addToPlate(btn,food){
+  if(plateItems.length>=currentTask.target){speak(`Plate is full! Press Done to check!`);return;}
+  playPlop();btn.classList.add('used');
+  plateItems.push({...food});
+  renderPlate();
+}
+
+function renderPlate(){
+  const plate=document.getElementById('plate');
+  plate.innerHTML='';
+  if(!plateItems.length){plate.innerHTML='<div class="plate-empty">Add foods!</div>';return;}
+  plateItems.forEach((f,i)=>{
+    const el=document.createElement('div');el.className='plate-item';
+    el.textContent=f.e;el.style.animationDelay=(i*.05)+'s';
+    plate.appendChild(el);
+  });
+  const healthyCount=plateItems.filter(f=>!f.isJunk).length;
+  const health=Math.round((healthyCount/Math.max(1,plateItems.length))*100);
+  document.getElementById('healthFill').style.width=health+'%';
+  document.getElementById('plateCount').textContent=`${plateItems.length} / ${currentTask.target} added`;
+  const msgs=['🍔 Too much junk!','⚠️ Add more healthy foods!','🌱 Getting better!','✅ Looking healthy!','🌟 Super healthy!'];
+  document.getElementById('plateStatus').textContent=msgs[Math.min(4,Math.floor(health/25))];
+}
+
+function checkPlate(){
+  if(answered)return;
+  if(plateItems.length<currentTask.target){speak(`Add ${currentTask.target-plateItems.length} more foods!`);return;}
+
+  const healthyCount=plateItems.filter(f=>!f.isJunk).length;
+  const junkCount=plateItems.filter(f=>f.isJunk).length;
+  let pass=false;
+  if(currentTask.type==='healthy')pass=junkCount===0&&healthyCount>=currentTask.target;
+  else if(currentTask.type==='junk')pass=junkCount>=currentTask.target&&healthyCount===0;
+  else if(currentTask.type==='balanced')pass=junkCount===0&&healthyCount>=4;
+  else pass=true;
+
+  if(pass){
+    answered=true;playCorrect();spawnConf();
+    const fact=currentTask.type==='junk'?'🍔 Junk food has too much sugar and oil! It can make us sick if we eat too much!':'🥦 Healthy food gives us energy, strong bones, and keeps us fit! Eat fruits and vegetables every day!';
+    showFact(fact);score+=15;document.getElementById('scoreVal').textContent=score;
+    speak(fact.replace(/[🥦🍔]/g,''));
+    round++;makeDots();setTimeout(newRound,3200);
+  } else {
+    playWrong();
+    if(currentTask.type==='healthy'&&junkCount>0)speak(`There is junk food on the plate! Remove the ${plateItems.filter(f=>f.isJunk).map(f=>f.n).join(', ')}!`);
+    else speak(`That is not quite right! Read the task again!`);
+  }
+}
+window.checkPlate=checkPlate;
+
+function clearPlate(){
+  plateItems=[];answered=false;
+  document.querySelectorAll('.food-btn.used').forEach(b=>b.classList.remove('used'));
+  renderPlate();
+}
+window.clearPlate=clearPlate;
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;plateItems=[];
+  currentTask=TASKS[round%TASKS.length];
+  document.getElementById('roundVal').textContent=round+1;
+  const lvIdx=round<3?0:round<6?1:2;
+  document.getElementById('lvChip').textContent=`Level ${lvIdx+1} · ${['Healthy vs Junk','Food Groups','Build a Meal'][lvIdx]}`;
+  document.getElementById('taskMain').innerHTML=`🍽️ ${currentTask.task}`;
+  document.getElementById('taskSub').textContent=`Need ${currentTask.target} items. ${currentTask.type==='junk'?'Pick JUNK foods!':'Pick HEALTHY foods!'}`;
+  makeDots();buildFoodGroups();renderPlate();
+  setTimeout(()=>speak(currentTask.task),400);
+}
+
+function showCelebration(){
+  playChime();spawnConf();speak('Amazing! You know all about healthy eating! Eat fruits and vegetables every day!');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🥗</div>
+    <div class="ov-title">Nutrition Champion!</div>
+    <div class="ov-sub">
+      🥦 Vegetables — vitamins & minerals<br/>
+      🍎 Fruits — energy & vitamins<br/>
+      🍚 Grains — energy for the day<br/>
+      🥚 Protein — strong muscles<br/>
+      🍔 Junk food — eat very little!<br/><br/>
+      Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!
+    </div>
+    <button class="ov-btn" onclick="restart()">Play Again 🍽️</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Build a healthy plate! Choose the right foods!');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

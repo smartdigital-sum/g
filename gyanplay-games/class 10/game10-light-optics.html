@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Light — Optics & Human Eye | GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;
+    --pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;
+    --card:#1a1740;--text:#E8E4FF;--muted:#9B97CC;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    font-family:'Nunito',sans-serif;color:var(--text);}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .fadeIn{animation:fadeIn .45s ease both;}
+
+  /* TOP BAR */
+  .topbar{display:flex;align-items:center;justify-content:space-between;
+    padding:14px 20px;background:rgba(15,12,41,.6);backdrop-filter:blur(8px);
+    position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,.07);}
+  .back-btn{background:none;border:1px solid rgba(255,255,255,.2);color:var(--text);
+    padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-size:.85rem;transition:all .2s;}
+  .back-btn:hover{background:rgba(255,255,255,.1);}
+  .subject-badge{background:var(--green);color:#fff;padding:4px 14px;
+    border-radius:20px;font-family:'Baloo 2',sans-serif;font-size:.8rem;font-weight:700;}
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{background:none;border:1px solid rgba(255,255,255,.2);color:var(--muted);
+    padding:4px 10px;border-radius:14px;cursor:pointer;font-size:.8rem;
+    font-family:'Nunito',sans-serif;transition:all .2s;}
+  .lang-btn.active{background:var(--purple);border-color:var(--purple);color:#fff;}
+
+  /* MAIN LAYOUT */
+  .container{max-width:760px;margin:0 auto;padding:24px 16px 40px;}
+  .game-title{font-family:'Baloo 2',sans-serif;font-size:1.7rem;font-weight:800;
+    text-align:center;margin-bottom:4px;color:var(--gold);}
+  .game-subtitle{text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:20px;}
+
+  /* PROGRESS */
+  .progress-row{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  .progress-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;}
+  .progress-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sky),var(--purple));
+    transition:width .4s ease;}
+  .q-count{font-size:.82rem;color:var(--muted);white-space:nowrap;}
+
+  /* QUESTION CARD */
+  .card{background:var(--card);border-radius:18px;padding:24px;
+    border:1px solid rgba(255,255,255,.07);margin-bottom:16px;}
+  .q-number{font-size:.78rem;color:var(--sky);font-weight:700;
+    text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+  .q-text{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:600;
+    line-height:1.5;margin-bottom:10px;}
+  .formula-box{background:rgba(0,174,239,.1);border:1px solid rgba(0,174,239,.3);
+    border-radius:10px;padding:10px 16px;margin:10px 0;
+    font-family:'Baloo 2',sans-serif;font-size:1.05rem;color:var(--sky);text-align:center;}
+
+  /* OPTIONS */
+  .options{display:grid;gap:10px;margin-top:14px;}
+  .opt-btn{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);
+    color:var(--text);padding:12px 16px;border-radius:12px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.95rem;text-align:left;
+    transition:all .2s;line-height:1.4;}
+  .opt-btn:hover:not(:disabled){background:rgba(124,58,237,.2);border-color:var(--purple);}
+  .opt-btn.correct{background:rgba(0,200,83,.15);border-color:var(--green);color:#fff;}
+  .opt-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);}
+  .opt-btn:disabled{cursor:default;}
+
+  /* FEEDBACK */
+  .feedback{border-radius:12px;padding:14px 16px;margin-top:12px;font-size:.9rem;
+    line-height:1.5;display:none;}
+  .feedback.show{display:block;animation:fadeIn .3s ease;}
+  .feedback.correct{background:rgba(0,200,83,.12);border:1px solid rgba(0,200,83,.3);color:#a8ffd0;}
+  .feedback.wrong{background:rgba(255,64,129,.12);border:1px solid rgba(255,64,129,.3);color:#ffb3c8;}
+  .feedback-icon{font-size:1.1rem;margin-right:6px;}
+
+  /* NAV BUTTON */
+  .next-btn{display:block;width:100%;padding:14px;border:none;border-radius:14px;
+    background:linear-gradient(135deg,var(--purple),var(--sky));color:#fff;
+    font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;
+    cursor:pointer;margin-top:14px;transition:opacity .2s;display:none;}
+  .next-btn:hover{opacity:.88;}
+  .next-btn.visible{display:block;}
+
+  /* END SCREEN */
+  .end-screen{display:none;text-align:center;}
+  .end-screen.show{display:block;animation:fadeIn .5s ease;}
+  .score-big{font-family:'Baloo 2',sans-serif;font-size:3.2rem;font-weight:800;color:var(--gold);}
+  .score-label{color:var(--muted);margin-bottom:18px;}
+  .stars{font-size:2.4rem;margin:10px 0 20px;}
+  .result-msg{font-size:1rem;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+  .play-again-btn{background:linear-gradient(135deg,var(--saffron),var(--gold));
+    border:none;color:#fff;padding:14px 36px;border-radius:14px;
+    font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;
+    cursor:pointer;transition:opacity .2s;}
+  .play-again-btn:hover{opacity:.88;}
+  .score-breakdown{background:var(--card);border-radius:14px;padding:16px;margin:20px 0;
+    border:1px solid rgba(255,255,255,.07);}
+  .breakdown-row{display:flex;justify-content:space-between;padding:6px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);font-size:.9rem;}
+  .breakdown-row:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="subject-badge">Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+    <button class="lang-btn" onclick="setLang('hi',this)">हि</button>
+    <button class="lang-btn" onclick="setLang('bn',this)">অ</button>
+  </div>
+</div>
+
+<div class="container">
+  <div id="quiz-section" class="fadeIn">
+    <div class="game-title">
+      <span data-lang-en="💡 Light — Optics & Human Eye" data-lang-hi="💡 प्रकाश — प्रकाशिकी और मानव नेत्र" data-lang-bn="💡 আলো — আলোকবিদ্যা ও মানব চোখ">💡 Light — Optics & Human Eye</span>
+    </div>
+    <div class="game-subtitle">
+      <span data-lang-en="Class 10 Science · Ch 10 & 11 · 10 Questions" data-lang-hi="कक्षा 10 विज्ञान · अध्याय 10 & 11 · 10 प्रश्न" data-lang-bn="দশম শ্রেণী বিজ্ঞান · অধ্যায় 10 & 11 · 10 প্রশ্ন">Class 10 Science · Ch 10 & 11 · 10 Questions</span>
+    </div>
+
+    <div class="progress-row">
+      <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+      <div class="q-count" id="q-count">0 / 10</div>
+    </div>
+
+    <div class="card fadeIn" id="question-card">
+      <div class="q-number" id="q-number">Question 1 of 10</div>
+      <div class="q-text" id="q-text"></div>
+      <div id="formula-area"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+      <span data-lang-en="Next Question →" data-lang-hi="अगला प्रश्न →" data-lang-bn="পরবর্তী প্রশ্ন →">Next Question →</span>
+    </button>
+  </div>
+
+  <div class="end-screen" id="end-screen">
+    <div class="card">
+      <div class="score-big" id="final-score">0/100</div>
+      <div class="score-label" data-lang-en="Your Score" data-lang-hi="आपका स्कोर" data-lang-bn="আপনার স্কোর">Your Score</div>
+      <div class="stars" id="stars">☆☆☆</div>
+      <div class="result-msg" id="result-msg"></div>
+      <div class="score-breakdown">
+        <div class="breakdown-row"><span data-lang-en="Correct" data-lang-hi="सही" data-lang-bn="সঠিক">Correct</span><span id="bd-correct" style="color:var(--green)"></span></div>
+        <div class="breakdown-row"><span data-lang-en="Wrong" data-lang-hi="गलत" data-lang-bn="ভুল">Wrong</span><span id="bd-wrong" style="color:var(--pink)"></span></div>
+        <div class="breakdown-row"><span data-lang-en="Score" data-lang-hi="स्कोर" data-lang-bn="স্কোর">Score</span><span id="bd-score" style="color:var(--gold)"></span></div>
+      </div>
+      <button class="play-again-btn" onclick="restartGame()">
+        <span data-lang-en="🔄 Play Again" data-lang-hi="🔄 फिर खेलें" data-lang-bn="🔄 আবার খেলুন">🔄 Play Again</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    en:{q:"According to the laws of reflection, which of the following is always true?",
+        formula:null,
+        opts:["Angle of incidence > angle of reflection","Angle of incidence = angle of reflection","Angle of reflection > angle of incidence","The incident ray is always perpendicular to the mirror"],
+        ans:1,
+        exp:"The first law of reflection states that the angle of incidence always equals the angle of reflection, measured from the normal to the reflecting surface."},
+    hi:{q:"परावर्तन के नियमों के अनुसार, निम्न में से कौन सा सदैव सत्य है?",
+        opts:["आपतन कोण > परावर्तन कोण","आपतन कोण = परावर्तन कोण","परावर्तन कोण > आपतन कोण","आपतित किरण हमेशा दर्पण के लम्बवत होती है"],
+        ans:1,
+        exp:"परावर्तन के प्रथम नियम के अनुसार, आपतन कोण सदैव परावर्तन कोण के बराबर होता है।"},
+    bn:{q:"প্রতিফলনের সূত্র অনুযায়ী, নিচের কোনটি সর্বদা সত্য?",
+        opts:["আপতন কোণ > প্রতিফলন কোণ","আপতন কোণ = প্রতিফলন কোণ","প্রতিফলন কোণ > আপতন কোণ","আপতিত রশ্মি সর্বদা দর্পণের লম্ব"],
+        ans:1,
+        exp:"প্রতিফলনের প্রথম সূত্র অনুযায়ী আপতন কোণ সর্বদা প্রতিফলন কোণের সমান।"}
+  },
+  {
+    en:{q:"The mirror formula relates object distance (u), image distance (v), and focal length (f). Which formula is correct?",
+        formula:"1/v + 1/u = 1/f",
+        opts:["1/v − 1/u = 1/f","1/v + 1/u = 1/f","1/f = v × u","v + u = f"],
+        ans:1,
+        exp:"The mirror formula is 1/v + 1/u = 1/f. All distances are measured from the pole of the mirror. By sign convention, distances in the direction of incident light are positive."},
+    hi:{q:"दर्पण सूत्र वस्तु दूरी (u), प्रतिबिम्ब दूरी (v) और फोकस दूरी (f) से संबंधित है। कौन सा सूत्र सही है?",
+        formula:"1/v + 1/u = 1/f",
+        opts:["1/v − 1/u = 1/f","1/v + 1/u = 1/f","1/f = v × u","v + u = f"],
+        ans:1,
+        exp:"दर्पण सूत्र 1/v + 1/u = 1/f है। सभी दूरियाँ दर्पण के ध्रुव से मापी जाती हैं।"},
+    bn:{q:"দর্পণ সূত্রটি বস্তু দূরত্ব (u), প্রতিবিম্ব দূরত্ব (v) এবং ফোকাস দৈর্ঘ্য (f) এর সাথে সম্পর্কিত। কোন সূত্রটি সঠিক?",
+        formula:"1/v + 1/u = 1/f",
+        opts:["1/v − 1/u = 1/f","1/v + 1/u = 1/f","1/f = v × u","v + u = f"],
+        ans:1,
+        exp:"দর্পণ সূত্র হল 1/v + 1/u = 1/f। সমস্ত দূরত্ব দর্পণের মেরু থেকে পরিমাপ করা হয়।"}
+  },
+  {
+    en:{q:"When a ray of light travels from a denser medium to a rarer medium, which phenomenon occurs when the angle of incidence exceeds the critical angle?",
+        formula:null,
+        opts:["Refraction","Total internal reflection","Diffraction","Dispersion"],
+        ans:1,
+        exp:"Total internal reflection occurs when light travels from denser to rarer medium and the angle of incidence exceeds the critical angle. The ray is completely reflected back into the denser medium. This principle is used in optical fibres."},
+    hi:{q:"जब प्रकाश की किरण सघन माध्यम से विरल माध्यम में जाती है, तो आपतन कोण क्रांतिक कोण से अधिक होने पर कौन सी घटना होती है?",
+        opts:["अपवर्तन","पूर्ण आंतरिक परावर्तन","विवर्तन","परिक्षेपण"],
+        ans:1,
+        exp:"जब प्रकाश सघन से विरल माध्यम में जाता है और आपतन कोण क्रांतिक कोण से अधिक हो जाता है, तो पूर्ण आंतरिक परावर्तन होता है। इसका उपयोग प्रकाशीय तंतु में होता है।"},
+    bn:{q:"যখন আলোর রশ্মি ঘন মাধ্যম থেকে হালকা মাধ্যমে যায়, আপতন কোণ সংকট কোণ অতিক্রম করলে কী ঘটে?",
+        opts:["প্রতিসরণ","পূর্ণ অভ্যন্তরীণ প্রতিফলন","অপবর্তন","বিক্ষেপণ"],
+        ans:1,
+        exp:"পূর্ণ অভ্যন্তরীণ প্রতিফলন ঘটে যখন আলো ঘন থেকে হালকা মাধ্যমে যায় এবং আপতন কোণ সংকট কোণের বেশি হয়। অপটিক্যাল ফাইবারে এই নীতি ব্যবহৃত হয়।"}
+  },
+  {
+    en:{q:"The power of a lens is defined as P = 1/f, where f is the focal length in metres. A lens has a focal length of 25 cm. What is its power?",
+        formula:"P = 1/f (in metres) → P = 1/0.25 = +4 D",
+        opts:["+25 D","+4 D","−4 D","0.25 D"],
+        ans:1,
+        exp:"Power P = 1/f(m) = 1/0.25 = +4 Dioptres. A convex (converging) lens has positive power; a concave (diverging) lens has negative power. The SI unit of power is Dioptre (D)."},
+    hi:{q:"लेंस की शक्ति P = 1/f से दी जाती है जहाँ f मीटर में है। यदि फोकस दूरी 25 cm है तो शक्ति क्या होगी?",
+        formula:"P = 1/f (मीटर में) → P = 1/0.25 = +4 D",
+        opts:["+25 D","+4 D","−4 D","0.25 D"],
+        ans:1,
+        exp:"शक्ति P = 1/0.25 = +4 डायप्टर। उत्तल लेंस की शक्ति धनात्मक और अवतल लेंस की शक्ति ऋणात्मक होती है।"},
+    bn:{q:"লেন্সের ক্ষমতা P = 1/f যেখানে f মিটারে। ফোকাস দৈর্ঘ্য 25 cm হলে ক্ষমতা কত?",
+        formula:"P = 1/f (মিটারে) → P = 1/0.25 = +4 D",
+        opts:["+25 D","+4 D","−4 D","0.25 D"],
+        ans:1,
+        exp:"ক্ষমতা P = 1/0.25 = +4 ডায়োপ্টার। উত্তল লেন্সের ক্ষমতা ধনাত্মক এবং অবতল লেন্সের ক্ষমতা ঋণাত্মক।"}
+  },
+  {
+    en:{q:"Snell's Law relates the angles of incidence and refraction to the refractive indices. Which expression is correct?",
+        formula:"n₁ sin θ₁ = n₂ sin θ₂",
+        opts:["n₁ cos θ₁ = n₂ cos θ₂","n₁ sin θ₁ = n₂ sin θ₂","n₁/θ₁ = n₂/θ₂","n₁ tan θ₁ = n₂ tan θ₂"],
+        ans:1,
+        exp:"Snell's Law: n₁ sin θ₁ = n₂ sin θ₂. When light enters a denser medium, it bends toward the normal (refraction). The refractive index n = c/v, where c is speed of light in vacuum and v is speed in medium."},
+    hi:{q:"स्नेल का नियम आपतन और अपवर्तन कोणों को अपवर्तनांक से जोड़ता है। कौन सा व्यंजक सही है?",
+        formula:"n₁ sin θ₁ = n₂ sin θ₂",
+        opts:["n₁ cos θ₁ = n₂ cos θ₂","n₁ sin θ₁ = n₂ sin θ₂","n₁/θ₁ = n₂/θ₂","n₁ tan θ₁ = n₂ tan θ₂"],
+        ans:1,
+        exp:"स्नेल का नियम: n₁ sin θ₁ = n₂ sin θ₂। सघन माध्यम में प्रकाश अभिलम्ब की ओर झुकता है।"},
+    bn:{q:"স্নেলের সূত্র আপতন ও প্রতিসরণ কোণকে প্রতিসরণাঙ্কের সাথে সম্পর্কিত করে। কোন রাশিটি সঠিক?",
+        formula:"n₁ sin θ₁ = n₂ sin θ₂",
+        opts:["n₁ cos θ₁ = n₂ cos θ₂","n₁ sin θ₁ = n₂ sin θ₂","n₁/θ₁ = n₂/θ₂","n₁ tan θ₁ = n₂ tan θ₂"],
+        ans:1,
+        exp:"স্নেলের সূত্র: n₁ sin θ₁ = n₂ sin θ₂। ঘন মাধ্যমে আলো অভিলম্বের দিকে বেঁকে যায়।"}
+  },
+  {
+    en:{q:"Which part of the human eye is responsible for adjusting the focal length of the eye lens to focus on objects at different distances?",
+        formula:null,
+        opts:["Cornea","Iris","Ciliary muscles","Retina"],
+        ans:2,
+        exp:"Ciliary muscles change the shape (and thus focal length) of the eye lens — a process called accommodation. When muscles contract, the lens becomes more convex (thicker) for near objects; when relaxed, the lens flattens for far objects."},
+    hi:{q:"मानव नेत्र में कौन सा भाग विभिन्न दूरियों पर वस्तुओं पर फोकस करने के लिए नेत्र लेंस की फोकस दूरी को समायोजित करता है?",
+        opts:["कॉर्निया","आइरिस","पक्ष्माभी पेशियाँ","रेटिना"],
+        ans:2,
+        exp:"पक्ष्माभी पेशियाँ नेत्र लेंस का आकार बदलती हैं। इसे समंजन क्षमता कहते हैं। पास की वस्तुओं के लिए लेंस उभरा और दूर की वस्तुओं के लिए सपाट हो जाता है।"},
+    bn:{q:"মানব চোখের কোন অংশ বিভিন্ন দূরত্বের বস্তুতে ফোকাস করতে চোখের লেন্সের ফোকাস দৈর্ঘ্য নিয়ন্ত্রণ করে?",
+        opts:["কর্নিয়া","আইরিস","সিলিয়ারি পেশী","রেটিনা"],
+        ans:2,
+        exp:"সিলিয়ারি পেশী চোখের লেন্সের আকার পরিবর্তন করে — এই প্রক্রিয়াকে অ্যাকোমোডেশন বলে। কাছের বস্তুর জন্য লেন্স মোটা ও দূরের জন্য পাতলা হয়।"}
+  },
+  {
+    en:{q:"A person cannot see distant objects clearly but can see nearby objects well. Which defect does this describe and what type of lens corrects it?",
+        formula:null,
+        opts:["Hypermetropia — convex lens","Myopia — concave lens","Presbyopia — bifocal lens","Myopia — convex lens"],
+        ans:1,
+        exp:"Myopia (short-sightedness): the image forms in front of the retina. It is corrected by a concave (diverging) lens which moves the image back onto the retina. Hypermetropia (long-sightedness) is the opposite defect, corrected by a convex lens."},
+    hi:{q:"एक व्यक्ति दूर की वस्तुएँ स्पष्ट नहीं देख सकता लेकिन पास की वस्तुएँ अच्छी तरह दिखती हैं। यह कौन सा दोष है और इसे किस लेंस से ठीक करते हैं?",
+        opts:["दूर-दृष्टि दोष — उत्तल लेंस","निकट-दृष्टि दोष — अवतल लेंस","जरादूरदर्शिता — द्विफोकसी लेंस","निकट-दृष्टि दोष — उत्तल लेंस"],
+        ans:1,
+        exp:"निकट-दृष्टि दोष: प्रतिबिम्ब रेटिना के आगे बनता है। अवतल लेंस से यह ठीक होता है। दूर-दृष्टि दोष विपरीत होता है और उत्तल लेंस से ठीक होता है।"},
+    bn:{q:"একজন ব্যক্তি দূরের বস্তু স্পষ্ট দেখতে পান না কিন্তু কাছের বস্তু ভালো দেখেন। এটি কোন ত্রুটি এবং কোন লেন্সে সংশোধন হয়?",
+        opts:["দূরদৃষ্টি — উত্তল লেন্স","ক্ষীণদৃষ্টি — অবতল লেন্স","বার্ধক্য-দৃষ্টি — দ্বিফোকাস লেন্স","ক্ষীণদৃষ্টি — উত্তল লেন্স"],
+        ans:1,
+        exp:"ক্ষীণদৃষ্টি (Myopia): প্রতিবিম্ব রেটিনার সামনে পড়ে। অবতল লেন্স দিয়ে সংশোধন হয়। দূরদৃষ্টি বিপরীত ত্রুটি, উত্তল লেন্সে সংশোধন হয়।"}
+  },
+  {
+    en:{q:"The splitting of white light into its constituent colours when it passes through a glass prism is called:",
+        formula:null,
+        opts:["Reflection","Refraction","Dispersion","Scattering"],
+        ans:2,
+        exp:"Dispersion is the splitting of white light into VIBGYOR (Violet, Indigo, Blue, Green, Yellow, Orange, Red) spectrum. It occurs because different colours have different wavelengths and travel at different speeds in glass, hence different refractive indices."},
+    hi:{q:"सफेद प्रकाश का काँच के प्रिज्म से गुजरने पर अपने घटक रंगों में विभाजित होना कहलाता है:",
+        opts:["परावर्तन","अपवर्तन","वर्ण-विक्षेपण","प्रकीर्णन"],
+        ans:2,
+        exp:"वर्ण-विक्षेपण में सफेद प्रकाश VIBGYOR वर्णक्रम में बँट जाता है। अलग-अलग रंगों के तरंगदैर्ध्य और अपवर्तनांक अलग होते हैं।"},
+    bn:{q:"সাদা আলো কাচের প্রিজ্মের মধ্য দিয়ে যাওয়ার সময় তার উপাদান রঙে বিভক্ত হওয়াকে বলে:",
+        opts:["প্রতিফলন","প্রতিসরণ","বিচ্ছুরণ","বিক্ষেপণ"],
+        ans:2,
+        exp:"বিচ্ছুরণে সাদা আলো VIBGYOR বর্ণালীতে বিভক্ত হয়। বিভিন্ন রঙের তরঙ্গদৈর্ঘ্য ও প্রতিসরণাঙ্ক আলাদা বলেই এটি ঘটে।"}
+  },
+  {
+    en:{q:"What is the linear magnification formula for mirrors, where h' is image height, h is object height, v is image distance, and u is object distance?",
+        formula:"m = h'/h = −v/u",
+        opts:["m = v/u","m = h'/h = −v/u","m = u/v","m = f/(f+u)"],
+        ans:1,
+        exp:"Magnification m = h'/h = −v/u. A negative magnification means the image is inverted. For concave mirrors, m can be negative (real, inverted image) or positive (virtual, erect image depending on object position)."},
+    hi:{q:"दर्पणों के लिए रेखीय आवर्धन का सूत्र क्या है? (h' = प्रतिबिम्ब की ऊँचाई, h = वस्तु की ऊँचाई, v = प्रतिबिम्ब दूरी, u = वस्तु दूरी)",
+        formula:"m = h'/h = −v/u",
+        opts:["m = v/u","m = h'/h = −v/u","m = u/v","m = f/(f+u)"],
+        ans:1,
+        exp:"आवर्धन m = h'/h = −v/u। ऋणात्मक आवर्धन का अर्थ है प्रतिबिम्ब उल्टा है।"},
+    bn:{q:"দর্পণের জন্য রৈখিক বিবর্ধনের সূত্র কী? (h' = প্রতিবিম্বের উচ্চতা, h = বস্তুর উচ্চতা, v = প্রতিবিম্ব দূরত্ব, u = বস্তু দূরত্ব)",
+        formula:"m = h'/h = −v/u",
+        opts:["m = v/u","m = h'/h = −v/u","m = u/v","m = f/(f+u)"],
+        ans:1,
+        exp:"বিবর্ধন m = h'/h = −v/u। ঋণাত্মক বিবর্ধন মানে প্রতিবিম্ব উল্টো।"}
+  },
+  {
+    en:{q:"Rainbows are formed due to which combination of optical phenomena in water droplets?",
+        formula:null,
+        opts:["Only reflection inside droplets","Only refraction when light enters/exits","Dispersion, refraction, and total internal reflection","Diffraction and scattering"],
+        ans:2,
+        exp:"A rainbow is formed by dispersion (splitting white light into colours), refraction (at entry and exit of droplet), and total internal reflection (inside the droplet). Sunlight enters a water droplet, splits into colours, reflects internally, and exits at different angles — red at ~42° and violet at ~40°."},
+    hi:{q:"इंद्रधनुष जल की बूँदों में प्रकाश की किन प्रकाशीय घटनाओं के संयोजन से बनता है?",
+        opts:["केवल बूँद के अंदर परावर्तन","केवल प्रवेश/निकास पर अपवर्तन","वर्ण-विक्षेपण, अपवर्तन और पूर्ण आंतरिक परावर्तन","विवर्तन और प्रकीर्णन"],
+        ans:2,
+        exp:"इंद्रधनुष वर्ण-विक्षेपण, अपवर्तन और पूर्ण आंतरिक परावर्तन से बनता है। सूर्य की रोशनी जल की बूँद में प्रवेश करती है, रंगों में विभाजित होती है और अलग-अलग कोणों पर निकलती है।"},
+    bn:{q:"রংধনু জলকণার মধ্যে কোন আলোকীয় ঘটনাগুলির সমন্বয়ে তৈরি হয়?",
+        opts:["কেবল কণার ভেতরে প্রতিফলন","কেবল প্রবেশ/বাহির হওয়ার সময় প্রতিসরণ","বিচ্ছুরণ, প্রতিসরণ ও পূর্ণ অভ্যন্তরীণ প্রতিফলন","অপবর্তন ও বিক্ষেপণ"],
+        ans:2,
+        exp:"রংধনু বিচ্ছুরণ, প্রতিসরণ ও পূর্ণ অভ্যন্তরীণ প্রতিফলনের সমন্বয়ে তৈরি। সূর্যালোক জলকণায় প্রবেশ করে রঙে বিভক্ত হয় ও বিভিন্ন কোণে বের হয়।"}
+  }
+];
+
+let currentQ=0,score=0,answered=false,currentLang='en';
+
+function setLang(lang,btn){
+  currentLang=lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[data-lang-en]').forEach(el=>{
+    const val=el.getAttribute('data-lang-'+lang)||el.getAttribute('data-lang-en');
+    el.textContent=val;
+  });
+  loadQuestion();
+}
+
+function loadQuestion(){
+  if(currentQ>=questions.length){showEnd();return;}
+  answered=false;
+  const q=questions[currentQ][currentLang]||questions[currentQ]['en'];
+  const qBase=questions[currentQ];
+  document.getElementById('q-number').textContent=
+    currentLang==='hi'?`प्रश्न ${currentQ+1} / 10`:
+    currentLang==='bn'?`প্রশ্ন ${currentQ+1} / 10`:`Question ${currentQ+1} of 10`;
+  document.getElementById('q-text').textContent=q.q;
+  const fa=document.getElementById('formula-area');
+  const formula=q.formula||(qBase.en?qBase.en.formula:null);
+  if(formula){fa.innerHTML=`<div class="formula-box">${formula}</div>`;}
+  else{fa.innerHTML='';}
+  const opts=document.getElementById('options');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';b.textContent=o;
+    b.onclick=()=>selectAnswer(i,q.ans,q.exp);
+    opts.appendChild(b);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('feedback').innerHTML='';
+  document.getElementById('next-btn').classList.remove('visible');
+  document.getElementById('progress-bar').style.width=(currentQ/10*100)+'%';
+  document.getElementById('q-count').textContent=currentQ+' / 10';
+  document.getElementById('question-card').classList.remove('fadeIn');
+  void document.getElementById('question-card').offsetWidth;
+  document.getElementById('question-card').classList.add('fadeIn');
+}
+
+function selectAnswer(idx,correct,exp){
+  if(answered)return;
+  answered=true;
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===correct)b.classList.add('correct');
+    else if(i===idx&&idx!==correct)b.classList.add('wrong');
+  });
+  const fb=document.getElementById('feedback');
+  if(idx===correct){
+    score+=10;
+    fb.className='feedback correct show';
+    fb.innerHTML=`<span class="feedback-icon">✓</span>${exp}`;
+  }else{
+    fb.className='feedback wrong show';
+    fb.innerHTML=`<span class="feedback-icon">✗</span>${exp}`;
+  }
+  document.getElementById('next-btn').classList.add('visible');
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ>=questions.length){showEnd();}
+  else{loadQuestion();}
+}
+
+function showEnd(){
+  document.getElementById('quiz-section').style.display='none';
+  const es=document.getElementById('end-screen');
+  es.className='end-screen show';
+  document.getElementById('final-score').textContent=score+'/100';
+  const pct=score;
+  let stars='☆☆☆',msg='';
+  if(pct>=90){stars='★★★';msg=currentLang==='hi'?'शानदार! आप प्रकाश के विशेषज्ञ हैं! 🎉':currentLang==='bn'?'অসাধারণ! আপনি আলোর বিশেষজ্ঞ! 🎉':'Outstanding! You\'re a light & optics expert! 🎉';}
+  else if(pct>=70){stars='★★☆';msg=currentLang==='hi'?'बहुत अच्छा! थोड़ा और अभ्यास करें।':currentLang==='bn'?'খুব ভালো! একটু আরও অনুশীলন করুন।':'Great job! A little more practice and you\'ll ace it!';}
+  else if(pct>=40){stars='★☆☆';msg=currentLang==='hi'?'ठीक है! कॉन्सेप्ट को फिर से पढ़ें।':currentLang==='bn'?'ঠিক আছে! ধারণাগুলো আবার পড়ুন।':'Keep going! Review the concepts and try again.';}
+  else{stars='☆☆☆';msg=currentLang==='hi'?'हार मत मानो! फिर से प्रयास करें।':currentLang==='bn'?'হাল ছেড়ো না! আবার চেষ্টা করো।':'Don\'t give up! Review the chapter and play again.';}
+  document.getElementById('stars').textContent=stars;
+  document.getElementById('result-msg').textContent=msg;
+  const correct=score/10,wrong=10-correct;
+  document.getElementById('bd-correct').textContent=correct+' / 10';
+  document.getElementById('bd-wrong').textContent=wrong+' / 10';
+  document.getElementById('bd-score').textContent=score+' / 100';
+}
+
+function restartGame(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('end-screen').className='end-screen';
+  document.getElementById('quiz-section').style.display='block';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

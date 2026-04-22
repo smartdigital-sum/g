@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Squares, Cubes & Roots — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:#fff;padding-bottom:40px}
+  h1,h2,h3,.heading{font-family:'Baloo 2',sans-serif}
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);position:sticky;top:0;z-index:99}
+  .back-btn{background:rgba(255,255,255,0.12);border:none;color:#fff;padding:7px 16px;border-radius:20px;cursor:pointer;font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;transition:background .2s}
+  .back-btn:hover{background:rgba(255,255,255,0.22)}
+  .badge{background:var(--saffron);color:#fff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;font-family:'Baloo 2',sans-serif}
+  .lang-toggle{margin-left:auto;display:flex;gap:6px}
+  .lang-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s}
+  .lang-btn.active{background:var(--saffron);border-color:var(--saffron)}
+  .progress-wrap{padding:16px 20px 0}
+  .progress-info{display:flex;justify-content:space-between;font-size:13px;opacity:.8;margin-bottom:6px}
+  .progress-bar{height:8px;background:rgba(255,255,255,0.12);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--saffron),var(--gold));border-radius:4px;transition:width .5s ease}
+  .card{background:var(--card);border-radius:20px;padding:28px 24px;margin:20px auto;max-width:680px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:fadeIn .4s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .q-meta{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;opacity:.7}
+  .q-num{background:var(--saffron);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;font-family:'Baloo 2',sans-serif;flex-shrink:0}
+
+  /* BIG NUMBER DISPLAY */
+  .big-num-box{background:linear-gradient(135deg,rgba(255,107,0,0.15),rgba(255,184,0,0.1));
+    border:2px solid rgba(255,184,0,0.3);border-radius:16px;padding:20px;
+    text-align:center;margin-bottom:20px}
+  .big-num{font-size:52px;font-weight:800;color:var(--gold);line-height:1;
+    text-shadow:0 0 30px rgba(255,184,0,0.4)}
+  .big-num-label{font-size:16px;opacity:.7;margin-top:4px}
+
+  .question{font-size:18px;font-weight:700;line-height:1.5;margin-bottom:20px;font-family:'Baloo 2',sans-serif}
+  .options{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:480px){.options{grid-template-columns:1fr}}
+  .opt-btn{background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);color:#fff;padding:18px 10px;border-radius:14px;cursor:pointer;text-align:center;font-size:22px;font-family:'Baloo 2',sans-serif;font-weight:800;transition:all .2s}
+  .opt-btn:hover:not(:disabled){background:rgba(255,107,0,0.18);border-color:var(--saffron);transform:scale(1.03)}
+  .opt-btn.correct{background:rgba(0,200,83,0.22);border-color:var(--green)}
+  .opt-btn.wrong{background:rgba(255,64,129,0.18);border-color:var(--pink)}
+  .opt-btn:disabled{cursor:default}
+
+  /* WORKING PANEL */
+  .working{margin-top:16px;padding:16px;border-radius:12px;background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.1);display:none;animation:fadeIn .3s ease}
+  .working.show{display:block}
+  .working-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+    opacity:.6;margin-bottom:8px}
+  .working-steps{font-size:15px;line-height:1.9}
+  .step{display:flex;gap:10px;margin-bottom:4px}
+  .step-icon{width:22px;height:22px;border-radius:50%;background:rgba(255,184,0,0.2);
+    border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:800;flex-shrink:0;margin-top:2px;color:var(--gold)}
+  .result-highlight{color:var(--gold);font-weight:800}
+
+  .feedback{margin-top:12px;padding:12px 16px;border-radius:12px;font-size:14px;line-height:1.6;display:none;animation:fadeIn .3s ease}
+  .feedback.show{display:block}
+  .feedback.correct-fb{background:rgba(0,200,83,0.15);border:1px solid var(--green)}
+  .feedback.wrong-fb{background:rgba(255,64,129,0.12);border:1px solid var(--pink)}
+  .score-live{background:rgba(255,107,0,0.18);border:1px solid var(--saffron);padding:4px 12px;border-radius:12px;font-size:13px;font-weight:700;color:var(--saffron)}
+  .next-btn{display:none;margin:20px auto 0;background:linear-gradient(135deg,var(--saffron),var(--gold));border:none;color:#fff;padding:13px 36px;border-radius:24px;font-size:16px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 18px rgba(255,107,0,0.4)}
+  .next-btn:hover{transform:translateY(-2px)}
+  .next-btn.show{display:block}
+  .end-screen{display:none;text-align:center;padding:30px 20px;max-width:520px;margin:40px auto}
+  .end-screen.show{display:block;animation:fadeIn .5s ease}
+  .stars{font-size:44px;letter-spacing:4px;margin:10px 0}
+  .final-score{font-size:54px;font-weight:800;color:var(--gold);line-height:1;font-family:'Baloo 2',sans-serif}
+  .score-label{font-size:15px;opacity:.7;margin-bottom:20px}
+  .play-again{background:linear-gradient(135deg,var(--saffron),var(--gold));border:none;color:#fff;padding:14px 40px;border-radius:28px;font-size:17px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s;box-shadow:0 4px 20px rgba(255,107,0,0.4)}
+  .play-again:hover{transform:scale(1.05)}
+  .end-title{font-size:26px;font-weight:800;margin-bottom:8px;font-family:'Baloo 2',sans-serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">উভতি যাওক</span></button>
+  <span class="badge">Maths</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-info">
+    <span data-lang="en">Round <span id="qNum">1</span>/10</span>
+    <span data-lang="hi" style="display:none">चक्र <span id="qNumHi">1</span>/10</span>
+    <span data-lang="as" style="display:none">ৰাউণ্ড <span id="qNumAs">1</span>/10</span>
+    <span class="score-live">Score: <span id="scoreLive">0</span>/100</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+</div>
+
+<div class="card" id="questionCard">
+  <div class="q-meta">
+    <div class="q-num" id="qBadge">1</div>
+    <span data-lang="en">Squares, Cubes &amp; Roots</span>
+    <span data-lang="hi" style="display:none">वर्ग, घन और मूल</span>
+    <span data-lang="as" style="display:none">বৰ্গ, ঘন আৰু মূল</span>
+  </div>
+  <div class="big-num-box" id="bigNumBox">
+    <div class="big-num" id="bigNum"></div>
+    <div class="big-num-label" id="bigNumLabel"></div>
+  </div>
+  <div class="question" id="questionText"></div>
+  <div class="options" id="optionsDiv"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="working" id="working">
+    <div class="working-title" data-lang="en">Step-by-Step Working</div>
+    <div class="working-title" data-lang="hi" style="display:none">चरण-दर-चरण हल</div>
+    <div class="working-title" data-lang="as" style="display:none">পদক্ষেপ-পদক্ষেপ সমাধান</div>
+    <div class="working-steps" id="workingSteps"></div>
+  </div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+    <span data-lang="en">Next Round →</span>
+    <span data-lang="hi" style="display:none">अगला चक्र →</span>
+    <span data-lang="as" style="display:none">পৰৱৰ্তী ৰাউণ্ড →</span>
+  </button>
+</div>
+
+<div class="end-screen" id="endScreen">
+  <div class="end-title" data-lang="en">All Rounds Complete! 🎉</div>
+  <div class="end-title" data-lang="hi" style="display:none">सभी चक्र पूर्ण! 🎉</div>
+  <div class="end-title" data-lang="as" style="display:none">সকলো ৰাউণ্ড সম্পূৰ্ণ! 🎉</div>
+  <div class="stars" id="starsDisplay">⭐⭐⭐</div>
+  <div class="final-score" id="finalScore">0</div>
+  <div class="score-label">/100</div>
+  <button class="play-again" onclick="restartGame()">
+    <span data-lang="en">Play Again 🔄</span>
+    <span data-lang="hi" style="display:none">फिर खेलें 🔄</span>
+    <span data-lang="as" style="display:none">আকৌ খেলক 🔄</span>
+  </button>
+</div>
+
+<script>
+const questions = [
+  {
+    bigNum:"144",bigLabel:"√144 = ?",
+    en:"What is the square root of 144?",hi:"144 का वर्गमूल क्या है?",as:"১৪৪ৰ বৰ্গমূল কত?",
+    options:{en:["12","11","13"],hi:["12","11","13"],as:["12","11","13"]},
+    correct:0,
+    working:{
+      en:`<div class="step"><div class="step-icon">1</div><div>Prime factorisation of 144: 144 = 2×2×2×2×3×3</div></div>
+<div class="step"><div class="step-icon">2</div><div>Group in pairs: (2×2) × (2×2) × (3×3)</div></div>
+<div class="step"><div class="step-icon">3</div><div>Take one from each pair: 2 × 2 × 3 = <span class="result-highlight">12</span></div></div>
+<div class="step"><div class="step-icon">✓</div><div>√144 = <span class="result-highlight">12</span> (Check: 12×12=144 ✓)</div></div>`,
+      hi:`<div class="step"><div class="step-icon">1</div><div>144 का अभाज्य गुणनखंड: 144 = 2×2×2×2×3×3</div></div>
+<div class="step"><div class="step-icon">2</div><div>जोड़ों में बाँटें: (2×2) × (2×2) × (3×3)</div></div>
+<div class="step"><div class="step-icon">3</div><div>प्रत्येक जोड़े से एक लें: 2×2×3 = <span class="result-highlight">12</span></div></div>`,
+      as:`<div class="step"><div class="step-icon">1</div><div>144ৰ মৌলিক গুণনীয়ক: 144 = 2×2×2×2×3×3</div></div>
+<div class="step"><div class="step-icon">2</div><div>যুগলত বিভাজন: (2×2)×(2×2)×(3×3)</div></div>
+<div class="step"><div class="step-icon">3</div><div>প্ৰতিটো যুগলৰ পৰা এটা: 2×2×3 = <span class="result-highlight">12</span></div></div>`
+    }
+  },
+  {
+    bigNum:"81",bigLabel:"Perfect Square?",
+    en:"Is 81 a perfect square? If yes, what is its square root?",hi:"क्या 81 एक पूर्ण वर्ग है? यदि हाँ, तो वर्गमूल क्या है?",as:"৮১ এটা পূৰ্ণ বৰ্গ নেকি? যদি হয়, বৰ্গমূল কত?",
+    options:{en:["Yes, √81 = 9","No, 81 is not","Yes, √81 = 8"],hi:["हाँ, √81 = 9","नहीं, 81 नहीं है","हाँ, √81 = 8"],as:["হয়, √81 = 9","নহয়, ৮১ নহয়","হয়, √81 = 8"]},
+    correct:0,
+    working:{
+      en:`<div class="step"><div class="step-icon">1</div><div>81 = 3×3×3×3 = (3×3)×(3×3)</div></div>
+<div class="step"><div class="step-icon">2</div><div>All prime factors appear in pairs → Perfect square!</div></div>
+<div class="step"><div class="step-icon">3</div><div>√81 = 3×3 = <span class="result-highlight">9</span> (Check: 9×9=81 ✓)</div></div>`,
+      hi:`<div class="step"><div class="step-icon">1</div><div>81 = 3×3×3×3 = (3×3)×(3×3)</div></div>
+<div class="step"><div class="step-icon">2</div><div>सभी अभाज्य गुणनखंड जोड़ों में → पूर्ण वर्ग!</div></div>
+<div class="step"><div class="step-icon">3</div><div>√81 = 3×3 = <span class="result-highlight">9</span></div></div>`,
+      as:`<div class="step"><div class="step-icon">1</div><div>81 = 3×3×3×3 = (3×3)×(3×3)</div></div>
+<div class="step"><div class="step-icon">2</div><div>সকলো মৌলিক গুণনীয়ক যুগলত → পূৰ্ণ বৰ্গ!</div></div>
+<div class="step"><div class="step-icon">3</div><div>√81 = <span class="result-highlight">9</span></div></div>`
+    }
+  },
+  {
+    bigNum:"3³",bigLabel:"Cube of 3",
+    en:"What is the cube of 3?",hi:"3 का घन क्या है?",as:"৩ৰ ঘন কত?",
+    options:{en:["27","9","18"],hi:["27","9","18"],as:["27","9","18"]},
+    correct:0,
+    working:{
+      en:`<div class="step"><div class="step-icon">1</div><div>Cube means multiply the number by itself 3 times</div></div>
+<div class="step"><div class="step-icon">2</div><div>3³ = 3 × 3 × 3</div></div>
+<div class="step"><div class="step-icon">3</div><div>= 9 × 3 = <span class="result-highlight">27</span></div></div>`,
+      hi:`<div class="step"><div class="step-icon">1</div><div>घन का अर्थ है संख्या को 3 बार खुद से गुणा करना</div></div>
+<div class="step"><div class="step-icon">2</div><div>3³ = 3 × 3 × 3 = 9 × 3 = <span class="result-highlight">27</span></div></div>`,
+      as:`<div class="step"><div class="step-icon">1</div><div>ঘন মানে সংখ্যাটো ৩বাৰ নিজকে গুণ কৰা</div></div>
+<div class="step"><div class="step-icon">2</div><div>3³ = 3×3×3 = 9×3 = <span class="result-highlight">27</span></div></div>`
+    }
+  },
+  {
+    bigNum:"∛27",bigLabel:"Cube Root of 27",
+    en:"What is the cube root of 27?",hi:"27 का घनमूल क्या है?",as:"২৭ৰ ঘনমূল কত?",
+    options:{en:["3","4","9"],hi:["3","4","9"],as:["3","4","9"]},
+    correct:0,
+    working:{
+      en:`<div class="step"><div class="step-icon">1</div><div>27 = 3 × 3 × 3 (prime factorisation)</div></div>
+<div class="step"><div class="step-icon">2</div><div>Group in triples: (3 × 3 × 3)</div></div>
+<div class="step"><div class="step-icon">3</div><div>∛27 = <span class="result-highlight">3</span> (Check: 3³ = 27 ✓)</div></div>`,
+      hi:`<div class="step"><div class="step-icon">1</div><div>27 = 3×3×3 (अभाज्य गुणनखंड)</div></div>
+<div class="step"><div class="step-icon">2</div><div>तीन-तीन के समूह बनाएँ: (3×3×3)</div></div>
+<div class="step"><div class="step-icon">3</div><div>∛27 = <span class="result-highlight">3</span></div></div>`,
+      as:`<div class="step"><div class="step-icon">1</div><div>27 = 3×3×3 (মৌলিক গুণনীয়ক)</div></div>
+<div class="step"><div class="step-icon">3</div><div>∛27 = <span class="result-highlight">3</span></div></div>`
+    }
+  },
+  {
+    bigNum:"169",bigLabel:"√169 = ?",
+    en:"What is the square root of 169?",hi:"169 का वर्गमूल क्या है?",as:"১৬৯ৰ বৰ্গমূল কত?",
+    options:{en:["13","12","14"],hi:["13","12","14"],as:["13","12","14"]},
+    correct:0,
+    working:{
+      en:`<div class="step"><div class="step-icon">1</div><div>169 = 13 × 13</div></div>
+<div class="step"><div class="step-icon">2</div><div>Since it forms one pair: √169 = <span class="result-highlight">13</span></div></div>
+<div class="step"><div class="step-icon">✓</div><div>Check: 13 × 13 = 169 ✓</div></div>`,
+      hi:`<div class="step"><div class="step-icon">1</div><div>169 = 13 × 13</div></div>
+<div class="step"><div class="step-icon">2</div><div>एक जोड़ा बना: √169 = <span class="result-highlight">13</span></div></div>`,
+      as:`<div class="step"><div class="step-icon">1</div><div>169 = 13×13</div></div>
+<div class="step"><div class="step-icon">2</div><div>√169 = <span class="result-highlight">13</span></div></div>`
+    }
+  },
+  {
+    bigNum:"5³",bigLabel:"Cube of 5",
+    en:"What is the cube of 5?",hi:"5 का घन क्या है?",as:"৫ৰ ঘন কত?",
+    options:{en:["125","25","75"],hi:["125","25","75"],as:["125","25","75"]},
+    correct:0,
+    working:{
+      en:`<div class="step"><div class="step-icon">1</div><div>5³ = 5 × 5 × 5</div></div>
+<div class="step"><div class="step-icon">2</div><div>= 25 × 5 = <span class="result-highlight">125</span></div></div>`,
+      hi:`<div class="step"><div class="step-icon">1</div><div>5³ = 5×5×5 = 25×5 = <span class="result-highlight">125</span></div></div>`,
+      as:`<div class="step"><div class="step-icon">1</div><div>5³ = 5×5×5 = 25×5 = <span class="result-highlight">125</span></div></div>`
+    }
+  },
+  {
+    bigNum:"∛216",bigLabel:"Cube Root of 216",
+    en:"What is the cube root of 216?",hi:"216 का घनमूल क्या है?",as:"২১৬ৰ ঘনমূল কত?",
+    options:{en:["6","5","7"],hi:["6","5","7"],as:["6","5","7"]},
+    correct:0,
+    working:{
+      en:`<div class="step"><div class="step-icon">1</div><div>216 = 2×2×2 × 3×3×3</div></div>
+<div class="step"><div class="step-icon">2</div><div>Group in triples: (2×2×2) × (3×3×3)</div></div>
+<div class="step"><div class="step-icon">3</div><div>∛216 = 2 × 3 = <span class="result-highlight">6</span> ✓</div></div>`,
+      hi:`<div class="step"><div class="step-icon">1</div><div>216 = 2×2×2 × 3×3×3</div></div>
+<div class="step"><div class="step-icon">2</div><div>तीन-तीन के समूह: (2³) × (3³)</div></div>
+<div class="step"><div class="step-icon">3</div><div>∛216 = 2×3 = <span class="result-highlight">6</span></div></div>`,
+      as:`<div class="step"><div class="step-icon">1</div><div>216 = 2×2×2 × 3×3×3</div></div>
+<div class="step"><div class="step-icon">3</div><div>∛216 = 2×3 = <span class="result-highlight">6</span></div></div>`
+    }
+  },
+  {
+    bigNum:"49",bigLabel:"Perfect Square?",
+    en:"Is 49 a perfect square? What is √49?",hi:"क्या 49 एक पूर्ण वर्ग है? √49 क्या है?",as:"৪৯ এটা পূৰ্ণ বৰ্গ নেকি? √49 কত?",
+    options:{en:["Yes, √49 = 7","No","Yes, √49 = 6"],hi:["हाँ, √49 = 7","नहीं","हाँ, √49 = 6"],as:["হয়, √49 = 7","নহয়","হয়, √49 = 6"]},
+    correct:0,
+    working:{
+      en:`<div class="step"><div class="step-icon">1</div><div>49 = 7 × 7</div></div>
+<div class="step"><div class="step-icon">2</div><div>Both prime factors form a pair → Perfect Square ✓</div></div>
+<div class="step"><div class="step-icon">3</div><div>√49 = <span class="result-highlight">7</span></div></div>`,
+      hi:`<div class="step"><div class="step-icon">1</div><div>49 = 7×7 → पूर्ण वर्ग है</div></div>
+<div class="step"><div class="step-icon">2</div><div>√49 = <span class="result-highlight">7</span></div></div>`,
+      as:`<div class="step"><div class="step-icon">1</div><div>49 = 7×7 → পূৰ্ণ বৰ্গ</div></div>
+<div class="step"><div class="step-icon">2</div><div>√49 = <span class="result-highlight">7</span></div></div>`
+    }
+  },
+  {
+    bigNum:"4³",bigLabel:"Cube of 4",
+    en:"What is 4 cubed (4³)?",hi:"4 का घन (4³) क्या है?",as:"৪ৰ ঘন (4³) কত?",
+    options:{en:["64","48","16"],hi:["64","48","16"],as:["64","48","16"]},
+    correct:0,
+    working:{
+      en:`<div class="step"><div class="step-icon">1</div><div>4³ = 4 × 4 × 4</div></div>
+<div class="step"><div class="step-icon">2</div><div>4 × 4 = 16; 16 × 4 = <span class="result-highlight">64</span></div></div>`,
+      hi:`<div class="step"><div class="step-icon">1</div><div>4³ = 4×4×4 = 16×4 = <span class="result-highlight">64</span></div></div>`,
+      as:`<div class="step"><div class="step-icon">1</div><div>4³ = 4×4×4 = 16×4 = <span class="result-highlight">64</span></div></div>`
+    }
+  },
+  {
+    bigNum:"√225",bigLabel:"Square root",
+    en:"What is the square root of 225?",hi:"225 का वर्गमूल क्या है?",as:"২২৫ৰ বৰ্গমূল কত?",
+    options:{en:["15","16","14"],hi:["15","16","14"],as:["15","16","14"]},
+    correct:0,
+    working:{
+      en:`<div class="step"><div class="step-icon">1</div><div>225 = 3×3×5×5 = (3×3)×(5×5)</div></div>
+<div class="step"><div class="step-icon">2</div><div>Take one from each pair: 3 × 5 = <span class="result-highlight">15</span></div></div>
+<div class="step"><div class="step-icon">✓</div><div>Check: 15 × 15 = 225 ✓</div></div>`,
+      hi:`<div class="step"><div class="step-icon">1</div><div>225 = 3×3×5×5 = (3×3)×(5×5)</div></div>
+<div class="step"><div class="step-icon">2</div><div>√225 = 3×5 = <span class="result-highlight">15</span></div></div>`,
+      as:`<div class="step"><div class="step-icon">1</div><div>225 = (3×3)×(5×5)</div></div>
+<div class="step"><div class="step-icon">2</div><div>√225 = 3×5 = <span class="result-highlight">15</span></div></div>`
+    }
+  }
+];
+
+let current=0,score=0,answered=false,lang='en';
+function setLang(l){lang=l;document.querySelectorAll('.lang-btn').forEach((b,i)=>{b.classList.toggle('active',['en','hi','as'][i]===l)});document.querySelectorAll('[data-lang]').forEach(el=>{el.style.display=el.dataset.lang===l?'':'none'});updateQNum()}
+function updateQNum(){const n=current+1;['qNum','qNumHi','qNumAs'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n});document.getElementById('qBadge').textContent=n}
+function renderQuestion(){
+  if(current>=questions.length){showEnd();return}
+  answered=false;const q=questions[current];
+  document.getElementById('progressFill').style.width=((current+1)/questions.length*100)+'%';
+  updateQNum();
+  document.getElementById('bigNum').textContent=q.bigNum;
+  document.getElementById('bigNumLabel').textContent=q.bigNumLabel||'';
+  document.getElementById('questionText').textContent=q[lang]||q.en;
+  const opts=q.options[lang]||q.options.en;
+  document.getElementById('optionsDiv').innerHTML=opts.map((o,i)=>`<button class="opt-btn" onclick="answer(${i})" id="opt${i}">${o}</button>`).join('');
+  const fb=document.getElementById('feedback');fb.className='feedback';fb.textContent='';
+  document.getElementById('working').className='working';document.getElementById('workingSteps').innerHTML='';
+  document.getElementById('nextBtn').classList.remove('show');
+}
+function answer(idx){
+  if(answered)return;answered=true;const q=questions[current];const isCorrect=idx===q.correct;
+  if(isCorrect)score+=10;document.getElementById('scoreLive').textContent=score;
+  document.querySelectorAll('.opt-btn').forEach((b,i)=>{b.disabled=true;if(i===q.correct)b.classList.add('correct');else if(i===idx&&!isCorrect)b.classList.add('wrong')});
+  const fb=document.getElementById('feedback');
+  fb.className='feedback show '+(isCorrect?'correct-fb':'wrong-fb');
+  fb.innerHTML=`<span style="font-size:18px;margin-right:6px">${isCorrect?'✓':'✗'}</span>${isCorrect?'Correct! Great work!':'Wrong answer. Study the working below.'}`;
+  const w=document.getElementById('working');w.classList.add('show');
+  const wk=q.working&&(q.working[lang]||q.working.en);
+  document.getElementById('workingSteps').innerHTML=wk||'';
+  document.getElementById('nextBtn').classList.add('show');
+}
+function nextQuestion(){current++;if(current>=questions.length){showEnd();return}renderQuestion()}
+function showEnd(){
+  document.getElementById('questionCard').style.display='none';document.getElementById('progressWrap').style.display='none';
+  const es=document.getElementById('endScreen');es.classList.add('show');
+  document.getElementById('finalScore').textContent=score;const p=score;
+  document.getElementById('starsDisplay').textContent=p>=90?'⭐⭐⭐':p>=70?'⭐⭐':p>=40?'⭐':'☆☆☆';
+}
+function restartGame(){
+  current=0;score=0;answered=false;document.getElementById('scoreLive').textContent=0;
+  document.getElementById('endScreen').classList.remove('show');
+  document.getElementById('questionCard').style.display='';document.getElementById('progressWrap').style.display='';
+  renderQuestion();
+}
+setLang('en');renderQuestion();
+</script>
+</body>
+</html>

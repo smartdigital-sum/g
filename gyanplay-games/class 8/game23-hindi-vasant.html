@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>हिंदी वसंत भाग 3 — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:#fff;padding-bottom:40px}
+  h1,h2,h3{font-family:'Baloo 2',sans-serif}
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);position:sticky;top:0;z-index:99}
+  .back-btn{background:rgba(255,255,255,0.12);border:none;color:#fff;padding:7px 16px;border-radius:20px;cursor:pointer;font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;transition:background .2s}
+  .back-btn:hover{background:rgba(255,255,255,0.22)}
+  .badge{background:var(--purple);color:#fff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;font-family:'Baloo 2',sans-serif}
+  .lang-toggle{margin-left:auto;display:flex;gap:6px}
+  .lang-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s}
+  .lang-btn.active{background:var(--purple);border-color:var(--purple)}
+  .progress-wrap{padding:16px 20px 0}
+  .progress-info{display:flex;justify-content:space-between;font-size:13px;opacity:.8;margin-bottom:6px}
+  .progress-bar{height:8px;background:rgba(255,255,255,0.12);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:4px;transition:width .5s ease}
+  .card{background:var(--card);border-radius:20px;padding:28px 24px;margin:20px auto;max-width:680px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:fadeIn .4s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .q-meta{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;opacity:.7}
+  .q-num{background:var(--purple);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;font-family:'Baloo 2',sans-serif;flex-shrink:0}
+  .chapter-tag{background:rgba(124,58,237,0.25);border:1px solid var(--purple);color:#c4b5fd;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700}
+  .scene-emoji{font-size:40px;text-align:center;margin-bottom:10px}
+  .question{font-size:18px;font-weight:700;line-height:1.6;margin-bottom:20px;font-family:'Baloo 2',sans-serif}
+  .options{display:grid;gap:12px}
+  .opt-btn{background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);color:#fff;padding:14px 18px;border-radius:14px;cursor:pointer;text-align:left;font-size:15px;font-family:'Nunito',sans-serif;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:10px}
+  .opt-btn:hover:not(:disabled){background:rgba(124,58,237,0.15);border-color:var(--purple)}
+  .opt-btn.correct{background:rgba(0,200,83,0.2);border-color:var(--green)}
+  .opt-btn.wrong{background:rgba(255,64,129,0.18);border-color:var(--pink)}
+  .opt-btn:disabled{cursor:default}
+  .opt-label{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:14px;line-height:1.6;display:none;animation:fadeIn .3s ease}
+  .feedback.show{display:block}
+  .feedback.correct-fb{background:rgba(0,200,83,0.15);border:1px solid var(--green)}
+  .feedback.wrong-fb{background:rgba(255,64,129,0.12);border:1px solid var(--pink)}
+  .score-live{background:rgba(124,58,237,0.25);border:1px solid var(--purple);padding:4px 12px;border-radius:12px;font-size:13px;font-weight:700;color:#c4b5fd}
+  .next-btn{display:none;margin:20px auto 0;background:linear-gradient(135deg,var(--purple),#5b21b6);border:none;color:#fff;padding:13px 36px;border-radius:24px;font-size:16px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 18px rgba(124,58,237,0.4)}
+  .next-btn:hover{transform:translateY(-2px)}
+  .next-btn.show{display:block}
+  .end-screen{display:none;text-align:center;padding:30px 20px;max-width:520px;margin:40px auto}
+  .end-screen.show{display:block;animation:fadeIn .5s ease}
+  .stars{font-size:44px;letter-spacing:4px;margin:10px 0}
+  .final-score{font-size:54px;font-weight:800;color:var(--gold);line-height:1;font-family:'Baloo 2',sans-serif}
+  .score-label{font-size:15px;opacity:.7;margin-bottom:20px}
+  .play-again{background:linear-gradient(135deg,var(--purple),var(--pink));border:none;color:#fff;padding:14px 40px;border-radius:28px;font-size:17px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s;box-shadow:0 4px 20px rgba(124,58,237,0.4)}
+  .play-again:hover{transform:scale(1.05)}
+  .end-title{font-size:26px;font-weight:800;margin-bottom:8px;font-family:'Baloo 2',sans-serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">উভতি যাওক</span></button>
+  <span class="badge">हिंदी</span>
+  <div class="lang-toggle">
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+    <button class="lang-btn active" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-info">
+    <span data-lang="en">Question <span id="qNum">1</span>/10</span>
+    <span data-lang="hi" style="display:none">प्रश्न <span id="qNumHi">1</span>/10</span>
+    <span data-lang="as" style="display:none">প্ৰশ্ন <span id="qNumAs">1</span>/10</span>
+    <span class="score-live">Score: <span id="scoreLive">0</span>/100</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+</div>
+
+<div id="quizArea"></div>
+
+<div class="end-screen" id="endScreen">
+  <div class="scene-emoji">📖</div>
+  <div class="end-title" data-lang="en">Quiz Complete!</div>
+  <div class="end-title" data-lang="hi" style="display:none">क्विज़ पूरा हुआ!</div>
+  <div class="end-title" data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</div>
+  <div class="stars" id="starsDisplay">⭐⭐⭐</div>
+  <div class="final-score" id="finalScore">0</div>
+  <div class="score-label" data-lang="en">out of 100</div>
+  <div class="score-label" data-lang="hi" style="display:none">100 में से</div>
+  <div class="score-label" data-lang="as" style="display:none">100ৰ মাজত</div>
+  <br>
+  <button class="play-again" onclick="restartQuiz()">
+    <span data-lang="en">Play Again</span>
+    <span data-lang="hi" style="display:none">फिर खेलें</span>
+    <span data-lang="as" style="display:none">আকৌ খেলক</span>
+  </button>
+</div>
+
+<script>
+const questions = [
+  {
+    emoji: "🌸",
+    chapter: "ध्वनि",
+    en: {
+      q: "Who is the author of the poem 'Dhwani' in Vasant Bhag 3?",
+      opts: ["Mahadevi Verma", "Suryakant Tripathi Nirala", "Sumitranandan Pant", "Harivansh Rai Bachchan"],
+      ans: 1,
+      exp: "'Dhwani' (ध्वनि) is a poem by Suryakant Tripathi 'Nirala', a major poet of the Chhayavad movement in Hindi literature. The poem is a celebration of spring and new life."
+    },
+    hi: {
+      q: "वसंत भाग 3 में 'ध्वनि' कविता के कवि कौन हैं?",
+      opts: ["महादेवी वर्मा", "सूर्यकांत त्रिपाठी निराला", "सुमित्रानंदन पंत", "हरिवंश राय बच्चन"],
+      ans: 1,
+      exp: "'ध्वनि' कविता सूर्यकांत त्रिपाठी 'निराला' द्वारा रचित है। वे छायावाद के प्रमुख कवि हैं। यह कविता वसंत ऋतु और नए जीवन का उत्सव है।"
+    },
+    as: {
+      q: "বসন্ত ভাগ ৩ত 'ধ্বনি' কবিতাৰ কবি কোন?",
+      opts: ["মহাদেৱী বৰ্মা", "সূৰ্যকান্ত ত্ৰিপাঠী নিৰালা", "সুমিত্ৰানন্দন পন্ত", "হৰিবংশ ৰায় বচ্চন"],
+      ans: 1,
+      exp: "'ধ্বনি' কবিতা সূৰ্যকান্ত ত্ৰিপাঠী 'নিৰালা'ৰ দ্বাৰা ৰচিত। তেওঁ ছায়াবাদৰ প্ৰধান কবি।"
+    }
+  },
+  {
+    emoji: "📿",
+    chapter: "लाख की चूड़ियाँ",
+    en: {
+      q: "In the story 'Lakh ki Chudiyan', what craft did Badloo's family practise?",
+      opts: ["Pottery making", "Weaving silk cloth", "Making lac bangles", "Woodcarving"],
+      ans: 2,
+      exp: "Badloo's family made lac (lakh) bangles — a traditional Indian craft. The story highlights the decline of this cottage industry as machine-made glass bangles replaced handmade ones, showing the impact of industrialisation on artisans."
+    },
+    hi: {
+      q: "'लाख की चूड़ियाँ' कहानी में बदलू के परिवार का पारंपरिक व्यवसाय क्या था?",
+      opts: ["मिट्टी के बर्तन बनाना", "रेशम बुनना", "लाख की चूड़ियाँ बनाना", "लकड़ी की नक्काशी"],
+      ans: 2,
+      exp: "बदलू का परिवार लाख की चूड़ियाँ बनाने का काम करता था। कहानी में दिखाया गया है कि कैसे मशीनी काँच की चूड़ियों ने इस पारंपरिक कला को प्रभावित किया।"
+    },
+    as: {
+      q: "'লাখ কী চুড়িয়া' গল্পত বদলুৰ পৰিয়ালৰ পৰম্পৰাগত পেছা কি আছিল?",
+      opts: ["মাটিৰ পাত্ৰ তৈয়াৰ", "ৰেচম বোৱা", "লাখৰ চুড়ি তৈয়াৰ", "কাঠৰ খোদাই"],
+      ans: 2,
+      exp: "বদলুৰ পৰিয়ালে লাখৰ চুড়ি তৈয়াৰ কৰিছিল। গল্পত দেখুওৱা হৈছে যন্ত্ৰেৰে তৈয়াৰ কাচৰ চুড়িয়ে কেনেকৈ এই পৰম্পৰাগত শিল্পক প্ৰভাৱিত কৰিলে।"
+    }
+  },
+  {
+    emoji: "🚌",
+    chapter: "बस की यात्रा",
+    en: {
+      q: "Who is the author of the humorous essay 'Bus ki Yatra' in Vasant Bhag 3?",
+      opts: ["Premchand", "Harishankar Parsai", "Shivprasad Singh", "Hazariprasad Dwivedi"],
+      ans: 1,
+      exp: "'Bus ki Yatra' is a satirical/humorous essay by Harishankar Parsai, a famous Hindi satirist. The essay humorously describes a dangerous bus journey and uses satire to comment on the poor state of public transport."
+    },
+    hi: {
+      q: "वसंत भाग 3 में 'बस की यात्रा' व्यंग्य लेख के लेखक कौन हैं?",
+      opts: ["प्रेमचंद", "हरिशंकर परसाई", "शिवप्रसाद सिंह", "हजारीप्रसाद द्विवेदी"],
+      ans: 1,
+      exp: "'बस की यात्रा' हरिशंकर परसाई द्वारा लिखित व्यंग्य लेख है। इसमें एक खतरनाक बस यात्रा का हास्यपूर्ण वर्णन करके सार्वजनिक परिवहन की दुर्दशा पर व्यंग्य किया गया है।"
+    },
+    as: {
+      q: "বসন্ত ভাগ ৩ত 'বছ কী যাত্ৰা' ৰচনাৰ লেখক কোন?",
+      opts: ["প্ৰেমচন্দ", "হৰিশংকৰ পৰচাই", "শিৱপ্ৰসাদ সিং", "হাজাৰীপ্ৰসাদ দ্বিৱেদী"],
+      ans: 1,
+      exp: "'বছ কী যাত্ৰা' হৰিশংকৰ পৰচাইৰ ব্যংগাত্মক ৰচনা। ইয়াত এক বিপজ্জনক বাছ যাত্ৰাৰ হাস্যৰসপূৰ্ণ বৰ্ণনাৰে ৰাজহুৱা পৰিবহনৰ দুৰৱস্থাৰ ওপৰত ব্যংগ কৰা হৈছে।"
+    }
+  },
+  {
+    emoji: "🎵",
+    chapter: "दीवानों की हस्ती",
+    en: {
+      q: "The poem 'Deewanon ki Hasti' conveys which main theme?",
+      opts: ["Sadness about poverty", "Joy of carefree wandering and spreading happiness", "Anger at society", "Love for nature only"],
+      ans: 1,
+      exp: "'Deewanon ki Hasti' by Bhagwati Charan Verma describes carefree wanderers who spread joy and happiness wherever they go. The poem celebrates a free-spirited, joyous attitude towards life."
+    },
+    hi: {
+      q: "'दीवानों की हस्ती' कविता का मुख्य भाव क्या है?",
+      opts: ["गरीबी का दुख", "मस्त घुमंतुओं द्वारा खुशी फैलाने का आनंद", "समाज पर क्रोध", "केवल प्रकृति-प्रेम"],
+      ans: 1,
+      exp: "'दीवानों की हस्ती' भगवती चरण वर्मा की कविता है। इसमें बेफिक्र घुमंतुओं का वर्णन है जो जहाँ भी जाते हैं खुशी फैलाते हैं। यह कविता जीवन के प्रति उमंगपूर्ण दृष्टिकोण का उत्सव मनाती है।"
+    },
+    as: {
+      q: "'দিওয়ানোঁ কী হস্তী' কবিতাৰ মূল বিষয়বস্তু কি?",
+      opts: ["দাৰিদ্ৰ্যৰ দুখ", "মস্ত ঘুৰোৱতীয়াসকলৰ আনন্দ আৰু সুখ বিলোৱা", "সমাজৰ প্ৰতি ক্ৰোধ", "কেৱল প্ৰকৃতি-প্ৰেম"],
+      ans: 1,
+      exp: "'দিওয়ানোঁ কী হস্তী' ভগৱতী চৰণ বৰ্মাৰ কবিতা। ইয়াত নিশ্চিন্ত ঘুৰোৱতীয়াসকলৰ বিষয়ে বৰ্ণনা আছে যি সকলোতে আনন্দ বিলাই দিয়ে।"
+    }
+  },
+  {
+    emoji: "✉️",
+    chapter: "चिट्ठियों की अनूठी दुनिया",
+    en: {
+      q: "In 'Chiththiyon ki Anoothi Duniya', what does the author say about letters (chitthi)?",
+      opts: ["Letters are only for business use", "Letters create a personal bond and preserve feelings that phone calls cannot", "Letters are outdated and useless", "Only postcards matter"],
+      ans: 1,
+      exp: "The essay by Arvindu Kumar Singh emphasises that letters (chitthi) are unique — they carry personal feelings, emotions, and create a lasting bond between people. Unlike phone calls, letters can be read again and again, and they preserve important moments."
+    },
+    hi: {
+      q: "'चिट्ठियों की अनूठी दुनिया' में लेखक चिट्ठियों के बारे में क्या कहते हैं?",
+      opts: ["चिट्ठियाँ केवल व्यावसायिक उपयोग के लिए हैं", "चिट्ठियाँ भावनात्मक रिश्ता बनाती हैं जो फोन नहीं कर सकता", "चिट्ठियाँ पुरानी और बेकार हैं", "केवल पोस्टकार्ड महत्वपूर्ण हैं"],
+      ans: 1,
+      exp: "अरविंदु कुमार सिंह के इस निबंध में बताया गया है कि चिट्ठियाँ भावनाओं की अनूठी वाहक हैं। फोन के विपरीत, इन्हें बार-बार पढ़ा जा सकता है और ये यादों को सुरक्षित रखती हैं।"
+    },
+    as: {
+      q: "'চিট্ঠিয়োঁ কী অনূঠী দুনিয়া'ত লেখকে চিঠিৰ বিষয়ে কি কয়?",
+      opts: ["চিঠি কেৱল ব্যৱসায়িক ব্যৱহাৰৰ বাবে", "চিঠিয়ে ব্যক্তিগত বন্ধন সৃষ্টি কৰে যা ফোনে নোৱাৰে", "চিঠি পুৰণা আৰু অকামিলা", "কেৱল পোষ্টকাৰ্ড গুৰুত্বপূৰ্ণ"],
+      ans: 1,
+      exp: "অৰবিন্দু কুমাৰ সিঙৰ এই ৰচনাত কোৱা হৈছে যে চিঠিয়ে অনুভূতি বহন কৰে আৰু মানুহৰ মাজত দীৰ্ঘস্থায়ী বন্ধন সৃষ্টি কৰে।"
+    }
+  },
+  {
+    emoji: "🕊️",
+    chapter: "भगवान के डाकिए",
+    en: {
+      q: "In the poem 'Bhagwan ke Dakiye', who does the poet call God's postmen?",
+      opts: ["Rivers and mountains", "Birds and clouds", "Flowers and trees", "The sun and moon"],
+      ans: 1,
+      exp: "In 'Bhagwan ke Dakiye' by Ramdhari Singh Dinkar, birds and clouds are called God's postmen. They carry messages of love and brotherhood across borders, showing that nature does not recognise boundaries between nations."
+    },
+    hi: {
+      q: "'भगवान के डाकिए' कविता में कवि किसे ईश्वर के डाकिए कहते हैं?",
+      opts: ["नदियाँ और पहाड़", "पक्षी और बादल", "फूल और पेड़", "सूर्य और चाँद"],
+      ans: 1,
+      exp: "रामधारी सिंह दिनकर की 'भगवान के डाकिए' में पक्षियों और बादलों को ईश्वर के डाकिए कहा गया है। वे सीमाओं को न मानते हुए प्रेम और भाईचारे का संदेश फैलाते हैं।"
+    },
+    as: {
+      q: "'ভগৱান কে ডাকিয়ে' কবিতাত কবিয়ে কাক ঈশ্বৰৰ ডাকিয়া বোলে?",
+      opts: ["নদী আৰু পৰ্বত", "চৰাই আৰু মেঘ", "ফুল আৰু গছ", "সূৰ্য আৰু চাঁদ"],
+      ans: 1,
+      exp: "ৰামধাৰী সিং দিনকৰৰ 'ভগৱান কে ডাকিয়ে'ত চৰাই আৰু মেঘক ঈশ্বৰৰ ডাকিয়া বোলা হৈছে। তেওঁলোকে সীমা নমানি প্ৰেম আৰু ভ্ৰাতৃত্বৰ বাৰ্তা বিয়পায়।"
+    }
+  },
+  {
+    emoji: "💭",
+    chapter: "क्या निराश हुआ जाए",
+    en: {
+      q: "What is the central message of the essay 'Kya Nirash Hua Jaye'?",
+      opts: ["India is full of corruption and hopeless", "Despite problems, India still has honest and kind-hearted people — do not lose hope", "We should leave India", "Only government can fix India's problems"],
+      ans: 1,
+      exp: "'Kya Nirash Hua Jaye' by Hazariprasad Dwivedi argues that despite dishonesty and problems visible in society, there are still countless honest, kind, and helpful people in India. One should not become cynical or hopeless."
+    },
+    hi: {
+      q: "'क्या निराश हुआ जाए' निबंध का मुख्य संदेश क्या है?",
+      opts: ["भारत भ्रष्टाचार से भरा और निराशाजनक है", "समस्याओं के बावजूद भारत में ईमानदार और दयालु लोग हैं — निराश न हों", "हमें भारत छोड़ देना चाहिए", "केवल सरकार ही भारत की समस्याएँ ठीक कर सकती है"],
+      ans: 1,
+      exp: "हजारीप्रसाद द्विवेदी का यह निबंध कहता है कि समाज में बेईमानी दिखने के बावजूद, भारत में अनगिनत ईमानदार, दयालु लोग हैं। हमें निराश नहीं होना चाहिए।"
+    },
+    as: {
+      q: "'ক্যা নিৰাশ হুৱা জায়ে' ৰচনাৰ মূল বাৰ্তা কি?",
+      opts: ["ভাৰত দুৰ্নীতিপূৰ্ণ আৰু নিৰাশাজনক", "সমস্যা থকা সত্ত্বেও ভাৰতত সৎ আৰু দয়ালু মানুহ আছে — হতাশ নহ'ব", "আমি ভাৰত এৰি যাব লাগে", "কেৱল চৰকাৰেই ভাৰতৰ সমস্যা সমাধান কৰিব পাৰে"],
+      ans: 1,
+      exp: "হাজাৰীপ্ৰসাদ দ্বিৱেদীৰ এই ৰচনাত কোৱা হৈছে যে সমাজত অসততা থকা সত্ত্বেও ভাৰতত অসংখ্য সৎ, দয়ালু মানুহ আছে। হতাশ হ'ব নালাগে।"
+    }
+  },
+  {
+    emoji: "⏳",
+    chapter: "यह सबसे कठिन समय नहीं",
+    en: {
+      q: "Who wrote the poem 'Yeh Sabse Kathin Samay Nahin'?",
+      opts: ["Nirala", "Jaya Jhadav", "Kedarnath Singh", "Mahadevi Verma"],
+      ans: 1,
+      exp: "'Yeh Sabse Kathin Samay Nahin' is written by Jaya Jhadav. The poem gives a message of hope and resilience — that no matter how hard the present time seems, it is not the most difficult time, and hope always exists as long as there is life."
+    },
+    hi: {
+      q: "'यह सबसे कठिन समय नहीं' कविता के कवि कौन हैं?",
+      opts: ["निराला", "जया जादव", "केदारनाथ सिंह", "महादेवी वर्मा"],
+      ans: 1,
+      exp: "'यह सबसे कठिन समय नहीं' जया जादव द्वारा रचित है। यह कविता उम्मीद और साहस का संदेश देती है — वर्तमान समय चाहे कितना भी कठिन लगे, यह सबसे कठिन नहीं है।"
+    },
+    as: {
+      q: "'যহ সবছে কঠিন সময় নহীং' কবিতাৰ কবি কোন?",
+      opts: ["নিৰালা", "জয়া জাধৱ", "কেদাৰনাথ সিং", "মহাদেৱী বৰ্মা"],
+      ans: 1,
+      exp: "'যহ সবছে কঠিন সময় নহীং' জয়া জাধৱৰ দ্বাৰা ৰচিত। এই কবিতাই আশা আৰু সাহসৰ বাৰ্তা দিয়ে।"
+    }
+  },
+  {
+    emoji: "📖",
+    chapter: "ध्वनि",
+    en: {
+      q: "In the poem 'Dhwani', the poet says he will wake up those who are sleeping (dormant). This is a symbol for:",
+      opts: ["Waking people from sleep at night", "Inspiring inactive/sleeping society to rise and work", "Asking students to study", "Describing morning birds"],
+      ans: 1,
+      exp: "In 'Dhwani', Nirala uses 'sleeping buds and flowers' as a metaphor for dormant people and society. He says he will fill them with new life and energy — inspiring them to wake up and bloom. It is a message of social awakening."
+    },
+    hi: {
+      q: "'ध्वनि' कविता में कवि कहते हैं कि वे सोए हुओं को जगाएँगे — यह किसका प्रतीक है?",
+      opts: ["रात को लोगों को नींद से जगाना", "निष्क्रिय/सोए हुए समाज को उठकर काम करने के लिए प्रेरित करना", "छात्रों को पढ़ने के लिए कहना", "सुबह की चिड़ियों का वर्णन"],
+      ans: 1,
+      exp: "'ध्वनि' में निराला 'सोई कलियों और फूलों' का प्रयोग निष्क्रिय समाज के प्रतीक रूप में करते हैं। वे उनमें नया जीवन और ऊर्जा भरने की बात कहते हैं — यह सामाजिक जागृति का संदेश है।"
+    },
+    as: {
+      q: "'ধ্বনি' কবিতাত কবিয়ে ঘুমাই থকাসকলক জগাব বুলি কয় — এয়া কিহৰ প্ৰতীক?",
+      opts: ["ৰাতি মানুহক টোপনিৰ পৰা জগোৱা", "নিষ্ক্ৰিয় সমাজক কামলৈ অনুপ্ৰাণিত কৰা", "শিক্ষাৰ্থীক পঢ়িবলৈ কোৱা", "ৰাতিপুৱাৰ চৰাইৰ বৰ্ণনা"],
+      ans: 1,
+      exp: "'ধ্বনি'ত নিৰালাই 'ঘুমাই থকা কলি আৰু ফুল'ক নিষ্ক্ৰিয় সমাজৰ প্ৰতীক হিচাপে ব্যৱহাৰ কৰিছে। এয়া সামাজিক জাগৰণৰ বাৰ্তা।"
+    }
+  },
+  {
+    emoji: "✉️",
+    chapter: "चिट्ठियों की अनूठी दुनिया",
+    en: {
+      q: "What does the Hindi word 'अनूठी' (anoothi) mean as used in the chapter title 'Chiththiyon ki Anoothi Duniya'?",
+      opts: ["Old and forgotten", "Unique / Special", "Sad and emotional", "Simple and ordinary"],
+      ans: 1,
+      exp: "'अनूठी' means unique or one-of-a-kind in Hindi. The title 'Chiththiyon ki Anoothi Duniya' means 'The Unique World of Letters', emphasising that the world created by letters (chitthi) is special and cannot be replaced by modern communication."
+    },
+    hi: {
+      q: "'चिट्ठियों की अनूठी दुनिया' शीर्षक में 'अनूठी' शब्द का क्या अर्थ है?",
+      opts: ["पुरानी और भूली हुई", "अनोखी / विशेष", "दुखद और भावनात्मक", "साधारण"],
+      ans: 1,
+      exp: "'अनूठी' का अर्थ है अनोखी या विशेष। 'चिट्ठियों की अनूठी दुनिया' का अर्थ है पत्रों की वह विशेष दुनिया जिसे आधुनिक तकनीक प्रतिस्थापित नहीं कर सकती।"
+    },
+    as: {
+      q: "'চিট্ঠিয়োঁ কী অনূঠী দুনিয়া' শিৰোনামত 'অনূঠী' শব্দৰ অৰ্থ কি?",
+      opts: ["পুৰণা আৰু পাহৰা", "অনন্য / বিশেষ", "দুখজনক আৰু আবেগময়", "সাধাৰণ"],
+      ans: 1,
+      exp: "'অনূঠী' মানে অনন্য বা বিশেষ। 'চিট্ঠিয়োঁ কী অনূঠী দুনিয়া' মানে চিঠিৰ সেই বিশেষ জগৎ যাক আধুনিক প্ৰযুক্তিয়ে প্ৰতিস্থাপন কৰিব নোৱাৰে।"
+    }
+  }
+];
+
+let current = 0, score = 0, lang = 'hi';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    const map = {'EN':'en','हि':'hi','অ':'as'};
+    btn.classList.toggle('active', map[btn.textContent.trim()] === l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (current >= questions.length) { showEnd(); return; }
+  const q = questions[current];
+  const d = q[lang];
+  const pct = ((current + 1) / questions.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('qNum').textContent = current + 1;
+  document.getElementById('qNumHi').textContent = current + 1;
+  document.getElementById('qNumAs').textContent = current + 1;
+
+  const labels = ['A','B','C','D'];
+  let optsHTML = d.opts.map((o, i) => `
+    <button class="opt-btn" onclick="selectAnswer(${i})" id="opt${i}">
+      <span class="opt-label">${labels[i]}</span>${o}
+    </button>`).join('');
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="card">
+      <div class="q-meta">
+        <span class="q-num">${current+1}</span>
+        <span class="chapter-tag">${q.chapter}</span>
+      </div>
+      <div class="scene-emoji">${q.emoji}</div>
+      <div class="question">${d.q}</div>
+      <div class="options">${optsHTML}</div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+        ${lang==='en'?'Next →':lang==='hi'?'आगे →':'পৰৱৰ্তী →'}
+      </button>
+    </div>`;
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const d = q[lang];
+  const correct = d.ans;
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === correct) {
+    btns[idx].classList.add('correct');
+    score += 10;
+    document.getElementById('scoreLive').textContent = score;
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = `<span class="fb-icon">✅</span>${d.exp}`;
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[correct].classList.add('correct');
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = `<span class="fb-icon">❌</span>${d.exp}`;
+  }
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQuestion() {
+  current++;
+  renderQuestion();
+}
+
+function showEnd() {
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'none';
+  const end = document.getElementById('endScreen');
+  end.classList.add('show');
+  document.getElementById('finalScore').textContent = score;
+  const pct = score;
+  let stars = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : pct >= 40 ? '⭐' : '☆☆☆';
+  document.getElementById('starsDisplay').textContent = stars;
+}
+
+function restartQuiz() {
+  current = 0; score = 0;
+  document.getElementById('scoreLive').textContent = 0;
+  document.getElementById('progressWrap').style.display = '';
+  document.getElementById('quizArea').style.display = '';
+  document.getElementById('endScreen').classList.remove('show');
+  renderQuestion();
+}
+
+setLang('hi');
+</script>
+</body>
+</html>

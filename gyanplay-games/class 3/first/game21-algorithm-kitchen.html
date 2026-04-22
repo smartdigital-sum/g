@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>👨‍🍳 Algorithm Kitchen — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A1200;--card:#141E00;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--lime:#A8E063;--orange:#FF9F1C;--text:#F0FFD0;--dim:#5A7A20}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(168,224,99,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.35rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.2rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+.hook{background:linear-gradient(135deg,rgba(168,224,99,.12),rgba(6,214,160,.08));border:1px solid rgba(168,224,99,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.87rem;line-height:1.65;color:#D0F090}
+.hook strong{color:var(--gold)}
+.task-card{background:var(--card);border-radius:14px;padding:14px 20px;width:100%;max-width:460px;text-align:center;border:2px solid rgba(168,224,99,.2)}
+.task-emoji{font-size:2.8rem;margin-bottom:8px;display:block}
+.task-title{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;color:var(--gold);margin-bottom:4px}
+.task-desc{font-size:.82rem;color:var(--dim);line-height:1.5}
+/* Steps list - draggable */
+.steps-label{font-size:.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);text-align:center}
+.steps-list{display:flex;flex-direction:column;gap:8px;width:100%;max-width:460px}
+.step-item{background:var(--card);border:2px solid rgba(168,224,99,.2);border-radius:12px;padding:13px 16px;cursor:grab;transition:all .2s;display:flex;align-items:center;gap:12px;user-select:none;position:relative}
+.step-item:active{cursor:grabbing;transform:scale(1.02);box-shadow:0 6px 20px rgba(0,0,0,.5);z-index:10}
+.step-item.dragging{opacity:.4}
+.step-item.drag-over{border-color:var(--lime);background:rgba(168,224,99,.1)}
+.step-item.correct-pos{border-color:var(--teal);background:rgba(6,214,160,.08)}
+.step-item.wrong-pos{border-color:var(--coral)}
+.step-num{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:var(--dim);flex-shrink:0;transition:background .3s,color .3s}
+.step-item.correct-pos .step-num{background:var(--teal);color:#042A1C}
+.step-text{font-size:.9rem;flex:1;line-height:1.4}
+.drag-handle{font-size:1rem;color:var(--dim);flex-shrink:0}
+/* Result animation */
+.result-panel{background:var(--card);border-radius:14px;padding:16px;width:100%;max-width:460px;text-align:center;border:2px solid transparent;display:none}
+.result-panel.show{display:block}
+.result-anim{font-size:3rem;margin-bottom:8px;display:block}
+.result-title{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;color:var(--gold)}
+.result-desc{font-size:.82rem;color:var(--dim);margin-top:4px;line-height:1.5}
+/* Check btn */
+.check-btn{padding:13px 30px;background:var(--lime);color:#0A1200;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .2s;box-shadow:0 4px 14px rgba(168,224,99,.35)}
+.check-btn:hover{transform:scale(1.05)}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#0A1200;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(10,18,0,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4rem}.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.9rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.88rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">👨‍🍳 Algorithm Kitchen</div><div class="subject-tag">Computer · Algorithms · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+<div class="game-area">
+  <div class="hook">🍳 A recipe is an algorithm. Tying your shoelaces is an algorithm. Computers just follow instructions a <strong>BILLION times faster</strong> than us — but the idea is the same. <strong>Order matters!</strong> Drag the steps into the right sequence!</div>
+  <div id="mainArea"></div>
+</div>
+<div class="bottom">
+  <div class="prog" id="prog">Task 1 of 4</div>
+  <button class="next-btn" id="nextBtn" onclick="nextTask()">Next Task →</button>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">Correct order!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+<script>
+const TASKS=[
+  {emoji:'☕',title:'Make a Cup of Tea',desc:'Arrange all 5 steps in the correct order!',
+   steps:['Boil water in a kettle','Put a tea bag in the cup','Pour hot water into the cup','Wait 2 minutes for the tea to brew','Remove the tea bag and enjoy!'],
+   wrongAnim:'☕💥 You poured water before boiling — cold water tea! Yuck!',
+   fact:'Every cook, chef and computer programmer follows algorithms. A recipe IS an algorithm!'},
+  {emoji:'🪥',title:'Brush Your Teeth',desc:'Put the steps in the right order!',
+   steps:['Get your toothbrush','Put toothpaste on the brush','Wet the brush with water','Brush teeth for 2 minutes','Rinse your mouth with water'],
+   wrongAnim:'🦷❌ Brushing without toothpaste first — no cleaning power!',
+   fact:'You do this algorithm every morning without thinking. Our brains run algorithms automatically!'},
+  {emoji:'📬',title:'Send a Letter',desc:'What is the correct order to send a letter?',
+   steps:['Write your message on paper','Put the letter in an envelope','Seal the envelope','Write the address on the envelope','Post it at the post office'],
+   wrongAnim:'📬❌ Sealing without the letter inside first — your friend gets an empty envelope!',
+   fact:'Computers send emails using a similar algorithm — write, address, send. The steps are always in order!'},
+  {emoji:'🌱',title:'Plant a Seed',desc:'Help the gardener plant correctly!',
+   steps:['Dig a small hole in the soil','Place the seed in the hole','Cover the seed with soil','Water the soil gently','Place the pot in sunlight'],
+   wrongAnim:'🌱❌ Watering before covering the seed — the seed washes away!',
+   fact:'A computer program is just like this — each instruction builds on the one before. Skip a step or mix them up, and the program fails!'},
+];
+let ti=0,score=0,dragSrc=null;
+function loadTask(){
+  const t=TASKS[ti];
+  document.getElementById('prog').textContent=`Task ${ti+1} of ${TASKS.length}`;
+  document.getElementById('nextBtn').style.display='none';
+  const mc=document.getElementById('mainArea');mc.innerHTML='';
+  // Task card
+  mc.innerHTML=`<div class="task-card"><span class="task-emoji">${t.emoji}</span><div class="task-title">${t.title}</div><div class="task-desc">${t.desc}</div></div>`;
+  // Shuffled steps
+  const shuffled=[...t.steps].sort(()=>Math.random()-.5);
+  const lbl=document.createElement('div');lbl.className='steps-label';lbl.textContent='⠿ Drag steps to reorder them';mc.appendChild(lbl);
+  const list=document.createElement('div');list.className='steps-list';list.id='stepsList';
+  shuffled.forEach((s,i)=>{
+    const item=document.createElement('div');item.className='step-item';item.draggable=true;
+    item.innerHTML=`<div class="step-num">${i+1}</div><div class="step-text">${s}</div><div class="drag-handle">⠿</div>`;
+    item.dataset.text=s;
+    item.addEventListener('dragstart',e=>{dragSrc=item;item.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+    item.addEventListener('dragend',()=>{item.classList.remove('dragging');document.querySelectorAll('.step-item').forEach(x=>x.classList.remove('drag-over'));updateNums();});
+    item.addEventListener('dragover',e=>{e.preventDefault();item.classList.add('drag-over');});
+    item.addEventListener('dragleave',()=>item.classList.remove('drag-over'));
+    item.addEventListener('drop',e=>{e.preventDefault();if(dragSrc!==item){list.insertBefore(dragSrc,item);}item.classList.remove('drag-over');updateNums();});
+    list.appendChild(item);
+  });
+  mc.appendChild(list);
+  const cb=document.createElement('button');cb.className='check-btn';cb.textContent='✅ Check Order';cb.onclick=()=>checkOrder(t);mc.appendChild(cb);
+  // Result panel
+  const rp=document.createElement('div');rp.className='result-panel';rp.id='resultPanel';mc.appendChild(rp);
+}
+function updateNums(){
+  document.querySelectorAll('.step-item').forEach((item,i)=>{item.querySelector('.step-num').textContent=i+1;});
+}
+function checkOrder(t){
+  const items=document.querySelectorAll('.step-item');
+  let allCorrect=true;
+  items.forEach((item,i)=>{
+    item.classList.remove('correct-pos','wrong-pos');
+    if(item.dataset.text===t.steps[i])item.classList.add('correct-pos');
+    else{item.classList.add('wrong-pos');allCorrect=false;}
+  });
+  const rp=document.getElementById('resultPanel');rp.classList.add('show');
+  if(allCorrect){
+    rp.innerHTML=`<span class="result-anim">🎉</span><div class="result-title">Perfect Algorithm!</div><div class="result-desc">${t.fact}</div>`;
+    rp.style.borderColor='var(--teal)';
+    score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+    showOv('Perfect Algorithm! 🍳',t.fact);confetti();setTimeout(hideOv,2500);
+    document.getElementById('nextBtn').style.display='block';
+  } else {
+    rp.innerHTML=`<span class="result-anim">🤔</span><div class="result-title">Not quite!</div><div class="result-desc">${t.wrongAnim} — check the highlighted steps and try again!</div>`;
+    rp.style.borderColor='var(--coral)';
+  }
+}
+function nextTask(){ti++;document.getElementById('nextBtn').style.display='none';if(ti>=TASKS.length){endGame();return;}loadTask();}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOv(`Algorithm Master! ${score}/${TASKS.length}`,'Every recipe, routine and computer program is an algorithm. You\'ve mastered them all!');
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;ti=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Next Task →';document.getElementById('nextBtn').onclick=nextTask;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='Correct order!';hideOv();loadTask();};
+}
+function showOv(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOv(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#A8E063','#FFD166','#06D6A0','#FF9F1C','#C77DFF'];for(let i=0;i<25;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+loadTask();
+</script>
+</body>
+</html>

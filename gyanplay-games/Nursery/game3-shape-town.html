@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GyanPlay Nursery — Shape Town!</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+  .hello-screen { background: linear-gradient(160deg, #F3E5F5, #EDE7F6); }
+
+  /* Shape display */
+  .shape-showcase {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+  .shape-svg-wrap {
+    width: 120px; height: 120px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-md);
+  }
+
+  .shape-name-display {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 800;
+    font-size: 1.7rem;
+    color: var(--text);
+    text-align: center;
+  }
+
+  /* Shape options grid */
+  .shapes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .shape-option {
+    background: var(--card);
+    border-radius: var(--r-md);
+    border: 3px solid rgba(0,0,0,0.07);
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+    touch-action: manipulation;
+    padding: 10px;
+  }
+  .shape-option:active { transform: scale(0.92); }
+  .shape-option.correct {
+    border-color: var(--green);
+    box-shadow: 0 0 0 4px rgba(0,200,83,0.2);
+    animation: correctPulse 0.45s ease;
+  }
+  .shape-option.wrong { animation: wobble 0.5s ease; }
+  .shape-option.hint {
+    border-color: var(--gold);
+    animation: hintGlow 1s ease-in-out infinite alternate;
+  }
+  .shape-option-label {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--text2);
+  }
+</style>
+</head>
+<body>
+
+<nav class="game-topbar">
+  <a class="game-logo" href="batch1-index.html">Gyan<span>Play</span></a>
+  <div class="topbar-center">🏘️ Shape Town!</div>
+  <div class="topbar-right">
+    <div class="lang-toggle">
+      <button onclick="setLang('en')">EN</button>
+      <button onclick="setLang('as')">অস</button>
+      <button onclick="setLang('hi')">हि</button>
+    </div>
+    <button class="sound-toggle" id="soundToggle">🔊</button>
+  </div>
+</nav>
+
+<div class="parent-tip-bar">
+  <span class="tip-icon">👨‍👩‍👧</span>
+  <div class="tip-text">
+    <span class="tip-label">Parent Tip</span>
+    <span data-lang="en" id="tipEn">Trace the shape with your finger before tapping. Say: "A circle is round — like the sun!"</span>
+    <span data-lang="as" id="tipAs">টেপ কৰাৰ আগতে আঙুলেৰে আকৃতিটো আঁকক। কওক: "বৃত্ত ঘূৰণীয়া — সূৰ্যৰ দৰে!"</span>
+    <span data-lang="hi" id="tipHi">Tap करने से पहले उंगली से आकार बनाएं। कहें: "गोला गोल होता है — सूरज जैसा!"</span>
+  </div>
+</div>
+
+<!-- HELLO SCREEN -->
+<div class="screen hello-screen" id="helloScreen">
+  <div class="hello-emoji">🏘️</div>
+  <div class="hello-title">
+    <span data-lang="en">Shape Town!</span>
+    <span data-lang="as">আকৃতি চহৰ!</span>
+    <span data-lang="hi">आकार का शहर!</span>
+  </div>
+  <div class="hello-subtitle">
+    <span data-lang="en">Can you find the right shape? ⭐</span>
+    <span data-lang="as">সঠিক আকৃতি বিচাৰিব পাৰিবানে? ⭐</span>
+    <span data-lang="hi">सही आकार ढूंढ सकते हो? ⭐</span>
+  </div>
+  <button class="start-btn" onclick="startGame()">
+    <span data-lang="en">▶ Let's Build!</span>
+    <span data-lang="as">▶ বনাওঁ!</span>
+    <span data-lang="hi">▶ बनाते हैं!</span>
+  </button>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="screen hidden" id="gameScreen">
+  <div class="game-wrapper">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <span style="background:rgba(124,58,237,0.1);color:#4a1aad;padding:3px 10px;border-radius:20px;font-size:0.7rem;font-weight:800;text-transform:uppercase;">⭕ Shapes</span>
+      <span class="round-indicator" id="roundLabel">1 / 8</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="stars-row">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+
+    <div class="game-card">
+      <div class="game-prompt">
+        <span data-lang="en">Tap the <strong id="shapeNameEn"></strong>!</span>
+        <span data-lang="as"><strong id="shapeNameAs"></strong> টেপ কৰক!</span>
+        <span data-lang="hi"><strong id="shapeNameHi"></strong> tap करो!</span>
+      </div>
+
+      <!-- Shape to match -->
+      <div class="shape-showcase">
+        <div class="shape-svg-wrap" id="shapeSvgWrap"></div>
+        <div class="shape-name-display" id="shapeNameDisplay"></div>
+      </div>
+
+      <!-- 4 shape options -->
+      <div class="shapes-grid" id="shapesGrid"></div>
+    </div>
+
+    <button class="next-btn" id="nextBtn" onclick="nextRound()">
+      <span data-lang="en">Next ➜</span>
+      <span data-lang="as">পৰৱৰ্তী ➜</span>
+      <span data-lang="hi">अगला ➜</span>
+    </button>
+  </div>
+</div>
+
+<!-- CELEBRATION -->
+<div class="celebration-overlay" id="celebrationOverlay">
+  <div class="cel-emoji" id="celEmoji">🎉</div>
+  <div class="cel-title" id="celTitle">Well done!</div>
+  <div class="cel-sub" id="celSub"></div>
+  <div class="cel-fact" id="celFact"></div>
+  <button class="play-again-btn" onclick="resetGame()">
+    <span data-lang="en">🔁 Play Again!</span>
+    <span data-lang="as">🔁 আকৌ খেলক!</span>
+    <span data-lang="hi">🔁 फिर खेलें!</span>
+  </button>
+</div>
+
+<script src="audio.js"></script>
+<script src="game-engine.js"></script>
+<script>
+const SHAPES = [
+  {
+    en: 'Circle', as: 'বৃত্ত', hi: 'गोला',
+    color: '#E53935',
+    tip: { en: "A circle has no corners! Look for circles at home — coins, plates, wheels!", as: "বৃত্তৰ কোনো চুক নাই! ঘৰত বৃত্ত বিচাৰক — মুদ্ৰা, প্লেট, চকা!", hi: "गोले के कोई कोने नहीं होते! घर में गोले ढूंढो — सिक्के, थाली, पहिया!" },
+    svg: `<svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="34" fill="#E53935"/></svg>`,
+    optSvg: (col) => `<svg width="60" height="60" viewBox="0 0 60 60"><circle cx="30" cy="30" r="25" fill="${col}"/></svg>`
+  },
+  {
+    en: 'Square', as: 'বৰ্গক্ষেত্ৰ', hi: 'वर्ग',
+    color: '#1E88E5',
+    tip: { en: "A square has 4 equal sides. Find squares at home — windows, tiles, books!", as: "বৰ্গৰ ৪টা সমান দিশ আছে। ঘৰত বৰ্গ বিচাৰক — খিৰিকী, টাইল, কিতাপ!", hi: "वर्ग की 4 बराबर भुजाएं होती हैं। घर में वर्ग ढूंढो — खिड़की, टाइल, किताब!" },
+    svg: `<svg width="80" height="80" viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="6" fill="#1E88E5"/></svg>`,
+    optSvg: (col) => `<svg width="60" height="60" viewBox="0 0 60 60"><rect x="6" y="6" width="48" height="48" rx="5" fill="${col}"/></svg>`
+  },
+  {
+    en: 'Triangle', as: 'ত্ৰিভুজ', hi: 'तिकोना',
+    color: '#43A047',
+    tip: { en: "A triangle has 3 sides and 3 corners! Assam thatched rooftops are triangle shaped!", as: "ত্ৰিভুজৰ ৩টা দিশ আৰু ৩টা চুক আছে! অসমৰ চালিৰ আকৃতি ত্ৰিভুজ!", hi: "तिकोने की 3 भुजाएं और 3 कोने होते हैं! असम की छत तिकोनी होती है!" },
+    svg: `<svg width="80" height="80" viewBox="0 0 80 80"><polygon points="40,6 74,72 6,72" fill="#43A047"/></svg>`,
+    optSvg: (col) => `<svg width="60" height="60" viewBox="0 0 60 60"><polygon points="30,5 56,54 4,54" fill="${col}"/></svg>`
+  },
+  {
+    en: 'Rectangle', as: 'আয়তক্ষেত্ৰ', hi: 'आयत',
+    color: '#FB8C00',
+    tip: { en: "A rectangle is like a stretched square — 2 long sides and 2 short sides!", as: "আয়তক্ষেত্ৰ তানি লোৱা বৰ্গৰ দৰে — ২টা দীঘল আৰু ২টা চুটি দিশ!", hi: "आयत एक खिंचे हुए वर्ग जैसा है — 2 लंबी और 2 छोटी भुजाएं!" },
+    svg: `<svg width="80" height="80" viewBox="0 0 80 80"><rect x="4" y="18" width="72" height="44" rx="6" fill="#FB8C00"/></svg>`,
+    optSvg: (col) => `<svg width="60" height="60" viewBox="0 0 60 60"><rect x="3" y="13" width="54" height="34" rx="5" fill="${col}"/></svg>`
+  }
+];
+
+const ROUND_ORDER = [0,1,2,3,0,1,2,3]; // 2 rounds per shape
+let roundIdx = 0, score = 0;
+
+function startGame() {
+  markVisited('pn-03-shape-town');
+  soundHello();
+  showScreen('gameScreen');
+  initStars();
+  roundIdx = 0; score = 0;
+  loadRound();
+}
+
+function loadRound() {
+  if (roundIdx >= ROUND_ORDER.length) { endGame(); return; }
+  hideNextBtn();
+
+  const shape = SHAPES[ROUND_ORDER[roundIdx]];
+  const lang = getLang();
+
+  document.getElementById('roundLabel').textContent = `${roundIdx+1} / ${ROUND_ORDER.length}`;
+  updateProgress(roundIdx, ROUND_ORDER.length);
+
+  document.getElementById('shapeNameEn').textContent = shape.en;
+  document.getElementById('shapeNameAs').textContent = shape.as;
+  document.getElementById('shapeNameHi').textContent = shape.hi;
+  document.getElementById('shapeNameDisplay').textContent =
+    lang === 'as' ? shape.as : lang === 'hi' ? shape.hi : shape.en;
+  document.getElementById('shapeSvgWrap').innerHTML = shape.svg;
+
+  // Tip
+  document.getElementById('tipEn').textContent = shape.tip.en;
+  document.getElementById('tipAs').textContent = shape.tip.as;
+  document.getElementById('tipHi').textContent = shape.tip.hi;
+  setLang(getLang());
+
+  // 4 options — correct + 3 others
+  const others = shuffle(SHAPES.filter(s => s.en !== shape.en)).slice(0, 3);
+  const options = shuffle([shape, ...others]);
+
+  const grid = document.getElementById('shapesGrid');
+  grid.innerHTML = '';
+  const OPTION_COLORS = ['#E53935','#1E88E5','#43A047','#FB8C00','#8E24AA','#FFD835'];
+
+  options.forEach((opt, i) => {
+    const el = document.createElement('div');
+    el.className = 'shape-option';
+    el.dataset.correct = opt.en === shape.en ? '1' : '0';
+    const col = OPTION_COLORS[i % OPTION_COLORS.length];
+    el.innerHTML = `
+      ${opt.optSvg(col)}
+      <span class="shape-option-label" data-lang="en">${opt.en}</span>
+      <span class="shape-option-label" data-lang="as" style="display:none">${opt.as}</span>
+      <span class="shape-option-label" data-lang="hi" style="display:none">${opt.hi}</span>
+    `;
+    el.addEventListener('click', () => handleTap(el, opt.en === shape.en));
+    grid.appendChild(el);
+  });
+}
+
+let answered = false;
+function handleTap(el, isCorrect) {
+  if (answered) return;
+  soundTap();
+  if (isCorrect) {
+    answered = true;
+    correctFeedback(el);
+    soundCorrect();
+    score++;
+    if (score === 3) { awardStar(); soundStar(); }
+    if (score === 5) { awardStar(); soundStar(); }
+    if (score === 8) { awardStar(); soundStar(); }
+    setTimeout(() => { answered = false; roundIdx++; loadRound(); }, 700);
+  } else {
+    wrongFeedback(el);
+    soundWrong();
+    const correctEl = document.querySelector('.shape-option[data-correct="1"]');
+    if (correctEl) showHint(correctEl);
+  }
+}
+
+function nextRound() { roundIdx++; loadRound(); }
+
+function endGame() {
+  updateProgress(ROUND_ORDER.length, ROUND_ORDER.length);
+  soundComplete();
+  const lang = getLang();
+  const titles = { en: '🏘️ Shape Master!', as: '🏘️ আকৃতি বিশেষজ্ঞ!', hi: '🏘️ आकार माहिर!' };
+  const subs = {
+    en: "You know circle, square, triangle and rectangle! Look around — shapes are EVERYWHERE!",
+    as: "আপুনি বৃত্ত, বৰ্গ, ত্ৰিভুজ আৰু আয়তক্ষেত্ৰ জানে! চাৰিওফালে চাওক — আকৃতি সকলোঠাই আছে!",
+    hi: "आपको गोला, वर्ग, तिकोना और आयत पता है! चारों तरफ देखो — आकार हर जगह हैं!"
+  };
+  const facts = {
+    en: '🏘️ Traditional Assamese bamboo houses have TRIANGLE rooftops and RECTANGLE walls — shapes you just learned!',
+    as: '🏘️ অসমৰ পৰম্পৰাগত বাঁহৰ ঘৰত ত্ৰিভুজ চাল আৰু আয়তক্ষেত্ৰ বেৰ আছে — আপুনি এইমাত্ৰ শিকা আকৃতি!',
+    hi: '🏘️ असम के पारंपरिक बांस के घरों में तिकोनी छत और आयत की दीवारें होती हैं — वही आकार जो आपने अभी सीखे!'
+  };
+  showCelebration({ emoji: '🏘️', title: titles[lang], sub: subs[lang], fact: facts[lang] });
+}
+
+function resetGame() {
+  hideCelebration();
+  initStars();
+  roundIdx = 0; score = 0;
+  showScreen('gameScreen');
+  loadRound();
+}
+</script>
+</body>
+</html>

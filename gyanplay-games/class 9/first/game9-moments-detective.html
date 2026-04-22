@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moments Detective — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;--border-glow:rgba(255,159,28,.2);--card-glow:rgba(255,159,28,.1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:linear-gradient(160deg,#1A0F00,#100800);min-height:100vh;color:var(--text);font-family:'Nunito',sans-serif;font-size:18px;display:flex;justify-content:center;padding-bottom:40px;}
+.shell{width:100%;max-width:480px;display:flex;flex-direction:column;}
+.header{padding:16px 20px 10px;border-bottom:2px solid var(--border-glow);background:rgba(13,20,40,.8);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px);}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold);}
+.subject-tag{font-size:.68rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+.stars{display:flex;gap:4px;margin-top:4px;}
+.star{font-size:.95rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.score-display{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--gold);}
+.wow-hook{margin:14px 14px 0;background:linear-gradient(135deg,rgba(255,159,28,.15),rgba(13,20,40,.95));border:1px solid var(--border-glow);border-radius:14px;padding:16px;box-shadow:0 4px 20px var(--card-glow);}
+.wow-hook .emoji{font-size:1.8rem;margin-bottom:6px;display:block;}
+.wow-hook p{font-size:.88rem;line-height:1.6;}
+.wow-hook strong{color:var(--gold);}
+.stage-area{padding:14px;flex:1;}
+.stage{display:none;}
+.stage.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.stage-title{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--orange);margin-bottom:8px;}
+.card{background:var(--card);border:1px solid var(--border-glow);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 2px 14px var(--card-glow);}
+.info-box{background:rgba(255,159,28,.07);border-left:3px solid var(--orange);padding:9px 12px;border-radius:0 7px 7px 0;font-size:.82rem;color:var(--dim);line-height:1.5;margin:8px 0;}
+.info-box strong{color:var(--text);}
+.result-msg{font-size:.85rem;min-height:20px;padding:3px 0;}
+.result-msg.ok{color:var(--teal);}
+.result-msg.err{color:var(--coral);}
+.bottom-bar{position:sticky;bottom:0;background:rgba(13,20,40,.92);border-top:1px solid var(--border-glow);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(8px);}
+.progress-label{font-size:.82rem;color:var(--dim);}
+.progress-label strong{color:var(--text);}
+.action-btn{background:var(--gold);color:#060A10;border:none;border-radius:22px;padding:9px 24px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;min-height:44px;}
+.action-btn:hover{transform:scale(1.04);box-shadow:0 4px 14px rgba(255,209,102,.4);}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.9);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{text-align:center;padding:26px 22px;max-width:340px;}
+.overlay-emoji{font-size:2.8rem;margin-bottom:10px;}
+.overlay-msg{font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--gold);margin-bottom:7px;}
+.overlay-fact{font-size:.82rem;color:var(--dim);line-height:1.5;}
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:200;}
+.confetto{position:absolute;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.game-complete{display:none;text-align:center;padding:36px 18px;}
+.game-complete.show{display:block;animation:fadeIn .5s ease;}
+.complete-title{font-family:'Baloo 2',cursive;font-size:1.9rem;color:var(--gold);margin-bottom:10px;}
+.complete-sub{color:var(--dim);font-size:.9rem;line-height:1.6;margin-bottom:20px;}
+.replay-btn{background:transparent;border:2px solid var(--gold);color:var(--gold);border-radius:22px;padding:9px 26px;font-family:'Baloo 2',cursive;font-size:.95rem;cursor:pointer;min-height:44px;}
+
+/* STORY CARDS */
+.story-card{background:rgba(0,0,0,.22);border:1px solid var(--border-glow);border-radius:12px;padding:14px;margin-bottom:12px;cursor:pointer;transition:all .2s;}
+.story-card:hover{border-color:var(--orange);background:rgba(255,159,28,.04);}
+.story-title{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--gold);margin-bottom:4px;}
+.story-excerpt{font-family:'Crimson Pro',serif;font-size:.88rem;color:var(--text);line-height:1.7;margin-bottom:8px;}
+.voice-q{font-size:.82rem;color:var(--dim);margin-bottom:8px;}
+.voice-opts{display:flex;flex-wrap:wrap;gap:6px;}
+.v-opt{background:rgba(255,159,28,.1);border:1px solid var(--border-glow);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:.8rem;color:var(--text);transition:all .2s;min-height:36px;}
+.v-opt:hover{background:rgba(255,159,28,.22);}
+.v-opt.correct{background:rgba(6,214,160,.18);border-color:var(--teal);color:var(--teal);}
+.v-opt.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* IRONY */
+.irony-scene{background:rgba(0,0,0,.25);border-radius:10px;padding:12px;margin-bottom:10px;}
+.scene-title{font-family:'Baloo 2',cursive;font-size:.9rem;color:var(--orange);margin-bottom:6px;}
+.scene-text{font-family:'Crimson Pro',serif;font-size:.9rem;color:var(--text);line-height:1.7;margin-bottom:8px;}
+.irony-q{font-size:.82rem;color:var(--dim);margin-bottom:6px;}
+.i-opts{display:flex;flex-direction:column;gap:6px;}
+.i-opt{background:rgba(255,159,28,.08);border:1px solid var(--border-glow);border-radius:7px;padding:8px 12px;cursor:pointer;font-size:.8rem;color:var(--text);transition:all .2s;min-height:40px;line-height:1.4;}
+.i-opt:hover{background:rgba(255,159,28,.2);}
+.i-opt.correct{background:rgba(6,214,160,.18);border-color:var(--teal);color:var(--teal);}
+.i-opt.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);animation:shake .3s;}
+
+/* MORAL COMPLEXITY */
+.moral-scenario{background:rgba(0,0,0,.22);border:1px solid var(--border-glow);border-radius:10px;padding:12px;margin-bottom:12px;}
+.moral-situation{font-family:'Crimson Pro',serif;font-size:.9rem;color:var(--text);line-height:1.7;margin-bottom:10px;}
+.moral-verdict{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.verdict-btn{background:rgba(255,159,28,.1);border:1px solid var(--border-glow);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:.8rem;transition:all .2s;min-height:38px;}
+.verdict-btn:hover{background:rgba(255,159,28,.22);}
+.verdict-btn.chosen-right{background:rgba(6,214,160,.18);border-color:var(--teal);color:var(--teal);}
+.verdict-btn.chosen-wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral);}
+.verdict-btn.chosen-complex{background:rgba(255,209,102,.18);border-color:var(--gold);color:var(--gold);}
+.justif-box{background:rgba(0,0,0,.2);border-radius:8px;padding:10px;font-size:.78rem;color:var(--teal);line-height:1.5;display:none;}
+.moral-scenario.judged .justif-box{display:block;}
+
+/* INFERENCE CHAIN */
+.inference-step{background:rgba(0,0,0,.22);border:1px solid var(--border-glow);border-radius:10px;padding:12px;margin-bottom:10px;}
+.inf-step-label{font-family:'Baloo 2',cursive;font-size:.82rem;color:var(--orange);margin-bottom:4px;}
+.inf-text{font-size:.85rem;color:var(--text);margin-bottom:8px;line-height:1.5;}
+.inf-opts{display:flex;flex-direction:column;gap:5px;}
+.inf-opt{background:rgba(255,159,28,.08);border:1px solid var(--border-glow);border-radius:7px;padding:7px 10px;cursor:pointer;font-size:.78rem;color:var(--text);transition:all .2s;min-height:36px;line-height:1.4;}
+.inf-opt:hover{background:rgba(255,159,28,.2);}
+.inf-opt.correct{background:rgba(6,214,160,.18);border-color:var(--teal);color:var(--teal);}
+.inf-opt.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);animation:shake .3s;}
+.chain-connector{text-align:center;color:var(--orange);font-size:1.2rem;margin:4px 0;}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="game-title">🔎 Moments Detective</div>
+        <div class="subject-tag">📝 English · G9-09 · Moments Supplementary Reader</div>
+      </div>
+      <div class="score-display" id="scoreDisplay">0 pts</div>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="emoji">✒️</span>
+    <p>O. Henry wrote over 600 stories in 14 years — one every 9 days. He wrote 12 of his most famous stories while in prison for embezzlement. He chose pen name <strong>'O. Henry' to hide his identity</strong>. The man who wrote stories about everyday heroes and ironic reversals WAS himself an everyday person facing an ironic reversal. <strong>Literature and life were the same.</strong></p>
+  </div>
+
+  <div class="stage-area">
+
+    <!-- STAGE 1: NARRATOR DETECTIVE -->
+    <div class="stage active" id="stage1">
+      <div class="stage-title">🔎 Stage 1: Narrator Detective</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">Identify the narrative voice in each Moments story excerpt. What can the narrator know — and what can't they know?</p>
+
+        <div class="story-card" id="sc0">
+          <div class="story-title">The Lost Child</div>
+          <div class="story-excerpt">"The child was fascinated by the toys in the shops but felt too shy to ask. He wished his parents would stop and look. They walked on ahead, unaware."</div>
+          <div class="voice-q">Who narrates this? What can this narrator access?</div>
+          <div class="voice-opts">
+            <div class="v-opt" onclick="checkVoice(this,0,'3omni')">3rd Person Omniscient — knows ALL characters' thoughts</div>
+            <div class="v-opt" onclick="checkVoice(this,0,'1st')">1st Person — 'I' is the narrator</div>
+            <div class="v-opt" onclick="checkVoice(this,0,'3lim')">3rd Person Limited — knows one character's thoughts only</div>
+          </div>
+          <div class="result-msg" id="vcr0"></div>
+        </div>
+
+        <div class="story-card" id="sc1">
+          <div class="story-title">Iswaran the Storyteller</div>
+          <div class="story-excerpt">"Mahendra listened, half-amused, half-annoyed. He didn't believe Iswaran's ghost stories. But that night, as he lay in his cot, he was not so sure."</div>
+          <div class="voice-q">The narrator shows Mahendra's thoughts but not Iswaran's inner world. This is:</div>
+          <div class="voice-opts">
+            <div class="v-opt" onclick="checkVoice(this,1,'3omni')">3rd Person Omniscient</div>
+            <div class="v-opt" onclick="checkVoice(this,1,'3lim')">3rd Person Limited (Mahendra's perspective)</div>
+            <div class="v-opt" onclick="checkVoice(this,1,'1st')">1st Person</div>
+          </div>
+          <div class="result-msg" id="vcr1"></div>
+        </div>
+
+        <div class="info-box"><strong>Why it matters:</strong> The narrator's limitations shape what we can trust. A 3rd person limited narrator can only report what one character knows — everything else is inference or assumption.</div>
+        <div class="result-msg" id="r1"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 2: IRONY SPOTTER -->
+    <div class="stage" id="stage2">
+      <div class="stage-title">🎭 Stage 2: Irony Spotter</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">Identify the irony — the gap between what seems to be and what actually is.</p>
+
+        <div class="irony-scene">
+          <div class="scene-title">In the Kingdom of Fools</div>
+          <div class="scene-text">In a kingdom where the king has reversed all logic — night is day, day is night — the guru and disciple discover the market is wonderfully cheap. The guru says they must leave immediately. The disciple refuses: "It's so cheap here. Let us stay."</div>
+          <div class="irony-q">What is the irony of the disciple's reasoning?</div>
+          <div class="i-opts">
+            <div class="i-opt" onclick="checkIrony(this,0,'wrong')">A) The disciple is greedy and knows the risk but ignores it.</div>
+            <div class="i-opt" onclick="checkIrony(this,0,'correct')">B) The very thing the disciple sees as opportunity (cheap prices) is the sign of danger — a kingdom run by fools is fundamentally unstable. Attraction to the surface conceals the structural threat.</div>
+            <div class="i-opt" onclick="checkIrony(this,0,'wrong2')">C) The disciple is wiser than the guru because cheap food is always a good thing.</div>
+          </div>
+          <div class="result-msg" id="irr0"></div>
+        </div>
+
+        <div class="irony-scene">
+          <div class="scene-title">The Adventures of Toto</div>
+          <div class="scene-text">Grandfather buys Toto the monkey for five rupees, secretly, because Grandmother would object. He hides Toto in a bag. At the station, the ticket-master charges grandfather for Toto as a dog — "a dog is a dog."</div>
+          <div class="irony-q">What type of irony is in the ticket-master's classification?</div>
+          <div class="i-opts">
+            <div class="i-opt" onclick="checkIrony(this,1,'correct')">Situational irony — the bureaucratic system, designed for order, produces absurdity by forcing a monkey into a dog category because rules don't account for monkeys.</div>
+            <div class="i-opt" onclick="checkIrony(this,1,'wrong')">Verbal irony — the ticket-master is being sarcastic about the monkey.</div>
+            <div class="i-opt" onclick="checkIrony(this,1,'wrong2')">Dramatic irony — the reader knows something the ticket-master doesn't.</div>
+          </div>
+          <div class="result-msg" id="irr1"></div>
+        </div>
+        <div class="result-msg" id="r2"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 3: MORAL COMPLEXITY MAP -->
+    <div class="stage" id="stage3">
+      <div class="stage-title">⚖️ Stage 3: Moral Complexity Map</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">Evaluate each character's choice. Was it right, wrong, or complicated? <strong>There is no single correct answer</strong> — justification matters more than verdict.</p>
+
+        <div class="moral-scenario" id="ms0">
+          <div class="scene-title" style="font-family:'Baloo 2',cursive;font-size:.9rem;color:var(--orange);margin-bottom:6px;">In the Kingdom of Fools</div>
+          <div class="moral-situation">The king punishes an innocent merchant for a death that happened near his wall. When the merchant argues, the king simply shifts the blame further back through a chain of logic — until an innocent man is condemned to death for an old crime he didn't directly cause.</div>
+          <div style="font-size:.82rem;color:var(--dim);margin-bottom:8px;">Was the king's "logical" reasoning morally valid?</div>
+          <div class="moral-verdict">
+            <div class="verdict-btn" onclick="giveVerdict(this,0,'right')" style="color:var(--teal);">Right — the logic holds</div>
+            <div class="verdict-btn" onclick="giveVerdict(this,0,'wrong')" style="color:var(--coral);">Wrong — clearly unjust</div>
+            <div class="verdict-btn" onclick="giveVerdict(this,0,'complex')" style="color:var(--gold);">Complicated</div>
+          </div>
+          <div class="justif-box" id="jb0"></div>
+          <div class="result-msg" id="mr0"></div>
+        </div>
+
+        <div class="moral-scenario" id="ms1">
+          <div class="scene-title" style="font-family:'Baloo 2',cursive;font-size:.9rem;color:var(--orange);margin-bottom:6px;">The Lost Child</div>
+          <div class="moral-situation">The parents walk ahead without noticing their child's longing looks at sweets, toys, and flowers. When the child is lost, his desperate cries show he only wants his parents — not any of the things he desired.</div>
+          <div style="font-size:.82rem;color:var(--dim);margin-bottom:8px;">Were the parents negligent, or were they simply being parents?</div>
+          <div class="moral-verdict">
+            <div class="verdict-btn" onclick="giveVerdict(this,1,'wrong')" style="color:var(--coral);">Negligent — they should have watched</div>
+            <div class="verdict-btn" onclick="giveVerdict(this,1,'right')" style="color:var(--teal);">Normal — children wander</div>
+            <div class="verdict-btn" onclick="giveVerdict(this,1,'complex')" style="color:var(--gold);">Complicated — it reveals something about desire</div>
+          </div>
+          <div class="justif-box" id="jb1"></div>
+          <div class="result-msg" id="mr1"></div>
+        </div>
+        <div class="result-msg" id="r3" style="margin-top:6px;"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 4: INFERENCE CHAIN -->
+    <div class="stage" id="stage4">
+      <div class="stage-title">🔗 Stage 4: Inference Chain</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">A strong inference has three links: <strong>What does it say? → What does that mean? → What can we conclude?</strong> Complete each chain.</p>
+
+        <div style="background:rgba(0,0,0,.25);border-radius:10px;padding:12px;margin-bottom:12px;">
+          <div style="font-family:'Crimson Pro',serif;font-size:.9rem;color:var(--text);line-height:1.7;margin-bottom:10px;font-style:italic;">"Iswaran would hold Mahendra spell-bound with his stories. He could take the simplest incident and weave it into an elaborate tale with many digressions."</div>
+
+          <div class="inference-step">
+            <div class="inf-step-label">Step 1 — What does the text say?</div>
+            <div class="inf-text">The text says Iswaran can turn any simple incident into a long, detailed story with digressions.</div>
+            <div class="inf-opts">
+              <div class="inf-opt" onclick="checkInf(this,0,0,'correct')">Correct — the text literally says this. ✓ Move to step 2.</div>
+              <div class="inf-opt" onclick="checkInf(this,0,0,'wrong')">Iswaran is a professional storyteller who trained for years.</div>
+            </div>
+            <div class="result-msg" id="infr00"></div>
+          </div>
+
+          <div class="chain-connector">↓</div>
+
+          <div class="inference-step">
+            <div class="inf-step-label">Step 2 — What does that mean?</div>
+            <div class="inf-text">This means Iswaran's storytelling is a skill — not just entertainment but a way of giving meaning and drama to ordinary life.</div>
+            <div class="inf-opts">
+              <div class="inf-opt" onclick="checkInf(this,1,0,'correct')">Correct — his stories transform experience into narrative, which is how humans process reality.</div>
+              <div class="inf-opt" onclick="checkInf(this,1,0,'wrong')">It means Iswaran is dishonest and makes things up.</div>
+            </div>
+            <div class="result-msg" id="infr10"></div>
+          </div>
+
+          <div class="chain-connector">↓</div>
+
+          <div class="inference-step">
+            <div class="inf-step-label">Step 3 — What can we conclude?</div>
+            <div class="inf-opts">
+              <div class="inf-opt" onclick="checkInf(this,2,0,'wrong')">Iswaran would be a good journalist because he can report events clearly.</div>
+              <div class="inf-opt" onclick="checkInf(this,2,0,'correct')">The author uses Iswaran to explore how storytelling is a fundamental human need — we make sense of our lives through the stories we tell about them.</div>
+            </div>
+            <div class="result-msg" id="infr20"></div>
+          </div>
+        </div>
+        <div class="result-msg" id="r4"></div>
+      </div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="game-complete" id="gameComplete">
+      <div style="font-size:2.8rem;margin-bottom:14px;">🔎</div>
+      <div class="complete-title">Moments Detective Complete!</div>
+      <div class="complete-sub">You identified narrative voices, spotted irony in The Kingdom of Fools and Toto, mapped moral complexity, and completed a 3-link inference chain.<br><br><strong style="color:var(--gold);">Strong inference — well supported. 🔍</strong><br>O. Henry would approve.</div>
+      <br>
+      <button class="replay-btn" onclick="resetGame()">↺ Play Again</button>
+    </div>
+  </div>
+
+  <div class="bottom-bar" id="bottomBar">
+    <div class="progress-label">Stage <strong id="stageNum">1</strong> of 4</div>
+    <button class="action-btn" id="mainBtn" onclick="nextStage()">Continue →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="overlay-emoji" id="ovEmoji">🔎</div>
+    <div class="overlay-msg" id="ovMsg">Stage Complete!</div>
+    <div class="overlay-fact" id="ovFact"></div>
+  </div>
+</div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<script>
+let score=0,currentStage=1,stageDone=[false,false,false,false];
+function addScore(p){score+=p;document.getElementById('scoreDisplay').textContent=score+' pts';}
+function lightStar(n){const s=document.getElementById('s'+n);if(s&&!s.classList.contains('lit'))s.classList.add('lit');}
+
+// STAGE 1: NARRATOR
+const voiceAnswers=['3omni','3lim'];
+const voiceExp=[
+  '3rd Person Omniscient ✓ — The narrator knows the child\'s thoughts ("wished", "fascinated") AND notes the parents\' state ("unaware"). Access to multiple characters\' inner worlds = omniscient.',
+  '3rd Person Limited ✓ — We get Mahendra\'s thoughts and feelings, but Iswaran\'s inner world is hidden. The narrator is limited to one character\'s perspective.'
+];
+let vcDone=0;
+function checkVoice(el,idx,choice){
+  const parent=el.parentElement;
+  if(parent.querySelector('.correct'))return;
+  if(choice===voiceAnswers[idx]){
+    el.classList.add('correct');
+    document.getElementById('vcr'+idx).textContent=voiceExp[idx];
+    document.getElementById('vcr'+idx).className='result-msg ok';
+    addScore(18);vcDone++;
+    if(vcDone>=2&&!stageDone[0]){stageDone[0]=true;lightStar(1);lightStar(2);addScore(20);
+      document.getElementById('r1').textContent='Narrative voice correctly identified. ✓';document.getElementById('r1').className='result-msg ok';}
+  }else{
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),600);
+    document.getElementById('vcr'+idx).textContent='Incorrect. Ask: whose thoughts does the narrator have access to?';
+    document.getElementById('vcr'+idx).className='result-msg err';
+  }
+}
+
+// STAGE 2: IRONY
+const ironyAnswers=['correct','correct'];
+const ironyExp=[
+  'Correct ✓ — This is structural irony. The disciple\'s desire for cheap food is understandable on the surface, but the cheapness itself is evidence of the kingdom\'s madness. The most attractive feature is the most dangerous signal.',
+  'Situational irony ✓ — The absurdity comes from the situation: a system designed for order (ticketing rules) produces chaos (a monkey classified as a dog) because reality doesn\'t fit the rules. Nobody intended this — it just happened.'
+];
+let ironyDone=0;
+function checkIrony(el,idx,status){
+  const parent=el.parentElement;
+  if(parent.querySelector('.correct'))return;
+  if(status==='correct'){
+    el.classList.add('correct');
+    document.getElementById('irr'+idx).textContent=ironyExp[idx];
+    document.getElementById('irr'+idx).className='result-msg ok';
+    addScore(18);ironyDone++;
+    if(ironyDone>=2&&!stageDone[1]){stageDone[1]=true;lightStar(3);addScore(20);
+      document.getElementById('r2').textContent='Irony identified in both stories. ✓';document.getElementById('r2').className='result-msg ok';}
+  }else{
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),600);
+    document.getElementById('irr'+idx).textContent='Look for the gap between surface meaning and deeper meaning.';
+    document.getElementById('irr'+idx).className='result-msg err';
+  }
+}
+
+// STAGE 3: MORAL COMPLEXITY
+const justifs={
+  '0-right':'Logic alone doesn\'t create justice. The king\'s chain of reasoning is internally consistent but morally bankrupt — it sacrifices individuals for the appearance of order.',
+  '0-wrong':'Wrong ✓ — The logic is a rhetorical trick. Real justice cannot be achieved by following a chain of technical blame backward through time. The story satirises arbitrary power that uses \'logic\' as cover.',
+  '0-complex':'Complicated ✓ — The irony is that the king\'s reasoning is internally consistent, yet produces monstrous injustice. This is exactly how authoritarian logic works — it sounds reasonable at each step while leading to cruelty.',
+  '1-wrong':'Negligent ✓ — The story suggests parents sometimes walk ahead while children lag behind, full of desire. The loss reveals how intensely the child needed connection, not just things.',
+  '1-right':'Normal ✓ — The story doesn\'t condemn the parents. The loss is an accident. What the story reveals is that the child\'s deepest desire was always for the parents themselves — not the sweets or toys.',
+  '1-complex':'Complicated ✓ — The story explores how we often don\'t know what we truly want until we lose it. The child\'s desires for things dissolve when what matters (the parents) is at risk. A meditation on values under pressure.'
+};
+let morDone=0;
+function giveVerdict(btn,idx,verdict){
+  const scenario=document.getElementById('ms'+idx);
+  if(scenario.classList.contains('judged'))return;
+  scenario.classList.add('judged');
+  const key=`${idx}-${verdict}`;
+  document.getElementById('jb'+idx).textContent=justifs[key]||'Your reasoning has been noted.';
+  btn.classList.add('chosen-'+verdict);
+  addScore(15);morDone++;
+  document.getElementById('mr'+idx).textContent='Moral verdict given. Justification is what earns marks. ✓';
+  document.getElementById('mr'+idx).className='result-msg ok';
+  if(morDone>=2&&!stageDone[2]){stageDone[2]=true;lightStar(4);addScore(20);
+    document.getElementById('r3').textContent='Moral complexity explored. No single right answer — that reasoning demonstrates understanding. ⚖️';
+    document.getElementById('r3').className='result-msg ok';}
+}
+
+// STAGE 4: INFERENCE
+const infAnswers=[['correct','wrong'],['correct','wrong'],['wrong','correct']];
+let infDone=0,infStep=0;
+function checkInf(el,step,chain,status){
+  const parent=el.parentElement;
+  if(parent.querySelector('.correct'))return;
+  if(status==='correct'){
+    el.classList.add('correct');addScore(15);infDone++;
+    document.getElementById('infr'+step+''+chain).textContent=`Step ${step+1} confirmed. ✓`;
+    document.getElementById('infr'+step+''+chain).className='result-msg ok';
+    if(infDone>=3&&!stageDone[3]){stageDone[3]=true;lightStar(5);addScore(25);
+      document.getElementById('r4').textContent='3-link inference chain complete. Strong inference — well supported. 🔍';
+      document.getElementById('r4').className='result-msg ok';}
+  }else{
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),600);
+    document.getElementById('infr'+step+''+chain).textContent='Incorrect. The inference must follow from the text, not add new information.';
+    document.getElementById('infr'+step+''+chain).className='result-msg err';
+  }
+}
+
+// NAVIGATION
+const ovData=[
+  {emoji:'🔎',msg:'Narrators Identified!',fact:'The choice of narrative voice determines what the reader can know. A first-person narrator can lie or be wrong. A third-person limited narrator misses what other characters think. An omniscient narrator knows everything — but may not tell everything.'},
+  {emoji:'🎭',msg:'Irony Spotted!',fact:'O. Henry\'s stories are famous for situational irony — endings that reverse expectations. "The Gift of the Magi" is his masterpiece of this: a couple sacrifice their most prized possessions to buy gifts for each other that become useless as a result.'},
+  {emoji:'⚖️',msg:'Moral Complexity Mapped!',fact:'Good literature does not provide easy moral answers — it presents situations where reasonable people might disagree. The exam reward for this is "value-based questions" where your justification matters more than your verdict.'},
+];
+function nextStage(){
+  if(currentStage===4&&stageDone[3]){showComplete();return;}
+  if(currentStage>=4)return;
+  const d=ovData[currentStage-1];
+  document.getElementById('ovEmoji').textContent=d.emoji;document.getElementById('ovMsg').textContent=d.msg;document.getElementById('ovFact').textContent=d.fact;
+  document.getElementById('overlay').classList.add('show');
+  setTimeout(()=>{
+    document.getElementById('stage'+currentStage).classList.remove('active');currentStage++;
+    document.getElementById('stage'+currentStage).classList.add('active');
+    document.getElementById('stageNum').textContent=currentStage;
+    document.getElementById('overlay').classList.remove('show');
+    if(currentStage===4)document.getElementById('mainBtn').textContent='Finish →';
+  },2500);
+}
+function showComplete(){document.getElementById('bottomBar').style.display='none';document.getElementById('stage4').classList.remove('active');document.getElementById('gameComplete').classList.add('show');fireConfetti();}
+function fireConfetti(){
+  const wrap=document.getElementById('confettiWrap');wrap.innerHTML='';
+  const colors=['#FFD166','#06D6A0','#4CC9F0','#FF9F1C','#FF6B6B'];
+  for(let i=0;i<28;i++){const c=document.createElement('div');c.className='confetto';c.style.left=(Math.random()*100)+'%';c.style.background=colors[~~(Math.random()*colors.length)];c.style.animationDuration=(1.5+Math.random()*2)+'s';c.style.animationDelay=(Math.random()*.8)+'s';wrap.appendChild(c);setTimeout(()=>c.remove(),4000);}
+}
+function resetGame(){
+  score=0;currentStage=1;stageDone=[false,false,false,false];vcDone=0;ironyDone=0;morDone=0;infDone=0;
+  document.getElementById('scoreDisplay').textContent='0 pts';
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('gameComplete').classList.remove('show');document.getElementById('bottomBar').style.display='flex';
+  document.getElementById('stageNum').textContent='1';document.getElementById('mainBtn').textContent='Continue →';
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));document.getElementById('stage1').classList.add('active');
+  document.querySelectorAll('.v-opt,.i-opt,.inf-opt').forEach(el=>el.classList.remove('correct','wrong'));
+  document.querySelectorAll('.moral-scenario').forEach(el=>el.classList.remove('judged'));
+  document.querySelectorAll('.verdict-btn').forEach(el=>el.classList.remove('chosen-right','chosen-wrong','chosen-complex'));
+  document.querySelectorAll('.justif-box').forEach(el=>{el.textContent='';});
+  document.querySelectorAll('.result-msg').forEach(el=>{el.textContent='';el.className='result-msg';});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌊 The Brahmaputra Story — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#040E1A;--card:#081828;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--river:#1A6E9E;--text:#D4EEFF;--dim:#3A6A8A}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(76,201,240,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.35rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.2rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+.hook{background:linear-gradient(135deg,rgba(76,201,240,.1),rgba(26,110,158,.12));border:1px solid rgba(76,201,240,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.87rem;line-height:1.65;color:#B0D8FF}
+.hook strong{color:var(--gold)}
+/* Stage card */
+.stage-card{background:var(--card);border-radius:16px;padding:18px 20px;width:100%;max-width:460px;border:2px solid rgba(76,201,240,.18)}
+.stage-label{font-size:.68rem;text-transform:uppercase;letter-spacing:2px;color:var(--blue);margin-bottom:8px}
+.stage-title{font-family:'Baloo 2',sans-serif;font-size:1.15rem;font-weight:700;color:var(--gold);margin-bottom:8px}
+.stage-text{font-size:.88rem;color:var(--dim);line-height:1.7}
+.stage-text strong{color:var(--text)}
+/* Map area */
+.map-area{position:relative;width:100%;max-width:460px;height:200px;background:linear-gradient(160deg,#0A2030,#040E1A);border-radius:14px;border:2px solid rgba(76,201,240,.15);overflow:hidden}
+.map-area svg{width:100%;height:100%}
+/* Settlement draggables */
+.settlements-bank{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:460px}
+.settle-item{padding:10px 14px;background:var(--card);border:2px solid rgba(255,209,102,.25);border-radius:12px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;gap:8px;transition:all .2s;user-select:none}
+.settle-item:hover{border-color:var(--gold);background:rgba(255,209,102,.08);transform:translateY(-2px)}
+.settle-item.placed{opacity:.4;pointer-events:none}
+.settle-emoji{font-size:1.4rem}
+/* Quiz opts */
+.quiz-opts{display:flex;flex-direction:column;gap:7px;width:100%;max-width:460px}
+.qopt{padding:12px 16px;background:var(--card);border:1px solid rgba(76,201,240,.2);border-radius:10px;cursor:pointer;font-size:.87rem;color:var(--dim);transition:all .15s;text-align:left}
+.qopt:hover{border-color:var(--blue);color:var(--text)}
+.qopt.correct{border-color:var(--teal);background:rgba(6,214,160,.1);color:var(--teal)}
+.qopt.wrong{border-color:var(--coral);background:rgba(255,107,107,.08);color:var(--coral)}
+.fact-box{background:rgba(76,201,240,.06);border:1px solid rgba(76,201,240,.2);border-radius:10px;padding:10px 14px;font-size:.82rem;color:#90C8E8;line-height:1.55;max-width:460px;display:none}
+.fact-box.show{display:block}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#040E1A;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(4,14,26,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4rem}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.9rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.88rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🌊 The Brahmaputra Story</div><div class="subject-tag">Social Studies · Rivers · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+<div class="game-area">
+  <div class="hook">🌊 The Brahmaputra starts in <strong>Tibet</strong>, cuts through the Himalayas, floods Assam every year — and Assam's farmers <strong>actually NEED that flood</strong>. It brings fertile soil that grows the crops. A flood can be a gift!</div>
+  <div id="mainContent"></div>
+</div>
+<div class="bottom">
+  <div class="prog" id="prog">Stage 1 of 5</div>
+  <button class="next-btn" id="nextBtn" onclick="nextStage()">Next →</button>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🌊</div>
+  <div class="ov-title" id="ovTitle">Correct!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+<script>
+const STAGES=[
+  {
+    type:'info',
+    label:'The Source',
+    title:'Where does the Brahmaputra begin?',
+    text:'The Brahmaputra river starts high in the <strong>Tibetan Plateau</strong> — one of the highest places on Earth. It travels over 2,900 km before reaching the sea. It is one of the longest rivers in Asia!',
+    fact:'The Brahmaputra is called "Yarlung Tsangpo" in Tibet. It means "purifier of the land."'
+  },
+  {
+    type:'quiz',
+    label:'The Journey',
+    title:'Why do cities grow near rivers?',
+    text:'All through history, people built cities near rivers. The Brahmaputra flows through Guwahati, and millions of people live along its banks. Why?',
+    opts:['Rivers look beautiful','Rivers provide water, food, transport and fertile land','Rivers make the weather cool','Rivers are easy to cross'],
+    ans:1,
+    fact:'Rivers were ancient highways. They gave water to drink, fish to eat, boats for travel, and flooded land for farming. Every great ancient civilisation grew near a river!'
+  },
+  {
+    type:'settle',
+    label:'Settlement Challenge',
+    title:'Where would you build a village?',
+    text:'A new group of people arrives. They need water, farmland and safety from floods. Tap the BEST place on the map to build their village.',
+    correctZone:'bank',
+    fact:'The best spot is near the river but on higher ground — close enough for water and farming, far enough to be safe from floods.'
+  },
+  {
+    type:'quiz',
+    label:'The Flood Gift',
+    title:'Why do Assam farmers actually want floods?',
+    text:'Every year the Brahmaputra floods parts of Assam. Farmers are not always upset. Why might a flood actually help farming?',
+    opts:['Floods bring fish directly to homes','Floodwater deposits rich, fertile soil on farmland','Floods wash away pests and insects','Farmers like the rain'],
+    ans:1,
+    fact:'River floods deposit "alluvial soil" — extremely fertile mud carried from far upstream. This is why the Brahmaputra valley is one of India\'s most productive farming regions!'
+  },
+  {
+    type:'quiz',
+    label:'The Final Question',
+    title:'What makes the Brahmaputra special?',
+    text:'The Brahmaputra is unusual among India\'s great rivers. What is one remarkable fact about it?',
+    opts:['It flows northward','It is one of the few rivers with a male name in India','It is the shortest river in Asia','It never floods'],
+    ans:1,
+    fact:'Most Indian rivers have female names (Ganga, Yamuna). "Brahmaputra" means "Son of Brahma" — it is one of the rare rivers with a male name. Brahma is the creator god in Hinduism!'
+  }
+];
+let si=0,score=0;
+function render(){
+  const s=STAGES[si];
+  document.getElementById('prog').textContent=`Stage ${si+1} of ${STAGES.length}`;
+  document.getElementById('nextBtn').style.display='none';
+  const mc=document.getElementById('mainContent');mc.innerHTML='';
+  if(s.type==='info') renderInfo(s,mc);
+  else if(s.type==='quiz') renderQuiz(s,mc);
+  else if(s.type==='settle') renderSettle(s,mc);
+}
+function renderInfo(s,mc){
+  mc.innerHTML=`<div class="stage-card"><div class="stage-label">${s.label}</div><div class="stage-title">${s.title}</div><div class="stage-text">${s.text}</div></div>`;
+  const fb=document.createElement('div');fb.className='fact-box show';fb.textContent='💡 '+s.fact;mc.appendChild(fb);
+  setTimeout(()=>{score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');document.getElementById('nextBtn').style.display='block';},600);
+}
+function renderQuiz(s,mc){
+  mc.innerHTML=`<div class="stage-card"><div class="stage-label">${s.label}</div><div class="stage-title">${s.title}</div><div class="stage-text">${s.text}</div></div>`;
+  const fb=document.createElement('div');fb.className='fact-box';fb.id='factBox';fb.textContent='💡 '+s.fact;mc.appendChild(fb);
+  const qd=document.createElement('div');qd.className='quiz-opts';
+  s.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='qopt';b.textContent=o;
+    b.onclick=()=>{
+      document.querySelectorAll('.qopt').forEach(x=>x.style.pointerEvents='none');
+      if(i===s.ans){b.classList.add('correct');score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');showOv('Correct! 🌊',s.fact);confetti();setTimeout(hideOv,2400);}
+      else{b.classList.add('wrong');document.querySelectorAll('.qopt')[s.ans].classList.add('correct');}
+      document.getElementById('factBox').classList.add('show');
+      document.getElementById('nextBtn').style.display='block';
+    };
+    qd.appendChild(b);
+  });
+  mc.appendChild(qd);
+}
+function renderSettle(s,mc){
+  // Simple map with clickable zones
+  const mapDiv=document.createElement('div');mapDiv.className='map-area';
+  mapDiv.innerHTML=`<svg viewBox="0 0 460 200" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background land -->
+    <rect width="460" height="200" fill="#0A2030"/>
+    <!-- Mountains top -->
+    <polygon points="0,80 40,30 80,70 120,20 160,65 200,10 240,60 280,25 320,70 360,30 400,60 460,20 460,80" fill="#1A3A50"/>
+    <!-- River -->
+    <path d="M0,120 Q80,105 160,118 Q240,132 320,115 Q390,100 460,112" fill="none" stroke="#1A6E9E" stroke-width="18" opacity=".8"/>
+    <path d="M0,120 Q80,105 160,118 Q240,132 320,115 Q390,100 460,112" fill="none" stroke="#4CC9F0" stroke-width="4" opacity=".5"/>
+    <!-- Farmland patches -->
+    <rect x="60" y="132" width="80" height="40" rx="4" fill="#1A3A18" opacity=".7"/>
+    <rect x="200" y="126" width="70" height="38" rx="4" fill="#1A3A18" opacity=".7"/>
+    <rect x="330" y="128" width="80" height="42" rx="4" fill="#1A3A18" opacity=".7"/>
+    <!-- Labels -->
+    <text x="230" y="115" text-anchor="middle" fill="#4CC9F0" font-size="11" font-family="Nunito,sans-serif" opacity=".9">~ Brahmaputra ~</text>
+    <text x="230" y="190" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="10" font-family="Nunito,sans-serif">Tap the best location for a village</text>
+    <!-- Clickable zones -->
+    <rect id="zone-top" x="150" y="40" width="160" height="55" rx="8" fill="rgba(255,209,102,.06)" stroke="rgba(255,209,102,.25)" stroke-width="1.5" stroke-dasharray="5,3" cursor="pointer"/>
+    <text x="230" y="68" text-anchor="middle" fill="rgba(255,209,102,.5)" font-size="10" font-family="Nunito,sans-serif" pointer-events="none">High mountain</text>
+    <rect id="zone-bank" x="120" y="100" width="220" height="28" rx="6" fill="rgba(6,214,160,.06)" stroke="rgba(6,214,160,.25)" stroke-width="1.5" stroke-dasharray="5,3" cursor="pointer"/>
+    <text x="230" y="118" text-anchor="middle" fill="rgba(6,214,160,.5)" font-size="10" font-family="Nunito,sans-serif" pointer-events="none">Near river bank</text>
+    <rect id="zone-far" x="10" y="148" width="100" height="38" rx="6" fill="rgba(199,125,255,.06)" stroke="rgba(199,125,255,.25)" stroke-width="1.5" stroke-dasharray="5,3" cursor="pointer"/>
+    <text x="60" y="170" text-anchor="middle" fill="rgba(199,125,255,.5)" font-size="10" font-family="Nunito,sans-serif" pointer-events="none">Far desert</text>
+  </svg>`;
+  mc.appendChild(mapDiv);
+  const sc=document.createElement('div');sc.className='stage-card';
+  sc.innerHTML=`<div class="stage-label">${s.label}</div><div class="stage-title">${s.title}</div><div class="stage-text">${s.text}</div>`;
+  mc.prepend(sc);
+  const fb=document.createElement('div');fb.className='fact-box';fb.id='factBox';fb.textContent='💡 '+s.fact;mc.appendChild(fb);
+  // Zone click handlers
+  setTimeout(()=>{
+    mapDiv.querySelector('#zone-bank').onclick=()=>pickZone('bank',s,mapDiv);
+    mapDiv.querySelector('#zone-top').onclick=()=>pickZone('top',s,mapDiv);
+    mapDiv.querySelector('#zone-far').onclick=()=>pickZone('far',s,mapDiv);
+  },100);
+}
+function pickZone(zone,s,mapDiv){
+  mapDiv.querySelectorAll('rect[id^=zone]').forEach(r=>r.style.pointerEvents='none');
+  if(zone===s.correctZone){
+    score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+    showOv('Great location! 🏘️',s.fact);confetti();setTimeout(hideOv,2400);
+  } else {
+    showOv('Not quite...', s.fact);setTimeout(hideOv,2400);
+  }
+  document.getElementById('factBox').classList.add('show');
+  document.getElementById('nextBtn').style.display='block';
+}
+function nextStage(){si++;if(si>=STAGES.length){endGame();return;}render();}
+function endGame(){showOv('River Expert! 🌊',`Score: ${score}/${STAGES.length}! The Brahmaputra has no more secrets from you.`);document.getElementById('nextBtn').textContent='Play Again ↺';document.getElementById('nextBtn').onclick=()=>{score=0;si=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').textContent='Next →';document.getElementById('nextBtn').onclick=nextStage;document.getElementById('ovEmoji').textContent='🌊';document.getElementById('ovTitle').textContent='Correct!';hideOv();render();};}
+function showOv(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOv(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#4CC9F0','#FFD166','#06D6A0','#C77DFF','#FF9F1C'];for(let i=0;i<22;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+render();
+</script>
+</body>
+</html>

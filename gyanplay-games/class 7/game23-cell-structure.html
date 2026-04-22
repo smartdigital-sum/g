@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cell Structure — Class 7 Science | GyanPlay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg1:#0F0C29;--bg2:#302B63;
+      --card:#1a1740;
+      --gold:#FFB800;--saffron:#FF6B00;--sky:#00AEEF;
+      --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Nunito',sans-serif;
+      background:linear-gradient(135deg,var(--bg1),var(--bg2));
+      color:#fff;min-height:100vh;
+      display:flex;flex-direction:column;align-items:center;
+      padding:1rem;animation:fadeIn .45s ease;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+
+    /* ── TOP BAR ── */
+    .topbar{
+      width:100%;max-width:700px;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:.75rem 0;margin-bottom:.4rem;flex-wrap:wrap;gap:8px;
+    }
+    .back-btn{
+      background:rgba(255,255,255,.1);border:none;color:#fff;
+      font-size:.85rem;font-weight:700;padding:6px 16px;
+      border-radius:20px;cursor:pointer;transition:background .2s;
+    }
+    .back-btn:hover{background:rgba(255,255,255,.2)}
+    .subject-tag{
+      background:var(--green);color:#fff;
+      font-size:.75rem;font-weight:800;padding:4px 14px;
+      border-radius:20px;letter-spacing:.5px;
+    }
+    .topbar-right{display:flex;align-items:center;gap:8px}
+    .stars{display:flex;gap:3px;font-size:1.2rem}
+    .star{opacity:.25;transition:all .3s}
+    .star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+
+    /* ── LANG ── */
+    .lang-row{display:flex;gap:6px;margin-bottom:.8rem}
+    .lang-btn{
+      background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);
+      font-weight:700;font-size:.75rem;padding:4px 10px;
+      border-radius:16px;cursor:pointer;transition:all .2s;
+    }
+    .lang-btn.active{background:var(--gold);color:#111}
+
+    /* ── CARD ── */
+    .game-card{
+      width:100%;max-width:680px;background:var(--card);
+      border:1px solid rgba(255,255,255,.1);border-radius:24px;
+      padding:1.75rem 1.5rem;text-align:center;
+    }
+
+    /* ── PROGRESS ── */
+    .prog-wrap{background:rgba(255,255,255,.07);border-radius:20px;height:7px;margin-bottom:.35rem;overflow:hidden}
+    .prog-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--sky));border-radius:20px;transition:width .4s}
+    .prog-text{font-size:.75rem;color:rgba(255,255,255,.4);text-align:right;margin-bottom:1rem}
+
+    /* ── SCORE ── */
+    .score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem}
+    .score-label{font-size:.8rem;font-weight:700;color:rgba(255,255,255,.5)}
+    .score-val{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+
+    /* ── QUESTION ── */
+    .q-num{font-size:.72rem;font-weight:800;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:.4rem}
+    .diagram-box{
+      background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.15);
+      border-radius:14px;padding:.8rem 1rem;margin-bottom:1rem;
+      font-size:.82rem;color:rgba(255,255,255,.6);line-height:1.5;font-style:italic;
+    }
+    .q-text{
+      font-family:'Baloo 2',cursive;font-weight:700;font-size:1.15rem;
+      line-height:1.45;margin-bottom:1.3rem;color:#fff;
+    }
+
+    /* ── CHOICES ── */
+    .choices{display:flex;flex-direction:column;gap:.6rem;margin-bottom:.8rem}
+    .choice-btn{
+      background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);
+      border-radius:14px;padding:.7rem 1.1rem;
+      font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:700;
+      color:#fff;cursor:pointer;text-align:left;transition:all .2s;
+    }
+    .choice-btn:hover:not(:disabled){background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.3);transform:translateX(3px)}
+    .choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green)}
+    .choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink)}
+    .choice-btn:disabled{cursor:default}
+
+    /* ── FEEDBACK ── */
+    .feedback{font-size:.85rem;font-weight:700;min-height:1.3rem;margin-bottom:.4rem}
+    .feedback.correct{color:var(--green)}
+    .feedback.wrong{color:var(--pink)}
+    .explanation{
+      font-size:.8rem;color:rgba(255,255,255,.6);line-height:1.5;
+      background:rgba(255,255,255,.05);border-radius:12px;
+      padding:.65rem 1rem;margin-bottom:.8rem;display:none;text-align:left;
+    }
+    .explanation.show{display:block}
+
+    /* ── NEXT BTN ── */
+    .next-btn{
+      background:var(--sky);color:#000;
+      font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;
+      padding:.65rem 2rem;border:none;border-radius:50px;
+      cursor:pointer;display:none;transition:transform .15s;
+    }
+    .next-btn:hover{transform:scale(1.05)}
+
+    /* ── OVERLAY ── */
+    .overlay{
+      display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,.78);backdrop-filter:blur(10px);
+      align-items:center;justify-content:center;z-index:100;padding:1.5rem;
+    }
+    .overlay.show{display:flex}
+    .result-box{
+      background:linear-gradient(135deg,#0f1a2e,var(--bg2));
+      border:1px solid rgba(255,255,255,.13);border-radius:28px;
+      padding:2.5rem 2rem;text-align:center;max-width:400px;width:100%;
+      animation:popIn .35s ease;
+    }
+    .result-emoji{font-size:3.5rem;margin-bottom:.6rem}
+    .result-title{font-family:'Baloo 2',cursive;font-size:1.9rem;font-weight:800;margin-bottom:.4rem}
+    .result-score{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1rem}
+    .result-stars{font-size:2.5rem;margin-bottom:1.2rem;letter-spacing:4px}
+    .play-again-btn{
+      background:var(--green);color:#fff;
+      font-family:'Baloo 2',cursive;font-weight:800;font-size:1.1rem;
+      padding:.75rem 2.2rem;border:none;border-radius:50px;
+      cursor:pointer;transition:transform .15s;
+    }
+    .play-again-btn:hover{transform:scale(1.06)}
+
+    /* hide lang spans */
+    [data-lang]{display:none}
+    [data-lang="en"]{display:inline}
+
+    @media(max-width:480px){
+      .q-text{font-size:1rem}
+      .choice-btn{font-size:.85rem;padding:.6rem .9rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi">वापस</span><span data-lang="as">পাছে</span></button>
+  <span class="subject-tag"><span data-lang="en">Science</span><span data-lang="hi">विज्ञान</span><span data-lang="as">বিজ্ঞান</span></span>
+  <div class="topbar-right">
+    <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span></div>
+  </div>
+</div>
+
+<!-- LANG TOGGLE -->
+<div class="lang-row">
+  <button class="lang-btn active" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" onclick="setLang('hi')">हि</button>
+  <button class="lang-btn" onclick="setLang('as')">অ</button>
+</div>
+
+<!-- GAME CARD -->
+<div class="game-card">
+  <div class="score-row">
+    <span class="score-label"><span data-lang="en">Score</span><span data-lang="hi">स्कोर</span><span data-lang="as">স্কোৰ</span></span>
+    <span class="score-val" id="score-display">0 / 100</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="prog-text" id="prog-text">0 / 10</div>
+
+  <div class="q-num" id="q-num">QUESTION 1 OF 10</div>
+  <div class="diagram-box" id="diagram-box"></div>
+  <div class="q-text" id="q-text"></div>
+  <div class="choices" id="choices"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="explanation" id="explanation"></div>
+  <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+    <span data-lang="en">Next →</span><span data-lang="hi">आगे →</span><span data-lang="as">আগলৈ →</span>
+  </button>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="result-box">
+    <div class="result-emoji" id="res-emoji">🎉</div>
+    <div class="result-title" id="res-title">Well Done!</div>
+    <div class="result-score" id="res-score"></div>
+    <div class="result-stars" id="res-stars"></div>
+    <button class="play-again-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span><span data-lang="hi">🔄 फिर खेलें</span><span data-lang="as">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+// ── LANGUAGE ──
+let currentLang = 'en';
+function setLang(l) {
+  currentLang = l;
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? 'inline' : 'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', ['en','hi','as'][i] === l);
+  });
+}
+
+// ── QUESTIONS ──
+const questions = [
+  {
+    diagram: "🔬 Imagine a tiny box-like structure surrounded by a firm outer wall, with a jelly-like filling, a dense spherical centre, and green disc-shaped structures scattered inside.",
+    q: { en:"Which type of cell is described above — plant or animal? What is the key clue?",
+         hi:"ऊपर वर्णित कोशिका पादप है या जंतु? मुख्य सुराग क्या है?",
+         as:"ওপৰত বৰ্ণিত কোষটো উদ্ভিদ নে প্ৰাণীৰ? মূল সূত্ৰটো কি?" },
+    choices: {
+      en:["Plant cell — has cell wall and chloroplasts","Animal cell — has cell wall","Plant cell — has centrioles","Animal cell — has chloroplasts"],
+      hi:["पादप कोशिका — कोशिका भित्ति और क्लोरोप्लास्ट हैं","जंतु कोशिका — कोशिका भित्ति है","पादप कोशिका — तारककाय हैं","जंतु कोशिका — क्लोरोप्लास्ट हैं"],
+      as:["উদ্ভিদ কোষ — কোষ প্ৰাচীৰ আৰু ক্লোৰোপ্লাষ্ট আছে","প্ৰাণী কোষ — কোষ প্ৰাচীৰ আছে","উদ্ভিদ কোষ — চেণ্ট্ৰিঅল আছে","প্ৰাণী কোষ — ক্লোৰোপ্লাষ্ট আছে"]
+    },
+    answer: 0,
+    explain: { en:"Plant cells have a rigid cell wall (made of cellulose) AND chloroplasts for photosynthesis. Animal cells have neither.",
+               hi:"पादप कोशिकाओं में कठोर कोशिका भित्ति (सेल्युलोज़ की) और प्रकाशसंश्लेषण के लिए क्लोरोप्लास्ट होते हैं।",
+               as:"উদ্ভিদ কোষত কঠিন কোষ প্ৰাচীৰ (চেলুলজৰ) আৰু সালোকসংশ্লেষণৰ বাবে ক্লোৰোপ্লাষ্ট থাকে।" }
+  },
+  {
+    diagram: "🔬 A cell organelle shaped like a bean, has its own DNA, is found in both plant and animal cells, and is called the 'powerhouse'.",
+    q: { en:"Which organelle is described here?",
+         hi:"यहाँ किस कोशिकांग का वर्णन है?",
+         as:"ইয়াত কোনটো কোষাংগৰ বৰ্ণনা কৰা হৈছে?" },
+    choices: {
+      en:["Nucleus","Mitochondria","Chloroplast","Vacuole"],
+      hi:["केन्द्रक","माइटोकॉन्ड्रिया","क्लोरोप्लास्ट","रसधानी"],
+      as:["নিউক্লিয়াছ","মাইটোকণ্ড্ৰিয়া","ক্লোৰোপ্লাষ্ট","ভেকুৱল"]
+    },
+    answer: 1,
+    explain: { en:"Mitochondria produce energy (ATP) through cellular respiration. They have their own DNA and are present in both plant and animal cells.",
+               hi:"माइटोकॉन्ड्रिया कोशिकीय श्वसन द्वारा ऊर्जा (ATP) उत्पन्न करते हैं। इनका अपना DNA होता है।",
+               as:"মাইটোকণ্ড্ৰিয়াই কোষীয় শ্বাসক্ৰিয়াৰ দ্বাৰা শক্তি (ATP) উৎপন্ন কৰে। ইহঁতৰ নিজস্ব DNA আছে।" }
+  },
+  {
+    diagram: "🔬 A cell with no distinct nucleus, no membrane-bound organelles, very small in size (~1–10 µm), e.g. bacteria.",
+    q: { en:"This cell is called —",
+         hi:"इस कोशिका को कहते हैं —",
+         as:"এই কোষক কোৱা হয় —" },
+    choices: {
+      en:["Eukaryotic cell","Prokaryotic cell","Plant cell","Nerve cell"],
+      hi:["सुकेन्द्रकी कोशिका","प्रोकेरियोटिक कोशिका","पादप कोशिका","तंत्रिका कोशिका"],
+      as:["ইউকেৰিয়ট কোষ","প্ৰ'কেৰিয়ট কোষ","উদ্ভিদ কোষ","স্নায়ু কোষ"]
+    },
+    answer: 1,
+    explain: { en:"Prokaryotic cells (e.g. bacteria) lack a membrane-bound nucleus and organelles. Eukaryotic cells (plants, animals) have a true nucleus.",
+               hi:"प्रोकेरियोटिक कोशिकाओं (जैसे जीवाणु) में झिल्ली-बद्ध केन्द्रक और कोशिकांग नहीं होते।",
+               as:"প্ৰ'কেৰিয়ট কোষত (যেনে বেক্টেৰিয়া) ঝিল্লি-আবৃত নিউক্লিয়াছ নাথাকে।" }
+  },
+  {
+    diagram: "🔬 A disc-shaped green structure found ONLY in plant cells. It contains a green pigment that captures sunlight.",
+    q: { en:"Which organelle / pigment pair is correct?",
+         hi:"कौन-सा कोशिकांग / वर्णक युग्म सही है?",
+         as:"কোনটো কোষাংগ / ৰঞ্জক যোৰ শুদ্ধ?" },
+    choices: {
+      en:["Chloroplast / Chlorophyll","Mitochondria / Melanin","Vacuole / Chlorophyll","Nucleus / Chlorophyll"],
+      hi:["क्लोरोप्लास्ट / क्लोरोफिल","माइटोकॉन्ड्रिया / मेलानिन","रसधानी / क्लोरोफिल","केन्द्रक / क्लोरोफिल"],
+      as:["ক্লোৰোপ্লাষ্ট / ক্লোৰোফিল","মাইটোকণ্ড্ৰিয়া / মেলানিন","ভেকুৱল / ক্লোৰোফিল","নিউক্লিয়াছ / ক্লোৰোফিল"]
+    },
+    answer: 0,
+    explain: { en:"Chloroplasts contain chlorophyll (green pigment) which absorbs sunlight for photosynthesis. They are found only in plant cells.",
+               hi:"क्लोरोप्लास्ट में क्लोरोफिल होता है जो प्रकाशसंश्लेषण के लिए सूर्य का प्रकाश अवशोषित करता है।",
+               as:"ক্লোৰোপ্লাষ্টত ক্লোৰোফিল থাকে যি সালোকসংশ্লেষণৰ বাবে সূৰ্যৰ পোহৰ শোষণ কৰে।" }
+  },
+  {
+    diagram: "🔬 A large fluid-filled space found in plant cells that stores water, sap, and waste products. It helps maintain cell turgidity.",
+    q: { en:"This structure is the —",
+         hi:"यह संरचना है —",
+         as:"এই গঠনটো হ'ল —" },
+    choices: {
+      en:["Cell wall","Vacuole","Cytoplasm","Cell membrane"],
+      hi:["कोशिका भित्ति","रसधानी","कोशिकाद्रव्य","कोशिका झिल्ली"],
+      as:["কোষ প্ৰাচীৰ","ভেকুৱল","চাইটোপ্লাজম","কোষ আৱৰণী"]
+    },
+    answer: 1,
+    explain: { en:"Vacuoles are large in plant cells (up to 90% of cell volume) and small/temporary in animal cells. They store water and maintain turgor pressure.",
+               hi:"रसधानी पादप कोशिकाओं में बड़ी (90% तक) होती हैं। ये पानी संग्रहीत करती हैं और स्फीति दाब बनाए रखती हैं।",
+               as:"উদ্ভিদ কোষত ভেকুৱল ডাঙৰ (৯০% পৰ্যন্ত) হয়। ই পানী সংৰক্ষণ কৰে আৰু টাৰ্গৰ চাপ বজাই ৰাখে।" }
+  },
+  {
+    diagram: "🔬 This is the 'control centre' of the cell. It contains DNA (genetic information) and directs all cell activities.",
+    q: { en:"Which organelle controls all cell activities?",
+         hi:"कौन-सा कोशिकांग सभी कोशिका गतिविधियों को नियंत्रित करता है?",
+         as:"কোনটো কোষাংগে সকলো কোষ কাৰ্যকলাপ নিয়ন্ত্ৰণ কৰে?" },
+    choices: {
+      en:["Ribosome","Cell wall","Nucleus","Mitochondria"],
+      hi:["राइबोसोम","कोशिका भित्ति","केन्द्रक","माइटोकॉन्ड्रिया"],
+      as:["ৰাইব'জম","কোষ প্ৰাচীৰ","নিউক্লিয়াছ","মাইটোকণ্ড্ৰিয়া"]
+    },
+    answer: 2,
+    explain: { en:"The nucleus is the control centre. It contains the chromosomes (DNA) that carry genetic information and regulate all cell functions.",
+               hi:"केन्द्रक नियंत्रण केन्द्र है। इसमें गुणसूत्र (DNA) होते हैं जो आनुवांशिक जानकारी ले जाते हैं।",
+               as:"নিউক্লিয়াছ হ'ল নিয়ন্ত্ৰণ কেন্দ্ৰ। ইয়াত ক্ৰম'জম (DNA) আছে যি সকলো কোষ কাৰ্য নিয়ন্ত্ৰণ কৰে।" }
+  },
+  {
+    diagram: "🔬 A thin, flexible outer boundary of BOTH plant and animal cells. It is selectively permeable — allows some substances in and blocks others.",
+    q: { en:"This boundary is called the —",
+         hi:"यह सीमा कहलाती है —",
+         as:"এই সীমাক কোৱা হয় —" },
+    choices: {
+      en:["Cell wall","Nuclear membrane","Cytoplasm","Cell membrane / Plasma membrane"],
+      hi:["कोशिका भित्ति","केन्द्रकीय झिल्ली","कोशिकाद्रव्य","कोशिका झिल्ली / प्लाज्मा झिल्ली"],
+      as:["কোষ প্ৰাচীৰ","নিউক্লিয়াৰ মেমব্ৰেন","চাইটোপ্লাজম","কোষ আৱৰণী / প্লাজমা আৱৰণী"]
+    },
+    answer: 3,
+    explain: { en:"The plasma membrane (cell membrane) surrounds every living cell. It controls what enters and exits the cell. The cell wall is ONLY in plants (outside the membrane).",
+               hi:"प्लाज्मा झिल्ली हर जीवित कोशिका को घेरती है। यह नियंत्रित करती है कि कोशिका में क्या प्रवेश करे। कोशिका भित्ति केवल पादपों में होती है।",
+               as:"প্লাজমা আৱৰণী প্ৰতিটো জীৱিত কোষক আগুৰি থাকে। কোষ প্ৰাচীৰ কেৱল উদ্ভিদতহে থাকে।" }
+  },
+  {
+    diagram: "🔬 Two cells compared: Cell A is irregular in shape, has no cell wall, small vacuoles, and centrioles. Cell B is box-shaped, has a cell wall, large vacuole, and chloroplasts.",
+    q: { en:"Which statement correctly identifies them?",
+         hi:"कौन-सा कथन उन्हें सही पहचानता है?",
+         as:"কোনটো বিবৃতিয়ে সঠিকভাৱে চিনাক্ত কৰে?" },
+    choices: {
+      en:["A = Plant cell, B = Animal cell","A = Animal cell, B = Plant cell","Both are plant cells","Both are animal cells"],
+      hi:["A = पादप कोशिका, B = जंतु कोशिका","A = जंतु कोशिका, B = पादप कोशिका","दोनों पादप कोशिकाएँ हैं","दोनों जंतु कोशिकाएँ हैं"],
+      as:["A = উদ্ভিদ কোষ, B = প্ৰাণী কোষ","A = প্ৰাণী কোষ, B = উদ্ভিদ কোষ","দুয়োটা উদ্ভিদ কোষ","দুয়োটা প্ৰাণী কোষ"]
+    },
+    answer: 1,
+    explain: { en:"Cell A (irregular, centrioles, small vacuoles, no cell wall) = Animal cell. Cell B (box-shaped, cell wall, large vacuole, chloroplasts) = Plant cell.",
+               hi:"Cell A (अनियमित, तारककाय, छोटी रसधानी, कोशिका भित्ति नहीं) = जंतु कोशिका। Cell B = पादप कोशिका।",
+               as:"Cell A (অনিয়মিত, চেণ্ট্ৰিঅল, সৰু ভেকুৱল, কোষ প্ৰাচীৰ নাই) = প্ৰাণী কোষ। Cell B = উদ্ভিদ কোষ।" }
+  },
+  {
+    diagram: "🔬 A jelly-like substance filling the cell between the nucleus and the cell membrane. All organelles float in it.",
+    q: { en:"This jelly-like substance is called —",
+         hi:"इस जेली-जैसे पदार्थ को कहते हैं —",
+         as:"এই জেলি-সদৃশ পদাৰ্থক কোৱা হয় —" },
+    choices: {
+      en:["Cytoplasm","Cell sap","Nucleoplasm","Protoplasm only"],
+      hi:["कोशिकाद्रव्य","कोशिका-रस","केन्द्रकद्रव्य","केवल जीवद्रव्य"],
+      as:["চাইটোপ্লাজম","কোষ-ৰস","নিউক্লিঅ'প্লাজম","কেৱল প্ৰ'টোপ্লাজম"]
+    },
+    answer: 0,
+    explain: { en:"Cytoplasm is the jelly-like material between the nucleus and cell membrane. Organelles like mitochondria and ribosomes are suspended in it.",
+               hi:"कोशिकाद्रव्य (Cytoplasm) केन्द्रक और कोशिका झिल्ली के बीच का जेली-जैसा पदार्थ है।",
+               as:"চাইটোপ্লাজম হ'ল নিউক্লিয়াছ আৰু কোষ আৱৰণীৰ মাজৰ জেলি-সদৃশ পদাৰ্থ।" }
+  },
+  {
+    diagram: "🔬 Fact: A single amoeba is a complete organism with ONE cell. A blue whale has trillions of cells. Cell was first observed in 1665 by Robert Hooke in a cork slice.",
+    q: { en:"Who discovered the cell and in which year?",
+         hi:"कोशिका की खोज किसने और किस वर्ष में की?",
+         as:"কোষ কোনে আৰু কোনটো বছৰত আৱিষ্কাৰ কৰিছিল?" },
+    choices: {
+      en:["Louis Pasteur, 1857","Robert Hooke, 1665","Charles Darwin, 1859","Antonie van Leeuwenhoek, 1700"],
+      hi:["लुई पाश्चर, 1857","रॉबर्ट हुक, 1665","चार्ल्स डार्विन, 1859","एंटोनी वान लीउवेनहोक, 1700"],
+      as:["লুই পাষ্টাৰ, ১৮৫৭","ৰবাৰ্ট হুক, ১৬৬৫","চাৰ্লছ ডাৰউইন, ১৮৫৯","এণ্টনি ভান লিউৱেনহুক, ১৭০০"]
+    },
+    answer: 1,
+    explain: { en:"Robert Hooke first observed cells in 1665 while looking at a thin slice of cork under his compound microscope. He named them 'cells' because they resembled small rooms.",
+               hi:"रॉबर्ट हुक ने 1665 में अपने यौगिक सूक्ष्मदर्शी से कॉर्क की पतली परत में कोशिकाओं को देखा और 'cell' नाम दिया।",
+               as:["ৰবাৰ্ট হুকে ১৬৬৫ চনত কৰ্কৰ পাতল খণ্ড তেওঁৰ যৌগিক অণুবীক্ষণ যন্ত্ৰৰ তলত পৰীক্ষা কৰি কোষ আৱিষ্কাৰ কৰিছিল।"] }
+  }
+];
+
+// ── STATE ──
+let order = [], qi = 0, score = 0, answered = false;
+
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-.5); }
+
+function startGame(){
+  order = shuffle([...Array(questions.length).keys()]);
+  qi = 0; score = 0;
+  document.getElementById('overlay').classList.remove('show');
+  loadQ();
+}
+
+function loadQ(){
+  const q = questions[order[qi]];
+  answered = false;
+
+  // progress
+  const pct = (qi/questions.length)*100;
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-text').textContent = qi+' / '+questions.length;
+  document.getElementById('q-num').textContent = 'QUESTION '+(qi+1)+' OF '+questions.length;
+
+  document.getElementById('score-display').textContent = score+' / 100';
+
+  // diagram
+  document.getElementById('diagram-box').textContent = q.diagram;
+
+  // question text
+  document.getElementById('q-text').textContent = q.q[currentLang] || q.q['en'];
+
+  // choices — shuffle with original index
+  const choiceList = q.choices[currentLang] || q.choices['en'];
+  const indexed = choiceList.map((txt,i)=>({txt,orig:i}));
+  const shuffled = shuffle(indexed);
+
+  const container = document.getElementById('choices');
+  container.innerHTML = '';
+  shuffled.forEach(item=>{
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = item.txt;
+    btn.dataset.orig = item.orig;
+    btn.onclick = ()=>handleAnswer(btn, item.orig, q.answer, q.explain);
+    container.appendChild(btn);
+  });
+
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('explanation').classList.remove('show');
+  document.getElementById('explanation').textContent = '';
+  document.getElementById('next-btn').style.display = 'none';
+  updateStars();
+}
+
+function handleAnswer(btn, chosen, correct, explain){
+  if(answered) return;
+  answered = true;
+
+  const allBtns = document.querySelectorAll('.choice-btn');
+  allBtns.forEach(b=>{
+    b.disabled = true;
+    if(+b.dataset.orig === correct) b.classList.add('correct');
+  });
+
+  const fb = document.getElementById('feedback');
+  const expBox = document.getElementById('explanation');
+
+  if(chosen === correct){
+    btn.classList.add('correct');
+    score = Math.min(100, score + 10);
+    fb.textContent = '✓ Correct!';
+    fb.className = 'feedback correct';
+  } else {
+    btn.classList.add('wrong');
+    fb.textContent = '✗ Not quite!';
+    fb.className = 'feedback wrong';
+  }
+
+  expBox.textContent = '💡 ' + (explain[currentLang] || explain['en']);
+  expBox.classList.add('show');
+
+  document.getElementById('score-display').textContent = score+' / 100';
+  document.getElementById('next-btn').style.display = 'inline-block';
+  updateStars();
+}
+
+function nextQuestion(){
+  qi++;
+  if(qi >= questions.length){ showResult(); return; }
+  loadQ();
+}
+
+function updateStars(){
+  const pct = score;
+  document.getElementById('s1').classList.toggle('lit', pct >= 40);
+  document.getElementById('s2').classList.toggle('lit', pct >= 70);
+  document.getElementById('s3').classList.toggle('lit', pct >= 90);
+}
+
+function showResult(){
+  document.getElementById('prog-fill').style.width='100%';
+  document.getElementById('prog-text').textContent = questions.length+' / '+questions.length;
+
+  const pct = score;
+  let emoji='😔', title='Keep Trying!';
+  if(pct>=90){emoji='🏆';title='Outstanding!';}
+  else if(pct>=70){emoji='🎉';title='Well Done!';}
+  else if(pct>=40){emoji='👍';title='Good Effort!';}
+
+  const stars = pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'';
+
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('res-score').textContent = 'Score: '+score+' / 100';
+  document.getElementById('res-stars').textContent = stars;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function restartGame(){ startGame(); }
+
+// init
+startGame();
+</script>
+</body>
+</html>

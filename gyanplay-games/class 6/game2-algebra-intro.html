@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algebra Intro — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#180A28 0%,#0F0820 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(199,125,255,.13),rgba(199,125,255,.04));border:1px solid rgba(199,125,255,.3);border-radius:16px;padding:16px;margin-bottom:16px;position:relative;overflow:hidden}
+.wow-hook::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(199,125,255,.18),transparent);border-radius:50%}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55;color:var(--text)}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(199,125,255,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--purple);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:700}
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:16px;line-height:1.45}
+/* Balance scale */
+.scale-container{display:flex;flex-direction:column;align-items:center;margin:8px 0 16px}
+.scale-beam{width:260px;height:6px;border-radius:3px;transition:transform .5s ease;transform-origin:center center;position:relative}
+.scale-beam.balanced{background:var(--teal);transform:rotate(0deg)}
+.scale-beam.left-heavy{background:var(--coral);transform:rotate(-8deg)}
+.scale-beam.right-heavy{background:var(--coral);transform:rotate(8deg)}
+.scale-pivot{width:8px;height:30px;background:var(--purple);border-radius:4px;margin:0 auto}
+.scale-base{width:60px;height:8px;background:rgba(199,125,255,.3);border-radius:4px;margin:0 auto}
+.scale-pans{display:flex;justify-content:space-between;width:280px;margin-bottom:-2px}
+.pan{width:90px;min-height:70px;background:rgba(199,125,255,.07);border:1px solid rgba(199,125,255,.25);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;gap:4px}
+.pan-label{font-size:.65rem;color:var(--dim);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.pan-content{font-family:'Baloo 2',cursive;font-size:1.4rem;font-weight:800;color:var(--purple);text-align:center;line-height:1.2}
+.pan-rhs{color:var(--gold)}
+/* Equation display */
+.equation-display{background:rgba(199,125,255,.08);border:1px solid rgba(199,125,255,.2);border-radius:12px;padding:14px;text-align:center;margin-bottom:14px}
+.eq-text{font-family:'Baloo 2',cursive;font-size:1.8rem;font-weight:800;color:var(--text);letter-spacing:2px}
+.eq-text .var-x{color:var(--purple)}
+.eq-text .num{color:var(--gold)}
+.eq-hint{font-size:.8rem;color:var(--dim);margin-top:6px}
+/* Answer options */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.opt-btn{background:rgba(199,125,255,.07);border:2px solid rgba(199,125,255,.2);border-radius:14px;padding:14px 8px;font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--purple);background:rgba(199,125,255,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:600;min-height:26px;margin:10px 0 4px;transition:all .3s}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+/* Stage 2 word problem */
+.word-problem{background:rgba(199,125,255,.06);border-left:3px solid var(--purple);border-radius:0 12px 12px 0;padding:14px;margin-bottom:14px;font-size:.9rem;line-height:1.6;color:var(--text)}
+.word-problem strong{color:var(--gold)}
+/* Verification badge */
+.verify-badge{background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.3);border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--teal);text-align:center;margin-top:8px;display:none}
+.verify-badge.show{display:block}
+/* Bottom bar */
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#0F0820 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--purple);color:var(--purple);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.play-again-btn:hover{background:rgba(199,125,255,.1)}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(199,125,255,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-score{font-family:'Baloo 2',cursive;font-size:1.9rem;font-weight:800;color:var(--purple);margin:10px 0}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stage-transition{background:linear-gradient(135deg,rgba(199,125,255,.1),rgba(199,125,255,.03));border:1px solid rgba(199,125,255,.2);border-radius:14px;padding:14px;text-align:center;margin-bottom:14px}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--purple);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">🔤 Algebra Intro</div>
+      <span class="subject-tag">Maths · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="wow-emoji">📜</span>
+    <div class="wow-text">
+      Algebra was invented in <strong>820 AD</strong> by Al-Khwarizmi in Baghdad. The word <strong>ALGEBRA</strong> comes from his book <em>'Al-Jabr'</em>. A <strong>1,200-year-old idea</strong> still runs inside every computer program ever written!
+    </div>
+  </div>
+
+  <div id="gameArea"></div>
+
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Question 1 of 10</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-score" id="ovScore"></div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+// Stage 1: balance-scale equations (solve for x)
+const S1 = [
+  {display:'x + 3 = 7', hint:'What + 3 = 7?', correct:4, opts:[4,3,7,10], verify:'Check: 4 + 3 = 7 ✓', lhs:'x + 3', rhs:'7'},
+  {display:'x − 5 = 2', hint:'What − 5 = 2?', correct:7, opts:[7,3,5,12], verify:'Check: 7 − 5 = 2 ✓', lhs:'x − 5', rhs:'2'},
+  {display:'x + 8 = 15', hint:'15 − 8 = ?', correct:7, opts:[7,6,8,23], verify:'Check: 7 + 8 = 15 ✓', lhs:'x + 8', rhs:'15'},
+  {display:'2x = 10', hint:'10 ÷ 2 = ?', correct:5, opts:[5,8,20,4], verify:'Check: 2 × 5 = 10 ✓', lhs:'2x', rhs:'10'},
+  {display:'x − 4 = 9', hint:'9 + 4 = ?', correct:13, opts:[13,5,36,14], verify:'Check: 13 − 4 = 9 ✓', lhs:'x − 4', rhs:'9'},
+];
+// Stage 2: word problems
+const S2 = [
+  {story:'A tea garden in Assam packed <strong>x boxes</strong> today. Each box holds <strong>6 kg of tea</strong>. Total packed = <strong>48 kg</strong>. How many boxes?', eq:'6x = 48', correct:8, opts:[8,6,48,42], fact:'6 × 8 = 48 ✓'},
+  {story:'Mita had <strong>x stickers</strong>. She gave away <strong>7</strong> and has <strong>11 left</strong>. How many did she start with?', eq:'x − 7 = 11', correct:18, opts:[18,4,77,14], fact:'18 − 7 = 11 ✓'},
+  {story:'A classroom has rows of <strong>x desks</strong> each. With <strong>4 rows</strong>, there are <strong>24 desks total</strong>. Find x.', eq:'4x = 24', correct:6, opts:[6,8,28,20], fact:'4 × 6 = 24 ✓'},
+  {story:'Rahul saved <strong>₹x per week</strong>. After <strong>3 weeks</strong> he added <strong>₹5 extra</strong> and had <strong>₹35</strong>. Find x.', eq:'3x + 5 = 35', correct:10, opts:[10,12,8,30], fact:'3 × 10 + 5 = 35 ✓'},
+  {story:'A river boat carried <strong>x passengers</strong> in the morning and <strong>15 more in the afternoon</strong>. Total = <strong>47</strong>. Find x.', eq:'x + 15 = 47', correct:32, opts:[32,62,31,33], fact:'32 + 15 = 47 ✓'},
+];
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+const FACTS=[
+  'In algebra, x is just a "mystery number" waiting to be revealed — like a detective case!',
+  'The equals sign (=) was invented in 1557 by Robert Recorde — before that, people wrote "is equal to"!',
+  'Al-Khwarizmi\'s name also gave us the word "algorithm" — the foundation of all programming!',
+  'An equation is like a balanced scale — whatever you do to one side, do to the other!',
+  'Every smartphone app uses algebra — from calculating your location to recommending a video!',
+  'Solving for x means "isolating" x — getting it alone on one side of the equation.',
+  'In 2x = 10, you divide both sides by 2: x = 5. Both sides stay balanced!',
+  'Algebra lets you write rules that work for ANY number, not just specific ones.',
+  'Scientists use algebra to predict where a comet will be 100 years from now!',
+  'India\'s Brahmagupta used algebra in 628 AD — independently of the Arab world!',
+];
+let qIdx=0,stg=1,score=0,answered=false;
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  const C=['#FFD166','#C77DFF','#06D6A0','#4CC9F0','#FF9F1C'];
+  for(let i=0;i<28;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
+  }
+}
+function updateStars(){
+  const lit=Math.min(5,Math.floor(score/2));
+  for(let i=1;i<=5;i++) document.getElementById('s'+i).classList.toggle('lit',i<=lit);
+}
+function showOverlay(emoji,title,scoreText,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovScore').textContent=scoreText;document.getElementById('ovFact').textContent=fact;
+  document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay');ov.classList.add('show');
+  if(!isEnd) setTimeout(()=>ov.classList.remove('show'),2600);
+}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(q,t){document.getElementById('progressLabel').textContent=`Question ${q} of ${t}`}
+
+function makeScale(eq,tiltClass){
+  return `
+    <div class="scale-container">
+      <div class="scale-pans">
+        <div class="pan"><div class="pan-label">Left</div><div class="pan-content">${eq.lhs}</div></div>
+        <div class="pan"><div class="pan-label">Right</div><div class="pan-content pan-rhs">${eq.rhs}</div></div>
+      </div>
+      <div class="scale-beam ${tiltClass}"></div>
+      <div class="scale-pivot"></div>
+      <div class="scale-base"></div>
+    </div>`;
+}
+
+function renderS1(i){
+  setProgress(i+1,10); answered=false; showNext(false);
+  const q=S1[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">⚖️ Stage 1 — Balance the Scale</div>
+      <div class="equation-display">
+        <div class="eq-text">${q.display.replace('x','<span class="var-x">x</span>')}</div>
+        <div class="eq-hint">${q.hint}</div>
+      </div>
+      ${makeScale(q,'left-heavy')}
+      <div style="font-family:'Baloo 2',cursive;font-size:.9rem;color:var(--dim);text-align:center;margin-bottom:10px">
+        What is the value of <span style="color:var(--purple);font-weight:800">x</span> that balances the scale?
+      </div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS1(${o},${q.correct},'${q.verify}',this)">x = ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div class="verify-badge" id="vbadge">${q.verify}</div>
+    </div>`;
+}
+function checkS1(sel,correct,verify,btn){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  const vb=document.getElementById('vbadge');
+  // Update scale visual
+  const beam=document.querySelector('.scale-beam');
+  if(sel===correct){
+    btn.classList.add('correct'); score++; updateStars();
+    fb.textContent=cheer()+` x = ${correct} is correct!`;
+    fb.className='feedback correct';
+    if(beam){beam.className='scale-beam balanced'}
+    vb.classList.add('show');
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('⚖️',cheer(),'',FACTS[qIdx%FACTS.length],false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent===`x = ${correct}`)b.classList.add('correct')});
+    fb.textContent=`x = ${correct}. ${verify}`;
+    fb.className='feedback wrong';
+    if(beam){beam.className='scale-beam right-heavy'}
+  }
+  showNext(true);
+}
+
+function renderS2(i){
+  setProgress(S1.length+i+1,10); answered=false; showNext(false);
+  const q=S2[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">📖 Stage 2 — Word Problems</div>
+      <div class="word-problem">${q.story}</div>
+      <div class="equation-display">
+        <div class="eq-text" style="font-size:1.4rem">${q.eq.replace('x','<span class="var-x">x</span>')}</div>
+        <div class="eq-hint">Solve for x</div>
+      </div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS2(${o},${q.correct},'${q.fact}',this)">x = ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div class="verify-badge" id="vbadge">${q.fact}</div>
+    </div>`;
+}
+function checkS2(sel,correct,fact,btn){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct'); score++; updateStars();
+    fb.textContent=cheer()+` x = ${correct} solves it perfectly!`;
+    fb.className='feedback correct';
+    document.getElementById('vbadge').classList.add('show');
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🎯',cheer(),'',FACTS[(qIdx+5)%FACTS.length],false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent===`x = ${correct}`)b.classList.add('correct')});
+    fb.textContent=`x = ${correct}. ${fact}`;
+    fb.className='feedback wrong';
+    document.getElementById('vbadge').classList.add('show');
+  }
+  showNext(true);
+}
+function nextQ(){
+  qIdx++;
+  if(stg===1){
+    if(qIdx<S1.length) renderS1(qIdx);
+    else{stg=2;qIdx=0;renderTransition()}
+  } else {
+    if(qIdx<S2.length) renderS2(qIdx);
+    else endGame();
+  }
+}
+function renderTransition(){
+  showNext(false);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="stage-transition">
+      <div style="font-size:2.5rem">📖</div>
+      <h3>Stage 2: Word Problems!</h3>
+      <p>Now apply algebra to real-life situations. Read the story, set up the equation, and solve for <span style="color:var(--purple);font-weight:800">x</span>!</p>
+    </div>`;
+  const nb=document.getElementById('nextBtn');
+  nb.textContent='Start Stage 2 →'; nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →';nb.onclick=nextQ;renderS2(0)};
+}
+function endGame(){
+  confetti();
+  const medals=['Algebra Beginner 🌱','Equation Solver 🔍','Algebra Master 🎯','Algebra Champion 🏆','Algebra Legend 🌟'];
+  const medal=medals[Math.min(4,Math.floor(score/2))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--purple);margin:10px 0">${score} / 10</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        Al-Khwarizmi would be proud! You can now solve equations that power everything from GPS satellites to video game physics engines.
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  document.getElementById('progressLabel').textContent=`Final Score: ${score}/10`;
+  showNext(false);
+}
+function resetGame(){
+  qIdx=0;stg=1;score=0;answered=false;
+  for(let i=1;i<=5;i++) document.getElementById('s'+i).classList.remove('lit');
+  const nb=document.getElementById('nextBtn');
+  nb.textContent='Next →'; nb.onclick=nextQ;
+  renderS1(0);
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{
+  document.getElementById('overlay').classList.remove('show'); resetGame();
+});
+renderS1(0);
+</script>
+</body>
+</html>

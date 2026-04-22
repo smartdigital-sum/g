@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Force & Work – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;--text:#e8e0ff;--muted:#9b8ec4}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(26,23,64,.85);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(0,200,83,.2)}
+.back-btn{background:none;border:1.5px solid rgba(0,200,83,.4);color:var(--green);padding:6px 14px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:.2s}
+.back-btn:hover{background:rgba(0,200,83,.15)}
+.badge{background:linear-gradient(90deg,var(--green),#00e676);color:#000;font-weight:800;font-family:'Baloo 2',sans-serif;padding:5px 14px;border-radius:20px;font-size:.8rem;letter-spacing:.5px}
+.lang-toggle{display:flex;gap:6px}
+.lang-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);padding:5px 11px;border-radius:14px;font-size:.78rem;font-weight:700;cursor:pointer;transition:.2s;font-family:'Nunito',sans-serif}
+.lang-btn.active{background:rgba(0,200,83,.25);border-color:var(--green);color:var(--green)}
+.wrap{max-width:700px;margin:0 auto;padding:24px 16px 60px}
+.score-bar-wrap{display:flex;align-items:center;gap:12px;margin-bottom:22px;animation:fadeIn .5s ease}
+.score-label{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;color:var(--green);min-width:90px}
+.prog-track{flex:1;height:10px;background:rgba(255,255,255,.1);border-radius:10px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green),#00e676);border-radius:10px;transition:width .5s ease}
+.q-card{background:var(--card);border-radius:20px;padding:28px 24px;animation:fadeIn .4s ease;border:1px solid rgba(0,200,83,.12);box-shadow:0 8px 40px rgba(0,0,0,.4)}
+.q-number{font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.emoji-box{font-size:3rem;text-align:center;margin:16px 0;animation:pop .5s ease}
+.q-text{font-size:1.05rem;font-weight:600;line-height:1.55;margin-bottom:20px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);color:var(--text);padding:13px 16px;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:600;cursor:pointer;transition:.2s;text-align:left;line-height:1.4}
+.opt-btn:hover:not(:disabled){background:rgba(0,200,83,.15);border-color:var(--green);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);animation:pop .3s ease}
+.opt-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);animation:shake .3s ease}
+.opt-btn.reveal{background:rgba(0,200,83,.1);border-color:rgba(0,200,83,.4);color:rgba(0,200,83,.7)}
+.opt-btn:disabled{cursor:default}
+.feedback{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:.9rem;font-weight:600;line-height:1.5;animation:fadeIn .3s ease}
+.feedback.correct{background:rgba(0,200,83,.12);border:1px solid rgba(0,200,83,.3);color:#6effa5}
+.feedback.wrong{background:rgba(255,64,129,.1);border:1px solid rgba(255,64,129,.3);color:#ff9ebf}
+.next-btn{margin-top:18px;width:100%;background:linear-gradient(90deg,var(--green),#00e676);color:#000;border:none;padding:14px;border-radius:12px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:.2s;letter-spacing:.5px}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,200,83,.4)}
+.end-card{background:var(--card);border-radius:24px;padding:40px 28px;text-align:center;animation:fadeIn .6s ease;border:1px solid rgba(0,200,83,.2);box-shadow:0 8px 50px rgba(0,0,0,.5)}
+.stars{font-size:2.8rem;margin:12px 0;letter-spacing:4px}
+.end-score{font-family:'Baloo 2',sans-serif;font-size:3.5rem;font-weight:800;color:var(--green);text-shadow:0 0 30px rgba(0,200,83,.4)}
+.end-label{font-size:1rem;color:var(--muted);margin-top:4px}
+.end-msg{font-size:1.1rem;font-weight:700;margin:16px 0 24px;color:var(--text)}
+.play-again{background:linear-gradient(90deg,var(--green),#00e676);color:#000;border:none;padding:14px 32px;border-radius:14px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:.2s}
+.play-again:hover{transform:scale(1.04);box-shadow:0 6px 24px rgba(0,200,83,.4)}
+[data-en],[data-hi],[data-as]{display:none}
+.lang-en [data-en]{display:inline}
+.lang-hi [data-hi]{display:inline}
+.lang-as [data-as]{display:inline}
+</style>
+</head>
+<body class="lang-en">
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-en>Back</span><span data-hi>वापस</span><span data-as>পিছলৈ</span></button>
+  <span class="badge">🔬 Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+<div class="wrap">
+  <div class="score-bar-wrap">
+    <div class="score-label"><span data-en>Score:</span><span data-hi>अंक:</span><span data-as>নম্বৰ:</span> <span id="scoreDisplay">0</span>/100</div>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div style="font-size:.85rem;color:var(--muted)" id="qCounter">1/10</div>
+  </div>
+  <div id="gameArea"></div>
+</div>
+<script>
+const questions=[
+{emoji:"🚪",q:{en:"When you open a door, you apply a _____ force.",hi:"जब आप दरवाज़ा खोलते हैं, तो आप _____ बल लगाते हैं।",as:"যেতিয়া আপুনি দুৱাৰ খোলে, আপুনি _____ বল প্ৰয়োগ কৰে।"},opts:{en:["Pull","Push","Magnetic","Gravitational"],hi:["खिंचाव","धक्का","चुंबकीय","गुरुत्वाकर्षण"],as:["টান","ঠেলা","চুম্বকীয়","মাধ্যাকৰ্ষণ"]},ans:0,exp:{en:"Opening a door means pulling it towards you — that is a pull force.",hi:"दरवाज़ा खींचने पर खिंचाव बल लगता है।",as:"দুৱাৰ খোলাৰ মানে আপোনাৰ দিশে টনা — সেইটো টান বল।"}},
+{emoji:"⚽",q:{en:"A football player kicks a ball at rest. The force changes the ball's:",hi:"एक फुटबॉलर रुकी हुई गेंद को किक करता है। बल बदलता है:",as:"এজন ফুটবলাৰে বিৰামত থকা বলত লাথি মাৰে। বলে পৰিৱৰ্তন পায়:"},opts:{en:["Speed","Colour","Weight","Temperature"],hi:["गति","रंग","वजन","तापमान"],as:["গতি","ৰং","ওজন","তাপমাত্ৰা"]},ans:0,exp:{en:"Force can change the speed (state of motion) of an object.",hi:"बल किसी वस्तु की गति (गतिशीलता की अवस्था) बदल सकता है।",as:"বলে বস্তুৰ গতি (গতিৰ অৱস্থা) সলনি কৰিব পাৰে।"}},
+{emoji:"🔧",q:{en:"A see-saw is an example of which simple machine?",hi:"सी-सॉ किस सरल मशीन का उदाहरण है?",as:"চি-চ' কোন সৰল যন্ত্ৰৰ উদাহৰণ?"},opts:{en:["Lever","Pulley","Screw","Wedge"],hi:["उत्तोलक","घिरनी","पेंच","कील"],as:["লিভাৰ","পুলি","স্ক্ৰু","কীলক"]},ans:0,exp:{en:"A see-saw is a lever — a rigid rod balanced on a pivot (fulcrum).",hi:"सी-सॉ एक उत्तोलक है — आधार पर संतुलित एक छड़।",as:"চি-চ' এটা লিভাৰ — এটা আধাৰত সন্তুলিত দৃঢ় দণ্ড।"}},
+{emoji:"🏋️",q:{en:"A pulley helps us by:",hi:"घिरनी हमारी मदद कैसे करती है?",as:"পুলিয়ে আমাক কেনেকৈ সহায় কৰে?"},opts:{en:["Changing the direction of force","Increasing weight","Reducing temperature","Producing electricity"],hi:["बल की दिशा बदलकर","वजन बढ़ाकर","तापमान घटाकर","बिजली उत्पन्न करके"],as:["বলৰ দিশ সলনি কৰি","ওজন বঢ়াই","তাপমাত্ৰা কমাই","বিদ্যুৎ উৎপাদন কৰি"]},ans:0,exp:{en:"A pulley changes the direction of force, making it easier to lift heavy objects.",hi:"घिरनी बल की दिशा बदलती है, जिससे भारी वस्तुएं उठाना आसान होता है।",as:"পুলিয়ে বলৰ দিশ সলনি কৰে, যাৰ ফলত গধুৰ বস্তু তোলা সহজ হয়।"}},
+{emoji:"🔩",q:{en:"Which simple machine is used to fasten two objects?",hi:"दो वस्तुओं को जोड़ने के लिए कौन सी सरल मशीन उपयोग होती है?",as:"দুটা বস্তু বান্ধিবলৈ কোন সৰল যন্ত্ৰ ব্যৱহাৰ হয়?"},opts:{en:["Screw","Lever","Wedge","Inclined Plane"],hi:["पेंच","उत्तोलक","कील","आनत तल"],as:["স্ক্ৰু","লিভাৰ","কীলক","ঢালু তল"]},ans:0,exp:{en:"A screw (like a nail or bolt) is used to fasten or join two objects together.",hi:"पेंच (जैसे बोल्ट या कील) दो वस्तुओं को जोड़ने के काम आता है।",as:"স্ক্ৰু (যেনে বোল্ট বা পেৰেক) দুটা বস্তু বান্ধিবলৈ ব্যৱহাৰ হয়।"}},
+{emoji:"🛝",q:{en:"A slide in a playground is an example of:",hi:"खेल के मैदान की स्लाइड किसका उदाहरण है?",as:"খেলপথাৰৰ ছ্লাইড কিহৰ উদাহৰণ?"},opts:{en:["Inclined Plane","Pulley","Screw","Wheel & Axle"],hi:["आनत तल","घिरनी","पेंच","पहिया व धुरी"],as:["ঢালু তল","পুলি","স্ক্ৰু","চকা আৰু অক্ষ"]},ans:0,exp:{en:"A slide is an inclined plane — a flat surface raised at one end to help move objects easily.",hi:"स्लाइड एक आनत तल है — एक छोर पर उठा हुआ सपाट सतह।",as:"ছ্লাইড এটা ঢালু তল — এটা মূৰত উঠা সমতল পৃষ্ঠ।"}},
+{emoji:"🧲",q:{en:"Like poles of a magnet:",hi:"चुंबक के समान ध्रुव:",as:"চুম্বকৰ সমান মেৰু:"},opts:{en:["Repel each other","Attract each other","Have no effect","Stick together"],hi:["एक-दूसरे को दूर धकेलते हैं","एक-दूसरे को खींचते हैं","कोई प्रभाव नहीं","आपस में चिपकते हैं"],as:["ইটোৱে সিটোক দূৰ কৰে","ইটোৱে সিটোক টানে","কোনো প্ৰভাৱ নহয়","এটাৰ সৈতে এটা লাগি থাকে"]},ans:0,exp:{en:"Like poles (N-N or S-S) repel each other. Unlike poles (N-S) attract.",hi:"समान ध्रुव (N-N या S-S) एक-दूसरे को दूर धकेलते हैं। विपरीत ध्रुव आकर्षित होते हैं।",as:"সমান মেৰু (N-N বা S-S) ইটোৱে সিটোক দূৰ কৰে। বিপৰীত মেৰু আকৰ্ষণ কৰে।"}},
+{emoji:"🚂",q:{en:"Friction is useful because it:",hi:"घर्षण उपयोगी है क्योंकि यह:",as:"ঘৰ্ষণ উপকাৰী কাৰণ ই:"},opts:{en:["Helps us grip and walk","Speeds up machines","Reduces heat","Stops rain"],hi:["पकड़ने और चलने में मदद करता है","मशीनों को तेज़ करता है","गर्मी कम करता है","बारिश रोकता है"],as:["ধৰিবলৈ আৰু খোজ কাঢ়িবলৈ সহায় কৰে","যন্ত্ৰ ত্বৰান্বিত কৰে","তাপ কমায়","বৰষুণ ৰোকে"]},ans:0,exp:{en:"Friction provides grip between our feet and the ground, enabling us to walk.",hi:"घर्षण हमारे पैरों और ज़मीन के बीच पकड़ देता है, जिससे हम चल सकते हैं।",as:"ঘৰ্ষণে আমাৰ ভৰি আৰু মাটিৰ মাজত আঁকোৱালি দিয়ে, যাৰ ফলত আমি খোজ কাঢ়িব পাৰো।"}},
+{emoji:"🚗",q:{en:"Wheel and axle is used in a bicycle to:",hi:"साइकिल में पहिया व धुरी का उपयोग होता है:",as:"চাইকেলত চকা আৰু অক্ষ ব্যৱহাৰ হয়:"},opts:{en:["Reduce effort to move","Heat the engine","Stop the bike","Increase friction"],hi:["चलाने में कम बल लगाने के लिए","इंजन गरम करने के लिए","बाइक रोकने के लिए","घर्षण बढ़ाने के लिए"],as:["চলাবলৈ কম প্ৰচেষ্টা লাগিবলৈ","ইঞ্জিন গৰম কৰিবলৈ","বাইক ৰখাবলৈ","ঘৰ্ষণ বঢ়াবলৈ"]},ans:0,exp:{en:"Wheel and axle reduces the effort needed to move or turn things, like in bicycles and cars.",hi:"पहिया व धुरी चीजों को हिलाने या घुमाने में लगने वाले बल को कम करता है।",as:"চকা আৰু অক্ষই বস্তু চলাবলৈ বা ঘূৰাবলৈ লাগতিয়াল প্ৰচেষ্টা কমায়।"}},
+{emoji:"💡",q:{en:"Work is done when force:",hi:"कार्य कब होता है जब बल:",as:"কাম হয় যেতিয়া বল:"},opts:{en:["Moves an object in its direction","Is applied but object doesn't move","Reduces heat","Changes colour"],hi:["वस्तु को उसकी दिशा में हिलाता है","लगता है पर वस्तु नहीं हिलती","गर्मी कम करता है","रंग बदलता है"],as:["বস্তুক ইয়াৰ দিশত লৰচৰ কৰায়","প্ৰয়োগ কৰা হয় কিন্তু বস্তু নলৰে","তাপ কমায়","ৰং সলনি কৰে"]},ans:0,exp:{en:"Work = Force × Distance. Work is done only when force moves the object in the direction of force.",hi:"कार्य = बल × दूरी। कार्य तभी होता है जब बल वस्तु को उसी दिशा में हिलाता है।",as:["কাম = বল × দূৰত্ব। কাম তেতিয়াহে হয় যেতিয়া বলে বস্তুক একেদিশত লৰচৰ কৰায়।"]}},
+];
+
+let cur=0,score=0,answered=false,lang='en';
+
+function setLang(l){
+  lang=l;
+  document.body.className='lang-'+l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+  renderQ();
+}
+
+function renderQ(){
+  const q=questions[cur];
+  document.getElementById('progFill').style.width=((cur)/10*100)+'%';
+  document.getElementById('qCounter').textContent=(cur+1)+'/10';
+  document.getElementById('scoreDisplay').textContent=score;
+  const opts=q.opts[lang].map((o,i)=>`<button class="opt-btn" onclick="answer(${i})">${o}</button>`).join('');
+  document.getElementById('gameArea').innerHTML=`
+    <div class="q-card">
+      <div class="q-number">Question ${cur+1} of 10</div>
+      <div class="emoji-box">${q.emoji}</div>
+      <div class="q-text">${q.q[lang]}</div>
+      <div class="options">${opts}</div>
+      <div id="feedback"></div>
+      <div id="nextWrap"></div>
+    </div>`;
+  answered=false;
+}
+
+function answer(i){
+  if(answered)return;
+  answered=true;
+  const q=questions[cur];
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  const correct=i===q.ans;
+  btns[i].classList.add(correct?'correct':'wrong');
+  if(!correct) btns[q.ans].classList.add('reveal');
+  score+=correct?10:0;
+  const exp=Array.isArray(q.exp[lang])?q.exp[lang][0]:q.exp[lang];
+  document.getElementById('feedback').innerHTML=`<div class="feedback ${correct?'correct':'wrong'}">${correct?'✓':'✗'} ${exp}</div>`;
+  document.getElementById('nextWrap').innerHTML=`<button class="next-btn" onclick="next()">${cur<9?'Next →':'See Results'}</button>`;
+}
+
+function next(){cur++;if(cur>=10){showEnd();return;}renderQ();}
+
+function showEnd(){
+  const pct=score;
+  const stars=pct>=90?3:pct>=70?2:pct>=40?1:0;
+  const starStr='★'.repeat(stars)+'☆'.repeat(3-stars);
+  const msgs={en:["Keep exploring science!","Good try! Review simple machines.","Great effort! Nearly there!","Science superstar! 🔬"],hi:["विज्ञान खोजते रहो!","अच्छा प्रयास! सरल मशीनें दोहराएं।","शाबाश! लगभग वहाँ!","साइंस स्टार! 🔬"],as:["বিজ্ঞান অন্বেষণ কৰি থাকক!","ভাল প্ৰচেষ্টা! সৰল যন্ত্ৰ পুনৰাই চাওক।","অসাধাৰণ!","বিজ্ঞানৰ তাৰকা! 🔬"]};
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('scoreDisplay').textContent=score;
+  document.getElementById('gameArea').innerHTML=`
+    <div class="end-card">
+      <div style="font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--green)">Force & Work</div>
+      <div class="stars">${starStr}</div>
+      <div class="end-score">${score}<span style="font-size:1.5rem;color:var(--muted)">/100</span></div>
+      <div class="end-label">${stars} Star${stars!==1?'s':''}</div>
+      <div class="end-msg">${msgs[lang][stars]}</div>
+      <button class="play-again" onclick="restart()">🔄 Play Again</button>
+    </div>`;
+}
+
+function restart(){cur=0;score=0;answered=false;renderQ();}
+renderQ();
+</script>
+</body>
+</html>

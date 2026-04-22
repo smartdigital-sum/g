@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Million Dollar Numbers — GyanPlay Class 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;
+  --teal:#06D6A0;--purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;
+  --subject:#C77DFF;--glow:rgba(199,125,255,.3);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#180A28,#0F0820);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 40px;}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.h-left{display:flex;flex-direction:column;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.game-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--dim);}
+.subject-tag{font-size:0.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:1.3rem;opacity:.25;transition:opacity .3s,filter .3s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+
+/* WOW Hook */
+.wow{background:linear-gradient(135deg,rgba(199,125,255,.18),rgba(199,125,255,.05));
+  border:1px solid var(--glow);border-radius:16px;padding:16px;margin-bottom:18px;}
+.wow-emoji{font-size:2rem;margin-bottom:6px;}
+.wow p{font-size:0.88rem;line-height:1.55;color:var(--text);}
+.wow p span{color:var(--gold);font-weight:700;}
+.wow-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--dim);margin-top:6px;}
+
+/* Game area */
+.game-area{background:var(--card);border-radius:20px;padding:20px;margin-bottom:16px;
+  border:1px solid rgba(199,125,255,.15);}
+.challenge-label{font-size:0.78rem;color:var(--dim);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em;}
+.challenge-label-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.72rem;color:var(--dim);margin-bottom:10px;display:block;}
+.target-num{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);
+  letter-spacing:.1em;text-align:center;margin:10px 0;}
+.num-words{font-size:0.82rem;color:var(--purple);text-align:center;margin-bottom:16px;min-height:1.2em;}
+
+/* Dial rows */
+.dials-wrap{display:flex;justify-content:center;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.dial-col{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.dial-label{font-size:0.6rem;color:var(--dim);text-align:center;letter-spacing:.04em;}
+.dial{width:44px;height:120px;background:linear-gradient(180deg,rgba(199,125,255,.1),rgba(199,125,255,.05));
+  border:1px solid rgba(199,125,255,.3);border-radius:10px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:0;overflow:hidden;position:relative;user-select:none;}
+.dial-up,.dial-dn{width:100%;height:34px;display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;color:var(--dim);cursor:pointer;transition:background .15s;touch-action:manipulation;}
+.dial-up:active,.dial-dn:active{background:rgba(199,125,255,.2);}
+.dial-val{font-family:'Baloo 2',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text);
+  line-height:1;flex:1;display:flex;align-items:center;justify-content:center;
+  border-top:1px solid rgba(199,125,255,.15);border-bottom:1px solid rgba(199,125,255,.15);width:100%;}
+
+/* Skyline */
+.skyline{display:flex;align-items:flex-end;justify-content:center;gap:4px;height:70px;margin-bottom:14px;}
+.building{border-radius:4px 4px 0 0;transition:height .4s ease,background .4s;min-width:30px;}
+
+/* Answer check */
+.check-btn{width:100%;padding:14px;background:var(--gold);color:#0F0820;border:none;border-radius:14px;
+  font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;
+  touch-action:manipulation;transition:transform .1s,opacity .1s;}
+.check-btn:active{transform:scale(.97);}
+.feedback{text-align:center;font-size:0.88rem;min-height:1.2em;margin-top:8px;font-weight:600;}
+.feedback.ok{color:var(--teal);}
+.feedback.err{color:var(--coral);}
+
+/* Progress bar */
+.progress-wrap{margin-bottom:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--dim);margin-bottom:5px;}
+.prog-label .as{font-family:'Noto Sans Devanagari',sans-serif;}
+.prog-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--purple);border-radius:99px;transition:width .4s;}
+
+/* Overlay */
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;
+  justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-card{background:var(--card);border:1px solid var(--glow);border-radius:22px;
+  padding:28px 24px;text-align:center;max-width:320px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);}to{transform:scale(1) translateY(0);}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px;}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.ov-fact{font-size:0.83rem;line-height:1.5;color:var(--text);margin-bottom:16px;}
+.ov-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--dim);margin-bottom:14px;}
+.ov-btn{padding:12px 28px;background:var(--gold);color:#0F0820;border:none;border-radius:12px;
+  font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+
+/* Confetti */
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:200;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+
+/* Auth overlay */
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;
+  justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+
+<!-- Auth loading screen -->
+<div class="auth-screen" id="authScreen">
+  <div style="font-size:2.5rem">🔢</div>
+  <p>Loading… / লোড হৈছে…</p>
+</div>
+
+<div class="wrap" id="mainApp" style="display:none;">
+  <!-- Header -->
+  <div class="header">
+    <div class="h-left">
+      <div class="game-title">Million Dollar Numbers</div>
+      <div class="game-title-as">কোটি টকাৰ সংখ্যা</div>
+      <div class="subject-tag">Maths · শ্ৰেণী ৪</div>
+    </div>
+    <div class="stars" id="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+      <span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+
+  <!-- WOW Hook -->
+  <div class="wow">
+    <div class="wow-emoji">🌍</div>
+    <p>There are more than <span>7 billion</span> people on Earth. One number can describe the whole planet — if you know how to read it!</p>
+    <div class="wow-as">পৃথিৱীত ৭০০ কোটিতকৈও বেছি মানুহ আছে। এটা সংখ্যাই গোটেই পৃথিৱীক বৰ্ণনা কৰিব পাৰে!</div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="prog-label"><span>Round <span id="qNum">1</span> of 5</span><span class="as">৫টাৰ ভিতৰত <span id="qNumAs">১</span>নং</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+
+  <!-- Game Area -->
+  <div class="game-area">
+    <div class="challenge-label">Set the dials to match:</div>
+    <div class="challenge-label-as">ডায়েলবোৰ এই সংখ্যাৰ সৈতে মিলাওক:</div>
+    <div class="target-num" id="targetDisplay">—</div>
+    <div class="num-words" id="numWords"></div>
+
+    <!-- Skyline -->
+    <div class="skyline" id="skyline">
+      <div class="building" id="b0" style="background:#C77DFF;width:38px;height:10px;"></div>
+      <div class="building" id="b1" style="background:#C77DFF;width:38px;height:10px;"></div>
+      <div class="building" id="b2" style="background:#06D6A0;width:38px;height:10px;"></div>
+      <div class="building" id="b3" style="background:#06D6A0;width:38px;height:10px;"></div>
+      <div class="building" id="b4" style="background:#FFD166;width:38px;height:10px;"></div>
+      <div class="building" id="b5" style="background:#FF9F1C;width:38px;height:10px;"></div>
+      <div class="building" id="b6" style="background:#4CC9F0;width:38px;height:10px;"></div>
+    </div>
+
+    <!-- Dials -->
+    <div class="dials-wrap" id="dialsWrap"></div>
+
+    <button class="check-btn" id="checkBtn" onclick="checkAnswer()">Check ✓ / পৰীক্ষা কৰক</button>
+    <div class="feedback" id="feedback"></div>
+  </div>
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <div class="ov-as" id="ovAs"></div>
+    <button class="ov-btn" id="ovBtn" onclick="nextRound()">Next →</button>
+  </div>
+</div>
+
+<script>
+// ── Firebase config (replace with your project values) ──
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+let currentUser = null;
+
+// ── Auth Guard ──
+auth.onAuthStateChanged(user => {
+  if (!user) { window.location.href = '/login.html'; return; }
+  currentUser = user;
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  initGame();
+});
+
+// ── Game Data ──
+const CHALLENGES = [
+  { target: 3050200, hint:"30 lakh 50 thousand 2 hundred", hintAs:"৩০ লাখ ৫০ হাজাৰ ২ শ", fact:"Assam's population is about 3.5 crore — close to this number!", factAs:"অসমৰ জনসংখ্যা প্ৰায় ৩.৫ কোটি!" },
+  { target: 1000000, hint:"10 lakh / 1 million", hintAs:"১০ লাখ / ১ মিলিয়ন", fact:"There are over 10 lakh tea workers in Assam — 1,000,000 people!", factAs:"অসমত ১০ লাখতকৈও বেছি চাহ শ্ৰমিক আছে!" },
+  { target: 7200000, hint:"72 lakh", hintAs:"৭২ লাখ", fact:"The Brahmaputra river basin covers 72 lakh hectares of land!", factAs:"ব্ৰহ্মপুত্ৰৰ অৱববাহিকা ৭২ লাখ হেক্টৰ!" },
+  { target: 5040300, hint:"50 lakh 40 thousand 3 hundred", hintAs:"৫০ লাখ ৪০ হাজাৰ ৩ শ", fact:"India has over 50 lakh km of roads — more than circling the Earth 125 times!", factAs:"ভাৰতত ৫০ লাখ কিমি পথ আছে!" },
+  { target: 9999999, hint:"99 lakh 99 thousand 9 hundred 99", hintAs:"৯৯ লাখ ৯৯ হাজাৰ ৯ শ ৯৯", fact:"Just 1 more than this = 1 crore = 10 million. The biggest 7-digit number!", factAs:"এইটোতকৈ ১ বেছি = ১ কোটি!" }
+];
+
+const PLACE_LABELS = ["10L","1L","10K","1K","100","10","1"];
+const PLACE_LABELS_AS = ["১০ লাখ","১ লাখ","১০হাজাৰ","১হাজাৰ","১শ","১০","১"];
+const MSG = ["Excellent!","Brilliant!","Amazing!","Spot on!","Outstanding!","You got it!","Superstar!"];
+
+let dials = [0,0,0,0,0,0,0];
+let round = 0, score = 0;
+
+function initGame() { round = 0; score = 0; updateStars(0); loadRound(); }
+
+function loadRound() {
+  const c = CHALLENGES[round];
+  document.getElementById('targetDisplay').textContent = formatIN(c.target);
+  document.getElementById('numWords').textContent = c.hint + ' / ' + c.hintAs;
+  document.getElementById('qNum').textContent = round + 1;
+  document.getElementById('qNumAs').textContent = ['১','২','৩','৪','৫'][round];
+  document.getElementById('progFill').style.width = (round / CHALLENGES.length * 100) + '%';
+  document.getElementById('feedback').textContent = '';
+  dials = [0,0,0,0,0,0,0];
+  buildDials();
+  updateSkyline();
+}
+
+function formatIN(n) {
+  const s = n.toString().padStart(7,'0');
+  return s[0]+','+s[1]+s[2]+','+s[3]+s[4]+s[5]+','+s[6]; // handles up to 7 digits
+}
+
+function buildDials() {
+  const wrap = document.getElementById('dialsWrap');
+  wrap.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const col = document.createElement('div');
+    col.className = 'dial-col';
+    col.innerHTML = `
+      <div class="dial-label">${PLACE_LABELS[i]}<br><span style="font-family:'Noto Sans Devanagari',sans-serif;font-size:.55rem;">${PLACE_LABELS_AS[i]}</span></div>
+      <div class="dial" id="dial${i}">
+        <div class="dial-up" ontouchstart="changeDial(${i},1)" onclick="changeDial(${i},1)">▲</div>
+        <div class="dial-val" id="dv${i}">0</div>
+        <div class="dial-dn" ontouchstart="changeDial(${i},-1)" onclick="changeDial(${i},-1)">▼</div>
+      </div>`;
+    wrap.appendChild(col);
+  }
+}
+
+function changeDial(i, dir) {
+  dials[i] = (dials[i] + dir + 10) % 10;
+  document.getElementById('dv' + i).textContent = dials[i];
+  updateSkyline();
+}
+
+function updateSkyline() {
+  const max = 9;
+  for (let i = 0; i < 7; i++) {
+    const h = Math.max(8, (dials[i] / max) * 62);
+    document.getElementById('b' + i).style.height = h + 'px';
+  }
+}
+
+function checkAnswer() {
+  const userNum = dials.reduce((acc, d) => acc * 10 + d, 0);
+  const target = CHALLENGES[round].target;
+  const fb = document.getElementById('feedback');
+  if (userNum === target) {
+    score++;
+    updateStars(score);
+    confetti();
+    fb.textContent = '';
+    const c = CHALLENGES[round];
+    const msg = MSG[Math.floor(Math.random() * MSG.length)];
+    document.getElementById('ovEmoji').textContent = '🎉';
+    document.getElementById('ovTitle').textContent = msg;
+    document.getElementById('ovFact').textContent = c.fact;
+    document.getElementById('ovAs').textContent = c.factAs;
+    document.getElementById('ovBtn').textContent = round < 4 ? 'Next → / পৰৱৰ্তী' : 'Finish! / শেষ!';
+    showOverlay(true);
+  } else {
+    fb.className = 'feedback err';
+    fb.textContent = '❌ Try again! / আকৌ চেষ্টা কৰক!';
+    document.getElementById('dial' + 0).style.animation = 'none';
+    setTimeout(() => fb.textContent = '', 1800);
+  }
+}
+
+function nextRound() {
+  showOverlay(false);
+  round++;
+  if (round >= CHALLENGES.length) {
+    endGame();
+  } else {
+    loadRound();
+  }
+}
+
+function endGame() {
+  trackProgress();
+  document.getElementById('ovEmoji').textContent = '🏆';
+  document.getElementById('ovTitle').textContent = 'Number Wizard! / সংখ্যা বিশেষজ্ঞ!';
+  document.getElementById('ovFact').textContent = `You scored ${score}/5! Big numbers never scared you. Now you can read ANY number up to 1 crore!`;
+  document.getElementById('ovAs').textContent = `তুমি ${score}/৫ পালে! এতিয়া তুমি ১ কোটিলৈকে যিকোনো সংখ্যা পঢ়িব পাৰা!`;
+  document.getElementById('ovBtn').textContent = '🔄 Play Again / আকৌ খেলক';
+  document.getElementById('ovBtn').onclick = () => { showOverlay(false); initGame(); };
+  showOverlay(true);
+}
+
+async function trackProgress() {
+  if (!currentUser) return;
+  try {
+    await db.collection('users').doc(currentUser.uid)
+      .collection('progress').doc('class4-game1').set({
+        score, total: 5, gameId: 'class4-game1',
+        gameName: 'Million Dollar Numbers',
+        class: 4, subject: 'Maths',
+        completedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+  } catch(e) { console.warn(e); }
+}
+
+function updateStars(n) {
+  document.querySelectorAll('.star').forEach((s,i) => s.classList.toggle('lit', i < n));
+}
+
+function showOverlay(show) {
+  document.getElementById('overlay').classList.toggle('show', show);
+}
+
+function confetti() {
+  const colors = ['#FFD166','#C77DFF','#06D6A0','#FF6B6B','#4CC9F0'];
+  for (let i = 0; i < 28; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `left:${Math.random()*100}vw;top:-10px;background:${colors[i%5]};
+      animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+}
+</script>
+</body>
+</html>

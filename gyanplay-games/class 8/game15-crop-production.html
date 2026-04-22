@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crop Production & Management — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+    --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+    --bg1:#0F0C29; --bg2:#302B63; --card:#1a1740;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    font-family:'Nunito',sans-serif;color:#fff;padding-bottom:40px}
+  h1,h2,h3,.big-num{font-family:'Baloo 2',sans-serif}
+
+  /* TOP BAR */
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;
+    background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);position:sticky;top:0;z-index:99}
+  .back-btn{background:rgba(255,255,255,0.12);border:none;color:#fff;
+    padding:7px 16px;border-radius:20px;cursor:pointer;font-size:14px;
+    font-family:'Nunito',sans-serif;font-weight:700;transition:background .2s}
+  .back-btn:hover{background:rgba(255,255,255,0.22)}
+  .badge{background:var(--green);color:#fff;padding:5px 14px;border-radius:20px;
+    font-size:13px;font-weight:700;font-family:'Baloo 2',sans-serif}
+  .lang-toggle{margin-left:auto;display:flex;gap:6px}
+  .lang-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);
+    color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:13px;
+    font-weight:700;transition:all .2s}
+  .lang-btn.active{background:var(--green);border-color:var(--green)}
+
+  /* PROGRESS */
+  .progress-wrap{padding:16px 20px 0}
+  .progress-info{display:flex;justify-content:space-between;font-size:13px;
+    opacity:.8;margin-bottom:6px}
+  .progress-bar{height:8px;background:rgba(255,255,255,0.12);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));
+    border-radius:4px;transition:width .5s ease}
+
+  /* CARD */
+  .card{background:var(--card);border-radius:20px;padding:28px 24px;
+    margin:20px auto;max-width:680px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:fadeIn .4s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+  .q-meta{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;opacity:.7}
+  .q-num{background:var(--green);color:#fff;border-radius:50%;width:28px;height:28px;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;
+    font-family:'Baloo 2',sans-serif;flex-shrink:0}
+  .scene-emoji{font-size:40px;text-align:center;margin-bottom:10px}
+  .question{font-size:18px;font-weight:700;line-height:1.5;margin-bottom:20px;
+    font-family:'Baloo 2',sans-serif}
+
+  /* OPTIONS */
+  .options{display:grid;gap:12px}
+  .opt-btn{background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);
+    color:#fff;padding:14px 18px;border-radius:14px;cursor:pointer;text-align:left;
+    font-size:15px;font-family:'Nunito',sans-serif;font-weight:600;
+    transition:all .2s;display:flex;align-items:center;gap:10px}
+  .opt-btn:hover:not(:disabled){background:rgba(0,168,239,0.15);border-color:var(--sky)}
+  .opt-btn.correct{background:rgba(0,200,83,0.2);border-color:var(--green)}
+  .opt-btn.wrong{background:rgba(255,64,129,0.18);border-color:var(--pink)}
+  .opt-btn:disabled{cursor:default}
+  .opt-label{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.12);
+    display:flex;align-items:center;justify-content:center;font-size:12px;
+    font-weight:800;flex-shrink:0}
+
+  /* FEEDBACK */
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:14px;
+    line-height:1.6;display:none;animation:fadeIn .3s ease}
+  .feedback.show{display:block}
+  .feedback.correct-fb{background:rgba(0,200,83,0.15);border:1px solid var(--green)}
+  .feedback.wrong-fb{background:rgba(255,64,129,0.12);border:1px solid var(--pink)}
+  .fb-icon{font-size:18px;margin-right:6px}
+
+  /* SCORE BADGE */
+  .score-live{background:rgba(255,184,0,0.15);border:1px solid var(--gold);
+    padding:4px 12px;border-radius:12px;font-size:13px;font-weight:700;color:var(--gold)}
+
+  /* NEXT BTN */
+  .next-btn{display:none;margin:20px auto 0;background:linear-gradient(135deg,var(--green),#00a844);
+    border:none;color:#fff;padding:13px 36px;border-radius:24px;font-size:16px;
+    font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;
+    transition:transform .15s,box-shadow .15s;box-shadow:0 4px 18px rgba(0,200,83,0.4)}
+  .next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,200,83,0.55)}
+  .next-btn.show{display:block}
+
+  /* END SCREEN */
+  .end-screen{display:none;text-align:center;padding:30px 20px;max-width:520px;margin:40px auto}
+  .end-screen.show{display:block;animation:fadeIn .5s ease}
+  .stars{font-size:44px;letter-spacing:4px;margin:10px 0}
+  .final-score{font-size:54px;font-weight:800;color:var(--gold);line-height:1}
+  .score-label{font-size:15px;opacity:.7;margin-bottom:20px}
+  .play-again{background:linear-gradient(135deg,var(--saffron),var(--gold));border:none;
+    color:#fff;padding:14px 40px;border-radius:28px;font-size:17px;font-weight:800;
+    font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s;
+    box-shadow:0 4px 20px rgba(255,107,0,0.4)}
+  .play-again:hover{transform:scale(1.05)}
+  .end-title{font-size:26px;font-weight:800;margin-bottom:8px;font-family:'Baloo 2',sans-serif}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">উভতি যাওক</span></button>
+  <span class="badge">Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-info">
+    <span data-lang="en">Question <span id="qNum">1</span>/10</span>
+    <span data-lang="hi" style="display:none">प्रश्न <span id="qNumHi">1</span>/10</span>
+    <span data-lang="as" style="display:none">প্ৰশ্ন <span id="qNumAs">1</span>/10</span>
+    <span class="score-live">Score: <span id="scoreLive">0</span>/100</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+</div>
+
+<!-- QUESTION CARD -->
+<div class="card" id="questionCard">
+  <div class="q-meta">
+    <div class="q-num" id="qBadge">1</div>
+    <span data-lang="en">Crop Production & Management</span>
+    <span data-lang="hi" style="display:none">फसल उत्पादन और प्रबंधन</span>
+    <span data-lang="as" style="display:none">শস্য উৎপাদন আৰু ব্যৱস্থাপনা</span>
+  </div>
+  <div class="scene-emoji" id="sceneEmoji">🌾</div>
+  <div class="question" id="questionText"></div>
+  <div class="options" id="optionsDiv"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+    <span data-lang="en">Next Question →</span>
+    <span data-lang="hi" style="display:none">अगला प्रश्न →</span>
+    <span data-lang="as" style="display:none">পৰৱৰ্তী প্ৰশ্ন →</span>
+  </button>
+</div>
+
+<!-- END SCREEN -->
+<div class="end-screen" id="endScreen">
+  <div class="end-title" data-lang="en">Quiz Complete! 🎉</div>
+  <div class="end-title" data-lang="hi" style="display:none">क्विज़ पूर्ण! 🎉</div>
+  <div class="end-title" data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ! 🎉</div>
+  <div class="stars" id="starsDisplay">⭐⭐⭐</div>
+  <div class="final-score" id="finalScore">0</div>
+  <div class="score-label">/100</div>
+  <button class="play-again" onclick="restartGame()">
+    <span data-lang="en">Play Again 🔄</span>
+    <span data-lang="hi" style="display:none">फिर खेलें 🔄</span>
+    <span data-lang="as" style="display:none">আকৌ খেলক 🔄</span>
+  </button>
+</div>
+
+<script>
+const questions = [
+  {
+    emoji: "🌾",
+    en: "Which of the following is a Kharif crop?",
+    hi: "निम्नलिखित में से कौन सी खरीफ फसल है?",
+    as: "তলত দিয়াবোৰৰ মাজত কোনটো খৰিফ শস্য?",
+    options: { en: ["Rice", "Wheat", "Mustard", "Pea"], hi: ["धान", "गेहूँ", "सरसों", "मटर"], as: ["ধান", "ঘেঁহু", "সৰিয়হ", "মটৰমাহ"] },
+    correct: 0,
+    explanation: { en: "Rice (paddy) is a Kharif crop sown in June-July with monsoon rains and harvested in September-October.", hi: "धान एक खरीफ फसल है जो जून-जुलाई में बोई जाती है और सितंबर-अक्टूबर में काटी जाती है।", as: "ধান এটা খৰিফ শস্য যি জুন-জুলাইত বুনা হয় আৰু ছেপ্টেম্বৰ-অক্টোবৰত চপোৱা হয়।" }
+  },
+  {
+    emoji: "🌿",
+    en: "Which tool is used to loosen and turn the soil before sowing?",
+    hi: "बुवाई से पहले मिट्टी को ढीला करने के लिए कौन सा उपकरण उपयोग किया जाता है?",
+    as: "বীজ সিঁচাৰ আগতে মাটি ঢিলা কৰিবলৈ কোন সঁজুলি ব্যৱহাৰ হয়?",
+    options: { en: ["Plough", "Sickle", "Thresher", "Winnower"], hi: ["हल", "दरांती", "थ्रेशर", "ओसावनी"], as: ["হাল", "কাচি", "থ্ৰেচাৰ", "ঢেঁকী"] },
+    correct: 0,
+    explanation: { en: "A plough is used to turn and loosen the soil. This process is called tilling/ploughing and prepares the soil for sowing.", hi: "हल का उपयोग मिट्टी को पलटने और ढीला करने के लिए किया जाता है। इस प्रक्रिया को जुताई कहते हैं।", as: "হাল ব্যৱহাৰ হয় মাটি উলটাবলৈ আৰু ঢিলা কৰিবলৈ। এই পদ্ধতিক হালোৱা বোলে।" }
+  },
+  {
+    emoji: "💧",
+    en: "Which irrigation method is best for water conservation and used in dry regions?",
+    hi: "जल संरक्षण के लिए कौन सी सिंचाई विधि सर्वोत्तम है और शुष्क क्षेत्रों में प्रयुक्त होती है?",
+    as: "পানী সংৰক্ষণৰ বাবে কোনটো জলসিঞ্চন পদ্ধতি সর্বোত্তম আৰু শুষ্ক অঞ্চলত ব্যৱহাৰ হয়?",
+    options: { en: ["Drip irrigation", "Canal irrigation", "Well irrigation", "Flood irrigation"], hi: ["ड्रिप सिंचाई", "नहर सिंचाई", "कुएँ से सिंचाई", "बाढ़ सिंचाई"], as: ["ড্ৰিপ জলসিঞ্চন", "খাল জলসিঞ্চন", "কূঁৱা জলসিঞ্চন", "বান জলসিঞ্চন"] },
+    correct: 0,
+    explanation: { en: "Drip irrigation delivers water directly to plant roots through small holes in pipes, minimising waste. It is ideal for water-scarce regions.", hi: "ड्रिप सिंचाई में पाइपों के छोटे छेदों से सीधे पौधों की जड़ों तक पानी पहुँचाया जाता है।", as: "ড্ৰিপ জলসিঞ্চনত পাইপৰ সৰু ফুটাৰে পোনে পোনে শস্যৰ শিপালৈ পানী দিয়া হয়।" }
+  },
+  {
+    emoji: "🌱",
+    en: "What is the main difference between a fertiliser and manure?",
+    hi: "उर्वरक और खाद में मुख्य अंतर क्या है?",
+    as: "সাৰ আৰু জাবৰৰ মূল পাৰ্থক্য কি?",
+    options: { en: ["Fertilisers are chemical; manure is natural organic matter", "Manure is chemical; fertiliser is organic", "Both are the same", "Fertilisers improve soil texture only"], hi: ["उर्वरक रासायनिक होता है; खाद प्राकृतिक जैव पदार्थ है", "खाद रासायनिक है; उर्वरक जैव है", "दोनों समान हैं", "उर्वरक केवल मिट्टी की बनावट सुधारता है"], as: ["সাৰ ৰাসায়নিক; জাবৰ প্ৰাকৃতিক জৈৱ পদাৰ্থ", "জাবৰ ৰাসায়নিক; সাৰ জৈৱ", "দুয়োটা একে", "সাৰে কেৱল মাটিৰ গঠন উন্নত কৰে"] },
+    correct: 0,
+    explanation: { en: "Fertilisers are manufactured chemicals (e.g., Urea, NPK) that supply specific nutrients. Manure is decomposed organic matter that improves soil structure and fertility naturally.", hi: "उर्वरक रासायनिक पदार्थ हैं जो विशिष्ट पोषक तत्व प्रदान करते हैं। खाद विघटित जैव पदार्थ है जो मिट्टी की संरचना सुधारती है।", as: "সাৰ হৈছে ৰাসায়নিক পদাৰ্থ যি নিৰ্দিষ্ট পুষ্টি যোগান ধৰে। জাবৰ হৈছে পচা জৈৱ পদাৰ্থ।" }
+  },
+  {
+    emoji: "🌾",
+    en: "Which Rabi crop is the most widely grown in India?",
+    hi: "भारत में सबसे अधिक उगाई जाने वाली रबी फसल कौन सी है?",
+    as: "ভাৰতত সর্বাধিক খেতি হোৱা ৰবি শস্য কোনটো?",
+    options: { en: ["Wheat", "Maize", "Rice", "Cotton"], hi: ["गेहूँ", "मक्का", "धान", "कपास"], as: ["ঘেঁহু", "মাকৈ", "ধান", "কপাহ"] },
+    correct: 0,
+    explanation: { en: "Wheat is the most important Rabi crop sown in November-December and harvested in March-April. It is a staple food in northern India.", hi: "गेहूँ सबसे महत्वपूर्ण रबी फसल है जो नवंबर-दिसंबर में बोई और मार्च-अप्रैल में काटी जाती है।", as: "ঘেঁহু হৈছে আটাইতকৈ গুৰুত্বপূৰ্ণ ৰবি শস্য যি নৱেম্বৰ-ডিচেম্বৰত বুনা হয়।" }
+  },
+  {
+    emoji: "🚜",
+    en: "What is a cultivator used for in farming?",
+    hi: "खेती में कल्टीवेटर का उपयोग किसलिए किया जाता है?",
+    as: "খেতিত কাল্টিভেটৰ কিহৰ বাবে ব্যৱহাৰ হয়?",
+    options: { en: ["Loosening soil and removing weeds", "Harvesting crops", "Storing grains", "Irrigating fields"], hi: ["मिट्टी ढीली करना और खरपतवार हटाना", "फसल काटना", "अनाज भंडारण", "खेतों की सिंचाई"], as: ["মাটি ঢিলা কৰা আৰু পেৰুৱা আঁতৰোৱা", "শস্য চপোৱা", "শস্য সংৰক্ষণ", "পথাৰ জলসিঞ্চন"] },
+    correct: 0,
+    explanation: { en: "A cultivator is a tractor-operated implement used to loosen soil and remove weeds between rows of crops, saving labour.", hi: "कल्टीवेटर एक ट्रैक्टर चालित उपकरण है जो मिट्टी ढीली करने और खरपतवार हटाने के लिए उपयोग होता है।", as: "কাল্টিভেটৰ হৈছে ট্ৰেক্টৰচালিত যন্ত্ৰ যি মাটি ঢিলা কৰে আৰু পেৰুৱা আঁতৰায়।" }
+  },
+  {
+    emoji: "🌧️",
+    en: "Sprinkler irrigation is MOST similar to which natural process?",
+    hi: "स्प्रिंकलर सिंचाई किस प्राकृतिक प्रक्रिया के सबसे समान है?",
+    as: "স্প্ৰিংকলাৰ জলসিঞ্চন কোন প্ৰাকৃতিক প্ৰক্ৰিয়াৰ সৈতে সর্বাধিক মিল আছে?",
+    options: { en: ["Rainfall", "River flooding", "Dew formation", "Groundwater seepage"], hi: ["वर्षा", "नदी बाढ़", "ओस जमाव", "भूजल रिसाव"], as: ["বৰষুণ", "নদীৰ বান", "শিশিৰ গঠন", "ভূগৰ্ভস্থ পানীৰ ছিদ্ৰণ"] },
+    correct: 0,
+    explanation: { en: "Sprinkler irrigation sprays water through rotating nozzles, mimicking rainfall. It is suitable for sandy soils and uneven terrains.", hi: "स्प्रिंकलर सिंचाई में घूमने वाली नोजलों से पानी छिड़का जाता है जो वर्षा जैसा होता है।", as: "স্প্ৰিংকলাৰ জলসিঞ্চনত ঘূৰণীয়া নজলৰ জৰিয়তে পানী ছিটিকোৱা হয়, যি বৰষুণৰ নিচিনা।" }
+  },
+  {
+    emoji: "🌾",
+    en: "Which of these is NOT a method of crop protection?",
+    hi: "इनमें से कौन सा फसल सुरक्षा का तरीका नहीं है?",
+    as: "এইবোৰৰ মাজত কোনটো শস্য সুৰক্ষাৰ পদ্ধতি নহয়?",
+    options: { en: ["Using pesticides", "Crop rotation", "Irrigation", "Using fungicides"], hi: ["कीटनाशकों का उपयोग", "फसल चक्र", "सिंचाई", "फफूंदनाशकों का उपयोग"], as: ["কীটনাশক ব্যৱহাৰ", "শস্য পৰিক্ৰমা", "জলসিঞ্চন", "ছত্ৰাকনাশক ব্যৱহাৰ"] },
+    correct: 2,
+    explanation: { en: "Irrigation is a method of supplying water to crops, not protecting them from pests or diseases. Pesticides, fungicides and crop rotation are crop protection methods.", hi: "सिंचाई फसलों को पानी देने की विधि है, न कि कीट या रोग से सुरक्षा। कीटनाशक, फफूंदनाशक और फसल चक्र सुरक्षा के तरीके हैं।", as: "জলসিঞ্চন হৈছে শস্যক পানী যোগানৰ পদ্ধতি, কীট-পতংগ বা ৰোগৰ পৰা সুৰক্ষা নহয়।" }
+  },
+  {
+    emoji: "🏚️",
+    en: "What is the purpose of using silos and granaries for grain storage?",
+    hi: "अनाज भंडारण के लिए साइलो और अनाज भंडार का उद्देश्य क्या है?",
+    as: "শস্য সংৰক্ষণৰ বাবে চাইলো আৰু ধান্যভাণ্ডাৰ ব্যৱহাৰৰ উদ্দেশ্য কি?",
+    options: { en: ["Protect from moisture, pests and rodents", "Speed up ripening of grain", "Increase grain size", "Remove chaff from grain"], hi: ["नमी, कीट और कृन्तकों से सुरक्षा", "अनाज के पकने में तेजी", "अनाज का आकार बढ़ाना", "अनाज से भूसा हटाना"], as: ["আৰ্দ্ৰতা, কীট আৰু ইঁদুৰৰ পৰা সুৰক্ষা", "শস্য পকাত গতি আনা", "শস্যৰ আকাৰ বৃদ্ধি", "শস্যৰ পৰা তুঁহ আঁতৰোৱা"] },
+    correct: 0,
+    explanation: { en: "Silos and granaries protect stored grain from moisture (causing fungal growth), pests (insects) and rodents. Proper storage prevents food wastage.", hi: "साइलो और अनाज भंडार नमी (फफूंद), कीट और कृन्तकों से सुरक्षा करते हैं और खाद्य अपव्यय रोकते हैं।", as: "চাইলো আৰু ধান্যভাণ্ডাৰে সংৰক্ষিত শস্যক আৰ্দ্ৰতা, কীট আৰু ইঁদুৰৰ পৰা ৰক্ষা কৰে।" }
+  },
+  {
+    emoji: "🦠",
+    en: "Which of the following causes a disease in wheat crops called 'rust'?",
+    hi: "गेहूँ की फसल में 'रस्ट' नामक रोग किससे होता है?",
+    as: "ঘেঁহু শস্যত 'ৰাষ্ট' নামৰ ৰোগ কিহৰ পৰা হয়?",
+    options: { en: ["Fungi", "Bacteria", "Virus", "Insects"], hi: ["कवक", "जीवाणु", "विषाणु", "कीट"], as: ["ছত্ৰাক", "বেক্টেৰিয়া", "ভাইৰাছ", "কীট"] },
+    correct: 0,
+    explanation: { en: "Rust in wheat is caused by fungi of the genus Puccinia. It appears as reddish-brown pustules on leaves and stems, severely reducing yield.", hi: "गेहूँ का रस्ट रोग पक्सिनिया कवक के कारण होता है। यह पत्तियों पर लाल-भूरे धब्बे बनाता है और उपज घटाता है।", as: "ঘেঁহুৰ ৰাষ্ট ৰোগ পুচিনিয়া ছত্ৰাকৰ কাৰণে হয়। ই পাতত ৰঙা-বাদামী দাগ বনায় আৰু উৎপাদন হ্ৰাস কৰে।" }
+  }
+];
+
+let current = 0, score = 0, answered = false, lang = 'en';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
+    b.classList.toggle('active', ['en','hi','as'][i]===l);
+  });
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display = el.dataset.lang===l ? '' : 'none';
+  });
+  updateQNumDisplay();
+}
+
+function updateQNumDisplay() {
+  const n = current+1;
+  ['qNum','qNumHi','qNumAs'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=n; });
+  document.getElementById('qBadge').textContent = n;
+}
+
+function renderQuestion() {
+  if (current >= questions.length) { showEnd(); return; }
+  answered = false;
+  const q = questions[current];
+  document.getElementById('progressFill').style.width = ((current+1)/questions.length*100)+'%';
+  updateQNumDisplay();
+  document.getElementById('sceneEmoji').textContent = q.emoji;
+  document.getElementById('questionText').textContent = q[lang] || q.en;
+  const opts = q.options[lang] || q.options.en;
+  const labels = ['A','B','C','D'];
+  document.getElementById('optionsDiv').innerHTML = opts.map((o,i)=>
+    `<button class="opt-btn" onclick="answer(${i})" id="opt${i}">
+      <span class="opt-label">${labels[i]}</span>${o}
+    </button>`
+  ).join('');
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.textContent = '';
+  document.getElementById('nextBtn').classList.remove('show');
+}
+
+function answer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const isCorrect = idx === q.correct;
+  if (isCorrect) score += 10;
+  document.getElementById('scoreLive').textContent = score;
+  const opts = document.querySelectorAll('.opt-btn');
+  opts.forEach((b,i)=>{
+    b.disabled = true;
+    if (i===q.correct) b.classList.add('correct');
+    else if (i===idx && !isCorrect) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+  const exp = (q.explanation && q.explanation[lang]) || q.explanation.en;
+  fb.innerHTML = `<span class="fb-icon">${isCorrect?'✓':'✗'}</span> ${exp}`;
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) { showEnd(); return; }
+  renderQuestion();
+}
+
+function showEnd() {
+  document.getElementById('questionCard').style.display='none';
+  document.getElementById('progressWrap').style.display='none';
+  const es = document.getElementById('endScreen');
+  es.classList.add('show');
+  document.getElementById('finalScore').textContent = score;
+  const pct = score;
+  document.getElementById('starsDisplay').textContent =
+    pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'☆☆☆';
+}
+
+function restartGame() {
+  current=0; score=0; answered=false;
+  document.getElementById('scoreLive').textContent=0;
+  document.getElementById('endScreen').classList.remove('show');
+  document.getElementById('questionCard').style.display='';
+  document.getElementById('progressWrap').style.display='';
+  renderQuestion();
+}
+
+setLang('en');
+renderQuestion();
+</script>
+</body>
+</html>

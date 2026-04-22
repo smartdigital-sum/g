@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Food Farm to Fork - GyanPlay Class 2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #55efc4, #00b894, #fdcb6e);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 { color: #55efc4; font-size: 2rem; }
+        
+        .score-board { display: flex; justify-content: center; gap: 30px; margin-top: 10px; }
+        
+        .score { background: #e94560; color: white; padding: 10px 20px; border-radius: 10px; font-size: 1.2rem; }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text { color: white; font-size: 1.3rem; }
+        
+        .food-type {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            color: #2d3436;
+            font-weight: bold;
+        }
+        
+        .journey-map {
+            background: linear-gradient(180deg, #87CEEB 0%, #90EE90 30%, #228B22 70%, #F4E4BA 100%);
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 300px;
+        }
+        
+        .journey-title {
+            text-align: center;
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .stages-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        
+        .stage {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 100px;
+            border: 3px solid transparent;
+        }
+        
+        .stage:hover { transform: scale(1.1); }
+        
+        .stage.active {
+            border-color: #00b894;
+            background: #55efc4;
+        }
+        
+        .stage.completed {
+            border-color: #f39c12;
+            background: #ffeaa7;
+        }
+        
+        .stage-icon { font-size: 2.5rem; display: block; }
+        
+        .stage-name {
+            color: #2d3436;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .arrow { font-size: 1.5rem; color: white; }
+        
+        .destination-box {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .dest-title { color: #636e72; font-size: 1.1rem; margin-bottom: 15px; }
+        
+        .dest-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .dest-btn {
+            background: #dfe6e9;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .dest-btn:hover { background: #74b9ff; color: white; }
+        
+        .dest-btn.correct { background: #00b894; color: white; }
+        .dest-btn.wrong { background: #ff7675; color: white; }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #e17055, #fab1a0);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(225, 112, 85, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover { transform: scale(1.05); }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        
+        .feedback-content.correct { border: 5px solid #00b894; }
+        .feedback-content.wrong { border: 5px solid #e94560; }
+        
+        .feedback-icon { font-size: 5rem; }
+        .feedback-text { font-size: 1.8rem; margin: 20px 0; color: #2d3436; }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-title { color: white; font-size: 1.1rem; margin-bottom: 10px; }
+        .info-text { color: #dfe6e9; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch3-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🌾 Food Farm to Fork</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Food: <span id="foodNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Trace the journey of food from farm to your plate!</p>
+        </div>
+        
+        <div class="food-type" id="foodType">🍚 Where does rice come from?</div>
+        
+        <div class="journey-map">
+            <div class="journey-title">🚜 Food Journey</div>
+            <div class="stages-row" id="stagesRow">
+                <!-- Stages will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="destination-box">
+            <div class="dest-title">🍽️ Where does this food end up?</div>
+            <div class="dest-options" id="destOptions">
+                <!-- Options will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <div class="info-title">📖 Food Journey:</div>
+            <div class="info-text">🌾 Farm → 🌾 Mill → 🏪 Shop → 🍽️ Home</div>
+            <div class="info-text">🐮 Farm → 🥛 Dairy → 🏪 Shop → 🍽️ Home</div>
+            <div class="info-text">🥬 Farm → 🏪 Market → 🍽️ Home</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextFood()">Next Food →</button>
+        </div>
+    </div>
+    
+    <script>
+        const foods = [
+            {
+                name: 'Rice',
+                emoji: '🍚',
+                journey: ['🌾 Paddy Field', '🏭 Rice Mill', '🏪 Shop', '🍽️ Our Plate'],
+                correctDestination: 'Our Plate'
+            },
+            {
+                name: 'Milk',
+                emoji: '🥛',
+                journey: ['🐄 Farm', '🥛 Dairy', '🏪 Shop', '🍽️ Our Plate'],
+                correctDestination: 'Our Plate'
+            },
+            {
+                name: 'Vegetables',
+                emoji: '🥬',
+                journey: ['🌱 Farm', '🏪 Market', '🏪 Shop', '🍽️ Our Plate'],
+                correctDestination: 'Our Plate'
+            },
+            {
+                name: 'Eggs',
+                emoji: '🥚',
+                journey: ['🐔 Poultry', '🏪 Shop', '🏪 Market', '🍽️ Our Plate'],
+                correctDestination: 'Our Plate'
+            },
+            {
+                name: 'Bread',
+                emoji: '🍞',
+                journey: ['🌾 Farm', '🏭 Factory', '🏪 Shop', '🍽️ Our Plate'],
+                correctDestination: 'Our Plate'
+            }
+        ];
+        
+        let currentIndex = 0;
+        let score = 0;
+        
+        function loadFood() {
+            const food = foods[currentIndex];
+            
+            document.getElementById('foodType').textContent = `${food.emoji} Where does ${food.name.toLowerCase()} come from?`;
+            document.getElementById('foodNum').textContent = currentIndex + 1;
+            
+            // Show journey stages
+            const row = document.getElementById('stagesRow');
+            row.innerHTML = '';
+            
+            food.journey.forEach((stage, index) => {
+                const div = document.createElement('div');
+                div.className = 'stage';
+                div.innerHTML = `
+                    <span class="stage-icon">${stage.split(' ')[0]}</span>
+                    <span class="stage-name">${stage.split(' ').slice(1).join(' ')}</span>
+                `;
+                row.appendChild(div);
+                
+                if (index < food.journey.length - 1) {
+                    const arrow = document.createElement('span');
+                    arrow.className = 'arrow';
+                    arrow.textContent = '→';
+                    row.appendChild(arrow);
+                }
+            });
+            
+            // Show destination options
+            const options = ['Our Plate', 'School', 'Hospital', 'Park'];
+            options.sort(() => Math.random() - 0.5);
+            
+            const destContainer = document.getElementById('destOptions');
+            destContainer.innerHTML = '';
+            
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'dest-btn';
+                btn.textContent = opt;
+                btn.onclick = () => checkDestination(btn, opt);
+                destContainer.appendChild(btn);
+            });
+        }
+        
+        function checkDestination(btn, answer) {
+            const food = foods[currentIndex];
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            if (answer === food.correctDestination) {
+                btn.classList.add('correct');
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Correct! Great job!';
+                score += 10;
+                document.getElementById('score').textContent = score;
+            } else {
+                btn.classList.add('wrong');
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = `It ends up on "${food.correctDestination}"`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextFood() {
+            document.getElementById('feedback').classList.remove('show');
+            currentIndex = (currentIndex + 1) % foods.length;
+            loadFood();
+        }
+        
+        loadFood();
+    </script>
+</body>
+</html>

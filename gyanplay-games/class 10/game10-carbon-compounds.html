@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Carbon &amp; its Compounds — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+  --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+  --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));min-height:100vh;color:#fff;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fadeIn{animation:fadeIn .45s ease both;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:99;}
+.back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:.95rem;padding:7px 16px;border-radius:20px;cursor:pointer;transition:.2s;}
+.back-btn:hover{background:rgba(255,255,255,.22);}
+.badge{background:var(--green);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.82rem;padding:5px 14px;border-radius:20px;letter-spacing:.5px;}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:.8rem;padding:5px 11px;border-radius:14px;cursor:pointer;transition:.2s;}
+.lang-btn.active,.lang-btn:hover{background:var(--purple);}
+.container{max-width:780px;margin:0 auto;padding:24px 16px 60px;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.7rem;font-weight:800;text-align:center;margin-bottom:4px;background:linear-gradient(90deg,var(--green),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.game-sub{text-align:center;font-size:.88rem;color:#bbb;margin-bottom:22px;}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.prog-bar{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:4px;transition:width .4s ease;}
+.prog-label{font-size:.82rem;color:#aaa;white-space:nowrap;}
+.score-display{text-align:right;font-family:'Baloo 2',sans-serif;font-size:1rem;color:var(--gold);margin-bottom:14px;}
+.q-card{background:var(--card);border-radius:18px;padding:26px 24px;border:1px solid rgba(255,255,255,.09);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.q-num{font-size:.78rem;color:var(--green);font-weight:700;letter-spacing:1px;margin-bottom:8px;}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.12rem;font-weight:600;line-height:1.55;margin-bottom:20px;}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.options{grid-template-columns:1fr;}}
+.opt-btn{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);color:#e8e8e8;font-family:'Nunito',sans-serif;font-size:.95rem;padding:13px 16px;border-radius:12px;cursor:pointer;text-align:left;transition:.22s;line-height:1.4;}
+.opt-btn:hover:not(:disabled){background:rgba(124,58,237,.25);border-color:var(--purple);}
+.opt-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);color:#fff;}
+.opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);color:#fff;}
+.opt-btn:disabled{cursor:not-allowed;}
+.feedback{margin-top:16px;padding:12px 16px;border-radius:12px;font-size:.92rem;line-height:1.5;display:none;}
+.feedback.show{display:block;}
+.feedback.correct{background:rgba(0,200,83,.15);border:1px solid var(--green);color:#b9f6ca;}
+.feedback.wrong{background:rgba(255,64,129,.15);border:1px solid var(--pink);color:#ffd0dd;}
+.next-btn{display:block;margin:20px auto 0;background:linear-gradient(135deg,var(--green),#00a046);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:13px 36px;border-radius:24px;cursor:pointer;transition:.2s;opacity:0;pointer-events:none;}
+.next-btn.visible{opacity:1;pointer-events:all;}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,200,83,.4);}
+.end-screen{background:var(--card);border-radius:20px;padding:36px 28px;text-align:center;border:1px solid rgba(255,255,255,.09);}
+.stars{font-size:2.8rem;margin-bottom:10px;letter-spacing:4px;}
+.final-score{font-family:'Baloo 2',sans-serif;font-size:2.4rem;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.final-msg{color:#ccc;font-size:1rem;margin-bottom:24px;}
+.play-again{background:linear-gradient(135deg,var(--purple),#5b21b6);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:14px 38px;border-radius:24px;cursor:pointer;transition:.2s;}
+.play-again:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(124,58,237,.5);}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">&#8592; Back</button>
+  <span class="badge">Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('bn')">অ</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="game-title">
+    <span data-lang="en">Carbon &amp; its Compounds</span>
+    <span data-lang="hi" class="hidden">कार्बन और उसके यौगिक</span>
+    <span data-lang="bn" class="hidden">কার্বন ও তার যৌগ</span>
+  </div>
+  <div class="game-sub">Class 10 Science &nbsp;|&nbsp; Ch 4 NCERT &nbsp;|&nbsp; 10 Questions</div>
+
+  <div class="prog-row">
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-label" id="progLabel">0 / 10</div>
+  </div>
+  <div class="score-display">Score: <span id="scoreVal">0</span> / 100</div>
+
+  <div class="q-card fadeIn" id="qCard">
+    <div class="q-num" id="qNum">QUESTION 1</div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="optionsGrid"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next &#8594;</button>
+  </div>
+
+  <div class="end-screen fadeIn hidden" id="endScreen">
+    <div class="stars" id="stars"></div>
+    <div class="final-score" id="finalScore"></div>
+    <div class="final-msg" id="finalMsg"></div>
+    <button class="play-again" onclick="restartGame()">&#9654; Play Again</button>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    en:"Carbon forms a large number of compounds mainly because of its ability to:",
+    hi:"कार्बन बड़ी संख्या में यौगिक बनाता है, मुख्यतः अपनी किस क्षमता के कारण?",
+    bn:"কার্বন প্রধানত তার কোন ক্ষমতার কারণে বিপুল সংখ্যক যৌগ গঠন করে?",
+    opts:{
+      en:["Form ionic bonds only","Catenation and tetravalency","React with metals only","Form double bonds only"],
+      hi:["केवल आयनिक बंध बनाना","श्रृंखलन और चतुर्संयोजकता","केवल धातुओं से क्रिया करना","केवल द्विबंध बनाना"],
+      bn:["শুধু আয়নিক বন্ধন গঠন","শৃঙ্খলন ও চতুর্যোজ্যতা","শুধু ধাতুর সাথে বিক্রিয়া","শুধু দ্বিবন্ধন গঠন"]
+    },
+    ans:1,
+    exp:{
+      en:"Carbon shows catenation (bonding with other carbon atoms to form long chains) and has a valency of 4, allowing it to form millions of organic compounds.",
+      hi:"कार्बन श्रृंखलन (अन्य कार्बन परमाणुओं से जुड़कर लम्बी श्रृंखला बनाना) दिखाता है और इसकी संयोजकता 4 होती है, जिससे यह लाखों कार्बनिक यौगिक बनाता है।",
+      bn:"কার্বন শৃঙ্খলন (অন্য কার্বন পরমাণুর সাথে বন্ধন তৈরি করে দীর্ঘ শৃঙ্খল গঠন) দেখায় এবং এর যোজনীমান ৪, যা লক্ষ লক্ষ জৈব যৌগ গঠনে সাহায্য করে।"
+    }
+  },
+  {
+    en:"Which allotrope of carbon is the hardest natural substance known?",
+    hi:"कार्बन का कौन-सा अपरूप ज्ञात सबसे कठोर प्राकृतिक पदार्थ है?",
+    bn:"কার্বনের কোন রূপভেদটি পরিচিত সবচেয়ে কঠিন প্রাকৃতিক পদার্থ?",
+    opts:{
+      en:["Graphite","Fullerene","Diamond","Coal"],
+      hi:["ग्रेफाइट","फुलेरीन","हीरा","कोयला"],
+      bn:["গ্রাফাইট","ফুলেরিন","হীরা","কয়লা"]
+    },
+    ans:2,
+    exp:{
+      en:"Diamond: each carbon atom is bonded to 4 others in a rigid tetrahedral network, making it the hardest natural substance. Graphite is soft (layered structure, used as lubricant).",
+      hi:"हीरा: प्रत्येक कार्बन परमाणु 4 अन्य से एक दृढ़ चतुष्फलकीय नेटवर्क में जुड़ा है, जिससे यह सबसे कठोर प्राकृतिक पदार्थ है। ग्रेफाइट मुलायम है (स्तरित संरचना, स्नेहक के रूप में उपयोग)।",
+      bn:"হীরা: প্রতিটি কার্বন পরমাণু অন্য ৪টির সাথে দৃঢ় চতুস্তলকীয় নেটওয়ার্কে যুক্ত, যা এটিকে সবচেয়ে কঠিন প্রাকৃতিক পদার্থ করে। গ্রাফাইট নরম (স্তরিত গঠন, পিচ্ছিলকারক হিসেবে ব্যবহৃত)।"
+    }
+  },
+  {
+    en:"The general formula for alkenes is:",
+    hi:"एल्कीन का सामान्य सूत्र है:",
+    bn:"অ্যালকিনের সাধারণ সংকেত হলো:",
+    opts:{
+      en:["CₙH₂ₙ₊₂","CₙH₂ₙ","CₙH₂ₙ₋₂","CₙHₙ"],
+      hi:["CₙH₂ₙ₊₂","CₙH₂ₙ","CₙH₂ₙ₋₂","CₙHₙ"],
+      bn:["CₙH₂ₙ₊₂","CₙH₂ₙ","CₙH₂ₙ₋₂","CₙHₙ"]
+    },
+    ans:1,
+    exp:{
+      en:"Alkanes: CₙH₂ₙ₊₂ (single bonds), Alkenes: CₙH₂ₙ (one double bond), Alkynes: CₙH₂ₙ₋₂ (one triple bond). Ethene (C₂H₄) is the simplest alkene.",
+      hi:"एल्केन: CₙH₂ₙ₊₂ (एकल बंध), एल्कीन: CₙH₂ₙ (एक द्विबंध), एल्काइन: CₙH₂ₙ₋₂ (एक त्रिबंध)। एथीन (C₂H₄) सरलतम एल्कीन है।",
+      bn:"অ্যালকেন: CₙH₂ₙ₊₂ (একল বন্ধন), অ্যালকিন: CₙH₂ₙ (একটি দ্বিবন্ধন), অ্যালকাইন: CₙH₂ₙ₋₂ (একটি ত্রিবন্ধন)। ইথিন (C₂H₄) হলো সরলতম অ্যালকিন।"
+    }
+  },
+  {
+    en:"Which functional group is present in ethanol (C₂H₅OH)?",
+    hi:"एथेनॉल (C₂H₅OH) में कौन-सा क्रियाशील समूह उपस्थित है?",
+    bn:"ইথানল (C₂H₅OH)-এ কোন কার্যকরী মূলক উপস্থিত?",
+    opts:{
+      en:["–COOH (Carboxylic acid)","–OH (Hydroxyl / Alcohol)","–CHO (Aldehyde)","–CO– (Ketone)"],
+      hi:["–COOH (कार्बोक्सिलिक एसिड)","–OH (हाइड्रॉक्सिल / एल्कोहल)","–CHO (एल्डिहाइड)","–CO– (कीटोन)"],
+      bn:["–COOH (কার্বোক্সিলিক অ্যাসিড)","–OH (হাইড্রোক্সিল / অ্যালকোহল)","–CHO (অ্যালডিহাইড)","–CO– (কিটোন)"]
+    },
+    ans:1,
+    exp:{
+      en:"Ethanol belongs to the alcohol family — it contains the –OH (hydroxyl) functional group. Ethanoic acid (CH₃COOH) contains –COOH (carboxylic acid group).",
+      hi:"एथेनॉल एल्कोहल परिवार से है — इसमें –OH (हाइड्रॉक्सिल) क्रियाशील समूह है। एथेनोइक एसिड (CH₃COOH) में –COOH (कार्बोक्सिलिक एसिड समूह) है।",
+      bn:"ইথানল অ্যালকোহল পরিবারের — এতে –OH (হাইড্রোক্সিল) কার্যকরী মূলক আছে। ইথানয়িক অ্যাসিড (CH₃COOH)-এ –COOH (কার্বোক্সিলিক অ্যাসিড মূলক) আছে।"
+    }
+  },
+  {
+    en:"What is the IUPAC name of CH₃–CH₂–CH₂–OH?",
+    hi:"CH₃–CH₂–CH₂–OH का IUPAC नाम क्या है?",
+    bn:"CH₃–CH₂–CH₂–OH-এর IUPAC নাম কী?",
+    opts:{
+      en:["Methanol","Ethanol","Propan-1-ol","Propan-2-ol"],
+      hi:["मेथेनॉल","एथेनॉल","प्रोपेन-1-ऑल","प्रोपेन-2-ऑल"],
+      bn:["মিথানল","ইথানল","প্রোপান-১-অল","প্রোপান-২-অল"]
+    },
+    ans:2,
+    exp:{
+      en:"The compound has 3 carbon atoms (propan-) and an –OH group on carbon 1 (–1-ol). IUPAC naming: count carbons, identify functional group, number the chain from the end nearest to the functional group.",
+      hi:"इस यौगिक में 3 कार्बन परमाणु (प्रोपेन-) और कार्बन 1 पर –OH समूह (–1-ऑल) है। IUPAC नामकरण: कार्बन गिनें, क्रियाशील समूह पहचानें, क्रियाशील समूह के निकटतम सिरे से श्रृंखला क्रमांकित करें।",
+      bn:"যৌগটিতে ৩টি কার্বন পরমাণু (প্রোপান-) এবং কার্বন ১-এ –OH মূলক (–১-অল) আছে। IUPAC নামকরণ: কার্বন গণনা করুন, কার্যকরী মূলক চিহ্নিত করুন, কার্যকরী মূলকের নিকটতম প্রান্ত থেকে শৃঙ্খল সংখ্যায়ন করুন।"
+    }
+  },
+  {
+    en:"When ethanol reacts with ethanoic acid in the presence of concentrated H₂SO₄, the product formed is:",
+    hi:"जब एथेनॉल सान्द्र H₂SO₄ की उपस्थिति में एथेनोइक एसिड के साथ क्रिया करता है, तो बनने वाला उत्पाद है:",
+    bn:"ইথানল গাঢ় H₂SO₄-এর উপস্থিতিতে ইথানয়িক অ্যাসিডের সাথে বিক্রিয়া করলে উৎপন্ন পদার্থ হলো:",
+    opts:{
+      en:["Ethane","Ethyl ethanoate (ester) + water","Ethene","Acetic anhydride"],
+      hi:["एथेन","एथिल एथेनोएट (एस्टर) + जल","एथीन","एसेटिक एनहाइड्राइड"],
+      bn:["ইথেন","ইথাইল ইথানোয়েট (এস্টার) + জল","ইথিন","অ্যাসিটিক অ্যানহাইড্রাইড"]
+    },
+    ans:1,
+    exp:{
+      en:"Esterification: Alcohol + Carboxylic acid → Ester + Water (conc. H₂SO₄ as catalyst). CH₃COOH + C₂H₅OH → CH₃COOC₂H₅ + H₂O. Esters have fruity smells and are used in perfumes.",
+      hi:"एस्टरीकरण: एल्कोहल + कार्बोक्सिलिक एसिड → एस्टर + जल (उत्प्रेरक के रूप में सान्द्र H₂SO₄)। CH₃COOH + C₂H₅OH → CH₃COOC₂H₅ + H₂O। एस्टर में फलों जैसी खुशबू होती है।",
+      bn:"এস্টারিফিকেশন: অ্যালকোহল + কার্বোক্সিলিক অ্যাসিড → এস্টার + জল (গাঢ় H₂SO₄ অনুঘটক)। CH₃COOH + C₂H₅OH → CH₃COOC₂H₅ + H₂O। এস্টারে ফলের মতো গন্ধ থাকে।"
+    }
+  },
+  {
+    en:"The process by which soap is manufactured from fats/oils and NaOH is called:",
+    hi:"वसा/तेल और NaOH से साबुन बनाने की प्रक्रिया कहलाती है:",
+    bn:"চর্বি/তেল ও NaOH থেকে সাবান তৈরির প্রক্রিয়াকে বলা হয়:",
+    opts:{
+      en:["Hydrogenation","Saponification","Esterification","Fermentation"],
+      hi:["हाइड्रोजनीकरण","साबुनीकरण","एस्टरीकरण","किण्वन"],
+      bn:["হাইড্রোজেনেশন","সাবানিফিকেশন","এস্টারিফিকেশন","গাঁজন"]
+    },
+    ans:1,
+    exp:{
+      en:"Saponification: Fat (ester of glycerol + fatty acids) + NaOH → Soap (sodium salt of fatty acid) + Glycerol. The soap molecule has a hydrophilic (ionic) head and a hydrophobic (carbon chain) tail.",
+      hi:"साबुनीकरण: वसा (ग्लिसरॉल + वसीय अम्लों का एस्टर) + NaOH → साबुन (वसीय अम्ल का सोडियम लवण) + ग्लिसरॉल। साबुन अणु में जलरागी (आयनिक) सिरा और जलविरागी (कार्बन श्रृंखला) पूँछ होती है।",
+      bn:"সাবানিফিকেশন: চর্বি (গ্লিসারল + ফ্যাটি অ্যাসিডের এস্টার) + NaOH → সাবান (ফ্যাটি অ্যাসিডের সোডিয়াম লবণ) + গ্লিসারল। সাবান অণুতে হাইড্রোফিলিক (আয়নিক) মাথা ও হাইড্রোফোবিক (কার্বন শৃঙ্খল) লেজ থাকে।"
+    }
+  },
+  {
+    en:"How does soap remove oily dirt from clothes? It forms:",
+    hi:"साबुन कपड़ों से तैलीय मैल कैसे हटाता है? यह बनाता है:",
+    bn:"সাবান কাপড় থেকে তেলতেলে ময়লা কীভাবে দূর করে? এটি গঠন করে:",
+    opts:{
+      en:["An ionic bond with dirt","Micelles — spherical clusters with oil trapped inside","A covalent compound with grease","Hydrogen bonds with water"],
+      hi:["मैल के साथ आयनिक बंध","मिसेल — अंदर तेल फंसे गोलाकार क्लस्टर","ग्रीस के साथ सहसंयोजक यौगिक","पानी के साथ हाइड्रोजन बंध"],
+      bn:["ময়লার সাথে আয়নিক বন্ধন","মাইসেল — ভেতরে তেল আটকানো গোলাকার গুচ্ছ","গ্রিজের সাথে সমযোজী যৌগ","জলের সাথে হাইড্রোজেন বন্ধন"]
+    },
+    ans:1,
+    exp:{
+      en:"Soap micelles: the hydrophobic tails point inward (surrounding the oil droplet) and hydrophilic heads point outward (toward water). This emulsifies grease so it can be rinsed away with water.",
+      hi:"साबुन मिसेल: जलविरागी पूँछें अंदर की ओर (तेल की बूंद को घेरती हुई) और जलरागी सिरे बाहर की ओर (पानी की तरफ)। यह ग्रीस को पायसीकृत करता है ताकि इसे पानी से धोया जा सके।",
+      bn:"সাবান মাইসেল: হাইড্রোফোবিক লেজগুলো ভেতরের দিকে (তেলের ফোঁটা ঘিরে) এবং হাইড্রোফিলিক মাথাগুলো বাইরের দিকে (জলের দিকে)। এটি গ্রিজকে ইমালসিফাই করে যাতে জল দিয়ে ধুয়ে ফেলা যায়।"
+    }
+  },
+  {
+    en:"Which of the following is a property of ethanoic acid (acetic acid)?",
+    hi:"निम्नलिखित में से कौन-सा एथेनोइक अम्ल (एसिटिक एसिड) का गुण है?",
+    bn:"নিচের কোনটি ইথানয়িক অ্যাসিড (অ্যাসিটিক অ্যাসিড)-এর বৈশিষ্ট্য?",
+    opts:{
+      en:["It is a strong acid like HCl","It has a melting point of 17°C and is called glacial acetic acid","It reacts with NaOH to form ethanol","It is insoluble in water"],
+      hi:["यह HCl जैसा प्रबल अम्ल है","इसका गलनांक 17°C है और इसे ग्लेशियल एसेटिक एसिड कहते हैं","यह NaOH के साथ क्रिया करके एथेनॉल बनाता है","यह पानी में अघुलनशील है"],
+      bn:["এটি HCl-এর মতো শক্তিশালী অ্যাসিড","এর গলনাঙ্ক ১৭°C এবং একে গ্লেশিয়াল অ্যাসিটিক অ্যাসিড বলা হয়","এটি NaOH-এর সাথে বিক্রিয়া করে ইথানল গঠন করে","এটি জলে অদ্রবণীয়"]
+    },
+    ans:1,
+    exp:{
+      en:"Pure ethanoic acid has a melting point of 17°C, so it can freeze in cold weather — hence 'glacial'. It is a weak acid (unlike HCl), fully miscible with water, and reacts with NaOH to form sodium ethanoate (a salt) + water.",
+      hi:"शुद्ध एथेनोइक अम्ल का गलनांक 17°C है, ठंड में यह जम सकता है — इसीलिए 'ग्लेशियल'। यह एक दुर्बल अम्ल है (HCl के विपरीत), पानी में पूरी तरह मिश्रणीय है, और NaOH के साथ क्रिया करके सोडियम एथेनोएट (एक लवण) + जल बनाता है।",
+      bn:"বিশুদ্ধ ইথানয়িক অ্যাসিডের গলনাঙ্ক ১৭°C, ঠান্ডায় জমে যেতে পারে — তাই 'গ্লেশিয়াল'। এটি একটি দুর্বল অ্যাসিড (HCl-এর বিপরীতে), জলে সম্পূর্ণ মিশ্রণীয়, এবং NaOH-এর সাথে বিক্রিয়া করে সোডিয়াম ইথানোয়েট (লবণ) + জল গঠন করে।"
+    }
+  },
+  {
+    en:"Detergents work well in hard water but soaps do not, because:",
+    hi:"डिटर्जेंट कठोर पानी में अच्छा काम करते हैं लेकिन साबुन नहीं, क्योंकि:",
+    bn:"ডিটারজেন্ট কঠিন জলে ভালো কাজ করে কিন্তু সাবান করে না, কারণ:",
+    opts:{
+      en:["Detergents are cheaper than soaps","Soaps form insoluble scum with Ca²⁺/Mg²⁺ ions in hard water; detergents do not","Soaps are stronger than detergents","Detergents contain carbon chains while soaps do not"],
+      hi:["डिटर्जेंट साबुन से सस्ते हैं","साबुन कठोर पानी में Ca²⁺/Mg²⁺ आयनों के साथ अघुलनशील स्कम बनाते हैं; डिटर्जेंट नहीं","साबुन डिटर्जेंट से अधिक शक्तिशाली हैं","डिटर्जेंट में कार्बन श्रृंखला है जबकि साबुन में नहीं"],
+      bn:["ডিটারজেন্ট সাবানের চেয়ে সস্তা","সাবান কঠিন জলে Ca²⁺/Mg²⁺ আয়নের সাথে অদ্রবণীয় স্কাম তৈরি করে; ডিটারজেন্ট করে না","সাবান ডিটারজেন্টের চেয়ে শক্তিশালী","ডিটারজেন্টে কার্বন শৃঙ্খল আছে কিন্তু সাবানে নেই"]
+    },
+    ans:1,
+    exp:{
+      en:"Hard water contains Ca²⁺ and Mg²⁺ ions. Soap (sodium/potassium salts of fatty acids) reacts with these to form insoluble calcium/magnesium salts (scum), wasting soap. Detergents (sulphonate salts) do NOT form scum with hard water.",
+      hi:"कठोर पानी में Ca²⁺ और Mg²⁺ आयन होते हैं। साबुन (वसीय अम्लों के सोडियम/पोटेशियम लवण) इनके साथ क्रिया करके अघुलनशील कैल्शियम/मैग्नीशियम लवण (स्कम) बनाता है। डिटर्जेंट (सल्फोनेट लवण) कठोर पानी के साथ स्कम नहीं बनाते।",
+      bn:"কঠিন জলে Ca²⁺ ও Mg²⁺ আয়ন থাকে। সাবান (ফ্যাটি অ্যাসিডের সোডিয়াম/পটাশিয়াম লবণ) এদের সাথে বিক্রিয়া করে অদ্রবণীয় ক্যালসিয়াম/ম্যাগনেশিয়াম লবণ (স্কাম) তৈরি করে। ডিটারজেন্ট (সালফোনেট লবণ) কঠিন জলের সাথে স্কাম তৈরি করে না।"
+    }
+  }
+];
+
+let currentQ=0,score=0,answered=false,currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.classList.toggle('hidden', el.dataset.lang!==l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(currentQ>=questions.length){showEnd();return;}
+  const q=questions[currentQ];
+  document.getElementById('qNum').textContent='QUESTION '+(currentQ+1)+' OF '+questions.length;
+  document.getElementById('qText').textContent=q[currentLang]||q.en;
+  const grid=document.getElementById('optionsGrid');
+  grid.innerHTML='';
+  const opts=(q.opts[currentLang]||q.opts.en);
+  opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.textContent=opt;
+    btn.onclick=()=>selectAnswer(i);
+    grid.appendChild(btn);
+  });
+  const fb=document.getElementById('feedback');
+  fb.className='feedback';
+  fb.textContent='';
+  document.getElementById('nextBtn').classList.remove('visible');
+  document.getElementById('progFill').style.width=(currentQ/questions.length*100)+'%';
+  document.getElementById('progLabel').textContent=currentQ+' / '+questions.length;
+  document.getElementById('qCard').classList.remove('fadeIn');
+  void document.getElementById('qCard').offsetWidth;
+  document.getElementById('qCard').classList.add('fadeIn');
+  answered=false;
+}
+
+function selectAnswer(i){
+  if(answered)return;
+  answered=true;
+  const q=questions[currentQ];
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('feedback');
+  if(i===q.ans){
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    btns[i].classList.add('correct');
+    fb.className='feedback correct show';
+    fb.innerHTML='&#10003; Correct! '+(q.exp[currentLang]||q.exp.en);
+  } else {
+    btns[i].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    fb.className='feedback wrong show';
+    fb.innerHTML='&#10007; Incorrect. '+(q.exp[currentLang]||q.exp.en);
+  }
+  document.getElementById('nextBtn').classList.add('visible');
+  if(currentQ===questions.length-1){
+    document.getElementById('nextBtn').textContent='See Results ★';
+  }
+}
+
+function nextQuestion(){
+  currentQ++;
+  renderQuestion();
+}
+
+function showEnd(){
+  document.getElementById('qCard').classList.add('hidden');
+  document.getElementById('endScreen').classList.remove('hidden');
+  const pct=score;
+  let stars='☆☆☆';
+  if(pct>=90)stars='★★★';
+  else if(pct>=70)stars='★★☆';
+  else if(pct>=40)stars='★☆☆';
+  document.getElementById('stars').textContent=stars;
+  document.getElementById('finalScore').textContent=score+' / 100';
+  let msg='Keep practising! Review carbon bonding and organic compounds.';
+  if(pct>=90)msg='Outstanding! You have mastered Carbon & Compounds!';
+  else if(pct>=70)msg='Great work! Revise functional groups once more.';
+  else if(pct>=40)msg='Good effort! Focus on allotropes and IUPAC naming.';
+  document.getElementById('finalMsg').textContent=msg;
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('progLabel').textContent='10 / 10';
+}
+
+function restartGame(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('scoreVal').textContent=0;
+  document.getElementById('endScreen').classList.add('hidden');
+  document.getElementById('qCard').classList.remove('hidden');
+  document.getElementById('nextBtn').textContent='Next →';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>

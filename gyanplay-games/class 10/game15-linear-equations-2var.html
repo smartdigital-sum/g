@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Linear Equations &amp; Arithmetic Progressions — GyanPlay Class 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+  --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+  --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));min-height:100vh;color:#fff;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fadeIn{animation:fadeIn .45s ease both;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:99;}
+.back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:.95rem;padding:7px 16px;border-radius:20px;cursor:pointer;transition:.2s;}
+.back-btn:hover{background:rgba(255,255,255,.22);}
+.badge{background:var(--saffron);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.82rem;padding:5px 14px;border-radius:20px;letter-spacing:.5px;}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:.8rem;padding:5px 11px;border-radius:14px;cursor:pointer;transition:.2s;}
+.lang-btn.active,.lang-btn:hover{background:var(--purple);}
+.container{max-width:780px;margin:0 auto;padding:24px 16px 60px;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.65rem;font-weight:800;text-align:center;margin-bottom:4px;background:linear-gradient(90deg,var(--sky),var(--saffron));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.game-sub{text-align:center;font-size:.88rem;color:#bbb;margin-bottom:22px;}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.prog-bar{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--saffron));border-radius:4px;transition:width .4s ease;}
+.prog-label{font-size:.82rem;color:#aaa;white-space:nowrap;}
+.score-display{text-align:right;font-family:'Baloo 2',sans-serif;font-size:1rem;color:var(--gold);margin-bottom:14px;}
+.q-card{background:var(--card);border-radius:18px;padding:26px 24px;border:1px solid rgba(255,255,255,.09);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.q-num{font-size:.78rem;color:var(--sky);font-weight:700;letter-spacing:1px;margin-bottom:8px;}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.08rem;font-weight:600;line-height:1.55;margin-bottom:14px;}
+.formula-highlight{background:rgba(0,174,239,.1);border:1px solid rgba(0,174,239,.35);border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:.97rem;color:var(--sky);font-weight:700;text-align:center;font-family:'Baloo 2',sans-serif;letter-spacing:.02em;}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.options{grid-template-columns:1fr;}}
+.opt-btn{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);color:#e8e8e8;font-family:'Nunito',sans-serif;font-size:.93rem;padding:13px 16px;border-radius:12px;cursor:pointer;text-align:left;transition:.22s;line-height:1.4;}
+.opt-btn:hover:not(:disabled){background:rgba(0,174,239,.2);border-color:var(--sky);}
+.opt-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);color:#fff;}
+.opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);color:#fff;}
+.opt-btn:disabled{cursor:not-allowed;}
+.feedback{margin-top:16px;padding:12px 16px;border-radius:12px;font-size:.92rem;line-height:1.5;display:none;}
+.feedback.show{display:block;}
+.feedback.correct{background:rgba(0,200,83,.15);border:1px solid var(--green);color:#b9f6ca;}
+.feedback.wrong{background:rgba(255,64,129,.15);border:1px solid var(--pink);color:#ffd0dd;}
+.next-btn{display:block;margin:20px auto 0;background:linear-gradient(135deg,var(--sky),#0077aa);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:13px 36px;border-radius:24px;cursor:pointer;transition:.2s;opacity:0;pointer-events:none;}
+.next-btn.visible{opacity:1;pointer-events:all;}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,174,239,.4);}
+.end-screen{background:var(--card);border-radius:20px;padding:36px 28px;text-align:center;border:1px solid rgba(255,255,255,.09);}
+.stars{font-size:2.8rem;margin-bottom:10px;letter-spacing:4px;}
+.final-score{font-family:'Baloo 2',sans-serif;font-size:2.4rem;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.final-msg{color:#ccc;font-size:1rem;margin-bottom:24px;}
+.play-again{background:linear-gradient(135deg,var(--purple),#5b21b6);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:14px 38px;border-radius:24px;cursor:pointer;transition:.2s;}
+.play-again:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(124,58,237,.5);}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">&#8592; Back</button>
+  <span class="badge">Maths</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('bn')">অ</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="game-title">
+    <span data-lang="en">Linear Equations &amp; Arithmetic Progressions</span>
+    <span data-lang="hi" class="hidden">द्विचर रैखिक समीकरण एवं समांतर श्रेढ़ी</span>
+    <span data-lang="bn" class="hidden">দ্বিচর রৈখিক সমীকরণ ও সমান্তর প্রগতি</span>
+  </div>
+  <div class="game-sub">Class 10 Maths &nbsp;|&nbsp; Ch 3 &amp; 5 NCERT &nbsp;|&nbsp; 10 Questions</div>
+
+  <div class="prog-row">
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-label" id="progLabel">0 / 10</div>
+  </div>
+  <div class="score-display">Score: <span id="scoreVal">0</span> / 100</div>
+
+  <div class="q-card fadeIn" id="qCard">
+    <div class="q-num" id="qNum">QUESTION 1 OF 10</div>
+    <div class="q-text" id="qText"></div>
+    <div class="formula-highlight hidden" id="formulaBox"></div>
+    <div class="options" id="optionsGrid"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next &#8594;</button>
+  </div>
+
+  <div class="end-screen fadeIn hidden" id="endScreen">
+    <div class="stars" id="starsDisplay"></div>
+    <div class="final-score" id="finalScore"></div>
+    <div class="final-msg" id="finalMsg"></div>
+    <button class="play-again" onclick="restartGame()">&#9654; Play Again</button>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    en:"Two lines a₁x + b₁y + c₁ = 0 and a₂x + b₂y + c₂ = 0 are INCONSISTENT (no solution) when:",
+    hi:"दो रेखाएँ a₁x + b₁y + c₁ = 0 और a₂x + b₂y + c₂ = 0 असंगत (कोई हल नहीं) होती हैं जब:",
+    bn:"দুটি রেখা a₁x + b₁y + c₁ = 0 এবং a₂x + b₂y + c₂ = 0 অসংগত (কোনো সমাধান নেই) যখন:",
+    formula:{en:"Inconsistent: a₁/a₂ = b₁/b₂ ≠ c₁/c₂ (parallel lines)",hi:"असंगत: a₁/a₂ = b₁/b₂ ≠ c₁/c₂ (समानांतर रेखाएँ)",bn:"অসংগত: a₁/a₂ = b₁/b₂ ≠ c₁/c₂ (সমান্তরাল রেখা)"},
+    opts:{
+      en:["a₁/a₂ ≠ b₁/b₂ (intersecting, unique solution)","a₁/a₂ = b₁/b₂ = c₁/c₂ (coincident, infinite solutions)","a₁/a₂ = b₁/b₂ ≠ c₁/c₂ (parallel, no solution)","a₁/a₂ = c₁/c₂ ≠ b₁/b₂"],
+      hi:["a₁/a₂ ≠ b₁/b₂ (अतिच्छेदी, अद्वितीय हल)","a₁/a₂ = b₁/b₂ = c₁/c₂ (संपाती, अनंत हल)","a₁/a₂ = b₁/b₂ ≠ c₁/c₂ (समानांतर, कोई हल नहीं)","a₁/a₂ = c₁/c₂ ≠ b₁/b₂"],
+      bn:["a₁/a₂ ≠ b₁/b₂ (ছেদকারী, অনন্য সমাধান)","a₁/a₂ = b₁/b₂ = c₁/c₂ (সমপাতী, অসীম সমাধান)","a₁/a₂ = b₁/b₂ ≠ c₁/c₂ (সমান্তরাল, কোনো সমাধান নেই)","a₁/a₂ = c₁/c₂ ≠ b₁/b₂"]
+    },
+    ans:2,
+    exp:{
+      en:"Three cases for a pair of linear equations: (1) Intersecting lines → a₁/a₂ ≠ b₁/b₂ → unique solution (consistent). (2) Coincident lines → a₁/a₂ = b₁/b₂ = c₁/c₂ → infinitely many solutions. (3) Parallel lines → a₁/a₂ = b₁/b₂ ≠ c₁/c₂ → no solution (inconsistent).",
+      hi:"रैखिक समीकरणों के तीन मामले: (1) अतिच्छेदी रेखाएँ → a₁/a₂ ≠ b₁/b₂ → अद्वितीय हल। (2) संपाती रेखाएँ → a₁/a₂ = b₁/b₂ = c₁/c₂ → अनंत हल। (3) समानांतर रेखाएँ → a₁/a₂ = b₁/b₂ ≠ c₁/c₂ → कोई हल नहीं।",
+      bn:"রৈখিক সমীকরণের তিনটি ক্ষেত্র: (1) ছেদকারী রেখা → a₁/a₂ ≠ b₁/b₂ → অনন্য সমাধান। (2) সমপাতী রেখা → a₁/a₂ = b₁/b₂ = c₁/c₂ → অসীম সমাধান। (3) সমান্তরাল → a₁/a₂ = b₁/b₂ ≠ c₁/c₂ → কোনো সমাধান নেই।"
+    }
+  },
+  {
+    en:"Solve by substitution method: x + y = 14 and x − y = 4. Find x.",
+    hi:"प्रतिस्थापन विधि से हल करें: x + y = 14 और x − y = 4। x का मान ज्ञात करें।",
+    bn:"প্রতিস্থাপন পদ্ধতিতে সমাধান করো: x + y = 14 এবং x − y = 4। x-এর মান নির্ণয় করো।",
+    formula:{en:"From eq2: x = y + 4. Substitute in eq1: (y+4)+y = 14 → y=5, x=9",hi:"সমীকরণ 2 থেকে: x = y + 4। সমীকরণ 1-এ রাখো: (y+4)+y = 14 → y=5, x=9",bn:"সমীকরণ 2 থেকে: x = y + 4। সমীকরণ 1-এ রাখো: (y+4)+y = 14 → y=5, x=9"},
+    opts:{
+      en:["x = 5","x = 9","x = 10","x = 4"],
+      hi:["x = 5","x = 9","x = 10","x = 4"],
+      bn:["x = 5","x = 9","x = 10","x = 4"]
+    },
+    ans:1,
+    exp:{
+      en:"Substitution: From x−y=4, get x = y+4. Substitute into x+y=14: (y+4)+y = 14 → 2y = 10 → y = 5. Then x = 5+4 = 9. Verify: 9+5=14 ✓ and 9−5=4 ✓. Substitution works best when one variable is easily expressed in terms of the other.",
+      hi:"प्रतिस्थापन: x−y=4 से, x = y+4। x+y=14 में रखने पर: (y+4)+y = 14 → 2y = 10 → y = 5। फिर x = 9। जाँच: 9+5=14 ✓ और 9−5=4 ✓।",
+      bn:"প্রতিস্থাপন: x−y=4 থেকে, x = y+4। x+y=14-এ বসাই: (y+4)+y = 14 → 2y = 10 → y = 5। তারপর x = 9। যাচাই: 9+5=14 ✓ এবং 9−5=4 ✓।"
+    }
+  },
+  {
+    en:"Using the elimination method, solve: 2x + 3y = 11 and 2x − 4y = −24. Find y.",
+    hi:"विलोपन विधि से हल करें: 2x + 3y = 11 और 2x − 4y = −24। y का मान ज्ञात करें।",
+    bn:"বিলোপ পদ্ধতিতে সমাধান করো: 2x + 3y = 11 এবং 2x − 4y = −24। y-এর মান নির্ণয় করো।",
+    formula:{en:"Subtract eq2 from eq1: (3y−(−4y)) = 11−(−24) → 7y = 35 → y = 5",hi:"সমীকরণ 2 বাদ দাও সমীকরণ 1 থেকে: 7y = 35 → y = 5",bn:"সমীকরণ 2 বাদ দাও সমীকরণ 1 থেকে: 7y = 35 → y = 5"},
+    opts:{
+      en:["y = 3","y = 4","y = 5","y = 7"],
+      hi:["y = 3","y = 4","y = 5","y = 7"],
+      bn:["y = 3","y = 4","y = 5","y = 7"]
+    },
+    ans:2,
+    exp:{
+      en:"Elimination: both equations have 2x. Subtract eq2 from eq1: (2x+3y)−(2x−4y) = 11−(−24) → 7y = 35 → y = 5. Then from eq1: 2x + 15 = 11 → 2x = −4 → x = −2. Verify: 2(−2)+3(5)=11 ✓ and 2(−2)−4(5)=−24 ✓.",
+      hi:"विलोपन: दोनों समीकरणों में 2x है। समीकरण 1 से समीकरण 2 घटाने पर: 7y = 35 → y = 5। फिर x = −2। जाँच: −4+15=11 ✓।",
+      bn:"বিলোপ: উভয় সমীকরণে 2x আছে। সমীকরণ 1 থেকে সমীকরণ 2 বাদ দিই: 7y = 35 → y = 5। তারপর x = −2। যাচাই: −4+15=11 ✓।"
+    }
+  },
+  {
+    en:"The ages of two friends Ananya and Bhaskar differ by 3 years. If Ananya's age is twice Bhaskar's age, find Bhaskar's age.",
+    hi:"दो मित्रों अनन्या और भास्कर की आयु में 3 वर्ष का अंतर है। यदि अनन्या की आयु भास्कर की आयु से दोगुनी है, तो भास्कर की आयु ज्ञात करें।",
+    bn:"দুই বন্ধু অনন্যা ও ভাস্করের বয়সের পার্থক্য 3 বছর। অনন্যার বয়স ভাস্করের দ্বিগুণ হলে, ভাস্করের বয়স নির্ণয় করো।",
+    formula:{en:"Let B = Bhaskar's age. A = 2B, A − B = 3 → B = 3",hi:"মনে করো B = ভাস্করের বয়স। A = 2B, A − B = 3 → B = 3",bn:"মনে করো B = ভাস্করের বয়স। A = 2B, A − B = 3 → B = 3"},
+    opts:{
+      en:["Bhaskar = 6 years","Bhaskar = 3 years","Bhaskar = 9 years","Bhaskar = 12 years"],
+      hi:["भास्कर = 6 वर्ष","भास्कर = 3 वर्ष","भास्कर = 9 वर्ष","भास्कर = 12 वर्ष"],
+      bn:["ভাস্কর = 6 বছর","ভাস্কর = 3 বছর","ভাস্কর = 9 বছর","ভাস্কর = 12 বছর"]
+    },
+    ans:1,
+    exp:{
+      en:"Let Bhaskar's age = B, Ananya's age = A. Equations: A = 2B and A − B = 3. Substitute: 2B − B = 3 → B = 3 and A = 6. Verify: 6 − 3 = 3 ✓ and 6 = 2×3 ✓. Word problems on age, numbers, and speed are common in Class 10 exams.",
+      hi:"माना भास्कर की आयु = B, अनन्या की = A। समीकरण: A = 2B और A−B = 3। प्रतिस्थापन: 2B−B = 3 → B = 3, A = 6। जाँच: 6−3=3 ✓ और 6=2×3 ✓।",
+      bn:"ধরো ভাস্করের বয়স = B, অনন্যার = A। সমীকরণ: A = 2B এবং A−B = 3। প্রতিস্থাপন: 2B−B = 3 → B = 3, A = 6। যাচাই: 6−3=3 ✓ এবং 6=2×3 ✓।"
+    }
+  },
+  {
+    en:"Which of the following is an Arithmetic Progression (AP)?",
+    hi:"निम्नलिखित में से कौन-सी समांतर श्रेढ़ी (AP) है?",
+    bn:"নিচের কোনটি সমান্তর প্রগতি (AP)?",
+    formula:{en:"AP: aₙ − aₙ₋₁ = constant (common difference d)",hi:"AP: aₙ − aₙ₋₁ = स्थिरांक (सार्व अंतर d)",bn:"AP: aₙ − aₙ₋₁ = ধ্রুবক (সাধারণ অন্তর d)"},
+    opts:{
+      en:["1, 1, 2, 3, 5, 8 (Fibonacci)","2, 4, 8, 16 (Geometric)","3, 7, 11, 15, 19 (d=4)","1, 4, 9, 16 (Perfect squares)"],
+      hi:["1, 1, 2, 3, 5, 8 (फिबोनाची)","2, 4, 8, 16 (गुणोत्तर)","3, 7, 11, 15, 19 (d=4)","1, 4, 9, 16 (पूर्ण वर्ग)"],
+      bn:["1, 1, 2, 3, 5, 8 (ফিবোনাচি)","2, 4, 8, 16 (গুণোত্তর)","3, 7, 11, 15, 19 (d=4)","1, 4, 9, 16 (পূর্ণ বর্গ)"]
+    },
+    ans:2,
+    exp:{
+      en:"An AP has a constant common difference d. For 3, 7, 11, 15, 19: d = 7−3 = 11−7 = 4 ✓ (constant). Fibonacci: 2−1=1, 3−2=1, 5−3=2 (not constant). Geometric 2,4,8,16: ratio=2 (not AP). Perfect squares 1,4,9,16: differences are 3,5,7 (not constant).",
+      hi:"AP में सार्व अंतर d स्थिर होता है। 3,7,11,15,19 में: d = 4 ✓। फिबोनाची में अंतर स्थिर नहीं। 2,4,8,16 गुणोत्तर श्रेढ़ी है। 1,4,9,16 में अंतर 3,5,7 — स्थिर नहीं।",
+      bn:"AP-এ সাধারণ অন্তর d ধ্রুবক। 3,7,11,15,19-এ: d = 4 ✓। ফিবোনাচিতে অন্তর ধ্রুবক নয়। 2,4,8,16 গুণোত্তর প্রগতি। 1,4,9,16-এ অন্তর 3,5,7 — ধ্রুবক নয়।"
+    }
+  },
+  {
+    en:"Find the 15th term of the AP: 7, 11, 15, 19, ...",
+    hi:"AP: 7, 11, 15, 19, ... का 15वाँ पद ज्ञात करें।",
+    bn:"AP: 7, 11, 15, 19, ... -এর 15তম পদ নির্ণয় করো।",
+    formula:{en:"aₙ = a + (n−1)d = 7 + (15−1)×4 = 7 + 56 = 63",hi:"aₙ = a + (n−1)d = 7 + 14×4 = 63",bn:"aₙ = a + (n−1)d = 7 + 14×4 = 63"},
+    opts:{
+      en:["59","63","67","71"],
+      hi:["59","63","67","71"],
+      bn:["59","63","67","71"]
+    },
+    ans:1,
+    exp:{
+      en:"nth term formula: aₙ = a + (n−1)d. Here a = 7 (first term), d = 11−7 = 4 (common difference), n = 15. a₁₅ = 7 + (15−1)×4 = 7 + 56 = 63. Always identify a and d first. This formula is the most frequently tested in board exams.",
+      hi:"nवाँ पद: aₙ = a + (n−1)d। यहाँ a = 7, d = 4, n = 15। a₁₅ = 7 + 14×4 = 7 + 56 = 63। पहले a और d पहचानें। यह सूत्र बोर्ड में सबसे ज्यादा पूछा जाता है।",
+      bn:"n-তম পদ: aₙ = a + (n−1)d। এখানে a = 7, d = 4, n = 15। a₁₅ = 7 + 14×4 = 63। প্রথমে a ও d নির্ণয় করো। এটি বোর্ডে সবচেয়ে বেশি পরীক্ষিত সূত্র।"
+    }
+  },
+  {
+    en:"Find the sum of first 20 terms of the AP: 2, 5, 8, 11, ...",
+    hi:"AP: 2, 5, 8, 11, ... के प्रथम 20 पदों का योग ज्ञात करें।",
+    bn:"AP: 2, 5, 8, 11, ... -এর প্রথম 20 পদের সমষ্টি নির্ণয় করো।",
+    formula:{en:"Sₙ = n/2 [2a + (n−1)d] = 20/2 [4 + 57] = 10×61 = 610",hi:"Sₙ = n/2 [2a + (n−1)d] = 10[4+57] = 610",bn:"Sₙ = n/2 [2a + (n−1)d] = 10[4+57] = 610"},
+    opts:{
+      en:["590","600","610","620"],
+      hi:["590","600","610","620"],
+      bn:["590","600","610","620"]
+    },
+    ans:2,
+    exp:{
+      en:"Sum of n terms: Sₙ = n/2 [2a + (n−1)d]. Here a=2, d=3, n=20. S₂₀ = 20/2 [2×2 + 19×3] = 10[4+57] = 10×61 = 610. Alternate formula: Sₙ = n/2 (a + l), where l is the last term. l = a₂₀ = 2+19×3 = 59. S₂₀ = 10(2+59) = 610 ✓.",
+      hi:"n पदों का योग: Sₙ = n/2 [2a + (n−1)d]। यहाँ a=2, d=3, n=20। S₂₀ = 10[4+57] = 610। वैकल्पिक: Sₙ = n/2 (a+l), जहाँ l=59। S₂₀=10×61=610 ✓।",
+      bn:"n পদের সমষ্টি: Sₙ = n/2 [2a + (n−1)d]। এখানে a=2, d=3, n=20। S₂₀ = 10[4+57] = 610। বিকল্পভাবে: Sₙ = n/2 (a+l), যেখানে l=59। S₂₀=10×61=610 ✓।"
+    }
+  },
+  {
+    en:"How many terms of the AP 3, 5, 7, 9, ... must be taken so that the sum is 120?",
+    hi:"AP 3, 5, 7, 9, ... के कितने पद लेने चाहिए ताकि योग 120 हो?",
+    bn:"AP 3, 5, 7, 9, ... -এর কতটি পদ নিলে সমষ্টি 120 হবে?",
+    formula:{en:"120 = n/2[2×3+(n−1)×2] → 120 = n(n+2) → n²+2n−120=0 → n=10",hi:"120 = n/2[6+2(n−1)] → n²+2n−120=0 → n=10",bn:"120 = n/2[6+2(n−1)] → n²+2n−120=0 → n=10"},
+    opts:{
+      en:["8","10","12","15"],
+      hi:["8","10","12","15"],
+      bn:["8","10","12","15"]
+    },
+    ans:1,
+    exp:{
+      en:"Sₙ = n/2[2a+(n−1)d] = 120. Here a=3, d=2. n/2[6+(n−1)2] = 120 → n[6+2n−2] = 240 → n(2n+4) = 240 → 2n²+4n−240 = 0 → n²+2n−120 = 0 → (n+12)(n−10) = 0 → n = 10 (positive). Verify: S₁₀ = 5[6+18] = 5×24 = 120 ✓.",
+      hi:"Sₙ = 120। a=3, d=2। n/2[6+2(n−1)] = 120 → n²+2n−120 = 0 → (n+12)(n−10)=0 → n=10। जाँच: S₁₀ = 5×24 = 120 ✓।",
+      bn:"Sₙ = 120। a=3, d=2। n/2[6+2(n−1)] = 120 → n²+2n−120 = 0 → (n+12)(n−10)=0 → n=10। যাচাই: S₁₀ = 5×24 = 120 ✓।"
+    }
+  },
+  {
+    en:"The 8th term of an AP is 37 and its 13th term is 62. Find the common difference d.",
+    hi:"एक AP का 8वाँ पद 37 है और 13वाँ पद 62 है। सार्व अंतर d ज्ञात करें।",
+    bn:"একটি AP-এর 8ম পদ 37 এবং 13তম পদ 62। সাধারণ অন্তর d নির্ণয় করো।",
+    formula:{en:"a₁₃ − a₈ = 5d = 62 − 37 = 25 → d = 5",hi:"a₁₃ − a₈ = 5d = 25 → d = 5",bn:"a₁₃ − a₈ = 5d = 25 → d = 5"},
+    opts:{
+      en:["d = 3","d = 4","d = 5","d = 6"],
+      hi:["d = 3","d = 4","d = 5","d = 6"],
+      bn:["d = 3","d = 4","d = 5","d = 6"]
+    },
+    ans:2,
+    exp:{
+      en:"a₈ = a+7d = 37 and a₁₃ = a+12d = 62. Subtract: 5d = 25 → d = 5. Then a = 37−7×5 = 37−35 = 2. So AP starts 2, 7, 12, 17, ... Verify: a₈=2+35=37 ✓, a₁₃=2+60=62 ✓. This method of subtracting two term equations is very efficient.",
+      hi:"a₈ = a+7d = 37, a₁₃ = a+12d = 62। घटाने पर: 5d = 25 → d = 5। फिर a = 2। जाँच: a₈=37 ✓, a₁₃=62 ✓।",
+      bn:"a₈ = a+7d = 37, a₁₃ = a+12d = 62। বাদ দিলে: 5d = 25 → d = 5। তারপর a = 2। যাচাই: a₈=37 ✓, a₁₃=62 ✓।"
+    }
+  },
+  {
+    en:"The cross-multiplication method solves a₁x + b₁y + c₁ = 0 and a₂x + b₂y + c₂ = 0. The formula for x is:",
+    hi:"वज्र-गुणन विधि a₁x + b₁y + c₁ = 0 और a₂x + b₂y + c₂ = 0 हल करती है। x का सूत्र है:",
+    bn:"তির্যক গুণন পদ্ধতিতে a₁x + b₁y + c₁ = 0 এবং a₂x + b₂y + c₂ = 0 সমাধান করা হয়। x-এর সূত্র হলো:",
+    formula:{en:"x/(b₁c₂−b₂c₁) = y/(c₁a₂−c₂a₁) = 1/(a₁b₂−a₂b₁)",hi:"x/(b₁c₂−b₂c₁) = y/(c₁a₂−c₂a₁) = 1/(a₁b₂−a₂b₁)",bn:"x/(b₁c₂−b₂c₁) = y/(c₁a₂−c₂a₁) = 1/(a₁b₂−a₂b₁)"},
+    opts:{
+      en:["x = (b₁c₂−b₂c₁)/(a₁b₂−a₂b₁)","x = (a₁b₂−a₂b₁)/(b₁c₂−b₂c₁)","x = (c₁a₂−c₂a₁)/(a₁b₂−a₂b₁)","x = (a₁c₂−a₂c₁)/(b₁c₂−b₂c₁)"],
+      hi:["x = (b₁c₂−b₂c₁)/(a₁b₂−a₂b₁)","x = (a₁b₂−a₂b₁)/(b₁c₂−b₂c₁)","x = (c₁a₂−c₂a₁)/(a₁b₂−a₂b₁)","x = (a₁c₂−a₂c₁)/(b₁c₂−b₂c₁)"],
+      bn:["x = (b₁c₂−b₂c₁)/(a₁b₂−a₂b₁)","x = (a₁b₂−a₂b₁)/(b₁c₂−b₂c₁)","x = (c₁a₂−c₂a₁)/(a₁b₂−a₂b₁)","x = (a₁c₂−a₂c₁)/(b₁c₂−b₂c₁)"]
+    },
+    ans:0,
+    exp:{
+      en:"Cross-multiplication: x/(b₁c₂−b₂c₁) = y/(c₁a₂−c₂a₁) = 1/(a₁b₂−a₂b₁). So x = (b₁c₂−b₂c₁)/(a₁b₂−a₂b₁). Remember the denominator for both x and y is the same: (a₁b₂−a₂b₁). This is a direct method that gives x and y together without needing substitution.",
+      hi:"वज्र-गुणन: x/(b₁c₂−b₂c₁) = y/(c₁a₂−c₂a₁) = 1/(a₁b₂−a₂b₁)। इसलिए x = (b₁c₂−b₂c₁)/(a₁b₂−a₂b₁)। x और y दोनों का हर समान है।",
+      bn:"তির্যক গুণন: x/(b₁c₂−b₂c₁) = y/(c₁a₂−c₂a₁) = 1/(a₁b₂−a₂b₁)। তাই x = (b₁c₂−b₂c₁)/(a₁b₂−a₂b₁)। x ও y উভয়ের হর একই।"
+    }
+  }
+];
+
+let currentQ=0,score=0,answered=false,currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.classList.toggle('hidden',el.dataset.lang!==l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(currentQ>=questions.length){showEnd();return;}
+  const q=questions[currentQ];
+  document.getElementById('qNum').textContent='QUESTION '+(currentQ+1)+' OF '+questions.length;
+  document.getElementById('qText').textContent=q[currentLang]||q.en;
+  const fb=document.getElementById('formulaBox');
+  if(q.formula){
+    fb.textContent=q.formula[currentLang]||q.formula.en;
+    fb.classList.remove('hidden');
+  } else {
+    fb.classList.add('hidden');
+  }
+  const grid=document.getElementById('optionsGrid');
+  grid.innerHTML='';
+  const opts=q.opts[currentLang]||q.opts.en;
+  opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.textContent=opt;
+    btn.onclick=()=>selectAnswer(i);
+    grid.appendChild(btn);
+  });
+  const feedback=document.getElementById('feedback');
+  feedback.className='feedback';
+  feedback.textContent='';
+  document.getElementById('nextBtn').classList.remove('visible');
+  document.getElementById('progFill').style.width=(currentQ/questions.length*100)+'%';
+  document.getElementById('progLabel').textContent=currentQ+' / '+questions.length;
+  document.getElementById('qCard').classList.remove('fadeIn');
+  void document.getElementById('qCard').offsetWidth;
+  document.getElementById('qCard').classList.add('fadeIn');
+  answered=false;
+}
+
+function selectAnswer(i){
+  if(answered)return;
+  answered=true;
+  const q=questions[currentQ];
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  const feedback=document.getElementById('feedback');
+  if(i===q.ans){
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    btns[i].classList.add('correct');
+    feedback.className='feedback correct show';
+    feedback.innerHTML='&#10003; Correct! '+(q.exp[currentLang]||q.exp.en);
+  } else {
+    btns[i].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    feedback.className='feedback wrong show';
+    feedback.innerHTML='&#10007; Incorrect. '+(q.exp[currentLang]||q.exp.en);
+  }
+  document.getElementById('nextBtn').classList.add('visible');
+  if(currentQ===questions.length-1){
+    document.getElementById('nextBtn').textContent='See Results \u2605';
+  }
+}
+
+function nextQuestion(){
+  currentQ++;
+  renderQuestion();
+}
+
+function showEnd(){
+  document.getElementById('qCard').classList.add('hidden');
+  document.getElementById('endScreen').classList.remove('hidden');
+  const pct=score;
+  let stars='\u2606\u2606\u2606';
+  if(pct>=90)stars='\u2605\u2605\u2605';
+  else if(pct>=70)stars='\u2605\u2605\u2606';
+  else if(pct>=40)stars='\u2605\u2606\u2606';
+  document.getElementById('starsDisplay').textContent=stars;
+  document.getElementById('finalScore').textContent=score+' / 100';
+  let msg='Keep practising! Review linear equations and AP formulas.';
+  if(pct>=90)msg='Excellent! You have mastered Linear Equations & AP!';
+  else if(pct>=70)msg='Well done! Revise cross-multiplication and sum of terms.';
+  else if(pct>=40)msg='Good effort! Focus on nth term and solving methods.';
+  document.getElementById('finalMsg').textContent=msg;
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('progLabel').textContent='10 / 10';
+}
+
+function restartGame(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('scoreVal').textContent=0;
+  document.getElementById('endScreen').classList.add('hidden');
+  document.getElementById('qCard').classList.remove('hidden');
+  document.getElementById('nextBtn').textContent='Next \u2192';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>

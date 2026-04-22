@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Money, Credit &amp; Globalisation – Class 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+    --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+    --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{min-height:100vh;font-family:'Nunito',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff;}
+  .topbar{display:flex;align-items:center;gap:12px;padding:12px 20px;
+    background:rgba(0,0,0,.35);flex-wrap:wrap;}
+  .back-btn{background:rgba(255,255,255,.12);border:none;color:#fff;
+    padding:7px 16px;border-radius:20px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.9rem;transition:background .2s;}
+  .back-btn:hover{background:rgba(255,255,255,.25);}
+  .subject-badge{background:var(--pink);color:#fff;padding:5px 14px;
+    border-radius:20px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.85rem;}
+  .title-bar{flex:1;font-family:'Baloo 2',sans-serif;font-weight:700;
+    font-size:1.05rem;color:var(--gold);}
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;transition:all .2s;}
+  .lang-btn.active{background:var(--sky);border-color:var(--sky);}
+  .progress-wrap{padding:14px 20px 0;}
+  .progress-info{display:flex;justify-content:space-between;font-size:.85rem;color:#ccc;margin-bottom:6px;}
+  .progress-bar-bg{background:rgba(255,255,255,.12);border-radius:10px;height:8px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--green));
+    border-radius:10px;transition:width .5s;}
+  .game-wrap{max-width:740px;margin:18px auto;padding:0 16px 40px;}
+  .card{background:var(--card);border-radius:18px;padding:26px;
+    box-shadow:0 8px 32px rgba(0,0,0,.45);animation:fadeIn .4s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .q-number{font-family:'Baloo 2',sans-serif;font-size:.85rem;color:var(--sky);margin-bottom:8px;font-weight:600;}
+  .q-text{font-size:1.08rem;line-height:1.6;margin-bottom:6px;font-weight:600;}
+  .year-tag{display:inline-block;background:rgba(0,174,239,.15);border:1px solid var(--sky);
+    color:var(--sky);padding:3px 12px;border-radius:12px;font-size:.8rem;
+    font-weight:700;margin-bottom:12px;}
+  .context-box{background:rgba(255,255,255,.06);border-left:3px solid var(--sky);
+    border-radius:0 10px 10px 0;padding:10px 14px;margin:10px 0;
+    font-size:.88rem;color:#ddd;line-height:1.5;}
+  .options{display:grid;gap:10px;margin-top:16px;}
+  .opt-btn{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);
+    color:#fff;padding:13px 18px;border-radius:12px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.97rem;text-align:left;transition:all .2s;}
+  .opt-btn:hover:not(:disabled){background:rgba(0,174,239,.18);border-color:var(--sky);}
+  .opt-btn.correct{background:rgba(0,200,83,.25);border-color:var(--green);}
+  .opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);}
+  .opt-btn:disabled{cursor:default;}
+  .feedback{margin-top:14px;padding:11px 16px;border-radius:10px;
+    font-weight:700;font-size:.95rem;display:none;}
+  .feedback.show{display:block;animation:fadeIn .3s ease;}
+  .feedback.ok{background:rgba(0,200,83,.2);color:var(--green);}
+  .feedback.no{background:rgba(255,64,129,.18);color:#ff7eb3;}
+  .next-btn{margin-top:18px;background:linear-gradient(135deg,var(--sky),var(--green));
+    border:none;color:#fff;padding:12px 32px;border-radius:25px;
+    font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;
+    cursor:pointer;display:none;transition:transform .15s;}
+  .next-btn:hover{transform:scale(1.04);}
+  .end-screen{display:none;text-align:center;}
+  .end-screen.show{display:block;animation:fadeIn .5s ease;}
+  .score-big{font-family:'Baloo 2',sans-serif;font-size:3.5rem;font-weight:800;
+    color:var(--gold);line-height:1;margin:10px 0;}
+  .score-label{color:#ccc;font-size:.95rem;margin-bottom:18px;}
+  .stars{font-size:2.5rem;margin:10px 0;}
+  .play-again{background:linear-gradient(135deg,var(--sky),var(--gold));
+    border:none;color:#fff;padding:14px 36px;border-radius:28px;
+    font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;
+    cursor:pointer;margin-top:16px;transition:transform .15s;}
+  .play-again:hover{transform:scale(1.05);}
+  .result-detail{margin-top:22px;text-align:left;}
+  .result-detail h3{font-family:'Baloo 2',sans-serif;color:var(--sky);margin-bottom:10px;}
+  .result-item{padding:9px 14px;border-radius:8px;margin-bottom:7px;
+    font-size:.9rem;line-height:1.4;background:rgba(255,255,255,.06);}
+  .result-item.r-ok{border-left:3px solid var(--green);}
+  .result-item.r-no{border-left:3px solid var(--pink);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">পিছলৈ</span></button>
+  <span class="subject-badge">Social Studies</span>
+  <span class="title-bar">
+    <span data-lang="en">Money, Credit &amp; Globalisation</span>
+    <span data-lang="hi" style="display:none">मुद्रा, साख और वैश्वीकरण</span>
+    <span data-lang="as" style="display:none">মুদ্ৰা, ঋণ আৰু বিশ্বায়ন</span>
+  </span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span><span data-lang="en">Question</span><span data-lang="hi" style="display:none">प्रश्न</span><span data-lang="as" style="display:none">প্ৰশ্ন</span> <span id="qNum">1</span>/10</span>
+    <span><span data-lang="en">Score</span><span data-lang="hi" style="display:none">स्कोर</span><span data-lang="as" style="display:none">স্কোৰ</span>: <span id="scoreDisp">0</span>/100</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progBar" style="width:0%"></div></div>
+</div>
+
+<div class="game-wrap">
+  <div class="card" id="questionCard">
+    <div class="q-number" id="qLabel">Question 1 of 10</div>
+    <div id="yearTagWrap"></div>
+    <div class="q-text" id="qText"></div>
+    <div id="contextBox" style="display:none" class="context-box"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="card end-screen" id="endScreen">
+    <div class="score-big" id="finalScore">0</div>
+    <div class="score-label">
+      <span data-lang="en">out of 100</span>
+      <span data-lang="hi" style="display:none">100 में से</span>
+      <span data-lang="as" style="display:none">100ৰ মাজৰ পৰা</span>
+    </div>
+    <div class="stars" id="stars">⭐⭐⭐</div>
+    <p id="endMsg" style="color:#ccc;font-size:1rem;"></p>
+    <button class="play-again" onclick="restartGame()">
+      <span data-lang="en">Play Again</span>
+      <span data-lang="hi" style="display:none">फिर खेलें</span>
+      <span data-lang="as" style="display:none">পুনৰ খেলক</span>
+    </button>
+    <div class="result-detail" id="resultDetail"></div>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    tag:"Money & Credit",
+    context:"Before money existed, people exchanged goods directly.",
+    en:{q:"💰 What is the main problem with the barter system that money solved?",
+    opts:["Barter required a double coincidence of wants — both parties had to want exactly what the other offered; money eliminated this problem",
+          "Barter was too fast and efficient","Barter only worked in cities, not in rural areas",
+          "Barter required government approval for every transaction"],ans:0,
+    exp:"In a barter system, a farmer with rice who wants cloth must find someone who has cloth AND wants rice — a 'double coincidence of wants.' Money acts as a medium of exchange accepted by everyone, eliminating this barrier and enabling complex economies."},
+    hi:{q:"💰 वस्तु-विनिमय प्रणाली की मुख्य समस्या क्या थी जिसे मुद्रा ने हल किया?",
+    opts:["वस्तु-विनिमय में दोहरी संयोग की आवश्यकता थी — दोनों पक्षों को बिल्कुल वही चाहिए होना था जो दूसरे के पास है; मुद्रा ने यह समस्या समाप्त की",
+          "वस्तु-विनिमय बहुत तेज़ और कुशल थी","वस्तु-विनिमय केवल शहरों में काम करती थी",
+          "प्रत्येक लेनदेन के लिए सरकारी अनुमति चाहिए थी"],exp:"वस्तु-विनिमय में 'दोहरी संयोग' की समस्या थी। मुद्रा ने विनिमय का माध्यम प्रदान किया जिसे सभी स्वीकार करते हैं।"},
+    as:{q:"💰 বিনিময় প্ৰথাৰ মূল সমস্যা কি আছিল যি মুদ্ৰাই সমাধান কৰিলে?",
+    opts:["বিনিময়ত দ্বৈত সমাপতনৰ প্ৰয়োজন আছিল — উভয় পক্ষই ঠিক সেইটোই বিচাৰিব লাগিব যি আনৰ হাতত আছে; মুদ্ৰাই এই সমস্যা সমাধান কৰিলে",
+          "বিনিময় প্ৰথা অতি দ্ৰুত আৰু দক্ষ আছিল","বিনিময় কেৱল চহৰত কাম কৰিছিল",
+          "প্ৰতিটো লেনদেনৰ বাবে চৰকাৰী অনুমতি লাগিছিল"],exp:"বিনিময় প্ৰথাত 'দ্বৈত সমাপতন'ৰ সমস্যা আছিল। মুদ্ৰাই বিনিময়ৰ মাধ্যম প্ৰদান কৰিলে যি সকলোৱে গ্ৰহণ কৰে।"}
+  },
+  {
+    tag:"Formal Credit",
+    context:"Banks and cooperative societies form the formal credit sector in India.",
+    en:{q:"🏦 What is 'collateral' in the context of bank loans, and why do the poor struggle to access bank credit?",
+    opts:["Collateral is an asset pledged as security for a loan (e.g., land, gold); poor people lack assets, so banks refuse them loans — pushing them to informal lenders",
+          "Collateral is the interest rate charged by banks","Collateral is the government guarantee on bank deposits",
+          "Collateral is a fee paid to the bank when opening an account"],ans:0,
+    exp:"Collateral is property (land, building, vehicle, deposits) that borrowers offer as guarantee. If the borrower cannot repay, the lender sells it. The poor lack valuable collateral, so banks reject them. They then rely on moneylenders who charge very high interest rates (often 36–60% per year)."},
+    hi:{q:"🏦 बैंक ऋण में 'संपार्श्विक' क्या है, और गरीब लोग बैंक ऋण क्यों नहीं पा पाते?",
+    opts:["संपार्श्विक एक संपत्ति है जो ऋण के लिए जमानत के रूप में गिरवी रखी जाती है (भूमि, सोना); गरीबों के पास संपत्ति नहीं, इसलिए बैंक ऋण से इनकार — वे अनौपचारिक ऋणदाताओं पर निर्भर",
+          "संपार्श्विक बैंकों द्वारा लगाई जाने वाली ब्याज दर है","संपार्श्विक बैंक जमा पर सरकारी गारंटी है",
+          "संपार्श्विक खाता खोलते समय बैंक को दी जाने वाली शुल्क है"],exp:"संपार्श्विक वह संपत्ति है जो उधारकर्ता गारंटी के रूप में देते हैं। गरीबों के पास यह नहीं होती, इसलिए वे महंगे साहूकारों पर निर्भर होते हैं।"},
+    as:{q:"🏦 বেংক ঋণত 'জামানত' কি, আৰু দৰিদ্ৰ লোকসকলে বেংক ঋণ পোৱাত কিয় সমস্যা হয়?",
+    opts:["জামানত হৈছে ঋণৰ নিৰাপত্তা হিচাপে বন্ধক ৰখা সম্পত্তি (ভূমি, সোণ); দৰিদ্ৰ লোকৰ সম্পত্তি নাই, সেয়ে বেংকে ঋণ প্ৰত্যাখ্যান কৰে — তেওঁলোক অনানুষ্ঠানিক ঋণদাতাৰ ওপৰত নিৰ্ভৰশীল",
+          "জামানত হৈছে বেংকে ধাৰ্য কৰা সুদৰ হাৰ","জামানত হৈছে বেংক আমানতত চৰকাৰী নিশ্চয়তা",
+          "জামানত হৈছে একাউণ্ট খোলাৰ সময়ত বেংকক দিয়া মাচুল"],exp:"জামানত হৈছে ঋণগ্ৰহীতাই নিৰাপত্তা হিচাপে আগবঢ়োৱা সম্পত্তি। দৰিদ্ৰ লোকৰ এনে সম্পত্তি নথকাত তেওঁলোক মহাজনৰ ওপৰত নিৰ্ভৰশীল।"}
+  },
+  {
+    tag:"SHGs",
+    context:"A grassroots model was developed to give the rural poor access to credit.",
+    en:{q:"💰 What is a Self Help Group (SHG) and how does it help poor rural women?",
+    opts:["SHGs are small groups (15–20 members) who save regularly and give loans to members at low interest, without collateral — empowering women economically",
+          "SHGs are government banks set up in rural areas","SHGs are groups of large farmers who share agricultural equipment",
+          "SHGs are MNC-funded organisations providing free food in villages"],ans:0,
+    exp:"SHGs typically have 15–20 rural women who save small amounts (₹25–100/month). After building savings, the group borrows from banks and gives loans to members at 10–15% interest (much lower than moneylenders' 36–60%). Grameen Bank of Bangladesh inspired India's SHG movement. NABARD supports SHGs in India."},
+    hi:{q:"💰 स्वयं सहायता समूह (SHG) क्या है और यह गरीब ग्रामीण महिलाओं की कैसे मदद करता है?",
+    opts:["SHG छोटे समूह (15–20 सदस्य) हैं जो नियमित बचत करते हैं और बिना संपार्श्विक के कम ब्याज पर सदस्यों को ऋण देते हैं — महिलाओं को आर्थिक रूप से सशक्त बनाते हैं",
+          "SHG ग्रामीण क्षेत्रों में सरकारी बैंक हैं","SHG बड़े किसानों के समूह हैं जो कृषि उपकरण साझा करते हैं",
+          "SHG बहुराष्ट्रीय कंपनियों द्वारा वित्त पोषित गांवों में मुफ्त भोजन देने वाले संगठन हैं"],exp:"SHG में 15–20 ग्रामीण महिलाएं छोटी-छोटी बचत करती हैं। बैंक से उधार लेकर सदस्यों को 10–15% ब्याज पर ऋण देती हैं। NABARD भारत में SHG का समर्थन करता है।"},
+    as:{q:"💰 স্বনিৰ্ভৰ গোট (SHG) কি আৰু ই কেনেকৈ দৰিদ্ৰ গ্ৰামীণ মহিলাসকলক সহায় কৰে?",
+    opts:["SHG হৈছে ক্ষুদ্ৰ গোট (15–20 সদস্য) যিসকলে নিয়মিত সঞ্চয় কৰে আৰু জামানত অবিহনে কম সুদত সদস্যসকলক ঋণ দিয়ে — মহিলাসকলক অৰ্থনৈতিকভাৱে ক্ষমতায়িত কৰে",
+          "SHG গ্ৰামাঞ্চলত স্থাপিত চৰকাৰী বেংক","SHG হৈছে কৃষি সঁজুলি ভাগ-বতৰা কৰা বৃহৎ কৃষকৰ গোট",
+          "SHG হৈছে বহুজাতিক কোম্পানীয়ে পুঁজি যোগোৱা গাঁৱত বিনামূলীয়া খাদ্য প্ৰদানকাৰী সংগঠন"],exp:"SHGত 15–20 গ্ৰামীণ মহিলাই সৰু পৰিমাণে সঞ্চয় কৰে। বেংকৰ পৰা ঋণ লৈ সদস্যসকলক 10–15% সুদত ঋণ দিয়ে। NABARD এ ভাৰতত SHG সমৰ্থন কৰে।"}
+  },
+  {
+    tag:"Informal Credit",
+    context:"A large portion of rural India still relies on non-institutional lenders.",
+    en:{q:"🏦 What is the difference between formal and informal sources of credit in India?",
+    opts:["Formal: banks, cooperatives — regulated, lower interest, require collateral; Informal: moneylenders, traders, relatives — unregulated, very high interest, no collateral check",
+          "Formal credit is only available in cities; informal only in rural areas",
+          "Formal credit is given by the government for free; informal credit is illegal",
+          "Both formal and informal sources charge the same interest rates"],ans:0,
+    exp:"Formal sector (RBI regulated): commercial banks, cooperative banks — interest 8–15%. Informal sector: moneylenders (36–60%), landlords, traders, relatives. About 85% of rural credit in India was from informal sources in the 1950s; today it is around 40%. The government promotes formal credit to reduce 'debt traps.'"},
+    hi:{q:"🏦 भारत में ऋण के औपचारिक और अनौपचारिक स्रोतों में क्या अंतर है?",
+    opts:["औपचारिक: बैंक, सहकारी — नियंत्रित, कम ब्याज, संपार्श्विक आवश्यक; अनौपचारिक: साहूकार, व्यापारी, रिश्तेदार — अनियंत्रित, बहुत अधिक ब्याज, संपार्श्विक जांच नहीं",
+          "औपचारिक ऋण केवल शहरों में उपलब्ध है; अनौपचारिक केवल ग्रामीण में",
+          "औपचारिक ऋण सरकार द्वारा मुफ्त दिया जाता है; अनौपचारिक ऋण अवैध है",
+          "दोनों स्रोत समान ब्याज दर लेते हैं"],exp:"औपचारिक क्षेत्र (RBI द्वारा नियंत्रित): ब्याज 8–15%। अनौपचारिक: साहूकार (36–60%)। सरकार ऋण जाल से बचाने के लिए औपचारिक ऋण को बढ़ावा देती है।"},
+    as:{q:"🏦 ভাৰতত আনুষ্ঠানিক আৰু অনানুষ্ঠানিক ঋণ উৎসৰ মাজত পাৰ্থক্য কি?",
+    opts:["আনুষ্ঠানিক: বেংক, সমবায় — নিয়ন্ত্ৰিত, কম সুদ, জামানত প্ৰয়োজন; অনানুষ্ঠানিক: মহাজন, ব্যৱসায়ী, আত্মীয় — অনিয়ন্ত্ৰিত, অতি উচ্চ সুদ, জামানত নাই",
+          "আনুষ্ঠানিক ঋণ কেৱল চহৰত উপলব্ধ; অনানুষ্ঠানিক কেৱল গ্ৰামাঞ্চলত",
+          "আনুষ্ঠানিক ঋণ চৰকাৰে বিনামূলীয়াকৈ দিয়ে; অনানুষ্ঠানিক ঋণ অবৈধ",
+          "দুয়োটো উৎসে একে সুদৰ হাৰ নিয়ে"],exp:"আনুষ্ঠানিক খণ্ড (RBI নিয়ন্ত্ৰিত): সুদ 8–15%। অনানুষ্ঠানিক: মহাজন (36–60%)। চৰকাৰে ঋণ ফান্দৰ পৰা বাঁচাবলৈ আনুষ্ঠানিক ঋণ উৎসাহিত কৰে।"}
+  },
+  {
+    tag:"Globalisation",
+    context:"Goods, services, money, and people now move more freely across national borders.",
+    en:{q:"🌐 What does globalisation mean in the context of economics?",
+    opts:["The process of rapid integration of countries through trade, investment, and flow of technology — so countries are more interconnected than ever before",
+          "The process of each country becoming fully self-sufficient without trade","A policy where all countries use the same currency",
+          "A United Nations programme for distributing food to poor countries"],ans:0,
+    exp:"Globalisation refers to the integration of national economies into the global economy through trade, FDI (Foreign Direct Investment), capital flows, technology transfer, and migration. It accelerated after the 1990s liberalisation. Key drivers: MNCs, WTO, improved transport, and the internet."},
+    hi:{q:"🌐 अर्थशास्त्र में वैश्वीकरण का क्या अर्थ है?",
+    opts:["व्यापार, निवेश और प्रौद्योगिकी प्रवाह के माध्यम से देशों के तेज एकीकरण की प्रक्रिया — ताकि देश पहले से कहीं अधिक परस्पर जुड़े हों",
+          "प्रत्येक देश के बिना व्यापार के पूरी तरह आत्मनिर्भर बनने की प्रक्रिया",
+          "सभी देशों द्वारा एक ही मुद्रा उपयोग की नीति",
+          "गरीब देशों को भोजन वितरित करने का संयुक्त राष्ट्र कार्यक्रम"],exp:"वैश्वीकरण व्यापार, FDI, पूंजी प्रवाह, प्रौद्योगिकी हस्तांतरण के माध्यम से राष्ट्रीय अर्थव्यवस्थाओं का वैश्विक अर्थव्यवस्था में एकीकरण है।"},
+    as:{q:"🌐 অৰ্থনীতিৰ পৰিপ্ৰেক্ষিতত বিশ্বায়নৰ অৰ্থ কি?",
+    opts:["বাণিজ্য, বিনিয়োগ আৰু প্ৰযুক্তি প্ৰবাহৰ জৰিয়তে দেশসমূহৰ দ্ৰুত একীভূতকৰণৰ প্ৰক্ৰিয়া — যাতে দেশসমূহ পূৰ্বতকৈ অধিক পৰস্পৰ সংযুক্ত হয়",
+          "প্ৰতিটো দেশ বাণিজ্য অবিহনে সম্পূৰ্ণ স্বনিৰ্ভৰ হোৱাৰ প্ৰক্ৰিয়া",
+          "সকলো দেশে একে মুদ্ৰা ব্যৱহাৰ কৰাৰ নীতি",
+          "দৰিদ্ৰ দেশসমূহত খাদ্য বিতৰণৰ ৰাষ্ট্ৰসংঘ কাৰ্যক্ৰম"],exp:"বিশ্বায়ন হৈছে বাণিজ্য, FDI, মূলধন প্ৰবাহ, প্ৰযুক্তি হস্তান্তৰৰ জৰিয়তে ৰাষ্ট্ৰীয় অৰ্থনীতিসমূহৰ বৈশ্বিক অৰ্থনীতিত একীভূতকৰণ।"}
+  },
+  {
+    tag:"MNCs",
+    context:"Large companies that operate in more than one country shape global trade.",
+    en:{q:"🌐 What is a Multinational Corporation (MNC) and how does it link production across countries?",
+    opts:["An MNC owns/controls production in more than one country — placing factories where production is cheapest and selling globally to maximise profit",
+          "An MNC is a company owned by multiple national governments","An MNC is a bank that operates in foreign countries only",
+          "An MNC is a company that produces only luxury goods for rich countries"],ans:0,
+    exp:"MNCs (e.g., Ford, Samsung, Nike, Coca-Cola) set up factories in developing countries for cheap labour and raw materials, then sell products globally. They interlink production chains — cotton grown in India, spun in Bangladesh, stitched in Vietnam, sold in Europe. This creates global production networks."},
+    hi:{q:"🌐 बहुराष्ट्रीय निगम (MNC) क्या है और यह देशों के पार उत्पादन कैसे जोड़ता है?",
+    opts:["एक MNC एक से अधिक देशों में उत्पादन का स्वामित्व/नियंत्रण रखती है — जहाँ उत्पादन सबसे सस्ता हो वहाँ कारखाने लगाकर वैश्विक स्तर पर बेचती है",
+          "MNC कई राष्ट्रीय सरकारों के स्वामित्व वाली कंपनी है","MNC केवल विदेशी देशों में काम करने वाला बैंक है",
+          "MNC केवल अमीर देशों के लिए विलासिता की वस्तुएं बनाने वाली कंपनी है"],exp:"MNC (जैसे Ford, Nike) विकासशील देशों में सस्ते श्रम और कच्चे माल के लिए कारखाने स्थापित करती हैं और वैश्विक स्तर पर बेचती हैं।"},
+    as:{q:"🌐 বহুজাতিক নিগম (MNC) কি আৰু ই কেনেকৈ দেশসমূহৰ মাজেদি উৎপাদন সংযুক্ত কৰে?",
+    opts:["এটা MNC একাধিক দেশত উৎপাদনৰ মালিকানা/নিয়ন্ত্ৰণ ৰাখে — য'ত উৎপাদন আটাইতকৈ সস্তা তাত কাৰখানা স্থাপন কৰি বিশ্বজুৰি বিক্ৰী কৰে",
+          "MNC হৈছে বহু ৰাষ্ট্ৰীয় চৰকাৰৰ মালিকানাধীন কোম্পানী","MNC হৈছে কেৱল বিদেশী দেশত কাম কৰা বেংক",
+          "MNC হৈছে কেৱল ধনী দেশৰ বাবে বিলাসিতা সামগ্ৰী উৎপাদনকাৰী কোম্পানী"],exp:"MNC (যেনে Ford, Nike) উন্নয়নশীল দেশত সস্তা শ্ৰম আৰু কেঁচামালৰ বাবে কাৰখানা স্থাপন কৰে আৰু বিশ্বজুৰি বিক্ৰী কৰে।"}
+  },
+  {
+    tag:"WTO & Trade",
+    context:"International organisations shape the rules of global trade.",
+    en:{q:"🏦 What is the role of the WTO (World Trade Organisation) in globalisation?",
+    opts:["WTO sets international trade rules, promotes trade liberalisation (reducing tariffs/barriers), and settles trade disputes between member countries",
+          "WTO provides loans to developing countries to build infrastructure",
+          "WTO is a military alliance to protect trade routes","WTO distributes aid to countries affected by natural disasters"],ans:0,
+    exp:"The WTO (est. 1995, successor to GATT) has 164 member countries. It establishes rules for international trade, negotiates reduction of tariffs and non-tariff barriers, and resolves disputes. Critics say WTO rules favour rich countries — developed nations protect their agriculture while forcing developing nations to open up."},
+    hi:{q:"🏦 वैश्वीकरण में WTO (विश्व व्यापार संगठन) की क्या भूमिका है?",
+    opts:["WTO अंतर्राष्ट्रीय व्यापार नियम स्थापित करता है, व्यापार उदारीकरण को बढ़ावा देता है (टैरिफ/बाधाएं कम करना), और सदस्य देशों के बीच व्यापार विवाद निपटाता है",
+          "WTO बुनियादी ढांचे के निर्माण के लिए विकासशील देशों को ऋण देता है",
+          "WTO व्यापार मार्गों की रक्षा के लिए सैन्य गठबंधन है","WTO प्राकृतिक आपदाओं से प्रभावित देशों को सहायता वितरित करता है"],exp:"WTO (1995 में स्थापित) के 164 सदस्य हैं। यह अंतर्राष्ट्रीय व्यापार नियम तय करता है और विवाद सुलझाता है।"},
+    as:{q:"🏦 বিশ্বায়নত WTO (বিশ্ব বাণিজ্য সংগঠন)ৰ ভূমিকা কি?",
+    opts:["WTO আন্তৰ্জাতিক বাণিজ্য নিয়ম প্ৰতিষ্ঠা কৰে, বাণিজ্য উদাৰীকৰণ প্ৰচাৰ কৰে (শুল্ক/বাধা হ্ৰাস কৰা), আৰু সদস্য দেশসমূহৰ মাজত বাণিজ্য বিবাদ নিষ্পত্তি কৰে",
+          "WTO আন্তঃগাঁথনি নিৰ্মাণৰ বাবে উন্নয়নশীল দেশসমূহক ঋণ প্ৰদান কৰে",
+          "WTO বাণিজ্য পথ সুৰক্ষিত কৰাৰ সামৰিক মৈত্ৰী","WTO প্ৰাকৃতিক দুৰ্যোগত ক্ষতিগ্ৰস্ত দেশসমূহক সাহায্য বিতৰণ কৰে"],exp:"WTO (1995 চনত প্ৰতিষ্ঠিত)ৰ 164 সদস্য আছে। ই আন্তৰ্জাতিক বাণিজ্য নিয়ম প্ৰতিষ্ঠা কৰে আৰু বিবাদ নিষ্পত্তি কৰে।"}
+  },
+  {
+    tag:"SEZ & FDI",
+    context:"India created special zones to attract foreign investment after 1991 liberalisation.",
+    en:{q:"🌐 What are Special Economic Zones (SEZs) and why were they created in India?",
+    opts:["SEZs are industrial zones with special tax benefits, relaxed labour laws, and good infrastructure — created to attract MNCs and boost exports",
+          "SEZs are agricultural zones where farmers get free seeds and fertilisers",
+          "SEZs are military zones on India's borders","SEZs are zones where only Indian companies can operate without competition"],ans:0,
+    exp:"India created SEZs (from 2005) to attract FDI (Foreign Direct Investment). SEZs offer: tax holidays, exemption from customs duties, relaxed labour laws, ready infrastructure. Companies like Nokia, Samsung set up in SEZs. Critics argue SEZ workers have fewer rights and local farmers lose land for SEZ development."},
+    hi:{q:"🌐 विशेष आर्थिक क्षेत्र (SEZ) क्या हैं और भारत में इन्हें क्यों बनाया गया?",
+    opts:["SEZ विशेष कर लाभ, शिथिल श्रम कानूनों और अच्छे बुनियादी ढांचे वाले औद्योगिक क्षेत्र हैं — MNCs को आकर्षित करने और निर्यात बढ़ाने के लिए बनाए गए",
+          "SEZ कृषि क्षेत्र हैं जहाँ किसानों को मुफ्त बीज और उर्वरक मिलते हैं",
+          "SEZ भारत की सीमाओं पर सैन्य क्षेत्र हैं","SEZ वे क्षेत्र हैं जहाँ केवल भारतीय कंपनियां काम कर सकती हैं"],exp:"भारत ने SEZ (2005 से) FDI आकर्षित करने के लिए बनाए। SEZ में कर छूट, सीमा शुल्क से छूट, और तैयार बुनियादी ढाँचा उपलब्ध है।"},
+    as:{q:"🌐 বিশেষ অৰ্থনৈতিক অঞ্চল (SEZ) কি আৰু ভাৰতত ইয়াক কিয় সৃষ্টি কৰা হৈছিল?",
+    opts:["SEZ হৈছে বিশেষ কৰ সুবিধা, শিথিল শ্ৰম আইন আৰু ভাল আন্তঃগাঁথনি থকা শিল্প অঞ্চল — MNC আকৰ্ষণ কৰিবলৈ আৰু ৰপ্তানি বৃদ্ধি কৰিবলৈ সৃষ্টি কৰা হৈছে",
+          "SEZ কৃষি অঞ্চল য'ত কৃষকসকলে বিনামূলীয়া বীজ আৰু সাৰ পায়",
+          "SEZ ভাৰতৰ সীমান্তত সামৰিক অঞ্চল","SEZ অঞ্চল য'ত কেৱল ভাৰতীয় কোম্পানীয়েহে কাম কৰিব পাৰে"],exp:"ভাৰতে SEZ (2005 চনৰ পৰা) FDI আকৰ্ষণৰ বাবে সৃষ্টি কৰিলে। SEZত কৰ ছুটি, শুল্ক ৰেহাই আৰু প্ৰস্তুত আন্তঃগাঁথনি উপলব্ধ।"}
+  },
+  {
+    tag:"Impact of Globalisation",
+    context:"Globalisation has created both winners and losers in Indian society.",
+    en:{q:"💰 What has been the impact of globalisation on Indian workers in small industries?",
+    opts:["Many small industries (shoes, toys, textiles) collapsed because they could not compete with cheaper MNC imports — leading to job losses and lower wages",
+          "Small industry workers benefited greatly as MNCs hired them all at high wages",
+          "Globalisation had no effect on small industries in India",
+          "Small industries thrived as the government protected them from all foreign competition"],ans:0,
+    exp:"Globalisation has had mixed effects. Skilled workers in IT, services, and export industries gained. But unskilled workers in small industries (toys, textiles, electronics) faced competition from cheap Chinese imports and MNC products. Many factories closed. Workers get insecure contracts and lower wages. Fair trade movements emerged to address this."},
+    hi:{q:"💰 छोटे उद्योगों में भारतीय कामगारों पर वैश्वीकरण का क्या प्रभाव पड़ा?",
+    opts:["कई छोटे उद्योग (जूते, खिलौने, वस्त्र) बंद हो गए क्योंकि वे सस्ते MNC आयात से प्रतिस्पर्धा नहीं कर सके — जिससे नौकरियां गईं और मजदूरी घटी",
+          "छोटे उद्योग के कामगारों को बहुत फायदा हुआ क्योंकि MNCs ने सभी को उच्च वेतन पर काम पर रखा",
+          "वैश्वीकरण का भारत के छोटे उद्योगों पर कोई प्रभाव नहीं पड़ा",
+          "सरकार ने सभी विदेशी प्रतिस्पर्धा से बचाया इसलिए छोटे उद्योग फले-फूले"],exp:"वैश्वीकरण के मिश्रित प्रभाव हुए। IT और सेवा क्षेत्र के कुशल कामगारों को फायदा हुआ। लेकिन छोटे उद्योगों के कामगारों को सस्ते चीनी आयात से प्रतिस्पर्धा झेलनी पड़ी।"},
+    as:{q:"💰 সৰু উদ্যোগৰ ভাৰতীয় শ্ৰমিকসকলৰ ওপৰত বিশ্বায়নৰ প্ৰভাৱ কি হৈছে?",
+    opts:["বহু সৰু উদ্যোগ (জোতা, খেলনা, বস্ত্ৰ) বন্ধ হৈ গ'ল কাৰণ সিহঁতে সস্তা MNC আমদানিৰ সৈতে প্ৰতিযোগিতা কৰিব নোৱাৰিলে — চাকৰি হেৰোৱা আৰু মজুৰি হ্ৰাস পালে",
+          "সৰু উদ্যোগৰ শ্ৰমিকসকলে বহু লাভ পালে কাৰণ MNC এ সকলোকে উচ্চ বেতনত নিয়োগ কৰিলে",
+          "বিশ্বায়নৰ ভাৰতৰ সৰু উদ্যোগত কোনো প্ৰভাৱ নপৰিল",
+          "চৰকাৰে সকলো বিদেশী প্ৰতিযোগিতাৰ পৰা ৰক্ষা কৰাত সৰু উদ্যোগ সমৃদ্ধ হ'ল"],exp:"বিশ্বায়নৰ মিশ্ৰিত প্ৰভাৱ হ'ল। IT আৰু সেৱা খণ্ডৰ দক্ষ শ্ৰমিকে লাভ পালে। কিন্তু সৰু উদ্যোগৰ শ্ৰমিকসকলে সস্তা চীনা আমদানিৰ সৈতে প্ৰতিযোগিতাৰ সন্মুখীন হ'ল।"}
+  },
+  {
+    tag:"Fair Trade",
+    context:"Concerns about exploitation of farmers and workers in developing countries led to a new movement.",
+    en:{q:"🌐 What is the concept of 'Fair Trade' and how does it help farmers in developing countries?",
+    opts:["Fair trade ensures producers in developing countries get a fair minimum price for their goods — bypassing exploitative middlemen so farmers earn more",
+          "Fair trade means all countries must trade equal volumes of goods","Fair trade is a WTO policy that removes all trade tariffs",
+          "Fair trade means only rich countries can buy from poor countries at discount prices"],ans:0,
+    exp:"Fair trade is an alternative trade movement (popular for coffee, tea, cocoa, handicrafts). It guarantees farmers a minimum 'fair price' above market rate, safe working conditions, and environmental standards. Labels like 'Fairtrade' on products tell consumers their purchase supports poor farmers. It counters the race-to-the-bottom in globalisation."},
+    hi:{q:"🌐 'फेयर ट्रेड' की अवधारणा क्या है और यह विकासशील देशों के किसानों की कैसे मदद करती है?",
+    opts:["फेयर ट्रेड सुनिश्चित करता है कि विकासशील देशों के उत्पादकों को उनके माल का उचित न्यूनतम मूल्य मिले — शोषणकारी बिचौलियों को बायपास कर किसान अधिक कमाएं",
+          "फेयर ट्रेड का मतलब सभी देशों को समान मात्रा में व्यापार करना है","फेयर ट्रेड एक WTO नीति है जो सभी व्यापार शुल्क हटाती है",
+          "फेयर ट्रेड का मतलब केवल अमीर देश ही छूट पर गरीब देशों से खरीद सकते हैं"],exp:"फेयर ट्रेड (कॉफी, चाय, कोको, हस्तशिल्प के लिए लोकप्रिय) किसानों को न्यूनतम 'उचित मूल्य' की गारंटी देता है।"},
+    as:{q:"🌐 'ন্যায্য বাণিজ্য'ৰ ধাৰণা কি আৰু ই উন্নয়নশীল দেশৰ কৃষকসকলক কেনেকৈ সহায় কৰে?",
+    opts:["ন্যায্য বাণিজ্যে নিশ্চিত কৰে যে উন্নয়নশীল দেশৰ উৎপাদকসকলে তেওঁলোকৰ সামগ্ৰীৰ ন্যায্য নিম্নতম মূল্য পায় — শোষণমূলক মধ্যস্থতাকাৰী এৰাই কৃষকে অধিক উপাৰ্জন কৰে",
+          "ন্যায্য বাণিজ্যৰ অৰ্থ সকলো দেশে সমান পৰিমাণৰ সামগ্ৰী বাণিজ্য কৰিব লাগিব","ন্যায্য বাণিজ্য হৈছে সকলো বাণিজ্য শুল্ক বাতিল কৰা WTO নীতি",
+          "ন্যায্য বাণিজ্যৰ অৰ্থ কেৱল ধনী দেশেহে দৰিদ্ৰ দেশৰ পৰা ছাড়ত ক্ৰয় কৰিব পাৰে"],exp:"ন্যায্য বাণিজ্য (কফি, চাহ, কোকো, হস্তশিল্পৰ বাবে জনপ্ৰিয়) কৃষকসকলক ন্যূনতম 'ন্যায্য মূল্য'ৰ নিশ্চয়তা দিয়ে।"}
+  }
+];
+
+let current=0,score=0,answered=[],currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display=el.getAttribute('data-lang')===l?'':'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['en','hi','as'][i]===l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(current>=questions.length){showEnd();return;}
+  const q=questions[current];
+  const lang=q[currentLang]||q['en'];
+  const enQ=q['en'];
+  document.getElementById('qNum').textContent=current+1;
+  document.getElementById('scoreDisp').textContent=score;
+  document.getElementById('qLabel').textContent='Question '+(current+1)+' of 10';
+  document.getElementById('progBar').style.width=((current)/10*100)+'%';
+  document.getElementById('yearTagWrap').innerHTML=q.tag?
+    '<span class="year-tag">🏷️ '+q.tag+'</span>':'';
+  document.getElementById('qText').textContent=lang.q||enQ.q;
+  const ctx=document.getElementById('contextBox');
+  if(q.context){ctx.textContent=q.context;ctx.style.display='block';}
+  else{ctx.style.display='none';}
+  const opts=lang.opts||enQ.opts;
+  const optDiv=document.getElementById('options');
+  optDiv.innerHTML='';
+  opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';b.textContent=o;
+    b.onclick=()=>selectAnswer(i,enQ.ans,lang.exp||enQ.exp);
+    optDiv.appendChild(b);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').style.display='none';
+}
+
+function selectAnswer(chosen,correct,exp){
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[correct].classList.add('correct');
+  const fb=document.getElementById('feedback');
+  if(chosen===correct){
+    score+=10;document.getElementById('scoreDisp').textContent=score;
+    fb.textContent='✓ Correct! '+exp;fb.className='feedback ok show';
+  } else {
+    btns[chosen].classList.add('wrong');
+    fb.textContent='✗ Not quite. '+exp;fb.className='feedback no show';
+  }
+  answered.push({q:questions[current]['en'].q,correct:chosen===correct,exp});
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextQuestion(){current++;renderQuestion();}
+
+function showEnd(){
+  document.getElementById('questionCard').style.display='none';
+  document.getElementById('progBar').style.width='100%';
+  document.getElementById('finalScore').textContent=score;
+  let stars='';
+  if(score>=90)stars='⭐⭐⭐';
+  else if(score>=70)stars='⭐⭐';
+  else if(score>=40)stars='⭐';
+  document.getElementById('stars').textContent=stars||'☆☆☆';
+  const msgs={en:['Keep studying economics! 💰','Good understanding! 🌐','Economics expert! 🏆'],
+    hi:['अर्थशास्त्र पढ़ते रहें! 💰','अच्छी समझ! 🌐','अर्थशास्त्र विशेषज्ञ! 🏆'],
+    as:['অৰ্থনীতি পঢ়ি থাকক! 💰','ভাল বোধগম্যতা! 🌐','অৰ্থনীতি বিশেষজ্ঞ! 🏆']};
+  const mArr=msgs[currentLang]||msgs.en;
+  document.getElementById('endMsg').textContent=score>=90?mArr[2]:score>=70?mArr[1]:mArr[0];
+  let html='<h3>Review</h3>';
+  answered.forEach((a,i)=>{
+    html+='<div class="result-item '+(a.correct?'r-ok':'r-no')+'">'
+      +'<strong>Q'+(i+1)+':</strong> '+(a.correct?'✓':'✗')+' '+a.q
+      +'<br/><small>'+a.exp+'</small></div>';
+  });
+  document.getElementById('resultDetail').innerHTML=html;
+  const es=document.getElementById('endScreen');
+  es.style.display='block';es.classList.add('show');
+}
+
+function restartGame(){
+  current=0;score=0;answered=[];
+  document.getElementById('questionCard').style.display='block';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('endScreen').classList.remove('show');
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

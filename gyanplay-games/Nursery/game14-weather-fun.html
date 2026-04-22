@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather Fun ☀️🌧️ | GyanPlay Nursery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--green:#00C853;--pink:#FF4081;--gold:#FFB800;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    body{
+      font-family:'Nunito',sans-serif;
+      min-height:100vh;
+      background:linear-gradient(135deg,#E3F2FD,#BBDEFB);
+      color:#0D47A1;
+      display:flex;flex-direction:column;align-items:center;
+      padding:16px;animation:fadeIn .4s ease;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes floatUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+    @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+    @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+    @keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+
+    /* TOP BAR */
+    .top-bar{
+      width:100%;max-width:680px;
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:14px;flex-wrap:wrap;gap:8px;
+    }
+    .back-btn{
+      background:rgba(255,255,255,.5);border:none;
+      padding:9px 22px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
+      cursor:pointer;transition:background .2s;color:#0D47A1;
+    }
+    .back-btn:hover{background:rgba(255,255,255,.75)}
+    .subject-badge{
+      background:rgba(255,255,255,.5);padding:7px 20px;
+      border-radius:999px;font-size:.9rem;font-weight:800;
+      font-family:'Baloo 2',sans-serif;color:#0D47A1;
+    }
+    .lang-toggle{display:flex;gap:6px}
+    .lang-btn{
+      background:rgba(255,255,255,.35);border:none;
+      padding:7px 14px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;
+      cursor:pointer;transition:all .2s;color:#0D47A1;
+    }
+    .lang-btn.active{background:#fff;color:#1565C0}
+    .lang-btn:hover:not(.active){background:rgba(255,255,255,.6)}
+
+    /* CARD */
+    .game-card{
+      background:rgba(255,255,255,.5);
+      backdrop-filter:blur(14px);
+      border:2.5px solid rgba(255,255,255,.7);
+      border-radius:28px;padding:22px 20px;
+      width:100%;max-width:680px;
+      box-shadow:0 12px 50px rgba(13,71,161,.1);
+    }
+    .game-title{
+      font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;
+      text-align:center;margin-bottom:6px;color:#0D47A1;
+    }
+    .score-bar{display:flex;justify-content:space-between;margin:6px 0;font-size:1rem;font-weight:800;color:#0D47A1;}
+    .prog-wrap{background:rgba(255,255,255,.4);border-radius:999px;height:12px;margin-bottom:16px}
+    .prog-fill{
+      height:12px;border-radius:999px;
+      background:linear-gradient(90deg,#90CAF9,#1976D2);
+      transition:width .4s ease;
+    }
+
+    /* WEATHER DISPLAY */
+    .weather-box{
+      background:rgba(255,255,255,.42);
+      border:2px solid rgba(255,255,255,.6);
+      border-radius:24px;padding:24px 18px;
+      margin-bottom:16px;text-align:center;
+    }
+    .weather-emoji{
+      font-size:7rem;line-height:1;
+      display:block;margin-bottom:8px;
+      animation:floatUp 2.4s ease infinite;
+      filter:drop-shadow(0 6px 20px rgba(13,71,161,.15));
+    }
+    .weather-prompt{
+      font-family:'Baloo 2',sans-serif;font-size:1.55rem;font-weight:800;
+      color:#0D47A1;
+    }
+
+    /* ANSWER BUTTONS */
+    .answer-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);
+      gap:12px;margin-bottom:12px;
+    }
+    .ans-btn{
+      background:rgba(255,255,255,.45);
+      border:3px solid rgba(255,255,255,.6);
+      border-radius:22px;padding:14px 8px;
+      font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;
+      cursor:pointer;text-align:center;transition:all .2s;
+      min-height:90px;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:5px;
+      color:#0D47A1;
+    }
+    .ans-btn span.be{font-size:2.3rem;display:block}
+    .ans-btn:hover:not(:disabled){background:rgba(255,255,255,.75);transform:scale(1.04)}
+    .ans-btn.correct{background:rgba(0,200,83,.3);border-color:#00C853;color:#1B5E20;animation:pop .4s ease}
+    .ans-btn.wrong{background:rgba(255,64,129,.22);border-color:#FF4081;animation:shake .4s ease}
+    .ans-btn:disabled{cursor:default}
+
+    /* FEEDBACK */
+    .feedback{
+      font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;
+      text-align:center;min-height:1.8rem;margin:6px 0 4px;
+    }
+    .feedback.correct{color:#2E7D32}
+    .feedback.wrong{color:#C62828}
+
+    /* FUN FACT */
+    .fun-fact{
+      font-size:1.05rem;border-radius:16px;padding:10px 14px;
+      margin-bottom:10px;line-height:1.55;display:none;
+      text-align:center;font-weight:700;
+      color:#0D47A1;background:rgba(255,255,255,.38);
+    }
+    .fun-fact.show{display:block}
+
+    /* NEXT BTN */
+    .next-btn{
+      color:#fff;background:#1976D2;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.8rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;display:none;transition:transform .15s;
+      width:100%;margin-top:4px;
+    }
+    .next-btn:hover{transform:scale(1.04)}
+
+    /* OVERLAY */
+    .overlay{
+      display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,.55);backdrop-filter:blur(10px);
+      align-items:center;justify-content:center;z-index:100;padding:1.5rem;
+    }
+    .overlay.show{display:flex}
+    .result-box{
+      background:linear-gradient(135deg,#E3F2FD,#BBDEFB);
+      border:3px solid rgba(25,118,210,.3);
+      border-radius:28px;padding:2.5rem 2rem;text-align:center;
+      max-width:400px;width:100%;animation:popIn .35s ease;
+    }
+    .res-emoji{font-size:4rem;margin-bottom:.5rem}
+    .res-title{font-family:'Baloo 2',sans-serif;font-size:2.2rem;font-weight:800;margin-bottom:.4rem;color:#0D47A1;}
+    .res-score{font-size:1.1rem;margin-bottom:.8rem;font-weight:700;color:#1565C0;}
+    .res-stars{font-size:3rem;margin-bottom:1.2rem;letter-spacing:6px}
+    .play-again-btn{
+      color:#fff;background:#1976D2;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.85rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;transition:transform .15s;
+    }
+    .play-again-btn:hover{transform:scale(1.05)}
+
+    [data-lang]{display:none}
+    [data-lang="en"]{display:inline}
+
+    @media(max-width:480px){
+      .weather-emoji{font-size:5.5rem}
+      .ans-btn{font-size:1.05rem;min-height:75px}
+      .ans-btn span.be{font-size:1.9rem}
+      .game-title{font-size:1.65rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi">वापस</span><span data-lang="as">পাছে</span></button>
+  <div class="subject-badge">🌤️ <span data-lang="en">Science</span><span data-lang="hi">विज्ञान</span><span data-lang="as">বিজ্ঞান</span></div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<!-- GAME CARD -->
+<div class="game-card">
+  <div class="game-title">
+    <span data-lang="en">Weather Fun ☀️🌧️</span>
+    <span data-lang="hi">मौसम की मस्ती ☀️🌧️</span>
+    <span data-lang="as">বতৰৰ মজা ☀️🌧️</span>
+  </div>
+  <div class="score-bar">
+    <span><span data-lang="en">Score</span><span data-lang="hi">स्कोर</span><span data-lang="as">স্কোৰ</span>: <b id="score-val">0</b> / 80</span>
+    <span><span data-lang="en">Round</span><span data-lang="hi">दौर</span><span data-lang="as">ৰাউণ্ড</span> <b id="round-num">1</b> / 8</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+
+  <div class="weather-box">
+    <span class="weather-emoji" id="weather-emoji"></span>
+    <div class="weather-prompt">
+      <span data-lang="en">What weather is this? 🤔</span>
+      <span data-lang="hi">यह कौन सा मौसम है? 🤔</span>
+      <span data-lang="as">এইটো কেনে বতৰ? 🤔</span>
+    </div>
+  </div>
+
+  <div class="answer-grid" id="answer-grid"></div>
+
+  <div class="feedback" id="feedback"></div>
+  <div class="fun-fact" id="fun-fact"></div>
+  <button class="next-btn" id="next-btn" onclick="nextRound()">
+    <span data-lang="en">Next →</span>
+    <span data-lang="hi">अगला →</span>
+    <span data-lang="as">পৰৱৰ্তী →</span>
+  </button>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="result-box">
+    <div class="res-emoji" id="res-emoji"></div>
+    <div class="res-title" id="res-title"></div>
+    <div class="res-score" id="res-score"></div>
+    <div class="res-stars" id="res-stars"></div>
+    <button class="play-again-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again!</span>
+      <span data-lang="hi">🔄 फिर खेलें!</span>
+      <span data-lang="as">🔄 আকৌ খেলক!</span>
+    </button>
+  </div>
+</div>
+
+<script>
+let currentLang = 'en';
+
+function setLang(l) {
+  currentLang = l;
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? 'inline' : 'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', ['en','hi','as'][i] === l);
+  });
+}
+
+const weathers = [
+  {
+    emoji: '☀️',
+    answer: 'sunny',
+    label: { en: 'Sunny', hi: 'धूप वाला', as: 'ৰ\'দালি' },
+    fact: {
+      en: '☀️ The sun shines bright on a sunny day! A great time to play outside!',
+      hi: '☀️ धूप वाले दिन सूरज चमकता है! बाहर खेलने का यह सबसे अच्छा समय है!',
+      as: '☀️ ৰ\'দালি দিনত সূৰ্য উজ্জ্বলভাৱে জিলিকে! বাহিৰত খেলাৰ এয়া সৰ্বোত্তম সময়!'
+    },
+    distractors: ['rainy', 'cloudy']
+  },
+  {
+    emoji: '🌧️',
+    answer: 'rainy',
+    label: { en: 'Rainy', hi: 'बारिश', as: 'বৰষুণীয়া' },
+    fact: {
+      en: '🌧️ Rain waters the plants and fills rivers! Jump in puddles with your boots!',
+      hi: '🌧️ बारिश पौधों को पानी देती है और नदियाँ भरती है! बूटों से पानी में कूदो!',
+      as: '🌧️ বৰষুণে গছ-গছনিত পানী দিয়ে আৰু নদী ভৰাই তোলে! বুটজোতাৰে গোটত জঁপিয়াওঁচোন!'
+    },
+    distractors: ['sunny', 'stormy']
+  },
+  {
+    emoji: '❄️',
+    answer: 'snowy',
+    label: { en: 'Snowy', hi: 'बर्फ़ीला', as: 'বৰফীয়া' },
+    fact: {
+      en: '❄️ Snow falls as tiny ice crystals! You can make a snowman in the snow!',
+      hi: '❄️ बर्फ़ छोटे बर्फ़ के टुकड़ों के रूप में गिरती है! बर्फ़ में स्नोमैन बना सकते हो!',
+      as: '❄️ বৰফ সৰু সৰু বৰফ স্ফটিক হিচাপে পৰে! বৰফত স্নোমেন বনাব পাৰা!'
+    },
+    distractors: ['rainy', 'foggy']
+  },
+  {
+    emoji: '🌈',
+    answer: 'rainbow',
+    label: { en: 'Rainbow', hi: 'इंद्रधनुष', as: 'ৰামধেনু' },
+    fact: {
+      en: '🌈 A rainbow has 7 colours! It appears after rain when the sun shines!',
+      hi: '🌈 इंद्रधनुष में 7 रंग होते हैं! बारिश के बाद धूप निकलने पर दिखता है!',
+      as: '🌈 ৰামধেনুত ৭টা ৰং থাকে! বৰষুণৰ পিছত সূৰ্য উঠিলে দেখা যায়!'
+    },
+    distractors: ['sunny', 'cloudy']
+  },
+  {
+    emoji: '⛅',
+    answer: 'cloudy',
+    label: { en: 'Cloudy', hi: 'बादल', as: 'দেৱতাপূৰ্ণ' },
+    fact: {
+      en: '⛅ Clouds are made of tiny water droplets! They float across the sky!',
+      hi: '⛅ बादल छोटी-छोटी पानी की बूँदों से बने होते हैं! वे आसमान में तैरते हैं!',
+      as: '⛅ ডাৱৰ সৰু সৰু পানীৰ টোপালেৰে তৈয়াৰ! সেইবোৰ আকাশত ভাহি ফুৰে!'
+    },
+    distractors: ['sunny', 'foggy']
+  },
+  {
+    emoji: '🌪️',
+    answer: 'windy',
+    label: { en: 'Windy', hi: 'तूफ़ानी हवा', as: 'বতাহী' },
+    fact: {
+      en: '🌪️ Wind moves air from one place to another! It can fly kites and spin windmills!',
+      hi: '🌪️ हवा एक जगह से दूसरी जगह जाती है! यह पतंग उड़ा सकती है और चक्की घुमा सकती है!',
+      as: '🌪️ বতাহে বায়ু এঠাইৰ পৰা আনঠাইলৈ লৈ যায়! ই ঘুড়ি উড়াব পাৰে আৰু পবনকল ঘুৰাব পাৰে!'
+    },
+    distractors: ['stormy', 'cloudy']
+  },
+  {
+    emoji: '🌫️',
+    answer: 'foggy',
+    label: { en: 'Foggy', hi: 'कोहरा', as: 'কুৱলীময়' },
+    fact: {
+      en: '🌫️ Fog is like a cloud on the ground! It makes everything look misty and white!',
+      hi: '🌫️ कोहरा ज़मीन पर बादल की तरह है! यह सब कुछ धुंधला और सफ़ेद दिखाता है!',
+      as: '🌫️ কুৱলী মাটিত থকা ডাৱৰৰ দৰে! ই সকলো কথা কুৱলীয়া আৰু বগা দেখায়!'
+    },
+    distractors: ['cloudy', 'snowy']
+  },
+  {
+    emoji: '⛈️',
+    answer: 'stormy',
+    label: { en: 'Stormy', hi: 'तूफ़ान', as: 'ধুমুহাময়' },
+    fact: {
+      en: '⛈️ A storm has thunder, lightning and heavy rain! Stay inside when it storms!',
+      hi: '⛈️ तूफ़ान में गड़गड़ाहट, बिजली और तेज़ बारिश होती है! तूफ़ान में घर के अंदर रहो!',
+      as: '⛈️ ধুমুহাত বজ্ৰপাত, বিজুলী আৰু ভাৰী বৰষুণ হয়! ধুমুহাৰ সময়ত ঘৰৰ ভিতৰত থাকা!'
+    },
+    distractors: ['rainy', 'windy']
+  }
+];
+
+// Build a lookup for quick access
+const weatherMap = {};
+weathers.forEach(w => { weatherMap[w.answer] = w; });
+
+let order = [], ri = 0, score = 0, answered = false;
+
+function shuffle(a) { return [...a].sort(() => Math.random() - .5); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function startGame() {
+  order = shuffle([...Array(weathers.length).keys()]);
+  ri = 0; score = 0;
+  document.getElementById('overlay').classList.remove('show');
+  loadRound();
+}
+
+function loadRound() {
+  const w = weathers[order[ri]];
+  answered = false;
+
+  document.getElementById('prog-fill').style.width = (ri / weathers.length * 100) + '%';
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('round-num').textContent = ri + 1;
+  document.getElementById('weather-emoji').textContent = w.emoji;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('fun-fact').classList.remove('show');
+  document.getElementById('fun-fact').textContent = '';
+  document.getElementById('next-btn').style.display = 'none';
+
+  // Build 3 options: correct + 2 distractors from the predefined list
+  const opts = shuffle([w, ...w.distractors.map(k => weatherMap[k])]);
+  const grid = document.getElementById('answer-grid');
+  grid.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'ans-btn';
+    btn.dataset.key = opt.answer;
+    btn.innerHTML = `<span class="be">${opt.emoji}</span><span>${opt.label[currentLang] || opt.label['en']}</span>`;
+    btn.onclick = () => handleAnswer(opt.answer, w.answer, btn, w);
+    grid.appendChild(btn);
+  });
+}
+
+function handleAnswer(chosen, correct, clickedBtn, w) {
+  if (answered) return;
+  answered = true;
+
+  document.querySelectorAll('.ans-btn').forEach(b => b.disabled = true);
+
+  const isCorrect = chosen === correct;
+  if (isCorrect) {
+    clickedBtn.classList.add('correct');
+    score += 10;
+  } else {
+    clickedBtn.classList.add('wrong');
+    document.querySelectorAll('.ans-btn').forEach(b => {
+      if (b.dataset.key === correct) b.classList.add('correct');
+    });
+  }
+
+  const fb = document.getElementById('feedback');
+  if (isCorrect) {
+    const msgs = {
+      en: ['Correct! Great weather watcher! ✓', 'You got it! ✓', 'Amazing! ✓'],
+      hi: ['सही! बहुत अच्छा! ✓', 'सही जवाब! ✓', 'शानदार! ✓'],
+      as: ['শুদ্ধ! অসাধাৰণ! ✓', 'একদম ঠিক! ✓', 'চমৎকাৰ! ✓']
+    };
+    fb.textContent = pick(msgs[currentLang] || msgs['en']);
+    fb.className = 'feedback correct';
+  } else {
+    const msgs = {
+      en: ['Oops! Not quite! ✗', 'Try again next time! ✗'],
+      hi: ['उफ़! सही नहीं! ✗', 'अगली बार कोशिश करो! ✗'],
+      as: ['উফ! ঠিক নহয়! ✗', 'পৰৱৰ্তী বাৰ চেষ্টা কৰা! ✗']
+    };
+    fb.textContent = pick(msgs[currentLang] || msgs['en']);
+    fb.className = 'feedback wrong';
+  }
+
+  const ff = document.getElementById('fun-fact');
+  ff.textContent = w.fact[currentLang] || w.fact['en'];
+  ff.classList.add('show');
+
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextRound() {
+  ri++;
+  if (ri >= weathers.length) { showResult(); return; }
+  loadRound();
+}
+
+function showResult() {
+  document.getElementById('prog-fill').style.width = '100%';
+  const pct = (score / (weathers.length * 10)) * 100;
+  let emoji = '😊', title = { en: 'Good Try!', hi: 'अच्छी कोशिश!', as: 'ভাল চেষ্টা!' };
+  if (pct >= 90) { emoji = '🌈'; title = { en: 'Weather Expert!', hi: 'मौसम विशेषज्ञ!', as: 'বতৰ বিশেষজ্ঞ!' }; }
+  else if (pct >= 70) { emoji = '⭐'; title = { en: 'Well Done!', hi: 'बहुत अच्छा!', as: 'বহুত ভাল!' }; }
+  else if (pct >= 40) { emoji = '👍'; title = { en: 'Good Job!', hi: 'शाबाश!', as: 'ভাল কাম!' }; }
+
+  const stars = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : pct >= 40 ? '⭐' : '';
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-title').textContent = title[currentLang] || title['en'];
+  document.getElementById('res-score').textContent = 'Score: ' + score + ' / ' + (weathers.length * 10);
+  document.getElementById('res-stars').textContent = stars;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function restartGame() { startGame(); }
+startGame();
+</script>
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Control & Reproduction | GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;
+    --pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;
+    --card:#1a1740;--text:#E8E4FF;--muted:#9B97CC;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    font-family:'Nunito',sans-serif;color:var(--text);}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .fadeIn{animation:fadeIn .45s ease both;}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;
+    padding:14px 20px;background:rgba(15,12,41,.6);backdrop-filter:blur(8px);
+    position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,.07);}
+  .back-btn{background:none;border:1px solid rgba(255,255,255,.2);color:var(--text);
+    padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-size:.85rem;transition:all .2s;}
+  .back-btn:hover{background:rgba(255,255,255,.1);}
+  .subject-badge{background:var(--green);color:#fff;padding:4px 14px;
+    border-radius:20px;font-family:'Baloo 2',sans-serif;font-size:.8rem;font-weight:700;}
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{background:none;border:1px solid rgba(255,255,255,.2);color:var(--muted);
+    padding:4px 10px;border-radius:14px;cursor:pointer;font-size:.8rem;
+    font-family:'Nunito',sans-serif;transition:all .2s;}
+  .lang-btn.active{background:var(--purple);border-color:var(--purple);color:#fff;}
+
+  .container{max-width:760px;margin:0 auto;padding:24px 16px 40px;}
+  .game-title{font-family:'Baloo 2',sans-serif;font-size:1.7rem;font-weight:800;
+    text-align:center;margin-bottom:4px;color:var(--gold);}
+  .game-subtitle{text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:20px;}
+
+  .progress-row{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  .progress-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;}
+  .progress-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--pink),var(--purple));
+    transition:width .4s ease;}
+  .q-count{font-size:.82rem;color:var(--muted);white-space:nowrap;}
+
+  .card{background:var(--card);border-radius:18px;padding:24px;
+    border:1px solid rgba(255,255,255,.07);margin-bottom:16px;}
+  .q-number{font-size:.78rem;color:var(--pink);font-weight:700;
+    text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+  .q-emoji{font-size:1.6rem;margin-bottom:8px;display:block;}
+  .q-text{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:600;
+    line-height:1.5;margin-bottom:4px;}
+
+  .options{display:grid;gap:10px;margin-top:14px;}
+  .opt-btn{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);
+    color:var(--text);padding:12px 16px;border-radius:12px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.95rem;text-align:left;
+    transition:all .2s;line-height:1.4;}
+  .opt-btn:hover:not(:disabled){background:rgba(255,64,129,.15);border-color:var(--pink);}
+  .opt-btn.correct{background:rgba(0,200,83,.15);border-color:var(--green);color:#fff;}
+  .opt-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);}
+  .opt-btn:disabled{cursor:default;}
+
+  .feedback{border-radius:12px;padding:14px 16px;margin-top:12px;font-size:.9rem;
+    line-height:1.5;display:none;}
+  .feedback.show{display:block;animation:fadeIn .3s ease;}
+  .feedback.correct{background:rgba(0,200,83,.12);border:1px solid rgba(0,200,83,.3);color:#a8ffd0;}
+  .feedback.wrong{background:rgba(255,64,129,.12);border:1px solid rgba(255,64,129,.3);color:#ffb3c8;}
+  .feedback-icon{font-size:1.1rem;margin-right:6px;}
+
+  .next-btn{display:none;width:100%;padding:14px;border:none;border-radius:14px;
+    background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;
+    font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;
+    cursor:pointer;margin-top:14px;transition:opacity .2s;}
+  .next-btn:hover{opacity:.88;}
+  .next-btn.visible{display:block;}
+
+  .end-screen{display:none;text-align:center;}
+  .end-screen.show{display:block;animation:fadeIn .5s ease;}
+  .score-big{font-family:'Baloo 2',sans-serif;font-size:3.2rem;font-weight:800;color:var(--gold);}
+  .score-label{color:var(--muted);margin-bottom:18px;}
+  .stars{font-size:2.4rem;margin:10px 0 20px;}
+  .result-msg{font-size:1rem;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+  .play-again-btn{background:linear-gradient(135deg,var(--saffron),var(--gold));
+    border:none;color:#fff;padding:14px 36px;border-radius:14px;
+    font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;
+    cursor:pointer;transition:opacity .2s;}
+  .play-again-btn:hover{opacity:.88;}
+  .score-breakdown{background:var(--card);border-radius:14px;padding:16px;margin:20px 0;
+    border:1px solid rgba(255,255,255,.07);}
+  .breakdown-row{display:flex;justify-content:space-between;padding:6px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);font-size:.9rem;}
+  .breakdown-row:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="subject-badge">Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+    <button class="lang-btn" onclick="setLang('hi',this)">हि</button>
+    <button class="lang-btn" onclick="setLang('bn',this)">অ</button>
+  </div>
+</div>
+
+<div class="container">
+  <div id="quiz-section" class="fadeIn">
+    <div class="game-title">
+      <span data-lang-en="🧠 Control & Coordination + Reproduction" data-lang-hi="🧠 नियंत्रण और समन्वय + जनन" data-lang-bn="🧠 নিয়ন্ত্রণ ও সমন্বয় + জনন">🧠 Control & Coordination + Reproduction</span>
+    </div>
+    <div class="game-subtitle">
+      <span data-lang-en="Class 10 Science · Ch 7 & 8 · 10 Questions" data-lang-hi="कक्षा 10 विज्ञान · अध्याय 7 & 8 · 10 प्रश्न" data-lang-bn="দশম শ্রেণী বিজ্ঞান · অধ্যায় 7 & 8 · 10 প্রশ্ন">Class 10 Science · Ch 7 & 8 · 10 Questions</span>
+    </div>
+
+    <div class="progress-row">
+      <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+      <div class="q-count" id="q-count">0 / 10</div>
+    </div>
+
+    <div class="card fadeIn" id="question-card">
+      <div class="q-number" id="q-number">Question 1 of 10</div>
+      <div class="q-emoji" id="q-emoji"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+      <span data-lang-en="Next Question →" data-lang-hi="अगला प्रश्न →" data-lang-bn="পরবর্তী প্রশ্ন →">Next Question →</span>
+    </button>
+  </div>
+
+  <div class="end-screen" id="end-screen">
+    <div class="card">
+      <div class="score-big" id="final-score">0/100</div>
+      <div class="score-label" data-lang-en="Your Score" data-lang-hi="आपका स्कोर" data-lang-bn="আপনার স্কোর">Your Score</div>
+      <div class="stars" id="stars">☆☆☆</div>
+      <div class="result-msg" id="result-msg"></div>
+      <div class="score-breakdown">
+        <div class="breakdown-row"><span data-lang-en="Correct" data-lang-hi="सही" data-lang-bn="সঠিক">Correct</span><span id="bd-correct" style="color:var(--green)"></span></div>
+        <div class="breakdown-row"><span data-lang-en="Wrong" data-lang-hi="गलत" data-lang-bn="ভুল">Wrong</span><span id="bd-wrong" style="color:var(--pink)"></span></div>
+        <div class="breakdown-row"><span data-lang-en="Score" data-lang-hi="स्कोर" data-lang-bn="স্কোর">Score</span><span id="bd-score" style="color:var(--gold)"></span></div>
+      </div>
+      <button class="play-again-btn" onclick="restartGame()">
+        <span data-lang-en="🔄 Play Again" data-lang-hi="🔄 फिर खेलें" data-lang-bn="🔄 আবার খেলুন">🔄 Play Again</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    emoji:"🧠",
+    en:{q:"What is the basic structural and functional unit of the nervous system?",
+        opts:["Brain cell","Nephron","Neuron","Synapse"],
+        ans:2,
+        exp:"A neuron (nerve cell) is the basic unit of the nervous system. It has a cell body (cyton), dendrites that receive signals, and an axon that transmits impulses to other neurons or effectors. Neurons communicate across synapses via neurotransmitters."},
+    hi:{q:"तंत्रिका तंत्र की संरचनात्मक और कार्यात्मक इकाई क्या है?",
+        opts:["मस्तिष्क कोशिका","वृक्काणु","तंत्रिका कोशिका (न्यूरॉन)","सिनैप्स"],
+        ans:2,
+        exp:"न्यूरॉन तंत्रिका तंत्र की मूल इकाई है। इसमें कोशिका काय, डेंड्राइट और एक्सॉन होते हैं। न्यूरॉन सिनैप्स के माध्यम से संचार करते हैं।"},
+    bn:{q:"স্নায়ুতন্ত্রের কাঠামোগত ও কার্যকরী একক কী?",
+        opts:["মস্তিষ্ক কোষ","নেফ্রন","নিউরন","সিন্যাপস"],
+        ans:2,
+        exp:"নিউরন স্নায়ুতন্ত্রের মূল একক। এতে কোষ দেহ, ডেনড্রাইট এবং অ্যাক্সন থাকে। নিউরনগুলো সিন্যাপসের মাধ্যমে যোগাযোগ করে।"}
+  },
+  {
+    emoji:"🔬",
+    en:{q:"In a reflex arc, what is the correct order of components through which a nerve impulse travels?",
+        opts:["Receptor → Motor neuron → Spinal cord → Sensory neuron → Effector",
+              "Receptor → Sensory neuron → Spinal cord → Motor neuron → Effector",
+              "Effector → Motor neuron → Brain → Sensory neuron → Receptor",
+              "Receptor → Brain → Spinal cord → Effector"],
+        ans:1,
+        exp:"A reflex arc: Receptor (detects stimulus) → Sensory neuron → Spinal cord (integration) → Motor neuron → Effector (muscle/gland). Reflex actions bypass the brain, enabling rapid involuntary responses to protect the body."},
+    hi:{q:"प्रतिवर्त चाप में तंत्रिका आवेग किस क्रम में यात्रा करता है?",
+        opts:["ग्राही → चालक तंत्रिका → मेरुरज्जु → संवेदी तंत्रिका → प्रभावक",
+              "ग्राही → संवेदी तंत्रिका → मेरुरज्जु → चालक तंत्रिका → प्रभावक",
+              "प्रभावक → चालक तंत्रिका → मस्तिष्क → संवेदी तंत्रिका → ग्राही",
+              "ग्राही → मस्तिष्क → मेरुरज्जु → प्रभावक"],
+        ans:1,
+        exp:"प्रतिवर्त चाप: ग्राही → संवेदी तंत्रिका → मेरुरज्जु → चालक तंत्रिका → प्रभावक। प्रतिवर्त क्रियाएँ मस्तिष्क को बाईपास करती हैं।"},
+    bn:{q:"প্রতিবর্ত চাপে স্নায়ু আবেগ কোন ক্রমে যায়?",
+        opts:["গ্রাহক → চালক নিউরন → মেরুরজ্জু → সংবেদী নিউরন → কার্যকর অঙ্গ",
+              "গ্রাহক → সংবেদী নিউরন → মেরুরজ্জু → চালক নিউরন → কার্যকর অঙ্গ",
+              "কার্যকর অঙ্গ → চালক নিউরন → মস্তিষ্ক → সংবেদী নিউরন → গ্রাহক",
+              "গ্রাহক → মস্তিষ্ক → মেরুরজ্জু → কার্যকর অঙ্গ"],
+        ans:1,
+        exp:"প্রতিবর্ত চাপ: গ্রাহক → সংবেদী নিউরন → মেরুরজ্জু → চালক নিউরন → কার্যকর অঙ্গ। প্রতিবর্ত ক্রিয়া মস্তিষ্ককে বাইপাস করে।"}
+  },
+  {
+    emoji:"🧠",
+    en:{q:"Which part of the brain controls involuntary actions like heartbeat, breathing, and blood pressure?",
+        opts:["Cerebrum","Cerebellum","Medulla oblongata","Hypothalamus"],
+        ans:2,
+        exp:"The medulla oblongata (part of the brain stem) controls vital involuntary functions: heartbeat, breathing, blood pressure, and swallowing. The cerebrum handles thinking/memory; the cerebellum controls balance and coordination."},
+    hi:{q:"मस्तिष्क का कौन सा भाग हृदय स्पंदन, श्वसन और रक्तचाप जैसी अनैच्छिक क्रियाओं को नियंत्रित करता है?",
+        opts:["प्रमस्तिष्क","अनुमस्तिष्क","मेडुला ऑब्लॉन्गेटा","हाइपोथैलेमस"],
+        ans:2,
+        exp:"मेडुला ऑब्लॉन्गेटा हृदय स्पंदन, श्वसन और रक्तचाप को नियंत्रित करता है। प्रमस्तिष्क सोचने और स्मृति के लिए, अनुमस्तिष्क संतुलन के लिए जिम्मेदार है।"},
+    bn:{q:"মস্তিষ্কের কোন অংশ হৃদস্পন্দন, শ্বাসক্রিয়া ও রক্তচাপের মতো অনৈচ্ছিক কার্যক্রম নিয়ন্ত্রণ করে?",
+        opts:["সেরিব্রাম","সেরিবেলাম","মেডুলা অবলংগাটা","হাইপোথ্যালামাস"],
+        ans:2,
+        exp:"মেডুলা অবলংগাটা হৃদস্পন্দন, শ্বাসক্রিয়া ও রক্তচাপ নিয়ন্ত্রণ করে। সেরিব্রাম চিন্তা ও স্মৃতির জন্য; সেরিবেলাম ভারসাম্যের জন্য।"}
+  },
+  {
+    emoji:"🌸",
+    en:{q:"Which hormone is secreted by the pancreas to lower blood sugar levels?",
+        opts:["Adrenaline","Thyroxine","Insulin","Growth hormone"],
+        ans:2,
+        exp:"Insulin is secreted by beta cells of the islets of Langerhans in the pancreas. It promotes glucose uptake by cells, lowering blood sugar. Glucagon (also from pancreas) raises blood sugar. Diabetes mellitus results from insufficient insulin."},
+    hi:{q:"रक्त में शर्करा का स्तर कम करने के लिए अग्न्याशय से कौन सा हार्मोन स्रावित होता है?",
+        opts:["एड्रिनेलिन","थायरॉक्सिन","इंसुलिन","वृद्धि हार्मोन"],
+        ans:2,
+        exp:"इंसुलिन अग्न्याशय की लैंगरहैंस की द्वीपिकाओं की बीटा कोशिकाओं से स्रावित होता है। यह रक्त शर्करा को कम करता है। मधुमेह इंसुलिन की कमी से होता है।"},
+    bn:{q:"রক্তে শর্করার মাত্রা কমাতে অগ্ন্যাশয় থেকে কোন হরমোন নিঃসৃত হয়?",
+        opts:["অ্যাড্রিনালিন","থাইরক্সিন","ইনসুলিন","বৃদ্ধি হরমোন"],
+        ans:2,
+        exp:"ইনসুলিন অগ্ন্যাশয়ের ল্যাঙ্গারহ্যান্স দ্বীপপুঞ্জের বিটা কোষ থেকে নিঃসৃত হয়। এটি রক্তে শর্করা কমায়। ডায়াবেটিস ইনসুলিনের অভাবে হয়।"}
+  },
+  {
+    emoji:"🌸",
+    en:{q:"Phototropism in plants is a movement in response to light. Which plant hormone is primarily responsible for this bending movement?",
+        opts:["Gibberellin","Cytokinin","Auxin","Abscisic acid"],
+        ans:2,
+        exp:"Auxin (indole-3-acetic acid) causes phototropism. When light shines from one side, auxin migrates to the shaded side, causing more elongation there — bending the shoot toward light. This is positive phototropism. Roots show negative phototropism."},
+    hi:{q:"प्रकाशानुवर्तन में पौधा प्रकाश की ओर झुकता है। यह किस पादप हार्मोन के कारण होता है?",
+        opts:["जिबरेलिन","साइटोकाइनिन","ऑक्सिन","एब्सिसिक एसिड"],
+        ans:2,
+        exp:"ऑक्सिन प्रकाशानुवर्तन का कारण है। प्रकाश आने पर ऑक्सिन छायावाली तरफ जाता है, जिससे वहाँ अधिक वृद्धि होती है और तना प्रकाश की ओर झुक जाता है।"},
+    bn:{q:"উদ্ভিদে আলোকবর্তিতায় (phototropism) মূলত কোন উদ্ভিদ হরমোন দায়ী?",
+        opts:["জিব্বেরেলিন","সাইটোকাইনিন","অক্সিন","অ্যাবসিসিক অ্যাসিড"],
+        ans:2,
+        exp:"অক্সিন আলোকবর্তিতার কারণ। আলো একদিক থেকে এলে অক্সিন ছায়ার দিকে চলে যায়, সেখানে বেশি বৃদ্ধি ঘটে এবং কাণ্ড আলোর দিকে বাঁকে।"}
+  },
+  {
+    emoji:"🔬",
+    en:{q:"Which type of asexual reproduction involves breaking of the parent body into two or more pieces, each growing into a new organism? (e.g. Spirogyra)",
+        opts:["Budding","Binary fission","Fragmentation","Spore formation"],
+        ans:2,
+        exp:"Fragmentation: the parent body breaks into fragments (e.g., Spirogyra algae). Each fragment grows into a complete new organism. Binary fission (Amoeba, Bacteria) splits one cell into two. Budding (Hydra, yeast) produces a small outgrowth."},
+    hi:{q:"अलैंगिक जनन के किस प्रकार में जनक शरीर दो या अधिक टुकड़ों में टूट जाता है, प्रत्येक से नया जीव बनता है? (जैसे स्पाइरोगायरा)",
+        opts:["मुकुलन","द्विखंडन","खंडन","बीजाणु निर्माण"],
+        ans:2,
+        exp:"खंडन में जनक का शरीर टुकड़ों में टूट जाता है (जैसे स्पाइरोगायरा)। प्रत्येक टुकड़े से नया जीव बनता है। द्विखंडन में एक कोशिका दो में विभाजित होती है।"},
+    bn:{q:"কোন ধরনের অযৌন জননে জনক দেহ দুই বা তার বেশি টুকরোয় ভেঙে প্রতিটি থেকে নতুন জীব হয়? (যেমন স্পাইরোগাইরা)",
+        opts:["মুকুলোদ্গম","দ্বিবিভাজন","খণ্ডায়ন","রেণু সৃষ্টি"],
+        ans:2,
+        exp:"খণ্ডায়নে জনক দেহ খণ্ডে ভাগ হয় (যেমন স্পাইরোগাইরা), প্রতিটি খণ্ড থেকে নতুন জীব জন্মায়। দ্বিবিভাজনে এককোষী জীব দুটিতে বিভক্ত হয়।"}
+  },
+  {
+    emoji:"🌸",
+    en:{q:"In flowering plants, the transfer of pollen from the anther to the stigma of the same or another flower of the same species is called:",
+        opts:["Fertilisation","Germination","Pollination","Dispersal"],
+        ans:2,
+        exp:"Pollination is the transfer of pollen grains from the anther (male part of stamen) to the stigma (top of pistil). Self-pollination is transfer within the same flower; cross-pollination is transfer between flowers of the same species. Fertilisation follows when pollen tube reaches the ovule."},
+    hi:{q:"फूल वाले पौधों में, परागकोश से वर्तिकाग्र तक परागकण के स्थानान्तरण को क्या कहते हैं?",
+        opts:["निषेचन","अंकुरण","परागण","परिक्षेपण"],
+        ans:2,
+        exp:"परागण में परागकण परागकोश से वर्तिकाग्र तक जाते हैं। स्व-परागण एक ही फूल में होता है; पर-परागण अलग-अलग फूलों के बीच। इसके बाद निषेचन होता है।"},
+    bn:{q:"ফুল গাছে পরাগধানী থেকে গর্ভমুণ্ডে পরাগ স্থানান্তরকে কী বলে?",
+        opts:["নিষেক","অঙ্কুরোদ্গম","পরাগায়ন","বিস্তার"],
+        ans:2,
+        exp:"পরাগায়ন হল পরাগধানী থেকে গর্ভমুণ্ডে পরাগ স্থানান্তর। স্ব-পরাগায়ন একই ফুলে; পর-পরাগায়ন ভিন্ন ফুলের মধ্যে। এরপর নিষেক ঘটে।"}
+  },
+  {
+    emoji:"🔬",
+    en:{q:"During which phase of the menstrual cycle does ovulation (release of the egg) typically occur?",
+        opts:["Day 1–5 (menstruation phase)","Day 6–13 (follicular phase)","Around Day 14 (ovulation)","Day 15–28 (luteal phase)"],
+        ans:2,
+        exp:"Ovulation occurs around day 14 of a 28-day cycle, triggered by a surge in LH (luteinising hormone). The egg is released from the ovary. If fertilised, it implants in the uterus. If unfertilised, the uterine lining sheds during menstruation (~day 1-5)."},
+    hi:{q:"मासिक धर्म चक्र में अण्डोत्सर्ग (अंडे का निकलना) आमतौर पर कब होता है?",
+        opts:["दिन 1–5 (रजोस्राव चरण)","दिन 6–13 (पुटकीय चरण)","लगभग दिन 14 (अण्डोत्सर्ग)","दिन 15–28 (ल्यूटियल चरण)"],
+        ans:2,
+        exp:"28-दिन के चक्र में लगभग दिन 14 पर LH की वृद्धि से अण्डोत्सर्ग होता है। निषेचन न होने पर दिन 1-5 में रजोस्राव होता है।"},
+    bn:{q:"ঋতুচক্রে ডিম্বস্ফোটন (ডিম নির্গমন) সাধারণত কখন হয়?",
+        opts:["১-৫ দিন (রজঃস্রাব পর্যায়)","৬-১৩ দিন (ফলিকুলার পর্যায়)","প্রায় ১৪তম দিনে (ডিম্বস্ফোটন)","১৫-২৮ দিন (লুটিয়াল পর্যায়)"],
+        ans:2,
+        exp:"২৮ দিনের চক্রে প্রায় ১৪তম দিনে LH-এর বৃদ্ধিতে ডিম্বস্ফোটন হয়। নিষেক না হলে ১-৫ দিনে রজঃস্রাব হয়।"}
+  },
+  {
+    emoji:"🧠",
+    en:{q:"Which hormone is released by the adrenal glands during an emergency or stressful situation, preparing the body for 'fight or flight'?",
+        opts:["Insulin","Thyroxine","Testosterone","Adrenaline"],
+        ans:3,
+        exp:"Adrenaline (epinephrine) is secreted by the adrenal medulla during stress. It increases heart rate, dilates air passages, releases glucose from glycogen stores, and diverts blood to muscles — preparing the body for fight or flight. It's called the 'emergency hormone'."},
+    hi:{q:"आपातकालीन या तनावपूर्ण स्थिति में अधिवृक्क ग्रंथि से कौन सा हार्मोन निकलता है?",
+        opts:["इंसुलिन","थायरॉक्सिन","टेस्टोस्टेरोन","एड्रिनेलिन"],
+        ans:3,
+        exp:"एड्रिनेलिन तनाव में अधिवृक्क मज्जा से निकलता है। यह हृदय गति बढ़ाता है, वायु मार्ग फैलाता है और मांसपेशियों में रक्त प्रवाह बढ़ाता है। इसे 'आपातकालीन हार्मोन' कहते हैं।"},
+    bn:{q:"জরুরী বা চাপের পরিস্থিতিতে অ্যাড্রিনাল গ্রন্থি থেকে কোন হরমোন নিঃসৃত হয়?",
+        opts:["ইনসুলিন","থাইরক্সিন","টেস্টোস্টেরন","অ্যাড্রিনালিন"],
+        ans:3,
+        exp:"অ্যাড্রিনালিন চাপের সময় অ্যাড্রিনাল মেডুলা থেকে নিঃসৃত হয়। এটি হৃদস্পন্দন বাড়ায়, শ্বাসনালী প্রসারিত করে ও পেশীতে রক্ত প্রবাহ বাড়ায়। একে 'জরুরী হরমোন' বলে।"}
+  },
+  {
+    emoji:"🌸",
+    en:{q:"In Hydra, a common method of asexual reproduction involves a small outgrowth on the parent that detaches to form a new individual. This is called:",
+        opts:["Binary fission","Fragmentation","Regeneration","Budding"],
+        ans:3,
+        exp:"Budding: in Hydra, a small bud grows from the body wall, develops into a tiny Hydra with tentacles, and then separates from the parent to become independent. Yeast also reproduces by budding. This is distinct from binary fission (equal cell division in Amoeba/Bacteria)."},
+    hi:{q:"हाइड्रा में, जनक पर एक छोटी वृद्धि बनती है जो अलग होकर नया जीव बन जाती है। इसे क्या कहते हैं?",
+        opts:["द्विखंडन","खंडन","पुनर्जनन","मुकुलन"],
+        ans:3,
+        exp:"मुकुलन में हाइड्रा के शरीर पर एक मुकुल विकसित होती है, जो परिपक्व होकर माता-पिता से अलग हो जाती है। यीस्ट में भी मुकुलन होता है।"},
+    bn:{q:"হাইড্রায় জনক দেহে একটি ছোট বৃদ্ধি হয় যা আলাদা হয়ে নতুন জীব তৈরি করে। এটাকে কী বলে?",
+        opts:["দ্বিবিভাজন","খণ্ডায়ন","পুনরুদ্ভব","মুকুলোদ্গম"],
+        ans:3,
+        exp:"মুকুলোদ্গম: হাইড্রার দেহে একটি মুকুল বিকশিত হয়, পরিপক্ব হয়ে জনক থেকে আলাদা হয়। ইস্টেও মুকুলোদ্গম হয়।"}
+  }
+];
+
+let currentQ=0,score=0,answered=false,currentLang='en';
+
+function setLang(lang,btn){
+  currentLang=lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[data-lang-en]').forEach(el=>{
+    const val=el.getAttribute('data-lang-'+lang)||el.getAttribute('data-lang-en');
+    el.textContent=val;
+  });
+  loadQuestion();
+}
+
+function loadQuestion(){
+  if(currentQ>=questions.length){showEnd();return;}
+  answered=false;
+  const qObj=questions[currentQ];
+  const q=qObj[currentLang]||qObj['en'];
+  document.getElementById('q-number').textContent=
+    currentLang==='hi'?`प्रश्न ${currentQ+1} / 10`:
+    currentLang==='bn'?`প্রশ্ন ${currentQ+1} / 10`:`Question ${currentQ+1} of 10`;
+  document.getElementById('q-emoji').textContent=qObj.emoji||'';
+  document.getElementById('q-text').textContent=q.q;
+  const opts=document.getElementById('options');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';b.textContent=o;
+    b.onclick=()=>selectAnswer(i,q.ans,q.exp);
+    opts.appendChild(b);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('feedback').innerHTML='';
+  document.getElementById('next-btn').classList.remove('visible');
+  document.getElementById('progress-bar').style.width=(currentQ/10*100)+'%';
+  document.getElementById('q-count').textContent=currentQ+' / 10';
+  document.getElementById('question-card').classList.remove('fadeIn');
+  void document.getElementById('question-card').offsetWidth;
+  document.getElementById('question-card').classList.add('fadeIn');
+}
+
+function selectAnswer(idx,correct,exp){
+  if(answered)return;
+  answered=true;
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===correct)b.classList.add('correct');
+    else if(i===idx&&idx!==correct)b.classList.add('wrong');
+  });
+  const fb=document.getElementById('feedback');
+  if(idx===correct){
+    score+=10;
+    fb.className='feedback correct show';
+    fb.innerHTML=`<span class="feedback-icon">✓</span>${exp}`;
+  }else{
+    fb.className='feedback wrong show';
+    fb.innerHTML=`<span class="feedback-icon">✗</span>${exp}`;
+  }
+  document.getElementById('next-btn').classList.add('visible');
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ>=questions.length){showEnd();}
+  else{loadQuestion();}
+}
+
+function showEnd(){
+  document.getElementById('quiz-section').style.display='none';
+  const es=document.getElementById('end-screen');
+  es.className='end-screen show';
+  document.getElementById('final-score').textContent=score+'/100';
+  const pct=score;
+  let stars='☆☆☆',msg='';
+  if(pct>=90){stars='★★★';msg=currentLang==='hi'?'शानदार! जीव विज्ञान के विशेषज्ञ! 🎉':currentLang==='bn'?'অসাধারণ! জীববিজ্ঞানের বিশেষজ্ঞ! 🎉':'Brilliant! You\'ve mastered control & reproduction! 🎉';}
+  else if(pct>=70){stars='★★☆';msg=currentLang==='hi'?'बहुत अच्छा! थोड़ा और अभ्यास करें।':currentLang==='bn'?'খুব ভালো! একটু আরও অনুশীলন করুন।':'Great effort! Review the chapter once more.';}
+  else if(pct>=40){stars='★☆☆';msg=currentLang==='hi'?'ठीक है! कॉन्सेप्ट को फिर से पढ़ें।':currentLang==='bn'?'ঠিক আছে! ধারণাগুলো পুনরায় পড়ুন।':'Keep going! Revisit the key concepts.';}
+  else{stars='☆☆☆';msg=currentLang==='hi'?'हार मत मानो! फिर से प्रयास करें।':currentLang==='bn'?'হাল ছেড়ো না! আবার চেষ্টা করো।':'Don\'t give up! Study and try again.';}
+  document.getElementById('stars').textContent=stars;
+  document.getElementById('result-msg').textContent=msg;
+  const correct=score/10,wrong=10-correct;
+  document.getElementById('bd-correct').textContent=correct+' / 10';
+  document.getElementById('bd-wrong').textContent=wrong+' / 10';
+  document.getElementById('bd-score').textContent=score+' / 100';
+}
+
+function restartGame(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('end-screen').className='end-screen';
+  document.getElementById('quiz-section').style.display='block';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

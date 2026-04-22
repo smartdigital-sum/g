@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Our Earth – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;
+  --pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;
+  --card:#1a1740;--text:#EEE;--muted:#aaa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  font-family:'Nunito',sans-serif;color:var(--text);padding-bottom:40px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeIn .45s ease both}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;
+  background:rgba(255,255,255,.04);backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.back-btn{background:none;border:1px solid rgba(255,255,255,.2);color:#fff;
+  padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;
+  font-size:.85rem;transition:all .2s}
+.back-btn:hover{background:rgba(255,255,255,.1)}
+.badge{background:var(--pink);color:#fff;padding:4px 14px;border-radius:20px;
+  font-size:.8rem;font-weight:700;font-family:'Baloo 2',sans-serif;letter-spacing:.5px}
+.title-bar{font-family:'Baloo 2',sans-serif;font-size:1.15rem;font-weight:700;flex:1;text-align:center}
+.lang-toggle{display:flex;gap:4px;margin-left:auto}
+.lang-btn{background:rgba(255,255,255,.08);border:none;color:#ccc;
+  padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;
+  font-family:'Nunito',sans-serif;transition:all .2s}
+.lang-btn.active{background:var(--pink);color:#fff;font-weight:700}
+.score-wrap{max-width:700px;margin:18px auto 0;padding:0 16px}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.score-label{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;color:var(--gold)}
+.score-val{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--saffron)}
+.prog-bar{height:8px;background:rgba(255,255,255,.1);border-radius:8px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--sky));border-radius:8px;transition:width .4s ease}
+.q-wrap{max-width:700px;margin:22px auto 0;padding:0 16px}
+.topic-tag{display:inline-block;background:rgba(255,64,129,.15);border:1px solid rgba(255,64,129,.3);
+  color:#ff9fc0;padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:700;margin-bottom:10px}
+.q-card{background:var(--card);border-radius:18px;padding:28px 26px;
+  border:1px solid rgba(255,64,129,.2);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.q-num{font-size:.8rem;color:var(--muted);margin-bottom:6px;font-weight:600}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.13rem;font-weight:700;line-height:1.55;margin-bottom:22px}
+
+/* FACT STRIP — quick visual reference */
+.fact-strip{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.fact-chip{background:rgba(0,174,239,.1);border:1px solid rgba(0,174,239,.2);
+  color:#9ae5ff;padding:3px 10px;border-radius:8px;font-size:.78rem;font-weight:600}
+
+.options{display:grid;gap:10px}
+.opt-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  color:var(--text);padding:13px 18px;border-radius:12px;cursor:pointer;
+  font-family:'Nunito',sans-serif;font-size:.97rem;font-weight:600;
+  text-align:left;transition:all .22s;display:flex;align-items:center;gap:10px}
+.opt-btn:hover:not(:disabled){background:rgba(255,64,129,.15);border-color:var(--pink);transform:translateX(4px)}
+.opt-btn:disabled{cursor:default}
+.opt-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);color:#fff}
+.opt-btn.wrong{background:rgba(255,64,129,.18);border-color:var(--pink);color:#fff}
+.opt-icon{font-size:1.1rem;min-width:22px}
+.explanation{margin-top:16px;padding:14px 18px;background:rgba(255,255,255,.05);
+  border-radius:12px;border-left:3px solid var(--sky);font-size:.92rem;line-height:1.65;display:none}
+.explanation.show{display:block}
+.explanation strong{color:var(--sky)}
+.next-btn{margin-top:18px;width:100%;padding:14px;background:linear-gradient(90deg,var(--pink),var(--purple));
+  border:none;color:#fff;border-radius:12px;font-family:'Baloo 2',sans-serif;
+  font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s;display:none}
+.next-btn:hover{opacity:.88}
+.next-btn.show{display:block}
+.result-card{max-width:700px;margin:40px auto;padding:0 16px;text-align:center}
+.result-inner{background:var(--card);border-radius:20px;padding:40px 30px;border:1px solid rgba(255,64,129,.3)}
+.stars{font-size:2.5rem;letter-spacing:4px;margin-bottom:16px}
+.result-score{font-family:'Baloo 2',sans-serif;font-size:3rem;font-weight:800;color:var(--saffron)}
+.result-msg{font-size:1.1rem;color:var(--muted);margin:8px 0 28px}
+.play-again{padding:14px 40px;background:linear-gradient(90deg,var(--pink),var(--purple));
+  border:none;color:#fff;border-radius:12px;font-family:'Baloo 2',sans-serif;
+  font-size:1.1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.play-again:hover{opacity:.85}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="badge">Social Studies</span>
+  <span class="title-bar">
+    <span class="lbl-en">🌍 Our Earth</span>
+    <span class="lbl-hi" style="display:none">🌍 हमारी पृथ्वी</span>
+    <span class="lbl-bn" style="display:none">🌍 আমাদের পৃথিবী</span>
+  </span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+    <button class="lang-btn" onclick="setLang('hi',this)">हि</button>
+    <button class="lang-btn" onclick="setLang('bn',this)">অ</button>
+  </div>
+</div>
+<div class="score-wrap">
+  <div class="score-row">
+    <span class="score-label" id="scoreLabel">Score</span>
+    <span class="score-val"><span id="scoreNum">0</span>/100</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+<div class="q-wrap" id="gameArea"></div>
+<div class="result-card" id="resultCard" style="display:none"></div>
+
+<script>
+const questions=[
+  {
+    topic:"🌐 Globe vs Map",
+    chips:["Globe = 3D model of Earth","Map = flat drawing on paper"],
+    q:"A globe is a model of the Earth. Which of these is TRUE about a globe?",
+    opts:["It is flat like a paper","It shows only one country","It is a round 3D model showing the whole Earth","It is used only in space"],
+    ans:2,
+    exp:"A <strong>Globe</strong> is a round, 3D model of the Earth that shows the correct shape, size, and position of continents and oceans. A <strong>Map</strong> is a flat representation drawn on paper."
+  },
+  {
+    topic:"🌎 The 7 Continents",
+    chips:["Asia","Africa","N. America","S. America","Europe","Australia","Antarctica"],
+    q:"How many continents are there on Earth?",
+    opts:["5","6","7","8"],
+    ans:2,
+    exp:"There are <strong>7 continents</strong>: Asia, Africa, North America, South America, Europe, Australia, and Antarctica. <strong>Asia</strong> is the largest and <strong>Australia</strong> is the smallest continent."
+  },
+  {
+    topic:"🌊 The 5 Oceans",
+    chips:["Pacific","Atlantic","Indian","Southern","Arctic"],
+    q:"Which is the largest ocean in the world?",
+    opts:["Atlantic Ocean","Indian Ocean","Arctic Ocean","Pacific Ocean"],
+    ans:3,
+    exp:"The <strong>Pacific Ocean</strong> is the largest and deepest ocean, covering more than 30% of Earth's surface. The five oceans are: Pacific, Atlantic, Indian, Southern, and Arctic."
+  },
+  {
+    topic:"🧭 Cardinal Directions",
+    chips:["N = North","S = South","E = East","W = West"],
+    q:"The sun rises in the East. If you face East, which direction is behind you?",
+    opts:["North","South","West","Up"],
+    ans:2,
+    exp:"If you face <strong>East</strong>, then <strong>West</strong> is behind you, <strong>North</strong> is to your left, and <strong>South</strong> is to your right. The four cardinal directions are North, South, East, and West."
+  },
+  {
+    topic:"🗺️ India on World Map",
+    chips:["India is in Asia","Southern part of Asia","Surrounded by Indian Ocean"],
+    q:"India is located in which continent?",
+    opts:["Africa","Europe","Asia","South America"],
+    ans:2,
+    exp:"<strong>India</strong> is located in <strong>Asia</strong>, the largest continent. It is in the southern part of Asia and is surrounded by the Indian Ocean to the south, the Arabian Sea to the west, and the Bay of Bengal to the east."
+  },
+  {
+    topic:"⛰️ Landforms",
+    chips:["Mountain = very high","Plateau = flat-topped high land","Plain = flat low land"],
+    q:"A large flat area of land at a high elevation is called a:",
+    opts:["Mountain","Valley","Plateau","Desert"],
+    ans:2,
+    exp:"A <strong>Plateau</strong> is a large flat-topped area of land raised above the surrounding land. The Deccan Plateau in India is a famous example. A <strong>Mountain</strong> is a high peak, while a <strong>Plain</strong> is flat and low."
+  },
+  {
+    topic:"🌊 The 5 Oceans",
+    chips:["Indian Ocean borders India","3rd largest ocean"],
+    q:"Which ocean is named after our country India?",
+    opts:["Pacific Ocean","Atlantic Ocean","Indian Ocean","Arctic Ocean"],
+    ans:2,
+    exp:"The <strong>Indian Ocean</strong> is named after India and is the third largest ocean. India is surrounded by the Indian Ocean to the south. It is an important ocean for trade routes."
+  },
+  {
+    topic:"🏜️ Landforms",
+    chips:["Desert = very dry, little rain","Island = land surrounded by water"],
+    q:"A piece of land completely surrounded by water on all sides is called:",
+    opts:["Peninsula","Desert","Plateau","Island"],
+    ans:3,
+    exp:"An <strong>Island</strong> is a piece of land surrounded by water on all sides. The Andaman & Nicobar Islands are famous Indian islands. A <strong>Peninsula</strong> is land surrounded by water on only three sides."
+  },
+  {
+    topic:"🌎 The 7 Continents",
+    chips:["Antarctica = coldest","No permanent human population"],
+    q:"Which continent is the coldest and is located at the South Pole of Earth?",
+    opts:["Arctic","Australia","Europe","Antarctica"],
+    ans:3,
+    exp:"<strong>Antarctica</strong> is the coldest continent and is located at the South Pole. It is covered in thick ice and has no permanent human population, though scientists visit for research. It is the 5th largest continent."
+  },
+  {
+    topic:"🧭 Maps & Directions",
+    chips:["Compass Rose shows directions","Legend/Key explains symbols"],
+    q:"The symbol on a map that shows North, South, East and West directions is called:",
+    opts:["Legend","Scale","Compass Rose","Grid"],
+    ans:2,
+    exp:"A <strong>Compass Rose</strong> is a symbol on a map that shows the four cardinal directions: North (N), South (S), East (E), and West (W). The <strong>Legend</strong> (or key) explains the symbols used on the map."
+  }
+];
+let currentQ=0,score=0,answered=false,lang='en';
+const LABELS={
+  en:{score:'Score',next:'Next Question →',result:'See Result →',again:'🔄 Play Again',
+    msgs:['🌍 Geography Champion!','Great knowledge! Well done!','Good effort! Explore more!','Keep learning! The world is big!']},
+  hi:{score:'स्कोर',next:'अगला प्रश्न →',result:'परिणाम देखें →',again:'🔄 फिर खेलें',
+    msgs:['🌍 भूगोल चैंपियन!','बहुत अच्छा! शाबाश!','अच्छी कोशिश! और जानो!','सीखते रहो! दुनिया बड़ी है!']},
+  bn:{score:'স্কোর',next:'পরের প্রশ্ন →',result:'ফলাফল দেখো →',again:'🔄 আবার খেলো',
+    msgs:['🌍 ভূগোল চ্যাম্পিয়ন!','দারুণ জ্ঞান! শাবাশ!','ভালো চেষ্টা! আরও জানো!','শিখতে থাকো! পৃথিবী বিশাল!']}
+};
+function setLang(l,btn){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelector('.lbl-en').style.display=l==='en'?'':'none';
+  document.querySelector('.lbl-hi').style.display=l==='hi'?'':'none';
+  document.querySelector('.lbl-bn').style.display=l==='bn'?'':'none';
+  document.getElementById('scoreLabel').textContent=LABELS[l].score;
+}
+function renderQ(){
+  answered=false;
+  const q=questions[currentQ];
+  const L=LABELS[lang];
+  document.getElementById('progFill').style.width=Math.round((currentQ/questions.length)*100)+'%';
+  const chipsHTML=q.chips.map(c=>`<span class="fact-chip">${c}</span>`).join('');
+  document.getElementById('gameArea').innerHTML=`
+    <div class="q-card fade">
+      <div class="topic-tag">${q.topic}</div>
+      <div class="q-num">Question ${currentQ+1} of ${questions.length}</div>
+      <div class="fact-strip">${chipsHTML}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o,i)=>`<button class="opt-btn" onclick="pick(${i})" id="opt${i}">
+          <span class="opt-icon">◦</span>${o}</button>`).join('')}
+      </div>
+      <div class="explanation" id="exp">${q.exp}</div>
+      <button class="next-btn" id="nextBtn" onclick="nextQ()">${currentQ===questions.length-1?L.result:L.next}</button>
+    </div>`;
+}
+function pick(i){
+  if(answered)return;answered=true;
+  const q=questions[currentQ];const pts=Math.round(100/questions.length);
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  if(i===q.ans){
+    document.getElementById('opt'+i).classList.add('correct');
+    document.getElementById('opt'+i).querySelector('.opt-icon').textContent='✓';
+    score+=pts;document.getElementById('scoreNum').textContent=score;
+  } else {
+    document.getElementById('opt'+i).classList.add('wrong');
+    document.getElementById('opt'+i).querySelector('.opt-icon').textContent='✗';
+    document.getElementById('opt'+q.ans).classList.add('correct');
+    document.getElementById('opt'+q.ans).querySelector('.opt-icon').textContent='✓';
+  }
+  document.getElementById('exp').classList.add('show');
+  document.getElementById('nextBtn').classList.add('show');
+}
+function nextQ(){currentQ++;if(currentQ>=questions.length){showResult();return;}renderQ();}
+function showResult(){
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('gameArea').style.display='none';
+  const L=LABELS[lang];
+  const stars=score>=90?'⭐⭐⭐':score>=70?'⭐⭐':score>=40?'⭐':'';
+  const msg=score>=90?L.msgs[0]:score>=70?L.msgs[1]:score>=40?L.msgs[2]:L.msgs[3];
+  document.getElementById('resultCard').style.display='block';
+  document.getElementById('resultCard').innerHTML=`
+    <div class="result-inner fade">
+      <div class="stars">${stars||'🌍'}</div>
+      <div class="result-score">${score}/100</div>
+      <div class="result-msg">${msg}</div>
+      <button class="play-again" onclick="restart()">${L.again}</button>
+    </div>`;
+}
+function restart(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('scoreNum').textContent=0;
+  document.getElementById('progFill').style.width='0%';
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  renderQ();
+}
+renderQ();
+</script>
+</body>
+</html>

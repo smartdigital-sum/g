@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>G5-06 · Active & Passive Voice · GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;
+  --grad-from:#1A0F00;--grad-to:#0F0800;--accent:var(--orange);
+  --border:rgba(255,159,28,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(145deg,var(--grad-from),var(--grad-to));min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;padding:0 0 40px;}
+.header{width:100%;max-width:480px;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;}
+.subject-tag{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);}
+.stars{display:flex;gap:3px;}
+.star{font-size:1rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+
+.wow-card{width:calc(100% - 32px);max-width:448px;background:linear-gradient(135deg,rgba(255,159,28,.18),rgba(255,209,102,.08));border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin:8px 16px 16px;text-align:center;}
+.wow-label{font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.wow-card p{font-size:.95rem;line-height:1.6;}
+.wow-card strong{color:var(--gold);}
+.wow-card em{color:var(--orange);font-style:normal;}
+
+.section{width:calc(100% - 32px);max-width:448px;margin:0 16px;}
+
+/* RULE CARD */
+.rule-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:14px;}
+.rule-title{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px;text-align:center;}
+.rule-compare{display:flex;flex-direction:column;gap:8px;}
+.voice-box{padding:12px 14px;border-radius:10px;}
+.active-box{background:rgba(76,201,240,.1);border:1.5px solid rgba(76,201,240,.4);}
+.passive-box{background:rgba(255,159,28,.1);border:1.5px solid var(--border);}
+.voice-tag{font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+.active-box .voice-tag{color:var(--blue);}
+.passive-box .voice-tag{color:var(--orange);}
+.voice-sentence{font-size:.92rem;font-weight:700;color:var(--text);line-height:1.5;}
+.voice-parts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.part{padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:800;}
+.part-subject{background:rgba(76,201,240,.2);color:var(--blue);}
+.part-verb{background:rgba(255,209,102,.2);color:var(--gold);}
+.part-object{background:rgba(6,214,160,.2);color:var(--teal);}
+
+/* FILL BLANK */
+.question-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:14px;}
+.q-num{font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;}
+.sentence-active{font-size:.95rem;font-weight:700;color:var(--text);line-height:1.7;margin-bottom:10px;padding:10px 14px;background:rgba(76,201,240,.08);border-radius:8px;}
+.sentence-active em{color:var(--blue);font-style:normal;font-weight:800;}
+.passive-build{font-size:.95rem;font-weight:700;color:var(--text);line-height:2;margin-bottom:8px;}
+.passive-build .fixed{color:var(--text);opacity:.7;}
+.passive-build .blank{
+  display:inline-block;min-width:80px;border-bottom:2px solid var(--accent);
+  text-align:center;padding:0 8px;color:var(--gold);
+  font-family:'Baloo 2',cursive;font-weight:800;
+}
+.word-bank{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+.word-chip{
+  background:rgba(255,159,28,.12);border:2px solid var(--border);
+  color:var(--text);font-weight:700;font-size:.88rem;
+  padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;
+}
+.word-chip:hover{border-color:var(--accent);color:var(--accent);}
+.word-chip.selected{border-color:var(--accent);background:rgba(255,159,28,.25);color:var(--orange);}
+.word-chip.used{opacity:.3;cursor:default;pointer-events:none;}
+
+/* HEADLINES STAGE */
+.headline-pair{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:12px;}
+.hl-label{font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;}
+.headline-text{font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.5;}
+.headline-question{font-size:.85rem;color:var(--text);margin-bottom:8px;}
+.hl-opts{display:flex;flex-wrap:wrap;gap:7px;}
+.hl-opt{
+  background:rgba(255,159,28,.1);border:2px solid var(--border);
+  color:var(--text);font-weight:700;font-size:.82rem;
+  padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;
+}
+.hl-opt:hover{border-color:var(--accent);}
+.hl-opt.selected{border-color:var(--accent);background:rgba(255,159,28,.2);color:var(--orange);}
+.hl-opt.correct-ans{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal);}
+.hl-opt.wrong-ans{border-color:var(--coral);background:rgba(255,107,107,.1);color:var(--coral);}
+
+.progress-tabs{width:calc(100% - 32px);max-width:448px;margin:0 16px 14px;display:flex;gap:6px;}
+.p-tab{flex:1;padding:8px 4px;border-radius:10px;border:2px solid transparent;font-family:'Baloo 2',cursive;font-weight:700;font-size:.78rem;background:var(--card);color:var(--dim);cursor:pointer;transition:all .2s;text-align:center;}
+.p-tab.active{border-color:var(--accent);color:var(--accent);background:rgba(255,159,28,.1);}
+
+.check-btn{width:100%;padding:14px;border-radius:14px;border:none;font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--orange),#e67e00);color:#fff;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(255,159,28,.35);}
+.check-btn:hover{opacity:.9;}
+.check-btn:disabled{opacity:.4;cursor:not-allowed;}
+.feedback{margin-top:12px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.9rem;text-align:center;display:none;}
+.feedback.correct{background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.4);color:var(--teal);}
+.feedback.wrong{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:var(--coral);}
+
+.progress-row{width:calc(100% - 32px);max-width:448px;margin:16px 16px 0;display:flex;align-items:center;justify-content:space-between;}
+.progress-text{font-size:.8rem;font-weight:700;color:var(--dim);}
+.next-btn{background:var(--gold);color:#1A0F00;font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;border:none;border-radius:50px;padding:8px 22px;cursor:pointer;display:none;}
+
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:30px 28px;max-width:360px;width:90%;text-align:center;}
+.overlay-box .o-emoji{font-size:3rem;margin-bottom:12px;}
+.overlay-box h3{font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--gold);margin-bottom:8px;}
+.overlay-box p{font-size:.9rem;color:var(--text);line-height:1.6;}
+.overlay-box strong{color:var(--teal);}
+
+.complete-screen{width:calc(100% - 32px);max-width:448px;margin:20px 16px;background:var(--card);border:2px solid rgba(6,214,160,.3);border-radius:22px;padding:32px 24px;text-align:center;display:none;}
+.complete-screen .big{font-size:4rem;margin-bottom:12px;}
+.complete-screen h2{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--gold);margin-bottom:8px;}
+.complete-screen p{color:var(--text);font-size:.95rem;line-height:1.6;margin-bottom:20px;}
+.play-again{background:var(--teal);color:#040E04;font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;border:none;border-radius:50px;padding:12px 28px;cursor:pointer;}
+
+.confetti-piece{position:fixed;width:10px;height:10px;opacity:0;animation:confFall 1.8s ease-in forwards;pointer-events:none;z-index:200;}
+@keyframes confFall{0%{opacity:1;transform:translateY(0) rotate(0deg);}100%{opacity:0;transform:translateY(80vh) rotate(720deg);}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="subject-tag">English</div>
+  <div class="game-title">🔊 Active & Passive Voice</div>
+  <div class="stars">
+    <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+    <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+  </div>
+</div>
+
+<div class="wow-card">
+  <div class="wow-label">🤯 Did You Know?</div>
+  <p>News headlines use passive voice to <strong>hide who did something</strong>: <em>"Mistakes were made."</em> — NOTICE nobody is blamed! <strong>Passive voice is a political superpower — and a grammar concept!</strong></p>
+</div>
+
+<div class="progress-tabs">
+  <div class="p-tab active" id="ptab1">1. Learn</div>
+  <div class="p-tab" id="ptab2">2. Transform</div>
+  <div class="p-tab" id="ptab3">3. Headlines</div>
+</div>
+
+<!-- STAGE 1: LEARN -->
+<div class="section" id="stage1">
+  <div class="rule-card">
+    <div class="rule-title">📖 Active vs Passive Voice</div>
+    <div class="rule-compare">
+      <div class="voice-box active-box">
+        <div class="voice-tag">🔵 Active Voice</div>
+        <div class="voice-sentence">The dog chased the cat.</div>
+        <div class="voice-parts">
+          <span class="part part-subject">Subject: dog</span>
+          <span class="part part-verb">Verb: chased</span>
+          <span class="part part-object">Object: cat</span>
+        </div>
+      </div>
+      <div class="voice-box passive-box">
+        <div class="voice-tag">🟠 Passive Voice</div>
+        <div class="voice-sentence">The cat was chased by the dog.</div>
+        <div class="voice-parts">
+          <span class="part part-object" style="background:rgba(6,214,160,.2);color:var(--teal)">New subject: cat</span>
+          <span class="part part-verb">Be + past participle</span>
+          <span class="part part-subject">By the dog</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="rule-card" style="background:rgba(255,159,28,.06);">
+    <div class="rule-title">🔑 Passive Voice Formula</div>
+    <div style="text-align:center;font-family:'Baloo 2',cursive;font-size:1rem;color:var(--gold);margin-bottom:8px;">Object + be-verb + past participle + by + subject</div>
+    <div style="font-size:.82rem;color:var(--text);line-height:1.7;">
+      <strong style="color:var(--orange);">be-verbs:</strong> is/are/was/were/has been/have been<br/>
+      <strong style="color:var(--orange);">Past participles:</strong> eaten, written, built, seen, loved
+    </div>
+  </div>
+  <div class="question-card">
+    <div class="q-num">🎯 Quick Check</div>
+    <div class="sentence-active">Which sentence is in <em>PASSIVE VOICE</em>?</div>
+    <div class="word-bank" id="s1Quiz">
+      <button class="word-chip" onclick="pickS1(this,'wrong')">The farmer grew the wheat.</button>
+      <button class="word-chip" onclick="pickS1(this,'correct')">The wheat was grown by the farmer.</button>
+      <button class="word-chip" onclick="pickS1(this,'wrong')">Riya sang the song beautifully.</button>
+    </div>
+  </div>
+  <button class="check-btn" id="s1Check" onclick="checkStage1()">Check ✓</button>
+  <div class="feedback" id="s1FB"></div>
+</div>
+
+<!-- STAGE 2: TRANSFORM -->
+<div class="section" id="stage2" style="display:none;">
+  <div id="transformQuestions"></div>
+  <button class="check-btn" id="s2Check" onclick="checkStage2()">Check Transformation ✓</button>
+  <div class="feedback" id="s2FB"></div>
+</div>
+
+<!-- STAGE 3: HEADLINES -->
+<div class="section" id="stage3" style="display:none;">
+  <div style="background:rgba(255,159,28,.08);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin-bottom:14px;font-size:.85rem;color:var(--text);line-height:1.6;">
+    <strong style="color:var(--orange);">🕵️ Spot the Passive!</strong> Some headlines use passive voice to avoid naming who is responsible. Can you spot them?
+  </div>
+  <div id="headlineQuestions"></div>
+  <button class="check-btn" id="s3Check" onclick="checkStage3()">Verdict ✓</button>
+  <div class="feedback" id="s3FB"></div>
+</div>
+
+<div class="progress-row">
+  <span class="progress-text" id="progressText">Stage 1 of 3</span>
+  <button class="next-btn" id="nextBtn" onclick="nextStage()">Next Stage →</button>
+</div>
+
+<div class="complete-screen" id="completeScreen">
+  <div class="big">📰</div>
+  <h2>Voice Detective!</h2>
+  <p>You can identify, transform, and spot passive voice in real headlines. Next time you read <em>"Errors were made"</em>, you'll know exactly what that trick means!</p>
+  <button class="play-again" onclick="restartGame()">Play Again 🔄</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="o-emoji" id="oEmoji">🎉</div>
+    <h3 id="oTitle">Correct!</h3>
+    <p id="oFact"></p>
+  </div>
+</div>
+
+<script>
+let stage=1, score=0;
+let s1Pick=null;
+const TRANSFORMS=[
+  {active:'The chef cooked the meal.',blanks:['was cooked','by'],answer:'was cooked',fixed:'The meal ___ by the chef.',bankWords:['was cooked','were cooking','cooked','has cook'],correct:'was cooked'},
+  {active:'Children broke the window.',blanks:['was broken','by'],answer:'was broken',fixed:'The window ___ by children.',bankWords:['was broke','was broken','is breaking','broken by'],correct:'was broken'},
+  {active:'Riya wrote the letter.',blanks:['was written','by'],answer:'was written',fixed:'The letter ___ by Riya.',bankWords:['wrote','was written','has write','is writing'],correct:'was written'},
+];
+const HEADLINES=[
+  {hl:'"Mistakes were made in handling the flood."',voice:'passive',question:'Is this active or passive voice?',hint:'Who made the mistakes? The headline hides the doer — that\'s passive!'},
+  {hl:'"Students win national science competition!"',voice:'active',question:'Is this active or passive voice?',hint:'Students (subject) + win (verb) + competition (object). Clear doer = active!'},
+  {hl:'"Road was damaged by heavy rains."',voice:'passive',question:'Is this active or passive voice?',hint:'"was damaged" = be-verb + past participle. Passive voice!'},
+];
+
+let t2Selections={};
+let hlSelections={};
+
+window.pickS1=function(el,type){
+  s1Pick=type;
+  document.querySelectorAll('#s1Quiz .word-chip').forEach(b=>b.classList.toggle('selected',b===el));
+}
+
+function checkStage1(){
+  if(!s1Pick){showFB('s1FB','wrong','⚠️ Pick a sentence!');return;}
+  if(s1Pick==='correct'){
+    ok(1,'s1FB','✅ Correct! "The wheat was grown by the farmer" — the object (wheat) comes first. Classic passive!');
+    showOverlay('📖','Passive Found!','Passive voice = Object first + "was/were" + past participle + "by" + subject. The action is received, not done!');
+  } else {
+    showFB('s1FB','wrong','❌ That\'s active voice — the subject (person/thing) is doing the action. Look for "was/were + past participle"!');
+  }
+}
+
+function buildTransform(){
+  const q=TRANSFORMS[0];
+  const container=document.getElementById('transformQuestions');
+  container.innerHTML=`
+    <div class="question-card">
+      <div class="q-num">🔄 Transform to Passive Voice (3 sentences)</div>
+      ${TRANSFORMS.map((t,i)=>`
+        <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:${i<2?'1px solid rgba(255,255,255,.06)':'none'};">
+          <div class="sentence-active" style="margin-bottom:8px;">Active: <em>${t.active}</em></div>
+          <div class="passive-build" style="margin-bottom:8px;">Passive: <span class="fixed">${t.fixed.split('___')[0]}</span><span class="blank" id="blank${i}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="fixed">${t.fixed.split('___')[1]||''}</span></div>
+          <div class="word-bank">
+            ${t.bankWords.map(w=>`<button class="word-chip" onclick="pickTransform(${i},'${w}',this)">${w}</button>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+window.pickTransform=function(idx,word,el){
+  t2Selections[idx]=word;
+  document.getElementById(`blank${idx}`).textContent=word;
+  el.closest('.word-bank').querySelectorAll('.word-chip').forEach(b=>b.classList.toggle('selected',b===el));
+}
+
+function checkStage2(){
+  let correct=0;
+  TRANSFORMS.forEach((t,i)=>{if(t2Selections[i]===t.correct) correct++;});
+  if(correct===TRANSFORMS.length){
+    ok(2,'s2FB','✅ All 3 sentences transformed perfectly!');
+    showOverlay('🔄','Transformation Expert!','Active → Passive: Object + <strong>was/were</strong> + past participle + by + subject. You\'ve mastered the swap!');
+  } else {
+    showFB('s2FB','wrong',`❌ ${correct}/3 correct. Remember: use "was/were + past participle" for past tense passive!`);
+  }
+}
+
+function buildHeadlines(){
+  const container=document.getElementById('headlineQuestions');
+  container.innerHTML=HEADLINES.map((h,i)=>`
+    <div class="headline-pair">
+      <div class="hl-label">📰 Headline ${i+1}</div>
+      <div class="headline-text">${h.hl}</div>
+      <div class="headline-question">${h.question}</div>
+      <div class="hl-opts">
+        <button class="hl-opt" id="hl_${i}_active" onclick="pickHL(${i},'active',this)">🔵 Active</button>
+        <button class="hl-opt" id="hl_${i}_passive" onclick="pickHL(${i},'passive',this)">🟠 Passive</button>
+      </div>
+    </div>`).join('');
+}
+
+window.pickHL=function(idx,voice,el){
+  hlSelections[idx]=voice;
+  el.closest('.hl-opts').querySelectorAll('.hl-opt').forEach(b=>b.classList.toggle('selected',b===el));
+}
+
+function checkStage3(){
+  let correct=0;
+  const marks=[];
+  HEADLINES.forEach((h,i)=>{
+    const isRight=hlSelections[i]===h.voice;
+    if(isRight) correct++;
+    // Show feedback on buttons
+    const rightBtn=document.getElementById(`hl_${i}_${h.voice}`);
+    const wrongBtn=document.getElementById(`hl_${i}_${hlSelections[i]==='active'?'passive':'active'}`);
+    if(rightBtn) rightBtn.classList.add('correct-ans');
+    if(hlSelections[i] && hlSelections[i]!==h.voice && wrongBtn) wrongBtn.classList.add('wrong-ans');
+  });
+  if(correct===HEADLINES.length){
+    ok(3,'s3FB','✅ All headlines identified correctly! You\'re a voice detective!');
+    showOverlay('🕵️','Headlines Decoded!','Now you know why politicians say <strong>"Mistakes were made"</strong> — passive voice hides the person responsible. Grammar is power!');
+  } else {
+    showFB('s3FB','wrong',`❌ ${correct}/3 correct. Look for "was/were + past participle" patterns in headlines!`);
+  }
+}
+
+function setStage(n){
+  stage=n;
+  [1,2,3].forEach(i=>{
+    document.getElementById('stage'+i).style.display=i===n?'block':'none';
+    document.getElementById('ptab'+i).classList.toggle('active',i===n);
+  });
+  document.getElementById('progressText').textContent=`Stage ${n} of 3`;
+  document.getElementById('nextBtn').style.display='none';
+  if(n===2){buildTransform(); t2Selections={};}
+  if(n===3){buildHeadlines(); hlSelections={};}
+}
+
+function nextStage(){
+  if(stage<3){setStage(stage+1);}
+  else{
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+    document.querySelector('.progress-tabs').style.display='none';
+    document.querySelector('.progress-row').style.display='none';
+    document.getElementById('completeScreen').style.display='block';
+    spawnConfetti();
+  }
+}
+
+function ok(n,fbId,msg){
+  score++;updateStars();
+  showFB(fbId,'correct',msg);
+  document.getElementById('nextBtn').style.display='block';
+  document.getElementById(`s${n}Check`).disabled=true;
+  spawnConfetti();
+}
+function showFB(id,type,msg){const el=document.getElementById(id);el.textContent=msg;el.className=`feedback ${type}`;el.style.display='block';}
+function updateStars(){const c=Math.min(5,score+1);for(let i=1;i<=c;i++) document.getElementById('s'+i).classList.add('lit');}
+function showOverlay(emoji,title,fact){
+  document.getElementById('oEmoji').textContent=emoji;document.getElementById('oTitle').textContent=title;document.getElementById('oFact').innerHTML=fact;
+  const ov=document.getElementById('overlay');ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),2600);
+}
+function spawnConfetti(){
+  const colors=['#FFD166','#FF6B6B','#06D6A0','#4CC9F0','#FF9F1C'];
+  for(let i=0;i<28;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[i%5]};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()*2}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),3500);}
+}
+function restartGame(){
+  stage=1;score=0;s1Pick=null;t2Selections={};hlSelections={};
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('completeScreen').style.display='none';
+  document.querySelectorAll('.section').forEach(s=>s.style.display='block');
+  document.querySelector('.progress-tabs').style.display='flex';
+  document.querySelector('.progress-row').style.display='flex';
+  setStage(1);
+}
+</script>
+</body>
+</html>

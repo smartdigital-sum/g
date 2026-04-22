@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sound — Class 8 Science | GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+    --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+    --bg1:#0F0C29; --bg2:#302B63; --card:#1a1740;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    min-height:100vh; color:#fff;
+  }
+
+  /* TOP BAR */
+  .topbar{
+    display:flex;align-items:center;gap:12px;
+    padding:14px 20px; background:rgba(0,0,0,0.3);
+    backdrop-filter:blur(8px); position:sticky;top:0;z-index:100;
+  }
+  .back-btn{
+    background:rgba(255,255,255,0.12); border:none; color:#fff;
+    padding:8px 16px; border-radius:20px; cursor:pointer;
+    font-family:'Nunito',sans-serif; font-size:14px; font-weight:700;
+    transition:background .2s;
+  }
+  .back-btn:hover{background:rgba(255,255,255,0.22);}
+  .subject-badge{
+    background:var(--green); color:#fff; padding:6px 16px;
+    border-radius:20px; font-weight:800; font-size:13px;
+    font-family:'Baloo 2',sans-serif; letter-spacing:.5px;
+  }
+  .title-bar{flex:1;font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:700;}
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{
+    background:rgba(255,255,255,0.1); border:2px solid transparent;
+    color:#fff; padding:5px 12px; border-radius:14px;
+    cursor:pointer; font-family:'Nunito',sans-serif; font-weight:700; font-size:13px;
+    transition:all .2s;
+  }
+  .lang-btn.active{background:var(--sky);border-color:var(--sky);}
+
+  /* MAIN */
+  .container{max-width:760px;margin:0 auto;padding:24px 16px;}
+
+  /* SCORE BAR */
+  .score-bar{
+    display:flex;justify-content:space-between;align-items:center;
+    background:var(--card); border-radius:16px; padding:14px 20px;
+    margin-bottom:20px; border:1px solid rgba(255,255,255,0.08);
+  }
+  .score-label{font-size:13px;color:#aaa;font-weight:600;}
+  .score-val{font-family:'Baloo 2',sans-serif;font-size:26px;font-weight:800;color:var(--gold);}
+  .q-counter{font-size:14px;color:#ccc;font-weight:700;}
+
+  /* PROGRESS */
+  .progress-wrap{background:rgba(255,255,255,0.1);border-radius:8px;height:8px;margin-bottom:22px;overflow:hidden;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--sky));border-radius:8px;transition:width .4s ease;}
+
+  /* CARD */
+  .game-card{
+    background:var(--card); border-radius:20px;
+    padding:28px 24px; border:1px solid rgba(255,255,255,0.08);
+    animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  .q-emoji{font-size:32px;margin-bottom:10px;}
+  .q-text{
+    font-family:'Baloo 2',sans-serif; font-size:19px; font-weight:700;
+    line-height:1.45; margin-bottom:22px; color:#f0f0f0;
+  }
+
+  /* OPTIONS */
+  .options{display:flex;flex-direction:column;gap:12px;}
+  .opt-btn{
+    background:rgba(255,255,255,0.06); border:2px solid rgba(255,255,255,0.12);
+    color:#fff; padding:14px 18px; border-radius:14px;
+    cursor:pointer; font-family:'Nunito',sans-serif; font-size:15px; font-weight:700;
+    text-align:left; transition:all .2s; display:flex;align-items:center;gap:10px;
+  }
+  .opt-btn:hover:not(:disabled){
+    background:rgba(0,174,239,0.15); border-color:var(--sky); transform:translateX(4px);
+  }
+  .opt-btn.correct{background:rgba(0,200,83,0.2);border-color:var(--green);color:var(--green);}
+  .opt-btn.wrong{background:rgba(255,64,129,0.18);border-color:var(--pink);color:var(--pink);}
+  .opt-btn:disabled{cursor:default;}
+  .opt-letter{
+    width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.12);
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:800;flex-shrink:0;
+  }
+
+  /* FEEDBACK */
+  .feedback{
+    margin-top:16px; padding:14px 18px; border-radius:14px;
+    font-weight:700; font-size:14px; display:none;
+    animation:fadeIn .3s ease;
+  }
+  .feedback.correct{background:rgba(0,200,83,0.15);border:1px solid var(--green);color:#6dffaa;}
+  .feedback.wrong{background:rgba(255,64,129,0.12);border:1px solid var(--pink);color:#ff8fab;}
+
+  /* NEXT BTN */
+  .next-btn{
+    display:none; margin-top:18px; width:100%;
+    background:linear-gradient(135deg,var(--sky),var(--purple));
+    border:none; color:#fff; padding:14px;
+    border-radius:14px; cursor:pointer;
+    font-family:'Baloo 2',sans-serif; font-size:17px; font-weight:700;
+    transition:transform .2s,opacity .2s;
+  }
+  .next-btn:hover{transform:scale(1.02);opacity:.9;}
+
+  /* RESULTS */
+  .results{display:none;text-align:center;animation:fadeIn .5s ease;}
+  .results-title{font-family:'Baloo 2',sans-serif;font-size:32px;font-weight:800;margin-bottom:8px;}
+  .stars{font-size:48px;margin:16px 0;}
+  .final-score{font-family:'Baloo 2',sans-serif;font-size:48px;font-weight:800;color:var(--gold);}
+  .score-sub{color:#aaa;font-size:15px;margin-bottom:24px;}
+  .play-again{
+    background:linear-gradient(135deg,var(--saffron),var(--gold));
+    border:none; color:#fff; padding:16px 40px; border-radius:20px;
+    cursor:pointer; font-family:'Baloo 2',sans-serif; font-size:18px; font-weight:800;
+    transition:transform .2s;
+  }
+  .play-again:hover{transform:scale(1.05);}
+  .result-msg{font-size:16px;color:#ddd;margin-bottom:12px;}
+
+  /* START SCREEN */
+  .start-screen{text-align:center;padding:40px 20px;}
+  .start-title{font-family:'Baloo 2',sans-serif;font-size:36px;font-weight:800;margin-bottom:12px;}
+  .start-sub{color:#bbb;font-size:16px;margin-bottom:32px;line-height:1.6;}
+  .start-btn{
+    background:linear-gradient(135deg,var(--green),var(--sky));
+    border:none;color:#fff;padding:16px 48px;border-radius:20px;
+    cursor:pointer;font-family:'Baloo 2',sans-serif;font-size:20px;font-weight:800;
+    transition:transform .2s;
+  }
+  .start-btn:hover{transform:scale(1.05);}
+  .topic-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:28px;}
+  .pill{background:rgba(255,255,255,0.08);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="subject-badge">Science</span>
+  <span class="title-bar">🔊 Sound — Class 8</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+    <button class="lang-btn" onclick="setLang('hi',this)">हि</button>
+    <button class="lang-btn" onclick="setLang('bn',this)">অ</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- START SCREEN -->
+  <div class="start-screen" id="startScreen">
+    <div style="font-size:64px;margin-bottom:16px;">🔊🌊</div>
+    <div class="start-title" id="st-title">Sound Waves Explorer</div>
+    <div class="start-sub" id="st-sub">
+      Dive into the science of sound! Explore vibrations, waves, pitch, loudness, ultrasound and more — based on Class 8 NCERT Chapter 13.
+    </div>
+    <div class="topic-pills">
+      <span class="pill">🎵 Vibration</span>
+      <span class="pill">🌊 Wave Types</span>
+      <span class="pill">📻 Frequency</span>
+      <span class="pill">🔉 Amplitude</span>
+      <span class="pill">🩺 Ultrasound</span>
+      <span class="pill">🚢 SONAR</span>
+      <span class="pill">🔇 Noise Pollution</span>
+    </div>
+    <button class="start-btn" onclick="startGame()" id="st-btn">Start Quiz 🚀</button>
+  </div>
+
+  <!-- GAME AREA -->
+  <div id="gameArea" style="display:none;">
+    <div class="score-bar">
+      <div>
+        <div class="score-label" id="lbl-score">Score</div>
+        <div class="score-val" id="scoreDisplay">0</div>
+      </div>
+      <div class="q-counter" id="qCounter">Q 1 / 10</div>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+    <div class="game-card" id="gameCard">
+      <div class="q-emoji" id="qEmoji"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="options" id="optionsContainer"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+        <span id="next-lbl">Next Question →</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+    <div class="stars" id="starsDisplay"></div>
+    <div class="results-title" id="res-title">Quiz Complete!</div>
+    <div class="final-score" id="finalScore"></div>
+    <div class="score-sub">out of 100</div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="play-again" onclick="resetGame()">🔄 Play Again</button>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    emoji:"🔊",
+    en:{
+      q:"Sound is produced when an object ___ . What fills the blank?",
+      opts:["Breaks into pieces","Vibrates","Melts","Reflects light"],
+      correct:1,
+      explain:"Sound is produced by vibration of objects. When an object vibrates, it creates compressions and rarefactions in the surrounding medium."
+    },
+    hi:{
+      q:"ध्वनि तब उत्पन्न होती है जब कोई वस्तु ___ करती है।",
+      opts:["टूट जाती है","कंपन करती है","पिघलती है","प्रकाश परावर्तित करती है"],
+      correct:1,
+      explain:"वस्तु के कंपन से ध्वनि उत्पन्न होती है।"
+    },
+    bn:{
+      q:"শব্দ উৎপন্ন হয় যখন কোনো বস্তু ___ করে।",
+      opts:["ভেঙে পড়ে","কম্পন করে","গলে যায়","আলো প্রতিফলিত করে"],
+      correct:1,
+      explain:"কম্পনের ফলে শব্দ উৎপন্ন হয়।"
+    }
+  },
+  {
+    emoji:"🌊",
+    en:{
+      q:"Sound CANNOT travel through which of the following?",
+      opts:["Water","Air","Steel","Vacuum"],
+      correct:3,
+      explain:"Sound needs a medium (solid, liquid, or gas) to travel. It cannot travel through a vacuum because there are no particles to carry the vibrations."
+    },
+    hi:{
+      q:"ध्वनि निम्नलिखित में से किसके माध्यम से यात्रा नहीं कर सकती?",
+      opts:["पानी","हवा","इस्पात","निर्वात"],
+      correct:3,
+      explain:"ध्वनि को यात्रा के लिए माध्यम की आवश्यकता होती है। निर्वात में कोई कण नहीं होते, इसलिए ध्वनि नहीं चल सकती।"
+    },
+    bn:{
+      q:"শব্দ কোনটির মধ্য দিয়ে যেতে পারে না?",
+      opts:["জল","বায়ু","ইস্পাত","শূন্যস্থান"],
+      correct:3,
+      explain:"শব্দের মাধ্যম দরকার। শূন্যস্থানে কণা নেই তাই শব্দ যেতে পারে না।"
+    }
+  },
+  {
+    emoji:"🌊",
+    en:{
+      q:"Sound waves are ___ waves because particles of the medium move in the same direction as the wave travels.",
+      opts:["Transverse","Longitudinal","Electromagnetic","Radio"],
+      correct:1,
+      explain:"Sound waves are longitudinal waves. Particles of the medium vibrate parallel to the direction of wave propagation, creating compressions and rarefactions."
+    },
+    hi:{
+      q:"ध्वनि तरंगें ___ तरंगें होती हैं, क्योंकि माध्यम के कण तरंग की दिशा में गति करते हैं।",
+      opts:["अनुप्रस्थ","अनुदैर्ध्य","विद्युतचुम्बकीय","रेडियो"],
+      correct:1,
+      explain:"ध्वनि तरंगें अनुदैर्ध्य (longitudinal) होती हैं।"
+    },
+    bn:{
+      q:"শব্দ তরঙ্গ ___ তরঙ্গ কারণ মাধ্যমের কণা তরঙ্গের দিকে চলে।",
+      opts:["তির্যক","অনুদৈর্ঘ্য","তড়িৎচুম্বকীয","রেডিও"],
+      correct:1,
+      explain:"শব্দ তরঙ্গ অনুদৈর্ঘ্য তরঙ্গ।"
+    }
+  },
+  {
+    emoji:"🔉",
+    en:{
+      q:"The loudness of sound depends on its ___ .",
+      opts:["Frequency","Wavelength","Amplitude","Speed"],
+      correct:2,
+      explain:"Loudness depends on amplitude. Greater the amplitude of vibration, louder is the sound produced."
+    },
+    hi:{
+      q:"ध्वनि की प्रबलता (loudness) किस पर निर्भर करती है?",
+      opts:["आवृत्ति","तरंगदैर्ध्य","आयाम","चाल"],
+      correct:2,
+      explain:"ध्वनि की प्रबलता आयाम (amplitude) पर निर्भर करती है।"
+    },
+    bn:{
+      q:"শব্দের তীব্রতা কীসের উপর নির্ভর করে?",
+      opts:["কম্পাঙ্ক","তরঙ্গদৈর্ঘ্য","বিস্তার","গতি"],
+      correct:2,
+      explain:"শব্দের তীব্রতা বিস্তার (amplitude) এর উপর নির্ভর করে।"
+    }
+  },
+  {
+    emoji:"🎵",
+    en:{
+      q:"The pitch of sound is determined by its ___ . Higher the value, shriller the sound.",
+      opts:["Amplitude","Frequency","Speed in air","Wavelength only"],
+      correct:1,
+      explain:"Pitch depends on frequency. Higher frequency = higher pitch (shriller). The unit of frequency is Hertz (Hz)."
+    },
+    hi:{
+      q:"ध्वनि का तारत्व (pitch) किस पर निर्भर करता है?",
+      opts:["आयाम","आवृत्ति","हवा में चाल","केवल तरंगदैर्ध्य"],
+      correct:1,
+      explain:"तारत्व आवृत्ति पर निर्भर करता है। अधिक आवृत्ति = उच्च तारत्व।"
+    },
+    bn:{
+      q:"শব্দের তীক্ষ্ণতা কীসের উপর নির্ভর করে?",
+      opts:["বিস্তার","কম্পাঙ্ক","বায়ুতে গতি","কেবল তরঙ্গদৈর্ঘ্য"],
+      correct:1,
+      explain:"তীক্ষ্ণতা কম্পাঙ্কের উপর নির্ভর করে।"
+    }
+  },
+  {
+    emoji:"📻",
+    en:{
+      q:"The unit of frequency of sound is ___.",
+      opts:["Decibel (dB)","Hertz (Hz)","Newton (N)","Pascal (Pa)"],
+      correct:1,
+      explain:"Frequency is measured in Hertz (Hz). 1 Hz = 1 vibration per second. It is named after physicist Heinrich Hertz."
+    },
+    hi:{
+      q:"ध्वनि की आवृत्ति की इकाई क्या है?",
+      opts:["डेसिबल (dB)","हर्ट्ज (Hz)","न्यूटन (N)","पास्कल (Pa)"],
+      correct:1,
+      explain:"आवृत्ति की इकाई हर्ट्ज (Hz) है।"
+    },
+    bn:{
+      q:"শব্দের কম্পাঙ্কের একক কী?",
+      opts:["ডেসিবেল (dB)","হার্টজ (Hz)","নিউটন (N)","পাসকাল (Pa)"],
+      correct:1,
+      explain:"কম্পাঙ্কের একক হার্টজ (Hz)।"
+    }
+  },
+  {
+    emoji:"👂",
+    en:{
+      q:"The audible range of sound for human ears is ___.",
+      opts:["0 Hz to 1000 Hz","20 Hz to 20,000 Hz","100 Hz to 1,00,000 Hz","1 Hz to 100 Hz"],
+      correct:1,
+      explain:"Humans can hear sounds in the range of 20 Hz to 20,000 Hz. Sounds below 20 Hz are infrasound; above 20,000 Hz are ultrasound."
+    },
+    hi:{
+      q:"मानव कान के लिए श्रव्य ध्वनि की सीमा क्या है?",
+      opts:["0 Hz से 1000 Hz","20 Hz से 20,000 Hz","100 Hz से 1,00,000 Hz","1 Hz से 100 Hz"],
+      correct:1,
+      explain:"मनुष्य 20 Hz से 20,000 Hz के बीच की ध्वनि सुन सकते हैं।"
+    },
+    bn:{
+      q:"মানুষের শ্রবণযোগ্য শব্দের পরিসীমা কত?",
+      opts:["০ Hz থেকে ১০০০ Hz","২০ Hz থেকে ২০,০০০ Hz","১০০ Hz থেকে ১,০০,০০০ Hz","১ Hz থেকে ১০০ Hz"],
+      correct:1,
+      explain:"মানুষ ২০ Hz থেকে ২০,০০০ Hz শ্রেণির শব্দ শুনতে পায়।"
+    }
+  },
+  {
+    emoji:"🚢",
+    en:{
+      q:"SONAR stands for ___.",
+      opts:["Sound Navigation And Ranging","Sound Of Naval And Radio","Sonic Navigation Area Radar","System Of Naval And Radio"],
+      correct:0,
+      explain:"SONAR = Sound Navigation And Ranging. It uses ultrasound waves to detect objects underwater. Ships use SONAR to find depth of sea and locate submarines."
+    },
+    hi:{
+      q:"SONAR का पूर्ण रूप क्या है?",
+      opts:["Sound Navigation And Ranging","Sound Of Naval And Radio","Sonic Navigation Area Radar","System Of Naval And Radio"],
+      correct:0,
+      explain:"SONAR = Sound Navigation And Ranging (ध्वनि नौसंचालन एवं दूरी मापन)। यह पानी के अंदर वस्तुओं का पता लगाने के लिए पराध्वनि का उपयोग करता है।"
+    },
+    bn:{
+      q:"SONAR-এর পূর্ণ রূপ কী?",
+      opts:["Sound Navigation And Ranging","Sound Of Naval And Radio","Sonic Navigation Area Radar","System Of Naval And Radio"],
+      correct:0,
+      explain:"SONAR = Sound Navigation And Ranging। এটি পানির নিচে বস্তু সনাক্ত করতে অতিশব্দ ব্যবহার করে।"
+    }
+  },
+  {
+    emoji:"🩺",
+    en:{
+      q:"Ultrasound is used in medical imaging (sonography). Which statement about ultrasound is CORRECT?",
+      opts:["Frequency below 20 Hz","Frequency above 20,000 Hz","Travels without a medium","Same as audible sound"],
+      correct:1,
+      explain:"Ultrasound has frequency above 20,000 Hz (above human hearing range). It is used in medical imaging, SONAR, and to detect cracks in metal."
+    },
+    hi:{
+      q:"पराध्वनि (Ultrasound) के बारे में कौन-सा कथन सही है?",
+      opts:["आवृत्ति 20 Hz से कम","आवृत्ति 20,000 Hz से अधिक","बिना माध्यम के चलती है","श्रव्य ध्वनि के समान है"],
+      correct:1,
+      explain:"पराध्वनि की आवृत्ति 20,000 Hz से अधिक होती है। इसका उपयोग चिकित्सा, SONAR और धातु में दरार का पता लगाने में होता है।"
+    },
+    bn:{
+      q:"অতিশব্দ (Ultrasound) সম্পর্কে কোন বক্তব্যটি সঠিক?",
+      opts:["কম্পাঙ্ক ২০ Hz এর নিচে","কম্পাঙ্ক ২০,০০০ Hz এর উপরে","মাধ্যম ছাড়া চলে","শ্রবণযোগ্য শব্দের মতো"],
+      correct:1,
+      explain:"অতিশব্দের কম্পাঙ্ক ২০,০০০ Hz এর বেশি। এটি চিকিৎসা ও SONAR-এ ব্যবহৃত হয়।"
+    }
+  },
+  {
+    emoji:"🔇",
+    en:{
+      q:"Noise pollution is harmful when sound level exceeds ___.",
+      opts:["30 dB","60 dB","85 dB","200 dB"],
+      correct:2,
+      explain:"Sounds above 85 dB can cause permanent hearing damage. Prolonged exposure to noise pollution can lead to hearing loss, stress, and high blood pressure."
+    },
+    hi:{
+      q:"ध्वनि प्रदूषण हानिकारक होता है जब ध्वनि स्तर ___ से अधिक हो।",
+      opts:["30 dB","60 dB","85 dB","200 dB"],
+      correct:2,
+      explain:"85 dB से अधिक ध्वनि सुनने की क्षमता को स्थायी रूप से नुकसान पहुँचा सकती है।"
+    },
+    bn:{
+      q:"শব্দ দূষণ ক্ষতিকর হয় যখন শব্দের মাত্রা ___ এর বেশি হয়।",
+      opts:["৩০ dB","৬০ dB","৮৫ dB","২০০ dB"],
+      correct:2,
+      explain:"৮৫ dB এর বেশি শব্দ স্থায়ী শ্রবণ ক্ষতি করতে পারে।"
+    }
+  }
+];
+
+let currentLang = 'en';
+let currentQ = 0;
+let score = 0;
+let answered = false;
+
+const labels = {
+  en:{score:"Score",next:"Next Question →",results:"Quiz Complete! 🎉",again:"🔄 Play Again",q:"Q"},
+  hi:{score:"अंक",next:"अगला प्रश्न →",results:"क्विज़ पूर्ण! 🎉",again:"🔄 फिर खेलें",q:"प्र"},
+  bn:{score:"স্কোর",next:"পরবর্তী প্রশ্ন →",results:"কুইজ সম্পন্ন! 🎉",again:"🔄 আবার খেলুন",q:"প্র"}
+};
+
+function setLang(lang, btn) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(document.getElementById('gameArea').style.display !== 'none') renderQuestion();
+  updateStaticLabels();
+}
+
+function updateStaticLabels(){
+  const l = labels[currentLang];
+  document.getElementById('lbl-score').textContent = l.score;
+  document.getElementById('next-lbl').textContent = l.next;
+}
+
+function startGame(){
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  currentQ=0; score=0;
+  updateStaticLabels();
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answered = false;
+  const q = QUESTIONS[currentQ];
+  const data = q[currentLang] || q['en'];
+  document.getElementById('qEmoji').textContent = q.emoji;
+  document.getElementById('qText').textContent = data.q;
+  document.getElementById('qCounter').textContent = `${labels[currentLang].q} ${currentQ+1} / 10`;
+  document.getElementById('scoreDisplay').textContent = score;
+  document.getElementById('progressFill').style.width = `${currentQ*10}%`;
+  document.getElementById('feedback').style.display='none';
+  document.getElementById('nextBtn').style.display='none';
+
+  const opts = document.getElementById('optionsContainer');
+  opts.innerHTML='';
+  const letters = ['A','B','C','D'];
+  data.opts.forEach((opt,i)=>{
+    const btn = document.createElement('button');
+    btn.className='opt-btn';
+    btn.innerHTML=`<span class="opt-letter">${letters[i]}</span>${opt}`;
+    btn.onclick = ()=>checkAnswer(i, data.correct, data.explain, btn);
+    opts.appendChild(btn);
+  });
+}
+
+function checkAnswer(chosen, correct, explain, clickedBtn){
+  if(answered) return;
+  answered = true;
+  const allBtns = document.querySelectorAll('.opt-btn');
+  allBtns.forEach(b=>b.disabled=true);
+
+  const fb = document.getElementById('feedback');
+  if(chosen === correct){
+    clickedBtn.classList.add('correct');
+    score += 10;
+    fb.className='feedback correct';
+    fb.textContent = '✅ Correct! ' + explain;
+  } else {
+    clickedBtn.classList.add('wrong');
+    allBtns[correct].classList.add('correct');
+    fb.className='feedback wrong';
+    fb.textContent = '❌ Not quite. ' + explain;
+  }
+  fb.style.display='block';
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ >= 10){
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResults(){
+  document.getElementById('gameArea').style.display='none';
+  const res = document.getElementById('results');
+  res.style.display='block';
+  document.getElementById('finalScore').textContent = score;
+
+  let stars='', msg='';
+  if(score>=90){stars='⭐⭐⭐';msg='Outstanding! You are a Sound Expert! 🔊';}
+  else if(score>=60){stars='⭐⭐';msg='Great job! Keep practising! 💪';}
+  else{stars='⭐';msg='Good attempt! Review NCERT Ch 13 and try again! 📖';}
+
+  document.getElementById('starsDisplay').textContent=stars;
+  document.getElementById('resultMsg').textContent=msg;
+}
+
+function resetGame(){
+  currentQ=0; score=0; answered=false;
+  document.getElementById('results').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  renderQuestion();
+}
+</script>
+</body>
+</html>

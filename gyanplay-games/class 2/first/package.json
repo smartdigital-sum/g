@@ -1,0 +1,16 @@
+{
+  "name": "gyanplay-class2",
+  "version": "1.0.0",
+  "description": "GyanPlay Class 2 Educational Games",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=3000",
+    "build": "echo 'Build complete'"
+  },
+  "keywords": ["education", "games", "class2", "ncert", "assam"],
+  "author": "GyanPlay Team",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

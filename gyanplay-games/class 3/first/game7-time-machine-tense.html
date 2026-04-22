@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⏰ Time Machine Tense — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#100820;--card:#1C1235;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--orange:#FF9F1C;--purple:#C77DFF;--blue:#4CC9F0;--text:#F8F0FF;--dim:#8068AA}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(255,209,102,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.3rem}
+.star{opacity:.3;transition:all .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:18px 16px;gap:16px}
+.hook{background:linear-gradient(135deg,rgba(76,201,240,.12),rgba(199,125,255,.08));border:1px solid rgba(76,201,240,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.88rem;line-height:1.6;color:#C4EEFF}
+.hook strong{color:var(--gold)}
+/* Time machine visual */
+.machine{background:var(--card);border-radius:20px;border:2px solid rgba(199,125,255,.3);padding:20px;width:100%;max-width:440px;box-shadow:0 0 30px rgba(76,201,240,.1)}
+.machine-title{text-align:center;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.9rem;color:var(--purple);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px}
+.time-dials{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.dial{flex:1;padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .2s;max-width:120px}
+.dial.yesterday{background:rgba(255,107,107,.12);border-color:rgba(255,107,107,.3)}
+.dial.yesterday:hover,.dial.yesterday.active{background:rgba(255,107,107,.25);border-color:var(--coral);box-shadow:0 0 16px rgba(255,107,107,.3)}
+.dial.today{background:rgba(255,209,102,.12);border-color:rgba(255,209,102,.3)}
+.dial.today:hover,.dial.today.active{background:rgba(255,209,102,.25);border-color:var(--gold);box-shadow:0 0 16px rgba(255,209,102,.3)}
+.dial.tomorrow{background:rgba(6,214,160,.12);border-color:rgba(6,214,160,.3)}
+.dial.tomorrow:hover,.dial.tomorrow.active{background:rgba(6,214,160,.25);border-color:var(--teal);box-shadow:0 0 16px rgba(6,214,160,.3)}
+.dial-emoji{font-size:1.6rem;line-height:1;margin-bottom:4px}
+.dial-label{font-family:'Baloo 2',sans-serif;font-size:.85rem;font-weight:700}
+.dial-sub{font-size:.65rem;color:var(--dim)}
+.sentence-area{background:rgba(0,0,0,.2);border-radius:12px;padding:16px;text-align:center}
+.given-sentence{font-size:.9rem;color:var(--dim);margin-bottom:10px;line-height:1.6}
+.given-sentence em{color:var(--gold);font-style:normal;font-weight:700}
+.blank-sentence{font-size:1.05rem;color:var(--text);line-height:1.8;font-weight:600}
+.blank-sentence strong{color:var(--blue)}
+/* Options */
+.options-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:440px}
+.opt{padding:13px 22px;background:var(--card);border:2px solid rgba(199,125,255,.2);border-radius:50px;color:var(--text);font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;transition:transform .15s,border-color .2s,background .2s}
+.opt:hover{transform:scale(1.06);border-color:var(--purple)}
+.opt.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal)}
+.opt.wrong{background:rgba(255,107,107,.12);border-color:var(--coral);color:var(--coral)}
+.rule-card{background:rgba(199,125,255,.06);border:1px solid rgba(199,125,255,.2);border-radius:10px;padding:10px 14px;font-size:.82rem;color:#C8A8FF;line-height:1.5;max-width:440px;text-align:center;display:none}
+.rule-card.show{display:block}
+.rule-card strong{color:var(--purple)}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#1B0A3C;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(16,8,32,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4.5rem}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.9rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@keyframes timewarp{0%{transform:scale(1);filter:blur(0)}50%{transform:scale(1.04);filter:blur(2px)}100%{transform:scale(1);filter:blur(0)}}
+.warping{animation:timewarp .5s ease}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">⏰ Time Machine Tense</div><div class="subject-tag">English · Tenses · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+
+<div class="game-area">
+  <div class="hook">⏰ <strong>"I eat"</strong> is today. <strong>"I ate"</strong> is yesterday. The SAME action, but a tiny verb change takes you back in time. Language has a built-in <strong>time machine</strong> — it's called TENSE!</div>
+
+  <div class="machine">
+    <div class="machine-title">⚙️ Time Machine Controls</div>
+    <div class="time-dials">
+      <div class="dial yesterday" id="dial-past"><div class="dial-emoji">🔴</div><div class="dial-label" style="color:var(--coral)">Yesterday</div><div class="dial-sub">Past Tense</div></div>
+      <div class="dial today" id="dial-present"><div class="dial-emoji">🟡</div><div class="dial-label" style="color:var(--gold)">Today</div><div class="dial-sub">Present Tense</div></div>
+      <div class="dial tomorrow" id="dial-future"><div class="dial-emoji">🟢</div><div class="dial-label" style="color:var(--teal)">Tomorrow</div><div class="dial-sub">Future Tense</div></div>
+    </div>
+    <div class="sentence-area" id="sentenceArea">
+      <div class="given-sentence" id="givenSent">...</div>
+      <div class="blank-sentence" id="blankSent">...</div>
+    </div>
+  </div>
+
+  <div class="options-row" id="optRow"></div>
+  <div class="rule-card" id="ruleCard"></div>
+</div>
+
+<div class="bottom">
+  <div class="prog" id="prog">Question 1 of 10</div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()">Next →</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">Correct!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+
+<script>
+const QS=[
+  {given:'Today, Priya eats her lunch.',blank:'Yesterday, Priya ___ her lunch.',correct:'ate',opts:['ate','eats','will eat'],dial:'past',rule:'Regular past tense adds -ed, but "eat" is irregular — it becomes "ate"!',subject:'Priya'},
+  {given:'Today, Raju runs to school.',blank:'Yesterday, Raju ___ to school.',correct:'ran',opts:['ran','runs','runned'],dial:'past',rule:'"Run" is irregular — it becomes "ran" in the past, not "runned"!',subject:'Raju'},
+  {given:'Yesterday, Mimi wrote a letter.',blank:'Today, Mimi ___ a letter.',correct:'writes',opts:['writes','wrote','will write'],dial:'present',rule:'Present tense: he/she/it adds -s. "Write" becomes "writes"!',subject:'Mimi'},
+  {given:'Today, Arjun drinks water.',blank:'Tomorrow, Arjun ___ water.',correct:'will drink',opts:['drank','drinks','will drink'],dial:'future',rule:'Future tense always uses "will" before the verb — "will drink"!',subject:'Arjun'},
+  {given:'Today, the birds sing.',blank:'Yesterday, the birds ___.',correct:'sang',opts:['sang','singed','will sing'],dial:'past',rule:'"Sing" becomes "sang" in the past. Some verbs change completely!',subject:'birds'},
+  {given:'Yesterday, we went to Kaziranga.',blank:'Today, we ___ to Kaziranga.',correct:'go',opts:['went','go','will go'],dial:'present',rule:'"Go" in present tense is just "go" (or "goes" for he/she)!',subject:'we'},
+  {given:'Today, she plays in the rain.',blank:'Yesterday, she ___ in the rain.',correct:'played',opts:['played','plays','will play'],dial:'past',rule:'"Play" is regular — just add -ed to make "played"!',subject:'she'},
+  {given:'Today, I see the Brahmaputra.',blank:'Yesterday, I ___ the Brahmaputra.',correct:'saw',opts:['saw','seen','will see'],dial:'past',rule:'"See" becomes "saw" in the past — another irregular verb!',subject:'I'},
+  {given:'Yesterday, they came home late.',blank:'Tomorrow, they ___ home late.',correct:'will come',opts:['came','come','will come'],dial:'future',rule:'Future is easy: "will" + the base verb. Always!',subject:'they'},
+  {given:'Today, Ram eats a mango.',blank:'Yesterday, Ram ___ a mango.',correct:'ate',opts:['ate','eats','eaten'],dial:'past',rule:'Eat → Ate in past. Remember: Eat today, Ate yesterday!',subject:'Ram'}
+];
+const MSGS=['Time traveller! ⏰','Tense master! 🧠','Perfect! 🌟','Brilliant! ⚡','Great! 🎯','Correct! ✨','Smart! 🤓','Excellent! 🏅','You got it! 💫','Language wizard! 🏆'];
+let qi=0,score=0,answered=false;
+
+function loadQ(){
+  const q=QS[qi];answered=false;
+  // Highlight dial
+  ['past','present','future'].forEach(d=>{
+    const el=document.getElementById(`dial-${d}`);
+    el.classList.toggle('active',q.dial===d);
+  });
+  document.getElementById('givenSent').innerHTML=q.given.replace(/(eats|runs|drinks|sings|goes|plays|sees|comes|ate|ran|drank|sang|went|played|saw|came|write|writes|wrote)/gi,m=>`<em>${m}</em>`);
+  document.getElementById('blankSent').innerHTML=`<strong>${q.blank.replace('___','<span style="color:var(--gold);background:rgba(255,209,102,.1);padding:2px 12px;border-radius:6px;border-bottom:2px dashed var(--gold)">___</span>')}</strong>`;
+  buildOpts(q);
+  document.getElementById('ruleCard').classList.remove('show');
+  document.getElementById('nextBtn').style.display='none';
+}
+
+function buildOpts(q){
+  const row=document.getElementById('optRow');row.innerHTML='';
+  const arr=[...q.opts].sort(()=>Math.random()-.5);
+  arr.forEach(o=>{
+    const b=document.createElement('button');b.className='opt';b.textContent=o;
+    b.onclick=()=>pick(b,o,q);row.appendChild(b);
+  });
+}
+
+function pick(btn,val,q){
+  if(answered)return;answered=true;
+  document.getElementById('sentenceArea').classList.add('warping');
+  setTimeout(()=>document.getElementById('sentenceArea').classList.remove('warping'),500);
+  if(val===q.correct){
+    btn.classList.add('correct');score++;
+    if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+    document.getElementById('blankSent').innerHTML=`<strong>${q.blank.replace('___',`<span style="color:var(--teal);font-size:1.15rem">${q.correct}</span>`)}</strong>`;
+    showOverlay(MSGS[qi]||'Correct!','');confetti();setTimeout(hideOverlay,2200);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt').forEach(b=>{if(b.textContent===q.correct)b.classList.add('correct');});
+    document.getElementById('blankSent').innerHTML=`<strong>${q.blank.replace('___',`<span style="color:var(--teal)">${q.correct}</span>`)}</strong>`;
+  }
+  document.getElementById('ruleCard').textContent=`💡 ${q.rule}`;document.getElementById('ruleCard').classList.add('show');
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function nextQ(){
+  qi++;document.getElementById('nextBtn').style.display='none';
+  if(qi>=QS.length){endGame();return;}
+  document.getElementById('prog').textContent=`Question ${qi+1} of ${QS.length}`;
+  loadQ();
+}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOverlay(`Score: ${score}/${QS.length}!`,'Time Machine Tense champion — you\'ve mastered past, present and future!');
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;qi=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Next →';document.getElementById('nextBtn').onclick=nextQ;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='Correct!';hideOverlay();loadQ();};
+}
+function showOverlay(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOverlay(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#FFD166','#FF6B6B','#06D6A0','#C77DFF','#FF9F1C'];for(let i=0;i<28;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+loadQ();
+</script>
+</body>
+</html>

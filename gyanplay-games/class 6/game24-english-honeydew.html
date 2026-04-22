@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Honeydew &amp; A Pact with the Sun – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;
+  --pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;
+  --card:#1a1740;--text:#EEE;--muted:#aaa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  font-family:'Nunito',sans-serif;color:var(--text);padding-bottom:48px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeIn .45s ease both}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;
+  background:rgba(255,255,255,.04);backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.back-btn{background:none;border:1px solid rgba(255,255,255,.2);color:#fff;
+  padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;
+  font-size:.85rem;transition:all .2s}
+.back-btn:hover{background:rgba(255,255,255,.1)}
+.badge{background:var(--sky);color:#000;padding:4px 14px;border-radius:20px;
+  font-size:.8rem;font-weight:700;font-family:'Baloo 2',sans-serif;letter-spacing:.5px}
+.title-bar{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;flex:1;text-align:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lang-toggle{display:flex;gap:4px;margin-left:auto}
+.lang-btn{background:rgba(255,255,255,.08);border:none;color:#ccc;
+  padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;
+  font-family:'Nunito',sans-serif;transition:all .2s}
+.lang-btn.active{background:var(--sky);color:#000;font-weight:700}
+
+/* SCORE / PROGRESS */
+.score-wrap{max-width:700px;margin:18px auto 0;padding:0 16px}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.score-label{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;color:var(--gold)}
+.score-val{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--saffron)}
+.prog-bar{height:8px;background:rgba(255,255,255,.1);border-radius:8px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--purple));border-radius:8px;transition:width .4s ease}
+
+/* QUESTION CARD */
+.q-wrap{max-width:700px;margin:22px auto 0;padding:0 16px}
+.chapter-tag{display:inline-block;background:rgba(0,174,239,.18);border:1px solid var(--sky);
+  color:#7dd9f9;padding:3px 13px;border-radius:20px;font-size:.76rem;font-weight:700;margin-bottom:12px;
+  letter-spacing:.3px}
+.q-card{background:var(--card);border-radius:18px;padding:28px 26px;
+  border:1px solid rgba(0,174,239,.2);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.q-num{font-size:.8rem;color:var(--muted);margin-bottom:6px;font-weight:600}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.08rem;font-weight:700;line-height:1.65;margin-bottom:22px}
+.options{display:grid;gap:10px}
+.opt-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  color:var(--text);padding:13px 18px;border-radius:12px;cursor:pointer;
+  font-family:'Nunito',sans-serif;font-size:.97rem;font-weight:600;
+  text-align:left;transition:all .22s;display:flex;align-items:center;gap:10px}
+.opt-btn:hover:not(:disabled){background:rgba(0,174,239,.15);border-color:var(--sky);transform:translateX(4px)}
+.opt-btn:disabled{cursor:default}
+.opt-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:#fff}
+.opt-btn.wrong{background:rgba(255,64,129,.18);border-color:var(--pink);color:#fff}
+.opt-icon{font-size:1.1rem;min-width:22px}
+.explanation{margin-top:16px;padding:14px 18px;background:rgba(255,255,255,.06);
+  border-radius:12px;border-left:3px solid var(--sky);font-size:.92rem;line-height:1.65;display:none}
+.explanation.show{display:block}
+.explanation strong{color:var(--gold)}
+.next-btn{margin-top:18px;width:100%;padding:14px;background:linear-gradient(90deg,var(--sky),var(--purple));
+  border:none;color:#fff;border-radius:12px;font-family:'Baloo 2',sans-serif;
+  font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s;display:none}
+.next-btn:hover{opacity:.88}
+.next-btn.show{display:block}
+
+/* RESULT */
+.result-card{max-width:700px;margin:40px auto;padding:0 16px;text-align:center}
+.result-inner{background:var(--card);border-radius:20px;padding:40px 30px;border:1px solid rgba(0,174,239,.25)}
+.stars{font-size:2.5rem;letter-spacing:4px;margin-bottom:16px}
+.result-score{font-family:'Baloo 2',sans-serif;font-size:3rem;font-weight:800;color:var(--saffron)}
+.result-msg{font-size:1.1rem;color:var(--muted);margin:8px 0 28px}
+.play-again{padding:14px 40px;background:linear-gradient(90deg,var(--sky),var(--purple));
+  border:none;color:#fff;border-radius:12px;font-family:'Baloo 2',sans-serif;
+  font-size:1.1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.play-again:hover{opacity:.85}
+
+@media(max-width:480px){
+  .title-bar{font-size:.95rem}
+  .q-card{padding:20px 16px}
+  .q-text{font-size:1rem}
+  .result-score{font-size:2.4rem}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">&#8592; Back</button>
+  <span class="badge">English</span>
+  <span class="title-bar">&#128218; Honeydew &amp; A Pact with the Sun</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+    <button class="lang-btn" onclick="setLang('hi',this)">हि</button>
+    <button class="lang-btn" onclick="setLang('bn',this)">অ</button>
+  </div>
+</div>
+
+<div class="score-wrap">
+  <div class="score-row">
+    <span class="score-label" id="scoreLabel">Score</span>
+    <span class="score-val"><span id="scoreNum">0</span>/100</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<div class="q-wrap fade" id="gameArea"></div>
+<div class="result-card fade" id="resultCard" style="display:none"></div>
+
+<script>
+/* ===== LANGUAGE ===== */
+let currentLang = 'en';
+function setLang(lang, btn) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderQuestion();
+  const labels = {en:'Score', hi:'स्कोर', bn:'স্কোর'};
+  document.getElementById('scoreLabel').textContent = labels[lang];
+}
+
+/* ===== QUESTION BANK (12 questions) ===== */
+const BANK = [
+  {
+    chapter: {en:"A Tale of Two Birds", hi:"दो चिड़ियों की कहानी", bn:"দুই পাখির গল্প"},
+    q:{
+      en:"📖 In 'A Tale of Two Birds', the two birds were separated after a storm. What was the main lesson of this story?",
+      hi:"📖 'दो चिड़ियों की कहानी' में तूफान के बाद दोनों चिड़ियाँ अलग हो गईं। इस कहानी का मुख्य संदेश क्या है?",
+      bn:"📖 'দুই পাখির গল্পে' ঝড়ের পর দুটি পাখি আলাদা হয়ে গেল। এই গল্পের মূল বার্তা কী?"
+    },
+    opts:{
+      en:["Hard work leads to success","Environment and company shape one's character","Birds are smarter than humans","Forests are dangerous places"],
+      hi:["कड़ी मेहनत सफलता दिलाती है","परिवेश और संगत चरित्र को आकार देती है","पक्षी मनुष्य से चालाक होते हैं","जंगल खतरनाक जगह हैं"],
+      bn:["কঠোর পরিশ্রম সাফল্য দেয়","পরিবেশ ও সঙ্গ চরিত্র গড়ে তোলে","পাখিরা মানুষের চেয়ে চালাক","জঙ্গল বিপজ্জনক জায়গা"]
+    },
+    ans: 1,
+    exp:{
+      en:"<strong>Environment shapes character.</strong> One bird lived with a rishi (sage) and spoke kindly; the other lived with robbers and learned to speak harshly. Same origin — different surroundings made them completely different.",
+      hi:"<strong>परिवेश चरित्र को आकार देता है।</strong> एक चिड़िया ऋषि के पास रही और विनम्र बोलना सीखा; दूसरी चिड़िया डाकुओं के साथ रही और कठोर बोलना सीखा। एक ही उद्गम — अलग-अलग परिवेश ने उन्हें बिल्कुल अलग बना दिया।",
+      bn:"<strong>পরিবেশ চরিত্র গড়ে তোলে।</strong> একটি পাখি ঋষির কাছে থেকে ভদ্র হয়ে ওঠে; অন্যটি ডাকাতদের সঙ্গে থেকে রুক্ষ হয়ে ওঠে। একই উৎস — ভিন্ন পরিবেশ তাদের সম্পূর্ণ আলাদা করে দিল।"
+    }
+  },
+  {
+    chapter: {en:"A Tale of Two Birds", hi:"दो चिड़ियों की कहानी", bn:"দুই পাখির গল্প"},
+    q:{
+      en:"📖 In 'A Tale of Two Birds', the bird raised near the rishi said which kind of words to the king?",
+      hi:"📖 'दो चिड़ियों की कहानी' में ऋषि के पास पली चिड़िया ने राजा से कैसे शब्द कहे?",
+      bn:"📖 'দুই পাখির গল্পে' ঋষির কাছে বড় হওয়া পাখিটি রাজাকে কী ধরনের কথা বলেছিল?"
+    },
+    opts:{
+      en:["Rude and threatening words","Kind and welcoming words","Silent — it could not speak","Angry and warning words"],
+      hi:["कठोर और धमकी भरे शब्द","विनम्र और स्वागत भरे शब्द","चुप — वह बोल नहीं सकती थी","क्रोधित और चेतावनी भरे शब्द"],
+      bn:["রুক্ষ ও হুমকির কথা","ভদ্র ও স্বাগতমূলক কথা","চুপ — সে বলতে পারত না","রাগী ও সতর্কতার কথা"]
+    },
+    ans: 1,
+    exp:{
+      en:"The bird raised by the <strong>rishi</strong> welcomed the king warmly, saying 'Come in, Your Majesty.' Its good environment taught it kind speech, showing that good company brings out good qualities.",
+      hi:"ऋषि के पास पली चिड़िया ने राजा का <strong>गर्मजोशी से स्वागत</strong> किया: 'आइए, महाराज।' अच्छे परिवेश ने उसे विनम्र बोलना सिखाया।",
+      bn:"ঋষির কাছে বড় হওয়া পাখিটি <strong>উষ্ণভাবে</strong> রাজাকে স্বাগত জানাল: 'আসুন, মহারাজ।' ভালো পরিবেশ তাকে মিষ্টি কথা বলতে শেখাল।"
+    }
+  },
+  {
+    chapter: {en:"The Friendly Mongoose", hi:"नेवले की कहानी", bn:"বন্ধু নেউল"},
+    q:{
+      en:"📖 In 'The Friendly Mongoose', why did the mother feel guilty at the end of the story?",
+      hi:"📖 'नेवले की कहानी' में अंत में माँ को क्यों पछतावा हुआ?",
+      bn:"📖 'বন্ধু নেউল' গল্পে শেষে মা কেন অনুতাপ করেছিলেন?"
+    },
+    opts:{
+      en:["She lost the baby while shopping","She killed the loyal mongoose by mistake, thinking it had hurt the baby","She forgot to feed the mongoose","She sold the mongoose to a merchant"],
+      hi:["वह बाजार में बच्चे को खो आई","उसने वफादार नेवले को गलती से मार दिया, यह सोचकर कि उसने बच्चे को नुकसान पहुँचाया","वह नेवले को खाना देना भूल गई","उसने नेवले को एक व्यापारी को बेच दिया"],
+      bn:["বাজারে শিশুকে হারিয়ে ফেলেছিল","সে বিশ্বস্ত নেউলকে ভুল করে হত্যা করেছিল, মনে করেছিল সে শিশুকে আঘাত করেছে","সে নেউলকে খাওয়াতে ভুলে গিয়েছিল","সে নেউলকে একজন ব্যবসায়ীর কাছে বিক্রি করেছিল"]
+    },
+    ans: 1,
+    exp:{
+      en:"The mongoose had <strong>killed a cobra</strong> to protect the baby. The mother saw blood on the mongoose's mouth and killed it, thinking it had harmed the baby. The moral: never act in haste without knowing the full truth.",
+      hi:"नेवले ने <strong>बच्चे की रक्षा के लिए साँप को मार डाला था</strong>। माँ ने नेवले के मुँह पर खून देखकर उसे मार दिया। नैतिक शिक्षा: बिना पूरी सच्चाई जाने जल्दबाजी में कभी कार्य न करें।",
+      bn:"নেউলটি <strong>শিশুকে রক্ষার জন্য সাপ মেরেছিল</strong>। মা নেউলের মুখে রক্ত দেখে সেটিকে মেরে ফেলেন। নীতিকথা: সম্পূর্ণ সত্য না জেনে তাড়াহুড়ো করে কখনো কাজ করবে না।"
+    }
+  },
+  {
+    chapter: {en:"The Shepherd's Treasure", hi:"गड़रिये का खज़ाना", bn:"রাখালের ধন"},
+    q:{
+      en:"📖 In 'The Shepherd's Treasure', the shepherd became a governor. What did he always keep with him as a symbol of humility?",
+      hi:"📖 'गड़रिये का खज़ाना' में गड़रिया गवर्नर बन गया। वह विनम्रता के प्रतीक के रूप में हमेशा क्या रखता था?",
+      bn:"📖 'রাখালের ধন' গল্পে রাখাল গভর্নর হয়। নম্রতার প্রতীক হিসেবে সে সবসময় কী সাথে রাখত?"
+    },
+    opts:{
+      en:["His old iron staff","His old cloak","A bag of gold coins","A shepherd's flute"],
+      hi:["अपनी पुरानी लोहे की छड़ी","अपना पुराना लबादा","सोने के सिक्कों की थैली","एक गड़रिये की बाँसुरी"],
+      bn:["তার পুরনো লোহার লাঠি","তার পুরনো চাদর","সোনার মুদ্রার থলি","একটি রাখালের বাঁশি"]
+    },
+    ans: 1,
+    exp:{
+      en:"The shepherd always kept his <strong>old cloak</strong> under his grand robe. When asked, he said it reminded him of his humble origins. This showed his honesty and humility — qualities that made the king appoint him governor in the first place.",
+      hi:"गड़रिये ने हमेशा अपने शाही वस्त्रों के नीचे <strong>पुराना लबादा</strong> रखा। पूछने पर उसने कहा कि यह उसे उसकी विनम्र शुरुआत याद दिलाता है। यही ईमानदारी और विनम्रता उसे राजा ने पसंद की थी।",
+      bn:"রাখাল সবসময় তার রাজকীয় পোশাকের নিচে <strong>পুরনো চাদর</strong> রাখত। জিজ্ঞেস করা হলে সে বলত এটি তার বিনম্র শুরুর কথা মনে করিয়ে দেয়। এই সততা ও নম্রতাই রাজাকে তাকে গভর্নর নিয়োগ করতে অনুপ্রাণিত করেছিল।"
+    }
+  },
+  {
+    chapter: {en:"Tansen", hi:"तानसेन", bn:"তানসেন"},
+    q:{
+      en:"📖 Tansen, the greatest musician in Akbar's court, learned music from which guru?",
+      hi:"📖 अकबर के दरबार के महान संगीतकार तानसेन ने किस गुरु से संगीत सीखा?",
+      bn:"📖 আকবরের দরবারের মহান সঙ্গীতজ্ঞ তানসেন কোন গুরুর কাছ থেকে সঙ্গীত শিখেছিলেন?"
+    },
+    opts:{
+      en:["Baiju Bawra","Swami Haridas","Miyan Ki Todi","Hazrat Inayat Khan"],
+      hi:["बैजू बावरा","स्वामी हरिदास","मियाँ की तोड़ी","हज़रत इनायत खाँ"],
+      bn:["বৈজু বাওয়ারা","স্বামী হরিদাস","মিয়াঁ কি তোড়ি","হজরত ইনায়েত খাঁন"]
+    },
+    ans: 1,
+    exp:{
+      en:"Tansen learned music from <strong>Swami Haridas</strong>, a great saint-musician who lived in Vrindavan. Emperor Akbar was so impressed by Tansen's skill that he invited him to be one of the Navaratnas (nine gems) of his court.",
+      hi:"तानसेन ने <strong>स्वामी हरिदास</strong> से संगीत सीखा, जो वृन्दावन में रहने वाले महान संत-संगीतकार थे। सम्राट अकबर तानसेन की प्रतिभा से इतने प्रभावित हुए कि उन्हें अपने दरबार के नवरत्नों में शामिल किया।",
+      bn:"তানসেন <strong>স্বামী হরিদাসের</strong> কাছে সঙ্গীত শিখেছিলেন, যিনি বৃন্দাবনে বাস করতেন। সম্রাট আকবর তানসেনের প্রতিভায় এতটাই মুগ্ধ হয়েছিলেন যে তাকে নবরত্নদের একজন হিসেবে দরবারে আমন্ত্রণ জানান।"
+    }
+  },
+  {
+    chapter: {en:"Tansen", hi:"तानसेन", bn:"তানসেন"},
+    q:{
+      en:"📖 Which raga did Tansen sing that was said to light all the lamps in the palace?",
+      hi:"📖 तानसेन ने कौन-सा राग गाया जो महल में सभी दीपकों को जला देता था?",
+      bn:"📖 তানসেন কোন রাগ গেয়েছিলেন যা মহলের সব প্রদীপ জ্বালিয়ে দিত বলে বলা হয়?"
+    },
+    opts:{
+      en:["Raga Megh","Raga Yaman","Raga Deepak","Raga Bhairav"],
+      hi:["राग मेघ","राग यमन","राग दीपक","राग भैरव"],
+      bn:["রাগ মেঘ","রাগ যমন","রাগ দীপক","রাগ ভৈরব"]
+    },
+    ans: 2,
+    exp:{
+      en:"According to legend, Tansen sang <strong>Raga Deepak</strong>, which was so powerful it could light lamps with its heat. However, this also caused him great suffering, and only the cooling effect of Raga Megh (sung by two young girls) saved him.",
+      hi:"किंवदंती के अनुसार तानसेन ने <strong>राग दीपक</strong> गाया, जो इतना शक्तिशाली था कि उसकी गर्मी से दीपक जल उठते थे। लेकिन इससे तानसेन को बहुत कष्ट भी हुआ, और केवल राग मेघ (दो युवतियों द्वारा गाया गया) ने उन्हें बचाया।",
+      bn:"কিংবদন্তি অনুযায়ী তানসেন <strong>রাগ দীপক</strong> গেয়েছিলেন, যা এতটাই শক্তিশালী ছিল যে তার তাপে প্রদীপ জ্বলে উঠত। তবে এতে তানসেনের নিজেরও কষ্ট হয়েছিল এবং কেবল রাগ মেঘ (দুটি তরুণী গাইয়েছিল) তাকে রক্ষা করেছিল।"
+    }
+  },
+  {
+    chapter: {en:"The Monkey and the Crocodile", hi:"बंदर और मगरमच्छ", bn:"বানর ও কুমির"},
+    q:{
+      en:"📖 In 'The Monkey and the Crocodile', why did the crocodile's wife demand the monkey's heart?",
+      hi:"📖 'बंदर और मगरमच्छ' में मगरमच्छ की पत्नी ने बंदर का दिल क्यों माँगा?",
+      bn:"📖 'বানর ও কুমির' গল্পে কুমিরের স্ত্রী কেন বানরের হৃদয় চেয়েছিল?"
+    },
+    opts:{
+      en:["She was jealous of the monkey","She believed eating it would give her long life","She wanted revenge on the monkey","She was testing her husband's loyalty"],
+      hi:["वह बंदर से जलती थी","उसे विश्वास था कि उसे खाने से वह लंबी उम्र पाएगी","वह बंदर से बदला लेना चाहती थी","वह अपने पति की वफादारी परख रही थी"],
+      bn:["সে বানরকে ঈর্ষা করত","সে বিশ্বাস করত এটি খেলে দীর্ঘজীবন পাবে","সে বানরের প্রতিশোধ নিতে চেয়েছিল","সে তার স্বামীর বিশ্বস্ততা পরীক্ষা করছিল"]
+    },
+    ans: 1,
+    exp:{
+      en:"The crocodile's wife believed that eating the heart of a monkey who ate <strong>sweet rose-apples</strong> every day would give her long life. This is a classic Panchatantra story about how greed and deceit destroy friendship.",
+      hi:"मगरमच्छ की पत्नी का मानना था कि रोज़ <strong>मीठे जामुन</strong> खाने वाले बंदर का दिल खाने से उसे लंबी उम्र मिलेगी। यह पंचतंत्र की एक क्लासिक कहानी है जो दर्शाती है कि लालच और छल मित्रता को कैसे नष्ट करते हैं।",
+      bn:"কুমিরের স্ত্রী বিশ্বাস করত যে প্রতিদিন <strong>মিষ্টি জামরুল</strong> খাওয়া বানরের হৃদয় খেলে সে দীর্ঘজীবন পাবে। এটি পঞ্চতন্ত্রের একটি ক্লাসিক গল্প যা দেখায় লোভ ও প্রতারণা কীভাবে বন্ধুত্ব নষ্ট করে।"
+    }
+  },
+  {
+    chapter: {en:"The Monkey and the Crocodile", hi:"बंदर और मगरमच्छ", bn:"বানর ও কুমির"},
+    q:{
+      en:"📖 How did the clever monkey trick the crocodile and save his life?",
+      hi:"📖 चतुर बंदर ने मगरमच्छ को कैसे धोखा दिया और अपनी जान बचाई?",
+      bn:"📖 চালাক বানর কীভাবে কুমিরকে ফাঁকি দিয়ে প্রাণ বাঁচাল?"
+    },
+    opts:{
+      en:["He jumped into the river and swam away","He told the crocodile he had left his heart back on the tree","He called for help from other animals","He pretended to be dead"],
+      hi:["वह नदी में कूदकर तैर गया","उसने मगरमच्छ से कहा कि उसका दिल पेड़ पर ही छूट गया है","उसने अन्य जानवरों से मदद माँगी","उसने मृत होने का नाटक किया"],
+      bn:["সে নদীতে লাফ দিয়ে সাঁতরে পালাল","সে কুমিরকে বলল তার হৃদয় গাছেই রেখে এসেছে","সে অন্য জীবদের কাছে সাহায্য চাইল","সে মৃত হওয়ার ভান করল"]
+    },
+    ans: 1,
+    exp:{
+      en:"The monkey cleverly told the crocodile that he had left his <strong>heart on the tree</strong> and asked to be taken back. When the crocodile reached the riverbank near the tree, the monkey quickly jumped back to safety. Presence of mind defeated deceit!",
+      hi:"बंदर ने चतुराई से मगरमच्छ को बताया कि उसका <strong>दिल पेड़ पर ही रखा है</strong> और वापस ले जाने को कहा। जब मगरमच्छ पेड़ के पास किनारे पहुँचा, बंदर तुरंत पेड़ पर कूद गया। बुद्धि ने छल को हराया!",
+      bn:"বানর চালাকি করে কুমিরকে বলল তার <strong>হৃদয় গাছে রাখা আছে</strong> এবং ফিরিয়ে নিতে বলল। কুমির গাছের কাছের তীরে পৌঁছাতেই বানর লাফ দিয়ে নিরাপদে গাছে উঠে গেল। বুদ্ধি প্রতারণাকে হারাল!"
+    }
+  },
+  {
+    chapter: {en:"A Pact with the Sun", hi:"सूरज से वादा", bn:"সূর্যের সাথে চুক্তি"},
+    q:{
+      en:"📖 In 'A Pact with the Sun', what was the main reason Saeeda's mother was ill?",
+      hi:"📖 'सूरज से वादा' में साईदा की माँ की बीमारी का मुख्य कारण क्या था?",
+      bn:"📖 'সূর্যের সাথে চুক্তিতে' সাইদার মায়ের অসুস্থতার প্রধান কারণ কী ছিল?"
+    },
+    opts:{
+      en:["She had eaten spoiled food","She was kept in a dark, damp room without sunlight or fresh air","She had worked too hard in the fields","She had fever from a mosquito bite"],
+      hi:["उसने खराब खाना खाया था","उसे एक अँधेरे, नम कमरे में बिना धूप और ताजी हवा के रखा गया था","उसने खेतों में बहुत मेहनत की थी","उसे मच्छर के काटने से बुखार आया था"],
+      bn:["সে নষ্ট খাবার খেয়েছিল","সূর্যালোক ও তাজা বায়ু ছাড়া অন্ধকার, স্যাঁতসেঁতে ঘরে থাকায়","সে মাঠে অতিরিক্ত কাজ করেছিল","মশার কামড়ে তার জ্বর হয়েছিল"]
+    },
+    ans: 1,
+    exp:{
+      en:"Saeeda's mother had been confined in a <strong>dark, damp room</strong> for a long time. The wise doctor advised that fresh air and sunlight were the best medicines. The story teaches the importance of nature's healing power.",
+      hi:"साईदा की माँ को लंबे समय से एक <strong>अँधेरे, नम कमरे</strong> में बंद रखा गया था। बुद्धिमान डॉक्टर ने सलाह दी कि ताजी हवा और धूप सबसे अच्छी दवाएँ हैं। यह कहानी प्रकृति की उपचार शक्ति का महत्त्व सिखाती है।",
+      bn:"সাইদার মায়াকে দীর্ঘদিন <strong>অন্ধকার, স্যাঁতসেঁতে ঘরে</strong> বন্দী রাখা হয়েছিল। জ্ঞানী ডাক্তার পরামর্শ দিলেন যে তাজা বায়ু ও সূর্যালোকই সেরা ওষুধ। গল্পটি প্রকৃতির নিরাময় শক্তির গুরুত্ব শেখায়।"
+    }
+  },
+  {
+    chapter: {en:"Poem — Vocation (Tagore)", hi:"कविता — व्यवसाय (टैगोर)", bn:"কবিতা — পেশা (ঠাকুর)"},
+    q:{
+      en:"📖 The poem 'Vocation' was written by Rabindranath Tagore. Which three workers does the child in the poem envy for their freedom?",
+      hi:"📖 'व्यवसाय' कविता रवींद्रनाथ टैगोर ने लिखी। कविता में बच्चा किन तीन कामगारों की आज़ादी से ईर्ष्या करता है?",
+      bn:"📖 'পেশা' কবিতাটি রবীন্দ্রনাথ ঠাকুর লিখেছেন। কবিতায় শিশু কোন তিনজন কর্মীর স্বাধীনতায় ঈর্ষান্বিত হয়?"
+    },
+    opts:{
+      en:["Doctor, lawyer, and teacher","Mail carrier, watchman, and hawker (fruit seller)","Farmer, fisherman, and potter","Soldier, weaver, and carpenter"],
+      hi:["डॉक्टर, वकील और शिक्षक","डाकिया, चौकीदार और फेरीवाला (फल बेचने वाला)","किसान, मछुआरा और कुम्हार","सैनिक, बुनकर और बढ़ई"],
+      bn:["ডাক্তার, আইনজীবী ও শিক্ষক","ডাকপিয়ন, চৌকিদার ও হকার (ফল বিক্রেতা)","কৃষক, মৎস্যজীবী ও কুমোর","সৈনিক, তাঁতি ও ছুতার"]
+    },
+    ans: 1,
+    exp:{
+      en:"In Tagore's poem <strong>'Vocation'</strong>, a child sitting at his lessons envies the <strong>mail carrier</strong> who walks freely all day, the <strong>watchman</strong> who roams the streets at night, and the <strong>hawker</strong> who cries out and sells his wares without restriction.",
+      hi:"टैगोर की कविता <strong>'व्यवसाय'</strong> में पढ़ाई करता बच्चा उस <strong>डाकिये</strong> से ईर्ष्या करता है जो पूरे दिन स्वतंत्र घूमता है, <strong>चौकीदार</strong> से जो रात को सड़कों पर घूमता है, और <strong>फेरीवाले</strong> से जो बिना रोक-टोक अपना सामान बेचता है।",
+      bn:"ঠাকুরের কবিতা <strong>'পেশায়'</strong>, পড়তে বসা শিশু <strong>ডাকপিয়নকে</strong> ঈর্ষা করে যে সারাদিন স্বাধীনে চলে, <strong>চৌকিদারকে</strong> যে রাতে রাস্তায় ঘোরে, এবং <strong>হকারকে</strong> যে নিজের ইচ্ছায় জিনিস বিক্রি করে।"
+    }
+  },
+  {
+    chapter: {en:"Poem — Where Do All the Teachers Go", hi:"कविता — अध्यापक कहाँ जाते हैं", bn:"কবিতা — শিক্ষকরা কোথায় যায়"},
+    q:{
+      en:"📖 In the funny poem 'Where Do All the Teachers Go', what is the main question the child is curious about?",
+      hi:"📖 मज़ेदार कविता 'अध्यापक कहाँ जाते हैं' में बच्चे को किस बात की जिज्ञासा है?",
+      bn:"📖 মজার কবিতা 'শিক্ষকরা কোথায় যায়' — কবিতায় শিশুটির কী কৌতূহল?"
+    },
+    opts:{
+      en:["Why teachers give so much homework","Whether teachers have a normal human life outside school (do they pick their nose, watch TV, wear pyjamas etc.)","How teachers know so many answers","Whether teachers ever play games"],
+      hi:["शिक्षक इतना होमवर्क क्यों देते हैं","क्या शिक्षकों का स्कूल के बाहर सामान्य मानवीय जीवन होता है (क्या वे नाक खुजाते हैं, टीवी देखते हैं, पायजामा पहनते हैं आदि)","शिक्षकों को इतने जवाब कैसे पता होते हैं","क्या शिक्षक कभी खेल खेलते हैं"],
+      bn:["শিক্ষকরা এত বেশি হোমওয়ার্ক কেন দেন","স্কুলের বাইরে শিক্ষকদের কি স্বাভাবিক মানবিক জীবন আছে (তারা কি নাক খোঁটায়, টিভি দেখে, পায়জামা পরে ইত্যাদি)","শিক্ষকরা এত উত্তর কীভাবে জানেন","শিক্ষকরা কি কখনো খেলেন"]
+    },
+    ans: 1,
+    exp:{
+      en:"The poem humorously imagines whether <strong>teachers are 'normal' humans</strong> — do they make mistakes, pick their noses, watch TV, wear pyjamas? The child finds it hard to believe teachers exist outside school! It shows how children sometimes see teachers as almost magical beings.",
+      hi:"कविता हास्यपूर्वण कल्पना करती है कि क्या <strong>शिक्षक 'सामान्य' इंसान हैं</strong> — क्या वे गलतियाँ करते हैं, नाक खुजाते हैं, टीवी देखते हैं, पायजामा पहनते हैं? बच्चे को विश्वास नहीं होता कि शिक्षक स्कूल के बाहर भी मौजूद हैं! यह दिखाता है कि बच्चे कभी-कभी शिक्षकों को जादुई प्राणी समझते हैं।",
+      bn:"কবিতাটি হাস্যরসাত্মকভাবে কল্পনা করে <strong>শিক্ষকরা কি 'স্বাভাবিক' মানুষ</strong> — তারা কি ভুল করেন, নাক খোঁটান, টিভি দেখেন, পায়জামা পরেন? শিশুটি বিশ্বাস করতে পারে না যে শিক্ষকরা স্কুলের বাইরে বিদ্যমান! এটি দেখায় শিশুরা কখনো কখনো শিক্ষকদের যাদুকরী সত্তা মনে করে।"
+    }
+  },
+  {
+    chapter: {en:"A Pact with the Sun", hi:"सूरज से वादा", bn:"সূর্যের সাথে চুক্তি"},
+    q:{
+      en:"📖 In 'A Pact with the Sun', Saeeda made a special request to the sunrays. What was it?",
+      hi:"📖 'सूरज से वादा' में साईदा ने सूरज की किरणों से विशेष अनुरोध किया। वह क्या था?",
+      bn:"📖 'সূর্যের সাথে চুক্তিতে' সাইদা সূর্যের রশ্মির কাছে বিশেষ অনুরোধ করেছিল। সেটি কী ছিল?"
+    },
+    opts:{
+      en:["To shine only on her house","To visit her mother the next morning with warmth and light to heal her","To make it rain less so her mother could go outside","To bring golden treasure to her family"],
+      hi:["केवल उनके घर पर चमकने के लिए","अपनी माँ को अगली सुबह गर्मजोशी और रोशनी लेकर आने के लिए ताकि वह ठीक हो सके","कम बारिश करने के लिए ताकि माँ बाहर जा सके","उनके परिवार को सुनहरा खजाना लाने के लिए"],
+      bn:["শুধু তার বাড়িতেই উজ্জ্বল হতে","পরের সকালে মাকে উষ্ণতা ও আলো নিয়ে আসতে যাতে সে সুস্থ হয়","কম বৃষ্টি আনতে যাতে মা বাইরে যেতে পারেন","তার পরিবারকে সোনার সম্পদ আনতে"]
+    },
+    ans: 1,
+    exp:{
+      en:"Saeeda requested the sunrays to <strong>visit her ill mother with warmth and light</strong>. The sun kept its 'pact' — the next morning was bright and sunny, Saeeda's mother sat in the sun, and slowly regained her health. The story teaches faith and the healing power of nature.",
+      hi:"साईदा ने सूरज की किरणों से अनुरोध किया कि वे <strong>गर्मजोशी और रोशनी लेकर उनकी बीमार माँ के पास आएँ</strong>। सूरज ने अपना 'वादा' पूरा किया — अगली सुबह उजली और धूप भरी थी, साईदा की माँ धूप में बैठी और धीरे-धीरे स्वस्थ हो गई। यह कहानी आस्था और प्रकृति की उपचार शक्ति सिखाती है।",
+      bn:"সাইদা সূর্যের রশ্মিকে অনুরোধ করল <strong>উষ্ণতা ও আলো নিয়ে তার অসুস্থ মায়ের কাছে আসতে</strong>। সূর্য তার 'চুক্তি' রাখল — পরের সকাল উজ্জ্বল ও রোদেলা ছিল, সাইদার মা রোদে বসলেন এবং ধীরে ধীরে সুস্থ হলেন। গল্পটি বিশ্বাস ও প্রকৃতির নিরাময় শক্তি শেখায়।"
+    }
+  }
+];
+
+/* ===== GAME STATE ===== */
+let session = [];
+let qi = 0;
+let score = 0;
+let answered = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startGame() {
+  session = shuffle(BANK).slice(0, 10);
+  qi = 0;
+  score = 0;
+  answered = false;
+  document.getElementById('scoreNum').textContent = '0';
+  document.getElementById('progFill').style.width = '0%';
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('gameArea').style.display = '';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = session[qi];
+  const lang = currentLang;
+  const chName = q.chapter[lang] || q.chapter['en'];
+  const qText = q.q[lang] || q.q['en'];
+  const opts = q.opts[lang] || q.opts['en'];
+
+  const html = `
+    <div class="chapter-tag">&#128218; ${chName}</div>
+    <div class="q-card fade">
+      <div class="q-num">${getLabel('question', lang)} ${qi + 1} / 10</div>
+      <div class="q-text">${qText}</div>
+      <div class="options" id="optGroup">
+        ${opts.map((o, i) => `
+          <button class="opt-btn" id="opt${i}" onclick="choose(${i})">
+            <span class="opt-icon">${['A','B','C','D'][i]}</span>
+            <span>${o}</span>
+          </button>`).join('')}
+      </div>
+      <div class="explanation" id="expBox">
+        ${q.exp[lang] || q.exp['en']}
+      </div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+        ${qi < 9 ? getLabel('next', lang) : getLabel('finish', lang)}
+      </button>
+    </div>`;
+  document.getElementById('gameArea').innerHTML = html;
+  answered = false;
+}
+
+function getLabel(key, lang) {
+  const labels = {
+    question: {en:'Question', hi:'प्रश्न', bn:'প্রশ্ন'},
+    next: {en:'Next Question →', hi:'अगला प्रश्न →', bn:'পরবর্তী প্রশ্ন →'},
+    finish: {en:'See Results', hi:'परिणाम देखें', bn:'ফলাফল দেখুন'},
+    score: {en:'Score', hi:'स्कोर', bn:'স্কোর'},
+    playAgain: {en:'Play Again', hi:'फिर खेलें', bn:'আবার খেলুন'},
+    excellent: {en:'Excellent! Outstanding performance!', hi:'शानदार! उत्कृष्ट प्रदर्शन!', bn:'অসাধারণ! অনবদ্য পারফরম্যান্স!'},
+    great: {en:'Great work! Keep it up!', hi:'बहुत अच्छा! ऐसे ही करते रहो!', bn:'চমৎকার কাজ! চালিয়ে যাও!'},
+    good: {en:'Good effort! Review the chapters.', hi:'अच्छा प्रयास! अध्याय दोबारा पढ़ें।', bn:'ভালো চেষ্টা! অধ্যায়গুলো আবার পড়ো।'},
+    keep: {en:'Keep practising! You can do better.', hi:'अभ्यास जारी रखो! तुम बेहतर कर सकते हो।', bn:'অনুশীলন চালিয়ে যাও! তুমি আরো ভালো করতে পারো।'}
+  };
+  return (labels[key] && labels[key][lang]) || (labels[key] && labels[key]['en']) || key;
+}
+
+function choose(idx) {
+  if (answered) return;
+  answered = true;
+  const q = session[qi];
+  const opts = document.querySelectorAll('.opt-btn');
+  opts.forEach(b => b.disabled = true);
+
+  if (idx === q.ans) {
+    opts[idx].classList.add('correct');
+    opts[idx].querySelector('.opt-icon').textContent = '✓';
+    score += 10;
+    document.getElementById('scoreNum').textContent = score;
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[idx].querySelector('.opt-icon').textContent = '✗';
+    opts[q.ans].classList.add('correct');
+    opts[q.ans].querySelector('.opt-icon').textContent = '✓';
+  }
+
+  document.getElementById('expBox').classList.add('show');
+  document.getElementById('nextBtn').classList.add('show');
+
+  const prog = ((qi + 1) / 10) * 100;
+  document.getElementById('progFill').style.width = prog + '%';
+}
+
+function nextQuestion() {
+  qi++;
+  if (qi >= 10) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  document.getElementById('gameArea').style.display = 'none';
+  const lang = currentLang;
+  const pct = score;
+  let stars = 0;
+  if (pct >= 90) stars = 3;
+  else if (pct >= 70) stars = 2;
+  else if (pct >= 40) stars = 1;
+
+  const starStr = '&#9733;'.repeat(stars) + '&#9734;'.repeat(3 - stars);
+  let msg = '';
+  if (pct >= 90) msg = getLabel('excellent', lang);
+  else if (pct >= 70) msg = getLabel('great', lang);
+  else if (pct >= 40) msg = getLabel('good', lang);
+  else msg = getLabel('keep', lang);
+
+  const titleMap = {en:'Honeydew & A Pact with the Sun', hi:'हनीड्यू और सूरज से वादा', bn:'হানিডিউ ও সূর্যের সাথে চুক্তি'};
+
+  document.getElementById('resultCard').innerHTML = `
+    <div class="result-inner fade">
+      <div class="stars">${starStr}</div>
+      <div class="result-score">${score}/100</div>
+      <div class="result-msg">${msg}</div>
+      <div style="color:var(--sky);font-family:'Baloo 2',sans-serif;font-size:.95rem;margin-bottom:24px;font-weight:700">
+        ${titleMap[lang] || titleMap['en']} — Class 6 English
+      </div>
+      <button class="play-again" onclick="startGame()">&#9654; ${getLabel('playAgain', lang)}</button>
+    </div>`;
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('progFill').style.width = '100%';
+}
+
+/* ===== INIT ===== */
+startGame();
+</script>
+</body>
+</html>

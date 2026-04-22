@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G8-07: Argument Architect | GyanPlay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060A10;
+            --card: #0D1428;
+            --gold: #FFD166;
+            --coral: #FF6B6B;
+            --teal: #06D6A0;
+            --purple: #C77DFF;
+            --orange: #FF9F1C;
+            --text: #E8F0FF;
+            --dim: #4A6A8A;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, #1A0F00 0%, #100800 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .container { max-width: 480px; margin: 0 auto; }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 159, 28, 0.22);
+            margin-bottom: 20px;
+        }
+        
+        .title-section { flex: 1; }
+        .game-title { font-family: 'Baloo 2', cursive; font-size: 1.35rem; color: var(--gold); font-weight: 800; }
+        .subject-tag { font-size: 0.7rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .stars { display: flex; gap: 4px; }
+        .star { font-size: 1.2rem; opacity: 0.3; transition: all 0.3s ease; }
+        .star.lit { opacity: 1; filter: drop-shadow(0 0 8px var(--gold)); }
+        
+        .hook-card {
+            background: linear-gradient(135deg, rgba(255, 159, 28, 0.15), rgba(255, 159, 28, 0.05));
+            border: 1px solid rgba(255, 159, 28, 0.22);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 24px rgba(255, 159, 28, 0.12);
+        }
+        
+        .hook-text { font-size: 0.95rem; line-height: 1.7; }
+        .hook-text strong { color: var(--gold); font-weight: 700; }
+        
+        .game-area {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .stage-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            color: var(--orange);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stage-title::before { content: ''; width: 4px; height: 20px; background: var(--orange); border-radius: 2px; }
+        
+        /* Argument Anatomy */
+        .argument-parts {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .arg-part {
+            background: rgba(6, 10, 16, 0.6);
+            border-radius: 10px;
+            padding: 12px 15px;
+            border-left: 4px solid;
+        }
+        
+        .arg-part.claim { border-color: var(--gold); }
+        .arg-part.evidence { border-color: var(--teal); }
+        .arg-part.warrant { border-color: var(--purple); }
+        .arg-part.rebuttal { border-color: var(--coral); }
+        
+        .arg-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+        
+        .arg-part.claim .arg-label { color: var(--gold); }
+        .arg-part.evidence .arg-label { color: var(--teal); }
+        .arg-part.warrant .arg-label { color: var(--purple); }
+        .arg-part.rebuttal .arg-label { color: var(--coral); }
+        
+        .arg-text { font-size: 0.9rem; line-height: 1.5; }
+        
+        /* Fallacy Cards */
+        .fallacy-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .fallacy-card {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .fallacy-card:hover { background: rgba(255, 71, 87, 0.2); }
+        .fallacy-card.selected { background: rgba(255, 71, 87, 0.3); border-color: var(--coral); }
+        
+        .fallacy-name {
+            font-family: 'Baloo 2', cursive;
+            font-size: 0.85rem;
+            color: var(--coral);
+            margin-bottom: 5px;
+        }
+        
+        .fallacy-desc { font-size: 0.75rem; color: var(--dim); }
+        
+        .fallacy-example {
+            background: rgba(6, 10, 16, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .fallacy-options { display: flex; gap: 8px; flex-wrap: wrap; }
+        .fallacy-btn {
+            padding: 8px 16px;
+            border: 2px solid rgba(255, 71, 87, 0.3);
+            background: rgba(255, 71, 87, 0.1);
+            border-radius: 20px;
+            color: var(--text);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .fallacy-btn:hover { border-color: var(--coral); }
+        .fallacy-btn.correct { background: rgba(6, 214, 160, 0.2); border-color: var(--teal); }
+        .fallacy-btn.wrong { background: rgba(255, 71, 87, 0.2); border-color: var(--coral); }
+        
+        /* Debate Builder */
+        .debate-topic {
+            background: rgba(255, 209, 102, 0.1);
+            border: 1px solid rgba(255, 209, 102, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .debate-question { font-family: 'Baloo 2', cursive; color: var(--gold); margin-bottom: 10px; }
+        .debate-context { font-size: 0.85rem; color: var(--dim); }
+        
+        .builder-section {
+            background: rgba(6, 10, 16, 0.4);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+        
+        .builder-label {
+            font-size: 0.8rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .builder-options { display: flex; flex-direction: column; gap: 8px; }
+        .builder-option {
+            background: rgba(199, 125, 255, 0.1);
+            border: 1px solid rgba(199, 125, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .builder-option:hover { border-color: var(--purple); }
+        .builder-option.selected { background: rgba(199, 125, 255, 0.3); border-color: var(--purple); }
+        
+        /* Bottom Bar */
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 20px;
+        }
+        
+        .progress-info { font-size: 0.85rem; color: var(--dim); }
+        
+        .action-btn {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: #060A10;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 209, 102, 0.4); }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(6, 10, 16, 0.95);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px;
+        }
+        .overlay.active { display: flex; }
+        .overlay-content { text-align: center; max-width: 400px; }
+        .overlay-emoji { font-size: 4rem; margin-bottom: 15px; }
+        .overlay-title { font-family: 'Baloo 2', cursive; font-size: 1.5rem; color: var(--gold); margin-bottom: 10px; }
+        .overlay-message { font-size: 1rem; color: var(--text); margin-bottom: 15px; }
+        .overlay-fact { font-size: 0.85rem; color: var(--dim); padding: 15px; background: rgba(255, 159, 28, 0.1); border-radius: 10px; border-left: 3px solid var(--orange); }
+        
+        /* Completion */
+        .completion-screen { display: none; text-align: center; padding: 40px 20px; }
+        .completion-screen.active { display: block; }
+        .trophy { font-size: 5rem; margin-bottom: 20px; }
+        .completion-title { font-family: 'Baloo 2', cursive; font-size: 2rem; color: var(--gold); margin-bottom: 15px; }
+        .completion-score { font-size: 1.2rem; color: var(--text); margin-bottom: 30px; }
+        .play-again-btn {
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border: none; border-radius: 25px; padding: 15px 40px;
+            color: var(--text); font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 1.1rem;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .play-again-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(199, 125, 255, 0.4); }
+        
+        .stage { display: none; }
+        .stage.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title-section">
+                <div class="subject-tag">English</div>
+                <div class="game-title">Argument Architect</div>
+            </div>
+            <div class="stars">
+                <span class="star" id="star1">⭐</span>
+                <span class="star" id="star2">⭐</span>
+                <span class="star" id="star3">⭐</span>
+                <span class="star" id="star4">⭐</span>
+                <span class="star" id="star5">⭐</span>
+            </div>
+        </div>
+        
+        <div class="hook-card">
+            <div class="hook-text">
+                A 2016 study showed that students who learned to identify logical fallacies scored <strong>34% better</strong> at reading comprehension. The ability to spot a bad argument is the same skill as constructing a good one — and both are more rare and valuable than any factual knowledge. <strong>Thinking IS a learnable skill.</strong>
+            </div>
+        </div>
+        
+        <!-- Stage 1: Argument Anatomy -->
+        <div class="stage active" id="stage1">
+            <div class="game-area">
+                <div class="stage-title">Stage 1: Argument Anatomy</div>
+                
+                <div style="font-size: 0.9rem; margin-bottom: 15px;">The Toulmin Model of argumentation:</div>
+                
+                <div class="argument-parts">
+                    <div class="arg-part claim">
+                        <div class="arg-label">CLAIM</div>
+                        <div class="arg-text">What you argue (your position)</div>
+                    </div>
+                    <div class="arg-part evidence">
+                        <div class="arg-label">EVIDENCE</div>
+                        <div class="arg-text">The facts/data that support your claim</div>
+                    </div>
+                    <div class="arg-part warrant">
+                        <div class="arg-label">WARRANT</div>
+                        <div class="arg-text">Why the evidence supports the claim (the reasoning)</div>
+                    </div>
+                    <div class="arg-part rebuttal">
+                        <div class="arg-label">REBUTTAL</div>
+                        <div class="arg-text">Counter-argument and your response to it</div>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(6, 10, 16, 0.4); border-radius: 10px; padding: 15px;">
+                    <div style="font-size: 0.9rem; margin-bottom: 10px;">Identify the part: <em>"Studies show that students who learn fallacies score 34% better on reading tests."</em></div>
+                    <div class="fallacy-options">
+                        <button class="fallacy-btn" onclick="checkAnatomy(this, 'claim')">Claim</button>
+                        <button class="fallacy-btn" onclick="checkAnatomy(this, 'evidence')">Evidence</button>
+                        <button class="fallacy-btn" onclick="checkAnatomy(this, 'warrant')">Warrant</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 1 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 2: Fallacy Spotter -->
+        <div class="stage" id="stage2">
+            <div class="game-area">
+                <div class="stage-title">Stage 2: Logical Fallacy Spotter</div>
+                
+                <div class="fallacy-grid">
+                    <div class="fallacy-card" onclick="showFallacy('ad hominem')">
+                        <div class="fallacy-name">Ad Hominem</div>
+                        <div class="fallacy-desc">Attack the person, not the argument</div>
+                    </div>
+                    <div class="fallacy-card" onclick="showFallacy('false binary')">
+                        <div class="fallacy-name">False Binary</div>
+                        <div class="fallacy-desc">Only two options presented</div>
+                    </div>
+                    <div class="fallacy-card" onclick="showFallacy('slippery slope')">
+                        <div class="fallacy-name">Slippery Slope</div>
+                        <div class="fallacy-desc">Assumes extreme consequence</div>
+                    </div>
+                    <div class="fallacy-card" onclick="showFallacy('appeal to authority')">
+                        <div class="fallacy-name">Appeal to Authority</div>
+                        <div class="fallacy-desc">Expert said so = must be true</div>
+                    </div>
+                    <div class="fallacy-card" onclick="showFallacy('bandwagon')">
+                        <div class="fallacy-name">Bandwagon</div>
+                        <div class="fallacy-desc">Everyone does it</div>
+                    </div>
+                    <div class="fallacy-card" onclick="showFallacy('straw man')">
+                        <div class="fallacy-name">Straw Man</div>
+                        <div class="fallacy-desc">Misrepresent opponent's position</div>
+                    </div>
+                </div>
+                
+                <div class="fallacy-example" id="fallacyExample">
+                    <strong>Example:</strong> "My opponent wants to raise taxes, so he wants to destroy the economy and make everyone poor."<br><br>
+                    <em>Which fallacy is this?</em>
+                </div>
+                
+                <div class="fallacy-options">
+                    <button class="fallacy-btn" onclick="checkFallacy(this, 'straw man')">Straw Man</button>
+                    <button class="fallacy-btn" onclick="checkFallacy(this, 'ad hominem')">Ad Hominem</button>
+                    <button class="fallacy-btn" onclick="checkFallacy(this, 'false binary')">False Binary</button>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 2 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 3: Debate Builder -->
+        <div class="stage" id="stage3">
+            <div class="game-area">
+                <div class="stage-title">Stage 3: Debate Builder</div>
+                
+                <div class="debate-topic">
+                    <div class="debate-question">Should the Brahmaputra Dam be opposed?</div>
+                    <div class="debate-context">China is building a dam upstream that could affect water flow to Assam.</div>
+                </div>
+                
+                <div class="builder-section">
+                    <div class="builder-label">Select Your Claim</div>
+                    <div class="builder-options">
+                        <div class="builder-option" onclick="selectBuilder(this, 'claim')">The dam should be opposed due to flooding risks downstream.</div>
+                        <div class="builder-option" onclick="selectBuilder(this, 'claim')">The dam is China's sovereign right and should not be opposed.</div>
+                    </div>
+                </div>
+                
+                <div class="builder-section">
+                    <div class="builder-label">Select Your Evidence</div>
+                    <div class="builder-options">
+                        <div class="builder-option" onclick="selectBuilder(this, 'evidence')">Assam already faces annual floods affecting 2 million people.</div>
+                        <div class="builder-option" onclick="selectBuilder(this, 'evidence')">International rivers require cross-border cooperation.</div>
+                    </div>
+                </div>
+                
+                <div class="builder-section">
+                    <div class="builder-label">Select Your Warrant</div>
+                    <div class="builder-options">
+                        <div class="builder-option" onclick="selectBuilder(this, 'warrant')">Reducing water flow during monsoons increases flood risk.</div>
+                        <div class="builder-option" onclick="selectBuilder(this, 'warrant')">Countries have the right to develop their own resources.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 3 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 4: Counter-Argument -->
+        <div class="stage" id="stage4">
+            <div class="game-area">
+                <div class="stage-title">Stage 4: Handle Counter-Arguments</div>
+                
+                <div style="background: rgba(6, 10, 16, 0.4); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                    <div style="font-size: 0.9rem; margin-bottom: 10px;"><strong>Your Argument:</strong> "Social media should have an age limit of 16."</div>
+                    <div style="font-size: 0.85rem; color: var(--dim);">Evidence: Studies link social media use to teen anxiety.</div>
+                </div>
+                
+                <div style="font-size: 0.9rem; margin-bottom: 15px;"><strong>Counter-Argument:</strong> "Teens will find ways around age limits, making them ineffective."</div>
+                
+                <div style="font-size: 0.9rem; margin-bottom: 10px;">Select the best rebuttal:</div>
+                
+                <div class="builder-options">
+                    <div class="builder-option" onclick="checkRebuttal(this, true)">
+                        <strong>Rebuttal A:</strong> While some teens may bypass limits, age verification still reduces overall exposure for the most vulnerable younger teens, which is the primary goal.
+                    </div>
+                    <div class="builder-option" onclick="checkRebuttal(this, false)">
+                        <strong>Rebuttal B:</strong> You're wrong and don't understand the issue at all.
+                    </div>
+                    <div class="builder-option" onclick="checkRebuttal(this, false)">
+                        <strong>Rebuttal C:</strong> Many experts agree with my position.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 4 of 4</div>
+                <button class="action-btn" onclick="completeGame()">Complete Game</button>
+            </div>
+        </div>
+        
+        <div class="completion-screen" id="completionScreen">
+            <div class="trophy">🏆</div>
+            <div class="completion-title">Argument Architect!</div>
+            <div class="completion-score" id="finalScore">You can spot bad arguments!</div>
+            <button class="play-again-btn" onclick="playAgain()">Play Again</button>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay">
+        <div class="overlay-content">
+            <div class="overlay-emoji" id="overlayEmoji">✓</div>
+            <div class="overlay-title" id="overlayTitle">Correct!</div>
+            <div class="overlay-message" id="overlayMessage"></div>
+            <div class="overlay-fact" id="overlayFact"></div>
+        </div>
+    </div>
+    
+    <script>
+        let currentStage = 1;
+        let score = 0;
+        let builderSelections = { claim: false, evidence: false, warrant: false };
+        
+        function checkAnatomy(btn, part) {
+            const buttons = btn.parentElement.querySelectorAll('.fallacy-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            if (part === 'evidence') {
+                btn.classList.add('correct');
+                score += 20;
+                showOverlay('✓', 'Correct!', 'This is evidence — data from a study.', 'Evidence provides the factual foundation for arguments.');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Not quite', 'This presents facts/data, not a position.', 'Evidence is the data that supports your claim.');
+            }
+            
+            document.getElementById('star1').classList.add('lit');
+        }
+        
+        function showFallacy(type) {
+            document.querySelectorAll('.fallacy-card').forEach(c => c.classList.remove('selected'));
+            event.target.closest('.fallacy-card').classList.add('selected');
+        }
+        
+        function checkFallacy(btn, type) {
+            const buttons = btn.parentElement.querySelectorAll('.fallacy-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            if (type === 'straw man') {
+                btn.classList.add('correct');
+                score += 20;
+                showOverlay('✓', 'Correct!', 'Straw Man: Misrepresenting the opponent.', 'The argument exaggerates "raise taxes" into "destroy economy".');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Not quite', 'This misrepresents the position.', 'Straw Man = attacking a weaker version of the argument.');
+            }
+            
+            document.getElementById('star2').classList.add('lit');
+        }
+        
+        function selectBuilder(el, type) {
+            const section = el.closest('.builder-section');
+            section.querySelectorAll('.builder-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            builderSelections[type] = true;
+            
+            if (builderSelections.claim && builderSelections.evidence && builderSelections.warrant) {
+                document.getElementById('star3').classList.add('lit');
+                score += 20;
+            }
+        }
+        
+        function checkRebuttal(el, correct) {
+            const options = el.parentElement.querySelectorAll('.builder-option');
+            options.forEach(o => o.style.pointerEvents = 'none');
+            
+            if (correct) {
+                el.style.background = 'rgba(6, 214, 160, 0.3)';
+                el.style.borderColor = 'var(--teal)';
+                score += 20;
+                showOverlay('✓', 'Strong Rebuttal!', 'Acknowledges the counter-point then responds.', 'Good rebuttals address the strongest version of counter-arguments.');
+            } else {
+                el.style.background = 'rgba(255, 71, 87, 0.3)';
+                el.style.borderColor = 'var(--coral)';
+                showOverlay('✗', 'Weak Rebuttal', 'A attacks the person; C appeals to authority.', 'Strong rebuttals engage with the actual argument.');
+            }
+            
+            document.getElementById('star4').classList.add('lit');
+        }
+        
+        function nextStage() {
+            document.getElementById('stage' + currentStage).classList.remove('active');
+            currentStage++;
+            document.getElementById('stage' + currentStage).classList.add('active');
+        }
+        
+        function completeGame() {
+            document.getElementById('star5').classList.add('lit');
+            score += 20;
+            
+            localStorage.setItem('G8-07', JSON.stringify({
+                visited: true,
+                score: score,
+                date: new Date().toISOString()
+            }));
+            
+            document.querySelectorAll('.stage').forEach(s => s.style.display = 'none');
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.hook-card').style.display = 'none';
+            document.getElementById('completionScreen').classList.add('active');
+            document.getElementById('finalScore').textContent = `You scored ${score}/100!`;
+        }
+        
+        function playAgain() {
+            currentStage = 1;
+            score = 0;
+            builderSelections = { claim: false, evidence: false, warrant: false };
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+            document.querySelectorAll('.stage').forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'block';
+            });
+            document.getElementById('stage1').classList.add('active');
+            document.querySelector('.header').style.display = 'flex';
+            document.querySelector('.hook-card').style.display = 'block';
+            document.getElementById('completionScreen').classList.remove('active');
+            
+            document.querySelectorAll('.fallacy-btn').forEach(b => {
+                b.disabled = false;
+                b.classList.remove('correct', 'wrong');
+            });
+            
+            document.querySelectorAll('.builder-option').forEach(o => {
+                o.classList.remove('selected');
+                o.style.pointerEvents = 'auto';
+                o.style.background = '';
+                o.style.borderColor = '';
+            });
+        }
+        
+        function showOverlay(emoji, title, message, fact) {
+            document.getElementById('overlayEmoji').textContent = emoji;
+            document.getElementById('overlayTitle').textContent = title;
+            document.getElementById('overlayMessage').textContent = message;
+            document.getElementById('overlayFact').textContent = fact;
+            document.getElementById('overlay').classList.add('active');
+            setTimeout(() => document.getElementById('overlay').classList.remove('active'), 2500);
+        }
+        
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('G8-07');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.score > 0) {
+                    const stars = Math.ceil(data.score / 20);
+                    for (let i = 1; i <= stars; i++) document.getElementById('star' + i).classList.add('lit');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

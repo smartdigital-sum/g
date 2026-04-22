@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gravitation &amp; Work, Energy and Power — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--green);color:#000;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--sky);color:#000;border-color:var(--sky);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--green);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--gold));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.formula-box{background:rgba(0,200,83,.12);border:1px solid rgba(0,200,83,.3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Baloo 2',cursive;font-size:.95rem;color:var(--green);letter-spacing:.03em;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.55;margin-bottom:18px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;}
+.choice-btn:hover:not(:disabled){background:rgba(0,200,83,.12);border-color:var(--green);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--green);color:#000;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--green);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Science · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en',event)">EN</button>
+      <button class="lang-btn" onclick="setLang('hi',event)">हि</button>
+      <button class="lang-btn" onclick="setLang('as',event)">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">🌍 Gravitation &amp; Work, Energy</span>
+    <span data-lang="hi" style="display:none">🌍 गुरुत्वाकर्षण और कार्य, ऊर्जा</span>
+    <span data-lang="as" style="display:none">🌍 মহাকৰ্ষণ আৰু কাৰ্য, শক্তি</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — Science Ch 10 &amp; 11 · Gravitation + Work &amp; Energy</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — विज्ञान अध्याय 10 &amp; 11 · गुरुत्वाकर्षण + कार्य &amp; ऊर्जा</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — বিজ্ঞান অধ্যায় 10 &amp; 11 · মহাকৰ্ষণ + কাৰ্য &amp; শক্তি</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="formula-box" id="formulaBox"></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    formula: "F = G·m₁·m₂ / r²",
+    en: "🌍 Newton's Universal Law of Gravitation states that the force between two masses is:",
+    hi: "🌍 न्यूटन का सार्वत्रिक गुरुत्वाकर्षण नियम कहता है कि दो द्रव्यमानों के बीच बल है:",
+    as: "🌍 নিউটনৰ সাৰ্বজনীন মহাকৰ্ষণ সূত্ৰ কয় যে দুটা ভৰৰ মাজৰ বল হৈছে:",
+    choices: {
+      en: ["Directly proportional to product of masses, inversely proportional to square of distance","Directly proportional to sum of masses and distance","Constant for all objects","Inversely proportional to mass"],
+      hi: ["द्रव्यमानों के गुणनफल के सीधे अनुपात में, दूरी के वर्ग के व्युत्क्रम अनुपात में","द्रव्यमानों के योग और दूरी के सीधे अनुपात में","सभी वस्तुओं के लिए स्थिर","द्रव्यमान के व्युत्क्रम अनुपात में"],
+      as: ["ভৰৰ গুণফলৰ সৈতে প্ৰত্যক্ষ, দূৰত্বৰ বৰ্গৰ সৈতে বিপৰীত","ভৰৰ সমষ্টি আৰু দূৰত্বৰ সৈতে প্ৰত্যক্ষ","সকলো বস্তুৰ বাবে স্থিৰ","ভৰৰ সৈতে বিপৰীত"]
+    },
+    correct: 0,
+    explain: {
+      en: "F = Gm₁m₂/r². Force is directly proportional to product of masses and inversely proportional to square of distance. G = 6.674×10⁻¹¹ N·m²/kg².",
+      hi: "F = Gm₁m₂/r²। बल द्रव्यमानों के गुणनफल के सीधे और दूरी के वर्ग के व्युत्क्रम अनुपात में है। G = 6.674×10⁻¹¹ N·m²/kg²।",
+      as: "F = Gm₁m₂/r²। বল ভৰৰ গুণফলৰ সৈতে প্ৰত্যক্ষ আৰু দূৰত্বৰ বৰ্গৰ সৈতে বিপৰীত। G = 6.674×10⁻¹¹ N·m²/kg²।"
+    }
+  },
+  {
+    formula: "g = 9.8 m/s²",
+    en: "🍎 The value of acceleration due to gravity (g) on the surface of the Earth is approximately:",
+    hi: "🍎 पृथ्वी की सतह पर गुरुत्वीय त्वरण (g) का मान लगभग है:",
+    as: "🍎 পৃথিৱীৰ পৃষ্ঠত মাধ্যাকৰ্ষণৰ কাৰণে ত্বৰণ (g)-ৰ মান প্ৰায়:",
+    choices: {
+      en: ["9.8 m/s²","6.67 × 10⁻¹¹ m/s²","3.7 m/s²","0.98 m/s²"],
+      hi: ["9.8 m/s²","6.67 × 10⁻¹¹ m/s²","3.7 m/s²","0.98 m/s²"],
+      as: ["9.8 m/s²","6.67 × 10⁻¹¹ m/s²","3.7 m/s²","0.98 m/s²"]
+    },
+    correct: 0,
+    explain: {
+      en: "Acceleration due to gravity g = 9.8 m/s² on Earth's surface. On the Moon it is 1.6 m/s² (about 1/6th of Earth's). G = 6.674×10⁻¹¹ N·m²/kg² is the universal constant.",
+      hi: "पृथ्वी की सतह पर g = 9.8 m/s²। चंद्रमा पर 1.6 m/s² (पृथ्वी का लगभग 1/6)। G = 6.674×10⁻¹¹ सार्वत्रिक स्थिरांक है।",
+      as: "পৃথিৱীৰ পৃষ্ঠত g = 9.8 m/s²। চন্দ্ৰত 1.6 m/s² (পৃথিৱীৰ প্ৰায় 1/6)। G = 6.674×10⁻¹¹ সাৰ্বজনীন ধ্ৰুৱক।"
+    }
+  },
+  {
+    formula: "Free fall: only gravity acts",
+    en: "🌊 When an object falls freely under gravity with no air resistance, it is called:",
+    hi: "🌊 जब कोई वस्तु बिना वायु प्रतिरोध के केवल गुरुत्व के अधीन गिरती है, तो इसे कहते हैं:",
+    as: "🌊 যেতিয়া কোনো বস্তু বায়ু প্ৰতিৰোধ নোহোৱাকৈ কেৱল মাধ্যাকৰ্ষণৰ অধীনত পৰে, ইয়াক কোৱা হয়:",
+    choices: {
+      en: ["Free fall — all objects fall at the same rate (g = 9.8 m/s²)","Projectile motion","Uniform horizontal motion","Buoyancy"],
+      hi: ["मुक्त पतन — सभी वस्तुएं समान दर (g = 9.8 m/s²) से गिरती हैं","प्रक्षेप्य गति","एकसमान क्षैतिज गति","उत्प्लावन"],
+      as: ["মুক্ত পতন — সকলো বস্তু একে হাৰত (g = 9.8 m/s²) পৰে","প্ৰক্ষেপ্য গতি","সমান অনুভূমিক গতি","উদাৰণ"]
+    },
+    correct: 0,
+    explain: {
+      en: "Free fall = only gravity acts. In vacuum, a feather and a stone fall at the same rate. The velocity increases by 9.8 m/s every second.",
+      hi: "मुक्त पतन = केवल गुरुत्व कार्य करता है। निर्वात में पंख और पत्थर एक ही दर से गिरते हैं। वेग हर सेकंड 9.8 m/s बढ़ता है।",
+      as: "মুক্ত পতন = কেৱল মাধ্যাকৰ্ষণ কাৰ্য কৰে। শূন্যত পাখি আৰু শিল একে হাৰত পৰে। বেগ প্ৰতি ছেকেণ্ডত 9.8 m/s বাঢ়ে।"
+    }
+  },
+  {
+    formula: "Pressure = Force / Area",
+    en: "⚖️ Thrust is the total force on a surface. Pressure is different because it is:",
+    hi: "⚖️ प्रणोद किसी सतह पर कुल बल है। दाब अलग है क्योंकि यह है:",
+    as: "⚖️ থ্ৰাষ্ট হৈছে কোনো পৃষ্ঠত মুঠ বল। চাপ বেলেগ কাৰণ এয়া হৈছে:",
+    choices: {
+      en: ["Force per unit area (F/A) — same thrust on smaller area = more pressure","Total force × area","Force × distance","Same as thrust"],
+      hi: ["प्रति इकाई क्षेत्रफल बल (F/A) — छोटे क्षेत्र पर समान प्रणोद = अधिक दाब","कुल बल × क्षेत्रफल","बल × दूरी","प्रणोद के समान"],
+      as: ["প্ৰতি একক কালিত বল (F/A) — সৰু কালিত একে থ্ৰাষ্ট = অধিক চাপ","মুঠ বল × কালি","বল × দূৰত্ব","থ্ৰাষ্টৰ সমান"]
+    },
+    correct: 0,
+    explain: {
+      en: "Pressure = Force/Area. A knife has a small area so even small force creates high pressure. Unit of pressure = Pascal (Pa). Thrust = total force perpendicular to surface.",
+      hi: "दाब = बल/क्षेत्रफल। चाकू का क्षेत्रफल छोटा होने पर कम बल से भी अधिक दाब बनता है। दाब की इकाई = पास्कल (Pa)।",
+      as: "চাপ = বল/কালি। ছুৰিৰ কালি সৰু হোৱাত কম বলতো বেছি চাপ পোৱা যায়। চাপৰ একক = পাস্কেল (Pa)।"
+    }
+  },
+  {
+    formula: "Archimedes: Buoyant Force = weight of fluid displaced",
+    en: "🛶 Archimedes' Principle states that an object immersed in a fluid experiences an upward force equal to:",
+    hi: "🛶 आर्किमिडीज़ का सिद्धांत कहता है कि किसी तरल में डूबी वस्तु पर ऊपर की ओर बल होता है जो बराबर है:",
+    as: "🛶 আৰ্কিমিডিছৰ নীতি কয় যে তৰলত নিমজ্জিত বস্তুত ওপৰলৈ বল থাকে যি সমান:",
+    choices: {
+      en: ["Weight of fluid displaced by the object","Weight of the object itself","Volume of the object","Density of the object"],
+      hi: ["वस्तु द्वारा विस्थापित तरल के भार के","वस्तु के अपने भार के","वस्तु के आयतन के","वस्तु के घनत्व के"],
+      as: ["বস্তুটোৱে স্থানচ্যুত কৰা তৰলৰ ওজনৰ","বস্তুটোৰ নিজৰ ওজনৰ","বস্তুটোৰ আয়তনৰ","বস্তুটোৰ ঘনত্বৰ"]
+    },
+    correct: 0,
+    explain: {
+      en: "Archimedes' Principle: Buoyant force = weight of fluid displaced. An object floats when its weight = buoyant force. Density of object < density of fluid → floats.",
+      hi: "आर्किमिडीज़ का सिद्धांत: उत्प्लावन बल = विस्थापित तरल का भार। वस्तु तैरती है जब भार = उत्प्लावन बल। वस्तु का घनत्व < तरल का घनत्व → तैरती है।",
+      as: "আৰ্কিমিডিছৰ নীতি: উৎপ্লাৱন বল = স্থানচ্যুত তৰলৰ ওজন। বস্তু ওপঙে যেতিয়া ওজন = উৎপ্লাৱন বল। বস্তুৰ ঘনত্ব < তৰলৰ ঘনত্ব → ওপঙে।"
+    }
+  },
+  {
+    formula: "W = F × d (when force ∥ displacement)",
+    en: "💪 Work is done when a force causes displacement. The formula for work is W = F×d. In which case is work done ZERO?",
+    hi: "💪 कार्य तब होता है जब बल विस्थापन उत्पन्न करता है। W = F×d। किस स्थिति में कार्य शून्य होता है?",
+    as: "💪 কাৰ্য তেতিয়া হয় যেতিয়া বলে সৰণ ঘটায়। W = F×d। কোন ক্ষেত্ৰত কাৰ্য শূন্য হয়?",
+    choices: {
+      en: ["Force applied but no displacement occurs (e.g., pushing a wall)","A book falls from a table","A ball is thrown upward","A car accelerates forward"],
+      hi: ["बल लगाया लेकिन कोई विस्थापन नहीं (जैसे दीवार धकेलना)","किताब मेज़ से गिरती है","गेंद ऊपर फेंकी जाती है","कार आगे त्वरित होती है"],
+      as: ["বল প্ৰয়োগ কিন্তু সৰণ নাই (যেনে দেৱাল ঠেলা)","কিতাপ মেজৰ পৰা পৰে","বল ওপৰলৈ নিক্ষেপ কৰা হয়","গাড়ী আগলৈ ত্বৰিত হয়"]
+    },
+    correct: 0,
+    explain: {
+      en: "Work = F × d × cos θ. If displacement = 0 (e.g., pushing a wall), W = 0. Also W = 0 when force ⊥ displacement (θ=90°), like carrying a bag horizontally.",
+      hi: "कार्य = F × d × cosθ। यदि विस्थापन = 0 (जैसे दीवार धकेलना), W = 0। बल ⊥ विस्थापन (θ=90°) पर भी W = 0 जैसे क्षैतिज रूप से बैग उठाना।",
+      as: "কাৰ্য = F × d × cosθ। যদি সৰণ = 0 (যেনে দেৱাল ঠেলা), W = 0। বল ⊥ সৰণ (θ=90°) হ'লেও W = 0 যেনে অনুভূমিকভাৱে বেগ বহন।"
+    }
+  },
+  {
+    formula: "KE = ½mv²",
+    en: "⚡ Kinetic energy is the energy of motion. If a 4 kg ball moves at 3 m/s, its kinetic energy is:",
+    hi: "⚡ गतिज ऊर्जा गति की ऊर्जा है। यदि 4 kg की गेंद 3 m/s पर चलती है, इसकी गतिज ऊर्जा है:",
+    as: "⚡ গতিশক্তি হৈছে গতিৰ শক্তি। যদি 4 kg বল 3 m/s-ত চলে, ইয়াৰ গতিশক্তি:",
+    choices: {
+      en: ["18 J","12 J","36 J","6 J"],
+      hi: ["18 J","12 J","36 J","6 J"],
+      as: ["18 J","12 J","36 J","6 J"]
+    },
+    correct: 0,
+    explain: {
+      en: "KE = ½mv² = ½ × 4 × 3² = ½ × 4 × 9 = 18 J. Kinetic energy increases with square of velocity, so doubling speed quadruples KE.",
+      hi: "KE = ½mv² = ½ × 4 × 3² = ½ × 4 × 9 = 18 J। गतिज ऊर्जा वेग के वर्ग के साथ बढ़ती है, इसलिए गति दोगुनी करने पर KE चार गुना।",
+      as: "KE = ½mv² = ½ × 4 × 3² = ½ × 4 × 9 = 18 J। গতিশক্তি বেগৰ বৰ্গৰ সৈতে বাঢ়ে, গতি দুগুণ কৰিলে KE চাৰিগুণ হয়।"
+    }
+  },
+  {
+    formula: "PE = mgh",
+    en: "🏔️ Potential energy is stored energy due to position. A 2 kg object is raised 5 m above the ground (g = 10 m/s²). Its gravitational PE is:",
+    hi: "🏔️ स्थितिज ऊर्जा स्थिति के कारण संग्रहीत ऊर्जा है। 2 kg वस्तु जमीन से 5 m ऊपर उठाई जाती है (g = 10 m/s²)। इसकी गुरुत्वीय PE है:",
+    as: "🏔️ বিভৱশক্তি হৈছে অৱস্থানৰ কাৰণে সঞ্চিত শক্তি। 2 kg বস্তু 5 m ওপৰলৈ তোলা হয় (g = 10 m/s²)। ইয়াৰ মাধ্যাকৰ্ষণ বিভৱশক্তি:",
+    choices: {
+      en: ["100 J","10 J","25 J","50 J"],
+      hi: ["100 J","10 J","25 J","50 J"],
+      as: ["100 J","10 J","25 J","50 J"]
+    },
+    correct: 0,
+    explain: {
+      en: "PE = mgh = 2 × 10 × 5 = 100 J. Potential energy depends on mass, gravity, and height. When the object falls, PE converts to KE.",
+      hi: "PE = mgh = 2 × 10 × 5 = 100 J। स्थितिज ऊर्जा द्रव्यमान, गुरुत्व और ऊंचाई पर निर्भर करती है। वस्तु गिरने पर PE, KE में बदलती है।",
+      as: "PE = mgh = 2 × 10 × 5 = 100 J। বিভৱশক্তি ভৰ, মাধ্যাকৰ্ষণ আৰু উচ্চতাৰ ওপৰত নিৰ্ভৰ কৰে। বস্তু পৰিলে PE, KE-লৈ ৰূপান্তৰ হয়।"
+    }
+  },
+  {
+    formula: "Law of Conservation: Total Energy = KE + PE = constant",
+    en: "🔋 The Law of Conservation of Energy states that energy:",
+    hi: "🔋 ऊर्जा संरक्षण का नियम कहता है कि ऊर्जा:",
+    as: "🔋 শক্তি সংৰক্ষণৰ নিয়মত কোৱা হৈছে যে শক্তি:",
+    choices: {
+      en: ["Cannot be created or destroyed — only converted from one form to another","Can be created from nothing","Is always lost as heat","Is only kinetic or potential"],
+      hi: ["न बनाई जा सकती है न नष्ट — केवल एक रूप से दूसरे रूप में बदलती है","शून्य से बनाई जा सकती है","हमेशा ऊष्मा के रूप में नष्ट होती है","केवल गतिज या स्थितिज होती है"],
+      as: ["সৃষ্টি বা ধ্বংস কৰিব নোৱাৰি — কেৱল এক ৰূপৰ পৰা আন ৰূপলৈ ৰূপান্তৰিত হয়","শূন্যৰ পৰা সৃষ্টি কৰিব পাৰি","সদায় তাপ হিচাপে হেৰায়","কেৱল গতিশক্তি বা বিভৱশক্তি"]
+    },
+    correct: 0,
+    explain: {
+      en: "Law of Conservation of Energy: Energy cannot be created or destroyed, only transformed. In a pendulum, PE at top ↔ KE at bottom. Total mechanical energy = KE + PE = constant.",
+      hi: "ऊर्जा संरक्षण नियम: ऊर्जा न बन सकती है न नष्ट, केवल रूपांतरित होती है। पेंडुलम में शीर्ष पर PE ↔ नीचे KE। कुल यांत्रिक ऊर्जा = KE + PE = स्थिर।",
+      as: "শক্তি সংৰক্ষণৰ নিয়ম: শক্তি সৃষ্টি বা ধ্বংস কৰিব নোৱাৰি, কেৱল ৰূপান্তৰিত হয়। পেণ্ডুলামত শীৰ্ষত PE ↔ তলত KE। মুঠ যান্ত্ৰিক শক্তি = KE + PE = স্থিৰ।"
+    }
+  },
+  {
+    formula: "P = W/t (Watt = J/s)",
+    en: "⚡ Power is the rate of doing work. If 600 J of work is done in 30 seconds, the power is:",
+    hi: "⚡ शक्ति कार्य करने की दर है। यदि 30 सेकंड में 600 J कार्य होता है, शक्ति है:",
+    as: "⚡ শক্তি হৈছে কাৰ্য সম্পাদনৰ হাৰ। যদি 30 ছেকেণ্ডত 600 J কাৰ্য হয়, শক্তি হ'ব:",
+    choices: {
+      en: ["20 W","18,000 W","0.05 W","600 W"],
+      hi: ["20 W","18,000 W","0.05 W","600 W"],
+      as: ["20 W","18,000 W","0.05 W","600 W"]
+    },
+    correct: 0,
+    explain: {
+      en: "P = W/t = 600/30 = 20 W. 1 Watt = 1 Joule/second. Commercial unit of energy is kilowatt-hour (kWh). 1 kWh = 3.6 × 10⁶ J.",
+      hi: "P = W/t = 600/30 = 20 W। 1 वाट = 1 जूल/सेकंड। व्यावसायिक ऊर्जा इकाई = किलोवाट-घंटा (kWh)। 1 kWh = 3.6 × 10⁶ J।",
+      as: "P = W/t = 600/30 = 20 W। 1 ৱাট = 1 জুল/ছেকেণ্ড। বাণিজ্যিক শক্তিৰ একক = কিলোৱাট-ঘণ্টা (kWh)। 1 kWh = 3.6 × 10⁶ J।"
+    }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l, e) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = 'Question ' + (current + 1) + ' of 10';
+  document.getElementById('formulaBox').textContent = '📐 Formula: ' + q.formula;
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+  const choicesArr = q.choices[lang] || q.choices.en;
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars, msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'Physics Genius! Newton & Archimedes salute you! 🌍', hi: 'भौतिकी प्रतिभा! न्यूटन और आर्किमिडीज़ आपको सलाम! 🌍', as: 'পদাৰ্থবিজ্ঞানৰ প্ৰতিভা! নিউটন আৰু আৰ্কিমিডিছে চেলাম জনায়! 🌍' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Great energy! You\'re almost at peak potential! ⚡', hi: 'शानदार ऊर्जा! आप लगभग शीर्ष स्थितिज ऊर्जा पर हैं! ⚡', as: 'চমৎকাৰ শক্তি! তুমি প্ৰায় শীৰ্ষ বিভৱশক্তিত আছা! ⚡' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Good effort! Revise gravitation formulas and energy conservation.', hi: 'अच्छी कोशिश! गुरुत्वाकर्षण के सूत्र और ऊर्जा संरक्षण दोबारा पढ़ें।', as: 'ভাল প্ৰচেষ্টা! মহাকৰ্ষণৰ সূত্ৰ আৰু শক্তি সংৰক্ষণ পুনৰায় পঢ়ক।' }; }
+  else { stars = '☆☆☆'; msg = { en: 'Keep trying! The force of gravity will guide you up! 🍎', hi: 'कोशिश जारी रखें! गुरुत्व बल आपको ऊपर उठाएगा! 🍎', as: 'চেষ্টা জাৰি ৰাখক! মাধ্যাকৰ্ষণ বলে তোমাক ওপৰলৈ লৈ যাব! 🍎' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

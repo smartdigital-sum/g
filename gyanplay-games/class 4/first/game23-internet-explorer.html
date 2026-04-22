@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Internet Explorer — GyanPlay Class 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#050E1A,#030810);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 40px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.h-left{display:flex;flex-direction:column;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.game-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);}
+.subject-tag{font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:1.3rem;opacity:.25;transition:opacity .3s,filter .3s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.wow{background:linear-gradient(135deg,rgba(76,201,240,.15),rgba(76,201,240,.04));
+  border:1px solid rgba(76,201,240,.3);border-radius:16px;padding:16px;margin-bottom:18px;}
+.wow-emoji{font-size:2rem;margin-bottom:6px;}
+.wow p{font-size:.88rem;line-height:1.55;}
+.wow p span{color:var(--gold);font-weight:700;}
+.wow-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-top:6px;}
+.stage-tabs{display:flex;gap:8px;margin-bottom:14px;}
+.stab{flex:1;padding:9px 6px;background:rgba(76,201,240,.06);border:2px solid rgba(76,201,240,.12);
+  border-radius:12px;text-align:center;font-family:'Baloo 2',sans-serif;font-size:.72rem;font-weight:700;
+  color:var(--dim);transition:all .2s;}
+.stab.active{background:rgba(76,201,240,.15);border-color:var(--blue);color:var(--blue);}
+.stab.done{border-color:rgba(6,214,160,.4);color:var(--teal);}
+.game-area{background:var(--card);border-radius:20px;padding:20px;margin-bottom:14px;
+  border:1px solid rgba(76,201,240,.12);}
+.stage-title{font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:800;color:var(--blue);margin-bottom:3px;}
+.stage-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.72rem;color:var(--dim);margin-bottom:14px;}
+/* Trace path */
+.path-nodes{display:flex;flex-direction:column;gap:0;margin-bottom:14px;}
+.path-node{display:flex;align-items:flex-start;gap:10px;cursor:pointer;touch-action:manipulation;
+  padding:10px 12px;border-radius:12px;transition:background .2s;}
+.path-node:active{background:rgba(76,201,240,.08);}
+.path-node.lit{background:rgba(6,214,160,.1);}
+.pn-icon{font-size:1.8rem;flex-shrink:0;margin-top:2px;}
+.pn-label{font-family:'Baloo 2',sans-serif;font-size:.88rem;font-weight:800;color:var(--dim);transition:color .3s;}
+.path-node.lit .pn-label{color:var(--teal);}
+.pn-desc{font-size:.75rem;color:var(--dim);line-height:1.4;margin-top:2px;}
+.pn-desc .as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.68rem;display:block;margin-top:1px;}
+.pn-num{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.08);
+  font-family:'Baloo 2',sans-serif;font-size:.75rem;font-weight:800;color:var(--dim);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:4px;transition:all .3s;}
+.path-node.lit .pn-num{background:var(--teal);color:#040E04;}
+.pn-connector{width:2px;height:14px;background:rgba(76,201,240,.15);margin-left:22px;}
+.pn-connector.lit{background:var(--teal);}
+.trace-prompt{font-size:.82rem;color:var(--dim);text-align:center;margin-bottom:10px;}
+.trace-prompt .as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;}
+/* URL anatomy */
+.url-bar{font-family:'Baloo 2',sans-serif;font-size:.85rem;font-weight:700;
+  background:rgba(76,201,240,.08);border:1px solid rgba(76,201,240,.2);
+  border-radius:10px;padding:12px 14px;margin-bottom:14px;word-break:break-all;color:var(--text);}
+.url-part{display:inline;cursor:pointer;padding:1px 3px;border-radius:4px;transition:all .2s;}
+.url-part:active{background:rgba(76,201,240,.2);}
+.url-part.https{color:#FF9F1C;}
+.url-part.domain{color:var(--teal);}
+.url-part.path{color:var(--gold);}
+.url-parts-label{font-size:.75rem;color:var(--dim);margin-bottom:10px;}
+.url-q-text{font-size:.88rem;margin-bottom:8px;line-height:1.5;}
+.url-q-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:12px;}
+.url-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.u-opt{padding:11px 14px;background:rgba(76,201,240,.06);border:2px solid rgba(76,201,240,.15);
+  border-radius:11px;font-size:.88rem;cursor:pointer;touch-action:manipulation;transition:all .15s;}
+.u-opt:active{transform:scale(.98);}
+.u-opt.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal);}
+.u-opt.wrong{background:rgba(255,107,107,.12);border-color:var(--coral);color:var(--coral);}
+.u-opt.disabled{pointer-events:none;}
+.feedback{text-align:center;font-size:.85rem;min-height:1.2em;font-weight:600;}
+.feedback.ok{color:var(--teal);}
+.feedback.err{color:var(--coral);}
+.progress-wrap{margin-bottom:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);margin-bottom:5px;}
+.prog-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--blue);border-radius:99px;transition:width .4s;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-card{background:var(--card);border:1px solid rgba(76,201,240,.3);border-radius:22px;padding:28px 24px;text-align:center;max-width:320px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);}to{transform:scale(1) translateY(0);}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px;}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.ov-fact{font-size:.83rem;line-height:1.5;margin-bottom:12px;}
+.ov-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+.ov-btn{padding:12px 28px;background:var(--gold);color:#0F0820;border:none;border-radius:12px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:200;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen"><div style="font-size:2.5rem">🌐</div><p>Loading… / লোড হৈছে…</p></div>
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="h-left">
+      <div class="game-title">Internet Explorer</div>
+      <div class="game-title-as">ইণ্টাৰনেট অন্বেষক</div>
+      <div class="subject-tag">Computer · শ্ৰেণী ৪</div>
+    </div>
+    <div class="stars" id="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+  <div class="wow">
+    <div class="wow-emoji">🌐</div>
+    <p>The internet has <span>NO central headquarters</span>, no owner, no single off switch. It was designed in <span>1969 to survive a nuclear war</span> — data reroutes around any damage!</p>
+    <div class="wow-as">ইণ্টাৰনেটৰ কোনো কেন্দ্ৰীয় মুখ্যালয় নাই, কোনো মালিক নাই। ১৯৬৯ত পাৰমাণৱিক যুদ্ধৰ পিছতো টিকি থাকিবলৈ ডিজাইন কৰা হৈছিল!</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-label"><span>Score: <span id="scoreDisplay">0</span></span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="stage-tabs">
+    <div class="stab active" id="stab1">Stage 1<br><span style="font-size:.6rem;">Trace Path</span></div>
+    <div class="stab" id="stab2">Stage 2<br><span style="font-size:.6rem;">URL Parts</span></div>
+    <div class="stab" id="stab3">Stage 3<br><span style="font-size:.6rem;">Quiz</span></div>
+  </div>
+  <div class="game-area" id="gameArea"></div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <div class="ov-as" id="ovAs"></div>
+    <button class="ov-btn" id="ovBtn">Next →</button>
+  </div>
+</div>
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let currentUser=null;
+auth.onAuthStateChanged(u=>{
+  if(!u){window.location.href='/login.html';return;}
+  currentUser=u;
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initGame();
+});
+
+const PATH_NODES=[
+  {icon:'💻',label:'Your Device (Browser)',labelAs:'তোমাৰ ডিভাইচ (ব্ৰাউজাৰ)',
+   desc:'You type a URL — your browser sends a request.\nYour device is the starting point!',
+   descAs:'তুমি URL টাইপ কৰা — ব্ৰাউজাৰে অনুৰোধ পঠায়।'},
+  {icon:'📡',label:'Router / Wi-Fi',labelAs:'ৰাউটাৰ / ৱাই-ফাই',
+   desc:'The request travels to your router — which connects your home to the internet.',
+   descAs:'অনুৰোধ ৰাউটাৰলৈ যায় — যি তোমাৰ ঘৰক ইণ্টাৰনেটৰ সৈতে সংযোগ কৰে।'},
+  {icon:'🏢',label:'ISP (Internet Service Provider)',labelAs:'আইএছপি (ইণ্টাৰনেট সেৱা প্ৰদানকাৰী)',
+   desc:'Your ISP (e.g., Airtel, BSNL) routes data across India and the world.',
+   descAs:'তোমাৰ আইএছপি (যেনে এয়াৰটেল, বিএছএনএল) ভাৰত আৰু বিশ্বজুৰি তথ্য পাঠায়।'},
+  {icon:'🖥️',label:'Web Server (Website\'s Computer)',labelAs:'ৱেব চাৰ্ভাৰ (ৱেবছাইটৰ কম্পিউটাৰ)',
+   desc:'The server stores the website. It receives your request and sends back the page!',
+   descAs:'চাৰ্ভাৰে ৱেবছাইট সংৰক্ষণ কৰে। ই তোমাৰ অনুৰোধ পায় আৰু পেজ পঠায়!'},
+  {icon:'💻',label:'Back to Your Device!',labelAs:'তোমাৰ ডিভাইচলৈ ঘূৰি আহে!',
+   desc:'The data travels back and your browser displays the website. All in under 1 second!',
+   descAs:'তথ্য ঘূৰি আহে আৰু ব্ৰাউজাৰে ৱেবছাইট দেখুৱায়। ১ ছেকেণ্ডতকৈ কমত!'},
+];
+
+const URL_QS=[
+  {q:"In the URL https://www.kaziranga.gov.in/rhinos — what does 'https' represent?",qAs:"URL https://www.kaziranga.gov.in/rhinos ত 'https' কি বুজায়?",
+   opts:['The website name','Secure communication protocol','The file path','The server location'],ans:1,
+   fact:"https = HyperText Transfer Protocol Secure. The 's' means it's encrypted — safe to use!",factAs:"https = সুৰক্ষিত হাইপাৰটেক্সট ট্ৰান্সফাৰ প্ৰট'কল। 's' মানে এনক্ৰিপ্টেড!"},
+  {q:"In the URL https://www.kaziranga.gov.in/rhinos — 'kaziranga.gov.in' is called the…?",qAs:"'kaziranga.gov.in' কি বোলা হয়?",
+   opts:['Path','Protocol','Domain name','IP address'],ans:2,
+   fact:"The domain name is the website's address — like a house address for the internet!",factAs:"ডমেইন নাম হ'ল ৱেবছাইটৰ ঠিকনা — ঠিক যেন ইণ্টাৰনেটৰ ঘৰৰ ঠিকনা!"},
+  {q:"In the URL https://www.kaziranga.gov.in/rhinos — '/rhinos' is the…?",qAs:"'/rhinos' কি?",
+   opts:['Protocol','Domain','Page path / sub-page','Security certificate'],ans:2,
+   fact:"The path (/rhinos) tells the server which specific page you want on the website!",factAs:"পথে (/rhinos) চাৰ্ভাৰক কয় তুমি ৱেবছাইটৰ কোন নিৰ্দিষ্ট পেজ বিচৰা!"},
+  {q:"What is the difference between the Internet and an Intranet?",qAs:"ইণ্টাৰনেট আৰু ইণ্ট্ৰানেটৰ পাৰ্থক্য কি?",
+   opts:['No difference — same thing','Internet = global public network; Intranet = private network for one organisation','Internet is faster','Intranet uses Wi-Fi only'],ans:1,
+   fact:"Schools and companies often have an Intranet — a private internet just for them. Like Assam's government portal for officials only!",factAs:"বিদ্যালয় আৰু কোম্পানিৰ প্ৰায়ে ইন্ট্ৰানেট থাকে — কেৱল তেওঁলোকৰ বাবে ব্যক্তিগত ইণ্টাৰনেট!"},
+  {q:"What is a 'browser'?",qAs:"'ব্ৰাউজাৰ' কি?",
+   opts:['A device that stores websites','Software that lets you view websites','The internet itself','A type of Wi-Fi router'],ans:1,
+   fact:"Examples: Chrome, Firefox, Safari, Edge. The first web browser was called 'WorldWideWeb' — invented in 1990!",factAs:"উদাহৰণ: ক্ৰম, ফায়াৰফক্স, চাফাৰি, এজ। প্ৰথম ৱেব ব্ৰাউজাৰ 'WorldWideWeb' ১৯৯০ত তৈয়াৰ হৈছিল!"},
+];
+
+let stage=1,score=0,tracedNodes=new Set(),urlQ=0;
+
+function initGame(){stage=1;score=0;tracedNodes=new Set();urlQ=0;updateStars(0);setTabs(1);renderStage1();}
+function setTabs(s){[1,2,3].forEach(i=>{const t=document.getElementById('stab'+i);t.className='stab'+(i===s?' active':'')+(i<s?' done':'');});}
+
+function renderStage1(){
+  const ga=document.getElementById('gameArea');
+  ga.innerHTML=`
+    <div class="stage-title">Stage 1: Trace the Internet Journey</div>
+    <div class="stage-as">ইণ্টাৰনেট যাত্ৰা অনুসৰণ কৰক</div>
+    <div class="trace-prompt">Tap each step IN ORDER to trace the data packet journey! <span class="as"><br>ক্ৰমত প্ৰতিটো পদক্ষেপ টেপ কৰক!</span></div>
+    <div class="path-nodes" id="pathNodes">
+      ${PATH_NODES.map((n,i)=>`
+        <div>
+          <div class="path-node" id="pn-${i}" onclick="tapNode(${i})">
+            <div class="pn-num">${i+1}</div>
+            <div class="pn-icon">${n.icon}</div>
+            <div style="flex:1;">
+              <div class="pn-label">${n.label}</div>
+              <div class="pn-desc" id="pndesc-${i}" style="display:none;">${n.desc}<span class="as">${n.descAs}</span></div>
+            </div>
+          </div>
+          ${i<4?`<div class="pn-connector" id="pc-${i}"></div>`:''}
+        </div>`).join('')}
+    </div>
+    <div class="feedback" id="feedback"></div>`;
+}
+
+function tapNode(idx){
+  if(idx!==tracedNodes.size){
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent=`Tap step ${tracedNodes.size+1} first! / আগে পদক্ষেপ ${tracedNodes.size+1} টেপ কৰক!`;
+    setTimeout(()=>document.getElementById('feedback').textContent='',1500);return;
+  }
+  tracedNodes.add(idx);
+  const node=document.getElementById('pn-'+idx);node.classList.add('lit');
+  document.getElementById('pndesc-'+idx).style.display='block';
+  if(idx>0){const conn=document.getElementById('pc-'+(idx-1));if(conn)conn.classList.add('lit');}
+  score++;document.getElementById('scoreDisplay').textContent=score;
+  document.getElementById('progFill').style.width=(score/10*100)+'%';
+  updateStars(Math.min(5,Math.ceil(score/2)));
+  document.getElementById('feedback').className='feedback ok';
+  document.getElementById('feedback').textContent=['🚀 Request sent!','📡 Router received!','🏢 ISP routing...','🖥️ Server found!','✅ Data received!'][idx];
+  if(tracedNodes.size===5){
+    setTimeout(()=>{
+      confetti();
+      document.getElementById('ovEmoji').textContent='🌐';
+      document.getElementById('ovTitle').textContent='Internet Traced!';
+      document.getElementById('ovFact').textContent='Data travels from your device → router → ISP → server → back to you — all in under 1 second! Light-speed travel!';
+      document.getElementById('ovAs').textContent='তোমাৰ ডিভাইচৰ পৰা চাৰ্ভাৰলৈ আৰু ঘূৰি ১ ছেকেণ্ডতকৈ কমত!';
+      document.getElementById('ovBtn').textContent='Stage 2 →';
+      document.getElementById('ovBtn').onclick=()=>{showOverlay(false);stage=2;setTabs(2);renderStage2();};
+      showOverlay(true);
+    },600);
+  }
+}
+
+function renderStage2(){
+  const ga=document.getElementById('gameArea');
+  ga.innerHTML=`
+    <div class="stage-title">Stage 2: Decode a URL</div>
+    <div class="stage-as">URL ডিকোড কৰক</div>
+    <div class="url-parts-label">Study this URL carefully:</div>
+    <div class="url-bar">
+      <span class="url-part https">https</span><span style="color:var(--dim);">://www.</span><span class="url-part domain">kaziranga.gov.in</span><span style="color:var(--dim);">/</span><span class="url-part path">rhinos</span>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:14px;font-size:.72rem;">
+      <span style="color:#FF9F1C;">■ Protocol (https)</span>
+      <span style="color:var(--teal);">■ Domain</span>
+      <span style="color:var(--gold);">■ Path (/page)</span>
+    </div>
+    <button class="check-btn" onclick="startStage3()" style="background:var(--blue);color:#030810;">Got it! Start Quiz → / বুজিলো!</button>`;
+}
+
+function startStage3(){stage=3;setTabs(3);renderURLQ(0);}
+
+function renderURLQ(idx){
+  if(idx>=URL_QS.length){endGame();return;}
+  const q=URL_QS[idx];
+  const ga=document.getElementById('gameArea');
+  ga.innerHTML=`
+    <div class="stage-title">Stage 3: Internet Quiz</div>
+    <div class="stage-as">ইণ্টাৰনেট প্ৰশ্নোত্তৰ</div>
+    <div class="url-q-text">${q.q}</div>
+    <div class="url-q-as">${q.qAs}</div>
+    <div class="url-opts" id="urlOpts">
+      ${q.opts.map((o,i)=>`<div class="u-opt" onclick="answerURL(${i},${q.ans},${idx})">${o}</div>`).join('')}
+    </div>
+    <div class="feedback" id="feedback"></div>`;
+}
+
+function answerURL(chosen,correct,idx){
+  document.querySelectorAll('.u-opt').forEach(o=>o.classList.add('disabled'));
+  const q=URL_QS[idx];
+  document.querySelectorAll('.u-opt').forEach((o,i)=>{if(i===chosen)o.classList.add(chosen===correct?'correct':'wrong');if(i===correct)o.classList.add('correct');});
+  if(chosen===correct){
+    score++;document.getElementById('scoreDisplay').textContent=score;
+    document.getElementById('progFill').style.width=(score/10*100)+'%';
+    updateStars(Math.min(5,Math.ceil(score/2)));confetti();
+    document.getElementById('ovEmoji').textContent='🌐';
+    document.getElementById('ovTitle').textContent=['Excellent!','Spot on!','Brilliant!','Amazing!'][Math.floor(Math.random()*4)];
+    document.getElementById('ovFact').textContent=q.fact;
+    document.getElementById('ovAs').textContent=q.factAs;
+    const isLast=idx>=4;
+    document.getElementById('ovBtn').textContent=isLast?'Finish! / শেষ!':'Next →';
+    document.getElementById('ovBtn').onclick=()=>{showOverlay(false);if(isLast)endGame();else renderURLQ(idx+1);};
+    setTimeout(()=>showOverlay(true),300);
+  } else {
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent='❌ Not quite! / ঠিক নহয়!';
+    setTimeout(()=>renderURLQ(idx+1),2000);
+  }
+}
+
+function endGame(){
+  trackProgress();
+  document.getElementById('ovEmoji').textContent='🏆';
+  document.getElementById('ovTitle').textContent='Internet Explorer! / ইণ্টাৰনেট অন্বেষক!';
+  document.getElementById('ovFact').textContent=`Score: ${score}/10! You traced the internet journey and decoded URL anatomy!`;
+  document.getElementById('ovAs').textContent=`স্কোৰ: ${score}/১০! ইণ্টাৰনেট যাত্ৰা অনুসৰণ কৰিলা আৰু URL ডিকোড কৰিলা!`;
+  document.getElementById('ovBtn').textContent='🔄 Play Again / আকৌ খেলক';
+  document.getElementById('ovBtn').onclick=()=>{showOverlay(false);initGame();};
+  showOverlay(true);
+}
+async function trackProgress(){
+  if(!currentUser)return;
+  try{await db.collection('users').doc(currentUser.uid).collection('progress').doc('class4-game23').set(
+    {score,total:10,gameId:'class4-game23',gameName:'Internet Explorer',class:4,subject:'Computer',completedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+}
+function updateStars(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function showOverlay(s){document.getElementById('overlay').classList.toggle('show',s);}
+function confetti(){
+  const cols=['#FFD166','#4CC9F0','#06D6A0','#FF6B6B','#C77DFF'];
+  for(let i=0;i<22;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%5]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}
+}
+</script>
+</body>
+</html>

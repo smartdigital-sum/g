@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dhol Master — Rongmon's World</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --jungle: #1a5c2e;
+    --leaf: #4caf50;
+    --gold: #f5c518;
+    --bihu-red: #e63946;
+    --bihu-orange: #f4a261;
+    --sky: #48cae4;
+    --earth: #8b5e3c;
+    --dark: #1a1a2e;
+    
+    --inst-dhol: #e63946;
+    --inst-pepa: #f4a261;
+    --inst-taal: #4caf50;
+    --inst-gog: #f5c518;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Baloo 2', cursive;
+    background: #111;
+    color: var(--dark);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+
+  .as { font-family: 'Hind Siliguri', sans-serif; }
+
+  /* ══ APP CONTAINER ══ */
+  #game-wrap {
+    width: 100%; max-width: 800px; height: 100vh; max-height: 600px;
+    background: linear-gradient(135deg, #fef9ef 0%, #fff0c0 100%);
+    position: relative; overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column;
+  }
+  @media(min-width: 820px) { #game-wrap { height: 90vh; border-radius: 24px; border: 8px solid var(--jungle); } }
+
+  /* ══ HUD ══ */
+  #hud {
+    position: absolute; top: 0; left: 0; right: 0;
+    padding: 12px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(26,92,46,0.9), rgba(26,92,46,0));
+  }
+  #hud.hidden { display: none; }
+  .hud-left, .hud-right { display: flex; gap: 12px; align-items: center; }
+  .hud-stat {
+    background: rgba(255,255,255,0.9); padding: 4px 14px;
+    border-radius: 20px; font-weight: 800; font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); color: var(--jungle);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .lang-pill {
+    display: flex; background: rgba(255,255,255,0.9);
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+  .lang-pill button {
+    border: none; background: none; padding: 4px 12px;
+    font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 14px;
+    cursor: pointer; color: #888; transition: 0.2s;
+  }
+  .lang-pill button.active { background: var(--gold); color: var(--jungle); }
+
+  /* ══ SCREENS ══ */
+  .screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 20px;
+    z-index: 10;
+  }
+  .screen.hidden { display: none; }
+
+  /* Overlays */
+  .overlay-box {
+    background: #fff; padding: 40px; border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    max-width: 400px; width: 90%;
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* ══ BUTTONS ══ */
+  .btn-primary {
+    background: var(--gold); color: var(--jungle);
+    border: none; padding: 12px 30px; font-size: 20px;
+    font-weight: 800; border-radius: 50px; cursor: pointer;
+    box-shadow: 0 6px 0 var(--earth);
+    transition: transform 0.1s, box-shadow 0.1s;
+    font-family: 'Baloo 2', cursive; margin-top: 15px;
+  }
+  .btn-primary:active { transform: translateY(6px); box-shadow: 0 0px 0 var(--earth); }
+  
+  .btn-home {
+    position: fixed; top: 20px; left: 20px; z-index: 500;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: #fff; text-decoration: none; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .mute-btn {
+    position: fixed; bottom: 20px; right: 20px; z-index: 500;
+    width: 44px; height: 44px; border-radius: 50%; border: none;
+    background: #fff; font-size: 20px; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  /* ══ GAME ELEMENTS ══ */
+  .central-rongmon {
+    position: absolute; top: 120px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 120px; z-index: 5;
+    animation: bob 3s infinite ease-in-out;
+  }
+  @keyframes bob { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -10px); } }
+
+  .status-text {
+    position: absolute; top: 250px; left: 50%; transform: translateX(-50%);
+    font-size: 24px; font-weight: 800; color: var(--jungle);
+    background: rgba(255,255,255,0.8); padding: 4px 20px; border-radius: 20px;
+    z-index: 5; transition: 0.3s;
+  }
+
+  /* INSTRUMENT GRID */
+  .instrument-grid {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    width: 320px; height: 320px; perspective: 1000px;
+  }
+  .inst-panel {
+    border-radius: 50%;
+    border: 8px solid rgba(255,255,255,0.4);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.1s;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    user-select: none; position: relative;
+    overflow: hidden;
+  }
+  .inst-panel::before {
+    content: ''; position: absolute; inset: 0;
+    background: #fff; opacity: 0; transition: opacity 0.1s;
+  }
+  .inst-panel.active { transform: scale(0.95) translateY(5px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+  .inst-panel.active::before { opacity: 0.5; }
+  
+  .inst-dhol { background: var(--inst-dhol); }
+  .inst-pepa { background: var(--inst-pepa); }
+  .inst-taal { background: var(--inst-taal); }
+  .inst-gog { background: var(--inst-gog); }
+
+  .inst-icon { font-size: 50px; line-height: 1; position: relative; z-index: 2; pointer-events: none; }
+  .inst-name { font-size: 16px; font-weight: 800; color: #fff; position: relative; z-index: 2; text-shadow: 0 2px 4px rgba(0,0,0,0.3); pointer-events: none; }
+
+  /* ══ ONBOARDING ══ */
+  #onboarding { background: rgba(0,0,0,0.8); z-index: 200; backdrop-filter: blur(5px); }
+  
+  /* ══ EFFECTS ══ */
+  .confetti-piece { position: absolute; pointer-events: none; z-index: 150; animation: fall 2s linear forwards; }
+  @keyframes fall {
+    0% { transform: translate(0,0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(var(--cx), var(--cy)) rotate(var(--cr)); opacity: 0; }
+  }
+
+  /* Utility */
+  .title-lg { font-size: 42px; font-weight: 900; color: var(--jungle); line-height: 1.1; margin-bottom: 10px; }
+  .desc-txt { font-size: 18px; color: #555; font-weight: 600; margin-bottom: 20px; }
+  .dim { color: #888; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<a href="../index.html#games" class="btn-home" title="Back to Home">🏠</a>
+<button class="mute-btn" id="mute-btn-game" onclick="toggleMuteGame()">🔊</button>
+
+<div id="game-wrap">
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-left">
+      <div class="hud-stat" title="Score">⭐ <span id="score-disp">0</span></div>
+      <div class="hud-stat" title="Streak">🎵 <span id="streak-disp">0</span></div>
+    </div>
+    <div class="hud-right">
+      <div class="lang-pill">
+        <button class="active" onclick="setLang('en')" id="lp-en">EN</button>
+        <button onclick="setLang('as')" id="lp-as">অস</button>
+      </div>
+      <div class="hud-stat" id="lives-disp">❤️❤️❤️</div>
+    </div>
+  </div>
+
+  <!-- SCREEN: INTRO -->
+  <div class="screen" id="screen-intro">
+    <div class="overlay-box" style="background:transparent;box-shadow:none;">
+      <div style="font-size:70px;margin-bottom:10px;">🥁</div>
+      <h1 class="title-lg" style="color:#e63946" id="intro-title">Dhol Master!</h1>
+      <p class="desc-txt" id="intro-desc">Watch Rongmon play the traditional instruments, then repeat the pattern!<br><span class="as">ৰংমনৰ বাজনা শুনক আৰু পুনৰাবৃত্তি কৰক!</span></p>
+      <button class="btn-primary" onclick="startGame()" id="btn-start">▶ Play Notes!</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: GAME -->
+  <div class="screen hidden" id="screen-game" style="justify-content:flex-start;padding-top:100px;">
+    
+    <!-- Central Character -->
+    <svg class="central-rongmon" viewBox="0 0 100 100">
+      <ellipse cx="50" cy="50" rx="35" ry="40" fill="#a08060"/>
+      <ellipse cx="50" cy="55" rx="25" ry="30" fill="#b09070"/>
+      <circle cx="40" cy="45" r="5" fill="#3a2a10"/>
+      <circle cx="60" cy="45" r="5" fill="#3a2a10"/>
+      <circle cx="41" cy="44" r="2" fill="#fff"/>
+      <circle cx="61" cy="44" r="2" fill="#fff"/>
+      <path d="M40 70 Q50 80 60 70" stroke="#3a2a10" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="50" cy="65" rx="8" ry="6" fill="#8b7355"/>
+      <!-- headphones -->
+      <path d="M20 50 A30 30 0 0 1 80 50" stroke="#333" stroke-width="4" fill="none"/>
+      <rect x="15" y="40" width="10" height="20" rx="5" fill="#e63946"/>
+      <rect x="75" y="40" width="10" height="20" rx="5" fill="#e63946"/>
+    </svg>
+
+    <div class="status-text" id="status-text">Watch & Listen! 👀</div>
+
+    <div class="instrument-grid">
+      <div class="inst-panel inst-dhol" id="inst-0" onpointerdown="playerTap(0)">
+        <div class="inst-icon">🥁</div>
+        <div class="inst-name">Dhol <span class="as">(ঢোল)</span></div>
+      </div>
+      <div class="inst-panel inst-pepa" id="inst-1" onpointerdown="playerTap(1)">
+        <div class="inst-icon">📯</div>
+        <div class="inst-name">Pepa <span class="as">(পেপাঁ)</span></div>
+      </div>
+      <div class="inst-panel inst-taal" id="inst-2" onpointerdown="playerTap(2)">
+        <div class="inst-icon">📀</div>
+        <div class="inst-name">Taal <span class="as">(তাল)</span></div>
+      </div>
+      <div class="inst-panel inst-gog" id="inst-3" onpointerdown="playerTap(3)">
+        <div class="inst-icon">🎻</div>
+        <div class="inst-name">Gogona <span class="as">(গগনা)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: GAME OVER -->
+  <div class="screen hidden" id="screen-gameover">
+    <div class="overlay-box">
+      <div style="font-size:60px">💔</div>
+      <h2 class="title-lg" id="go-title" style="color:#e63946">Oops!</h2>
+      <p class="desc-txt" id="go-desc">You missed a note! Don't worry, even great musicians make mistakes.</p>
+      <div class="dim" id="go-score">⭐ Final Score: 0</div>
+      <button class="btn-primary" onclick="startGame()" id="btn-retry">🔄 Try Again</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: ROUND CLEAR -->
+  <div class="screen hidden" id="screen-roundup">
+    <div class="overlay-box" style="background:transparent;box-shadow:none;">
+      <h2 class="title-lg" id="ru-title" style="color:#fff;text-shadow:0 4px 10px rgba(0,0,0,0.3)">Perfect! 🌟</h2>
+      <div style="height:100px;"></div>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div id="onboarding" class="screen hidden">
+    <div class="overlay-box">
+      <h2 class="title-lg" style="font-size:32px" id="ob-title">How to Play</h2>
+      <p class="desc-txt" style="text-align:left;font-size:16px;" id="ob-desc">
+        1. Watch Rongmon play the instruments. 🥁<br>
+        2. Remember the pattern! 🧠<br>
+        3. Tap the instruments in the exact same order! 👆<br>
+        <span class="as">১. বাজনালৈ মন কৰক। ২. ক্ৰমটো মনত ৰাখক। ৩. একে ক্ৰমত বজাওক!</span>
+      </p>
+      <button class="btn-primary" onclick="dismissOnboarding()" id="btn-ob">Got it! 👍</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="rongmon-data.js"></script>
+<script src="rongmon-audio.js"></script>
+<script>
+// ══ STATE ══
+let sequence = [];
+let playerStep = 0;
+let isPlayerTurn = false;
+let score = 0;
+let lives = 3;
+let lang = 'en';
+
+const lt = {
+  en:{
+    'intro-title':'Dhol Master!',
+    'intro-desc':'Watch Rongmon play the traditional instruments, then repeat the pattern!',
+    'btn-start':'▶ Play Notes!',
+    'st-watch':'Watch & Listen! 👀',
+    'st-play':'Your Turn! 👆',
+    'st-wait':'Wait...',
+    'go-title':'Oops!',
+    'go-desc':"You missed a note! Don't worry, even great musicians make mistakes.",
+    'btn-retry':'🔄 Try Again',
+    'ru-title':'Perfect! 🌟',
+    'ob-title':'How to Play',
+    'ob-desc':"1. Watch Rongmon play the instruments. 🥁<br>2. Remember the pattern! 🧠<br>3. Tap the instruments in the exact same order! 👆",
+    'btn-ob':'Got it! 👍'
+  },
+  as:{
+    'intro-title':'ঢোল মাষ্টাৰ!',
+    'intro-desc':'ৰংমনৰ বাজনা শুনক আৰু একেখিনি পুনৰাবৃত্তি কৰক!',
+    'btn-start':'▶ আৰম্ভ কৰক!',
+    'st-watch':'শুনক আৰু চাওক! 👀',
+    'st-play':'আপোনাৰ পাল! 👆',
+    'st-wait':'ৰওক...',
+    'go-title':'হায়!',
+    'go-desc':"আপুনি এটা সুৰ পাহৰিলে! চিন্তা নকৰিব, পুনৰ চেষ্টা কৰক।",
+    'btn-retry':'🔄 আকৌ চেষ্টা কৰক',
+    'ru-title':'অসাধাৰণ! 🌟',
+    'ob-title':'কেনেদৰে খেলিব',
+    'ob-desc':"১. বাজনালৈ মন কৰক। 🥁<br>২. ক্ৰমটো মনত ৰাখক! 🧠<br>৩. একে ক্ৰমত বজাওক! 👆",
+    'btn-ob':'বুজি পালোঁ! 👍'
+  }
+};
+
+function setLang(l){
+  lang = l;
+  document.getElementById('lp-en').classList.toggle('active', l==='en');
+  document.getElementById('lp-as').classList.toggle('active', l==='as');
+  for(const [id,val] of Object.entries(lt[l])){
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=val;
+  }
+  updateStatus(isPlayerTurn ? 'st-play' : (sequence.length?'st-watch':'st-wait'));
+}
+
+function showScreen(id){
+  ['screen-intro','screen-game','screen-gameover','screen-roundup'].forEach(s=>
+    document.getElementById(s).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  document.getElementById('hud').classList.toggle('hidden', id==='screen-intro'||id==='screen-gameover');
+}
+
+function updateHUD(){
+  document.getElementById('score-disp').textContent=score;
+  document.getElementById('streak-disp').textContent=sequence.length;
+  document.getElementById('lives-disp').textContent='❤️'.repeat(Math.max(0,lives));
+}
+
+function updateStatus(key){
+  const el=document.getElementById('status-text');
+  el.textContent=lt[lang][key];
+  el.style.color = key==='st-play' ? 'var(--bihu-red)' : 'var(--jungle)';
+}
+
+function startGame(){
+  sequence=[];
+  score=0;
+  lives=3;
+  updateHUD();
+  showScreen('screen-game');
+  setTimeout(nextRound, 800);
+}
+
+function nextRound(){
+  isPlayerTurn=false;
+  playerStep=0;
+  updateStatus('st-watch');
+  
+  // Add new note
+  sequence.push(Math.floor(Math.random()*4));
+  updateHUD();
+
+  // Play sequence
+  playSequence();
+}
+
+function playSequence(){
+  let delay=0;
+  const noteDuration=isMobile()?600:500;
+  const gapDuration=isMobile()?200:150;
+
+  for(let i=0;i<sequence.length;i++){
+    setTimeout(()=>{
+      triggerInstrument(sequence[i]);
+    }, delay);
+    delay += noteDuration + gapDuration;
+  }
+
+  // Allow player to play after sequence is done
+  setTimeout(()=>{
+    isPlayerTurn=true;
+    updateStatus('st-play');
+  }, delay);
+}
+
+function triggerInstrument(idx, isPlayer=false){
+  const inst=document.getElementById(`inst-${idx}`);
+  inst.classList.add('active');
+  setTimeout(()=>inst.classList.remove('active'), 250);
+
+  if(typeof RongmonAudio!=='undefined'){
+    if(idx===0) RongmonAudio.playDhol();
+    else if(idx===1) RongmonAudio.playPepa();
+    else if(idx===2) RongmonAudio.playTaal();
+    else if(idx===3) RongmonAudio.playGogona();
+  }
+}
+
+function playerTap(idx){
+  if(!isPlayerTurn) return; // Ignore input if not their turn
+  
+  triggerInstrument(idx, true);
+
+  // Check correctness
+  if(idx === sequence[playerStep]){
+    // Correct!
+    playerStep++;
+    score+=5;
+    updateHUD();
+
+    if(playerStep === sequence.length){
+      // Round cleared!
+      isPlayerTurn=false;
+      updateStatus('st-wait');
+      if(typeof RongmonAudio!=='undefined') setTimeout(()=>RongmonAudio.playLevelUp(),400);
+      
+      showScreen('screen-roundup');
+      spawnConfetti();
+      
+      score+=10; // Bonus for round clear
+      updateHUD();
+
+      setTimeout(()=>{
+        showScreen('screen-game');
+        nextRound();
+      }, 1500);
+    }
+  } else {
+    // Wrong!
+    isPlayerTurn=false;
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playWrong();
+    
+    // Shake screen
+    document.getElementById('game-wrap').animate([
+      { transform: 'translateX(0)' },
+      { transform: 'translateX(-10px)' },
+      { transform: 'translateX(10px)' },
+      { transform: 'translateX(-10px)' },
+      { transform: 'translateX(0)' }
+    ], { duration: 400 });
+
+    lives--;
+    updateHUD();
+
+    if(lives<=0){
+      setTimeout(()=>{
+        document.getElementById('go-score').textContent=`⭐ ${lang==='en'?'Final Score':'সৰ্বমুঠ স্কোৰ'}: ${score}`;
+        showScreen('screen-gameover');
+      },800);
+    } else {
+      updateStatus('st-watch');
+      setTimeout(()=>{
+        // Replay same sequence
+        playerStep=0;
+        playSequence();
+      },1000);
+    }
+  }
+}
+
+// ══ EFFECTS ══
+function spawnConfetti(){
+  const wrap=document.getElementById('game-wrap');
+  const cols=['#e63946','#f4a261','#4caf50','#f5c518','#fff'];
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    const cx=(Math.random()-0.5)*400; const cy=200+Math.random()*200;
+    p.style.cssText=`
+      left:${50+(Math.random()-0.5)*20}%; top:30%;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
+      --cx:${cx}px; --cy:${cy}px; --cr:${Math.random()*360}deg;
+      animation-duration:${0.8+Math.random()*0.8}s;
+      width:${8+Math.random()*6}px; height:${8+Math.random()*6}px;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+    `;
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(),2000);
+  }
+}
+
+// ── Shared ──
+window.addEventListener('DOMContentLoaded', () => {
+  if (typeof RongmonData !== 'undefined' && !RongmonData.hasSeenOnboarding('dhol-master')) {
+    document.getElementById('onboarding').classList.remove('hidden');
+  }
+  if (typeof RongmonData !== 'undefined') {
+    const m = RongmonData.getSetting('muted');
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+  setLang('en');
+});
+function dismissOnboarding() {
+  document.getElementById('onboarding').classList.add('hidden');
+  if (typeof RongmonData !== 'undefined') RongmonData.markOnboardingSeen('dhol-master');
+}
+function toggleMuteGame() {
+  if (typeof RongmonAudio !== 'undefined') {
+    const m = RongmonAudio.toggleMute();
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+}
+function isMobile() { return window.innerWidth < 640; }
+</script>
+</body>
+</html>

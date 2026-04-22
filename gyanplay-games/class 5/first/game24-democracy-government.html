@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GyanPlay – Democracy & Government</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:#fff;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes barGrow{from{width:0}to{width:var(--w)}}
+.fadeIn{animation:fadeIn .45s ease both;}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100;}
+.back-btn{background:none;border:2px solid rgba(255,255,255,.25);color:#fff;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:600;padding:7px 16px;border-radius:30px;cursor:pointer;transition:all .2s;}
+.back-btn:hover{background:rgba(255,255,255,.12);}
+.badge{background:var(--pink);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.8rem;padding:5px 14px;border-radius:30px;letter-spacing:.5px;}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);color:#fff;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;padding:5px 12px;border-radius:20px;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--pink);border-color:var(--pink);}
+
+/* SCORE BAR */
+.score-bar{padding:12px 20px 0;max-width:700px;margin:0 auto;}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.score-label{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.95rem;color:var(--gold);}
+.score-val{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.1rem;color:#fff;}
+.progress-track{height:8px;background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));border-radius:10px;transition:width .5s ease;}
+
+/* MAIN */
+.main{max-width:700px;margin:0 auto;padding:20px;}
+.q-card{background:var(--card);border-radius:20px;padding:28px 28px 24px;box-shadow:0 8px 40px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.06);}
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.q-num{font-family:'Baloo 2',sans-serif;font-size:.85rem;font-weight:700;color:rgba(255,255,255,.45);}
+.q-emoji{font-size:1.6rem;}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:700;line-height:1.5;margin-bottom:22px;color:#fff;}
+.choices{display:flex;flex-direction:column;gap:11px;}
+.choice{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);border-radius:14px;padding:14px 18px;font-family:'Nunito',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;text-align:left;color:#fff;transition:all .2s;display:flex;align-items:center;gap:12px;}
+.choice:hover:not(:disabled){background:rgba(255,64,129,.13);border-color:var(--pink);}
+.choice.correct{background:rgba(0,200,83,.15);border-color:var(--green);}
+.choice.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);}
+.choice:disabled{cursor:default;}
+.choice-icon{font-size:1.1rem;min-width:22px;text-align:center;}
+
+/* EXPLANATION */
+.explanation{margin-top:18px;background:rgba(255,255,255,.06);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:14px 16px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;line-height:1.55;color:rgba(255,255,255,.88);}
+
+/* END SCREEN */
+.end-card{background:var(--card);border-radius:24px;padding:40px 28px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.4);}
+.stars{font-size:2.8rem;margin-bottom:10px;}
+.end-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.end-score{font-family:'Baloo 2',sans-serif;font-size:1.2rem;color:rgba(255,255,255,.75);margin-bottom:24px;}
+.play-again{background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:800;padding:14px 36px;border-radius:50px;cursor:pointer;box-shadow:0 4px 20px rgba(124,58,237,.4);transition:transform .18s;}
+.play-again:hover{transform:scale(1.06);}
+.next-btn{margin-top:20px;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;padding:12px 32px;border-radius:50px;cursor:pointer;display:block;width:100%;transition:transform .18s;}
+.next-btn:hover{transform:scale(1.03);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="badge">🗳️ Social Studies</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="score-bar">
+  <div class="score-row">
+    <span class="score-label" id="scoreLabel">Score</span>
+    <span class="score-val" id="scoreVal">0 / 100</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<div class="main" id="mainArea"></div>
+
+<script>
+const QUESTIONS=[
+  {emoji:"🏛️",
+   en:{q:"What is a government?",choices:["A group that rules and makes decisions for a country","A type of school","A sports club"],ans:0,exp:"A government is the group of people that officially governs a country. It makes laws, provides services, and maintains order."},
+   hi:{q:"सरकार क्या है?",choices:["देश के लिए निर्णय लेने वाला समूह","एक स्कूल","एक खेल क्लब"],ans:0,exp:"सरकार वह समूह है जो किसी देश पर शासन करती है, कानून बनाती है और सेवाएँ प्रदान करती है।"},
+   as:{q:"চৰকাৰ কি?",choices:["দেশৰ বাবে সিদ্ধান্ত লোৱা গোট","এখন বিদ্যালয়","এটা ক্রীড়া ক্লাব"],ans:0,exp:"চৰকাৰ হৈছে সেই গোট যি চৰকাৰীভাৱে এখন দেশ পৰিচালনা কৰে।"}},
+  {emoji:"🗳️",
+   en:{q:"What is universal adult franchise?",choices:["Right of every adult citizen to vote","Only educated people can vote","Only men can vote"],ans:0,exp:"Universal adult franchise means every citizen above 18 years of age has the right to vote, regardless of caste, religion, or gender."},
+   hi:{q:"सार्वभौमिक वयस्क मताधिकार क्या है?",choices:["हर वयस्क नागरिक को वोट देने का अधिकार","केवल शिक्षित लोग वोट दे सकते हैं","केवल पुरुष वोट दे सकते हैं"],ans:0,exp:"सार्वभौमिक वयस्क मताधिकार का अर्थ है 18 वर्ष से अधिक हर नागरिक को जाति, धर्म या लिंग के बावजूद वोट देने का अधिकार है।"},
+   as:{q:"সর্বজনীন প্রাপ্তবয়স্ক মতাধিকাৰ কি?",choices:["প্ৰতিজন প্ৰাপ্তবয়স্ক নাগৰিকৰ ভোটদানৰ অধিকাৰ","কেৱল শিক্ষিত লোকে ভোট দিব পাৰে","কেৱল পুৰুষে ভোট দিব পাৰে"],ans:0,exp:"১৮ বছৰৰ ওপৰৰ প্ৰতিজন নাগৰিকে জাতি, ধৰ্ম বা লিংগ নিৰ্বিশেষে ভোট দিব পাৰে।"}},
+  {emoji:"🏛️",
+   en:{q:"Which of these is a democratic government?",choices:["Government elected by the people","King who inherits power","Military taking over by force"],ans:0,exp:"In a democratic government, leaders are elected by citizens through free and fair elections. India is the world's largest democracy."},
+   hi:{q:"इनमें से कौन-सी लोकतांत्रिक सरकार है?",choices:["लोगों द्वारा चुनी गई सरकार","वंशानुगत राजा","बलपूर्वक सत्ता लेने वाली सेना"],ans:0,exp:"लोकतांत्रिक सरकार में नेता नागरिकों द्वारा स्वतंत्र चुनावों में चुने जाते हैं। भारत विश्व का सबसे बड़ा लोकतंत्र है।"},
+   as:{q:"এইবোৰৰ মাজত কোনটো গণতান্ত্ৰিক চৰকাৰ?",choices:["জনগণে নিৰ্বাচিত চৰকাৰ","উত্তৰাধিকাৰী ৰজা","বলপূৰ্বক ক্ষমতা লোৱা সেনা"],ans:0,exp:"গণতান্ত্ৰিক চৰকাৰত নেতাসকল নাগৰিকৰ দ্বাৰা মুক্ত নিৰ্বাচনৰ জৰিয়তে নিৰ্বাচিত হয়।"}},
+  {emoji:"🗳️",
+   en:{q:"What is the supreme law of India?",choices:["The Constitution","The Prime Minister's orders","The Supreme Court judgments"],ans:0,exp:"The Constitution of India is the supreme law of the land. All other laws must be consistent with the Constitution."},
+   hi:{q:"भारत का सर्वोच्च कानून क्या है?",choices:["संविधान","प्रधानमंत्री के आदेश","सुप्रीम कोर्ट के फैसले"],ans:0,exp:"भारत का संविधान देश का सर्वोच्च कानून है। सभी अन्य कानून संविधान के अनुरूप होने चाहिए।"},
+   as:{q:"ভাৰতৰ সৰ্বোচ্চ আইন কি?",choices:["সংবিধান","প্ৰধানমন্ত্ৰীৰ আদেশ","উচ্চতম ন্যায়ালয়ৰ ৰায়"],ans:0,exp:"ভাৰতৰ সংবিধান দেশৰ সৰ্বোচ্চ আইন। অন্য সকলো আইন সংবিধানৰ সৈতে সামঞ্জস্যপূৰ্ণ হ'ব লাগিব।"}},
+  {emoji:"🏛️",
+   en:{q:"Which is the LOWEST level of Panchayati Raj in a village?",choices:["Gram Panchayat","Panchayat Samiti","Zila Parishad"],ans:0,exp:"Gram Panchayat is the lowest level of Panchayati Raj. It works at the village level and is elected by villagers."},
+   hi:{q:"गाँव में पंचायती राज का सबसे निचला स्तर कौन-सा है?",choices:["ग्राम पंचायत","पंचायत समिति","जिला परिषद"],ans:0,exp:"ग्राम पंचायत पंचायती राज का सबसे निचला स्तर है। यह ग्राम स्तर पर काम करती है और ग्रामीणों द्वारा चुनी जाती है।"},
+   as:{q:"গাঁৱত পঞ্চায়তী ৰাজৰ সৰ্বনিম্ন স্তৰ কোনটো?",choices:["গ্ৰাম পঞ্চায়ত","পঞ্চায়ত সমিতি","জিলা পৰিষদ"],ans:0,exp:"গ্ৰাম পঞ্চায়ত পঞ্চায়তী ৰাজৰ সৰ্বনিম্ন স্তৰ। ই গাঁও স্তৰত কাম কৰে আৰু গ্ৰামবাসীয়ে নিৰ্বাচিত কৰে।"}},
+  {emoji:"🗳️",
+   en:{q:"Which body governs at the DISTRICT level in Panchayati Raj?",choices:["Zila Parishad","Gram Panchayat","Municipal Corporation"],ans:0,exp:"Zila Parishad (District Council) is the highest level of Panchayati Raj working at the district level."},
+   hi:{q:"पंचायती राज में जिला स्तर पर कौन-सा निकाय शासन करता है?",choices:["जिला परिषद","ग्राम पंचायत","नगर निगम"],ans:0,exp:"जिला परिषद पंचायती राज का सबसे उच्च स्तर है जो जिले के स्तर पर काम करता है।"},
+   as:{q:"পঞ্চায়তী ৰাজত জিলা স্তৰত কোন সংস্থাই শাসন কৰে?",choices:["জিলা পৰিষদ","গ্ৰাম পঞ্চায়ত","পৌৰ নিগম"],ans:0,exp:"জিলা পৰিষদ পঞ্চায়তী ৰাজৰ সৰ্বোচ্চ স্তৰ যি জিলা স্তৰত কাম কৰে।"}},
+  {emoji:"🏛️",
+   en:{q:"What is the main job of the police?",choices:["Maintain law and order and protect citizens","Collect taxes","Build roads"],ans:0,exp:"The police are responsible for maintaining law and order, preventing crime, and protecting citizens. They work under the government."},
+   hi:{q:"पुलिस का मुख्य काम क्या है?",choices:["कानून व्यवस्था बनाए रखना और नागरिकों की रक्षा करना","कर संग्रह करना","सड़क बनाना"],ans:0,exp:"पुलिस कानून और व्यवस्था बनाए रखने, अपराध रोकने और नागरिकों की रक्षा करने के लिए जिम्मेदार है।"},
+   as:{q:"আৰক্ষীৰ মূল কাম কি?",choices:["আইন-শৃংখলা ৰক্ষা কৰা আৰু নাগৰিকক সুৰক্ষিত কৰা","কৰ সংগ্ৰহ কৰা","ৰাস্তা নিৰ্মাণ কৰা"],ans:0,exp:"আৰক্ষীয়ে আইন-শৃংখলা ৰক্ষা, অপৰাধ প্ৰতিৰোধ আৰু নাগৰিকক সুৰক্ষিত কৰাৰ কাম কৰে।"}},
+  {emoji:"🗳️",
+   en:{q:"Which body manages towns and cities (urban areas)?",choices:["Urban Local Bodies (Municipality/Municipal Corporation)","Gram Panchayat","Panchayat Samiti"],ans:0,exp:"Urban Local Bodies like Municipalities and Municipal Corporations manage towns and cities. They provide services like water, roads, and sanitation."},
+   hi:{q:"कस्बों और शहरों (शहरी क्षेत्रों) का प्रबंधन कौन करता है?",choices:["शहरी स्थानीय निकाय (नगर पालिका/नगर निगम)","ग्राम पंचायत","पंचायत समिति"],ans:0,exp:"नगर पालिका और नगर निगम जैसे शहरी स्थानीय निकाय कस्बों और शहरों का प्रबंधन करते हैं।"},
+   as:{q:"চহৰ আৰু নগৰ (নগৰ অঞ্চল) ব্যৱস্থাপনা কোনে কৰে?",choices:["নগৰ স্থানীয় সংস্থা (পৌৰ সভা/পৌৰ নিগম)","গ্ৰাম পঞ্চায়ত","পঞ্চায়ত সমিতি"],ans:0,exp:"পৌৰ সভা আৰু পৌৰ নিগমৰ দৰে নগৰ স্থানীয় সংস্থাই চহৰ আৰু নগৰৰ ব্যৱস্থাপনা কৰে।"}},
+  {emoji:"🏛️",
+   en:{q:"What does a court do?",choices:["Settles disputes and delivers justice","Collects money","Makes new roads"],ans:0,exp:"Courts settle disputes, uphold the law, and deliver justice. They protect citizens' rights and ensure laws are followed."},
+   hi:{q:"अदालत क्या करती है?",choices:["विवादों को सुलझाती है और न्याय देती है","पैसे इकट्ठा करती है","नई सड़कें बनाती है"],ans:0,exp:"अदालतें विवादों को सुलझाती हैं, कानून को बनाए रखती हैं और न्याय प्रदान करती हैं।"},
+   as:{q:"ন্যায়ালয়ে কি কৰে?",choices:["বিবাদ নিষ্পত্তি কৰে আৰু ন্যায় প্ৰদান কৰে","ধন সংগ্ৰহ কৰে","নতুন ৰাস্তা নিৰ্মাণ কৰে"],ans:0,exp:"ন্যায়ালয়ে বিবাদ নিষ্পত্তি কৰে, আইন ৰক্ষা কৰে আৰু ন্যায় প্ৰদান কৰে।"}},
+  {emoji:"🗳️",
+   en:{q:"Why is voting important in a democracy?",choices:["It lets citizens choose their representatives","It makes the government richer","It builds schools"],ans:0,exp:"Voting is the most important way citizens participate in democracy. By voting, people choose their representatives who make decisions on their behalf."},
+   hi:{q:"लोकतंत्र में वोट देना क्यों महत्वपूर्ण है?",choices:["यह नागरिकों को अपने प्रतिनिधि चुनने देता है","यह सरकार को अमीर बनाता है","यह स्कूल बनाता है"],ans:0,exp:"मतदान लोकतंत्र में नागरिकों की भागीदारी का सबसे महत्वपूर्ण तरीका है।"},
+   as:{q:"গণতন্ত্ৰত ভোটদান কিয় গুৰুত্বপূৰ্ণ?",choices:["ই নাগৰিকসকলক তেওঁলোকৰ প্ৰতিনিধি বাছনি কৰিবলৈ দিয়ে","ই চৰকাৰক ধনী কৰে","ই বিদ্যালয় নিৰ্মাণ কৰে"],ans:0,exp:"ভোটদান গণতন্ত্ৰত নাগৰিকৰ অংশগ্ৰহণৰ সবচেয়ে গুৰুত্বপূৰ্ণ উপায়।"}}
+];
+
+let lang='en',current=0,score=0,answered=false;
+const pts=10;
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['en','hi','as'][i]===l);
+  });
+  render();
+}
+
+function render(){
+  if(current>=QUESTIONS.length){showEnd();return;}
+  const q=QUESTIONS[current];
+  const d=q[lang];
+  const pct=((current)/QUESTIONS.length)*100;
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('scoreVal').textContent=score+' / 100';
+  document.getElementById('mainArea').innerHTML=`
+  <div class="q-card fadeIn">
+    <div class="q-meta"><span class="q-num">${lang==='en'?'Q':'प्र'} ${current+1} / 10</span><span class="q-emoji">${q.emoji}</span></div>
+    <div class="q-text">${d.q}</div>
+    <div class="choices" id="choices">
+      ${d.choices.map((c,i)=>`<button class="choice" onclick="pick(${i})" id="ch${i}"><span class="choice-icon">●</span>${c}</button>`).join('')}
+    </div>
+  </div>`;
+  answered=false;
+}
+
+function pick(i){
+  if(answered)return;
+  answered=true;
+  const d=QUESTIONS[current][lang];
+  const ans=d.ans;
+  document.querySelectorAll('.choice').forEach((b,j)=>{
+    b.disabled=true;
+    if(j===ans){b.classList.add('correct');b.querySelector('.choice-icon').textContent='✓';}
+    else if(j===i&&i!==ans){b.classList.add('wrong');b.querySelector('.choice-icon').textContent='✗';}
+  });
+  if(i===ans)score+=pts;
+  document.getElementById('scoreVal').textContent=score+' / 100';
+  const exp=document.createElement('div');
+  exp.className='explanation fadeIn';
+  exp.textContent='💡 '+d.exp;
+  document.querySelector('.q-card').appendChild(exp);
+  const btn=document.createElement('button');
+  btn.className='next-btn fadeIn';
+  btn.textContent=current<9?(lang==='hi'?'अगला →':lang==='as'?'পৰৱৰ্তী →':'Next →'):(lang==='hi'?'परिणाम देखें':'See Results');
+  btn.onclick=()=>{current++;render();};
+  document.querySelector('.q-card').appendChild(btn);
+}
+
+function showEnd(){
+  const pct=score;
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'☆';
+  const msg=pct>=90?'Outstanding! 🎉':pct>=70?'Great job! 👍':pct>=40?'Good effort! 💪':'Keep practising! 📚';
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('mainArea').innerHTML=`
+  <div class="end-card fadeIn">
+    <div class="stars">${stars}</div>
+    <div class="end-title">${msg}</div>
+    <div class="end-score">You scored ${score} out of 100</div>
+    <button class="play-again" onclick="restart()">🔄 Play Again</button>
+  </div>`;
+}
+
+function restart(){current=0;score=0;render();}
+render();
+</script>
+</body>
+</html>

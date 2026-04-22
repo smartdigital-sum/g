@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rongmon's Trophy Room 🏆</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0f1b2d;
+  --bg2: #162236;
+  --gold: #f5c518;
+  --gold2: #ffd700;
+  --silver: #c0c0c0;
+  --bronze: #cd7f32;
+  --jungle: #1a5c2e;
+  --leaf: #4caf50;
+  --red: #e63946;
+  --sky: #48cae4;
+  --cream: #fef9ef;
+  --white: #fff;
+  --text-dim: rgba(255,255,255,0.55);
+  --card: rgba(255,255,255,0.06);
+  --card-border: rgba(255,255,255,0.10);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Baloo 2',cursive;
+  background:var(--bg);
+  color:var(--white);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── starfield ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 35% 8%,  rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75% 5%,  rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 25%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 10% 50%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(2px 2px at 45% 35%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(2px 2px at 65% 70%, rgba(255,255,255,0.2) 0%, transparent 100%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── NAV ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(15,27,45,0.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 24px;
+}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.back-btn{
+  font-family:'Baloo 2',cursive;
+  font-size:13px;font-weight:700;
+  padding:6px 16px;border-radius:20px;
+  border:1.5px solid rgba(255,255,255,0.2);
+  background:transparent;color:rgba(255,255,255,0.7);
+  cursor:pointer;transition:all 0.2s;
+  text-decoration:none;display:inline-flex;align-items:center;gap:5px;
+}
+.back-btn:hover{background:rgba(255,255,255,0.1);color:#fff;}
+.topbar-title{font-size:18px;font-weight:900;color:var(--gold);}
+.topbar-title span{color:rgba(255,255,255,0.5);font-size:13px;font-weight:600;margin-left:6px;}
+.lang-row{display:flex;gap:4px;}
+.lpill{font-family:'Baloo 2',cursive;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1.5px solid transparent;cursor:pointer;background:transparent;color:rgba(255,255,255,0.4);}
+.lpill.active{background:var(--gold);color:#0f1b2d;border-color:var(--gold);}
+
+/* ── HERO STATS ── */
+.hero-stats{
+  position:relative;z-index:1;
+  padding:36px 24px 24px;
+  text-align:center;
+}
+.hs-name{font-size:13px;font-weight:700;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
+.hs-main{font-size:40px;font-weight:900;color:var(--gold);line-height:1;}
+.hs-sub{font-size:14px;color:var(--text-dim);margin-top:4px;}
+
+.stats-row{
+  display:flex;justify-content:center;gap:16px;margin-top:24px;flex-wrap:wrap;
+  position:relative;z-index:1;padding:0 20px;
+}
+.stat-pill{
+  background:var(--card);
+  border:1px solid var(--card-border);
+  border-radius:16px;padding:14px 20px;text-align:center;flex:1;min-width:90px;max-width:130px;
+}
+.sp-num{font-size:24px;font-weight:900;display:block;}
+.sp-label{font-size:11px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.sp-gold{color:var(--gold);}
+.sp-green{color:var(--leaf);}
+.sp-sky{color:var(--sky);}
+.sp-red{color:#f4a261;}
+
+/* ── SECTION TITLES ── */
+.section{padding:0 20px 32px;position:relative;z-index:1;}
+.section-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.section-title{font-size:16px;font-weight:800;color:var(--white);display:flex;align-items:center;gap:8px;}
+.section-count{font-size:12px;color:var(--text-dim);font-weight:600;}
+
+/* ── TROPHY SHELF ── */
+.trophy-shelf{
+  background:linear-gradient(135deg,#1a2a3d,#0f1b2d);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:8px;
+}
+.shelf-row{
+  display:flex;justify-content:center;gap:12px;flex-wrap:wrap;
+  border-bottom:3px solid rgba(255,255,255,0.06);
+  padding-bottom:16px;margin-bottom:4px;
+}
+.shelf-row:last-child{border-bottom:none;padding-bottom:0;margin-bottom:0;}
+.shelf-label{text-align:center;font-size:10px;font-weight:700;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+
+/* ── ANIMAL TROPHY CARD ── */
+.trophy-card{
+  width:80px;text-align:center;cursor:pointer;
+  transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  position:relative;
+}
+.trophy-card:hover{transform:scale(1.12) translateY(-4px);}
+.trophy-card.locked .trophy-emoji{filter:grayscale(1) brightness(0.3);cursor:default;}
+.trophy-card.locked:hover{transform:none;}
+.trophy-podium{
+  width:72px;height:72px;
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:40px;
+  margin:0 auto 6px;
+  position:relative;
+  border:2px solid transparent;
+}
+.trophy-card.unlocked .trophy-podium{
+  background:linear-gradient(135deg,rgba(245,197,24,0.15),rgba(245,197,24,0.05));
+  border-color:rgba(245,197,24,0.35);
+  box-shadow:0 4px 20px rgba(245,197,24,0.2);
+}
+.trophy-card.locked .trophy-podium{
+  background:rgba(255,255,255,0.03);
+  border-color:rgba(255,255,255,0.06);
+}
+.trophy-emoji{font-size:38px;display:block;line-height:1;}
+.lock-icon{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:20px;color:rgba(255,255,255,0.2);
+}
+.trophy-name{font-family:'Hind Siliguri',sans-serif;font-size:14px;font-weight:700;color:var(--white);line-height:1.2;}
+.trophy-eng{font-size:10px;color:var(--text-dim);font-weight:600;margin-top:1px;}
+.trophy-stars{font-size:11px;margin-top:3px;letter-spacing:2px;}
+.trophy-new-badge{
+  position:absolute;top:-4px;right:-4px;
+  background:var(--red);color:#fff;
+  font-size:9px;font-weight:800;
+  padding:2px 6px;border-radius:8px;text-transform:uppercase;
+  animation:popBadge 1s ease-in-out infinite alternate;
+}
+@keyframes popBadge{0%{transform:scale(1);}100%{transform:scale(1.1);}}
+
+/* ── BADGES ── */
+.badges-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;
+}
+.badge-card{
+  background:var(--card);
+  border:1px solid var(--card-border);
+  border-radius:16px;padding:16px;text-align:center;
+  transition:all 0.2s;cursor:pointer;
+}
+.badge-card.unlocked{
+  border-color:rgba(245,197,24,0.3);
+  background:linear-gradient(135deg,rgba(245,197,24,0.08),rgba(255,255,255,0.03));
+}
+.badge-card.locked{opacity:0.4;cursor:default;}
+.badge-card:hover.unlocked{transform:translateY(-4px);box-shadow:0 8px 24px rgba(245,197,24,0.15);}
+.badge-icon{font-size:44px;display:block;margin-bottom:8px;}
+.badge-name{font-size:13px;font-weight:800;color:var(--white);margin-bottom:3px;}
+.badge-desc{font-size:11px;color:var(--text-dim);line-height:1.5;}
+.badge-earned{font-size:10px;color:var(--gold);font-weight:700;margin-top:4px;}
+
+/* ── LETTER LEARNED GRID ── */
+.letters-learned-grid{
+  display:flex;flex-wrap:wrap;gap:8px;
+}
+.learned-letter{
+  width:46px;height:46px;
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Hind Siliguri',sans-serif;font-size:22px;font-weight:700;
+  border:2px solid transparent;
+  transition:all 0.2s;cursor:default;
+}
+.learned-letter.know{
+  background:linear-gradient(135deg,rgba(76,175,80,0.2),rgba(76,175,80,0.08));
+  border-color:rgba(76,175,80,0.4);
+  color:var(--white);
+  box-shadow:0 3px 12px rgba(76,175,80,0.2);
+}
+.learned-letter.unknown{
+  background:rgba(255,255,255,0.03);
+  border-color:rgba(255,255,255,0.06);
+  color:rgba(255,255,255,0.2);
+}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{
+  background:linear-gradient(135deg,#1a2a3d,#162236);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:24px;padding:32px 24px;text-align:center;
+  max-width:280px;width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  transform:scale(0.85);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.modal-overlay.open .modal{transform:scale(1);}
+.modal-animal{font-size:72px;display:block;margin-bottom:8px;}
+.modal-name{font-family:'Hind Siliguri',sans-serif;font-size:32px;font-weight:700;color:var(--gold);}
+.modal-eng{font-size:16px;color:var(--text-dim);margin-bottom:4px;font-weight:600;}
+.modal-letter{font-size:14px;color:var(--leaf);font-weight:700;margin-bottom:16px;}
+.modal-stars{font-size:28px;letter-spacing:6px;margin-bottom:16px;}
+.modal-close{
+  font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;
+  padding:8px 28px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.2);
+  background:transparent;color:rgba(255,255,255,0.7);cursor:pointer;transition:all 0.2s;
+}
+.modal-close:hover{background:rgba(255,255,255,0.1);}
+
+/* ── PROGRESS BAR ── */
+.xp-bar-wrap{
+  background:rgba(255,255,255,0.08);
+  border-radius:8px;height:10px;overflow:hidden;margin-top:10px;
+}
+.xp-bar{
+  height:100%;
+  background:linear-gradient(90deg,var(--leaf),var(--gold));
+  border-radius:8px;
+  transition:width 1s ease;
+}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(15,27,45,0.95);backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,0.08);
+  display:flex;justify-content:space-around;padding:10px 0 14px;
+}
+.bn-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-size:11px;font-weight:700;color:var(--text-dim);cursor:pointer;
+  transition:color 0.2s;text-decoration:none;
+}
+.bn-item.active,.bn-item:hover{color:var(--gold);}
+.bn-icon{font-size:22px;}
+
+.spacer-bottom{height:80px;}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="../index.html" class="back-btn">← Home</a>
+    <div>
+      <div class="topbar-title">🏆 Trophy Room <span id="tb-sub">Rongmon Jr.</span></div>
+    </div>
+  </div>
+  <div class="lang-row">
+    <button class="lpill active" id="lp-en" onclick="setLang('en')">EN</button>
+    <button class="lpill" id="lp-as" onclick="setLang('as')">অস</button>
+  </div>
+</div>
+
+<!-- HERO STATS -->
+<div class="hero-stats">
+  <div class="hs-name" id="hs-name">YOUR SCORE</div>
+  <div class="hs-main" id="hs-main">85</div>
+  <div class="hs-sub" id="hs-sub">Total Stars Earned</div>
+  <div class="xp-bar-wrap" style="max-width:200px;margin:14px auto 0;">
+    <div class="xp-bar" id="xp-bar" style="width:53%"></div>
+  </div>
+  <div style="font-size:12px;color:var(--text-dim);margin-top:5px;" id="xp-label">Level 2 Explorer — 15 stars to next rank!</div>
+</div>
+
+<!-- STATS ROW -->
+<div class="stats-row">
+  <div class="stat-pill">
+    <span class="sp-num sp-gold">5</span>
+    <span class="sp-label" id="st1">Animals<br/>Freed</span>
+  </div>
+  <div class="stat-pill">
+    <span class="sp-num sp-green">5</span>
+    <span class="sp-label" id="st2">Letters<br/>Learned</span>
+  </div>
+  <div class="stat-pill">
+    <span class="sp-num sp-sky">3</span>
+    <span class="sp-label" id="st3">Badges<br/>Earned</span>
+  </div>
+  <div class="stat-pill">
+    <span class="sp-num sp-red">3</span>
+    <span class="sp-label" id="st4">Day<br/>Streak 🔥</span>
+  </div>
+</div>
+
+<!-- ── TROPHY SHELF ── -->
+<div class="section" style="margin-top:28px;">
+  <div class="section-head">
+    <div class="section-title">🐾 <span id="shelf-title">Jungle Animals Freed</span></div>
+    <div class="section-count" id="shelf-count">5 / 8 rescued</div>
+  </div>
+  <div class="trophy-shelf">
+    <div class="shelf-label" id="sl1">Row 1</div>
+    <div class="shelf-row" id="shelf-row-1"></div>
+    <div class="shelf-label" id="sl2" style="margin-top:12px;">Row 2</div>
+    <div class="shelf-row" id="shelf-row-2"></div>
+  </div>
+</div>
+
+<!-- ── BADGES ── -->
+<div class="section">
+  <div class="section-head">
+    <div class="section-title">🎖️ <span id="badges-title">Badges</span></div>
+    <div class="section-count" id="badges-count">3 / 8 earned</div>
+  </div>
+  <div class="badges-grid" id="badges-grid"></div>
+</div>
+
+<!-- ── LETTERS LEARNED ── -->
+<div class="section">
+  <div class="section-head">
+    <div class="section-title">✏️ <span id="letters-title">Assamese Letters Learned</span></div>
+    <div class="section-count" id="letters-count">5 / 8 known</div>
+  </div>
+  <div class="letters-learned-grid" id="letters-grid"></div>
+</div>
+
+<div class="spacer-bottom"></div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="../index.html" class="bn-item">
+    <span class="bn-icon">🏠</span>
+    <span id="bn-home">Home</span>
+  </a>
+  <a href="../games/jungle-rescue.html" class="bn-item">
+    <span class="bn-icon">🎮</span>
+    <span id="bn-play">Play</span>
+  </a>
+  <a href="trophy-room.html" class="bn-item active">
+    <span class="bn-icon">🏆</span>
+    <span id="bn-trophies">Trophies</span>
+  </a>
+  <a href="parent-dashboard.html" class="bn-item">
+    <span class="bn-icon">👨‍👩‍👧</span>
+    <span id="bn-parents">Parents</span>
+  </a>
+</nav>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <span class="modal-animal" id="modal-animal">🐘</span>
+    <div class="modal-name" id="modal-name">হাতী</div>
+    <div class="modal-eng" id="modal-eng">Elephant</div>
+    <div class="modal-letter" id="modal-letter">✏️ Letter learned: হ</div>
+    <div class="modal-stars" id="modal-stars">⭐⭐⭐</div>
+    <button class="modal-close" onclick="closeModal()" id="modal-close-btn">Close</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const animals = [
+  {emoji:'🐍',name:'অজগৰ',eng:'Python',letter:'অ',stars:3,unlocked:true,isNew:false},
+  {emoji:'🐘',name:'হাতী',eng:'Elephant',letter:'হ',stars:3,unlocked:true,isNew:false},
+  {emoji:'🕊️',name:'কপৌ',eng:'Dove',letter:'ক',stars:2,unlocked:true,isNew:false},
+  {emoji:'🦏',name:'গঁড়',eng:'Rhino',letter:'গ',stars:3,unlocked:true,isNew:true},
+  {emoji:'🐟',name:'মাছ',eng:'Fish',letter:'ম',stars:1,unlocked:true,isNew:false},
+  {emoji:'🐯',name:'বাঘ',eng:'Tiger',letter:'ব',stars:0,unlocked:false,isNew:false},
+  {emoji:'🦌',name:'পহু',eng:'Deer',letter:'প',stars:0,unlocked:false,isNew:false},
+  {emoji:'🦜',name:'ৰঙীন চৰাই',eng:'Colourful Bird',letter:'ৰ',stars:0,unlocked:false,isNew:false},
+];
+
+const badges = [
+  {icon:'🌱',name_en:'First Rescue',name_as:'প্ৰথম উদ্ধাৰ',desc_en:'Freed your first animal!',desc_as:'প্ৰথম জন্তু মুক্ত কৰিলে!',earned:'Day 1',unlocked:true},
+  {icon:'🔥',name_en:'On Fire!',name_as:'আগুনীয়া!',desc_en:'3-day play streak',desc_as:'৩ দিনৰ খেলৰ ধাৰা',earned:'Day 3',unlocked:true},
+  {icon:'⭐',name_en:'Star Student',name_as:'তাৰকা ছাত্ৰ',desc_en:'Earned 50 stars total',desc_as:'মুঠ ৫০টা তাৰকা',earned:'Day 2',unlocked:true},
+  {icon:'🦏',name_en:'Rhino Friend',name_as:"ৰংমনৰ বন্ধু",desc_en:'Freed Rongmon\'s cousin!',desc_as:'ৰংমনৰ আত্মীয় মুক্ত কৰিলে!',earned:null,unlocked:false},
+  {icon:'📖',name_en:'Letter Master',name_as:'আখৰ মাষ্টৰ',desc_en:'Learn all 8 letters',desc_as:'সকলো ৮টা আখৰ শিকক',earned:null,unlocked:false},
+  {icon:'🏆',name_en:'Champion',name_as:'চ্যাম্পিয়ন',desc_en:'Complete all 8 levels',desc_as:'সকলো ৮টা স্তৰ সম্পূৰ্ণ কৰক',earned:null,unlocked:false},
+  {icon:'💯',name_en:'Perfect Score',name_as:'নিখুঁত স্কোৰ',desc_en:'Get 3 stars on every level',desc_as:'প্ৰতিটো স্তৰত ৩টা তাৰকা',earned:null,unlocked:false},
+  {icon:'🌿',name_en:'Jungle Explorer',name_as:'বনৰীয়া অভিযাত্ৰী',desc_en:'Play 7 days in a row',desc_as:'৭ দিন একেৰাহে খেলক',earned:null,unlocked:false},
+];
+
+const allLetters = ['অ','আ','ক','খ','গ','ঘ','হ','ম','ব','প','ৰ','ল','ন','ত','ছ','ভ'];
+const learnedLetters = ['অ','হ','ক','গ','ম'];
+
+let lang = 'en';
+
+const langText = {
+  en:{
+    'hs-name':'YOUR SCORE','hs-sub':'Total Stars Earned',
+    'xp-label':'Level 2 Explorer — 15 stars to next rank!',
+    'st1':'Animals<br/>Freed','st2':'Letters<br/>Learned','st3':'Badges<br/>Earned','st4':'Day<br/>Streak 🔥',
+    'shelf-title':'Jungle Animals Freed','shelf-count':'5 / 8 rescued',
+    'sl1':'Rescued ✅','sl2':'Still Locked 🔒',
+    'badges-title':'Badges','badges-count':'3 / 8 earned',
+    'letters-title':'Assamese Letters Learned','letters-count':'5 / 16 known',
+    'bn-home':'Home','bn-play':'Play','bn-trophies':'Trophies','bn-parents':'Parents',
+    'modal-close-btn':'Close',
+  },
+  as:{
+    'hs-name':'তোমাৰ স্কোৰ','hs-sub':'মুঠ তাৰকা অৰ্জিত',
+    'xp-label':'স্তৰ ২ অভিযাত্ৰী — পৰৱৰ্তী পদবীৰ বাবে ১৫টা তাৰকা বাকী!',
+    'st1':'মুক্ত কৰা<br/>জন্তু','st2':'শিকা<br/>আখৰ','st3':'অৰ্জিত<br/>বেজ','st4':'দিনৰ<br/>ধাৰা 🔥',
+    'shelf-title':'বনৰীয়া জন্তু মুক্ত কৰা হৈছে','shelf-count':'৫ / ৮ উদ্ধাৰ',
+    'sl1':'উদ্ধাৰ হৈছে ✅','sl2':'এতিয়াও বন্দী 🔒',
+    'badges-title':'বেজসমূহ','badges-count':'৩ / ৮ অৰ্জিত',
+    'letters-title':'শিকা অসমীয়া আখৰ','letters-count':'৫ / ১৬ জনা',
+    'bn-home':'ঘৰ','bn-play':'খেলক','bn-trophies':'ট্ৰফি','bn-parents':'অভিভাৱক',
+    'modal-close-btn':'বন্ধ কৰক',
+  }
+};
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('lp-en').classList.toggle('active',l==='en');
+  document.getElementById('lp-as').classList.toggle('active',l==='as');
+  const t = langText[l];
+  for(const [id,val] of Object.entries(t)){
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=val;
+  }
+  renderAll();
+}
+
+function starsStr(n){return '⭐'.repeat(n)+'☆'.repeat(3-n);}
+
+function renderTrophies(){
+  const r1=document.getElementById('shelf-row-1');
+  const r2=document.getElementById('shelf-row-2');
+  r1.innerHTML='';r2.innerHTML='';
+  animals.forEach((a,i)=>{
+    const div=document.createElement('div');
+    div.className='trophy-card '+(a.unlocked?'unlocked':'locked');
+    div.innerHTML=`
+      <div class="trophy-podium">
+        <span class="trophy-emoji">${a.emoji}</span>
+        ${a.unlocked?'':'<span class="lock-icon">🔒</span>'}
+      </div>
+      <div class="trophy-name">${a.name}</div>
+      <div class="trophy-eng">${a.eng}</div>
+      ${a.unlocked?`<div class="trophy-stars">${starsStr(a.stars)}</div>`:''}
+      ${a.isNew?'<div class="trophy-new-badge">NEW!</div>':''}
+    `;
+    if(a.unlocked) div.onclick=()=>openModal(a);
+    (i<4?r1:r2).appendChild(div);
+  });
+}
+
+function renderBadges(){
+  const grid=document.getElementById('badges-grid');
+  grid.innerHTML='';
+  badges.forEach(b=>{
+    const div=document.createElement('div');
+    div.className='badge-card '+(b.unlocked?'unlocked':'locked');
+    div.innerHTML=`
+      <span class="badge-icon">${b.icon}</span>
+      <div class="badge-name">${lang==='en'?b.name_en:b.name_as}</div>
+      <div class="badge-desc">${lang==='en'?b.desc_en:b.desc_as}</div>
+      ${b.unlocked?`<div class="badge-earned">✅ ${b.earned}</div>`:'<div class="badge-earned" style="color:rgba(255,255,255,0.2)">🔒 Locked</div>'}
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function renderLetters(){
+  const grid=document.getElementById('letters-grid');
+  grid.innerHTML='';
+  allLetters.forEach(l=>{
+    const know=learnedLetters.includes(l);
+    const div=document.createElement('div');
+    div.className='learned-letter '+(know?'know':'unknown');
+    div.textContent=l;
+    div.title=know?`You know ${l}!`:`Not learned yet`;
+    grid.appendChild(div);
+  });
+}
+
+function renderAll(){
+  renderTrophies();renderBadges();renderLetters();
+}
+
+function openModal(a){
+  document.getElementById('modal-animal').textContent=a.emoji;
+  document.getElementById('modal-name').textContent=a.name;
+  document.getElementById('modal-eng').textContent=a.eng;
+  document.getElementById('modal-letter').textContent=`✏️ ${lang==='en'?'Letter learned':'আখৰ শিকিলে'}: ${a.letter}`;
+  document.getElementById('modal-stars').textContent=starsStr(a.stars);
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+}
+
+renderAll();
+</script>
+</body>
+</html>

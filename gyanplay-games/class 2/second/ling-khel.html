@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>लिंग खेल - Gender Game - GyanPlay Class 2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 { color: #ff6b6b; font-size: 2rem; }
+        
+        .score-board { display: flex; justify-content: center; gap: 30px; margin-top: 10px; }
+        
+        .score { background: #00b894; color: white; padding: 10px 20px; border-radius: 10px; font-size: 1.2rem; }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text { color: white; font-size: 1.3rem; }
+        
+        .items-scene {
+            background: linear-gradient(180deg, #87CEEB 0%, #90EE90 30%, #228B22 100%);
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 300px;
+        }
+        
+        .items-title {
+            text-align: center;
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .items-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .item {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+            border: 3px solid transparent;
+        }
+        
+        .item:hover { transform: scale(1.1); }
+        
+        .item.selected { border-color: #ff6b6b; background: #ffeaa7; }
+        
+        .item-icon { font-size: 3rem; display: block; }
+        
+        .item-name {
+            color: #2d3436;
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .bins-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .gender-bin {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            min-width: 200px;
+            border: 4px solid #dfe6e9;
+        }
+        
+        .bin-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .pulbin .bin-title {
+            background: #74b9ff;
+            color: white;
+        }
+        
+        .stribin .bin-title {
+            background: #fd79a8;
+            color: white;
+        }
+        
+        .bin-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            min-height: 60px;
+        }
+        
+        .bin-item {
+            background: #dfe6e9;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .type-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .type-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .type-btn.pul {
+            background: #74b9ff;
+            color: white;
+        }
+        
+        .type-btn.stri {
+            background: #fd79a8;
+            color: white;
+        }
+        
+        .type-btn.active { transform: scale(1.1); box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(243, 156, 18, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover { transform: scale(1.05); }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        
+        .feedback-content.correct { border: 5px solid #00b894; }
+        .feedback-content.wrong { border: 5px solid #e94560; }
+        
+        .feedback-icon { font-size: 5rem; }
+        .feedback-text { font-size: 1.8rem; margin: 20px 0; color: #2d3436; }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-title { color: white; font-size: 1.1rem; margin-bottom: 10px; }
+        .info-text { color: #dfe6e9; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch3-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🔴 लिंग खेल (Gender Game)</h1>
+            <div class="score-board">
+                <div class="score">स्कोर: <span id="score">0</span></div>
+                <div class="score">राउंड: <span id="roundNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">वस्तुओं को पुल्लिंग या स्त्रीलिंग में सही बक्से में डालें!</p>
+        </div>
+        
+        <div class="type-toggle">
+            <button class="type-btn pul active" onclick="selectType('पुल्लिंग')">🔵 पुल्लिंग (Male)</button>
+            <button class="type-btn stri" onclick="selectType('स्त्रीलिंग')">🔴 स्त्रीलिंग (Female)</button>
+        </div>
+        
+        <div class="items-scene">
+            <div class="items-title">🔨 वस्तुएं (Objects)</div>
+            <div class="items-grid" id="itemsGrid">
+                <!-- Items will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="bins-container">
+            <div class="gender-bin pulbin">
+                <div class="bin-title">🔵 पुल्लिंग (Male)</div>
+                <div class="bin-items" id="pulBin"></div>
+            </div>
+            <div class="gender-bin stribin">
+                <div class="bin-title">🔴 स्त्रीलिंग (Female)</div>
+                <div class="bin-items" id="striBin"></div>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <div class="info-title">📖 लिंग (Gender):</div>
+            <div class="info-text">पुल्लिंग (Male) - राजा, लड़का, पिता, भाई</div>
+            <div class="info-text">स्त्रीलिंग (Female) - रानी, लड़की, माता, बहन</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">सही!</div>
+            <button class="next-btn" onclick="nextRound()">अगला राउंड →</button>
+        </div>
+    </div>
+    
+    <script>
+        const items = [
+            { icon: '👑', name: 'राजा', gender: 'पुल्लिंग' },
+            { icon: '👸', name: 'रानी', gender: 'स्त्रीलिंग' },
+            { icon: '👦', name: 'लड़का', gender: 'पुल्लिंग' },
+            { icon: '👧', name: 'लड़की', gender: 'स्त्रीलिंग' },
+            { icon: '👨', name: 'पिता', gender: 'पुल्लिंग' },
+            { icon: '👩', name: 'माता', gender: 'स्त्रीलिंग' },
+            { icon: '👦🏻', name: 'भाई', gender: 'पुल्लिंग' },
+            { icon: '👧🏻', name: 'बहन', gender: 'स्त्रीलिंग' },
+            { icon: '🚹', name: 'पुरुष', gender: 'पुल्लिंग' },
+            { icon: '🚺', name: 'स्त्री', gender: 'स्त्रीलिंग' },
+            { icon: '🐕', name: 'कुत्ता', gender: 'पुल्लिंग' },
+            { icon: '🐕‍🦺', name: 'कुतिया', gender: 'स्त्रीलिंग' },
+            { icon: '🐂', name: 'बैल', gender: 'पुल्लिंग' },
+            { icon: '🐄', name: 'गाय', gender: 'स्त्रीलिंग' },
+            { icon: '🐈', name: 'बिल्ली', gender: 'पुल्लिंग' },
+            { icon: '😺', name: 'बिल्ली', gender: 'स्त्रीलिंग' }
+        ];
+        
+        let currentType = 'पुल्लिंग';
+        let placedItems = { 'पुल्लिंग': [], 'स्त्रीलिंग': [] };
+        let score = 0;
+        let round = 1;
+        
+        function loadItems() {
+            const shuffled = [...items].sort(() => Math.random() - 0.5).slice(0, 8);
+            
+            const grid = document.getElementById('itemsGrid');
+            grid.innerHTML = '';
+            
+            shuffled.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `
+                    <span class="item-icon">${item.icon}</span>
+                    <span class="item-name">${item.name}</span>
+                `;
+                div.onclick = () => selectItem(div, item);
+                grid.appendChild(div);
+            });
+            
+            document.getElementById('roundNum').textContent = round;
+        }
+        
+        function selectType(type) {
+            currentType = type;
+            document.querySelector('.type-btn.pul').classList.toggle('active', type === 'पुल्लिंग');
+            document.querySelector('.type-btn.stri').classList.toggle('active', type === 'स्त्रीलिंग');
+        }
+        
+        function selectItem(div, item) {
+            if (div.classList.contains('selected')) return;
+            
+            div.classList.add('selected');
+            placedItems[item.gender].push(item.name);
+            
+            updateBinDisplay();
+        }
+        
+        function updateBinDisplay() {
+            const pulBin = document.getElementById('pulBin');
+            const striBin = document.getElementById('striBin');
+            
+            pulBin.innerHTML = placedItems['पुल्लिंग'].map(name => 
+                `<span class="bin-item" onclick="removeFromBin('पुल्लिंग', '${name}')">${name}</span>`
+            ).join('');
+            
+            striBin.innerHTML = placedItems['स्त्रीलिंग'].map(name => 
+                `<span class="bin-item" onclick="removeFromBin('स्त्रीलिंग', '${name}')">${name}</span>`
+            ).join('');
+        }
+        
+        function removeFromBin(gender, name) {
+            placedItems[gender] = placedItems[gender].filter(n => n !== name);
+            updateBinDisplay();
+            
+            // Remove selection from grid
+            const items = document.querySelectorAll('.item');
+            items.forEach(item => {
+                if (item.querySelector('.item-name').textContent === name) {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+        
+        function checkAnswer() {
+            // Calculate correct placements
+            let correctCount = 0;
+            
+            placedItems['पुल्लिंग'].forEach(name => {
+                const item = items.find(i => i.name === name);
+                if (item && item.gender === 'पुल्लिंग') correctCount++;
+            });
+            
+            placedItems['स्त्रीलिंग'].forEach(name => {
+                const item = items.find(i => i.name === name);
+                if (item && item.gender === 'स्त्रीलिंग') correctCount++;
+            });
+            
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            if (correctCount >= 5) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'बहुत बढ़िया! (Excellent!)';
+                score += 15;
+                document.getElementById('score').textContent = score;
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '👍';
+                text.textContent = `आपने ${correctCount} सही किए`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextRound() {
+            document.getElementById('feedback').classList.remove('show');
+            round++;
+            placedItems = { 'पुल्लिंग': [], 'स्त्रीलिंग': [] };
+            
+            document.getElementById('pulBin').innerHTML = '';
+            document.getElementById('striBin').innerHTML = '';
+            
+            loadItems();
+        }
+        
+        loadItems();
+        
+        // Add check button
+        setTimeout(() => {
+            const btn = document.querySelector('.check-btn');
+            if (btn) btn.onclick = checkAnswer;
+        }, 100);
+    </script>
+</body>
+</html>

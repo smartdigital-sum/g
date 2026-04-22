@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resources Explorer — GyanPlay Class 8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F0C29;
+  --dark: #1A1A2E;
+  --gold: #FFB800;
+  --sky: #00AEEF;
+  --green: #00C853;
+  --pink: #FF4081;
+  --purple: #7C3AED;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+body { background: var(--bg); min-height: 100vh; color: #fff; font-family: 'Nunito', sans-serif; display: flex; justify-content: center; align-items: flex-start; padding: 24px 16px 48px; animation: fadeIn .4s ease; }
+.shell { width: 100%; max-width: 520px; }
+.top-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.back-btn { background: rgba(255,255,255,.1); color: #fff; border: none; border-radius: 999px; padding: 8px 20px; font-family: 'Nunito', sans-serif; font-size: .9rem; font-weight: 700; cursor: pointer; transition: background .2s; }
+.back-btn:hover { background: rgba(255,255,255,.18); }
+.badge { background: var(--gold); color: #1a1a2e; border-radius: 999px; padding: 6px 16px; font-size: .8rem; font-weight: 800; letter-spacing: .04em; }
+.lang-toggle { display: flex; gap: 6px; margin-left: auto; }
+.lang-btn { background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,255,255,.18); color: #fff; border-radius: 999px; padding: 5px 14px; font-size: .82rem; font-weight: 700; cursor: pointer; transition: all .2s; }
+.lang-btn.active { background: var(--gold); color: #1a1a2e; border-color: var(--gold); }
+.game-title { font-family: 'Baloo 2', cursive; font-size: 2rem; font-weight: 800; color: var(--gold); margin-bottom: 4px; line-height: 1.1; }
+.game-sub { font-size: .9rem; color: rgba(255,255,255,.55); margin-bottom: 24px; }
+.progress-bar-wrap { background: rgba(255,255,255,.08); border-radius: 999px; height: 8px; margin-bottom: 20px; }
+.progress-bar { height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--gold), var(--green)); transition: width .4s ease; }
+.q-counter { font-size: .85rem; color: rgba(255,255,255,.55); margin-bottom: 12px; }
+.question-card { background: var(--dark); border: 1.5px solid rgba(255,255,255,.08); border-radius: 20px; padding: 24px; margin-bottom: 18px; }
+.question-text { font-size: 1.08rem; font-weight: 700; line-height: 1.5; margin-bottom: 20px; }
+.choices { display: flex; flex-direction: column; gap: 10px; }
+.choice-btn { background: rgba(255,255,255,.06); border: 1.5px solid rgba(255,255,255,.12); border-radius: 14px; padding: 13px 18px; color: #fff; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: left; transition: all .18s; }
+.choice-btn:hover:not(:disabled) { background: rgba(255,184,0,.12); border-color: var(--gold); }
+.choice-btn.correct { background: rgba(0,200,83,.18); border-color: var(--green); color: var(--green); }
+.choice-btn.wrong { background: rgba(255,64,129,.15); border-color: var(--pink); color: var(--pink); }
+.choice-btn:disabled { cursor: default; }
+.feedback { margin-top: 14px; padding: 12px 16px; border-radius: 12px; font-weight: 700; font-size: .95rem; display: none; }
+.feedback.correct { background: rgba(0,200,83,.15); color: var(--green); border: 1px solid rgba(0,200,83,.3); }
+.feedback.wrong { background: rgba(255,64,129,.12); color: var(--pink); border: 1px solid rgba(255,64,129,.28); }
+.next-btn { background: var(--gold); color: #1a1a2e; border: none; border-radius: 999px; padding: 13px 32px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; margin-top: 16px; display: none; transition: transform .15s; }
+.next-btn:hover { transform: scale(1.04); }
+.result-card { background: var(--dark); border: 1.5px solid rgba(255,255,255,.1); border-radius: 24px; padding: 36px 28px; text-align: center; display: none; }
+.result-title { font-family: 'Baloo 2', cursive; font-size: 2rem; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
+.result-score { font-size: 3.5rem; font-weight: 800; color: #fff; margin: 12px 0; }
+.result-stars { font-size: 2.8rem; margin: 10px 0 20px; }
+.result-msg { font-size: 1rem; color: rgba(255,255,255,.7); margin-bottom: 24px; }
+.restart-btn { background: var(--purple); color: #fff; border: none; border-radius: 999px; padding: 14px 36px; font-family: 'Nunito', sans-serif; font-size: 1.05rem; font-weight: 800; cursor: pointer; transition: transform .15s; }
+.restart-btn:hover { transform: scale(1.05); }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Geography · Class 8</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('hi')">हि</button>
+      <button class="lang-btn" onclick="setLang('as')">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">Resources Explorer</span>
+    <span data-lang="hi" style="display:none">संसाधन अन्वेषक</span>
+    <span data-lang="as" style="display:none">সম্পদ অন্বেষক</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 8 — Resources and Development</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 8 — संसाधन एवं विकास</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 8 — সম্পদ আৰু উন্নয়ন</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">आगे →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Exploration Complete!</span>
+      <span data-lang="hi" style="display:none">अन्वेषण पूरा!</span>
+      <span data-lang="as" style="display:none">অন্বেষণ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore">0/10</div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">Play Again 🔄</span>
+      <span data-lang="hi" style="display:none">फिर खेलें 🔄</span>
+      <span data-lang="as" style="display:none">পুনৰ খেলক 🔄</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  { en: "Natural resources are gifts of ___", hi: "प्राकृतिक संसाधन ___ के उपहार हैं", as: "প্ৰাকৃতিক সম্পদ ___ ৰ উপহাৰ", choices: { en: ["Humans", "Nature", "Factories"], hi: ["मनुष्यों", "प्रकृति", "कारखानों"], as: ["মানুহ", "প্ৰকৃতি", "কাৰখানা"] }, answer: 1 },
+  { en: "Solar energy is a ___ resource", hi: "सौर ऊर्जा एक ___ संसाधन है", as: "সৌৰ শক্তি এটা ___ সম্পদ", choices: { en: ["Non-renewable", "Renewable", "Exhaustible"], hi: ["अनवीकरणीय", "नवीकरणीय", "समाप्त होने वाला"], as: ["অনবীকৰণযোগ্য", "নবীকৰণযোগ্য", "নিঃশেষযোগ্য"] }, answer: 1 },
+  { en: "Coal is a ___ resource", hi: "कोयला एक ___ संसाधन है", as: "কয়লা এটা ___ সম্পদ", choices: { en: ["Renewable", "Non-renewable", "Biotic"], hi: ["नवीकरणीय", "अनवीकरणीय", "जैविक"], as: ["নবীকৰণযোগ্য", "অনবীকৰণযোগ্য", "জৈৱ"] }, answer: 1 },
+  { en: "Soil is a ___ resource", hi: "मिट्टी एक ___ संसाधन है", as: "মাটি এটা ___ সম্পদ", choices: { en: ["Biotic", "Abiotic", "Man-made"], hi: ["जैविक", "अजैविक", "मानव-निर्मित"], as: ["জৈৱ", "অজৈৱ", "মানৱ-নিৰ্মিত"] }, answer: 1 },
+  { en: "Sustainable development means ___", hi: "सतत विकास का अर्थ है ___", as: "টেকসই উন্নয়নৰ অৰ্থ হ'ল ___", choices: { en: ["Using all resources now", "Using resources without harming future generations", "Stopping all development"], hi: ["अभी सभी संसाधनों का उपयोग करना", "भावी पीढ़ियों को नुकसान पहुँचाए बिना संसाधनों का उपयोग करना", "सभी विकास रोकना"], as: ["এতিয়াই সকলো সম্পদ ব্যৱহাৰ কৰা", "ভৱিষ্যত প্ৰজন্মক ক্ষতি নকৰাকৈ সম্পদ ব্যৱহাৰ", "সকলো উন্নয়ন বন্ধ কৰা"] }, answer: 1 },
+  { en: "Which soil is best for cotton cultivation?", hi: "कपास की खेती के लिए कौन सी मिट्टी सबसे उपयुक्त है?", as: "কপাহ খেতিৰ বাবে কোনটো মাটি সৰ্বোত্তম?", choices: { en: ["Red soil", "Black soil", "Sandy soil"], hi: ["लाल मिट्टी", "काली मिट्टी", "रेतीली मिट्टी"], as: ["ৰঙা মাটি", "ক'লা মাটি", "বালিচহীয়া মাটি"] }, answer: 1 },
+  { en: "Alluvial soil is found in ___", hi: "जलोढ़ मिट्टी ___ में पाई जाती है", as: "পলস মাটি ___ ত পোৱা যায়", choices: { en: ["Mountains", "River plains", "Deserts"], hi: ["पहाड़ों में", "नदी के मैदानों में", "मरुस्थलों में"], as: ["পাহাৰত", "নদী সমভূমিত", "মৰুভূমিত"] }, answer: 1 },
+  { en: "Forests are a ___ resource", hi: "वन एक ___ संसाधन हैं", as: "বন এটা ___ সম্পদ", choices: { en: ["Abiotic", "Biotic", "Mineral"], hi: ["अजैविक", "जैविक", "खनिज"], as: ["অজৈৱ", "জৈৱ", "খনিজ"] }, answer: 1 },
+  { en: "The process of turning desert land into farmland is called ___", hi: "रेगिस्तान को कृषि भूमि में बदलने की प्रक्रिया को ___ कहते हैं", as: "মৰুভূমিক কৃষিভূমিলৈ পৰিণত কৰা প্ৰক্ৰিয়াটোক ___ বোলে", choices: { en: ["Deforestation", "Land reclamation", "Mining"], hi: ["वनों की कटाई", "भूमि सुधार/पुनरुद्धार", "खनन"], as: ["বন নিধন", "ভূমি পুনৰুদ্ধাৰ", "খনন"] }, answer: 1 },
+  { en: "Which country has the largest coal reserves in the world?", hi: "विश्व में सबसे अधिक कोयला भंडार किस देश में है?", as: "বিশ্বত সৰ্বাধিক কয়লা মজুত কোন দেশত আছে?", choices: { en: ["India", "USA", "China"], hi: ["भारत", "अमेरिका (USA)", "चीन"], as: ["ভাৰত", "আমেৰিকা (USA)", "চীন"] }, answer: 1 }
+];
+
+let currentQ = 0, score = 0, lang = 'en', answered = false;
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach((b, i) => b.classList.toggle('active', ['en','hi','as'][i] === l));
+  document.querySelectorAll('[data-lang]').forEach(el => el.style.display = el.getAttribute('data-lang') === l ? '' : 'none');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (currentQ >= questions.length) { showResult(); return; }
+  const q = questions[currentQ];
+  document.getElementById('qCounter').textContent = `Question ${currentQ + 1} of ${questions.length}`;
+  document.getElementById('progressBar').style.width = `${(currentQ / questions.length) * 100}%`;
+  document.getElementById('questionText').textContent = q[lang] || q.en;
+  const ch = q.choices[lang] || q.choices.en;
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  ch.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = c;
+    btn.onclick = () => handleAnswer(i);
+    choicesEl.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').style.display = 'none';
+  answered = false;
+}
+
+function handleAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const ch = q.choices[lang] || q.choices.en;
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.answer) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.textContent = '✅ Correct!';
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.answer].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.textContent = `❌ Wrong — correct answer: ${ch[q.answer]}`;
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() { currentQ++; renderQuestion(); }
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  document.getElementById('resultScore').textContent = `${score}/10`;
+  const pct = score / 10;
+  let stars = '', msg = '';
+  if (pct >= .9) { stars = '⭐⭐⭐'; msg = 'Amazing! You are a Resources Expert! 🌍'; }
+  else if (pct >= .7) { stars = '⭐⭐'; msg = 'Great geographical knowledge!'; }
+  else if (pct >= .4) { stars = '⭐'; msg = 'Good effort! Keep exploring geography!'; }
+  else { stars = ''; msg = 'Keep learning — the earth has so much to discover!'; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg;
+}
+
+function restartGame() {
+  currentQ = 0; score = 0; answered = false;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

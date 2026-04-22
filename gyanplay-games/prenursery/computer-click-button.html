@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Click the Button! 🖱️</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Baloo 2',cursive;
+    background:linear-gradient(160deg,#0f0c29,#302b63,#24243e);
+    min-height:100vh;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    user-select:none;
+  }
+  /* circuit board pattern */
+  .circuit{
+    position:fixed;inset:0;z-index:0;opacity:.06;
+    background-image:
+      linear-gradient(rgba(0,255,255,.5) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(0,255,255,.5) 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+  /* floating tech particles */
+  .tech-particle{
+    position:fixed;pointer-events:none;z-index:1;
+    font-size:1rem;color:rgba(0,255,255,.4);
+    font-family:'Courier New',monospace;
+    animation:techFloat 6s ease-in-out infinite;
+  }
+  @keyframes techFloat{0%,100%{transform:translateY(0);opacity:.4;}50%{transform:translateY(-20px);opacity:.8;}}
+
+  .header{position:relative;z-index:10;text-align:center;padding:18px 20px 8px;width:100%;}
+  .title{font-size:clamp(1.4rem,5vw,2.2rem);color:#00ffff;text-shadow:0 0 20px rgba(0,255,255,.5);}
+  .instruction{
+    background:rgba(0,255,255,.08);backdrop-filter:blur(8px);
+    border:2px solid rgba(0,255,255,.3);border-radius:50px;
+    padding:12px 28px;font-size:clamp(1rem,4vw,1.5rem);color:#fff;
+    margin-top:10px;display:inline-block;
+    animation:glowPulse 2s ease-in-out infinite;
+  }
+  @keyframes glowPulse{0%,100%{box-shadow:0 0 10px rgba(0,255,255,.2);}50%{box-shadow:0 0 25px rgba(0,255,255,.5);}}
+
+  .score-bar{position:relative;z-index:10;display:flex;gap:16px;align-items:center;margin-top:8px;}
+  .score-box{background:rgba(0,255,255,.1);border:2px solid rgba(0,255,255,.3);border-radius:20px;padding:6px 18px;color:#fff;font-size:1rem;}
+  .score-box span{color:#00ffff;font-size:1.2rem;}
+
+  .progress{position:relative;z-index:10;display:flex;gap:8px;margin-top:8px;}
+  .dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .3s;}
+  .dot.done{background:#00ffff;box-shadow:0 0 8px #00ffff;}
+  .dot.active{background:#fff;transform:scale(1.3);}
+
+  /* stage */
+  .stage{
+    position:relative;z-index:5;
+    flex:1;width:100%;max-width:700px;
+    display:flex;align-items:center;justify-content:center;
+    flex-wrap:wrap;gap:clamp(14px,4vw,24px);
+    padding:24px 20px;
+  }
+
+  /* THE BUTTON */
+  .big-btn{
+    width:clamp(120px,28vw,180px);
+    height:clamp(120px,28vw,180px);
+    border-radius:50%;
+    border:none;cursor:pointer;
+    font-family:'Baloo 2',cursive;
+    font-weight:800;font-size:clamp(2rem,8vw,3.5rem);
+    position:relative;
+    transition:transform .1s;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:
+      0 8px 0 rgba(0,0,0,.4),
+      0 12px 30px rgba(0,0,0,.3),
+      inset 0 4px 12px rgba(255,255,255,.3);
+    animation:btnFloat 2.5s ease-in-out infinite;
+    outline:none;
+  }
+  .big-btn:active,.big-btn.pressed{
+    transform:translateY(4px) scale(.95);
+    box-shadow:0 4px 0 rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.3),inset 0 4px 12px rgba(0,0,0,.2);
+    animation:none;
+  }
+  @keyframes btnFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+  .big-btn.target{
+    animation:btnFloat 2.5s ease-in-out infinite,targetPulse 1s ease-in-out infinite;
+  }
+  @keyframes targetPulse{
+    0%,100%{box-shadow:0 8px 0 rgba(0,0,0,.4),0 12px 30px rgba(255,255,255,.3),inset 0 4px 12px rgba(255,255,255,.3);}
+    50%{box-shadow:0 8px 0 rgba(0,0,0,.4),0 16px 40px rgba(255,255,255,.6),inset 0 4px 12px rgba(255,255,255,.3);}
+  }
+
+  .big-btn.correct-flash{
+    animation:correctFlash .4s ease!important;
+  }
+  @keyframes correctFlash{0%{transform:scale(1);}30%{transform:scale(1.25);}70%{transform:scale(1.1);}100%{transform:scale(1);}}
+
+  .big-btn.wrong-flash{
+    animation:wrongFlash .4s ease!important;
+  }
+  @keyframes wrongFlash{0%,100%{transform:translate(0);}25%{transform:translate(-10px);}75%{transform:translate(10px);}}
+
+  /* color label */
+  .btn-label{
+    position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);
+    color:rgba(255,255,255,.7);font-size:clamp(.7rem,2.5vw,.9rem);
+    white-space:nowrap;font-weight:700;
+  }
+
+  /* click ripple */
+  .ripple{
+    position:fixed;pointer-events:none;z-index:99;
+    border-radius:50%;border:3px solid rgba(255,255,255,.6);
+    animation:rippleOut .6s ease-out forwards;
+  }
+  @keyframes rippleOut{from{transform:scale(0);opacity:1;}to{transform:scale(3);opacity:0;}}
+
+  /* level badge */
+  .level-badge{
+    position:relative;z-index:10;
+    background:rgba(0,255,255,.12);
+    border:2px solid rgba(0,255,255,.3);
+    border-radius:50px;padding:6px 20px;
+    color:#00ffff;font-size:.85rem;font-weight:700;
+    margin-top:6px;letter-spacing:1px;
+  }
+
+  /* celebration */
+  .celebration{
+    position:fixed;inset:0;z-index:200;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(0,0,30,.85);backdrop-filter:blur(10px);animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .celeb-emoji{font-size:clamp(4rem,15vw,7rem);animation:celebBounce .5s ease infinite alternate;}
+  @keyframes celebBounce{from{transform:scale(1);}to{transform:scale(1.15);}}
+  .celebration h2{color:#00ffff;font-size:clamp(2rem,8vw,3.5rem);text-align:center;margin:16px 0 8px;}
+  .celebration p{color:#fff;font-size:clamp(1rem,4vw,1.4rem);margin-bottom:24px;text-align:center;}
+  .next-btn{
+    background:linear-gradient(135deg,#00ffff,#0080ff);color:#000;border:none;border-radius:50px;
+    padding:14px 40px;font-family:'Baloo 2',cursive;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;
+    cursor:pointer;box-shadow:0 6px 24px rgba(0,255,255,.4);transition:transform .2s;
+  }
+  .next-btn:hover{transform:scale(1.05);}
+  .confetti-piece{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.2s ease-in forwards;}
+  @keyframes confettiFall{0%{opacity:1;}100%{transform:translateY(300px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="circuit"></div>
+
+<div class="header">
+  <div class="title">🖱️ Click the Button!</div>
+  <div class="instruction" id="instruction">Click the <span id="targetColor" style="color:#FFD700;">RED</span> button!</div>
+</div>
+<div class="score-bar">
+  <div class="score-box">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="score-box">🎯 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress" id="progress"></div>
+<div class="level-badge" id="levelBadge">🎮 Level 1 — Colors</div>
+
+<div class="stage" id="stage"></div>
+
+<script>
+const LEVELS=[
+  {
+    name:'Colors',badge:'🎨 Level 1 — Colors',
+    buttons:[
+      {emoji:'🔴',label:'RED',color:'#FF4757',shadow:'rgba(255,71,87,.5)'},
+      {emoji:'🔵',label:'BLUE',color:'#1e90ff',shadow:'rgba(30,144,255,.5)'},
+      {emoji:'🟢',label:'GREEN',color:'#2ed573',shadow:'rgba(46,213,115,.5)'},
+      {emoji:'🟡',label:'YELLOW',color:'#FFD700',shadow:'rgba(255,215,0,.5)'},
+    ]
+  },
+  {
+    name:'Numbers',badge:'🔢 Level 2 — Numbers',
+    buttons:[
+      {emoji:'1️⃣',label:'ONE',color:'#FF6B00',shadow:'rgba(255,107,0,.5)'},
+      {emoji:'2️⃣',label:'TWO',color:'#a55eea',shadow:'rgba(165,94,234,.5)'},
+      {emoji:'3️⃣',label:'THREE',color:'#00b4d8',shadow:'rgba(0,180,216,.5)'},
+      {emoji:'4️⃣',label:'FOUR',color:'#2ed573',shadow:'rgba(46,213,115,.5)'},
+    ]
+  },
+  {
+    name:'Shapes',badge:'🔷 Level 3 — Shapes',
+    buttons:[
+      {emoji:'🔴',label:'CIRCLE',color:'#FF4757',shadow:'rgba(255,71,87,.5)'},
+      {emoji:'🔷',label:'DIAMOND',color:'#1e90ff',shadow:'rgba(30,144,255,.5)'},
+      {emoji:'⭐',label:'STAR',color:'#FFD700',shadow:'rgba(255,215,0,.5)'},
+      {emoji:'💚',label:'HEART',color:'#2ed573',shadow:'rgba(46,213,115,.5)'},
+    ]
+  },
+];
+
+let score=0,round=0,level=0,target=null,answered=false;
+const TOTAL=10,ROUNDS_PER_LEVEL=Math.ceil(10/3);
+let audioCtx;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function playClick(correct){
+  const ctx=getAudio();
+  if(correct){
+    // satisfying digital click
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='square';
+    o.frequency.setValueAtTime(1200,ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(2400,ctx.currentTime+.08);
+    g.gain.setValueAtTime(.2,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.15);
+    o.start();o.stop(ctx.currentTime+.15);
+    [523,659,784].forEach((f,i)=>{
+      setTimeout(()=>{
+        const o2=ctx.createOscillator(),g2=ctx.createGain();
+        o2.connect(g2);g2.connect(ctx.destination);
+        o2.frequency.value=f;o2.type='sine';
+        g2.gain.setValueAtTime(.25,ctx.currentTime);
+        g2.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
+        o2.start();o2.stop(ctx.currentTime+.3);
+      },i*90+100);
+    });
+  } else {
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='square';o.frequency.value=150;
+    g.gain.setValueAtTime(.15,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.25);
+    o.start();o.stop(ctx.currentTime+.25);
+  }
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.85;u.pitch=1.3;
+  window.speechSynthesis.speak(u);
+}
+
+function makeDots(){
+  const p=document.getElementById('progress');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+
+function spawnRipple(x,y,color){
+  const r=document.createElement('div');
+  r.className='ripple';
+  const sz=80;
+  r.style.cssText=`left:${x-sz/2}px;top:${y-sz/2}px;width:${sz}px;height:${sz}px;border-color:${color};`;
+  document.body.appendChild(r);
+  setTimeout(()=>r.remove(),700);
+}
+
+function spawnConfetti(){
+  const cols=['#FF4757','#FFD700','#00ffff','#a55eea','#2ed573'];
+  for(let i=0;i<20;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`left:${Math.random()*100}%;top:20%;background:${cols[i%cols.length]};animation-duration:${.8+Math.random()*.6}s;`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1400);
+  }
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  level=Math.min(Math.floor(round/Math.ceil(TOTAL/LEVELS.length)),LEVELS.length-1);
+  const lv=LEVELS[level];
+  document.getElementById('levelBadge').textContent=lv.badge;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  target=lv.buttons[Math.floor(Math.random()*lv.buttons.length)];
+  document.getElementById('targetColor').textContent=target.label;
+  document.getElementById('targetColor').style.color=target.color;
+
+  // build buttons
+  const stage=document.getElementById('stage');
+  stage.innerHTML='';
+  const shuffled=[...lv.buttons].sort(()=>Math.random()-.5);
+  shuffled.forEach(btn=>{
+    const el=document.createElement('button');
+    el.className='big-btn'+(btn.label===target.label?' target':'');
+    el.innerHTML=btn.emoji;
+    el.style.cssText=`background:radial-gradient(circle at 35% 30%,${lighten(btn.color)},${btn.color});`;
+    el.setAttribute('aria-label',btn.label);
+
+    const lbl=document.createElement('div');
+    lbl.className='btn-label';
+    lbl.textContent=btn.label;
+    el.appendChild(lbl);
+
+    el.addEventListener('click',(e)=>{
+      const rect=el.getBoundingClientRect();
+      const cx=rect.left+rect.width/2;
+      const cy=rect.top+rect.height/2;
+      spawnRipple(cx,cy,btn.color);
+      checkAnswer(el,btn);
+    });
+    el.addEventListener('touchstart',(e)=>{
+      e.preventDefault();
+      el.classList.add('pressed');
+      const t=e.touches[0];
+      spawnRipple(t.clientX,t.clientY,btn.color);
+      checkAnswer(el,btn);
+    },{passive:false});
+    el.addEventListener('touchend',()=>el.classList.remove('pressed'));
+    stage.appendChild(el);
+  });
+
+  setTimeout(()=>speak(`Click the ${target.label} button!`),300);
+}
+
+function checkAnswer(el,btn){
+  if(answered)return;
+  answered=true;
+  if(btn.label===target.label){
+    el.classList.add('correct-flash');
+    playClick(true);
+    spawnConfetti();
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    speak(`${target.label}! You clicked it! Amazing!`);
+    round++;
+    makeDots();
+    setTimeout(newRound,1600);
+  } else {
+    el.classList.add('wrong-flash');
+    playClick(false);
+    speak(`Oops! Find the ${target.label} button!`);
+    setTimeout(()=>{el.classList.remove('wrong-flash');answered=false;},500);
+  }
+}
+
+function showCelebration(){
+  speak(`Brilliant! You can use a computer! You are a tech star!`);
+  const ov=document.createElement('div');
+  ov.className='celebration';
+  ov.innerHTML=`
+    <div class="celeb-emoji">💻</div>
+    <h2>Computer Pro!</h2>
+    <p>You learned to click buttons!<br/>Score: <span style="color:#00ffff;font-size:1.4em;">${score}</span> points!</p>
+    <button class="next-btn" onclick="restartGame()">Play Again 🖱️</button>
+  `;
+  document.body.appendChild(ov);
+}
+
+function restartGame(){
+  document.querySelector('.celebration')?.remove();
+  score=0;round=0;level=0;
+  document.getElementById('scoreVal').textContent=0;
+  newRound();
+}
+
+function lighten(hex){
+  try{
+    const r=parseInt(hex.slice(1,3),16);
+    const g=parseInt(hex.slice(3,5),16);
+    const b=parseInt(hex.slice(5,7),16);
+    return `rgb(${Math.min(255,r+80)},${Math.min(255,g+80)},${Math.min(255,b+80)})`;
+  }catch(e){return hex;}
+}
+
+// Tech particles
+function makeTechParticles(){
+  const bits=['01','10','0','1','</>','{}','[]','!'];
+  for(let i=0;i<12;i++){
+    const p=document.createElement('div');
+    p.className='tech-particle';
+    p.textContent=bits[i%bits.length];
+    p.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*5}s;font-size:${.7+Math.random()*.8}rem;`;
+    document.body.appendChild(p);
+  }
+}
+
+window.addEventListener('load',()=>{
+  makeTechParticles();
+  window.speechSynthesis.getVoices();
+  makeDots();
+  setTimeout(()=>{
+    speak('Welcome to computers! Click the right button!');
+    setTimeout(newRound,1300);
+  },500);
+});
+</script>
+</body>
+</html>

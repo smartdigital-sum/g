@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work & Energy – Class 9 Science | GyanPlay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+    --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+    --bg1:#0F0C29; --bg2:#302B63; --card:#1a1740;
+    --text:#F0EEF8; --subtext:#A89EC9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    min-height:100vh; color:var(--text);
+    display:flex; flex-direction:column; align-items:center;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .fade-in{animation:fadeIn .45s ease both}
+
+  /* TOP BAR */
+  .topbar{
+    width:100%; max-width:720px;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 18px;
+  }
+  .back-btn{
+    background:rgba(255,255,255,.08); border:none; color:var(--text);
+    font-family:'Nunito',sans-serif; font-size:15px; font-weight:700;
+    padding:7px 14px; border-radius:20px; cursor:pointer;
+    transition:background .2s;
+  }
+  .back-btn:hover{background:rgba(255,255,255,.15)}
+  .subject-badge{
+    background:var(--green); color:#fff;
+    font-family:'Baloo 2',sans-serif; font-size:13px; font-weight:700;
+    padding:5px 14px; border-radius:20px; letter-spacing:.5px;
+  }
+  .lang-toggle{display:flex;gap:6px}
+  .lang-btn{
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    color:var(--subtext); font-size:13px; font-weight:700;
+    padding:5px 11px; border-radius:16px; cursor:pointer; transition:all .2s;
+  }
+  .lang-btn.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+
+  /* MAIN CARD */
+  .card{
+    width:100%; max-width:720px;
+    background:var(--card); border-radius:22px;
+    padding:28px 30px; margin:6px 16px 24px;
+    box-shadow:0 8px 40px rgba(0,0,0,.45);
+  }
+
+  /* SCORE + PROGRESS */
+  .score-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .score-label{font-family:'Baloo 2',sans-serif;font-size:22px;font-weight:800;color:var(--gold)}
+  .q-counter{font-size:14px;color:var(--subtext);font-weight:700}
+  .progress-track{
+    width:100%; height:8px; background:rgba(255,255,255,.1);
+    border-radius:8px; overflow:hidden; margin-bottom:22px;
+  }
+  .progress-fill{
+    height:100%; border-radius:8px;
+    background:linear-gradient(90deg,var(--green),var(--sky));
+    transition:width .4s ease;
+  }
+
+  /* QUESTION */
+  .question-text{
+    font-family:'Baloo 2',sans-serif; font-size:19px; font-weight:700;
+    line-height:1.5; margin-bottom:8px;
+  }
+  .formula-hint{
+    background:rgba(255,184,0,.1); border-left:3px solid var(--gold);
+    padding:8px 12px; border-radius:0 8px 8px 0;
+    font-size:13px; color:var(--gold); margin-bottom:20px; font-weight:600;
+  }
+
+  /* OPTIONS */
+  .options{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
+  .opt-btn{
+    background:rgba(255,255,255,.06); border:2px solid rgba(255,255,255,.12);
+    color:var(--text); font-family:'Nunito',sans-serif; font-size:16px; font-weight:700;
+    padding:13px 18px; border-radius:14px; cursor:pointer; text-align:left;
+    transition:all .2s; display:flex; align-items:center; gap:10px;
+  }
+  .opt-btn:hover:not(:disabled){background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.25)}
+  .opt-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:#6fffa8}
+  .opt-btn.wrong{background:rgba(255,64,129,.18);border-color:var(--pink);color:#ff9eb5}
+  .opt-btn:disabled{cursor:not-allowed}
+  .opt-letter{
+    width:28px;height:28px;border-radius:50%;
+    background:rgba(255,255,255,.1);display:flex;align-items:center;
+    justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;
+  }
+
+  /* FEEDBACK */
+  .feedback{
+    border-radius:12px; padding:13px 16px;
+    font-size:14px; font-weight:700; line-height:1.55;
+    margin-bottom:16px; display:none;
+  }
+  .feedback.correct{background:rgba(0,200,83,.15);border:1px solid rgba(0,200,83,.35);color:#7fffb6}
+  .feedback.wrong{background:rgba(255,64,129,.15);border:1px solid rgba(255,64,129,.35);color:#ffaac9}
+
+  /* NEXT BTN */
+  .next-btn{
+    width:100%; padding:14px; border:none; border-radius:14px;
+    background:linear-gradient(90deg,var(--saffron),var(--gold));
+    color:#fff; font-family:'Baloo 2',sans-serif; font-size:18px; font-weight:800;
+    cursor:pointer; transition:opacity .2s; display:none;
+  }
+  .next-btn:hover{opacity:.88}
+
+  /* END SCREEN */
+  .end-screen{display:none;text-align:center}
+  .end-screen h2{font-family:'Baloo 2',sans-serif;font-size:30px;font-weight:800;margin-bottom:6px}
+  .final-score{font-size:52px;font-weight:800;font-family:'Baloo 2',sans-serif;color:var(--gold);margin:10px 0}
+  .stars-row{font-size:36px;margin:10px 0 18px}
+  .end-screen p{color:var(--subtext);font-size:16px;margin-bottom:24px}
+  .play-again{
+    background:linear-gradient(90deg,var(--purple),var(--sky));
+    border:none;color:#fff;font-family:'Baloo 2',sans-serif;
+    font-size:19px;font-weight:800;padding:14px 38px;
+    border-radius:30px;cursor:pointer;transition:opacity .2s;
+  }
+  .play-again:hover{opacity:.85}
+
+  @media(max-width:480px){
+    .card{padding:20px 16px;margin:4px 10px 16px}
+    .question-text{font-size:16px}
+    .opt-btn{font-size:14px;padding:11px 14px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="subject-badge">⚡ Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')"><span data-lang="en">EN</span></button>
+    <button class="lang-btn" onclick="setLang('hi')"><span data-lang="hi">हि</span></button>
+    <button class="lang-btn" onclick="setLang('bn')"><span data-lang="bn">অ</span></button>
+  </div>
+</div>
+
+<div class="card fade-in" id="quiz-card">
+  <div class="score-row">
+    <span class="score-label" id="score-display">Score: 0/100</span>
+    <span class="q-counter" id="q-counter">Question 1 / 10</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+  <div id="game-area">
+    <p class="question-text" id="question-text"></p>
+    <div class="formula-hint" id="formula-hint" style="display:none"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="bn" style="display:none">পরবর্তী →</span>
+    </button>
+  </div>
+
+  <div class="end-screen" id="end-screen">
+    <h2>
+      <span data-lang="en">Quiz Complete! 🎉</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरा! 🎉</span>
+      <span data-lang="bn" style="display:none">কুইজ শেষ! 🎉</span>
+    </h2>
+    <div class="final-score" id="final-score"></div>
+    <div class="stars-row" id="stars-row"></div>
+    <p id="end-msg"></p>
+    <button class="play-again" onclick="restartGame()">
+      <span data-lang="en">Play Again</span>
+      <span data-lang="hi" style="display:none">फिर खेलें</span>
+      <span data-lang="bn" style="display:none">আবার খেলো</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    en:"Work is said to be done when a force is applied on an object and the object:",
+    hi:"कार्य तब होता है जब बल लगाया जाए और वस्तु:",
+    bn:"কাজ হয় যখন বল প্রয়োগ করা হয় এবং বস্তুটি:",
+    options:{en:["Moves in the direction of force","Remains stationary","Moves in any direction"],
+              hi:["बल की दिशा में गति करे","स्थिर रहे","किसी भी दिशा में चले"],
+              bn:["বলের দিকে সরে","স্থির থাকে","যেকোনো দিকে সরে"]},
+    correct:0,
+    explanation:{en:"Work = Force × Displacement (in direction of force). If no displacement occurs, W = 0.",
+                 hi:"कार्य = बल × विस्थापन (बल की दिशा में)। विस्थापन न होने पर कार्य शून्य।",
+                 bn:"কাজ = বল × সরণ (বলের দিকে)। সরণ না হলে কাজ = ০।"},
+    formula:"W = F × d"
+  },
+  {
+    en:"A 5 kg object is lifted to a height of 10 m. What is its gravitational potential energy? (g = 10 m/s²)",
+    hi:"5 kg की वस्तु को 10 m ऊपर उठाया गया। उसकी गुरुत्वीय स्थितिज ऊर्जा कितनी है? (g = 10 m/s²)",
+    bn:"5 kg বস্তুকে 10 m উচ্চতায় তোলা হল। এর অভিকর্ষীয় বিভব শক্তি কত? (g = 10 m/s²)",
+    options:{en:["250 J","500 J","1000 J"],hi:["250 J","500 J","1000 J"],bn:["250 J","500 J","1000 J"]},
+    correct:1,
+    explanation:{en:"PE = mgh = 5 × 10 × 10 = 500 J",hi:"PE = mgh = 5 × 10 × 10 = 500 J",bn:"PE = mgh = 5 × 10 × 10 = 500 J"},
+    formula:"PE = mgh"
+  },
+  {
+    en:"A car of mass 1000 kg is moving at 20 m/s. Its kinetic energy is:",
+    hi:"1000 kg का एक कार 20 m/s से चल रही है। उसकी गतिज ऊर्जा है:",
+    bn:"1000 kg ভরের একটি গাড়ি 20 m/s বেগে চলছে। এর গতিশক্তি হল:",
+    options:{en:["100,000 J","200,000 J","400,000 J"],hi:["100,000 J","200,000 J","400,000 J"],bn:["100,000 J","200,000 J","400,000 J"]},
+    correct:1,
+    explanation:{en:"KE = ½mv² = ½ × 1000 × 20² = 200,000 J = 200 kJ",hi:"KE = ½mv² = ½ × 1000 × 400 = 200,000 J",bn:"KE = ½mv² = ½ × 1000 × 400 = 200,000 J"},
+    formula:"KE = ½mv²"
+  },
+  {
+    en:"The Law of Conservation of Energy states that energy can be:",
+    hi:"ऊर्जा संरक्षण के नियम के अनुसार ऊर्जा:",
+    bn:"শক্তির সংরক্ষণ সূত্র অনুযায়ী শক্তি:",
+    options:{en:["Created but not destroyed","Neither created nor destroyed, only transformed","Destroyed but not created"],
+              hi:["बनाई जा सकती है नष्ट नहीं","न बनाई जा सकती है न नष्ट, केवल रूपांतरित","नष्ट हो सकती है"],
+              bn:["সৃষ্টি করা যায় কিন্তু ধ্বংস নয়","সৃষ্টি বা ধ্বংস হয় না, রূপান্তরিত হয়","ধ্বংস হয় কিন্তু সৃষ্টি নয়"]},
+    correct:1,
+    explanation:{en:"Energy is never created or destroyed; it only changes form (e.g. PE → KE as an object falls).",
+                 hi:"ऊर्जा कभी नष्ट नहीं होती, केवल एक रूप से दूसरे में बदलती है जैसे PE→KE।",
+                 bn:"শক্তি কখনো সৃষ্টি বা ধ্বংস হয় না, শুধু রূপ পরিবর্তন করে।"},
+    formula:"Total Energy = constant"
+  },
+  {
+    en:"Power is defined as the rate of doing work. Its SI unit is:",
+    hi:"शक्ति कार्य करने की दर है। इसका SI मात्रक है:",
+    bn:"ক্ষমতা হল কাজ করার হার। এর SI একক হল:",
+    options:{en:["Joule","Watt","Newton"],hi:["जूल","वाट","न्यूटन"],bn:["জুল","ওয়াট","নিউটন"]},
+    correct:1,
+    explanation:{en:"Power P = W/t. 1 Watt = 1 Joule per second. Named after James Watt.",
+                 hi:"P = W/t. 1 वाट = 1 जूल प्रति सेकंड। जेम्स वाट के नाम पर।",
+                 bn:"P = W/t. 1 ওয়াট = 1 জুল প্রতি সেকেন্ড।"},
+    formula:"P = W/t (unit: Watt)"
+  },
+  {
+    en:"The commercial unit of electrical energy used in homes and industries is:",
+    hi:"घरों और उद्योगों में विद्युत ऊर्जा की व्यावसायिक इकाई है:",
+    bn:"বাড়িতে ও শিল্পে বৈদ্যুতিক শক্তির বাণিজ্যিক একক হল:",
+    options:{en:["Joule (J)","Watt (W)","Kilowatt-hour (kWh)"],
+              hi:["जूल (J)","वाट (W)","किलोवाट-घंटा (kWh)"],
+              bn:["জুল (J)","ওয়াট (W)","কিলোওয়াট-ঘণ্টা (kWh)"]},
+    correct:2,
+    explanation:{en:"1 kWh = 1000 W × 3600 s = 3.6 × 10⁶ J. This is 1 'unit' on your electricity bill.",
+                 hi:"1 kWh = 3.6 × 10⁶ J। बिजली बिल में 'यूनिट' यही है।",
+                 bn:"1 kWh = 3.6 × 10⁶ J। বিদ্যুৎ বিলে এটিই '1 ইউনিট'।"},
+    formula:"1 kWh = 3.6 × 10⁶ J"
+  },
+  {
+    en:"A person pushes a wall with great force but the wall does not move. The work done is:",
+    hi:"एक व्यक्ति दीवार को जोर से धकेलता है लेकिन दीवार नहीं हिलती। किया गया कार्य है:",
+    bn:"একজন ব্যক্তি দেওয়াল জোরে ঠেলে কিন্তু দেওয়াল নড়ে না। কাজ হয়:",
+    options:{en:["Positive work","Zero work","Negative work"],
+              hi:["धनात्मक कार्य","शून्य कार्य","ऋणात्मक कार्य"],
+              bn:["ধনাত্মক কাজ","শূন্য কাজ","ঋণাত্মক কাজ"]},
+    correct:1,
+    explanation:{en:"W = F × d × cosθ. Since displacement d = 0, work done = 0, regardless of force applied.",
+                 hi:"W = F × d = 0 क्योंकि d = 0। बल लगाने पर भी कार्य शून्य है।",
+                 bn:"d = 0 তাই W = 0, যতই বল লাগানো হোক না কেন।"},
+    formula:"W = F × d (d=0 → W=0)"
+  },
+  {
+    en:"A machine does 500 J of work in 10 seconds. What is its power?",
+    hi:"एक मशीन 10 सेकंड में 500 J कार्य करती है। उसकी शक्ति है:",
+    bn:"একটি যন্ত্র 10 সেকেন্ডে 500 J কাজ করে। এর ক্ষমতা হল:",
+    options:{en:["5000 W","50 W","5 W"],hi:["5000 W","50 W","5 W"],bn:["5000 W","50 W","5 W"]},
+    correct:1,
+    explanation:{en:"P = W/t = 500/10 = 50 W",hi:"P = W/t = 500/10 = 50 W",bn:"P = W/t = 500/10 = 50 W"},
+    formula:"P = W/t = 500/10 = 50 W"
+  },
+  {
+    en:"When a ball is thrown upward, at the highest point its kinetic energy is:",
+    hi:"जब कोई गेंद ऊपर फेंकी जाए, उच्चतम बिंदु पर उसकी गतिज ऊर्जा:",
+    bn:"একটি বল উপরে ছোঁড়া হলে সর্বোচ্চ বিন্দুতে তার গতিশক্তি:",
+    options:{en:["Maximum","Zero","Equal to potential energy"],
+              hi:["अधिकतम","शून्य","स्थितिज ऊर्जा के बराबर"],
+              bn:["সর্বোচ্চ","শূন্য","বিভব শক্তির সমান"]},
+    correct:1,
+    explanation:{en:"At the highest point velocity = 0, so KE = ½mv² = 0. All energy is stored as PE.",
+                 hi:"उच्चतम बिंदु पर वेग = 0, अतः KE = 0। सारी ऊर्जा PE के रूप में है।",
+                 bn:"সর্বোচ্চ বিন্দুতে বেগ = 0, তাই KE = 0। সব শক্তি PE হিসেবে।"},
+    formula:"KE = ½mv² (v=0 at top)"
+  },
+  {
+    en:"Which of the following is an example of negative work?",
+    hi:"निम्नलिखित में से ऋणात्मक कार्य का उदाहरण कौन-सा है?",
+    bn:"নিচের কোনটি ঋণাত্মক কাজের উদাহরণ?",
+    options:{en:["Lifting a box upward","Friction stopping a moving car","Kicking a football"],
+              hi:["बक्से को उठाना","घर्षण से कार रोकना","फुटबॉल को किक करना"],
+              bn:["বাক্স তোলা","ঘর্ষণে গাড়ি থামানো","ফুটবলে কিক দেওয়া"]},
+    correct:1,
+    explanation:{en:"Friction acts opposite to the direction of motion, so W = F × d × cos180° = –Fd (negative).",
+                 hi:"घर्षण बल गति की विपरीत दिशा में होता है अतः कार्य = –Fd (ऋणात्मक)।",
+                 bn:"ঘর্ষণ বল গতির বিপরীত দিকে কাজ করে, তাই W = –Fd (ঋণাত্মক)।"},
+    formula:"W = Fd·cos180° = –Fd"
+  }
+];
+
+let currentLang = 'en';
+let currentQ = 0;
+let score = 0;
+let answered = false;
+const PER_Q = 10;
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    if(b.querySelector(`[data-lang="${lang}"]`)) b.classList.add('active');
+  });
+  // refresh all data-lang spans
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = (el.getAttribute('data-lang') === lang) ? '' : 'none';
+  });
+  // re-render current question without resetting
+  if(document.getElementById('end-screen').style.display === 'block') return;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  document.getElementById('question-text').textContent = q[currentLang] || q.en;
+  const hint = document.getElementById('formula-hint');
+  if(q.formula){ hint.style.display='block'; hint.textContent = '📐 ' + q.formula; }
+  else hint.style.display='none';
+
+  const optContainer = document.getElementById('options');
+  optContainer.innerHTML = '';
+  const opts = q.options[currentLang] || q.options.en;
+  const letters = ['A','B','C','D'];
+  opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${opt}`;
+    btn.onclick = () => selectAnswer(i);
+    if(answered) btn.disabled = true;
+    optContainer.appendChild(btn);
+  });
+  document.getElementById('q-counter').textContent = `Question ${currentQ+1} / ${QUESTIONS.length}`;
+  document.getElementById('progress-fill').style.width = `${(currentQ / QUESTIONS.length) * 100}%`;
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+}
+
+function selectAnswer(idx) {
+  if(answered) return;
+  answered = true;
+  const q = QUESTIONS[currentQ];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  const isCorrect = idx === q.correct;
+  if(isCorrect) score += PER_Q;
+
+  btns[idx].classList.add(isCorrect ? 'correct' : 'wrong');
+  btns[q.correct].classList.add('correct');
+
+  const fb = document.getElementById('feedback');
+  const expl = q.explanation[currentLang] || q.explanation.en;
+  fb.className = 'feedback ' + (isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = (isCorrect ? '✓ Correct! ' : '✗ Incorrect. ') + expl;
+  fb.style.display = 'block';
+
+  document.getElementById('score-display').textContent = `Score: ${score}/100`;
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if(currentQ >= QUESTIONS.length) { showEnd(); return; }
+  const ga = document.getElementById('game-area');
+  ga.classList.remove('fade-in');
+  void ga.offsetWidth;
+  ga.classList.add('fade-in');
+  renderQuestion();
+}
+
+function showEnd() {
+  document.getElementById('game-area').style.display = 'none';
+  const es = document.getElementById('end-screen');
+  es.style.display = 'block';
+  es.classList.add('fade-in');
+  document.getElementById('final-score').textContent = `${score}/100`;
+  const pct = score;
+  let stars = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : pct >= 40 ? '⭐' : '☆☆☆';
+  document.getElementById('stars-row').textContent = stars;
+  const msgs = {en: pct>=90?'Outstanding! You mastered Work & Energy!': pct>=70?'Great job! Keep practising!': pct>=40?'Good effort. Review the formulas again.':'Keep going — every attempt makes you stronger!',
+                hi: pct>=90?'शानदार! आपने कार्य और ऊर्जा में महारत हासिल की!': pct>=70?'बहुत अच्छा! अभ्यास जारी रखें!': pct>=40?'अच्छा प्रयास। फॉर्मूले दोबारा देखें।':'हार मत मानो — हर प्रयास आपको मजबूत बनाता है!',
+                bn: pct>=90?'অসাধারণ! তুমি কাজ ও শক্তিতে দক্ষ!': pct>=70?'চমৎকার! অনুশীলন চালিয়ে যাও!': pct>=40?'ভালো চেষ্টা। সূত্রগুলো আবার দেখো।':'হার মেনো না — প্রতিটি চেষ্টা তোমাকে শক্তিশালী করে!'};
+  document.getElementById('end-msg').textContent = msgs[currentLang] || msgs.en;
+  document.getElementById('progress-fill').style.width = '100%';
+}
+
+function restartGame() {
+  currentQ = 0; score = 0; answered = false;
+  document.getElementById('score-display').textContent = 'Score: 0/100';
+  document.getElementById('end-screen').style.display = 'none';
+  document.getElementById('game-area').style.display = 'block';
+  renderQuestion();
+}
+
+// init lang spans
+document.querySelectorAll('[data-lang]').forEach(el => {
+  el.style.display = (el.getAttribute('data-lang') === currentLang) ? '' : 'none';
+});
+renderQuestion();
+</script>
+</body>
+</html>

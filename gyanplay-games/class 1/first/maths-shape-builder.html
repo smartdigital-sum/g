@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Shape Builder 🔷 — Class 1 Maths</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--purple:#6A1B9A;--sky:#0288D1;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#EDE7F6,#D1C4E9,#B39DDB,#EDE7F6);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* floating shapes bg */
+.shape-float{position:fixed;pointer-events:none;z-index:1;opacity:.12;animation:shapeOrbit linear infinite;}
+@keyframes shapeOrbit{0%{transform:translateY(100vh) rotate(0deg);}100%{transform:translateY(-200px) rotate(360deg);}}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#4A148C;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#4A148C;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#4A148C;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* QUESTION */
+.q-card{position:relative;z-index:20;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.95);border-radius:24px;padding:10px 22px;margin:6px 16px;text-align:center;max-width:640px;width:calc(100% - 32px);box-shadow:0 6px 20px rgba(0,0,0,.08);}
+.q-main{font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4.5vw,1.7rem);color:#4A148C;}
+.q-sub{font-size:clamp(.78rem,2.8vw,.98rem);color:#7B1FA2;font-weight:700;margin-top:3px;}
+
+/* MAIN AREA */
+.main-area{position:relative;z-index:15;display:flex;align-items:flex-start;justify-content:center;gap:clamp(12px,4vw,28px);padding:0 14px;flex:1;flex-wrap:wrap;margin-top:6px;}
+
+/* BUILD CANVAS */
+.build-canvas{
+  background:rgba(255,255,255,.65);backdrop-filter:blur(8px);
+  border:3px solid rgba(255,255,255,.9);border-radius:22px;
+  width:clamp(180px,42vw,260px);height:clamp(200px,46vw,280px);
+  position:relative;overflow:hidden;
+  box-shadow:0 8px 24px rgba(0,0,0,.1);
+  flex-shrink:0;
+}
+.canvas-label{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(74,20,140,.4);}
+.target-outline{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+.target-svg{width:80%;height:80%;opacity:.15;}
+
+/* placed shape on canvas */
+.placed-shape{position:absolute;font-size:clamp(1.8rem,5vw,2.8rem);animation:placePop .35s cubic-bezier(.34,1.56,.64,1) both;transform-origin:center;}
+@keyframes placePop{from{transform:scale(0) rotate(-20deg);opacity:0;}to{transform:scale(1) rotate(0deg);opacity:1;}}
+
+/* SHAPES PANEL */
+.shapes-panel{
+  background:rgba(255,255,255,.72);backdrop-filter:blur(10px);
+  border:3px solid rgba(255,255,255,.9);border-radius:22px;
+  padding:14px 12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.1);
+  display:flex;flex-direction:column;gap:8px;
+  flex-shrink:0;
+  max-width:clamp(150px,35vw,200px);
+}
+.panel-label{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(74,20,140,.4);text-align:center;margin-bottom:2px;}
+.shape-btn{
+  display:flex;align-items:center;gap:8px;
+  padding:clamp(8px,2vw,12px) clamp(10px,2.5vw,16px);
+  border-radius:16px;border:2px solid rgba(255,255,255,.7);
+  cursor:pointer;transition:all .2s;
+  background:rgba(255,255,255,.5);
+  box-shadow:0 3px 0 rgba(0,0,0,.1);
+  position:relative;top:0;
+}
+.shape-btn:hover{top:-2px;box-shadow:0 5px 0 rgba(0,0,0,.08);border-color:rgba(106,27,154,.4);}
+.shape-btn.correct-pick{border-color:#43A047;background:rgba(67,160,71,.15);animation:shpPop .4s ease;}
+@keyframes shpPop{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+.shape-btn.wrong-pick{border-color:#E53935;background:rgba(229,57,53,.1);animation:shpShake .35s ease;opacity:.4;pointer-events:none;}
+@keyframes shpShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+.shape-emoji{font-size:clamp(1.4rem,5vw,2rem);}
+.shape-info{display:flex;flex-direction:column;}
+.shape-name{font-family:'Fredoka One',cursive;font-size:clamp(.75rem,2.8vw,1rem);color:#4A148C;}
+.shape-sides{font-size:clamp(.6rem,2vw,.75rem);color:#7B1FA2;font-weight:700;}
+
+/* FACT BOX */
+.fact-box{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(74,20,140,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:380px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.88rem,3vw,1.1rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:2;}
+.ov-btn{background:linear-gradient(135deg,#6A1B9A,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(106,27,154,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title">🔷 Shape Builder</div>
+  <div class="lvchip" id="lvChip">Identify & Place Shapes</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">🔷 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="q-card">
+  <div class="q-main">Place a <span id="targetName" style="color:#E53935;">SQUARE</span> on the building!</div>
+  <div class="q-sub" id="qSub">Think about how many sides it has!</div>
+</div>
+
+<div class="main-area">
+  <div class="build-canvas" id="buildCanvas">
+    <div class="canvas-label">Build here</div>
+    <div class="target-outline" id="targetOutline"></div>
+  </div>
+  <div class="shapes-panel">
+    <div class="panel-label">Pick the shape</div>
+    <div id="shapesContainer"></div>
+  </div>
+</div>
+
+<script>
+const SHAPES_DATA=[
+  {id:'circle',   emoji:'⭕',name:'Circle',   sides:'0 sides — round!',   fact:'⭕ A circle has NO sides and NO corners! Like the sun, a wheel, a coin!', svgPath:'<circle cx="50" cy="50" r="40" fill="none" stroke="rgba(106,27,154,.6)" stroke-width="3"/>'},
+  {id:'square',   emoji:'🟦',name:'Square',   sides:'4 equal sides',       fact:'🟦 A square has 4 EQUAL sides and 4 corners! Like a window, a tile!', svgPath:'<rect x="10" y="10" width="80" height="80" fill="none" stroke="rgba(106,27,154,.6)" stroke-width="3"/>'},
+  {id:'rectangle',emoji:'🔷',name:'Rectangle',sides:'4 sides, 2 long 2 short',fact:'🔷 A rectangle has 4 sides — 2 long and 2 short sides! Like a door, a book!', svgPath:'<rect x="5" y="20" width="90" height="60" fill="none" stroke="rgba(106,27,154,.6)" stroke-width="3"/>'},
+  {id:'triangle', emoji:'🔺',name:'Triangle', sides:'3 sides',              fact:'🔺 A triangle has 3 sides and 3 corners! Like a pizza slice, a mountain!', svgPath:'<polygon points="50,8 92,90 8,90" fill="none" stroke="rgba(106,27,154,.6)" stroke-width="3"/>'},
+  {id:'oval',     emoji:'🥚',name:'Oval',     sides:'0 sides — oval!',      fact:'🥚 An oval is like a stretched circle! Like an egg, a mango!', svgPath:'<ellipse cx="50" cy="50" rx="45" ry="30" fill="none" stroke="rgba(106,27,154,.6)" stroke-width="3"/>'},
+  {id:'star',     emoji:'⭐',name:'Star',     sides:'5 points',             fact:'⭐ A star has 5 points! We see star shapes in the night sky!', svgPath:'<polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" fill="none" stroke="rgba(106,27,154,.6)" stroke-width="3"/>'},
+  {id:'diamond',  emoji:'💠',name:'Diamond',  sides:'4 sides, tilted',      fact:'💠 A diamond is a square turned sideways! It has 4 sides too!', svgPath:'<polygon points="50,5 95,50 50,95 5,50" fill="none" stroke="rgba(106,27,154,.6)" stroke-width="3"/>'},
+  {id:'hexagon',  emoji:'🔹',name:'Hexagon',  sides:'6 sides',              fact:'🔹 A hexagon has 6 sides! Honeycomb cells are hexagons!', svgPath:'<polygon points="50,5 90,27 90,73 50,95 10,73 10,27" fill="none" stroke="rgba(106,27,154,.6)" stroke-width="3"/>'},
+];
+
+const SCENARIOS=[
+  {target:'square',   context:'window in a house', build:'🏠'},
+  {target:'circle',   context:'wheel on a car',    build:'🚗'},
+  {target:'triangle', context:'roof of a house',   build:'🏡'},
+  {target:'rectangle',context:'door of a building',build:'🏢'},
+  {target:'oval',     context:'mirror on a wall',  build:'🪞'},
+  {target:'star',     context:'decoration on a flag',build:'🚩'},
+  {target:'diamond',  context:'gem in a crown',    build:'👑'},
+  {target:'hexagon',  context:'tile on a floor',   build:'🔲'},
+  {target:'square',   context:'screen of a tablet',build:'📱'},
+  {target:'circle',   context:'clock on the wall', build:'🕐'},
+];
+
+const TOTAL=10;
+let score=0,round=0,current=null,currentShape=null,answered=false;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playPop(ok){
+  const c=ac();
+  if(ok){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*100));}
+  else{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;window.speechSynthesis.speak(u);}
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#6A1B9A','#FFD700','#E53935','#43A047','#0288D1'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showFact(txt){document.querySelector('.fact-box')?.remove();const el=document.createElement('div');el.className='fact-box';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  makeDots();
+  document.getElementById('roundVal').textContent=round+1;
+  current=SCENARIOS[round%SCENARIOS.length];
+  currentShape=SHAPES_DATA.find(s=>s.id===current.target);
+
+  document.getElementById('targetName').textContent=currentShape.name.toUpperCase();
+  document.getElementById('qSub').textContent=`${currentShape.sides} — for the ${current.context}`;
+
+  // show target outline in canvas
+  const outline=document.getElementById('targetOutline');
+  outline.innerHTML=`<svg viewBox="0 0 100 100" class="target-svg" xmlns="http://www.w3.org/2000/svg">${currentShape.svgPath}</svg>`;
+
+  // build canvas
+  const canvas=document.getElementById('buildCanvas');
+  const existing=canvas.querySelector('.build-emoji');
+  if(existing)existing.remove();
+  const buildEl=document.createElement('div');
+  buildEl.style.cssText='position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:clamp(2rem,7vw,3.5rem);';
+  buildEl.textContent=current.build;
+  canvas.appendChild(buildEl);
+
+  // build shape options — correct + 3 distractors
+  const others=SHAPES_DATA.filter(s=>s.id!==current.target).sort(()=>Math.random()-.5).slice(0,3);
+  const all=[currentShape,...others].sort(()=>Math.random()-.5);
+  const container=document.getElementById('shapesContainer');container.innerHTML='';
+  all.forEach(sh=>{
+    const btn=document.createElement('div');btn.className='shape-btn';
+    btn.innerHTML=`<span class="shape-emoji">${sh.emoji}</span><div class="shape-info"><div class="shape-name">${sh.name}</div><div class="shape-sides">${sh.sides}</div></div>`;
+    btn.onclick=()=>pickShape(btn,sh);
+    container.appendChild(btn);
+  });
+
+  setTimeout(()=>speak(`I need a ${currentShape.name} for the ${current.context}. A ${currentShape.name} has ${currentShape.sides}!`),400);
+}
+
+function pickShape(btn,shape){
+  if(answered)return;
+  if(shape.id===currentShape.id){
+    answered=true;btn.classList.add('correct-pick');
+    playPop(true);spawnConf();showFact(currentShape.fact);
+    // place on canvas
+    const canvas=document.getElementById('buildCanvas');
+    const placed=document.createElement('div');placed.className='placed-shape';
+    placed.textContent=shape.emoji;
+    placed.style.cssText='position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);font-size:clamp(2.5rem,8vw,3.5rem);';
+    canvas.appendChild(placed);
+    score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(`${shape.name}! Correct! ${shape.fact.replace(/^[^ ]+ /,'')}`);
+    round++;makeDots();setTimeout(newRound,2800);
+  } else {
+    btn.classList.add('wrong-pick');playPop(false);
+    speak(`That is a ${shape.name}! It has ${shape.sides}! We need a ${currentShape.name} with ${currentShape.sides}!`);
+  }
+}
+
+function showCelebration(){
+  playChime();spawnConf();speak('You know all the shapes! Shape architect!');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🏗️</div>
+    <div class="ov-title">Shape Architect!</div>
+    <div class="ov-sub">
+      ⭕ Circle — 0 sides &nbsp; 🟦 Square — 4 equal sides<br/>
+      🔷 Rectangle — 4 sides &nbsp; 🔺 Triangle — 3 sides<br/>
+      ⭐ Star — 5 points &nbsp; 🔹 Hexagon — 6 sides<br/><br/>
+      Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!
+    </div>
+    <button class="ov-btn" onclick="restart()">Play Again 🔷</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+// floating bg shapes
+function makeShapes(){
+  ['🔺','🔷','⭕','🟦','⭐','💠'].forEach((s,i)=>{
+    const el=document.createElement('div');el.className='shape-float';el.textContent=s;
+    el.style.cssText=`left:${Math.random()*100}%;font-size:${2+Math.random()*3}rem;animation-duration:${10+Math.random()*8}s;animation-delay:${i*1.2}s;`;
+    document.body.appendChild(el);
+  });
+}
+
+window.addEventListener('load',()=>{makeShapes();window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Use shapes to build things! Which shape fits?');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

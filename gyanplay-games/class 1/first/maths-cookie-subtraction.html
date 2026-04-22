@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cookie Subtraction 🍪 — Class 1 Maths</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--blue:#1565C0;--brown:#5D4037;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1565C0 0%,#1976D2 30%,#42A5F5 70%,#90CAF9 100%);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* STARS BG */
+.star-bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.sb{position:absolute;background:#fff;border-radius:50%;animation:twink 2s infinite;}
+@keyframes twink{0%,100%{opacity:.15;}50%{opacity:.5;}}
+
+/* TABLE */
+.table-bg{position:fixed;bottom:0;left:0;right:0;height:90px;z-index:2;background:linear-gradient(180deg,#8D6E63,#5D4037);border-radius:30px 30px 0 0;}
+.table-bg::before{content:'';position:absolute;top:0;left:0;right:0;height:20px;background:linear-gradient(180deg,#A1887F,#8D6E63);border-radius:30px 30px 0 0;}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#fff;text-shadow:2px 3px 0 rgba(0,0,0,.3);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.2);backdrop-filter:blur(8px);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#fff;margin-top:4px;border:2px solid rgba(255,255,255,.3);}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.2);backdrop-filter:blur(8px);border:2px solid rgba(255,255,255,.3);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#fff;}
+.spill span{color:var(--gold);}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* EQUATION */
+.eq-card{position:relative;z-index:20;background:rgba(255,255,255,.18);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.35);border-radius:24px;padding:12px 24px;margin:8px 16px;text-align:center;max-width:640px;width:calc(100% - 32px);}
+.eq-main{font-family:'Fredoka One',cursive;font-size:clamp(1.8rem,7vw,3rem);color:#fff;text-shadow:2px 2px 0 rgba(0,0,0,.2);}
+.eq-hint{font-size:clamp(.85rem,3vw,1.05rem);color:rgba(255,255,255,.8);font-weight:700;margin-top:4px;}
+
+/* COOKIE JAR */
+.scene{position:relative;z-index:15;display:flex;align-items:center;justify-content:center;gap:clamp(16px,6vw,40px);padding:0 20px;flex:1;flex-wrap:wrap;}
+
+.jar-section{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.jar-label{font-family:'Fredoka One',cursive;font-size:clamp(.95rem,3.5vw,1.4rem);color:#fff;background:rgba(255,255,255,.2);border-radius:50px;padding:4px 16px;border:2px solid rgba(255,255,255,.3);}
+
+.cookie-jar{
+  position:relative;
+  width:clamp(120px,30vw,180px);height:clamp(130px,32vw,190px);
+  background:linear-gradient(145deg,rgba(255,255,255,.25),rgba(255,255,255,.1));
+  border:3px solid rgba(255,255,255,.4);
+  border-radius:20px 20px 30px 30px;
+  backdrop-filter:blur(8px);
+  display:flex;flex-wrap:wrap;align-content:flex-start;
+  padding:10px 8px;gap:4px;
+  box-shadow:0 8px 30px rgba(0,0,0,.2),inset 0 2px 8px rgba(255,255,255,.15);
+  overflow:hidden;
+}
+.jar-lid{position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:80%;height:22px;background:linear-gradient(135deg,#FFCC02,#FF9800);border-radius:12px 12px 0 0;box-shadow:0 3px 8px rgba(0,0,0,.2);}
+
+.cookie{
+  width:clamp(28px,7vw,38px);height:clamp(28px,7vw,38px);
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#FFCC80,#8D6E63);
+  border:2px solid #6D4C41;
+  display:flex;align-items:center;justify-content:center;
+  font-size:clamp(.7rem,2vw,.9rem);
+  cursor:default;
+  transition:all .4s;
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+  position:relative;
+  flex-shrink:0;
+}
+.cookie::after{content:'·';position:absolute;font-size:1.2rem;color:rgba(93,64,55,.5);}
+.cookie.eating{animation:cookieEat .5s ease forwards;}
+@keyframes cookieEat{0%{transform:scale(1);opacity:1;}50%{transform:scale(1.4) rotate(20deg);}100%{transform:scale(0) rotate(180deg);opacity:0;}}
+.cookie.eaten{opacity:0;pointer-events:none;}
+
+/* MONSTER */
+.monster-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.monster{font-size:clamp(4rem,14vw,7rem);animation:monsterBob 1.5s ease-in-out infinite;cursor:default;}
+@keyframes monsterBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px) rotate(-5deg);}}
+.monster.eating-anim{animation:monsterEat .6s ease;}
+@keyframes monsterEat{0%{transform:scale(1);}30%{transform:scale(1.3) rotate(10deg);}60%{transform:scale(.9);}100%{transform:scale(1);}}
+.monster-speech{background:rgba(255,255,255,.9);border-radius:20px;padding:8px 16px;font-weight:800;font-size:clamp(.8rem,3vw,1.1rem);color:#1565C0;position:relative;max-width:160px;text-align:center;}
+.monster-speech::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:rgba(255,255,255,.9);}
+
+/* EAT BUTTON */
+.eat-btn{
+  background:linear-gradient(135deg,#E53935,#FF8F00);color:#fff;border:none;border-radius:50px;
+  padding:12px 28px;font-family:'Fredoka One',cursive;font-size:clamp(1rem,4vw,1.4rem);
+  cursor:pointer;box-shadow:0 5px 18px rgba(229,57,53,.4);
+  transition:transform .2s;z-index:20;position:relative;
+  animation:eatBtnPulse 1.5s ease-in-out infinite;
+}
+@keyframes eatBtnPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+.eat-btn:active{transform:scale(.95);}
+.eat-btn.done{opacity:.35;pointer-events:none;animation:none;}
+
+/* ANSWERS */
+.choices-area{position:relative;z-index:20;background:rgba(255,255,255,.18);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.3);border-radius:22px;padding:12px 14px;margin:6px 14px;max-width:680px;width:calc(100% - 28px);margin-bottom:100px;}
+.choices-lbl{font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:8px;text-align:center;}
+.ans-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.ans-btn{width:clamp(56px,13vw,74px);height:clamp(56px,13vw,74px);border-radius:16px;border:none;cursor:pointer;font-family:'Fredoka One',cursive;font-size:clamp(1.4rem,5vw,2rem);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.3),0 6px 14px rgba(0,0,0,.2);transition:all .15s;position:relative;top:0;}
+.ans-btn:hover{top:-3px;box-shadow:0 7px 0 rgba(0,0,0,.25);}
+.ans-btn:active{top:3px;box-shadow:0 1px 0 rgba(0,0,0,.3);}
+.ans-btn.wrong{animation:btnShake .35s ease;opacity:.3;pointer-events:none;}
+@keyframes btnShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.95rem,3.5vw,1.25rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:1.7;}
+.ov-btn{background:linear-gradient(135deg,#1565C0,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(21,101,192,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+.explain{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(21,101,192,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:360px;width:90%;text-align:center;animation:exIn .3s ease both,exOut .3s 2.8s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes exIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes exOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="star-bg" id="starBg"></div>
+<div class="table-bg"></div>
+
+<div class="header">
+  <div class="title">🍪 Cookie Subtraction</div>
+  <div class="lvchip" id="lvChip">Level 1 · Subtract within 10</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">📚 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+<div class="eq-card">
+  <div class="eq-main" id="eqMain">8 − 3 = ?</div>
+  <div class="eq-hint" id="eqHint">The monster is eating 3 cookies. How many are left?</div>
+</div>
+
+<div class="scene" id="scene">
+  <div class="jar-section">
+    <div class="jar-label" id="jarLabel">Cookie Jar (8)</div>
+    <div class="cookie-jar" id="cookieJar"><div class="jar-lid"></div></div>
+  </div>
+  <div class="monster-wrap">
+    <div class="monster" id="monster">👾</div>
+    <div class="monster-speech" id="monsterSpeech">Yum yum! I want cookies!</div>
+    <button class="eat-btn" id="eatBtn" onclick="feedMonster()">🍪 Feed Monster!</button>
+  </div>
+</div>
+
+<div class="choices-area" id="choicesArea" style="display:none;">
+  <div class="choices-lbl">🍪 How many cookies are left?</div>
+  <div class="ans-row" id="ansRow"></div>
+</div>
+
+<script>
+const MONSTERS=['👾','🤖','👻','🦖','🐉','🦕','🎃','👽'];
+const ANS_COLORS=['#E53935','#1E88E5','#FB8C00','#8E24AA','#00897B'];
+const TOTAL=10;
+let score=0,round=0,total=0,sub=0,answered=false,fed=false;
+
+function makeStars(){
+  const bg=document.getElementById('starBg');
+  for(let i=0;i<40;i++){
+    const s=document.createElement('div');s.className='sb';
+    const sz=Math.random()*2.5+1;
+    s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*2.5}s;animation-duration:${1.5+Math.random()*2}s;`;
+    bg.appendChild(s);
+  }
+}
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playMunch(){
+  const c=ac();
+  [400,300,350].forEach((f,i)=>setTimeout(()=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=f;
+    g.gain.setValueAtTime(.12,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.12);
+    o.start();o.stop(c.currentTime+.12);
+  },i*100));
+}
+function playCorrect(){
+  const c=ac();
+  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';
+    g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);
+    o.start();o.stop(c.currentTime+.4);
+  },i*100));
+}
+function playWrong(){
+  const c=ac(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;
+  g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);
+  o.start();o.stop(c.currentTime+.3);
+}
+function playBigChime(){
+  const c=ac();
+  [523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';
+    g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);
+    o.start();o.stop(c.currentTime+.45);
+  },i*90));
+}
+
+function speak(t){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;
+  window.speechSynthesis.speak(u);
+}
+function makeDots(){
+  const p=document.getElementById('progRow');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='pdot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+function spawnConf(){
+  const cols=['#1565C0','#FFD700','#E53935','#43A047','#FB8C00'];
+  for(let i=0;i<22;i++){
+    const c=document.createElement('div');c.className='conf';
+    c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;
+    document.body.appendChild(c);setTimeout(()=>c.remove(),1600);
+  }
+}
+function showExplain(txt){
+  document.querySelector('.explain')?.remove();
+  const el=document.createElement('div');el.className='explain';el.textContent=txt;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),3200);
+}
+
+function buildCookies(count){
+  const jar=document.getElementById('cookieJar');
+  jar.innerHTML='<div class="jar-lid"></div>';
+  for(let i=0;i<count;i++){
+    const c=document.createElement('div');c.className='cookie';c.id=`cookie_${i}`;
+    jar.appendChild(c);
+  }
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;fed=false;
+  const lvIdx=round<4?0:round<7?1:2;
+  const levels=[{name:'within 10',max:8,maxS:5},{name:'within 15',max:13,maxS:7},{name:'within 20',max:18,maxS:9}];
+  const lv=levels[lvIdx];
+  document.getElementById('lvChip').textContent=`Level ${lvIdx+1} · Subtract ${lv.name}`;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  total=Math.floor(Math.random()*lv.max)+3;
+  sub=Math.floor(Math.random()*Math.min(lv.maxS,total-1))+1;
+  const remain=total-sub;
+
+  document.getElementById('eqMain').textContent=`${total} − ${sub} = ?`;
+  document.getElementById('eqHint').textContent=`The monster eats ${sub} cookies. How many are left?`;
+  document.getElementById('jarLabel').textContent=`Cookie Jar (${total})`;
+  document.getElementById('monsterSpeech').textContent=`Yum yum! I want ${sub} cookies!`;
+  document.getElementById('monster').textContent=MONSTERS[round%MONSTERS.length];
+  document.getElementById('eatBtn').className='eat-btn';
+  document.getElementById('choicesArea').style.display='none';
+  buildCookies(total);
+
+  setTimeout(()=>speak(`There are ${total} cookies. The monster eats ${sub}. How many are left?`),400);
+}
+
+function feedMonster(){
+  if(fed)return;fed=true;
+  document.getElementById('eatBtn').classList.add('done');
+  const monster=document.getElementById('monster');
+  let eaten=0;
+  function eatOne(){
+    if(eaten>=sub){
+      // show answer choices
+      const remain=total-sub;
+      document.getElementById('eqMain').textContent=`${total} − ${sub} = ?`;
+      document.getElementById('monsterSpeech').textContent=`Mmm! I ate ${sub}!`;
+      document.getElementById('choicesArea').style.display='';
+      buildAnsButtons(remain);
+      speak(`I ate ${sub} cookies! Count the remaining cookies. How many are left?`);
+      return;
+    }
+    playMunch();
+    monster.classList.remove('eating-anim');
+    void monster.offsetWidth;
+    monster.classList.add('eating-anim');
+    // animate next cookie
+    const cookies=document.querySelectorAll('.cookie:not(.eaten)');
+    if(cookies[0]){
+      cookies[0].classList.add('eating');
+      setTimeout(()=>cookies[0].classList.add('eaten'),500);
+    }
+    eaten++;
+    setTimeout(eatOne,600);
+  }
+  eatOne();
+}
+window.feedMonster=feedMonster;
+
+function buildAnsButtons(correct){
+  const ar=document.getElementById('ansRow');ar.innerHTML='';
+  const wrongs=new Set();
+  while(wrongs.size<4){
+    const w=correct+Math.floor(Math.random()*6)-3;
+    if(w>=0&&w!==correct)wrongs.add(w);
+  }
+  [...wrongs,correct].sort(()=>Math.random()-.5).forEach((n,i)=>{
+    const btn=document.createElement('button');
+    btn.className='ans-btn';btn.textContent=n;
+    btn.style.background=`linear-gradient(135deg,${ANS_COLORS[i%ANS_COLORS.length]},${ANS_COLORS[(i+2)%ANS_COLORS.length]})`;
+    btn.onclick=()=>checkAns(btn,n,correct);
+    ar.appendChild(btn);
+  });
+}
+
+function checkAns(btn,chosen,correct){
+  if(answered)return;
+  if(chosen===correct){
+    answered=true;
+    playCorrect();spawnConf();
+    document.getElementById('eqMain').textContent=`${total} − ${sub} = ${correct} ✓`;
+    document.getElementById('monsterSpeech').textContent=`Yes! ${correct} left!`;
+    score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(`${total} minus ${sub} equals ${correct}! You got it!`);
+    round++;makeDots();setTimeout(newRound,1900);
+  } else {
+    playWrong();btn.classList.add('wrong');
+    const left=document.querySelectorAll('.cookie:not(.eaten)').length;
+    showExplain(`💡 Count the cookies still in the jar. There are ${left} cookies left!\n${total} − ${sub} = ?`);
+    speak(`Count the cookies still in the jar!`);
+  }
+}
+
+function showCelebration(){
+  playBigChime();spawnConf();
+  speak(`Brilliant! You understand subtraction! Taking away cookies helps us subtract!`);
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🍪</div>
+    <div class="ov-title">Subtraction Star!</div>
+    <div class="ov-sub">You learned: <strong style="color:#FFD700;">Whole − Part = Part</strong><br/>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</div>
+    <button class="ov-btn" onclick="restart()">Play Again 👾</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{makeStars();window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Feed the monster cookies and learn subtraction!');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

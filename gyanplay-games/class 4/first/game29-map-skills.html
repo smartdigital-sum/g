@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GyanPlay – Map Skills</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:#fff;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{from{transform:rotate(-15deg) scale(.7);opacity:0}to{transform:rotate(0deg) scale(1);opacity:1}}
+.fadeIn{animation:fadeIn .45s ease both;}
+.spin{animation:spin .5s cubic-bezier(.34,1.56,.64,1) both;}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100;}
+.back-btn{background:none;border:2px solid rgba(255,255,255,.25);color:#fff;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:600;padding:7px 16px;border-radius:30px;cursor:pointer;transition:all .2s;}
+.back-btn:hover{background:rgba(255,255,255,.12);}
+.badge{background:var(--pink);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.8rem;padding:5px 14px;border-radius:30px;letter-spacing:.5px;}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);color:#fff;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;padding:5px 12px;border-radius:20px;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--pink);border-color:var(--pink);}
+
+.score-bar{padding:12px 20px 0;max-width:700px;margin:0 auto;}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.score-label{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.95rem;color:var(--gold);}
+.score-val{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.1rem;color:#fff;}
+.progress-track{height:8px;background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--sky));border-radius:10px;transition:width .5s ease;}
+
+.main{max-width:700px;margin:0 auto;padding:20px;}
+.q-card{background:var(--card);border-radius:20px;padding:28px 28px 24px;box-shadow:0 8px 40px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.06);}
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.q-num{font-family:'Baloo 2',sans-serif;font-size:.85rem;font-weight:700;color:rgba(255,255,255,.45);}
+.q-type{font-family:'Baloo 2',sans-serif;font-size:.8rem;font-weight:700;color:var(--green);background:rgba(0,200,83,.13);padding:3px 10px;border-radius:20px;}
+
+/* COMPASS / ICON DISPLAY */
+.icon-display{text-align:center;margin:14px 0 20px;padding:16px;background:rgba(0,200,83,.07);border:2px solid rgba(0,200,83,.18);border-radius:16px;}
+.icon-display .main-icon{font-size:4rem;display:block;line-height:1;}
+.icon-display .icon-label{font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;color:rgba(255,255,255,.5);margin-top:8px;}
+
+/* COMPASS ROSE SVG */
+.compass-rose{display:block;margin:0 auto 0;width:120px;height:120px;}
+
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.15rem;font-weight:700;line-height:1.5;margin-bottom:18px;color:#fff;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;font-family:'Nunito',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;text-align:left;color:#fff;transition:all .2s;display:flex;align-items:center;gap:12px;}
+.choice:hover:not(:disabled){background:rgba(0,200,83,.12);border-color:var(--green);}
+.choice.correct{background:rgba(0,200,83,.15);border-color:var(--green);}
+.choice.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);}
+.choice:disabled{cursor:default;}
+.choice-icon{font-size:1rem;min-width:22px;text-align:center;color:rgba(255,255,255,.4);}
+
+.explanation{margin-top:18px;background:rgba(255,255,255,.06);border-left:4px solid var(--sky);border-radius:0 12px 12px 0;padding:14px 16px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;line-height:1.55;color:rgba(255,255,255,.88);}
+.next-btn{margin-top:20px;background:linear-gradient(135deg,var(--green),var(--sky));border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;padding:12px 32px;border-radius:50px;cursor:pointer;display:block;width:100%;transition:transform .18s;}
+.next-btn:hover{transform:scale(1.03);}
+.end-card{background:var(--card);border-radius:24px;padding:40px 28px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.4);}
+.stars{font-size:2.8rem;margin-bottom:10px;}
+.end-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.end-score{font-family:'Baloo 2',sans-serif;font-size:1.2rem;color:rgba(255,255,255,.75);margin-bottom:24px;}
+.play-again{background:linear-gradient(135deg,var(--green),var(--sky));border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:800;padding:14px 36px;border-radius:50px;cursor:pointer;transition:transform .18s;}
+.play-again:hover{transform:scale(1.06);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="badge">🗺️ Social Studies</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="score-bar">
+  <div class="score-row">
+    <span class="score-label">Score</span>
+    <span class="score-val" id="scoreVal">0 / 100</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<div class="main" id="mainArea"></div>
+
+<script>
+// Compass Rose SVG for direction questions
+const COMPASS_SVG=`<svg class="compass-rose spin" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="60" r="55" fill="rgba(0,200,83,.1)" stroke="rgba(0,200,83,.3)" stroke-width="1.5"/>
+  <polygon points="60,10 55,55 65,55" fill="#00C853"/>
+  <polygon points="60,110 55,65 65,65" fill="rgba(255,255,255,.3)"/>
+  <polygon points="10,60 55,55 55,65" fill="rgba(255,255,255,.3)"/>
+  <polygon points="110,60 65,55 65,65" fill="rgba(255,255,255,.3)"/>
+  <text x="60" y="8" text-anchor="middle" font-family="Baloo 2" font-size="12" font-weight="800" fill="#00C853">N</text>
+  <text x="60" y="118" text-anchor="middle" font-family="Baloo 2" font-size="11" font-weight="700" fill="rgba(255,255,255,.6)">S</text>
+  <text x="6" y="64" text-anchor="middle" font-family="Baloo 2" font-size="11" font-weight="700" fill="rgba(255,255,255,.6)">W</text>
+  <text x="114" y="64" text-anchor="middle" font-family="Baloo 2" font-size="11" font-weight="700" fill="rgba(255,255,255,.6)">E</text>
+  <circle cx="60" cy="60" r="5" fill="#FFB800"/>
+</svg>`;
+
+const MAP_ICON=`<span style="font-size:3.5rem">🗺️</span>`;
+const GLOBE_ICON=`<span style="font-size:3.5rem">🌍</span>`;
+const COMPASS_ICON=`<span style="font-size:3.5rem">🧭</span>`;
+
+const QUESTIONS=[
+  {type:"Types of Maps",icon:"map",
+   en:{q:"Which type of map shows rivers, mountains, and plains?",choices:["Physical map","Political map","Thematic map"],ans:0,exp:"A physical map shows natural features like mountains, rivers, plains, and oceans. A political map shows countries, states, and cities."},
+   hi:{q:"कौन-सा नक्शा नदियाँ, पहाड़ और मैदान दिखाता है?",choices:["भौतिक नक्शा","राजनीतिक नक्शा","विषयगत नक्शा"],ans:0,exp:"भौतिक नक्शा पहाड़, नदी, मैदान जैसी प्राकृतिक विशेषताएं दिखाता है। राजनीतिक नक्शा देश, राज्य और शहर दिखाता है।"},
+   as:{q:"কোন মানচিত্ৰে নদী, পাহাৰ আৰু সমভূমি দেখুৱায়?",choices:["ভৌতিক মানচিত্ৰ","ৰাজনৈতিক মানচিত্ৰ","বিষয়ভিত্তিক মানচিত্ৰ"],ans:0,exp:"ভৌতিক মানচিত্ৰে পাহাৰ, নদী, সমভূমিৰ দৰে প্ৰাকৃতিক বৈশিষ্ট্য দেখুৱায়।"}},
+  {type:"Map Components",icon:"map",
+   en:{q:"What does the LEGEND (key) on a map show?",choices:["Meaning of symbols used","Distance between places","Direction of north"],ans:0,exp:"The legend (or key) explains what the symbols and colors on a map mean. It is one of the essential components of a map."},
+   hi:{q:"नक्शे की 'लेजेंड (कुंजी)' क्या दिखाती है?",choices:["प्रयुक्त चिन्हों का अर्थ","स्थानों के बीच की दूरी","उत्तर की दिशा"],ans:0,exp:"लेजेंड/कुंजी नक्शे पर इस्तेमाल किए गए चिह्नों और रंगों का अर्थ बताती है। यह नक्शे का एक आवश्यक भाग है।"},
+   as:{q:"মানচিত্ৰৰ 'লেজেণ্ড (চাবিকাঠি)' কি দেখুৱায়?",choices:["ব্যৱহৃত চিহ্নবোৰৰ অৰ্থ","স্থানবোৰৰ মাজৰ দূৰত্ব","উত্তৰৰ দিশ"],ans:0,exp:"লেজেণ্ড বা চাবিকাঠিয়ে মানচিত্ৰৰ চিহ্ন আৰু ৰঙৰ অৰ্থ বুজায়।"}},
+  {type:"Cardinal Directions",icon:"compass",
+   en:{q:"🧭 Which direction is OPPOSITE to North?",choices:["South","East","West"],ans:0,exp:"The four cardinal directions are North (N), South (S), East (E), West (W). North and South are opposite. East and West are opposite."},
+   hi:{q:"🧭 उत्तर के विपरीत दिशा कौन-सी है?",choices:["दक्षिण","पूर्व","पश्चिम"],ans:0,exp:"चार मुख्य दिशाएँ: उत्तर (N), दक्षिण (S), पूर्व (E), पश्चिम (W)। उत्तर और दक्षिण विपरीत हैं।"},
+   as:{q:"🧭 উত্তৰৰ বিপৰীত দিশ কোনটো?",choices:["দক্ষিণ","পূব","পশ্চিম"],ans:0,exp:"চাৰিটা মূল দিশ: উত্তৰ (N), দক্ষিণ (S), পূব (E), পশ্চিম (W)। উত্তৰ আৰু দক্ষিণ বিপৰীত।"}},
+  {type:"Intermediate Directions",icon:"compass",
+   en:{q:"🧭 What is the intermediate direction between North and East?",choices:["North-East (NE)","North-West (NW)","South-East (SE)"],ans:0,exp:"Intermediate directions lie between the cardinal directions. Between North and East is North-East (NE). The 4 intermediate directions are NE, NW, SE, SW."},
+   hi:{q:"🧭 उत्तर और पूर्व के बीच की मध्यवर्ती दिशा क्या है?",choices:["उत्तर-पूर्व (NE)","उत्तर-पश्चिम (NW)","दक्षिण-पूर्व (SE)"],ans:0,exp:"मध्यवर्ती दिशाएँ मुख्य दिशाओं के बीच होती हैं। उत्तर और पूर्व के बीच = उत्तर-पूर्व (NE)।"},
+   as:{q:"🧭 উত্তৰ আৰু পূবৰ মাজৰ মধ্যবৰ্তী দিশ কোনটো?",choices:["উত্তৰ-পূব (NE)","উত্তৰ-পশ্চিম (NW)","দক্ষিণ-পূব (SE)"],ans:0,exp:"মধ্যবৰ্তী দিশবোৰ মূল দিশবোৰৰ মাজত থাকে। উত্তৰ আৰু পূবৰ মাজত = উত্তৰ-পূব (NE)।"}},
+  {type:"Latitude – Equator",icon:"globe",
+   en:{q:"🌍 What is the latitude of the Equator?",choices:["0°","23.5°N","90°N"],ans:0,exp:"The Equator is at 0° latitude. It is an imaginary line that divides the Earth into the Northern and Southern Hemispheres."},
+   hi:{q:"🌍 भूमध्य रेखा का अक्षांश क्या है?",choices:["0°","23.5°N","90°N"],ans:0,exp:"भूमध्य रेखा 0° अक्षांश पर है। यह एक काल्पनिक रेखा है जो पृथ्वी को उत्तरी और दक्षिणी गोलार्धों में बाँटती है।"},
+   as:{q:"🌍 বিষুৱ ৰেখাৰ অক্ষাংশ কত?",choices:["0°","23.5°N","90°N"],ans:0,exp:"বিষুৱ ৰেখা 0° অক্ষাংশত আছে। এটা কাল্পনিক ৰেখা যি পৃথিৱীক উত্তৰ আৰু দক্ষিণ গোলার্ধত ভাগ কৰে।"}},
+  {type:"Tropic of Cancer",icon:"globe",
+   en:{q:"🌍 The Tropic of Cancer is at which latitude?",choices:["23.5°N","23.5°S","66.5°N"],ans:0,exp:"The Tropic of Cancer is at 23.5° North latitude. India lies mostly between the Equator and the Tropic of Cancer. The Sun is directly overhead here on June 21."},
+   hi:{q:"🌍 कर्क रेखा किस अक्षांश पर है?",choices:["23.5°N","23.5°S","66.5°N"],ans:0,exp:"कर्क रेखा 23.5° उत्तरी अक्षांश पर है। भारत का अधिकांश भाग भूमध्य रेखा और कर्क रेखा के बीच है।"},
+   as:{q:"🌍 কৰ্কটক্রান্তি কোন অক্ষাংশত আছে?",choices:["23.5°N","23.5°S","66.5°N"],ans:0,exp:"কৰ্কটক্রান্তি 23.5° উত্তৰ অক্ষাংশত আছে। ভাৰতৰ বেছিভাগ অংশ বিষুৱ ৰেখা আৰু কৰ্কটক্রান্তিৰ মাজত।"}},
+  {type:"Tropic of Capricorn",icon:"globe",
+   en:{q:"🌍 Where is the Tropic of Capricorn located?",choices:["23.5°S","23.5°N","0°"],ans:0,exp:"The Tropic of Capricorn is at 23.5° South latitude. It is in the Southern Hemisphere. The Sun is directly overhead here on December 21."},
+   hi:{q:"🌍 मकर रेखा कहाँ स्थित है?",choices:["23.5°S","23.5°N","0°"],ans:0,exp:"मकर रेखा 23.5° दक्षिणी अक्षांश पर है। यह दक्षिणी गोलार्ध में है।"},
+   as:{q:"🌍 মকৰক্রান্তি ক'ত অৱস্থিত?",choices:["23.5°S","23.5°N","0°"],ans:0,exp:"মকৰক্রান্তি 23.5° দক্ষিণ অক্ষাংশত আছে। ই দক্ষিণ গোলার্ধত আছে।"}},
+  {type:"Prime Meridian",icon:"globe",
+   en:{q:"🌍 The Prime Meridian (0° longitude) passes through which city?",choices:["Greenwich, London","New Delhi","New York"],ans:0,exp:"The Prime Meridian (0° longitude) passes through Greenwich in London, UK. It divides Earth into Eastern and Western Hemispheres."},
+   hi:{q:"🌍 प्रमुख याम्योत्तर (0° देशांतर) किस शहर से गुजरती है?",choices:["ग्रीनविच, लंदन","नई दिल्ली","न्यूयॉर्क"],ans:0,exp:"प्रमुख याम्योत्तर (0° देशांतर) यूके के लंदन में ग्रीनविच से गुजरती है। यह पृथ्वी को पूर्वी और पश्चिमी गोलार्धों में बाँटती है।"},
+   as:{q:"🌍 মূল মধ্যাহ্নৰেখা (0° দ্ৰাঘিমা) কোন চহৰৰ মাজেৰে যায়?",choices:["গ্ৰীনউইচ, লণ্ডন","নতুন দিল্লী","নিউয়ৰ্ক"],ans:0,exp:"মূল মধ্যাহ্নৰেখা (0° দ্ৰাঘিমা) UK ৰ লণ্ডনৰ গ্ৰীনউইচৰ মাজেৰে যায়। ই পৃথিৱীক পূব আৰু পশ্চিম গোলার্ধত ভাগ কৰে।"}},
+  {type:"Map Scale",icon:"map",
+   en:{q:"What does SCALE on a map tell us?",choices:["Ratio of map distance to actual distance","List of symbols","Direction of North"],ans:0,exp:"Scale shows the relationship between distance on the map and actual distance on the ground. For example, 1 cm on map = 100 km on ground."},
+   hi:{q:"नक्शे पर 'पैमाना' क्या बताता है?",choices:["नक्शे की दूरी और वास्तविक दूरी का अनुपात","चिह्नों की सूची","उत्तर की दिशा"],ans:0,exp:"पैमाना, नक्शे पर दूरी और जमीन पर वास्तविक दूरी के बीच संबंध दिखाता है।"},
+   as:{q:"মানচিত্ৰৰ 'স্কেল' কি বুজায়?",choices:["মানচিত্ৰৰ দূৰত্ব আৰু প্ৰকৃত দূৰত্বৰ অনুপাত","চিহ্নবোৰৰ তালিকা","উত্তৰৰ দিশ"],ans:0,exp:"স্কেলে মানচিত্ৰৰ দূৰত্ব আৰু মাটিৰ প্ৰকৃত দূৰত্বৰ সম্পৰ্ক দেখুৱায়।"}},
+  {type:"India Standard Time",icon:"globe",
+   en:{q:"🌍 What is India Standard Time (IST) offset from Greenwich?",choices:["+5 hours 30 min","−5 hours","0 hours"],ans:0,exp:"India Standard Time (IST) is +5:30 hours ahead of Greenwich Mean Time (GMT/UTC). India follows a single time zone for the whole country."},
+   hi:{q:"🌍 भारतीय मानक समय (IST) ग्रीनविच से कितना आगे है?",choices:["+5 घंटे 30 मिनट","−5 घंटे","0 घंटे"],ans:0,exp:"भारतीय मानक समय (IST) ग्रीनविच मीन टाइम से +5:30 घंटे आगे है। पूरे भारत में एक ही समय क्षेत्र है।"},
+   as:{q:"🌍 ভাৰতীয় মানক সময় (IST) গ্ৰীনউইচতকৈ কিমান আগত?",choices:["+5 ঘণ্টা 30 মিনিট","−5 ঘণ্টা","0 ঘণ্টা"],ans:0,exp:"ভাৰতীয় মানক সময় (IST) গ্ৰীনউইচ মিন টাইমতকৈ +5:30 ঘণ্টা আগত। গোটেই ভাৰতত এটা সময় ক্ষেত্ৰ আছে।"}}
+];
+
+let lang='en',current=0,score=0,answered=false;
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{b.classList.toggle('active',['en','hi','as'][i]===l);});
+  render();
+}
+
+function buildIcon(type){
+  if(type==='compass'){
+    return `<div class="icon-display">${COMPASS_SVG}<span class="icon-label">🧭 Directions</span></div>`;
+  }else if(type==='globe'){
+    return `<div class="icon-display spin">${GLOBE_ICON}<span class="icon-label">🌐 Globe & Latitude/Longitude</span></div>`;
+  }else{
+    return `<div class="icon-display">${MAP_ICON}<span class="icon-label">🗺️ Maps</span></div>`;
+  }
+}
+
+function render(){
+  if(current>=QUESTIONS.length){showEnd();return;}
+  const q=QUESTIONS[current];const d=q[lang];
+  document.getElementById('progressFill').style.width=((current/QUESTIONS.length)*100)+'%';
+  document.getElementById('scoreVal').textContent=score+' / 100';
+  document.getElementById('mainArea').innerHTML=`
+  <div class="q-card fadeIn">
+    <div class="q-meta"><span class="q-num">Q ${current+1} / 10</span><span class="q-type">${q.type}</span></div>
+    ${buildIcon(q.icon)}
+    <div class="q-text">${d.q}</div>
+    <div class="choices">
+      ${d.choices.map((c,i)=>`<button class="choice" onclick="pick(${i})" id="ch${i}"><span class="choice-icon">●</span>${c}</button>`).join('')}
+    </div>
+  </div>`;
+  answered=false;
+}
+
+function pick(i){
+  if(answered)return;answered=true;
+  const d=QUESTIONS[current][lang];const ans=d.ans;
+  document.querySelectorAll('.choice').forEach((b,j)=>{
+    b.disabled=true;
+    if(j===ans){b.classList.add('correct');b.querySelector('.choice-icon').textContent='✓';}
+    else if(j===i&&i!==ans){b.classList.add('wrong');b.querySelector('.choice-icon').textContent='✗';}
+  });
+  if(i===ans)score+=10;
+  document.getElementById('scoreVal').textContent=score+' / 100';
+  const exp=document.createElement('div');exp.className='explanation fadeIn';exp.textContent='💡 '+d.exp;
+  document.querySelector('.q-card').appendChild(exp);
+  const btn=document.createElement('button');btn.className='next-btn fadeIn';
+  btn.textContent=current<9?'Next →':'See Results';
+  btn.onclick=()=>{current++;render();};
+  document.querySelector('.q-card').appendChild(btn);
+}
+
+function showEnd(){
+  const pct=score;
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'☆';
+  const msg=pct>=90?'Outstanding! 🎉':pct>=70?'Great job! 👍':pct>=40?'Good effort! 💪':'Keep practising! 📚';
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('mainArea').innerHTML=`
+  <div class="end-card fadeIn">
+    <div class="stars">${stars}</div>
+    <div class="end-title">${msg}</div>
+    <div class="end-score">You scored ${score} out of 100</div>
+    <button class="play-again" onclick="restart()">🔄 Play Again</button>
+  </div>`;
+}
+function restart(){current=0;score=0;render();}
+render();
+</script>
+</body>
+</html>

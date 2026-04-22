@@ -1,0 +1,47 @@
+# ── Secrets / env ──
+.env
+.env.*
+!.env.example
+
+# ── Dependencies ──
+node_modules/
+**/node_modules/
+
+# ── Firebase ──
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log
+ui-debug.log
+
+# ── Build artefacts ──
+dist/
+build/
+.cache/
+.parcel-cache/
+
+# ── Logs ──
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Editor / OS ──
+.vscode/
+.idea/
+.qodo/
+.claude/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Pre-launch files that must never deploy ──
+test-purchases.html
+
+# ── Private business docs ──
+GyanPlay-Project-Plan.docx
+
+# ── Local-only ──
+/private/
+/scratch/

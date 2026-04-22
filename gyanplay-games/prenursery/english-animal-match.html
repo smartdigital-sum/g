@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Animal Name Match 🦁</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Baloo 2',cursive;
+    background:linear-gradient(160deg,#1a2a0a,#2d5016,#3d7a1e);
+    min-height:100vh;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    user-select:none;
+  }
+  /* jungle leaves */
+  .leaf{
+    position:fixed;pointer-events:none;z-index:1;font-size:2rem;
+    animation:leafSway 4s ease-in-out infinite;opacity:.6;
+  }
+  @keyframes leafSway{0%,100%{transform:rotate(-10deg);}50%{transform:rotate(10deg);}}
+
+  .header{position:relative;z-index:10;text-align:center;padding:18px 20px 8px;width:100%;}
+  .title{font-size:clamp(1.4rem,5vw,2.2rem);color:#FFD700;text-shadow:0 2px 10px rgba(0,0,0,.3);}
+
+  .score-bar{position:relative;z-index:10;display:flex;gap:16px;align-items:center;margin-top:8px;}
+  .score-box{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);border-radius:20px;padding:6px 18px;color:#fff;font-size:1rem;}
+  .score-box span{color:#FFD700;font-size:1.2rem;}
+
+  .progress{position:relative;z-index:10;display:flex;gap:8px;margin-top:8px;}
+  .dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s;}
+  .dot.done{background:#FFD700;box-shadow:0 0 8px #FFD700;}
+  .dot.active{background:#fff;transform:scale(1.3);}
+
+  /* question card */
+  .question-card{
+    position:relative;z-index:10;
+    background:rgba(255,255,255,.12);backdrop-filter:blur(10px);
+    border:3px solid rgba(255,255,255,.25);border-radius:28px;
+    padding:clamp(16px,4vw,28px) clamp(20px,5vw,40px);
+    margin:12px 20px;
+    text-align:center;
+    box-shadow:0 8px 32px rgba(0,0,0,.3);
+  }
+  .question-animal{font-size:clamp(4rem,18vw,8rem);line-height:1;margin-bottom:8px;animation:animalBob 2s ease-in-out infinite;}
+  @keyframes animalBob{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+  .question-name{
+    font-size:clamp(1.4rem,6vw,2.5rem);color:#fff;font-weight:800;
+    text-shadow:0 2px 8px rgba(0,0,0,.3);
+    letter-spacing:2px;
+  }
+  .play-sound-btn{
+    background:rgba(255,215,0,.2);border:2px solid rgba(255,215,0,.5);
+    color:#FFD700;border-radius:50px;padding:8px 20px;
+    font-family:'Baloo 2',cursive;font-size:.9rem;font-weight:700;
+    cursor:pointer;margin-top:8px;transition:all .2s;
+  }
+  .play-sound-btn:hover{background:rgba(255,215,0,.35);}
+
+  /* choices */
+  .choices{
+    position:relative;z-index:10;
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:clamp(10px,3vw,18px);
+    padding:0 20px;
+    width:100%;max-width:600px;
+  }
+  .choice-btn{
+    background:rgba(255,255,255,.1);backdrop-filter:blur(6px);
+    border:3px solid rgba(255,255,255,.2);border-radius:20px;
+    padding:clamp(12px,3vw,20px);
+    text-align:center;cursor:pointer;
+    transition:all .2s;
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+  }
+  .choice-btn:hover{transform:scale(1.04);border-color:rgba(255,215,0,.5);background:rgba(255,215,0,.1);}
+  .choice-emoji{font-size:clamp(2.5rem,9vw,4rem);}
+  .choice-label{color:#fff;font-size:clamp(.8rem,3vw,1.1rem);font-weight:700;}
+  .choice-btn.correct{
+    border-color:#2ed573;background:rgba(46,213,115,.25);
+    animation:correctPop .5s ease;
+  }
+  .choice-btn.wrong{
+    border-color:#FF4757;background:rgba(255,71,87,.2);
+    animation:wrongShake .4s ease;
+  }
+  @keyframes correctPop{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+  @keyframes wrongShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-10px);}75%{transform:translateX(10px);}}
+
+  /* sound wave animation */
+  .sound-wave{
+    position:fixed;pointer-events:none;z-index:100;
+    font-size:3rem;
+    animation:wavePulse .6s ease-out forwards;
+  }
+  @keyframes wavePulse{0%{transform:scale(0);opacity:1;}100%{transform:scale(3);opacity:0;}}
+
+  /* celebration */
+  .celebration{
+    position:fixed;inset:0;z-index:200;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.75);backdrop-filter:blur(8px);animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .celeb-emoji{font-size:clamp(4rem,15vw,7rem);animation:celebBounce .5s ease infinite alternate;}
+  @keyframes celebBounce{from{transform:scale(1);}to{transform:scale(1.15);}}
+  .celebration h2{color:#FFD700;font-size:clamp(2rem,8vw,3.5rem);text-align:center;margin:16px 0 8px;}
+  .celebration p{color:#fff;font-size:clamp(1rem,4vw,1.4rem);margin-bottom:24px;}
+  .next-btn{
+    background:linear-gradient(135deg,#FF6B00,#FFB800);color:#fff;border:none;border-radius:50px;
+    padding:14px 40px;font-family:'Baloo 2',cursive;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;
+    cursor:pointer;box-shadow:0 6px 24px rgba(255,107,0,.4);transition:transform .2s;
+  }
+  .next-btn:hover{transform:scale(1.05);}
+  .confetti-piece{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.2s ease-in forwards;}
+  @keyframes confettiFall{0%{opacity:1;}100%{transform:translateY(300px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title">🦁 Animal Name Match</div>
+</div>
+<div class="score-bar">
+  <div class="score-box">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="score-box">🎯 Round: <span id="roundVal">1</span>/12</div>
+</div>
+<div class="progress" id="progress"></div>
+
+<div class="question-card">
+  <div class="question-animal" id="qAnimal">🦁</div>
+  <div class="question-name" id="qName">LION</div>
+  <button class="play-sound-btn" onclick="playAnimalSound()">🔊 Hear its sound!</button>
+</div>
+
+<div class="choices" id="choices"></div>
+
+<script>
+const ANIMALS=[
+  {emoji:'🦁',name:'LION',sound:'Roar! Roar!',desc:'lion'},
+  {emoji:'🐘',name:'ELEPHANT',sound:'Trumpet! Trumpet!',desc:'elephant'},
+  {emoji:'🐸',name:'FROG',sound:'Ribbit! Ribbit!',desc:'frog'},
+  {emoji:'🐄',name:'COW',sound:'Moo! Moo!',desc:'cow'},
+  {emoji:'🐶',name:'DOG',sound:'Woof! Woof!',desc:'dog'},
+  {emoji:'🐱',name:'CAT',sound:'Meow! Meow!',desc:'cat'},
+  {emoji:'🐔',name:'HEN',sound:'Cluck! Cluck!',desc:'hen'},
+  {emoji:'🐧',name:'PENGUIN',sound:'Squawk! Squawk!',desc:'penguin'},
+  {emoji:'🦆',name:'DUCK',sound:'Quack! Quack!',desc:'duck'},
+  {emoji:'🐝',name:'BEE',sound:'Buzz! Buzz!',desc:'bee'},
+  {emoji:'🦊',name:'FOX',sound:'Yip! Yip!',desc:'fox'},
+  {emoji:'🐺',name:'WOLF',sound:'Howl!',desc:'wolf'},
+  {emoji:'🐻',name:'BEAR',sound:'Growl! Growl!',desc:'bear'},
+  {emoji:'🦋',name:'BUTTERFLY',sound:'Flutter!',desc:'butterfly'},
+  {emoji:'🐬',name:'DOLPHIN',sound:'Click! Click!',desc:'dolphin'},
+];
+
+let score=0,round=0,current=null,answered=false;
+const TOTAL=12;
+
+let audioCtx;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function playCorrectSound(){
+  const ctx=getAudio();
+  [523,659,784,1047].forEach((f,i)=>{
+    setTimeout(()=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.4);
+      o.start();o.stop(ctx.currentTime+.4);
+    },i*100);
+  });
+}
+
+function playWrongSound(){
+  const ctx=getAudio();
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);
+  o.frequency.value=200;o.type='sine';
+  g.gain.setValueAtTime(.2,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
+  o.start();o.stop(ctx.currentTime+.3);
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.85;u.pitch=1.3;
+  window.speechSynthesis.speak(u);
+}
+
+function playAnimalSound(){
+  if(current) speak(current.sound+' I am a '+current.desc+'!');
+}
+window.playAnimalSound=playAnimalSound;
+
+function makeDots(){
+  const p=document.getElementById('progress');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+
+function spawnConfetti(){
+  const cols=['#FF4757','#FFD700','#2ed573','#1e90ff','#a55eea'];
+  for(let i=0;i<20;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`left:${Math.random()*100}%;top:20%;background:${cols[i%cols.length]};animation-duration:${.8+Math.random()*.6}s;`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1400);
+  }
+}
+
+let usedAnimals=[];
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  // pick animal
+  const remaining=ANIMALS.filter(a=>!usedAnimals.some(u=>u.name===a.name));
+  if(remaining.length<2){usedAnimals=[];newRound();return;}
+  current=remaining[Math.floor(Math.random()*remaining.length)];
+  usedAnimals.push(current);
+
+  document.getElementById('qAnimal').textContent=current.emoji;
+  document.getElementById('qName').textContent=current.name;
+
+  // 4 choices
+  const others=ANIMALS.filter(a=>a.name!==current.name).sort(()=>Math.random()-.5).slice(0,3);
+  const allChoices=[current,...others].sort(()=>Math.random()-.5);
+
+  const choicesEl=document.getElementById('choices');
+  choicesEl.innerHTML='';
+  allChoices.forEach(a=>{
+    const btn=document.createElement('div');
+    btn.className='choice-btn';
+    btn.innerHTML=`<span class="choice-emoji">${a.emoji}</span><span class="choice-label">${a.name}</span>`;
+    btn.onclick=()=>checkAnswer(btn,a);
+    choicesEl.appendChild(btn);
+  });
+
+  setTimeout(()=>speak(`This is a ${current.desc}. Find the ${current.desc}!`),300);
+}
+
+function checkAnswer(btn,animal){
+  if(answered)return;
+  answered=true;
+  if(animal.name===current.name){
+    btn.classList.add('correct');
+    playCorrectSound();
+    spawnConfetti();
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    speak(`Yes! That is the ${current.desc}! ${current.sound}`);
+    round++;
+    makeDots();
+    setTimeout(newRound,1800);
+  } else {
+    btn.classList.add('wrong');
+    playWrongSound();
+    speak(`Oops! That is a ${animal.desc}. Find the ${current.desc}!`);
+    setTimeout(()=>{btn.classList.remove('wrong');answered=false;},800);
+  }
+}
+
+function showCelebration(){
+  speak(`You know all the animals! Brilliant!`);
+  const ov=document.createElement('div');
+  ov.className='celebration';
+  ov.innerHTML=`
+    <div class="celeb-emoji">🦁</div>
+    <h2>Animal Expert!</h2>
+    <p>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</p>
+    <button class="next-btn" onclick="restartGame()">Play Again 🦋</button>
+  `;
+  document.body.appendChild(ov);
+}
+
+function restartGame(){
+  document.querySelector('.celebration')?.remove();
+  score=0;round=0;usedAnimals=[];
+  document.getElementById('scoreVal').textContent=0;
+  newRound();
+}
+
+// Jungle leaves
+function makeLeaves(){
+  const leafPos=[[5,10],[90,20],[15,80],[85,70],[50,5]];
+  leafPos.forEach(([l,t],i)=>{
+    const el=document.createElement('div');
+    el.className='leaf';
+    el.textContent=['🌿','🍃','🌱','🌾','🍀'][i];
+    el.style.cssText=`left:${l}%;top:${t}%;animation-delay:${i*.6}s;font-size:${1.5+Math.random()}rem;`;
+    document.body.appendChild(el);
+  });
+}
+
+window.addEventListener('load',()=>{
+  makeLeaves();
+  window.speechSynthesis.getVoices();
+  makeDots();
+  setTimeout(()=>{
+    speak('Match the animal name!');
+    setTimeout(newRound,1200);
+  },500);
+});
+</script>
+</body>
+</html>

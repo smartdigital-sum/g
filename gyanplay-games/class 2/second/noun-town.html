@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noun Town - GyanPlay Class 2</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #74b9ff;
+            font-size: 2rem;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .score {
+            background: #e94560;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text {
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        .town-map {
+            background: linear-gradient(180deg, #87CEEB 0%, #90EE90 50%, #228B22 100%);
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .buildings {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .building {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .building:hover {
+            transform: scale(1.05);
+        }
+        
+        .building.selected {
+            border-color: #e94560;
+            background: #ffeaa7;
+        }
+        
+        .building.correct {
+            border-color: #00b894;
+            background: #55efc4;
+        }
+        
+        .building.wrong {
+            border-color: #e94560;
+            background: #ff7675;
+        }
+        
+        .building-icon {
+            font-size: 3rem;
+        }
+        
+        .building-name {
+            font-size: 0.9rem;
+            color: #2d3436;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .noun-type-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .type-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .type-btn.common {
+            background: #fdcb6e;
+            color: #2d3436;
+        }
+        
+        .type-btn.proper {
+            background: #a29bfe;
+            color: white;
+        }
+        
+        .type-btn.active {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .bins-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .noun-bin {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            min-width: 200px;
+            min-height: 150px;
+            border: 4px solid #dfe6e9;
+        }
+        
+        .bin-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .common-bin .bin-title {
+            background: #fdcb6e;
+            color: #2d3436;
+        }
+        
+        .proper-bin .bin-title {
+            background: #a29bfe;
+            color: white;
+        }
+        
+        .bin-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            min-height: 80px;
+        }
+        
+        .bin-item {
+            background: #dfe6e9;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 1rem;
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #00b894, #55efc4);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 184, 148, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .feedback-content.correct {
+            border: 5px solid #00b894;
+        }
+        
+        .feedback-content.wrong {
+            border: 5px solid #e94560;
+        }
+        
+        .feedback-icon {
+            font-size: 5rem;
+        }
+        
+        .feedback-text {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            color: #2d3436;
+        }
+        
+        .explanation {
+            color: #636e72;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .rules-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .rules-title {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .rule {
+            color: #dfe6e9;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+        
+        .level-info {
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch1-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🏘️ Noun Town</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Round: <span id="roundNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Tap all the things (nouns) you see in the town, then sort them into Common or Proper nouns!</p>
+        </div>
+        
+        <div class="level-info" id="levelInfo">Tap 3 common nouns first!</div>
+        
+        <div class="town-map">
+            <div class="buildings" id="buildingsGrid">
+                <!-- Buildings will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="noun-type-toggle">
+            <button class="type-btn common active" id="commonBtn" onclick="selectType('common')">Common Nouns</button>
+            <button class="type-btn proper" id="properBtn" onclick="selectType('proper')">Proper Nouns</button>
+        </div>
+        
+        <div class="bins-container">
+            <div class="noun-bin common-bin">
+                <div class="bin-title">Common Nouns</div>
+                <div class="bin-items" id="commonBin"></div>
+            </div>
+            <div class="noun-bin proper-bin">
+                <div class="bin-title">Proper Nouns</div>
+                <div class="bin-items" id="properBin"></div>
+            </div>
+        </div>
+        
+        <button class="check-btn" onclick="checkAnswer()">✓ Check Answer</button>
+        
+        <div class="rules-box">
+            <div class="rules-title">📖 Noun Rules:</div>
+            <div class="rule">Common Nouns: General names (dog, city, school)</div>
+            <div class="rule">Proper Nouns: Specific names with capital letter (Ramu, Delhi, India)</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <div class="explanation" id="explanation"></div>
+            <button class="next-btn" onclick="nextRound()">Next Round →</button>
+        </div>
+    </div>
+    
+    <script>
+        const items = [
+            { icon: '🐕', name: 'Dog', isNoun: true, type: 'common' },
+            { icon: '🏠', name: 'House', isNoun: true, type: 'common' },
+            { icon: '🌳', name: 'Tree', isNoun: true, type: 'common' },
+            { icon: '👦', name: 'Ramu', isNoun: true, type: 'proper' },
+            { icon: '🏫', name: 'School', isNoun: true, type: 'common' },
+            { icon: '👧', name: 'Sita', isNoun: true, type: 'proper' },
+            { icon: '🐈', name: 'Cat', isNoun: true, type: 'common' },
+            { icon: '🚗', name: 'Car', isNoun: true, type: 'common' },
+            { icon: '🚌', name: 'Bus', isNoun: true, type: 'common' },
+            { icon: '🏪', name: 'Shop', isNoun: true, type: 'common' },
+            { icon: '🏥', name: 'Hospital', isNoun: true, type: 'common' },
+            { icon: '🌺', name: 'Flower', isNoun: true, type: 'common' },
+            { icon: '🕐', name: 'Time', isNoun: true, type: 'common' },
+            { icon: '🧍', name: 'Man', isNoun: true, type: 'common' },
+            { icon: '👩', name: 'Mrs. Das', isNoun: true, type: 'proper' },
+            { icon: '☀️', name: 'Sun', isNoun: true, type: 'common' },
+            { icon: '🌙', name: 'Moon', isNoun: true, type: 'common' },
+            { icon: '🐦', name: 'Bird', isNoun: true, type: 'common' }
+        ];
+        
+        let round = 1;
+        let score = 0;
+        let selectedItems = [];
+        let currentType = 'common';
+        let placedItems = { common: [], proper: [] };
+        let displayItems = [];
+        
+        function initRound() {
+            displayItems = [...items].sort(() => Math.random() - 0.5).slice(0, 8);
+            selectedItems = [];
+            placedItems = { common: [], proper: [] };
+            
+            const grid = document.getElementById('buildingsGrid');
+            grid.innerHTML = '';
+            
+            displayItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'building';
+                div.dataset.index = index;
+                div.dataset.name = item.name;
+                div.dataset.type = item.type;
+                div.innerHTML = `
+                    <span class="building-icon">${item.icon}</span>
+                    <span class="building-name">${item.name}</span>
+                `;
+                div.onclick = () => toggleItem(div, item);
+                grid.appendChild(div);
+            });
+            
+            document.getElementById('commonBin').innerHTML = '';
+            document.getElementById('properBin').innerHTML = '';
+            document.getElementById('roundNum').textContent = round;
+            
+            if (round === 1) {
+                document.getElementById('levelInfo').textContent = 'Tap 3 common nouns!';
+            } else if (round === 2) {
+                document.getElementById('levelInfo').textContent = 'Now tap 2 proper nouns!';
+            } else {
+                document.getElementById('levelInfo').textContent = 'Sort all nouns correctly!';
+            }
+        }
+        
+        function toggleItem(div, item) {
+            if (!item.isNoun) return;
+            
+            if (selectedItems.includes(item.name)) {
+                selectedItems = selectedItems.filter(n => n !== item.name);
+                div.classList.remove('selected');
+            } else {
+                selectedItems.push(item.name);
+                div.classList.add('selected');
+                
+                // Auto-place based on current type
+                placeItem(item);
+            }
+            
+            updateBinDisplay();
+        }
+        
+        function selectType(type) {
+            currentType = type;
+            document.getElementById('commonBtn').classList.toggle('active', type === 'common');
+            document.getElementById('properBtn').classList.toggle('active', type === 'proper');
+        }
+        
+        function placeItem(item) {
+            const bin = currentType === 'common' ? 'common' : 'proper';
+            if (!placedItems[bin].includes(item.name)) {
+                placedItems[bin].push(item.name);
+            }
+            updateBinDisplay();
+        }
+        
+        function updateBinDisplay() {
+            const commonBin = document.getElementById('commonBin');
+            const properBin = document.getElementById('properBin');
+            
+            commonBin.innerHTML = placedItems.common.map(name => 
+                `<span class="bin-item" onclick="removeFromBin('common', '${name}')">${name}</span>`
+            ).join('');
+            
+            properBin.innerHTML = placedItems.proper.map(name => 
+                `<span class="bin-item" onclick="removeFromBin('proper', '${name}')">${name}</span>`
+            ).join('');
+        }
+        
+        function removeFromBin(bin, name) {
+            placedItems[bin] = placedItems[bin].filter(n => n !== name);
+            updateBinDisplay();
+        }
+        
+        function checkAnswer() {
+            if (placedItems.common.length === 0 && placedItems.proper.length === 0) {
+                alert('Tap on items in the town first!');
+                return;
+            }
+            
+            let correct = true;
+            let totalItems = displayItems.filter(i => i.isNoun).length;
+            let correctCount = 0;
+            
+            // Check common nouns
+            const commonItems = displayItems.filter(i => i.isNoun && i.type === 'common').map(i => i.name);
+            const properItems = displayItems.filter(i => i.isNoun && i.type === 'proper').map(i => i.name);
+            
+            placedItems.common.forEach(name => {
+                if (commonItems.includes(name)) correctCount++;
+            });
+            
+            placedItems.proper.forEach(name => {
+                if (properItems.includes(name)) correctCount++;
+            });
+            
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            const explanation = document.getElementById('explanation');
+            
+            if (correctCount === totalItems) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Excellent!';
+                explanation.textContent = 'You correctly identified all nouns!';
+                score += 20;
+                document.getElementById('score').textContent = score;
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '👍';
+                text.textContent = 'Good try!';
+                explanation.textContent = `You got ${correctCount} out of ${totalItems} correct`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextRound() {
+            document.getElementById('feedback').classList.remove('show');
+            round++;
+            if (round > 3) round = 1;
+            initRound();
+        }
+        
+        initRound();
+    </script>
+</body>
+</html>

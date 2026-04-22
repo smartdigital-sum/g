@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Computer Builder 💻 — Class 1 Computer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--cyan:#00BCD4;--navy:#0D47A1;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#E3F2FD,#BBDEFB,#90CAF9,#E3F2FD);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+.circuit{position:fixed;inset:0;z-index:0;opacity:.04;background-image:linear-gradient(rgba(0,188,212,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(0,188,212,.5) 1px,transparent 1px);background-size:40px 40px;}
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 4px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#0D47A1;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#0D47A1;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#0D47A1;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:#00BCD4;box-shadow:0 0 8px #00BCD4;}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* QUESTION CARD */
+.q-card{position:relative;z-index:20;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border:4px solid rgba(255,255,255,.95);border-radius:28px;padding:clamp(10px,2.5vw,18px) clamp(16px,4vw,28px);margin:6px 16px;text-align:center;max-width:640px;width:calc(100% - 32px);box-shadow:0 8px 28px rgba(0,0,0,.1);}
+.q-icon{font-size:clamp(3rem,12vw,5.5rem);animation:qFloat 2s ease-in-out infinite;display:block;}
+@keyframes qFloat{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.q-main{font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4.5vw,1.7rem);color:#0D47A1;margin-top:6px;}
+.q-sub{font-size:clamp(.8rem,3vw,1.05rem);color:#1565C0;font-weight:700;margin-top:3px;}
+
+/* CHOICES */
+.choices-grid{position:relative;z-index:20;display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,2.5vw,14px);padding:0 14px;max-width:660px;width:100%;margin:6px 0;}
+.ch-card{background:rgba(255,255,255,.8);backdrop-filter:blur(8px);border:3px solid rgba(255,255,255,.9);border-radius:20px;padding:clamp(10px,2.5vw,18px) clamp(10px,2.5vw,16px);text-align:center;cursor:pointer;transition:all .2s;box-shadow:0 5px 0 rgba(0,0,0,.1);position:relative;top:0;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.ch-card:hover{top:-3px;box-shadow:0 8px 0 rgba(0,0,0,.08);}
+.ch-emoji{font-size:clamp(2rem,8vw,3.2rem);}
+.ch-name{font-family:'Fredoka One',cursive;font-size:clamp(.82rem,3.2vw,1.15rem);color:#0D47A1;}
+.ch-desc{font-size:clamp(.6rem,2vw,.78rem);color:#1565C0;font-weight:700;}
+.ch-card.correct{border-color:#43A047;background:rgba(67,160,71,.2);animation:chPop .5s ease;}
+@keyframes chPop{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+.ch-card.wrong{border-color:#E53935;background:rgba(229,57,53,.1);animation:chShake .35s ease;opacity:.35;pointer-events:none;}
+@keyframes chShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+
+.fact-box{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(13,71,161,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:400px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3.5s ease forwards;border:2px solid rgba(255,215,0,.3);line-height:1.5;}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.88rem,3vw,1.05rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:2;}
+.ov-btn{background:linear-gradient(135deg,#0D47A1,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(13,71,161,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="circuit"></div>
+<div class="header">
+  <div class="title">💻 Computer Builder</div>
+  <div class="lvchip" id="lvChip">Parts of a Computer</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">💻 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+<div class="q-card">
+  <span class="q-icon" id="qIcon">⌨️</span>
+  <div class="q-main" id="qMain">Which part do we use to TYPE?</div>
+  <div class="q-sub" id="qSub">Think about what you use your fingers on!</div>
+</div>
+<div class="choices-grid" id="choicesGrid"></div>
+
+<script>
+const PARTS=[
+  {emoji:'🖥️',name:'Monitor',desc:'Shows pictures & text',fact:'🖥️ The MONITOR is like the face of the computer! It shows us everything we need to see!'},
+  {emoji:'⌨️',name:'Keyboard',desc:'We type with it',fact:'⌨️ The KEYBOARD has letters and numbers! We press keys to type words on the computer!'},
+  {emoji:'🖱️',name:'Mouse',desc:'We click & point',fact:'🖱️ The MOUSE helps us point and click on the screen! Move the mouse to move the arrow!'},
+  {emoji:'🖨️',name:'Printer',desc:'Prints on paper',fact:'🖨️ The PRINTER prints our work on paper! We can print pictures and documents!'},
+  {emoji:'💾',name:'Memory/Storage',desc:'Stores our files',fact:'💾 Memory stores all our files and work! Like a big cupboard inside the computer!'},
+  {emoji:'🔌',name:'Power Cable',desc:'Gives electricity',fact:'🔌 The POWER CABLE gives electricity to the computer! Without power, the computer cannot work!'},
+  {emoji:'🔊',name:'Speakers',desc:'Makes sound',fact:'🔊 SPEAKERS help us hear music and sounds from the computer!'},
+  {emoji:'📷',name:'Camera/Webcam',desc:'Takes pictures',fact:'📷 The WEBCAM takes pictures and videos! We use it for video calls!'},
+];
+
+const QUESTIONS=[
+  {icon:'⌨️',q:'Which part do we use to TYPE?',sub:'We use our fingers on it!',correct:'Keyboard'},
+  {icon:'🖥️',q:'Which part SHOWS what we are doing?',sub:'It is like a TV screen!',correct:'Monitor'},
+  {icon:'🖱️',q:'Which part do we CLICK and POINT with?',sub:'We move it on the table!',correct:'Mouse'},
+  {icon:'🖨️',q:'Which part PRINTS our work on paper?',sub:'It uses ink and paper!',correct:'Printer'},
+  {icon:'🔊',q:'Which part makes SOUND on the computer?',sub:'We hear music through it!',correct:'Speakers'},
+  {icon:'🔌',q:'Which part gives ELECTRICITY to the computer?',sub:'Without this, nothing works!',correct:'Power Cable'},
+  {icon:'📷',q:'Which part takes PICTURES and VIDEO?',sub:'We use it for video calls!',correct:'Camera/Webcam'},
+  {icon:'⌨️',q:'Which part has A B C letters on it?',sub:'You can see A B C D E F on it!',correct:'Keyboard'},
+  {icon:'🖥️',q:'What do we LOOK AT when using a computer?',sub:'It shows pictures and words!',correct:'Monitor'},
+  {icon:'🖱️',q:'When we want to OPEN a file, what do we double-click with?',sub:'It moves the arrow on screen!',correct:'Mouse'},
+];
+
+const TOTAL=10;
+let score=0,round=0,answered=false;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playCorrect(){const c=ac();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*100));}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;window.speechSynthesis.speak(u);}
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#0D47A1','#FFD700','#00BCD4','#43A047','#E53935'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showFact(txt){document.querySelector('.fact-box')?.remove();const el=document.createElement('div');el.className='fact-box';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+  const q=QUESTIONS[round%QUESTIONS.length];
+  document.getElementById('qIcon').textContent=q.icon;
+  document.getElementById('qMain').textContent=q.q;
+  document.getElementById('qSub').textContent=q.sub;
+  const correct=PARTS.find(p=>p.name===q.correct);
+  const others=PARTS.filter(p=>p.name!==q.correct).sort(()=>Math.random()-.5).slice(0,3);
+  const all=[correct,...others].sort(()=>Math.random()-.5);
+  const grid=document.getElementById('choicesGrid');grid.innerHTML='';
+  const colors=['#0D47A1','#1E88E5','#00897B','#8E24AA'];
+  all.forEach((p,i)=>{
+    const card=document.createElement('div');card.className='ch-card';
+    card.style.borderColor=colors[i]+'44';
+    card.innerHTML=`<span class="ch-emoji">${p.emoji}</span><span class="ch-name" style="color:${colors[i]};">${p.name}</span><span class="ch-desc">${p.desc}</span>`;
+    card.onclick=()=>checkPart(card,p,correct);
+    grid.appendChild(card);
+  });
+  setTimeout(()=>speak(q.q+' '+q.sub),400);
+}
+
+function checkPart(card,part,correct){
+  if(answered)return;
+  if(part.name===correct.name){
+    answered=true;card.classList.add('correct');
+    playCorrect();spawnConf();showFact(correct.fact);
+    score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(correct.fact.replace(/[💻⌨️🖥️🖱️🖨️💾🔌🔊📷]/g,''));
+    round++;makeDots();setTimeout(newRound,3500);
+  } else {
+    card.classList.add('wrong');playWrong();
+    speak(`That is a ${part.name}! We need the ${correct.name}!`);
+  }
+}
+
+function showCelebration(){
+  playChime();spawnConf();speak('Amazing! You know all the parts of a computer!');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">💻</div>
+    <div class="ov-title">Computer Expert!</div>
+    <div class="ov-sub">
+      🖥️ Monitor — Shows what we do<br/>
+      ⌨️ Keyboard — We type on it<br/>
+      🖱️ Mouse — We click and point<br/>
+      🖨️ Printer — Prints on paper<br/>
+      🔊 Speakers — Makes sound<br/>
+      📷 Camera — Takes pictures<br/><br/>
+      Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!
+    </div>
+    <button class="ov-btn" onclick="restart()">Play Again 💻</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Name the parts of a computer!');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

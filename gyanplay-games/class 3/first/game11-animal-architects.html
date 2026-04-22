@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏗️ Animal Architects — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A0F1A;--card:#121C2E;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--warm:#FF9F1C;--text:#E8F0FF;--dim:#5A7098}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(255,209,102,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.3rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:18px 16px;gap:16px}
+.hook{background:linear-gradient(135deg,rgba(76,201,240,.1),rgba(255,159,28,.08));border:1px solid rgba(76,201,240,.25);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.88rem;line-height:1.6;color:#C4EEFF}
+.hook strong{color:var(--gold)}
+.mode-title{font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;color:var(--blue);text-align:center;text-transform:uppercase;letter-spacing:1.5px}
+/* Match grid */
+.match-area{width:100%;max-width:460px;display:flex;flex-direction:column;gap:12px}
+.match-row{display:flex;align-items:center;gap:10px}
+.animal-card{flex:1;background:var(--card);border:2px solid rgba(76,201,240,.2);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;user-select:none}
+.animal-card:hover{border-color:var(--blue);background:rgba(76,201,240,.08)}
+.animal-card.selected{border-color:var(--gold);background:rgba(255,209,102,.1);box-shadow:0 0 14px rgba(255,209,102,.25)}
+.animal-card.matched{border-color:var(--teal);background:rgba(6,214,160,.1);pointer-events:none}
+.animal-emoji{font-size:2.2rem;line-height:1;margin-bottom:4px}
+.animal-name{font-size:.72rem;font-weight:700;color:var(--dim)}
+.connector{font-size:1.2rem;color:var(--dim);flex-shrink:0}
+.home-card{flex:1;background:var(--card);border:2px solid rgba(255,159,28,.2);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;user-select:none}
+.home-card:hover{border-color:var(--warm);background:rgba(255,159,28,.08)}
+.home-card.selected{border-color:var(--gold);background:rgba(255,209,102,.1);box-shadow:0 0 14px rgba(255,209,102,.25)}
+.home-card.matched{border-color:var(--teal);background:rgba(6,214,160,.1);pointer-events:none}
+.home-emoji{font-size:2rem;line-height:1;margin-bottom:4px}
+.home-name{font-size:.72rem;font-weight:700;color:var(--dim)}
+.wrong-flash{animation:redflash .5s ease}
+@keyframes redflash{0%,100%{background:var(--card)}50%{background:rgba(255,107,107,.2)}}
+/* WHY stage */
+.why-card{background:var(--card);border-radius:14px;padding:18px;border:2px solid rgba(255,209,102,.2);width:100%;max-width:440px;text-align:center}
+.why-animal{font-size:3rem;margin-bottom:8px}
+.why-question{font-size:1rem;color:var(--text);margin-bottom:16px;line-height:1.5}
+.why-options{display:flex;flex-direction:column;gap:8px}
+.why-opt{padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(76,201,240,.2);border-radius:10px;cursor:pointer;font-size:.88rem;color:var(--dim);transition:all .15s;text-align:left}
+.why-opt:hover{border-color:var(--blue);color:var(--text);background:rgba(76,201,240,.08)}
+.why-opt.correct{border-color:var(--teal);background:rgba(6,214,160,.12);color:var(--teal)}
+.why-opt.wrong{border-color:var(--coral);background:rgba(255,107,107,.1);color:var(--coral)}
+.fact-reveal{background:rgba(255,209,102,.07);border:1px solid rgba(255,209,102,.2);border-radius:10px;padding:10px 14px;font-size:.82rem;color:#FFE0A0;line-height:1.5;display:none;margin-top:8px}
+.fact-reveal.show{display:block}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#0A0F1A;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(10,15,26,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4.5rem}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.9rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🏗️ Animal Architects</div><div class="subject-tag">Science · Animals & Homes · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+
+<div class="game-area">
+  <div class="hook">🏗️ A bird builds a nest without being taught. A hermit crab uses a shell it didn't make. A polar bear's fur is <strong>transparent</strong>, not white! Animals solve survival problems <strong>better than most engineers</strong>.</div>
+
+  <div class="mode-title" id="modeTitle">Level 1 — Match animal to home</div>
+  <div id="mainArea"></div>
+</div>
+
+<div class="bottom">
+  <div class="prog" id="prog">0 / 6 matched</div>
+  <button class="next-btn" id="nextBtn" onclick="nextMode()">Level 2: WHY? →</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">All matched!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+
+<script>
+const PAIRS=[
+  {animal:'🦅',aName:'Eagle',home:'🪹',hName:'Nest',why:'Eagles build nests high on cliffs to be safe from predators and see prey from above.',whyOpts:['They like heights','To be safe and spot prey from above','Nests look pretty','They can\'t walk'],whyAns:1},
+  {animal:'🦔',aName:'Hedgehog',home:'🕳️',hName:'Burrow',why:'Hedgehogs burrow underground to stay warm in winter and hide from foxes.',whyOpts:['They like digging','To stay warm and hide from predators','Underground has more food','They are lazy'],whyAns:1},
+  {animal:'🦁',aName:'Lion',home:'🌾',hName:'Grassland den',why:'Lions live in grasslands where herds of prey roam. They stay near food!',whyOpts:['Grass is soft','Lions like open space','They live near their food source','They don\'t like trees'],whyAns:2},
+  {animal:'🦀',aName:'Hermit Crab',home:'🐚',hName:'Shell',why:'Hermit crabs use empty shells as portable armour — they move to a bigger shell as they grow!',whyOpts:['Shells are pretty','Shells protect their soft body','They are shy','Shells float in water'],whyAns:1},
+  {animal:'🐝',aName:'Honeybee',home:'🍯',hName:'Hive',why:'Bees build hexagonal hives because hexagons use the least wax while storing the most honey. Perfect geometry!',whyOpts:['Hives look nice','Hexagons are the most efficient shape','Bees like yellow','It is easy to build'],whyAns:1},
+  {animal:'🐟',aName:'Fish',home:'🌊',hName:'Coral reef',why:'Coral reefs provide food, protection and hiding spots. It\'s the ocean\'s most crowded neighbourhood!',whyOpts:['Fish like colour','Reefs provide food and shelter','Water is clear there','Fish are born there'],whyAns:1},
+];
+
+let matched=new Set(),selectedAnimal=null,selectedHome=null,score=0,mode='match',whyIdx=0,whyScore=0;
+
+function buildMatch(){
+  const area=document.getElementById('mainArea');area.innerHTML='';
+  const grid=document.createElement('div');grid.className='match-area';
+  // Shuffle homes
+  const homes=[...PAIRS].sort(()=>Math.random()-.5);
+  PAIRS.forEach((p,i)=>{
+    const row=document.createElement('div');row.className='match-row';
+    // animal card
+    const ac=document.createElement('div');ac.className='animal-card';ac.id=`ac-${i}`;
+    ac.innerHTML=`<div class="animal-emoji">${p.animal}</div><div class="animal-name">${p.aName}</div>`;
+    ac.onclick=()=>clickAnimal(i);
+    // home card (shuffled)
+    const hi=homes.findIndex(h=>h===p);
+    const hc=document.createElement('div');hc.className='home-card';hc.id=`hc-${i}`;
+    const shuffledHome=homes[i];
+    hc.setAttribute('data-home-idx',PAIRS.indexOf(shuffledHome));
+    hc.innerHTML=`<div class="home-emoji">${shuffledHome.home}</div><div class="home-name">${shuffledHome.hName}</div>`;
+    hc.onclick=()=>clickHome(hc);
+    const con=document.createElement('div');con.className='connector';con.textContent='→';
+    row.appendChild(ac);row.appendChild(con);row.appendChild(hc);
+    grid.appendChild(row);
+  });
+  area.appendChild(grid);
+}
+
+function clickAnimal(i){
+  if(matched.has(`a${i}`))return;
+  document.querySelectorAll('.animal-card').forEach(c=>c.classList.remove('selected'));
+  selectedAnimal=i;
+  document.getElementById(`ac-${i}`).classList.add('selected');
+  if(selectedHome!==null)checkMatch();
+}
+function clickHome(hc){
+  const homeIdx=parseInt(hc.getAttribute('data-home-idx'));
+  if(matched.has(`h${homeIdx}`))return;
+  document.querySelectorAll('.home-card').forEach(c=>c.classList.remove('selected'));
+  selectedHome=homeIdx;
+  hc.classList.add('selected');
+  if(selectedAnimal!==null)checkMatch();
+}
+function checkMatch(){
+  if(selectedAnimal===null||selectedHome===null)return;
+  if(selectedAnimal===selectedHome){
+    // Correct
+    document.getElementById(`ac-${selectedAnimal}`).classList.replace('selected','matched');
+    document.querySelector(`.home-card[data-home-idx="${selectedHome}"]`).classList.replace('selected','matched');
+    matched.add(`a${selectedAnimal}`);matched.add(`h${selectedHome}`);
+    const cnt=matched.size/2;
+    document.getElementById('prog').textContent=`${cnt} / ${PAIRS.length} matched`;
+    selectedAnimal=null;selectedHome=null;
+    if(cnt===PAIRS.length){allMatchedDone();}
+  } else {
+    // Wrong
+    document.querySelectorAll('.animal-card.selected,.home-card.selected').forEach(c=>{c.classList.remove('selected');c.classList.add('wrong-flash');setTimeout(()=>c.classList.remove('wrong-flash'),500);});
+    selectedAnimal=null;selectedHome=null;
+  }
+}
+function allMatchedDone(){
+  score++;if(score<=3)document.getElementById(`s${score}`).classList.add('lit');
+  showOverlay('All matched! 🏡','Now find out WHY animals live where they live!');confetti();setTimeout(hideOverlay,2200);
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function buildWhy(){
+  whyIdx=0;whyScore=0;
+  document.getElementById('modeTitle').textContent='Level 2 — WHY do they live there?';
+  document.getElementById('prog').textContent=`Question 1 of ${PAIRS.length}`;
+  document.getElementById('nextBtn').style.display='none';
+  showWhyQ();
+}
+function showWhyQ(){
+  const p=PAIRS[whyIdx];
+  const area=document.getElementById('mainArea');area.innerHTML='';
+  const card=document.createElement('div');card.className='why-card';
+  card.innerHTML=`
+    <div class="why-animal">${p.animal}</div>
+    <div class="why-question">Why does the <strong>${p.aName}</strong> live in a <strong>${p.hName}</strong>?</div>
+    <div class="why-options" id="whyOpts"></div>
+    <div class="fact-reveal" id="factReveal">💡 ${p.why}</div>`;
+  area.appendChild(card);
+  p.whyOpts.forEach((o,oi)=>{
+    const b=document.createElement('button');b.className='why-opt';b.textContent=o;
+    b.onclick=()=>pickWhy(b,oi,p.whyAns,p.why);
+    document.getElementById('whyOpts').appendChild(b);
+  });
+}
+function pickWhy(btn,oi,correct,fact){
+  document.querySelectorAll('.why-opt').forEach(b=>b.style.pointerEvents='none');
+  if(oi===correct){btn.classList.add('correct');score++;whyScore++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');}
+  else{btn.classList.add('wrong');document.querySelectorAll('.why-opt')[correct].classList.add('correct');}
+  document.getElementById('factReveal').classList.add('show');
+  whyIdx++;
+  if(whyIdx>=PAIRS.length){setTimeout(endGame,1200);}
+  else{
+    document.getElementById('prog').textContent=`Question ${whyIdx+1} of ${PAIRS.length}`;
+    document.getElementById('nextBtn').textContent='Next Why →';document.getElementById('nextBtn').style.display='block';
+    document.getElementById('nextBtn').onclick=()=>{document.getElementById('nextBtn').style.display='none';showWhyQ();};
+  }
+}
+
+function nextMode(){
+  document.getElementById('nextBtn').style.display='none';
+  mode='why';buildWhy();
+}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOverlay('Animal Architect! 🏗️',`You matched all homes AND understood why — score: ${score}! Nature is full of clever solutions.`);
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;whyIdx=0;mode='match';matched=new Set();selectedAnimal=null;selectedHome=null;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('modeTitle').textContent='Level 1 — Match animal to home';document.getElementById('prog').textContent='0 / 6 matched';document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Level 2: WHY? →';document.getElementById('nextBtn').onclick=nextMode;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='All matched!';hideOverlay();buildMatch();};
+}
+function showOverlay(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOverlay(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#FFD166','#4CC9F0','#06D6A0','#FF9F1C','#C77DFF'];for(let i=0;i<28;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+buildMatch();
+</script>
+</body>
+</html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Material World - GyanPlay Class 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #55efc4, #00b894);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #55efc4;
+            font-size: 2rem;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .score {
+            background: #e94560;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text {
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        .question-box {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .question-text {
+            font-size: 1.5rem;
+            color: #2d3436;
+            font-weight: bold;
+        }
+        
+        .materials-scene {
+            background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 30%, #F4E4BA 100%);
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 300px;
+        }
+        
+        .materials-label {
+            color: white;
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .materials-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .material-item {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            min-width: 100px;
+        }
+        
+        .material-item:hover {
+            transform: scale(1.1);
+        }
+        
+        .material-item.selected {
+            border-color: #00b894;
+            background: #55efc4;
+        }
+        
+        .material-icon {
+            font-size: 3rem;
+        }
+        
+        .material-name {
+            font-size: 1rem;
+            color: #2d3436;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .bins-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .property-bin {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            min-width: 180px;
+            border: 4px solid #dfe6e9;
+        }
+        
+        .bin-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .bin-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            min-height: 60px;
+        }
+        
+        .bin-item {
+            background: #dfe6e9;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .hard-bin .bin-title {
+            background: #636e72;
+            color: white;
+        }
+        
+        .soft-bin .bin-title {
+            background: #fdcb6e;
+            color: #2d3436;
+        }
+        
+        .rough-bin .bin-title {
+            background: #e17055;
+            color: white;
+        }
+        
+        .smooth-bin .bin-title {
+            background: #74b9ff;
+            color: white;
+        }
+        
+        .level-indicator {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(243, 156, 18, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+            max-width: 400px;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .feedback-content.correct {
+            border: 5px solid #00b894;
+        }
+        
+        .feedback-content.wrong {
+            border: 5px solid #e94560;
+        }
+        
+        .feedback-icon {
+            font-size: 5rem;
+        }
+        
+        .feedback-text {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            color: #2d3436;
+        }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-title {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .info-text {
+            color: #dfe6e9;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch2-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🧱 Material World</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Level: <span id="level">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Sort materials by their properties!</p>
+        </div>
+        
+        <div class="level-indicator" id="levelIndicator">Level 1: Sort by Hard or Soft</div>
+        
+        <div class="question-box">
+            <div class="question-text" id="questionText">Which materials are hard?</div>
+        </div>
+        
+        <div class="materials-scene">
+            <div class="materials-label">🔨 Tap materials to sort:</div>
+            <div class="materials-grid" id="materialsGrid">
+                <!-- Materials will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="bins-container" id="binsContainer">
+            <!-- Bins will be generated by JS -->
+        </div>
+        
+        <div class="info-box">
+            <div class="info-title">📖 Material Properties:</div>
+            <div class="info-text">🔷 Hard - Cannot be pressed easily (stone, metal)</div>
+            <div class="info-text">🔶 Soft - Can be pressed easily (cotton, sponge)</div>
+            <div class="info-text">🔲 Rough - Not smooth to touch (wood, rock)</div>
+            <div class="info-text">🔳 Smooth - Even surface (glass, silk)</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextLevel()">Next Level →</button>
+        </div>
+    </div>
+    
+    <script>
+        const materials = [
+            { icon: '🪨', name: 'Stone', hard: true, soft: false, rough: true, smooth: false },
+            { icon: '🧸', name: 'Cotton', hard: false, soft: true, rough: false, smooth: false },
+            { icon: '🥛', name: 'Glass', hard: true, soft: false, rough: false, smooth: true },
+            { icon: '🧽', name: 'Sponge', hard: false, soft: true, rough: false, smooth: false },
+            { icon: '🌲', name: 'Wood', hard: true, soft: false, rough: true, smooth: false },
+            { icon: '🧣', name: 'Wool', hard: false, soft: true, rough: false, smooth: false },
+            { icon: '🔩', name: 'Metal', hard: true, soft: false, rough: false, smooth: true },
+            { icon: '🧵', name: 'Cloth', hard: false, soft: true, rough: false, smooth: true },
+            { icon: '🧱', name: 'Brick', hard: true, soft: false, rough: true, smooth: false },
+            { icon: '🧴', name: 'Rubber', hard: false, soft: true, rough: false, smooth: true },
+            { icon: '📏', name: 'Plastic', hard: true, soft: false, rough: false, smooth: true },
+            { icon: '🎽', name: 'Silk', hard: false, soft: true, rough: false, smooth: true }
+        ];
+        
+        let level = 1;
+        let score = 0;
+        let currentMaterials = [];
+        let placedItems = { hard: [], soft: [], rough: [], smooth: [] };
+        let currentType = 'hard';
+        
+        function initLevel() {
+            // Reset bins
+            placedItems = { hard: [], soft: [], rough: [], smooth: [] };
+            
+            // Show appropriate bins based on level
+            const binsContainer = document.getElementById('binsContainer');
+            
+            if (level === 1) {
+                currentType = 'hard';
+                document.getElementById('levelIndicator').textContent = 'Level 1: Sort by Hard or Soft';
+                document.getElementById('questionText').textContent = 'Tap materials that are hard';
+                
+                binsContainer.innerHTML = `
+                    <div class="property-bin hard-bin">
+                        <div class="bin-title">🔷 Hard</div>
+                        <div class="bin-items" id="hardBin"></div>
+                    </div>
+                    <div class="property-bin soft-bin">
+                        <div class="bin-title">🔶 Soft</div>
+                        <div class="bin-items" id="softBin"></div>
+                    </div>
+                `;
+                
+                currentMaterials = materials.slice(0, 6);
+            } else {
+                currentType = 'rough';
+                document.getElementById('levelIndicator').textContent = 'Level 2: Sort by Rough or Smooth';
+                document.getElementById('questionText').textContent = 'Tap materials that are rough';
+                
+                binsContainer.innerHTML = `
+                    <div class="property-bin rough-bin">
+                        <div class="bin-title">🔲 Rough</div>
+                        <div class="bin-items" id="roughBin"></div>
+                    </div>
+                    <div class="property-bin smooth-bin">
+                        <div class="bin-title">🔳 Smooth</div>
+                        <div class="bin-items" id="smoothBin"></div>
+                    </div>
+                `;
+                
+                currentMaterials = materials.slice(0, 6);
+            }
+            
+            // Show materials
+            const grid = document.getElementById('materialsGrid');
+            grid.innerHTML = '';
+            
+            currentMaterials.forEach(mat => {
+                const div = document.createElement('div');
+                div.className = 'material-item';
+                div.innerHTML = `
+                    <span class="material-icon">${mat.icon}</span>
+                    <span class="material-name">${mat.name}</span>
+                `;
+                div.onclick = () => selectMaterial(div, mat);
+                grid.appendChild(div);
+            });
+            
+            document.getElementById('level').textContent = level;
+        }
+        
+        function selectMaterial(div, mat) {
+            // Check if correct property
+            let isCorrect = false;
+            let bin = '';
+            
+            if (level === 1) {
+                if (currentType === 'hard' && mat.hard) {
+                    isCorrect = true;
+                    bin = 'hard';
+                } else if (currentType === 'soft' && mat.soft) {
+                    isCorrect = true;
+                    bin = 'soft';
+                }
+            } else {
+                if (currentType === 'rough' && mat.rough) {
+                    isCorrect = true;
+                    bin = 'rough';
+                } else if (currentType === 'smooth' && mat.smooth) {
+                    isCorrect = true;
+                    bin = 'smooth';
+                }
+            }
+            
+            if (isCorrect) {
+                if (!placedItems[bin].includes(mat.name)) {
+                    placedItems[bin].push(mat.name);
+                    updateBinDisplay(bin);
+                    div.classList.add('selected');
+                    score += 5;
+                    document.getElementById('score').textContent = score;
+                }
+            } else {
+                div.style.background = '#ff7675';
+                setTimeout(() => {
+                    div.style.background = 'white';
+                }, 500);
+            }
+        }
+        
+        function updateBinDisplay(bin) {
+            const binElement = document.getElementById(bin + 'Bin');
+            if (binElement) {
+                binElement.innerHTML = placedItems[bin].map(name => 
+                    `<span class="bin-item" onclick="removeFromBin('${bin}', '${name}')">${name}</span>`
+                ).join('');
+            }
+        }
+        
+        function removeFromBin(bin, name) {
+            placedItems[bin] = placedItems[bin].filter(n => n !== name);
+            updateBinDisplay(bin);
+            
+            // Remove selection from grid
+            const items = document.querySelectorAll('.material-item');
+            items.forEach(item => {
+                if (item.querySelector('.material-name').textContent === name) {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+        
+        function checkAnswer() {
+            let correctCount = 0;
+            
+            if (level === 1) {
+                correctCount = placedItems.hard.length;
+            } else {
+                correctCount = placedItems.rough.length;
+            }
+            
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            if (correctCount >= 3) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Excellent! You identified the materials!';
+                score += 10;
+                document.getElementById('score').textContent = score;
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '👍';
+                text.textContent = `You found ${correctCount}. Try to find more!`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextLevel() {
+            document.getElementById('feedback').classList.remove('show');
+            level = level === 1 ? 2 : 1;
+            initLevel();
+        }
+        
+        initLevel();
+        
+        // Override check button
+        setTimeout(() => {
+            const btn = document.querySelector('.check-btn');
+            if (btn) {
+                btn.onclick = checkAnswer;
+                btn.style.display = 'block';
+            }
+        }, 100);
+    </script>
+</body>
+</html>

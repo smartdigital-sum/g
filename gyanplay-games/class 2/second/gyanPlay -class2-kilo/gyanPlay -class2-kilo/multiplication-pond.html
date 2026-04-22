@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Multiplication Pond - GyanPlay Class 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #00cec9, #81ecec);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #00cec9;
+            font-size: 2rem;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .score {
+            background: #e94560;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text {
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        .problem-display {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .problem-text {
+            font-size: 3rem;
+            color: #2d3436;
+            font-weight: bold;
+        }
+        
+        .hint-text {
+            color: #636e72;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+        
+        .pond-scene {
+            background: linear-gradient(180deg, #87CEEB 0%, #48C9B0 30%, #1ABC9C 70%, #16A085 100%);
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 350px;
+            position: relative;
+        }
+        
+        .pond-title {
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .frog-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            min-height: 150px;
+            align-items: center;
+        }
+        
+        .frog-group {
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .frog-count {
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .frogs {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .frog {
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            animation: hop 1s infinite;
+        }
+        
+        @keyframes hop {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .frog:hover {
+            transform: scale(1.3);
+        }
+        
+        .answer-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .answer-btn {
+            background: white;
+            border: 4px solid #dfe6e9;
+            border-radius: 15px;
+            padding: 15px 30px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2d3436;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .answer-btn:hover {
+            border-color: #00cec9;
+            transform: scale(1.1);
+        }
+        
+        .answer-btn.correct {
+            border-color: #00b894;
+            background: #55efc4;
+        }
+        
+        .answer-btn.wrong {
+            border-color: #e94560;
+            background: #ff7675;
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .feedback-content.correct {
+            border: 5px solid #00b894;
+        }
+        
+        .feedback-content.wrong {
+            border: 5px solid #e94560;
+        }
+        
+        .feedback-icon {
+            font-size: 5rem;
+        }
+        
+        .feedback-text {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            color: #2d3436;
+        }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .tables-info {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .tables-title {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .table-info {
+            color: #dfe6e9;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch2-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🐸 Multiplication Pond</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Problem: <span id="problemNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Count the frogs! 3 frogs jump 4 times = ?</p>
+        </div>
+        
+        <div class="problem-display">
+            <div class="problem-text" id="problemText">3 × 4 = ?</div>
+            <div class="hint-text" id="hintText">3 + 3 + 3 + 3 = 12</div>
+        </div>
+        
+        <div class="pond-scene">
+            <div class="pond-title">🐸 Frog Groups</div>
+            <div class="frog-container" id="frogContainer">
+                <!-- Frogs will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="answer-options" id="answerOptions">
+            <!-- Options will be generated by JS -->
+        </div>
+        
+        <div class="tables-info">
+            <div class="tables-title">📖 Multiplication Tables:</div>
+            <div class="table-info">2 × 5 = 10 (2 + 2 + 2 + 2 + 2)</div>
+            <div class="table-info">3 × 4 = 12 (3 + 3 + 3 + 3)</div>
+            <div class="table-info">4 × 3 = 12 (4 + 4 + 4)</div>
+            <div class="table-info">5 × 2 = 10 (5 + 5)</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextProblem()">Next Problem →</button>
+        </div>
+    </div>
+    
+    <script>
+        const problems = [
+            { table: 2, times: 3, answer: 6 },
+            { table: 3, times: 4, answer: 12 },
+            { table: 4, times: 3, answer: 12 },
+            { table: 5, times: 2, answer: 10 },
+            { table: 2, times: 5, answer: 10 },
+            { table: 3, times: 2, answer: 6 },
+            { table: 4, times: 2, answer: 8 },
+            { table: 5, times: 3, answer: 15 },
+            { table: 2, times: 4, answer: 8 },
+            { table: 3, times: 5, answer: 15 },
+            { table: 4, times: 4, answer: 16 },
+            { table: 5, times: 4, answer: 20 },
+            { table: 2, times: 2, answer: 4 },
+            { table: 3, times: 3, answer: 9 },
+            { table: 4, times: 5, answer: 20 }
+        ];
+        
+        let currentIndex = 0;
+        let score = 0;
+        let selectedAnswer = null;
+        let correctAnswer = 0;
+        
+        function loadProblem() {
+            const problem = problems[currentIndex];
+            correctAnswer = problem.answer;
+            
+            document.getElementById('problemText').textContent = `${problem.table} × ${problem.times} = ?`;
+            document.getElementById('hintText').textContent = `${problem.table} + ${problem.table} + ${problem.table} (${problem.times} times) = ${correctAnswer}`;
+            document.getElementById('problemNum').textContent = currentIndex + 1;
+            
+            // Generate frogs
+            const container = document.getElementById('frogContainer');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < problem.times; i++) {
+                const group = document.createElement('div');
+                group.className = 'frog-group';
+                group.innerHTML = `<div class="frog-count">Group ${i + 1}</div>`;
+                
+                const frogsDiv = document.createElement('div');
+                frogsDiv.className = 'frogs';
+                for (let j = 0; j < problem.table; j++) {
+                    const frog = document.createElement('span');
+                    frog.className = 'frog';
+                    frog.textContent = '🐸';
+                    frog.style.animationDelay = (j * 0.1) + 's';
+                    frogsDiv.appendChild(frog);
+                }
+                group.appendChild(frogsDiv);
+                container.appendChild(group);
+            }
+            
+            // Generate answer options
+            const optionsContainer = document.getElementById('answerOptions');
+            optionsContainer.innerHTML = '';
+            
+            const answers = generateOptions(correctAnswer);
+            answers.forEach(ans => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = ans;
+                btn.onclick = () => selectAnswer(btn, ans);
+                optionsContainer.appendChild(btn);
+            });
+            
+            selectedAnswer = null;
+        }
+        
+        function generateOptions(correct) {
+            const options = [correct];
+            while (options.length < 4) {
+                const num = Math.floor(Math.random() * 20) + 1;
+                if (!options.includes(num)) {
+                    options.push(num);
+                }
+            }
+            return options.sort(() => Math.random() - 0.5);
+        }
+        
+        function selectAnswer(btn, ans) {
+            selectedAnswer = ans;
+            document.querySelectorAll('.answer-btn').forEach(b => {
+                b.classList.remove('correct', 'wrong');
+            });
+            
+            if (ans === correctAnswer) {
+                btn.classList.add('correct');
+                score += 10;
+                document.getElementById('score').textContent = score;
+                showFeedback(true);
+            } else {
+                btn.classList.add('wrong');
+                showFeedback(false);
+            }
+        }
+        
+        function showFeedback(isCorrect) {
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            if (isCorrect) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Correct! Great counting!';
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = `The answer is ${correctAnswer}`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextProblem() {
+            document.getElementById('feedback').classList.remove('show');
+            currentIndex = (currentIndex + 1) % problems.length;
+            loadProblem();
+        }
+        
+        loadProblem();
+    </script>
+</body>
+</html>

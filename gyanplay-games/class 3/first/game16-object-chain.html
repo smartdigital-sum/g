@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔗 Object Chain — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0F0A00;--card:#1E1600;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--orange:#FF9F1C;--amber:#F4A261;--text:#FFF5D6;--dim:#8A7040}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(255,209,102,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.35rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.2rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+.hook{background:linear-gradient(135deg,rgba(244,162,97,.12),rgba(255,209,102,.08));border:1px solid rgba(244,162,97,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.87rem;line-height:1.65;color:#FFE0A0}
+.hook strong{color:var(--gold)}
+/* Object selector */
+.object-selector{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:460px}
+.obj-btn{padding:14px 18px;background:var(--card);border:2px solid rgba(255,209,102,.2);border-radius:14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .2s;min-width:100px}
+.obj-btn:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 6px 18px rgba(255,209,102,.15)}
+.obj-btn.active{border-color:var(--gold);background:rgba(255,209,102,.1);box-shadow:0 0 16px rgba(255,209,102,.2)}
+.obj-emoji{font-size:2.2rem;line-height:1}
+.obj-name{font-size:.75rem;font-weight:700;color:var(--dim)}
+/* Chain display */
+.chain-area{width:100%;max-width:460px;display:flex;flex-direction:column;gap:10px}
+.chain-title{font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;color:var(--gold);text-align:center}
+.chain-nodes{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px}
+.chain-node{display:flex;flex-direction:column;align-items:center;gap:4px}
+.node-slot{width:68px;height:68px;border-radius:12px;border:2px dashed rgba(255,209,102,.25);background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;font-size:1.8rem;transition:all .3s;position:relative}
+.node-slot.filled{border-style:solid;border-color:var(--teal);background:rgba(6,214,160,.08)}
+.node-slot.filled::after{content:'✓';position:absolute;top:-8px;right:-8px;width:18px;height:18px;background:var(--teal);border-radius:50%;font-size:.65rem;display:flex;align-items:center;justify-content:center;color:#042A1C}
+.node-label{font-size:.6rem;font-weight:700;color:var(--dim);text-align:center;max-width:72px;line-height:1.2}
+.node-slot.filled+.node-label+.arrow-next{display:none}
+.chain-arrow{font-size:1rem;color:rgba(255,209,102,.3);flex-shrink:0;align-self:flex-start;margin-top:22px}
+/* Worker bank */
+.worker-bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:460px}
+.worker-chip{padding:10px 14px;background:var(--card);border:2px solid rgba(244,162,97,.25);border-radius:50px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;gap:8px;transition:all .2s;user-select:none}
+.worker-chip:hover{border-color:var(--amber);transform:scale(1.05)}
+.worker-chip.used{opacity:.3;pointer-events:none}
+.worker-chip.wrong-shake{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.chain-progress{font-size:.82rem;color:var(--dim);text-align:center}
+.chain-progress span{color:var(--gold);font-weight:700}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#0F0A00;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(15,10,0,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4rem}.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.9rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.88rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🔗 Object Chain</div><div class="subject-tag">Social Studies · Occupations · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+<div class="game-area">
+  <div class="hook">🔗 Everything you touched today — your pencil, your shirt, your breakfast — a <strong>chain of people</strong> worked to get it to you. No single person made it alone. That's how <strong>society works</strong>!</div>
+  <div id="mainArea"></div>
+</div>
+<div class="bottom">
+  <div class="prog" id="prog">Pick an object to trace</div>
+  <button class="next-btn" id="nextBtn" onclick="nextChain()">Another Chain →</button>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">Chain complete!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+<script>
+const CHAINS=[
+  {
+    obj:'🍵',name:'Cup of Assam Tea',
+    chain:[
+      {worker:'🌿 Tea picker',label:'Picks leaves by hand'},
+      {worker:'🏭 Factory worker',label:'Processes the leaves'},
+      {worker:'📦 Packer',label:'Packs into boxes'},
+      {worker:'🚛 Truck driver',label:'Delivers to cities'},
+      {worker:'🏪 Shopkeeper',label:'Sells to customers'},
+      {worker:'🫵 You!',label:'Enjoy your tea'}
+    ],
+    extraWorkers:['🎣 Fisher','👨‍🌾 Farmer','🧑‍💻 Coder','✈️ Pilot'],
+    fact:'50% of India\'s tea comes from Assam. Each cup of tea involves at least 6 different people\'s work!'
+  },
+  {
+    obj:'✏️',name:'Pencil',
+    chain:[
+      {worker:'🪵 Woodcutter',label:'Cuts the wood'},
+      {worker:'⛏️ Miner',label:'Mines graphite'},
+      {worker:'🏭 Factory worker',label:'Makes the pencil'},
+      {worker:'🚛 Truck driver',label:'Delivers to shops'},
+      {worker:'🏪 Shopkeeper',label:'Sells it'},
+      {worker:'🫵 You!',label:'Write with it'}
+    ],
+    extraWorkers:['🎣 Fisher','🌿 Tea picker','✈️ Pilot','🧑‍⚕️ Doctor'],
+    fact:'A simple pencil requires wood, graphite, metal and rubber — from mines and forests across the world. No single country can make one alone!'
+  },
+  {
+    obj:'🍚',name:'Bowl of Rice',
+    chain:[
+      {worker:'👨‍🌾 Farmer',label:'Plants the paddy'},
+      {worker:'🌾 Harvester',label:'Cuts the rice'},
+      {worker:'🏭 Mill worker',label:'Processes the grain'},
+      {worker:'🚛 Truck driver',label:'Delivers to market'},
+      {worker:'🏪 Shopkeeper',label:'Sells the rice'},
+      {worker:'🫵 You!',label:'Cook and eat'}
+    ],
+    extraWorkers:['🧑‍💻 Coder','✈️ Pilot','🌿 Tea picker','⛏️ Miner'],
+    fact:'Assam grows over 4 million tonnes of rice every year. Rice reaches your plate through at least 6 different workers\' hands!'
+  }
+];
+let chainIdx=0,filled=[],score=0,chainDone=false;
+
+function showObjectPicker(){
+  const area=document.getElementById('mainArea');area.innerHTML='';
+  document.getElementById('prog').textContent='Pick an object to trace';
+  document.getElementById('nextBtn').style.display='none';
+  const title=document.createElement('div');title.style.cssText='font-family:Baloo 2,sans-serif;font-size:1rem;font-weight:700;color:var(--gold);text-align:center;margin-bottom:4px';title.textContent='Which object\'s journey do you want to trace?';
+  area.appendChild(title);
+  const sel=document.createElement('div');sel.className='object-selector';
+  CHAINS.forEach((c,i)=>{
+    const btn=document.createElement('div');btn.className='obj-btn';
+    btn.innerHTML=`<div class="obj-emoji">${c.obj}</div><div class="obj-name">${c.name}</div>`;
+    btn.onclick=()=>{chainIdx=i;buildChain();};
+    sel.appendChild(btn);
+  });
+  area.appendChild(sel);
+}
+
+function buildChain(){
+  const c=CHAINS[chainIdx];filled=[];chainDone=false;
+  const area=document.getElementById('mainArea');area.innerHTML='';
+  document.getElementById('prog').textContent=`Build the chain for: ${c.obj} ${c.name}`;
+  document.getElementById('nextBtn').style.display='none';
+  // Chain nodes
+  const chainArea=document.createElement('div');chainArea.className='chain-area';
+  const ct=document.createElement('div');ct.className='chain-title';ct.textContent=`🔗 Who helped bring ${c.name} to you?`;
+  chainArea.appendChild(ct);
+  const nodes=document.createElement('div');nodes.className='chain-nodes';
+  c.chain.forEach((step,i)=>{
+    const node=document.createElement('div');node.className='chain-node';
+    const slot=document.createElement('div');slot.className='node-slot';slot.id=`slot-${i}`;slot.textContent='?';
+    const lbl=document.createElement('div');lbl.className='node-label';lbl.textContent=step.label;
+    node.appendChild(slot);node.appendChild(lbl);
+    if(i<c.chain.length-1){
+      const arr=document.createElement('div');arr.className='chain-arrow';arr.textContent='→';
+      nodes.appendChild(node);nodes.appendChild(arr);
+    } else {nodes.appendChild(node);}
+  });
+  chainArea.appendChild(nodes);
+  const cp=document.createElement('div');cp.className='chain-progress';cp.id='chainProg';cp.innerHTML=`Placed: <span>0</span> / ${c.chain.length}`;
+  chainArea.appendChild(cp);
+  area.appendChild(chainArea);
+  // Worker bank (correct + extras, shuffled)
+  const allWorkers=[...c.chain.map(s=>s.worker),...c.extraWorkers].sort(()=>Math.random()-.5);
+  const bank=document.createElement('div');bank.className='worker-bank';
+  allWorkers.forEach(w=>{
+    const chip=document.createElement('div');chip.className='worker-chip';chip.textContent=w;
+    chip.onclick=()=>placeWorker(w,chip,c);
+    bank.appendChild(chip);
+  });
+  area.appendChild(bank);
+}
+
+function placeWorker(w,chip,c){
+  if(chainDone)return;
+  // Find next unfilled slot
+  const nextIdx=filled.length;
+  if(nextIdx>=c.chain.length)return;
+  if(w===c.chain[nextIdx].worker){
+    filled.push(w);chip.classList.add('used');
+    const slot=document.getElementById(`slot-${nextIdx}`);
+    slot.textContent=w.split(' ')[0];slot.classList.add('filled');
+    document.getElementById('chainProg').innerHTML=`Placed: <span>${filled.length}</span> / ${c.chain.length}`;
+    if(filled.length===c.chain.length){chainComplete(c);}
+  } else {
+    chip.classList.add('wrong-shake');setTimeout(()=>chip.classList.remove('wrong-shake'),400);
+  }
+}
+
+function chainComplete(c){
+  chainDone=true;score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+  showOv('Chain Complete! 🔗',c.fact);confetti();setTimeout(hideOv,2800);
+  document.getElementById('nextBtn').style.display='block';
+}
+function nextChain(){
+  document.getElementById('nextBtn').style.display='none';
+  if(score>=CHAINS.length){endGame();return;}
+  showObjectPicker();
+}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOv(`Chain Master! ${score}/${CHAINS.length}`,'You traced every chain. Remember — every object has a team of people behind it!');
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Another Chain →';document.getElementById('nextBtn').onclick=nextChain;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='Chain complete!';hideOv();showObjectPicker();};
+}
+function showOv(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOv(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#FFD166','#FF9F1C','#06D6A0','#F4A261','#C77DFF'];for(let i=0;i<25;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+showObjectPicker();
+</script>
+</body>
+</html>

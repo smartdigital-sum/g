@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transport World 🚗✈️ | GyanPlay Nursery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--green:#00C853;--pink:#FF4081;--gold:#FFB800;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    body{
+      font-family:'Nunito',sans-serif;
+      min-height:100vh;
+      background:linear-gradient(135deg,#FFF3E0,#FFE0B2);
+      color:#BF360C;
+      display:flex;flex-direction:column;align-items:center;
+      padding:16px;animation:fadeIn .4s ease;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes floatUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+    @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+    @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+    @keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+    @keyframes vroom{0%{transform:translateX(-8px)}50%{transform:translateX(8px)}100%{transform:translateX(-8px)}}
+
+    /* TOP BAR */
+    .top-bar{
+      width:100%;max-width:680px;
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:14px;flex-wrap:wrap;gap:8px;
+    }
+    .back-btn{
+      background:rgba(255,255,255,.55);border:none;
+      padding:9px 22px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
+      cursor:pointer;transition:background .2s;color:#BF360C;
+    }
+    .back-btn:hover{background:rgba(255,255,255,.8)}
+    .subject-badge{
+      background:rgba(255,255,255,.55);padding:7px 20px;
+      border-radius:999px;font-size:.9rem;font-weight:800;
+      font-family:'Baloo 2',sans-serif;color:#BF360C;
+    }
+    .lang-toggle{display:flex;gap:6px}
+    .lang-btn{
+      background:rgba(255,255,255,.4);border:none;
+      padding:7px 14px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;
+      cursor:pointer;transition:all .2s;color:#BF360C;
+    }
+    .lang-btn.active{background:#fff;color:#E64A19}
+    .lang-btn:hover:not(.active){background:rgba(255,255,255,.65)}
+
+    /* CARD */
+    .game-card{
+      background:rgba(255,255,255,.52);
+      backdrop-filter:blur(14px);
+      border:2.5px solid rgba(255,255,255,.72);
+      border-radius:28px;padding:22px 20px;
+      width:100%;max-width:680px;
+      box-shadow:0 12px 50px rgba(191,54,12,.1);
+    }
+    .game-title{
+      font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;
+      text-align:center;margin-bottom:6px;color:#BF360C;
+    }
+    .score-bar{display:flex;justify-content:space-between;margin:6px 0;font-size:1rem;font-weight:800;color:#BF360C;}
+    .prog-wrap{background:rgba(255,255,255,.45);border-radius:999px;height:12px;margin-bottom:16px}
+    .prog-fill{
+      height:12px;border-radius:999px;
+      background:linear-gradient(90deg,#FFCC80,#F57C00);
+      transition:width .4s ease;
+    }
+
+    /* TRANSPORT DISPLAY */
+    .transport-box{
+      background:rgba(255,255,255,.45);
+      border:2px solid rgba(255,255,255,.65);
+      border-radius:24px;padding:24px 18px;
+      margin-bottom:16px;text-align:center;
+    }
+    .transport-emoji{
+      font-size:7rem;line-height:1;
+      display:block;margin-bottom:10px;
+      animation:floatUp 2.2s ease infinite;
+      filter:drop-shadow(0 6px 18px rgba(191,54,12,.18));
+    }
+    .transport-name{
+      font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;
+      color:#BF360C;margin-bottom:4px;
+    }
+    .transport-prompt{
+      font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:700;
+      color:#E64A19;
+    }
+
+    /* CATEGORY BUTTONS — 3 big buttons */
+    .cat-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);
+      gap:14px;margin-bottom:12px;
+    }
+    .cat-btn{
+      background:rgba(255,255,255,.48);
+      border:3px solid rgba(255,255,255,.65);
+      border-radius:22px;padding:16px 8px;
+      font-family:'Baloo 2',sans-serif;font-size:1.25rem;font-weight:800;
+      cursor:pointer;text-align:center;transition:all .2s;
+      min-height:100px;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:6px;
+      color:#BF360C;
+    }
+    .cat-btn span.ce{font-size:2.6rem;display:block}
+    .cat-btn:hover:not(:disabled){background:rgba(255,255,255,.75);transform:scale(1.05)}
+    .cat-btn.correct{background:rgba(0,200,83,.32);border-color:#00C853;color:#1B5E20;animation:pop .4s ease}
+    .cat-btn.wrong{background:rgba(255,64,129,.22);border-color:#FF4081;animation:shake .4s ease}
+    .cat-btn:disabled{cursor:default}
+
+    /* FEEDBACK */
+    .feedback{
+      font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;
+      text-align:center;min-height:1.8rem;margin:6px 0 4px;
+    }
+    .feedback.correct{color:#2E7D32}
+    .feedback.wrong{color:#C62828}
+
+    /* FUN FACT */
+    .fun-fact{
+      font-size:1.05rem;border-radius:16px;padding:10px 14px;
+      margin-bottom:10px;line-height:1.55;display:none;
+      text-align:center;font-weight:700;
+      color:#BF360C;background:rgba(255,255,255,.38);
+    }
+    .fun-fact.show{display:block}
+
+    /* NEXT BTN */
+    .next-btn{
+      color:#fff;background:#F57C00;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.8rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;display:none;transition:transform .15s;
+      width:100%;margin-top:4px;
+    }
+    .next-btn:hover{transform:scale(1.04)}
+
+    /* OVERLAY */
+    .overlay{
+      display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,.55);backdrop-filter:blur(10px);
+      align-items:center;justify-content:center;z-index:100;padding:1.5rem;
+    }
+    .overlay.show{display:flex}
+    .result-box{
+      background:linear-gradient(135deg,#FFF3E0,#FFE0B2);
+      border:3px solid rgba(245,124,0,.35);
+      border-radius:28px;padding:2.5rem 2rem;text-align:center;
+      max-width:400px;width:100%;animation:popIn .35s ease;
+    }
+    .res-emoji{font-size:4rem;margin-bottom:.5rem}
+    .res-title{font-family:'Baloo 2',sans-serif;font-size:2.2rem;font-weight:800;margin-bottom:.4rem;color:#BF360C;}
+    .res-score{font-size:1.1rem;margin-bottom:.8rem;font-weight:700;color:#E64A19;}
+    .res-stars{font-size:3rem;margin-bottom:1.2rem;letter-spacing:6px}
+    .play-again-btn{
+      color:#fff;background:#F57C00;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.85rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;transition:transform .15s;
+    }
+    .play-again-btn:hover{transform:scale(1.05)}
+
+    [data-lang]{display:none}
+    [data-lang="en"]{display:inline}
+
+    @media(max-width:480px){
+      .transport-emoji{font-size:5.5rem}
+      .cat-btn{font-size:1.05rem;min-height:80px}
+      .cat-btn span.ce{font-size:2.1rem}
+      .game-title{font-size:1.65rem}
+      .transport-name{font-size:1.65rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi">वापस</span><span data-lang="as">পাছে</span></button>
+  <div class="subject-badge">🚗 <span data-lang="en">EVS</span><span data-lang="hi">पर्यावरण</span><span data-lang="as">পৰিৱেশ</span></div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<!-- GAME CARD -->
+<div class="game-card">
+  <div class="game-title">
+    <span data-lang="en">Transport World 🚗✈️🛳️</span>
+    <span data-lang="hi">परिवहन की दुनिया 🚗✈️🛳️</span>
+    <span data-lang="as">পৰিবহণৰ জগত 🚗✈️🛳️</span>
+  </div>
+  <div class="score-bar">
+    <span><span data-lang="en">Score</span><span data-lang="hi">स्कोर</span><span data-lang="as">স্কোৰ</span>: <b id="score-val">0</b> / 80</span>
+    <span><span data-lang="en">Round</span><span data-lang="hi">दौर</span><span data-lang="as">ৰাউণ্ড</span> <b id="round-num">1</b> / 8</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+
+  <div class="transport-box">
+    <span class="transport-emoji" id="transport-emoji"></span>
+    <div class="transport-name" id="transport-name"></div>
+    <div class="transport-prompt">
+      <span data-lang="en">Where does it travel? 🤔</span>
+      <span data-lang="hi">यह कहाँ चलता है? 🤔</span>
+      <span data-lang="as">এইটো ক'ত চলে? 🤔</span>
+    </div>
+  </div>
+
+  <div class="cat-grid">
+    <button class="cat-btn" id="btn-land" onclick="handleAnswer('land')">
+      <span class="ce">🛣️</span>
+      <span data-lang="en">Land</span><span data-lang="hi">ज़मीन</span><span data-lang="as">স্থল</span>
+    </button>
+    <button class="cat-btn" id="btn-water" onclick="handleAnswer('water')">
+      <span class="ce">🌊</span>
+      <span data-lang="en">Water</span><span data-lang="hi">पानी</span><span data-lang="as">পানী</span>
+    </button>
+    <button class="cat-btn" id="btn-air" onclick="handleAnswer('air')">
+      <span class="ce">🌤️</span>
+      <span data-lang="en">Air</span><span data-lang="hi">आकाश</span><span data-lang="as">আকাশ</span>
+    </button>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+  <div class="fun-fact" id="fun-fact"></div>
+  <button class="next-btn" id="next-btn" onclick="nextRound()">
+    <span data-lang="en">Next →</span>
+    <span data-lang="hi">अगला →</span>
+    <span data-lang="as">পৰৱৰ্তী →</span>
+  </button>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="result-box">
+    <div class="res-emoji" id="res-emoji"></div>
+    <div class="res-title" id="res-title"></div>
+    <div class="res-score" id="res-score"></div>
+    <div class="res-stars" id="res-stars"></div>
+    <button class="play-again-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again!</span>
+      <span data-lang="hi">🔄 फिर खेलें!</span>
+      <span data-lang="as">🔄 আকৌ খেলক!</span>
+    </button>
+  </div>
+</div>
+
+<script>
+let currentLang = 'en';
+
+function setLang(l) {
+  currentLang = l;
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? 'inline' : 'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', ['en','hi','as'][i] === l);
+  });
+}
+
+const vehicles = [
+  {
+    emoji: '🚗',
+    name: { en: 'Car', hi: 'कार', as: 'গাড়ী' },
+    category: 'land',
+    fact: {
+      en: '🚗 Cars travel on roads! They have 4 wheels and can carry a whole family!',
+      hi: '🚗 कार सड़क पर चलती है! इसके 4 पहिये होते हैं और पूरे परिवार को ले जा सकती है!',
+      as: '🚗 গাড়ী ৰাস্তাত চলে! ইয়াৰ ৪টা চকা আছে আৰু গোটেই পৰিয়ালক লৈ যাব পাৰে!'
+    }
+  },
+  {
+    emoji: '🚌',
+    name: { en: 'Bus', hi: 'बस', as: 'বাছ' },
+    category: 'land',
+    fact: {
+      en: '🚌 A bus can carry many people at once! It travels on roads just like a car!',
+      hi: '🚌 एक बस एक साथ कई लोगों को ले जा सकती है! यह कार की तरह सड़क पर चलती है!',
+      as: '🚌 এখন বাছে একেসময়তে বহুত মানুহ বহন কৰিব পাৰে! ই গাড়ীৰ দৰেই ৰাস্তাত চলে!'
+    }
+  },
+  {
+    emoji: '🚂',
+    name: { en: 'Train', hi: 'रेलगाड़ी', as: 'ৰেলগাড়ী' },
+    category: 'land',
+    fact: {
+      en: '🚂 Trains run on railway tracks! They are very long and can carry hundreds of people!',
+      hi: '🚂 ट्रेन रेल की पटरी पर चलती है! यह बहुत लंबी होती है और सैकड़ों लोगों को ले जा सकती है!',
+      as: '🚂 ৰেলগাড়ী ৰেললাইনত চলে! এইবোৰ বহুত দীঘল আৰু শতাধিক মানুহ বহন কৰিব পাৰে!'
+    }
+  },
+  {
+    emoji: '🛳️',
+    name: { en: 'Ship', hi: 'जहाज़', as: 'জাহাজ' },
+    category: 'water',
+    fact: {
+      en: '🛳️ Ships sail on the sea! They are huge and can travel across oceans!',
+      hi: '🛳️ जहाज़ समुद्र में चलता है! यह बहुत बड़ा होता है और महासागर पार कर सकता है!',
+      as: '🛳️ জাহাজ সাগৰত চলে! এইবোৰ বিশাল আৰু মহাসাগৰ পাৰ হ\'ব পাৰে!'
+    }
+  },
+  {
+    emoji: '✈️',
+    name: { en: 'Aeroplane', hi: 'हवाई जहाज़', as: 'বিমান' },
+    category: 'air',
+    fact: {
+      en: '✈️ Aeroplanes fly very high in the sky! They can travel to faraway countries!',
+      hi: '✈️ हवाई जहाज़ आसमान में बहुत ऊँचा उड़ता है! यह दूर-दूर के देशों की यात्रा कर सकता है!',
+      as: '✈️ বিমান আকাশত বহুত ওখকৈ উড়ে! ই দূৰণীয়া দেশলৈ যাত্ৰা কৰিব পাৰে!'
+    }
+  },
+  {
+    emoji: '🚲',
+    name: { en: 'Bicycle', hi: 'साइकिल', as: 'চাইকেল' },
+    category: 'land',
+    fact: {
+      en: '🚲 Bicycles have 2 wheels and you pedal them yourself! Great exercise too!',
+      hi: '🚲 साइकिल में 2 पहिये होते हैं और आप खुद पैडल चलाते हो! यह बढ़िया व्यायाम भी है!',
+      as: '🚲 চাইকেলত ২টা চকা থাকে আৰু আপুনি নিজে পেডেল মাৰে! এইটো ভাল ব্যায়ামও!'
+    }
+  },
+  {
+    emoji: '🛺',
+    name: { en: 'Auto Rickshaw', hi: 'ऑटो रिक्शा', as: 'অটো ৰিক্সা' },
+    category: 'land',
+    fact: {
+      en: '🛺 Auto rickshaws have 3 wheels! They are very popular in India for short trips!',
+      hi: '🛺 ऑटो रिक्शा में 3 पहिये होते हैं! छोटी यात्राओं के लिए भारत में बहुत लोकप्रिय है!',
+      as: '🛺 অটো ৰিক্সাৰ ৩টা চকা থাকে! চুটি যাত্ৰাৰ বাবে ভাৰতত বহুত জনপ্ৰিয়!'
+    }
+  },
+  {
+    emoji: '🚁',
+    name: { en: 'Helicopter', hi: 'हेलीकॉप्टर', as: 'হেলিকপ্তাৰ' },
+    category: 'air',
+    fact: {
+      en: '🚁 Helicopters can fly up, down, and even hover in one spot! Very useful for rescues!',
+      hi: '🚁 हेलीकॉप्टर ऊपर, नीचे और एक जगह पर भी उड़ सकता है! बचाव कार्यों के लिए बहुत उपयोगी!',
+      as: '🚁 হেলিকপ্তাৰ ওপৰলৈ, তললৈ আৰু এক ঠাইতে থাকিও উড়িব পাৰে! উদ্ধাৰ কাৰ্যত বহুত উপযোগী!'
+    }
+  }
+];
+
+const catIds = ['land', 'water', 'air'];
+
+let order = [], ri = 0, score = 0, answered = false;
+
+function shuffle(a) { return [...a].sort(() => Math.random() - .5); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function startGame() {
+  order = shuffle([...Array(vehicles.length).keys()]);
+  ri = 0; score = 0;
+  document.getElementById('overlay').classList.remove('show');
+  loadRound();
+}
+
+function loadRound() {
+  const v = vehicles[order[ri]];
+  answered = false;
+
+  document.getElementById('prog-fill').style.width = (ri / vehicles.length * 100) + '%';
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('round-num').textContent = ri + 1;
+  document.getElementById('transport-emoji').textContent = v.emoji;
+  document.getElementById('transport-name').textContent = v.name[currentLang] || v.name['en'];
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('fun-fact').classList.remove('show');
+  document.getElementById('fun-fact').textContent = '';
+  document.getElementById('next-btn').style.display = 'none';
+
+  catIds.forEach(id => {
+    const btn = document.getElementById('btn-' + id);
+    btn.disabled = false;
+    btn.className = 'cat-btn';
+  });
+}
+
+function handleAnswer(chosen) {
+  if (answered) return;
+  answered = true;
+  const v = vehicles[order[ri]];
+  const isCorrect = chosen === v.category;
+
+  catIds.forEach(id => {
+    document.getElementById('btn-' + id).disabled = true;
+  });
+
+  const chosenBtn = document.getElementById('btn-' + chosen);
+  const correctBtn = document.getElementById('btn-' + v.category);
+
+  correctBtn.classList.add('correct');
+  if (!isCorrect) chosenBtn.classList.add('wrong');
+
+  if (isCorrect) score += 10;
+
+  const fb = document.getElementById('feedback');
+  const catLabels = {
+    land:  { en: 'land', hi: 'ज़मीन', as: 'স্থল' },
+    water: { en: 'water', hi: 'पानी', as: 'পানী' },
+    air:   { en: 'air', hi: 'आकाश', as: 'আকাশ' }
+  };
+  if (isCorrect) {
+    const msgs = {
+      en: ['Yes! Correct! ✓', 'Amazing! ✓', 'You got it! ✓'],
+      hi: ['हाँ! सही! ✓', 'शानदार! ✓', 'सही जवाब! ✓'],
+      as: ['হয়! শুদ্ধ! ✓', 'অসাধাৰণ! ✓', 'একদম ঠিক! ✓']
+    };
+    fb.textContent = pick(msgs[currentLang] || msgs['en']);
+    fb.className = 'feedback correct';
+  } else {
+    const msgs = {
+      en: [`It travels on ${catLabels[v.category]['en']}! ✗`, 'Oops! Try again next time! ✗'],
+      hi: [`यह ${catLabels[v.category]['hi']} पर चलता है! ✗`, 'उफ़! अगली बार कोशिश करो! ✗'],
+      as: [`এইটো ${catLabels[v.category]['as']}ত চলে! ✗`, 'উফ! পৰৱৰ্তী বাৰ চেষ্টা কৰা! ✗']
+    };
+    fb.textContent = msgs[currentLang][0] || msgs['en'][0];
+    fb.className = 'feedback wrong';
+  }
+
+  const ff = document.getElementById('fun-fact');
+  ff.textContent = v.fact[currentLang] || v.fact['en'];
+  ff.classList.add('show');
+
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextRound() {
+  ri++;
+  if (ri >= vehicles.length) { showResult(); return; }
+  loadRound();
+}
+
+function showResult() {
+  document.getElementById('prog-fill').style.width = '100%';
+  const pct = (score / (vehicles.length * 10)) * 100;
+  let emoji = '😊', title = { en: 'Good Try!', hi: 'अच्छी कोशिश!', as: 'ভাল চেষ্টা!' };
+  if (pct >= 90) { emoji = '✈️'; title = { en: 'Transport Expert!', hi: 'परिवहन विशेषज्ञ!', as: 'পৰিবহণ বিশেষজ্ঞ!' }; }
+  else if (pct >= 70) { emoji = '🚗'; title = { en: 'Well Done!', hi: 'बहुत अच्छा!', as: 'বহুত ভাল!' }; }
+  else if (pct >= 40) { emoji = '👍'; title = { en: 'Good Job!', hi: 'शाबाश!', as: 'ভাল কাম!' }; }
+
+  const stars = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : pct >= 40 ? '⭐' : '';
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-title').textContent = title[currentLang] || title['en'];
+  document.getElementById('res-score').textContent = 'Score: ' + score + ' / ' + (vehicles.length * 10);
+  document.getElementById('res-stars').textContent = stars;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function restartGame() { startGame(); }
+startGame();
+</script>
+</body>
+</html>

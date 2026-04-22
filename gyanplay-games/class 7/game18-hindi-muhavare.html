@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>मुहावरे मिलान — Class 7 Hindi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#0F0C29;--dark:#1A1A2E;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Nunito',sans-serif;background:var(--bg);color:#fff;min-height:100vh;
+         display:flex;flex-direction:column;align-items:center;padding:1rem;animation:fadeIn .4s ease}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    .topbar{width:100%;max-width:700px;display:flex;align-items:center;
+            justify-content:space-between;padding:.75rem 0;margin-bottom:.5rem}
+    .back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:.85rem;
+              font-weight:700;padding:6px 14px;border-radius:20px;cursor:pointer;
+              text-decoration:none;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.18)}
+    .subject-tag{background:#C62828;color:#fff;font-size:.75rem;font-weight:800;
+                 padding:4px 12px;border-radius:20px;letter-spacing:.5px}
+    .stars{display:flex;gap:4px;font-size:1.3rem}
+    .star{opacity:.3;transition:all .3s}
+    .star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+
+    .lang-row{display:flex;gap:6px;margin-bottom:1rem}
+    .lang-btn{background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);
+              font-weight:700;font-size:.75rem;padding:4px 10px;border-radius:16px;
+              cursor:pointer;transition:all .2s}
+    .lang-btn.active{background:var(--gold);color:var(--dark)}
+
+    .game-card{width:100%;max-width:680px;background:rgba(255,255,255,.05);
+               border:1px solid rgba(255,255,255,.1);border-radius:24px;
+               padding:2rem 1.5rem;text-align:center}
+
+    /* Scroll/parchment display for the muhavara */
+    .scroll-display{background:linear-gradient(135deg,rgba(198,40,40,.12),rgba(255,184,0,.08));
+                    border:2px solid rgba(198,40,40,.3);border-radius:20px;
+                    padding:1.2rem 1.5rem;margin-bottom:.6rem;position:relative}
+    .scroll-display::before,.scroll-display::after{
+      content:'❧';position:absolute;font-size:1.2rem;color:rgba(198,40,40,.4);
+    }
+    .scroll-display::before{top:.4rem;left:.7rem}
+    .scroll-display::after{bottom:.4rem;right:.7rem}
+
+    .muhavara-text{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.7rem;
+                   line-height:1.3;color:var(--gold);margin-bottom:.4rem;
+                   text-shadow:0 0 20px rgba(255,184,0,.3)}
+    .muhavara-hint{font-size:.72rem;color:rgba(255,255,255,.35);font-style:italic;
+                   font-family:'Nunito',sans-serif}
+
+    .q-header{font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:.8rem;font-style:italic}
+    .progress-bar{width:100%;background:rgba(255,255,255,.08);border-radius:20px;
+                  height:7px;margin-bottom:.4rem;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,#C62828,var(--gold));
+                   border-radius:20px;transition:width .4s}
+    .progress-text{font-size:.78rem;color:rgba(255,255,255,.4);text-align:right;margin-bottom:.8rem}
+    .q-number{font-size:.75rem;font-weight:800;color:var(--gold);letter-spacing:1px;
+              text-transform:uppercase;margin-bottom:.3rem}
+    .q-label{font-family:'Baloo 2',cursive;font-weight:700;font-size:.95rem;
+              color:rgba(255,255,255,.7);margin-bottom:1rem}
+
+    .choices{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1rem}
+    .choice-btn{background:rgba(255,255,255,.07);border:2px solid rgba(198,40,40,.2);
+                border-radius:14px;padding:.8rem 1.2rem;font-family:'Nunito',sans-serif;
+                font-size:.95rem;font-weight:700;color:#fff;cursor:pointer;
+                text-align:center;transition:all .2s;line-height:1.4}
+    .choice-btn:hover:not(:disabled){background:rgba(255,184,0,.1);
+                                      border-color:rgba(255,184,0,.4);transform:scale(1.02)}
+    .choice-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);
+                        box-shadow:0 0 12px rgba(0,200,83,.25)}
+    .choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink)}
+    .choice-btn:disabled{cursor:default}
+
+    .feedback{font-size:.9rem;font-weight:800;min-height:1.4rem;margin-bottom:.5rem}
+    .feedback.correct{color:var(--green)}
+    .feedback.wrong{color:var(--pink)}
+    .next-btn{background:var(--gold);color:var(--dark);font-family:'Baloo 2',cursive;
+              font-weight:800;font-size:1rem;padding:.7rem 2rem;border:none;
+              border-radius:50px;cursor:pointer;display:none;transition:transform .15s}
+    .next-btn:hover{transform:scale(1.04)}
+
+    /* Score beads row */
+    .bead-row{display:flex;justify-content:center;gap:.3rem;margin-bottom:.8rem;flex-wrap:wrap}
+    .bead{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.1);
+          border:2px solid rgba(255,255,255,.15);transition:all .35s;font-size:.55rem;
+          display:flex;align-items:center;justify-content:center}
+    .bead.hit{background:var(--gold);border-color:var(--gold);box-shadow:0 0 6px var(--gold)}
+    .bead.miss{background:rgba(255,64,129,.35);border-color:var(--pink)}
+
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);
+             backdrop-filter:blur(8px);align-items:center;justify-content:center;
+             z-index:100;padding:1.5rem}
+    .overlay.show{display:flex}
+    .result-box{background:linear-gradient(135deg,#2a0505,#0F0C29);
+                border:1px solid rgba(198,40,40,.25);border-radius:28px;
+                padding:2.5rem 2rem;text-align:center;max-width:420px;width:100%;
+                animation:popIn .35s ease}
+    @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+    .result-emoji{font-size:3.5rem;margin-bottom:.75rem}
+    .result-title{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.8rem;color:#fff;margin-bottom:.5rem}
+    .result-score{font-size:1rem;color:rgba(255,255,255,.6);margin-bottom:.75rem}
+    .result-stars{font-size:2rem;margin-bottom:.75rem}
+    .result-fact{background:rgba(198,40,40,.1);border:1px solid rgba(198,40,40,.3);
+                 border-radius:14px;padding:.75rem 1rem;font-size:.82rem;
+                 color:rgba(255,255,255,.8);line-height:1.6;margin-bottom:1.5rem;text-align:left}
+    .btn-play-again{background:var(--gold);color:var(--dark);font-family:'Baloo 2',cursive;
+                    font-weight:800;font-size:1rem;padding:.8rem 2rem;border:none;
+                    border-radius:50px;cursor:pointer;width:100%;transition:transform .15s}
+    .btn-play-again:hover{transform:scale(1.03)}
+    .confetti-piece{position:fixed;width:8px;height:8px;pointer-events:none;
+                    animation:fall var(--dur,1.8s) ease-in forwards}
+    @keyframes fall{0%{transform:translateY(0) rotate(0)}
+                    100%{transform:translateY(100vh) rotate(720deg) translateX(var(--dx));opacity:0}}
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="subject-tag">📖 Hindi · Class 7</span>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span>
+      <span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span>
+    </div>
+  </div>
+
+  <div class="lang-row">
+    <button class="lang-btn active" onclick="setLang('en')" id="lbEn">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')" id="lbHi">हि</button>
+    <button class="lang-btn" onclick="setLang('as')" id="lbAs">অ</button>
+  </div>
+
+  <div class="game-card">
+    <div class="q-header" id="qHeader">What does this idiom mean?</div>
+
+    <!-- Score beads -->
+    <div class="bead-row" id="beadRow"></div>
+
+    <div class="progress-bar"><div class="progress-fill" id="pFill" style="width:0%"></div></div>
+    <div class="progress-text" id="pText">1 / 10</div>
+    <div class="q-number" id="qNum">Muhavara 1</div>
+
+    <!-- Muhavara parchment -->
+    <div class="scroll-display">
+      <div class="muhavara-text" id="muhavaraText">नाक में दम करना</div>
+      <div class="muhavara-hint" id="muhavaraHint">Idiom in Hindi — to cause trouble</div>
+    </div>
+
+    <div class="q-label" id="qLabel">इस मुहावरे का अर्थ क्या है?</div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQ()">अगला →</button>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="result-box">
+      <div class="result-emoji" id="rEmoji">📖</div>
+      <div class="result-title" id="rTitle"></div>
+      <div class="result-score" id="rScore"></div>
+      <div class="result-stars" id="rStars"></div>
+      <div class="result-fact" id="rFact"></div>
+      <button class="btn-play-again" onclick="restartGame()" id="rBtn">दोबारा खेलें</button>
+    </div>
+  </div>
+
+<script>
+const QUESTIONS = [
+  {
+    muhavara:"नाक में दम करना",
+    hintEn:"to cause great trouble",
+    hintHi:"बहुत परेशान करना (lit. to stuff the nose)",
+    hintAs:"বহুত বিৰক্ত কৰা",
+    choices:["बहुत परेशान करना","खुश करना","डराना"],
+    answer:0
+  },
+  {
+    muhavara:"आँखें खुलना",
+    hintEn:"to realise the truth",
+    hintHi:"सच्चाई समझ आना (lit. eyes opening)",
+    hintAs:"সত্য বুজা",
+    choices:["नींद से जागना","सच्चाई समझ आना","रोना"],
+    answer:1
+  },
+  {
+    muhavara:"हाथ पर हाथ धरना",
+    hintEn:"to sit idle",
+    hintHi:"बिना काम बैठे रहना (lit. placing hand on hand)",
+    hintAs:"কাম নকৰাকৈ বহি থকা",
+    choices:["काम करना","बिना काम बैठे रहना","हाथ धोना"],
+    answer:1
+  },
+  {
+    muhavara:"दाँत खट्टे करना",
+    hintEn:"to defeat someone",
+    hintHi:"हराना (lit. to sour one's teeth)",
+    hintAs:"পৰাজিত কৰা",
+    choices:["हराना","मिठाई खाना","दोस्त बनाना"],
+    answer:0
+  },
+  {
+    muhavara:"कान भरना",
+    hintEn:"to tell tales about someone",
+    hintHi:"चुगली करना (lit. to fill ears)",
+    hintAs:"কুচুকাৱাজ কৰা",
+    choices:["ध्यान से सुनना","चुगली करना","कान साफ करना"],
+    answer:1
+  },
+  {
+    muhavara:"पेट में चूहे दौड़ना",
+    hintEn:"to feel very hungry",
+    hintHi:"बहुत भूख लगना (lit. mice running in stomach)",
+    hintAs:"খুব ভোক লগা",
+    choices:["बीमार पड़ना","बहुत भूख लगना","डर जाना"],
+    answer:1
+  },
+  {
+    muhavara:"नौ दो ग्यारह होना",
+    hintEn:"to run away",
+    hintHi:"भाग जाना (lit. 9 + 2 = 11 — slip away!)",
+    hintAs:"পলাই যোৱা",
+    choices:["गणित करना","भाग जाना","इकट्ठा होना"],
+    answer:1
+  },
+  {
+    muhavara:"आसमान से बातें करना",
+    hintEn:"to be very tall / sky-high",
+    hintHi:"बहुत ऊँचा होना (lit. to talk with the sky)",
+    hintAs:"বহুত ওখ হোৱা",
+    choices:["झूठ बोलना","बहुत ऊँचा होना","उड़ना"],
+    answer:1
+  },
+  {
+    muhavara:"अंधे की लाठी",
+    hintEn:"one's only support",
+    hintHi:"एकमात्र सहारा (lit. the blind man's stick)",
+    hintAs:"একমাত্ৰ আশ্ৰয়",
+    choices:["एकमात्र सहारा","कमज़ोर होना","अंधेरे में चलना"],
+    answer:0
+  },
+  {
+    muhavara:"दिल बाग-बाग होना",
+    hintEn:"to be very happy",
+    hintHi:"बहुत खुश होना (lit. heart becoming a garden)",
+    hintAs:"বহুত সুখী হোৱা",
+    choices:["बहुत खुश होना","उदास होना","डर जाना"],
+    answer:0
+  }
+];
+
+const T = {
+  en:{
+    header:"What does this idiom mean?",
+    qLabel:"What does this idiom mean?",
+    qNum:"Idiom",
+    feedback_correct:["Correct! 📖","Brilliant! ✅","Spot on! 🌟","Well done! 👏","Perfect! 🎯"],
+    feedback_wrong:"The correct meaning is",
+    next:"Next →",restart:"Restart",
+    result_title:["Idiom Master! 📖","Great Work! 🎉","Good Effort! 👏","Keep Learning! 💪"],
+    result_score:(c)=>`You scored ${c} out of 10`,
+    fact:"📖 Fun Fact: मुहावरे (Muhavare) are fixed Hindi expressions whose meaning is different from the individual words. They make language colourful! For example, 'नौ दो ग्यारह' literally means '9+2=11' but means 'to run away' — because when you run, your legs split apart like the numbers!"
+  },
+  hi:{
+    header:"इस मुहावरे का अर्थ क्या है?",
+    qLabel:"इस मुहावरे का अर्थ क्या है?",
+    qNum:"मुहावरा",
+    feedback_correct:["सही! 📖","शानदार! ✅","बिल्कुल सही! 🌟","शाबाश! 👏","परफेक्ट! 🎯"],
+    feedback_wrong:"सही अर्थ है",
+    next:"अगला →",restart:"दोबारा खेलें",
+    result_title:["मुहावरा विशेषज्ञ! 📖","बहुत अच्छा! 🎉","अच्छा प्रयास! 👏","पढ़ते रहो! 💪"],
+    result_score:(c)=>`आपने 10 में से ${c} अंक पाए`,
+    fact:"📖 मज़ेदार तथ्य: मुहावरे वे निश्चित अभिव्यक्तियाँ हैं जिनका अर्थ अलग-अलग शब्दों के अर्थ से अलग होता है। वे भाषा को रंगीन बनाते हैं! उदाहरण: 'नौ दो ग्यारह' का शाब्दिक अर्थ है '9+2=11' लेकिन इसका मतलब है 'भाग जाना'!"
+  },
+  as:{
+    header:"এই মুহাৱৰাৰ অৰ্থ কি?",
+    qLabel:"এই মুহাৱৰাৰ অৰ্থ কি?",
+    qNum:"মুহাৱৰা",
+    feedback_correct:["শুদ্ধ! 📖","চমৎকাৰ! ✅","একদম শুদ্ধ! 🌟","শাবাশ! 👏","নিখুঁত! 🎯"],
+    feedback_wrong:"শুদ্ধ অৰ্থ হ'ল",
+    next:"পৰৱৰ্তী →",restart:"পুনৰ খেলক",
+    result_title:["মুহাৱৰা বিশেষজ্ঞ! 📖","বহুত ভাল! 🎉","ভাল প্ৰচেষ্টা! 👏","পঢ়ি থাকক! 💪"],
+    result_score:(c)=>`আপুনি ১০ৰ মাজত ${c} পাইছে`,
+    fact:"📖 মজাৰ তথ্য: মুহাৱৰা হৈছে হিন্দীৰ নিৰ্দিষ্ট প্ৰকাশভঙ্গী যাৰ অৰ্থ পৃথক শব্দৰ অৰ্থৰ পৰা বেলেগ হয়। এইবোৰে ভাষাক সুন্দৰ কৰে! উদাহৰণ: 'নৌ দো গ্যাৰহ' শাব্দিকভাৱে '৯+২=১১' কিন্তু ইয়াৰ অৰ্থ হ'ল 'পলাই যোৱা'!"
+  }
+};
+
+let lang='en', cur=0, score=0, answered=false, litStars=0;
+
+function buildBeadRow(){
+  const row=document.getElementById('beadRow');
+  row.innerHTML=Array(10).fill(0).map((_,i)=>`<div class="bead" id="bead${i}"></div>`).join('');
+}
+
+function setLang(l){
+  lang=l;
+  ['en','hi','as'].forEach(x=>{
+    document.getElementById('lb'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('active',x===l);
+  });
+  renderQ();
+}
+
+function renderQ(){
+  const t=T[lang], q=QUESTIONS[cur];
+  answered=false;
+  document.getElementById('qHeader').textContent=t.header;
+  document.getElementById('pFill').style.width=(cur/10*100)+'%';
+  document.getElementById('pText').textContent=`${cur+1} / 10`;
+  document.getElementById('qNum').textContent=`${t.qNum} ${cur+1}`;
+  document.getElementById('qLabel').textContent=t.qLabel;
+
+  document.getElementById('muhavaraText').textContent=q.muhavara;
+  // Show appropriate hint
+  const hintKey = lang==='en' ? 'hintEn' : lang==='hi' ? 'hintHi' : 'hintAs';
+  document.getElementById('muhavaraHint').textContent=q[hintKey];
+
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('nextBtn').textContent=cur<9?t.next:t.restart;
+
+  const ch=document.getElementById('choices');
+  ch.innerHTML=q.choices.map((c,i)=>
+    `<button class="choice-btn" onclick="pick(${i})">${c}</button>`
+  ).join('');
+}
+
+function pick(idx){
+  if(answered) return;
+  answered=true;
+  const q=QUESTIONS[cur], t=T[lang];
+  const btns=document.querySelectorAll('.choice-btn');
+  btns.forEach(b=>b.disabled=true);
+  const correct=idx===q.answer;
+  btns[idx].classList.add(correct?'correct':'wrong');
+  if(!correct) btns[q.answer].classList.add('correct');
+
+  // Update bead
+  const bead=document.getElementById('bead'+cur);
+  bead.classList.add(correct?'hit':'miss');
+  bead.textContent=correct?'✓':'✗';
+
+  const fb=document.getElementById('feedback');
+  if(correct){
+    score++;
+    const msgs=t.feedback_correct;
+    fb.textContent=msgs[Math.floor(Math.random()*msgs.length)];
+    fb.className='feedback correct';
+    playTone(660,'sine',.15);playTone(880,'sine',.2,.25,.12);
+    updateStars();
+  } else {
+    fb.textContent=`${t.feedback_wrong}: ${q.choices[q.answer]}`;
+    fb.className='feedback wrong';
+    playTone(280,'sawtooth',.18);
+  }
+  document.getElementById('nextBtn').style.display='inline-block';
+  if(cur>=9) document.getElementById('nextBtn').onclick=showResult;
+}
+
+function nextQ(){cur++;if(cur>=10){showResult();return;}renderQ();}
+
+function updateStars(){
+  const pct=score/10;
+  if(pct>=.4&&litStars<1){litStars=1;litStar(1);}
+  if(pct>=.7&&litStars<2){litStars=2;litStar(2);}
+  if(pct>=.9&&litStars<3){litStars=3;litStar(3);}
+}
+function litStar(n){
+  const el=document.getElementById('s'+n);
+  el.classList.add('lit');
+  el.animate([{transform:'scale(1.6)'},{transform:'scale(1)'}],{duration:400});
+}
+
+function showResult(){
+  const t=T[lang], pct=score/10;
+  const idx=pct>=.9?0:pct>=.7?1:pct>=.4?2:3;
+  document.getElementById('rEmoji').textContent=['📖','🎉','👏','💪'][idx];
+  document.getElementById('rTitle').textContent=t.result_title[idx];
+  document.getElementById('rScore').textContent=t.result_score(score);
+  document.getElementById('rStars').textContent='⭐'.repeat(litStars)+'☆'.repeat(3-litStars);
+  document.getElementById('rFact').textContent=t.fact;
+  document.getElementById('rBtn').textContent=t.restart;
+  document.getElementById('overlay').classList.add('show');
+  if(pct>=.4) launchConfetti();
+}
+
+function restartGame(){
+  cur=score=litStars=0;answered=false;
+  ['s1','s2','s3'].forEach(id=>document.getElementById(id).classList.remove('lit'));
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('nextBtn').onclick=nextQ;
+  buildBeadRow();
+  renderQ();
+}
+
+let _ctx;
+function getCtx(){return _ctx||(_ctx=new(window.AudioContext||window.webkitAudioContext)());}
+function playTone(f,t,d,g,dl){
+  try{const c=getCtx(),dly=dl||0,o=c.createOscillator(),gn=c.createGain();
+  o.type=t;o.frequency.setValueAtTime(f,c.currentTime+dly);
+  gn.gain.setValueAtTime(0,c.currentTime+dly);
+  gn.gain.linearRampToValueAtTime(g||.22,c.currentTime+dly+.01);
+  gn.gain.exponentialRampToValueAtTime(.001,c.currentTime+dly+d);
+  o.connect(gn);gn.connect(c.destination);
+  o.start(c.currentTime+dly);o.stop(c.currentTime+dly+d+.05);}catch(e){}
+}
+document.addEventListener('click',()=>{try{getCtx().resume();}catch(e){}},{once:true});
+function launchConfetti(){
+  const cols=['#FFB800','#C62828','#FF4081','#00C853','#7C3AED'];
+  for(let i=0;i<35;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%cols.length]};--dur:${1.4+Math.random()*1.2}s;--dx:${(Math.random()-.5)*160}px;border-radius:${Math.random()>.5?'50%':'3px'}`;
+    document.body.appendChild(el);el.addEventListener('animationend',()=>el.remove());
+  }
+}
+
+buildBeadRow();
+setLang('en');
+</script>
+</body>
+</html>

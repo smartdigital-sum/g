@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G8-06: Modal Verb Theatre | GyanPlay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060A10;
+            --card: #0D1428;
+            --gold: #FFD166;
+            --coral: #FF6B6B;
+            --teal: #06D6A0;
+            --purple: #C77DFF;
+            --orange: #FF9F1C;
+            --text: #E8F0FF;
+            --dim: #4A6A8A;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, #1A0F00 0%, #100800 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .container { max-width: 480px; margin: 0 auto; }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 159, 28, 0.22);
+            margin-bottom: 20px;
+        }
+        
+        .title-section { flex: 1; }
+        .game-title { font-family: 'Baloo 2', cursive; font-size: 1.35rem; color: var(--gold); font-weight: 800; }
+        .subject-tag { font-size: 0.7rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .stars { display: flex; gap: 4px; }
+        .star { font-size: 1.2rem; opacity: 0.3; transition: all 0.3s ease; }
+        .star.lit { opacity: 1; filter: drop-shadow(0 0 8px var(--gold)); }
+        
+        .hook-card {
+            background: linear-gradient(135deg, rgba(255, 159, 28, 0.15), rgba(255, 159, 28, 0.05));
+            border: 1px solid rgba(255, 159, 28, 0.22);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 24px rgba(255, 159, 28, 0.12);
+        }
+        
+        .hook-text { font-size: 0.95rem; line-height: 1.7; }
+        .hook-text strong { color: var(--gold); font-weight: 700; }
+        
+        .game-area {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .stage-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            color: var(--orange);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stage-title::before { content: ''; width: 4px; height: 20px; background: var(--orange); border-radius: 2px; }
+        
+        /* Modal Scale */
+        .modal-scale {
+            background: rgba(6, 10, 16, 0.6);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .scale-title { font-size: 0.85rem; color: var(--dim); margin-bottom: 10px; }
+        
+        .scale-bar {
+            display: flex;
+            height: 40px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: rgba(74, 106, 138, 0.2);
+        }
+        
+        .scale-segment {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .scale-segment.will { background: rgba(6, 214, 160, 0.4); color: var(--teal); }
+        .scale-segment.should { background: rgba(255, 209, 102, 0.4); color: var(--gold); }
+        .scale-segment.may { background: rgba(199, 125, 255, 0.4); color: var(--purple); }
+        .scale-segment.might { background: rgba(255, 159, 28, 0.4); color: var(--orange); }
+        .scale-segment.could { background: rgba(255, 107, 107, 0.4); color: var(--coral); }
+        
+        /* Scenario Cards */
+        .scenario-card {
+            background: rgba(6, 10, 16, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .scenario-context {
+            font-size: 0.8rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .scenario-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .scenario-blank {
+            display: inline-block;
+            min-width: 80px;
+            border-bottom: 2px solid var(--orange);
+            text-align: center;
+            color: var(--gold);
+            font-weight: 700;
+        }
+        
+        .modal-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .modal-btn {
+            padding: 8px 16px;
+            border: 2px solid rgba(255, 159, 28, 0.3);
+            background: rgba(255, 159, 28, 0.1);
+            border-radius: 20px;
+            color: var(--text);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-btn:hover { border-color: var(--orange); background: rgba(255, 159, 28, 0.2); }
+        .modal-btn.correct { background: rgba(6, 214, 160, 0.2); border-color: var(--teal); }
+        .modal-btn.wrong { background: rgba(255, 71, 87, 0.2); border-color: var(--coral); }
+        
+        /* Conditional Types */
+        .conditional-card {
+            background: rgba(199, 125, 255, 0.1);
+            border: 1px solid rgba(199, 125, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+        
+        .conditional-type {
+            font-family: 'Baloo 2', cursive;
+            color: var(--purple);
+            margin-bottom: 8px;
+        }
+        
+        .conditional-example { font-size: 0.9rem; color: var(--dim); }
+        
+        .drag-area {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        
+        .draggable {
+            background: rgba(255, 209, 102, 0.2);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 0.85rem;
+            cursor: move;
+        }
+        
+        .drop-zone {
+            background: rgba(6, 10, 16, 0.6);
+            border: 2px dashed rgba(255, 159, 28, 0.4);
+            border-radius: 10px;
+            padding: 15px;
+            min-height: 50px;
+            margin-top: 10px;
+        }
+        
+        /* High Stakes */
+        .stakes-card {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+        
+        .stakes-icon { font-size: 1.5rem; margin-bottom: 8px; }
+        .stakes-title { font-family: 'Baloo 2', cursive; color: var(--coral); margin-bottom: 8px; }
+        .stakes-text { font-size: 0.9rem; line-height: 1.5; margin-bottom: 12px; }
+        
+        /* Bottom Bar */
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 20px;
+        }
+        
+        .progress-info { font-size: 0.85rem; color: var(--dim); }
+        
+        .action-btn {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: #060A10;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 209, 102, 0.4); }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(6, 10, 16, 0.95);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px;
+        }
+        .overlay.active { display: flex; }
+        .overlay-content { text-align: center; max-width: 400px; }
+        .overlay-emoji { font-size: 4rem; margin-bottom: 15px; }
+        .overlay-title { font-family: 'Baloo 2', cursive; font-size: 1.5rem; color: var(--gold); margin-bottom: 10px; }
+        .overlay-message { font-size: 1rem; color: var(--text); margin-bottom: 15px; }
+        .overlay-fact { font-size: 0.85rem; color: var(--dim); padding: 15px; background: rgba(255, 159, 28, 0.1); border-radius: 10px; border-left: 3px solid var(--orange); }
+        
+        /* Completion */
+        .completion-screen { display: none; text-align: center; padding: 40px 20px; }
+        .completion-screen.active { display: block; }
+        .trophy { font-size: 5rem; margin-bottom: 20px; }
+        .completion-title { font-family: 'Baloo 2', cursive; font-size: 2rem; color: var(--gold); margin-bottom: 15px; }
+        .completion-score { font-size: 1.2rem; color: var(--text); margin-bottom: 30px; }
+        .play-again-btn {
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border: none; border-radius: 25px; padding: 15px 40px;
+            color: var(--text); font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 1.1rem;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .play-again-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(199, 125, 255, 0.4); }
+        
+        .stage { display: none; }
+        .stage.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title-section">
+                <div class="subject-tag">English</div>
+                <div class="game-title">Modal Verb Theatre</div>
+            </div>
+            <div class="stars">
+                <span class="star" id="star1">⭐</span>
+                <span class="star" id="star2">⭐</span>
+                <span class="star" id="star3">⭐</span>
+                <span class="star" id="star4">⭐</span>
+                <span class="star" id="star5">⭐</span>
+            </div>
+        </div>
+        
+        <div class="hook-card">
+            <div class="hook-text">
+                The word <strong>'should'</strong> versus <strong>'must'</strong> is the difference between advice and a legal obligation. <strong>'You should wear a seatbelt'</strong> is advice. <strong>'You must wear a seatbelt'</strong> is law. Entire legal codes, medical instructions, and ethical debates hinge on which modal verb is used. <strong>Modals are where grammar becomes power.</strong>
+            </div>
+        </div>
+        
+        <!-- Stage 1: Modal Scale -->
+        <div class="stage active" id="stage1">
+            <div class="game-area">
+                <div class="stage-title">Stage 1: Modal Certainty Scale</div>
+                
+                <div class="modal-scale">
+                    <div class="scale-title">Certainty Level (High → Low)</div>
+                    <div class="scale-bar">
+                        <div class="scale-segment will">WILL<br>100%</div>
+                        <div class="scale-segment should">SHOULD<br>Expect</div>
+                        <div class="scale-segment may">MAY<br>Possible</div>
+                        <div class="scale-segment might">MIGHT<br>Remote</div>
+                        <div class="scale-segment could">COULD<br>Ability</div>
+                    </div>
+                </div>
+                
+                <div class="scenario-card">
+                    <div class="scenario-context">Medical Context</div>
+                    <div class="scenario-text">
+                        Patients <span class="scenario-blank" id="blank1">_____</span> take 2 tablets daily after meals.
+                    </div>
+                    <div class="modal-options">
+                        <button class="modal-btn" onclick="checkModal(this, 'must', true, 1)">must</button>
+                        <button class="modal-btn" onclick="checkModal(this, 'should', false, 1)">should</button>
+                        <button class="modal-btn" onclick="checkModal(this, 'may', false, 1)">may</button>
+                    </div>
+                </div>
+                
+                <div class="scenario-card">
+                    <div class="scenario-context">Polite Request</div>
+                    <div class="scenario-text">
+                        You <span class="scenario-blank" id="blank2">_____</span> please pass me the salt?
+                    </div>
+                    <div class="modal-options">
+                        <button class="modal-btn" onclick="checkModal(this, 'could', true, 2)">could</button>
+                        <button class="modal-btn" onclick="checkModal(this, 'must', false, 2)">must</button>
+                        <button class="modal-btn" onclick="checkModal(this, 'will', false, 2)">will</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 1 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 2: Conditional Types -->
+        <div class="stage" id="stage2">
+            <div class="game-area">
+                <div class="stage-title">Stage 2: Conditional Sentences</div>
+                
+                <div class="conditional-card">
+                    <div class="conditional-type">Type 0: Scientific Truth</div>
+                    <div class="conditional-example">If water boils, it turns to steam. (Always true)</div>
+                </div>
+                
+                <div class="conditional-card">
+                    <div class="conditional-type">Type 1: Real Future</div>
+                    <div class="conditional-example">If it rains, I will take an umbrella. (Likely)</div>
+                </div>
+                
+                <div class="conditional-card">
+                    <div class="conditional-type">Type 2: Unreal Present</div>
+                    <div class="conditional-example">If I were rich, I would travel. (Hypothetical)</div>
+                </div>
+                
+                <div class="conditional-card">
+                    <div class="conditional-type">Type 3: Unreal Past</div>
+                    <div class="conditional-example">If she had studied, she would have passed. (Regret)</div>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(6, 10, 16, 0.4); border-radius: 10px;">
+                    <div style="font-size: 0.9rem; margin-bottom: 10px;">Match the sentence to its type:</div>
+                    <div style="font-size: 0.85rem; color: var(--dim);">"If I won the lottery, I would buy a house."</div>
+                    <div class="modal-options" style="margin-top: 10px;">
+                        <button class="modal-btn" onclick="checkConditional(this, 1)">Type 1</button>
+                        <button class="modal-btn" onclick="checkConditional(this, 2)">Type 2</button>
+                        <button class="modal-btn" onclick="checkConditional(this, 3)">Type 3</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 2 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 3: High Stakes -->
+        <div class="stage" id="stage3">
+            <div class="game-area">
+                <div class="stage-title">Stage 3: High-Stakes Scenarios</div>
+                
+                <div class="stakes-card">
+                    <div class="stakes-icon">🏥</div>
+                    <div class="stakes-title">Medical Prescription</div>
+                    <div class="stakes-text">
+                        "Patients <span class="scenario-blank" id="blank3">_____</span> not exceed the recommended dosage. Overdose may result in liver damage."
+                    </div>
+                    <div class="modal-options">
+                        <button class="modal-btn" onclick="checkStakes(this, 'must')">must</button>
+                        <button class="modal-btn" onclick="checkStakes(this, 'should')">should</button>
+                        <button class="modal-btn" onclick="checkStakes(this, 'may')">may</button>
+                    </div>
+                </div>
+                
+                <div class="stakes-card">
+                    <div class="stakes-icon">📋</div>
+                    <div class="stakes-title">Legal Contract</div>
+                    <div class="stakes-text">
+                        "Either party <span class="scenario-blank" id="blank4">_____</span> terminate this agreement with 30 days written notice."
+                    </div>
+                    <div class="modal-options">
+                        <button class="modal-btn" onclick="checkStakes2(this, 'may')">may</button>
+                        <button class="modal-btn" onclick="checkStakes2(this, 'must')">must</button>
+                        <button class="modal-btn" onclick="checkStakes2(this, 'shall')">shall</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 3 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 4: Assam Accord Context -->
+        <div class="stage" id="stage4">
+            <div class="game-area">
+                <div class="stage-title">Stage 4: Assam Accord 1985</div>
+                
+                <div style="background: rgba(6, 214, 160, 0.1); border: 1px solid rgba(6, 214, 160, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 15px;">
+                    <div style="font-size: 0.9rem; line-height: 1.6;">
+                        The Assam Accord used modal verbs to define obligations vs permissions. Identify which clauses create legal obligations (must/shall) vs permissions (may):
+                    </div>
+                </div>
+                
+                <div class="scenario-card">
+                    <div class="scenario-text">
+                        "Foreigners who entered Assam after March 25, 1971 <span class="scenario-blank" id="blank5">_____</span> be detected and deported."
+                    </div>
+                    <div class="modal-options">
+                        <button class="modal-btn" onclick="checkAssam(this, 'shall', true)">shall</button>
+                        <button class="modal-btn" onclick="checkAssam(this, 'may', false)">may</button>
+                        <button class="modal-btn" onclick="checkAssam(this, 'should', false)">should</button>
+                    </div>
+                </div>
+                
+                <div class="scenario-card">
+                    <div class="scenario-text">
+                        "The government <span class="scenario-blank" id="blank6">_____</span> provide safeguards for the cultural identity of Assam."
+                    </div>
+                    <div class="modal-options">
+                        <button class="modal-btn" onclick="checkAssam2(this, 'shall', true)">shall</button>
+                        <button class="modal-btn" onclick="checkAssam2(this, 'may', false)">may</button>
+                        <button class="modal-btn" onclick="checkAssam2(this, 'could', false)">could</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 4 of 4</div>
+                <button class="action-btn" onclick="completeGame()">Complete Game</button>
+            </div>
+        </div>
+        
+        <div class="completion-screen" id="completionScreen">
+            <div class="trophy">🏆</div>
+            <div class="completion-title">Modal Master!</div>
+            <div class="completion-score" id="finalScore">You mastered modal verbs!</div>
+            <button class="play-again-btn" onclick="playAgain()">Play Again</button>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay">
+        <div class="overlay-content">
+            <div class="overlay-emoji" id="overlayEmoji">✓</div>
+            <div class="overlay-title" id="overlayTitle">Correct!</div>
+            <div class="overlay-message" id="overlayMessage"></div>
+            <div class="overlay-fact" id="overlayFact"></div>
+        </div>
+    </div>
+    
+    <script>
+        let currentStage = 1;
+        let score = 0;
+        
+        function checkModal(btn, modal, correct, blankNum) {
+            const card = btn.closest('.scenario-card');
+            const buttons = card.querySelectorAll('.modal-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            document.getElementById('blank' + blankNum).textContent = modal;
+            
+            if (correct) {
+                btn.classList.add('correct');
+                score += 10;
+                showOverlay('✓', 'Correct!', `"${modal}" is the right choice here.`, 'Modal verbs change the legal and social meaning of statements.');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Not quite', `"${modal}" doesn't fit this context.`, 'Think about the level of obligation or certainty needed.');
+            }
+            
+            document.getElementById('star1').classList.add('lit');
+        }
+        
+        function checkConditional(btn, type) {
+            const buttons = btn.parentElement.querySelectorAll('.modal-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            if (type === 2) {
+                btn.classList.add('correct');
+                score += 20;
+                showOverlay('✓', 'Correct!', 'Type 2: Unreal present/hypothetical.', 'Uses "would" for hypothetical situations.');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Not quite', 'This is a hypothetical situation.', 'Type 2 is for unreal present situations.');
+            }
+            
+            document.getElementById('star2').classList.add('lit');
+        }
+        
+        function checkStakes(btn, modal) {
+            const card = btn.closest('.stakes-card');
+            const buttons = card.querySelectorAll('.modal-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            document.getElementById('blank3').textContent = modal;
+            
+            if (modal === 'must') {
+                btn.classList.add('correct');
+                score += 10;
+                showOverlay('✓', 'Correct!', '"Must not" creates a prohibition.', 'Medical warnings use strong modals for safety.');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Too weak', 'Medical safety requires strong language.', '"Must" creates a legal/medical obligation.');
+            }
+        }
+        
+        function checkStakes2(btn, modal) {
+            const card = btn.closest('.stakes-card');
+            const buttons = card.querySelectorAll('.modal-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            document.getElementById('blank4').textContent = modal;
+            
+            if (modal === 'may') {
+                btn.classList.add('correct');
+                score += 10;
+                showOverlay('✓', 'Correct!', '"May" gives permission/option.', 'Contracts use "may" for optional actions.');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Too strong', 'Termination is optional, not required.', '"May" = permission; "must" = obligation.');
+            }
+        }
+        
+        function checkAssam(btn, modal, correct) {
+            const card = btn.closest('.scenario-card');
+            const buttons = card.querySelectorAll('.modal-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            document.getElementById('blank5').textContent = modal;
+            
+            if (correct) {
+                btn.classList.add('correct');
+                score += 10;
+                showOverlay('✓', 'Correct!', '"Shall" creates legal obligation.', 'Legal documents use "shall" for mandatory actions.');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Not strong enough', 'Legal agreements need mandatory language.', '"Shall" is stronger than "should" in law.');
+            }
+            
+            document.getElementById('star3').classList.add('lit');
+        }
+        
+        function checkAssam2(btn, modal, correct) {
+            const card = btn.closest('.scenario-card');
+            const buttons = card.querySelectorAll('.modal-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            document.getElementById('blank6').textContent = modal;
+            
+            if (correct) {
+                btn.classList.add('correct');
+                score += 10;
+                showOverlay('✓', 'Correct!', 'Government obligations use "shall".', 'The Accord created binding commitments.');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Too permissive', 'Safeguards are mandatory, not optional.', 'Legal texts use "shall" for duties.');
+            }
+            
+            document.getElementById('star4').classList.add('lit');
+        }
+        
+        function nextStage() {
+            document.getElementById('stage' + currentStage).classList.remove('active');
+            currentStage++;
+            document.getElementById('stage' + currentStage).classList.add('active');
+        }
+        
+        function completeGame() {
+            document.getElementById('star5').classList.add('lit');
+            score += 20;
+            
+            localStorage.setItem('G8-06', JSON.stringify({
+                visited: true,
+                score: score,
+                date: new Date().toISOString()
+            }));
+            
+            document.querySelectorAll('.stage').forEach(s => s.style.display = 'none');
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.hook-card').style.display = 'none';
+            document.getElementById('completionScreen').classList.add('active');
+            document.getElementById('finalScore').textContent = `You scored ${score}/100!`;
+        }
+        
+        function playAgain() {
+            currentStage = 1;
+            score = 0;
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+            document.querySelectorAll('.stage').forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'block';
+            });
+            document.getElementById('stage1').classList.add('active');
+            document.querySelector('.header').style.display = 'flex';
+            document.querySelector('.hook-card').style.display = 'block';
+            document.getElementById('completionScreen').classList.remove('active');
+            
+            document.querySelectorAll('.modal-btn').forEach(b => {
+                b.disabled = false;
+                b.classList.remove('correct', 'wrong');
+            });
+            
+            for (let i = 1; i <= 6; i++) {
+                const blank = document.getElementById('blank' + i);
+                if (blank) blank.textContent = '_____';
+            }
+        }
+        
+        function showOverlay(emoji, title, message, fact) {
+            document.getElementById('overlayEmoji').textContent = emoji;
+            document.getElementById('overlayTitle').textContent = title;
+            document.getElementById('overlayMessage').textContent = message;
+            document.getElementById('overlayFact').textContent = fact;
+            document.getElementById('overlay').classList.add('active');
+            setTimeout(() => document.getElementById('overlay').classList.remove('active'), 2500);
+        }
+        
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('G8-06');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.score > 0) {
+                    const stars = Math.ceil(data.score / 20);
+                    for (let i = 1; i <= stars; i++) document.getElementById('star' + i).classList.add('lit');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GyanPlay Nursery — Find the Colour!</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+  .hello-screen { background: linear-gradient(160deg, #FFF8E1, #FDEBD0); }
+
+  .scene-wrapper {
+    position: relative;
+    background: linear-gradient(180deg, #87CEEB 0%, #87CEEB 55%, #4CAF50 55%, #2E7D32 100%);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    min-height: 320px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 16px;
+    touch-action: none;
+  }
+
+  .scene-object {
+    position: absolute;
+    font-size: 2.8rem;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.3s;
+    touch-action: manipulation;
+    user-select: none;
+    line-height: 1;
+    filter: grayscale(0.7) brightness(0.7);
+  }
+  .scene-object.found {
+    filter: none;
+    animation: objectFound 0.5s cubic-bezier(.34,1.56,.64,1) forwards;
+    pointer-events: none;
+  }
+  .scene-object.wrong-tap {
+    animation: sceneTap 0.3s ease;
+  }
+  @keyframes objectFound {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.5) rotate(15deg); }
+    100% { transform: scale(1.15); }
+  }
+  @keyframes sceneTap {
+    0%,100% { transform: scale(1); }
+    50%     { transform: scale(0.85); }
+  }
+
+  .found-counter {
+    position: absolute;
+    top: 10px; right: 12px;
+    background: rgba(255,255,255,0.92);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-family: 'Baloo 2', cursive;
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .colour-target-banner {
+    background: var(--card);
+    border-radius: var(--r-md);
+    padding: 14px 20px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
+  .target-swatch {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+    border: 4px solid white;
+  }
+  .target-label {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--text);
+  }
+
+  .stage-dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  .stage-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.12);
+    transition: background 0.3s;
+  }
+  .stage-dot.active { background: var(--saffron); }
+  .stage-dot.done   { background: var(--green); }
+</style>
+</head>
+<body>
+
+<nav class="game-topbar">
+  <a class="game-logo" href="batch1-index.html">Gyan<span>Play</span></a>
+  <div class="topbar-center">🔍 Find the Colour!</div>
+  <div class="topbar-right">
+    <div class="lang-toggle">
+      <button onclick="setLang('en')">EN</button>
+      <button onclick="setLang('as')">অস</button>
+      <button onclick="setLang('hi')">हि</button>
+    </div>
+    <button class="sound-toggle" id="soundToggle">🔊</button>
+  </div>
+</nav>
+
+<div class="parent-tip-bar">
+  <span class="tip-icon">👨‍👩‍👧</span>
+  <div class="tip-text">
+    <span class="tip-label">Parent Tip</span>
+    <span data-lang="en" id="tipEn">Ask: "Can you find something RED in the picture?" Then look for red things around the room!</span>
+    <span data-lang="as" id="tipAs">সোধক: "ছবিত ৰঙা কিবা বিচাৰিব পাৰিছানে?" তাৰ পিছত কোঠাত ৰঙা বস্তু বিচাৰক!</span>
+    <span data-lang="hi" id="tipHi">पूछें: "तस्वीर में कुछ लाल ढूंढ सकते हो?" फिर कमरे में लाल चीज़ें ढूंढें!</span>
+  </div>
+</div>
+
+<!-- HELLO SCREEN -->
+<div class="screen hello-screen" id="helloScreen">
+  <div class="hello-emoji">🔍</div>
+  <div class="hello-title">
+    <span data-lang="en">Find the Colour!</span>
+    <span data-lang="as">ৰং বিচাৰক!</span>
+    <span data-lang="hi">रंग ढूंढो!</span>
+  </div>
+  <div class="hello-subtitle">
+    <span data-lang="en">Tap all the hidden coloured things! 🌟</span>
+    <span data-lang="as">লুকাই থকা ৰঙীন বস্তুবোৰ টেপ কৰক! 🌟</span>
+    <span data-lang="hi">छुपे रंगीन चीज़ें tap करो! 🌟</span>
+  </div>
+  <button class="start-btn" onclick="startGame()">
+    <span data-lang="en">▶ Let's Find!</span>
+    <span data-lang="as">▶ বিচাৰো!</span>
+    <span data-lang="hi">▶ ढूंढते हैं!</span>
+  </button>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="screen hidden" id="gameScreen">
+  <div class="game-wrapper">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <span style="background:rgba(255,184,0,0.15);color:#8a6000;padding:3px 10px;border-radius:20px;font-size:0.7rem;font-weight:800;text-transform:uppercase;">🎨 Colours</span>
+      <span class="round-indicator" id="roundLabel">Scene 1 / 3</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="stars-row">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+
+    <!-- Target colour banner -->
+    <div class="colour-target-banner">
+      <div class="target-swatch" id="targetSwatch"></div>
+      <div>
+        <div class="target-label" id="targetLabel">Red</div>
+        <div style="font-size:0.78rem;color:var(--muted);font-weight:600;" id="findPrompt">
+          <span data-lang="en">Tap all the <span id="colourWordEn"></span> things!</span>
+          <span data-lang="as"><span id="colourWordAs"></span> বস্তুবোৰ টেপ কৰক!</span>
+          <span data-lang="hi">सभी <span id="colourWordHi"></span> चीज़ें tap करो!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage dots -->
+    <div class="stage-dots" id="stageDots"></div>
+
+    <!-- Scene -->
+    <div class="scene-wrapper" id="sceneWrapper">
+      <div class="found-counter" id="foundCounter">0 / 0</div>
+    </div>
+
+    <button class="next-btn" id="nextBtn" onclick="nextStage()">
+      <span data-lang="en">Next Colour ➜</span>
+      <span data-lang="as">পৰৱৰ্তী ৰং ➜</span>
+      <span data-lang="hi">अगला रंग ➜</span>
+    </button>
+  </div>
+</div>
+
+<!-- CELEBRATION OVERLAY -->
+<div class="celebration-overlay" id="celebrationOverlay">
+  <div class="cel-emoji" id="celEmoji">🎉</div>
+  <div class="cel-title" id="celTitle">Well done!</div>
+  <div class="cel-sub" id="celSub"></div>
+  <div class="cel-fact" id="celFact"></div>
+  <button class="play-again-btn" onclick="resetGame()">
+    <span data-lang="en">🔁 Play Again!</span>
+    <span data-lang="as">🔁 আকৌ খেলক!</span>
+    <span data-lang="hi">🔁 फिर खेलें!</span>
+  </button>
+</div>
+
+<script src="audio.js"></script>
+<script src="game-engine.js"></script>
+<script>
+const STAGES = [
+  {
+    colour: { en: 'Red', as: 'ৰঙা', hi: 'लाल', hex: '#E53935' },
+    targets: ['🍎','🌹','🍓'],
+    decoys:  ['🌳','🐘','⭐','🌙','🐦','☁️'],
+    tip: { en: "Ask: 'Can you find something RED in the room too?'", as: "সোধক: 'ঘৰতো ৰঙা কিবা বিচাৰিব পাৰিছানে?'", hi: "पूछें: 'घर में भी कुछ लाल ढूंढ सकते हो?'" }
+  },
+  {
+    colour: { en: 'Blue', as: 'নীলা', hi: 'नीला', hex: '#1E88E5' },
+    targets: ['🫐','💧','🐬'],
+    decoys:  ['🌸','🍋','🦒','🌺','🍄','🐞'],
+    tip: { en: "Point to the sky: 'The sky is blue — like Brahmaputra river in Assam!'", as: "আকাশৰ দিশে আঙুলি দেখাওক: 'আকাশ নীলা — অসমৰ ব্ৰহ্মপুত্ৰ নদীৰ দৰে!'", hi: "आसमान की तरफ इशारा करें: 'आसमान नीला है — असम की ब्रह्मपुत्र नदी जैसा!'" }
+  },
+  {
+    colour: { en: 'Yellow', as: 'হালধীয়া', hi: 'पीला', hex: '#FDD835' },
+    targets: ['🌻','🍌','⭐'],
+    decoys:  ['🍇','🌊','🦔','🐸','🌹','🐺'],
+    tip: { en: "Show a banana or lemon: 'Yellow like this!' In Assamese: হালধীয়া (Haldhiya)", as: "কল বা নেমু দেখাওক: 'এনেকুৱা হালধীয়া!' অসমীয়া: হালধীয়া", hi: "केला या नींबू दिखाएं: 'इस जैसा पीला!' असमिया में: হালধীয়া (Haldhiya)" }
+  }
+];
+
+// Object positions (percentage based)
+const POSITIONS = [
+  {top:'8%', left:'8%'}, {top:'8%', left:'55%'}, {top:'30%', left:'30%'},
+  {top:'28%', left:'68%'}, {top:'52%', left:'5%'}, {top:'54%', left:'45%'},
+  {top:'54%', left:'72%'}, {top:'72%', left:'18%'}, {top:'72%', left:'62%'},
+];
+
+let stageIdx = 0, foundCount = 0, targetCount = 0, stageComplete = false;
+
+function startGame() {
+  markVisited('pn-02-find-colour');
+  soundHello();
+  showScreen('gameScreen');
+  initStars();
+  stageIdx = 0;
+  buildStageDots();
+  loadStage();
+}
+
+function buildStageDots() {
+  const dots = document.getElementById('stageDots');
+  dots.innerHTML = '';
+  STAGES.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'stage-dot' + (i === 0 ? ' active' : '');
+    d.id = `dot-${i}`;
+    dots.appendChild(d);
+  });
+}
+
+function updateDots() {
+  STAGES.forEach((_, i) => {
+    const d = document.getElementById(`dot-${i}`);
+    if (!d) return;
+    d.className = 'stage-dot';
+    if (i < stageIdx) d.classList.add('done');
+    else if (i === stageIdx) d.classList.add('active');
+  });
+}
+
+function loadStage() {
+  if (stageIdx >= STAGES.length) { endGame(); return; }
+  hideNextBtn();
+  stageComplete = false;
+  foundCount = 0;
+
+  const stage = STAGES[stageIdx];
+  targetCount = stage.targets.length;
+  updateDots();
+  updateProgress(stageIdx, STAGES.length);
+  document.getElementById('roundLabel').textContent = `Scene ${stageIdx+1} / ${STAGES.length}`;
+
+  // Set target colour
+  document.getElementById('targetSwatch').style.background = stage.colour.hex;
+  document.getElementById('targetLabel').textContent = stage.colour.en;
+  document.getElementById('colourWordEn').textContent = stage.colour.en;
+  document.getElementById('colourWordAs').textContent = stage.colour.as;
+  document.getElementById('colourWordHi').textContent = stage.colour.hi;
+
+  // Update tip
+  document.getElementById('tipEn').textContent = stage.tip.en;
+  document.getElementById('tipAs').textContent = stage.tip.as;
+  document.getElementById('tipHi').textContent = stage.tip.hi;
+  setLang(getLang());
+
+  // Build scene
+  const scene = document.getElementById('sceneWrapper');
+  // Remove old objects except counter
+  scene.querySelectorAll('.scene-object').forEach(e => e.remove());
+
+  const allObjects = shuffle([
+    ...stage.targets.map(e => ({ emoji: e, isTarget: true })),
+    ...stage.decoys.map(e => ({ emoji: e, isTarget: false }))
+  ]);
+
+  const positions = shuffle([...POSITIONS]).slice(0, allObjects.length);
+
+  allObjects.forEach((obj, i) => {
+    const el = document.createElement('div');
+    el.className = 'scene-object';
+    el.textContent = obj.emoji;
+    el.style.top = positions[i].top;
+    el.style.left = positions[i].left;
+    el.dataset.target = obj.isTarget ? '1' : '0';
+
+    el.addEventListener('click', () => handleObjectTap(el, obj.isTarget));
+    scene.appendChild(el);
+  });
+
+  document.getElementById('foundCounter').textContent = `0 / ${targetCount}`;
+}
+
+function handleObjectTap(el, isTarget) {
+  if (el.classList.contains('found')) return;
+  soundTap();
+
+  if (isTarget) {
+    el.classList.add('found');
+    soundCorrect();
+    foundCount++;
+    document.getElementById('foundCounter').textContent = `${foundCount} / ${targetCount}`;
+
+    if (foundCount === targetCount) {
+      stageComplete = true;
+      // Award star for each stage completed
+      awardStar(); soundStar();
+      setTimeout(showNextBtn, 500);
+    }
+  } else {
+    el.classList.add('wrong-tap');
+    soundWrong();
+    setTimeout(() => el.classList.remove('wrong-tap'), 350);
+
+    // Hint: gently highlight an unfound target
+    const unfound = document.querySelector('.scene-object[data-target="1"]:not(.found)');
+    if (unfound) showHint(unfound);
+  }
+}
+
+function nextStage() {
+  stageIdx++;
+  loadStage();
+}
+
+function endGame() {
+  updateProgress(STAGES.length, STAGES.length);
+  soundComplete();
+  const lang = getLang();
+  const titles = { en: '🌈 Amazing Explorer!', as: '🌈 অসাধাৰণ অন্বেষক!', hi: '🌈 शानदार खोजकर्ता!' };
+  const subs = {
+    en: "You found all the colours! Now look around the room — what colours can you spot?",
+    as: "আপুনি সকলো ৰং বিচাৰি পালে! এতিয়া চাৰিওফালে চাওক — কি ৰং দেখিছে?",
+    hi: "आपने सभी रंग ढूंढ लिए! अब कमरे में देखो — कौन से रंग दिखते हैं?"
+  };
+  const facts = {
+    en: '🌈 The Bihu festival in Assam uses RED gamosa cloth, GREEN banana leaves, and YELLOW mustard flowers!',
+    as: '🌈 অসমৰ বিহু উৎসৱত ৰঙা গামোচা, সেউজীয়া কলপাত, আৰু হালধীয়া সৰিয়হ ফুল ব্যৱহাৰ হয়!',
+    hi: '🌈 असम के बिहू उत्सव में लाल गमोचा कपड़ा, हरे केले के पत्ते और पीले सरसों के फूल इस्तेमाल होते हैं!'
+  };
+  showCelebration({ emoji: '🌈', title: titles[lang], sub: subs[lang], fact: facts[lang] });
+}
+
+function resetGame() {
+  hideCelebration();
+  initStars();
+  stageIdx = 0;
+  showScreen('gameScreen');
+  buildStageDots();
+  loadStage();
+}
+</script>
+</body>
+</html>

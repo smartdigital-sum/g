@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GyanPlay — Class 1 Game Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+  --green:#00C853;--pink:#FF4081;--dark:#1A1A2E;--dark2:#16213E;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--dark);color:#fff;min-height:100vh;overflow-x:hidden;}
+
+/* Animated bg */
+.bg-orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.12;animation:orbDrift 10s ease-in-out infinite;pointer-events:none;z-index:0;}
+@keyframes orbDrift{0%,100%{transform:translate(0,0);}50%{transform:translate(30px,-25px);}}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(26,26,46,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Fredoka One',cursive;font-size:1.5rem;color:var(--gold);}
+.logo span{color:var(--sky);}
+.class-badge{background:rgba(0,174,239,.15);border:1px solid rgba(0,174,239,.3);color:var(--sky);font-size:.78rem;font-weight:800;padding:4px 14px;border-radius:20px;letter-spacing:1px;}
+
+/* HERO */
+.hero{text-align:center;padding:clamp(36px,7vw,70px) 24px clamp(28px,5vw,48px);position:relative;z-index:1;}
+.hero-emoji{font-size:clamp(3.5rem,13vw,6rem);animation:heroFloat 3s ease-in-out infinite;}
+@keyframes heroFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+.hero h1{font-family:'Fredoka One',cursive;font-size:clamp(1.9rem,6.5vw,3.2rem);background:linear-gradient(135deg,var(--gold),var(--saffron));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:14px 0 8px;line-height:1.1;}
+.hero p{color:rgba(255,255,255,.5);font-size:clamp(.9rem,3vw,1.1rem);max-width:520px;margin:0 auto 28px;line-height:1.6;}
+.hero-stats{display:flex;justify-content:center;gap:clamp(14px,5vw,40px);flex-wrap:wrap;}
+.hstat{text-align:center;}
+.hstat-num{font-family:'Fredoka One',cursive;font-size:clamp(1.8rem,6vw,2.6rem);color:var(--gold);line-height:1;}
+.hstat-label{font-size:.72rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:2px;margin-top:2px;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:0 18px 22px;position:relative;z-index:1;}
+.filter-btn{padding:8px 18px;border-radius:50px;font-weight:700;font-size:.85rem;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.45);cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif;}
+.filter-btn:hover{border-color:rgba(255,255,255,.25);color:#fff;}
+.filter-btn.active{color:#fff;border-color:transparent;}
+.filter-btn[data-f="all"].active{background:linear-gradient(135deg,var(--saffron),var(--gold));}
+.filter-btn[data-f="maths"].active{background:linear-gradient(135deg,#FF6B00,#FFB800);}
+.filter-btn[data-f="english"].active{background:linear-gradient(135deg,#00AEEF,#0080ff);}
+.filter-btn[data-f="science"].active{background:linear-gradient(135deg,#00C853,#69F0AE);}
+.filter-btn[data-f="social"].active{background:linear-gradient(135deg,#FF4081,#f953c6);}
+.filter-btn[data-f="hindi"].active{background:linear-gradient(135deg,#FF6B00,#FF4757);}
+.filter-btn[data-f="computer"].active{background:linear-gradient(135deg,#00BCD4,#7C4DFF);}
+
+/* GAMES GRID */
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:clamp(12px,3vw,20px);padding:0 clamp(14px,4vw,28px) 60px;max-width:1200px;margin:0 auto;position:relative;z-index:1;}
+
+/* GAME CARD */
+.game-card{background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);border-radius:22px;overflow:hidden;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);text-decoration:none;color:inherit;display:block;}
+.game-card:hover{transform:translateY(-6px) scale(1.02);border-color:rgba(255,255,255,.18);box-shadow:0 20px 50px rgba(0,0,0,.4);}
+.card-thumb{height:clamp(120px,18vw,160px);display:flex;align-items:center;justify-content:center;font-size:clamp(3.5rem,11vw,5.5rem);position:relative;overflow:hidden;}
+.card-thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.25));}
+.thumb-maths{background:linear-gradient(135deg,#3d1c02,#FF6B00 220%);}
+.thumb-english{background:linear-gradient(135deg,#001f3d,#00AEEF 220%);}
+.thumb-science{background:linear-gradient(135deg,#002d14,#00C853 220%);}
+.thumb-social{background:linear-gradient(135deg,#3d001a,#FF4081 220%);}
+.thumb-hindi{background:linear-gradient(135deg,#3d1200,#FF4757 220%);}
+.thumb-computer{background:linear-gradient(135deg,#00001a,#00BCD4 220%);}
+.card-body{padding:16px 18px 18px;}
+.card-subject{font-size:.68rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+.sub-maths{color:var(--saffron);}
+.sub-english{color:var(--sky);}
+.sub-science{color:#00C853;}
+.sub-social{color:var(--pink);}
+.sub-hindi{color:#FF6347;}
+.sub-computer{color:#00BCD4;}
+.card-title{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#fff;margin-bottom:5px;line-height:1.2;}
+.card-desc{font-size:.82rem;color:rgba(255,255,255,.4);line-height:1.5;margin-bottom:13px;}
+.card-play{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 0;border-radius:12px;font-weight:700;font-size:.88rem;color:#fff;}
+.play-maths{background:linear-gradient(135deg,#FF6B00,#FFB800);}
+.play-english{background:linear-gradient(135deg,#00AEEF,#0080ff);}
+.play-science{background:linear-gradient(135deg,#00C853,#69F0AE);}
+.play-social{background:linear-gradient(135deg,#FF4081,#f953c6);}
+.play-hindi{background:linear-gradient(135deg,#FF6B00,#FF4757);}
+.play-computer{background:linear-gradient(135deg,#00BCD4,#7C4DFF);}
+
+/* SUBJECT SECTION HEADERS */
+.subject-section{position:relative;z-index:1;padding:8px clamp(14px,4vw,28px) 14px;max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:12px;}
+.subject-section h2{font-family:'Fredoka One',cursive;font-size:1.15rem;font-weight:700;color:#fff;}
+.section-line{flex:1;height:1px;background:rgba(255,255,255,.07);}
+
+footer{text-align:center;padding:22px;color:rgba(255,255,255,.18);font-size:.8rem;border-top:1px solid rgba(255,255,255,.05);position:relative;z-index:1;}
+footer strong{color:var(--gold);}
+
+.no-results{text-align:center;padding:40px;color:rgba(255,255,255,.3);font-size:1.1rem;font-weight:700;grid-column:1/-1;}
+</style>
+</head>
+<body>
+
+<div class="bg-orb" style="width:500px;height:500px;background:#FF6B00;top:-100px;left:-100px;"></div>
+<div class="bg-orb" style="width:400px;height:400px;background:#00AEEF;bottom:-80px;right:-80px;animation-delay:4s;"></div>
+<div class="bg-orb" style="width:300px;height:300px;background:#FF4081;top:50%;left:55%;animation-delay:7s;"></div>
+
+<nav class="topbar">
+  <div class="logo">Gyan<span>Play</span></div>
+  <div class="class-badge">CLASS 1 · AGES 6–7</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-emoji">🎒</div>
+  <h1>Class 1 Game Library</h1>
+  <p>22 curriculum-aligned educational games across 6 subjects. NCERT + Assam Board. Every concept built for real understanding.</p>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-num">22</div><div class="hstat-label">Games</div></div>
+    <div class="hstat"><div class="hstat-num">6</div><div class="hstat-label">Subjects</div></div>
+    <div class="hstat"><div class="hstat-num">3</div><div class="hstat-label">Levels each</div></div>
+    <div class="hstat"><div class="hstat-num">🌿</div><div class="hstat-label">Assam Context</div></div>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" data-f="all" onclick="filter('all')">🎮 All 22 Games</button>
+  <button class="filter-btn" data-f="maths" onclick="filter('maths')">🔢 Maths (5)</button>
+  <button class="filter-btn" data-f="english" onclick="filter('english')">📝 English (4)</button>
+  <button class="filter-btn" data-f="science" onclick="filter('science')">🔬 Science (4)</button>
+  <button class="filter-btn" data-f="social" onclick="filter('social')">🌏 Social (4)</button>
+  <button class="filter-btn" data-f="hindi" onclick="filter('hindi')">🙏 Hindi (3)</button>
+  <button class="filter-btn" data-f="computer" onclick="filter('computer')">💻 Computer (3) <span style="font-size:.7em;opacity:.6;margin-left:4px;">+ Smart Child</span></button>
+</div>
+
+<div class="games-grid" id="gamesGrid"></div>
+
+<footer>
+  <strong>GyanPlay</strong> Class 1 · NCERT + Assam Board Aligned · Voice Guided · 3 Difficulty Levels · Ages 6–7
+</footer>
+
+<script>
+const GAMES=[
+  // ── MATHS ──
+  {file:'maths-number-train.html',subject:'maths',emoji:'🚂',title:'Number Train',
+   desc:'Fill missing numbers in a sequence — 1 to 50, skip count by 2s and 5s.',batch:1},
+  {file:'maths-apple-addition.html',subject:'maths',emoji:'🍎',title:'Apple Tree Addition',
+   desc:'Count apples on two trees and add them. Visual addition up to 20.',batch:1},
+  {file:'maths-cookie-subtraction.html',subject:'maths',emoji:'🍪',title:'Cookie Monster Subtraction',
+   desc:'Feed the monster cookies and count what\'s left. Visual subtraction.',batch:1},
+  {file:'maths-shape-builder.html',subject:'maths',emoji:'🔷',title:'Shape Builder',
+   desc:'Match shapes to real-world objects. Circles, squares, triangles, hexagons.',batch:2},
+  {file:'maths-weighing-scale.html',subject:'maths',emoji:'⚖️',title:'Market Weighing Scale',
+   desc:'Compare heavy and light on a real balance scale. Measurement concepts.',batch:2},
+
+  // ── ENGLISH ──
+  {file:'english-letter-twins.html',subject:'english',emoji:'✉️',title:'Letter Twins',
+   desc:'Match all 26 capital letters to their small twins. A↔a to Z↔z.',batch:1},
+  {file:'english-word-builder.html',subject:'english',emoji:'🔤',title:'Word Builder',
+   desc:'Spell 3-4 letter CVC words by tapping letter tiles. CAT, DOG, SUN.',batch:1},
+  {file:'english-sentence-train.html',subject:'english',emoji:'🚆',title:'Sentence Train',
+   desc:'Arrange sight words in correct order. Learn: the, a, is, I, can, go.',batch:2},
+  {file:'english-story-tap.html',subject:'english',emoji:'📖',title:'Story Tap',
+   desc:'5 animated stories + comprehension questions. Includes Assam-based story!',batch:2},
+
+  // ── SCIENCE ──
+  {file:'science-plant-doctor.html',subject:'science',emoji:'🌿',title:'Plant Doctor',
+   desc:'Label flower, leaf, stem, root and branch on a real plant diagram.',batch:1},
+  {file:'science-animal-homes.html',subject:'science',emoji:'🏠',title:'Animal Homes',
+   desc:'Match 12 animals to their correct homes. Den, nest, hive, barn, cave.',batch:1},
+  {file:'science-healthy-plate.html',subject:'science',emoji:'🍽️',title:'Healthy Plate',
+   desc:'Build a balanced meal! Learn food groups and identify junk food.',batch:2},
+  {file:'science-sky-painter.html',subject:'science',emoji:'🌅',title:'Sky Painter',
+   desc:'Day vs Night sky. Sun rises in East. Nocturnal animals. Photosynthesis.',batch:2},
+
+  // ── SOCIAL STUDIES ──
+  {file:'social-hero-finder.html',subject:'social',emoji:'🦸',title:'Hero Finder',
+   desc:'Match community helpers to scenarios. Forest officer protects Assam rhinos!',batch:2},
+  {file:'social-assam-explorer.html',subject:'social',emoji:'🌿',title:'Assam Explorer',
+   desc:'Kaziranga, Brahmaputra, Bihu, Tea, Mekhela Chador, One-horned Rhino.',batch:3},
+  {file:'social-vehicle-sorter.html',subject:'social',emoji:'🚗',title:'Vehicle Sorter',
+   desc:'Sort 15 vehicles by land, water or sky. Includes boats on Brahmaputra!',batch:3},
+  // Bonus — community helpers extended
+  {file:'social-hero-finder.html',subject:'social',emoji:'👮',title:'Community Helpers',
+   desc:'12 scenarios — doctor, farmer, electrician, plumber, police and more!',batch:2},
+
+  // ── HINDI ──
+  {file:'hindi-vyanjan-rocket.html',subject:'hindi',emoji:'🚀',title:'व्यंजन Rocket',
+   desc:'Launch rockets by finding the right Hindi consonant — क ख ग to ह.',batch:3},
+  {file:'hindi-matra-magic.html',subject:'hindi',emoji:'✨',title:'मात्रा Magic',
+   desc:'Add the right matra to complete Hindi words. आ इ ई उ ऊ ए ओ.',batch:3},
+  {file:'hindi-picture-dictionary.html',subject:'hindi',emoji:'📖',title:'Hindi Dictionary',
+   desc:'20 common words — गाय, हाथी, चाय, गैंडा and Assam special words!',batch:3},
+
+  // ── COMPUTER ──
+  {file:'computer-parts-builder.html',subject:'computer',emoji:'💻',title:'Computer Builder',
+   desc:'Identify 8 computer parts — monitor, keyboard, mouse, printer, speakers.',batch:3},
+  {file:'computer-smart-child.html',subject:'computer',emoji:'🌟',title:'Smart Child',
+   desc:'10 safe-use scenarios — screen time, eye care, online safety, bedtime.',batch:3},
+  {file:'computer-word-typer.html',subject:'computer',emoji:'⌨️',title:'Word Typer',
+   desc:'Type 3-5 letter words on an on-screen keyboard. Basic typing practice.',batch:3},
+];
+
+const SUBJECT_LABELS={maths:'🔢 MATHS',english:'📝 ENGLISH',science:'🔬 SCIENCE',social:'🌏 SOCIAL STUDIES',hindi:'🙏 HINDI',computer:'💻 COMPUTER'};
+
+// deduplicate by file
+const UNIQUE=[];const seen=new Set();
+GAMES.forEach(g=>{if(!seen.has(g.file+'_'+g.title)){seen.add(g.file+'_'+g.title);UNIQUE.push(g);}});
+
+function renderGames(subjectFilter='all'){
+  const grid=document.getElementById('gamesGrid');grid.innerHTML='';
+  const filtered=subjectFilter==='all'?UNIQUE:UNIQUE.filter(g=>g.subject===subjectFilter);
+  if(!filtered.length){grid.innerHTML='<div class="no-results">No games found.</div>';return;}
+  filtered.forEach(game=>{
+    const card=document.createElement('a');
+    card.href=game.file;card.className='game-card';card.target='_blank';
+    card.innerHTML=`
+      <div class="card-thumb thumb-${game.subject}">${game.emoji}</div>
+      <div class="card-body">
+        <div class="card-subject sub-${game.subject}">${SUBJECT_LABELS[game.subject]}</div>
+        <div class="card-title">${game.title}</div>
+        <div class="card-desc">${game.desc}</div>
+        <div class="card-play play-${game.subject}">▶ Play Now</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function filter(subj){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.f===subj));
+  renderGames(subj);
+}
+window.filter=filter;
+
+window.addEventListener('load',()=>renderGames('all'));
+</script>
+</body>
+</html>

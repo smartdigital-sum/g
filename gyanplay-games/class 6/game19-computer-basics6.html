@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Computer Basics – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;
+  --pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;
+  --card:#1a1740;--text:#EEE;--muted:#aaa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  font-family:'Nunito',sans-serif;color:var(--text);padding-bottom:40px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeIn .45s ease both}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;
+  background:rgba(255,255,255,.04);backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.back-btn{background:none;border:1px solid rgba(255,255,255,.2);color:#fff;
+  padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;
+  font-size:.85rem;transition:all .2s}
+.back-btn:hover{background:rgba(255,255,255,.1)}
+.badge{background:var(--sky);color:#fff;padding:4px 14px;border-radius:20px;
+  font-size:.8rem;font-weight:700;font-family:'Baloo 2',sans-serif;letter-spacing:.5px}
+.title-bar{font-family:'Baloo 2',sans-serif;font-size:1.15rem;font-weight:700;flex:1;text-align:center}
+.lang-toggle{display:flex;gap:4px;margin-left:auto}
+.lang-btn{background:rgba(255,255,255,.08);border:none;color:#ccc;
+  padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;
+  font-family:'Nunito',sans-serif;transition:all .2s}
+.lang-btn.active{background:var(--sky);color:#fff;font-weight:700}
+.score-wrap{max-width:700px;margin:18px auto 0;padding:0 16px}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.score-label{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;color:var(--gold)}
+.score-val{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--saffron)}
+.prog-bar{height:8px;background:rgba(255,255,255,.1);border-radius:8px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--green));border-radius:8px;transition:width .4s ease}
+.q-wrap{max-width:700px;margin:22px auto 0;padding:0 16px}
+.hint-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(0,174,239,.15);
+  border:1px solid rgba(0,174,239,.3);color:#7de4ff;padding:4px 14px;
+  border-radius:20px;font-size:.8rem;font-weight:700;margin-bottom:12px;font-family:'Nunito',sans-serif}
+.q-card{background:var(--card);border-radius:18px;padding:28px 26px;
+  border:1px solid rgba(0,174,239,.2);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.q-num{font-size:.8rem;color:var(--muted);margin-bottom:6px;font-weight:600}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.12rem;font-weight:700;line-height:1.55;margin-bottom:22px}
+.kbd{display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);
+  border-radius:6px;padding:2px 8px;font-family:monospace;font-size:.9rem;color:var(--gold)}
+.options{display:grid;gap:10px}
+.opt-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  color:var(--text);padding:13px 18px;border-radius:12px;cursor:pointer;
+  font-family:'Nunito',sans-serif;font-size:.97rem;font-weight:600;
+  text-align:left;transition:all .22s;display:flex;align-items:center;gap:10px}
+.opt-btn:hover:not(:disabled){background:rgba(0,174,239,.18);border-color:var(--sky);transform:translateX(4px)}
+.opt-btn:disabled{cursor:default}
+.opt-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:#fff}
+.opt-btn.wrong{background:rgba(255,64,129,.18);border-color:var(--pink);color:#fff}
+.opt-icon{font-size:1.1rem;min-width:22px}
+.explanation{margin-top:16px;padding:14px 18px;background:rgba(255,255,255,.06);
+  border-radius:12px;border-left:3px solid var(--sky);font-size:.92rem;line-height:1.6;display:none}
+.explanation.show{display:block}
+.explanation strong{color:var(--sky)}
+.next-btn{margin-top:18px;width:100%;padding:14px;background:linear-gradient(90deg,var(--sky),var(--purple));
+  border:none;color:#fff;border-radius:12px;font-family:'Baloo 2',sans-serif;
+  font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s;display:none}
+.next-btn:hover{opacity:.88}
+.next-btn.show{display:block}
+.result-card{max-width:700px;margin:40px auto;padding:0 16px;text-align:center}
+.result-inner{background:var(--card);border-radius:20px;padding:40px 30px;border:1px solid rgba(0,174,239,.3)}
+.stars{font-size:2.5rem;letter-spacing:4px;margin-bottom:16px}
+.result-score{font-family:'Baloo 2',sans-serif;font-size:3rem;font-weight:800;color:var(--saffron)}
+.result-msg{font-size:1.1rem;color:var(--muted);margin:8px 0 28px}
+.play-again{padding:14px 40px;background:linear-gradient(90deg,var(--sky),var(--purple));
+  border:none;color:#fff;border-radius:12px;font-family:'Baloo 2',sans-serif;
+  font-size:1.1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.play-again:hover{opacity:.85}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="badge">Computer</span>
+  <span class="title-bar" data-lang>
+    <span class="en">💻 Computer Basics</span>
+    <span class="hi" style="display:none">💻 कंप्यूटर बेसिक्स</span>
+    <span class="bn" style="display:none">💻 কম্পিউটার বেসিক্স</span>
+  </span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+    <button class="lang-btn" onclick="setLang('hi',this)">हि</button>
+    <button class="lang-btn" onclick="setLang('bn',this)">অ</button>
+  </div>
+</div>
+<div class="score-wrap">
+  <div class="score-row">
+    <span class="score-label" id="scoreLabel">Score</span>
+    <span class="score-val"><span id="scoreNum">0</span>/100</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+<div class="q-wrap" id="gameArea"></div>
+<div class="result-card fade" id="resultCard" style="display:none"></div>
+<script>
+const questions=[
+  {
+    hint:"🖥️ Input/Output",
+    q:"Which of the following is an INPUT device?",
+    opts:["Monitor","Printer","Scanner","Speaker"],
+    ans:2,
+    exp:"<strong>Scanner</strong> is an input device — it takes data (images/text) from the real world INTO the computer. Monitor, Printer, and Speaker are all OUTPUT devices."
+  },
+  {
+    hint:"🖨️ Output Devices",
+    q:"Which device is used to give a printed copy of a document (called a hardcopy)?",
+    opts:["Mouse","Keyboard","Printer","Microphone"],
+    ans:2,
+    exp:"A <strong>Printer</strong> produces a physical (hard) copy of a document. This is an output device. Inkjet and laser printers are common types."
+  },
+  {
+    hint:"⌨️ Shortcut Keys",
+    q:"What is the keyboard shortcut to BOLD text in MS Word?",
+    opts:["Ctrl + I","Ctrl + U","Ctrl + B","Ctrl + S"],
+    ans:2,
+    exp:"<strong>Ctrl + B</strong> makes text Bold. Remember: B = Bold, I = Italic (Ctrl+I), U = Underline (Ctrl+U), S = Save (Ctrl+S)."
+  },
+  {
+    hint:"💾 Storage Devices",
+    q:"Which of the following is a portable storage device that plugs into a USB port?",
+    opts:["Hard Disk Drive (HDD)","Pen Drive / USB Flash Drive","CD-ROM","RAM"],
+    ans:1,
+    exp:"A <strong>Pen Drive (USB Flash Drive)</strong> is a small, portable storage device that connects via USB. HDDs are internal/external storage, CDs are optical, RAM is temporary memory."
+  },
+  {
+    hint:"🌐 Internet Basics",
+    q:"What does 'www' stand for in a web address like www.google.com?",
+    opts:["World Wide Web","Wide World Web","World Web Wizard","Web World Wide"],
+    ans:0,
+    exp:"<strong>WWW = World Wide Web</strong>. It is a system of interlinked web pages accessible via the internet. Tim Berners-Lee invented the WWW in 1989."
+  },
+  {
+    hint:"🎨 MS Paint",
+    q:"Which MS Paint tool is used to fill a closed shape with colour?",
+    opts:["Pencil","Eraser","Text Tool","Fill with Colour (Paint Bucket)"],
+    ans:3,
+    exp:"The <strong>Fill with Colour (Paint Bucket)</strong> tool floods a closed area with a selected colour. The Pencil draws freehand, Eraser removes colour, and Text adds text."
+  },
+  {
+    hint:"💿 Software Types",
+    q:"MS Word, VLC Media Player, and games are examples of which type of software?",
+    opts:["System Software","Application Software","Operating System","Utility Software"],
+    ans:1,
+    exp:"<strong>Application Software</strong> is designed for end-users to perform specific tasks like word processing (MS Word) or watching videos (VLC). System software (like Windows/Linux) manages hardware."
+  },
+  {
+    hint:"📁 Files & Folders",
+    q:"What is the difference between a FILE and a FOLDER?",
+    opts:["Both are the same thing","A folder stores data; a file stores other folders","A file stores data (text/image/video); a folder organises files","Files are only for images"],
+    ans:2,
+    exp:"A <strong>File</strong> stores actual data (a document, image, video, etc.). A <strong>Folder</strong> (directory) is a container used to organise and group files together. Folders can contain both files and other folders."
+  },
+  {
+    hint:"⌨️ Shortcut Keys",
+    q:"What keyboard shortcut is used to SAVE a file in MS Word?",
+    opts:["Ctrl + P","Ctrl + Z","Ctrl + A","Ctrl + S"],
+    ans:3,
+    exp:"<strong>Ctrl + S</strong> saves the current file in MS Word (and most applications). Always save your work frequently! Ctrl+P = Print, Ctrl+Z = Undo, Ctrl+A = Select All."
+  },
+  {
+    hint:"🌐 Browser & URL",
+    q:"A program used to access and view websites on the internet is called a:",
+    opts:["Compiler","Web Browser","Operating System","Text Editor"],
+    ans:1,
+    exp:"A <strong>Web Browser</strong> is software that lets you access and view websites. Examples: Google Chrome, Mozilla Firefox, Microsoft Edge. You type a URL (web address) in the browser to visit a website."
+  }
+];
+let currentQ=0,score=0,answered=false;
+function setLang(l,btn){
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[data-lang] .en').forEach(e=>e.style.display=l==='en'?'':'none');
+  document.querySelectorAll('[data-lang] .hi').forEach(e=>e.style.display=l==='hi'?'':'none');
+  document.querySelectorAll('[data-lang] .bn').forEach(e=>e.style.display=l==='bn'?'':'none');
+  document.getElementById('scoreLabel').textContent=l==='hi'?'स्कोर':l==='bn'?'স্কোর':'Score';
+}
+function renderQ(){
+  answered=false;
+  const q=questions[currentQ];
+  document.getElementById('progFill').style.width=Math.round((currentQ/questions.length)*100)+'%';
+  document.getElementById('gameArea').innerHTML=`
+    <div class="q-card fade">
+      <div class="hint-pill">${q.hint}</div>
+      <div class="q-num">Question ${currentQ+1} of ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o,i)=>`<button class="opt-btn" onclick="pick(${i})" id="opt${i}">
+          <span class="opt-icon">◦</span>${o}</button>`).join('')}
+      </div>
+      <div class="explanation" id="exp">${q.exp}</div>
+      <button class="next-btn" id="nextBtn" onclick="nextQ()">${currentQ===questions.length-1?'See Result →':'Next Question →'}</button>
+    </div>`;
+}
+function pick(i){
+  if(answered)return;answered=true;
+  const q=questions[currentQ];const pts=Math.round(100/questions.length);
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  if(i===q.ans){
+    document.getElementById('opt'+i).classList.add('correct');
+    document.getElementById('opt'+i).querySelector('.opt-icon').textContent='✓';
+    score+=pts;document.getElementById('scoreNum').textContent=score;
+  } else {
+    document.getElementById('opt'+i).classList.add('wrong');
+    document.getElementById('opt'+i).querySelector('.opt-icon').textContent='✗';
+    document.getElementById('opt'+q.ans).classList.add('correct');
+    document.getElementById('opt'+q.ans).querySelector('.opt-icon').textContent='✓';
+  }
+  document.getElementById('exp').classList.add('show');
+  document.getElementById('nextBtn').classList.add('show');
+}
+function nextQ(){currentQ++;if(currentQ>=questions.length){showResult();return;}renderQ();}
+function showResult(){
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('gameArea').style.display='none';
+  const pct=score;
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'';
+  const msg=pct>=90?'💻 Tech Genius! Outstanding!':pct>=70?'Great skills! Well done!':pct>=40?'Good effort! Keep exploring!':'Keep practicing! Computers are fun!';
+  document.getElementById('resultCard').style.display='block';
+  document.getElementById('resultCard').innerHTML=`
+    <div class="result-inner fade">
+      <div class="stars">${stars||'💻'}</div>
+      <div class="result-score">${score}/100</div>
+      <div class="result-msg">${msg}</div>
+      <button class="play-again" onclick="restart()">🔄 Play Again</button>
+    </div>`;
+}
+function restart(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('scoreNum').textContent=0;
+  document.getElementById('progFill').style.width='0%';
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  renderQ();
+}
+renderQ();
+</script>
+</body>
+</html>

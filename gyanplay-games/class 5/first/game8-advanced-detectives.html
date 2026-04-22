@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>G5-08 · Advanced Detectives · GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;
+  --grad-from:#0A1A0A;--grad-to:#060A10;--accent:var(--teal);
+  --border:rgba(6,214,160,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(145deg,var(--grad-from),var(--grad-to));min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;padding:0 0 40px;}
+.header{width:100%;max-width:480px;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;}
+.subject-tag{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);}
+.stars{display:flex;gap:3px;}
+.star{font-size:1rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+
+.wow-card{width:calc(100% - 32px);max-width:448px;background:linear-gradient(135deg,rgba(6,214,160,.15),rgba(76,201,240,.08));border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin:8px 16px 16px;text-align:center;}
+.wow-label{font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.wow-card p{font-size:.95rem;line-height:1.6;}
+.wow-card strong{color:var(--gold);}
+
+.section{width:calc(100% - 32px);max-width:448px;margin:0 16px;}
+
+/* PASSAGE */
+.passage-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px;}
+.passage-label{font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.passage-text{font-family:'Crimson Pro',serif;font-size:1.05rem;line-height:1.9;color:var(--text);}
+.passage-text p{margin-bottom:.6em;}
+.highlight-fact{background:rgba(76,201,240,.18);padding:1px 3px;border-radius:3px;cursor:help;border-bottom:2px solid rgba(76,201,240,.5);}
+.highlight-opinion{background:rgba(255,159,28,.15);padding:1px 3px;border-radius:3px;cursor:help;border-bottom:2px solid rgba(255,159,28,.5);}
+
+/* FACT VS OPINION LEGEND */
+.legend{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;}
+.legend-swatch{width:16px;height:10px;border-radius:3px;}
+.fact-swatch{background:rgba(76,201,240,.5);}
+.opinion-swatch{background:rgba(255,159,28,.5);}
+
+/* QUESTION CARD */
+.question-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:14px;}
+.q-num{font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;}
+.q-text{font-size:.95rem;font-weight:700;color:var(--text);line-height:1.6;margin-bottom:12px;}
+.q-text strong{color:var(--gold);}
+.q-opts{display:flex;flex-direction:column;gap:8px;}
+.q-opt{
+  background:rgba(6,214,160,.08);border:2px solid rgba(6,214,160,.2);
+  color:var(--text);font-weight:600;font-size:.9rem;
+  padding:11px 16px;border-radius:11px;cursor:pointer;
+  transition:all .2s;text-align:left;line-height:1.4;
+}
+.q-opt:hover{border-color:var(--accent);background:rgba(6,214,160,.14);}
+.q-opt.chosen{border-color:var(--accent);background:rgba(6,214,160,.2);color:var(--teal);}
+.q-opt.correct-a{border-color:var(--teal);background:rgba(6,214,160,.2);color:var(--teal);}
+.q-opt.wrong-a{border-color:var(--coral);background:rgba(255,107,107,.1);color:var(--coral);}
+
+/* PROGRESS */
+.progress-bar-wrap{width:calc(100% - 32px);max-width:448px;margin:4px 16px 14px;background:rgba(255,255,255,.06);border-radius:10px;height:6px;}
+.progress-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--teal),var(--blue));transition:width .5s ease;}
+
+/* SCORE BADGE */
+.score-badge{width:calc(100% - 32px);max-width:448px;margin:0 16px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;}
+.score-badge span{font-size:.82rem;color:var(--dim);font-weight:700;}
+.score-badge strong{font-family:'Baloo 2',cursive;font-size:1.1rem;color:var(--gold);}
+
+/* STAGE 2: Fact vs Opinion sorter */
+.sorter-instruction{background:rgba(6,214,160,.08);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:.88rem;line-height:1.6;}
+.sorter-instruction strong{color:var(--accent);}
+.sort-item{
+  background:var(--card);border:2px solid rgba(255,255,255,.1);
+  border-radius:12px;padding:12px 16px;margin-bottom:10px;
+}
+.sort-sentence{font-size:.9rem;font-weight:600;color:var(--text);line-height:1.5;margin-bottom:8px;}
+.sort-btns{display:flex;gap:8px;}
+.sort-btn{
+  flex:1;padding:8px;border-radius:8px;border:2px solid transparent;
+  font-family:'Baloo 2',cursive;font-weight:700;font-size:.82rem;
+  cursor:pointer;transition:all .2s;
+}
+.fact-btn{background:rgba(76,201,240,.1);border-color:rgba(76,201,240,.3);color:var(--blue);}
+.fact-btn:hover,.fact-btn.selected{background:rgba(76,201,240,.25);border-color:var(--blue);}
+.opinion-btn{background:rgba(255,159,28,.1);border-color:rgba(255,159,28,.3);color:var(--orange);}
+.opinion-btn:hover,.opinion-btn.selected{background:rgba(255,159,28,.25);border-color:var(--orange);}
+.sort-result{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-top:6px;display:none;}
+.sort-result.correct{color:var(--teal);}
+.sort-result.wrong{color:var(--coral);}
+
+.check-btn{width:100%;padding:14px;border-radius:14px;border:none;font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--teal),var(--blue));color:#000;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(6,214,160,.3);}
+.check-btn:hover{opacity:.9;}
+.check-btn:disabled{opacity:.4;cursor:not-allowed;}
+.feedback{margin-top:12px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.9rem;text-align:center;display:none;}
+.feedback.correct{background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.4);color:var(--teal);}
+.feedback.wrong{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:var(--coral);}
+
+.progress-row{width:calc(100% - 32px);max-width:448px;margin:16px 16px 0;display:flex;align-items:center;justify-content:space-between;}
+.progress-text{font-size:.8rem;font-weight:700;color:var(--dim);}
+.next-btn{background:var(--gold);color:#1A0F00;font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;border:none;border-radius:50px;padding:8px 22px;cursor:pointer;display:none;}
+
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:30px 28px;max-width:360px;width:90%;text-align:center;}
+.overlay-box .o-emoji{font-size:3rem;margin-bottom:12px;}
+.overlay-box h3{font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--gold);margin-bottom:8px;}
+.overlay-box p{font-size:.9rem;color:var(--text);line-height:1.6;}
+.overlay-box strong{color:var(--teal);}
+
+.complete-screen{width:calc(100% - 32px);max-width:448px;margin:20px 16px;background:var(--card);border:2px solid rgba(6,214,160,.3);border-radius:22px;padding:32px 24px;text-align:center;display:none;}
+.complete-screen .big{font-size:4rem;margin-bottom:12px;}
+.complete-screen h2{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--gold);margin-bottom:8px;}
+.complete-screen p{color:var(--text);font-size:.95rem;line-height:1.6;margin-bottom:20px;}
+.final-score{font-family:'Baloo 2',cursive;font-size:2.5rem;color:var(--gold);margin:12px 0;}
+.play-again{background:var(--teal);color:#040E04;font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;border:none;border-radius:50px;padding:12px 28px;cursor:pointer;}
+
+.confetti-piece{position:fixed;width:10px;height:10px;opacity:0;animation:confFall 1.8s ease-in forwards;pointer-events:none;z-index:200;}
+@keyframes confFall{0%{opacity:1;transform:translateY(0) rotate(0deg);}100%{opacity:0;transform:translateY(80vh) rotate(720deg);}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="subject-tag">English</div>
+  <div class="game-title">🕵️ Advanced Detectives</div>
+  <div class="stars">
+    <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+    <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+  </div>
+</div>
+
+<div class="wow-card">
+  <div class="wow-label">🤯 Did You Know?</div>
+  <p><strong>Fact:</strong> "The Ganga flows 2,525 km." You can measure it.<br/>
+  <strong>Opinion:</strong> "The Ganga is the most beautiful river." Not everyone agrees!<br/>
+  Journalists are trained to tell them apart — <strong>now you will be too!</strong></p>
+</div>
+
+<div class="score-badge">
+  <span>🔍 Detective Score</span>
+  <strong id="scoreBadge">0 / 7</strong>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<!-- STAGE 1: Reading comprehension -->
+<div class="section" id="stage1">
+  <div class="passage-wrap">
+    <div class="passage-label">📄 Read the Passage — Case File</div>
+    <div class="passage-text" id="passageText"></div>
+  </div>
+  <div id="comprehensionQs"></div>
+  <button class="check-btn" id="s1Btn" onclick="checkS1()">Submit Answers ✓</button>
+  <div class="feedback" id="s1FB"></div>
+</div>
+
+<!-- STAGE 2: Fact vs Opinion -->
+<div class="section" id="stage2" style="display:none;">
+  <div class="sorter-instruction">
+    <strong>🔍 Fact or Opinion?</strong> A <em>fact</em> can be proved — tested, measured, or verified. An <em>opinion</em> is what someone believes or feels. Read each sentence and classify it!
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch fact-swatch"></div>Fact = Can be verified</div>
+    <div class="legend-item"><div class="legend-swatch opinion-swatch"></div>Opinion = Someone's belief</div>
+  </div>
+  <div id="sortItems"></div>
+  <button class="check-btn" id="s2Btn" onclick="checkS2()">Verdict ✓</button>
+  <div class="feedback" id="s2FB"></div>
+</div>
+
+<div class="progress-row">
+  <span class="progress-text" id="progressText">Part 1 of 2</span>
+  <button class="next-btn" id="nextBtn" onclick="nextStage()">Part 2 →</button>
+</div>
+
+<div class="complete-screen" id="completeScreen">
+  <div class="big">🏆</div>
+  <h2>Case Closed!</h2>
+  <div class="final-score" id="finalScore">7 / 7</div>
+  <p>You've mastered comprehension AND the difference between facts and opinions. These two skills will help you read newspapers, study for exams, and think critically for life!</p>
+  <button class="play-again" onclick="restartGame()">New Case 🔄</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="o-emoji" id="oEmoji">🎉</div>
+    <h3 id="oTitle">Case Cracked!</h3>
+    <p id="oFact"></p>
+  </div>
+</div>
+
+<script>
+const PASSAGE = `<p>The Sardar Sarovar Dam on the Narmada River in Gujarat is one of the largest dams in India. It stands 163 metres tall and can store 9.5 billion cubic metres of water. The dam provides irrigation water to over 18 lakh hectares of farmland across Gujarat, Rajasthan, Maharashtra, and Madhya Pradesh.</p>
+<p>The project was planned in the 1960s and construction began in 1987 after years of planning. It was <span class="highlight-fact">officially inaugurated in September 2017</span> by the Prime Minister. The dam also generates 1,450 megawatts of electricity.</p>
+<p>Many experts believe the dam is <span class="highlight-opinion">the greatest engineering achievement in modern Indian history</span>. However, the project required the relocation of thousands of families from submerged villages. Some activists argued that the compensation provided was not enough. Others felt that the dam's benefits to millions of farmers outweighed the difficulties faced by those displaced.</p>`;
+
+const COMPREHENSION_QS = [
+  {
+    q: "How tall is the Sardar Sarovar Dam?",
+    opts: ["163 metres", "9.5 metres", "1,450 metres", "18 lakh metres"],
+    answer: 0,
+    explanation: "The passage clearly states: <strong>163 metres tall</strong>. This is a factual detail found in the first paragraph."
+  },
+  {
+    q: "What was the main concern raised by activists about the project?",
+    opts: [
+      "The dam was not tall enough",
+      "Compensation for displaced families was insufficient",
+      "The dam produced too much electricity",
+      "Gujarat did not benefit from the dam"
+    ],
+    answer: 1,
+    explanation: "Activists argued that the <strong>compensation for relocated families was not enough</strong> — a key detail in the final paragraph."
+  },
+  {
+    q: "Which word in the passage shows that something is an OPINION, not a fact?",
+    opts: ["inaugurated", "generates", "believe", "began"],
+    answer: 2,
+    explanation: "<strong>'Believe'</strong> signals an opinion — 'Many experts <em>believe</em>…' If you can replace a word with 'think' or 'feel', it's an opinion!"
+  },
+  {
+    q: "In which year was the dam inaugurated?",
+    opts: ["1960", "1987", "2007", "2017"],
+    answer: 3,
+    explanation: "The passage says it was <strong>inaugurated in September 2017</strong> — nearly 30 years after construction began in 1987!"
+  },
+];
+
+const SORT_ITEMS = [
+  {sentence:"India has a population of over 140 crore people.",answer:"fact",hint:"Population is counted and measured — fully verifiable!"},
+  {sentence:"Cricket is the most exciting sport in the world.",answer:"opinion",hint:"'Most exciting' is a feeling — not everyone agrees! That makes it an opinion."},
+  {sentence:"The Nile is the longest river on Earth.",answer:"fact",hint:"Length can be measured — 6,650 km. Verified by scientists worldwide!"},
+  {sentence:"Summer is the worst season of the year.",answer:"opinion",hint:"'Worst' is a judgement — some people love summer!"},
+  {sentence:"Mount Everest stands 8,849 metres above sea level.",answer:"fact",hint:"Height measured precisely — 8,849 metres, verified by GPS surveys."},
+  {sentence:"Reading books is better than watching TV.",answer:"opinion",hint:"'Better' is a personal judgement — it's what someone believes, not measurable!"},
+  {sentence:"India achieved independence on 15th August 1947.",answer:"fact",hint:"A historical event with a specific date — 100% verifiable!"},
+];
+
+let stage=1, score=0, totalQ=7;
+let s1Chosen={};
+let s2Chosen={};
+
+function buildPassage(){
+  document.getElementById('passageText').innerHTML=PASSAGE;
+}
+
+function buildComprehension(){
+  const container=document.getElementById('comprehensionQs');
+  container.innerHTML='';
+  COMPREHENSION_QS.forEach((q,i)=>{
+    const card=document.createElement('div');
+    card.className='question-card';
+    card.innerHTML=`
+      <div class="q-num">🔍 Question ${i+1} of ${COMPREHENSION_QS.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">
+        ${q.opts.map((o,j)=>`<button class="q-opt" id="opt_${i}_${j}" onclick="pickS1(${i},${j},this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="qfb_${i}" style="margin-top:8px;"></div>`;
+    container.appendChild(card);
+  });
+}
+
+window.pickS1=function(qi,oi,el){
+  s1Chosen[qi]=oi;
+  document.querySelectorAll(`[id^="opt_${qi}_"]`).forEach(b=>b.classList.toggle('chosen',b===el));
+}
+
+function checkS1(){
+  let correct=0;
+  let allAnswered=Object.keys(s1Chosen).length===COMPREHENSION_QS.length;
+  if(!allAnswered){
+    showFB('s1FB','wrong','⚠️ Answer all 4 questions before submitting!'); return;
+  }
+  COMPREHENSION_QS.forEach((q,i)=>{
+    const chosen=s1Chosen[i];
+    const isRight=chosen===q.answer;
+    if(isRight) correct++;
+    // Show answer on buttons
+    document.getElementById(`opt_${i}_${q.answer}`).classList.add('correct-a');
+    if(!isRight && chosen!==undefined) document.getElementById(`opt_${i}_${chosen}`).classList.add('wrong-a');
+    const fb=document.getElementById(`qfb_${i}`);
+    fb.innerHTML=isRight?`✅ ${q.explanation}`:`❌ ${q.explanation}`;
+    fb.className=`feedback ${isRight?'correct':'wrong'}`;
+    fb.style.display='block';
+  });
+  score+=correct;
+  updateBadge();
+  updateFill();
+  document.getElementById('s1Btn').disabled=true;
+  const msg=correct===4?'✅ Perfect comprehension! All 4 correct!':`✅ ${correct}/4 correct — read the explanations above!`;
+  showFB('s1FB',correct>=3?'correct':'wrong',msg);
+  document.getElementById('nextBtn').style.display='block';
+  if(correct>=3) spawnConfetti();
+}
+
+function buildSortItems(){
+  const container=document.getElementById('sortItems');
+  container.innerHTML='';
+  SORT_ITEMS.forEach((item,i)=>{
+    const div=document.createElement('div');
+    div.className='sort-item';
+    div.innerHTML=`
+      <div class="sort-sentence">${i+1}. "${item.sentence}"</div>
+      <div class="sort-btns">
+        <button class="sort-btn fact-btn" id="sb_${i}_fact" onclick="pickS2(${i},'fact',this)">📘 Fact</button>
+        <button class="sort-btn opinion-btn" id="sb_${i}_opinion" onclick="pickS2(${i},'opinion',this)">💭 Opinion</button>
+      </div>
+      <div class="sort-result" id="sr_${i}"></div>`;
+    container.appendChild(div);
+  });
+}
+
+window.pickS2=function(idx,type,el){
+  s2Chosen[idx]=type;
+  el.closest('.sort-btns').querySelectorAll('.sort-btn').forEach(b=>b.classList.toggle('selected',b===el));
+}
+
+function checkS2(){
+  let allDone=Object.keys(s2Chosen).length===SORT_ITEMS.length;
+  if(!allDone){showFB('s2FB','wrong','⚠️ Classify all sentences first!');return;}
+  let correct=0;
+  SORT_ITEMS.forEach((item,i)=>{
+    const isRight=s2Chosen[i]===item.answer;
+    if(isRight) correct++;
+    const result=document.getElementById(`sr_${i}`);
+    result.textContent=isRight?`✅ Correct! ${item.hint}`:`❌ This is a ${item.answer}. ${item.hint}`;
+    result.className=`sort-result ${isRight?'correct':'wrong'}`;
+    result.style.display='block';
+    // lock buttons
+    document.getElementById(`sb_${i}_fact`).disabled=true;
+    document.getElementById(`sb_${i}_opinion`).disabled=true;
+  });
+  score+=correct;
+  updateBadge();
+  updateFill();
+  document.getElementById('s2Btn').disabled=true;
+  const msg=correct===SORT_ITEMS.length?'✅ Perfect! All facts and opinions identified!':
+    correct>=5?`✅ ${correct}/7 — great detective work!`:`❌ ${correct}/7 — review the hints above!`;
+  showFB('s2FB',correct>=5?'correct':'wrong',msg);
+  if(correct>=5){spawnConfetti(); updateStars();}
+
+  setTimeout(()=>{
+    document.getElementById('nextBtn').style.display='none';
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+    document.querySelector('.progress-row').style.display='none';
+    document.getElementById('finalScore').textContent=`${score} / ${totalQ}`;
+    document.getElementById('completeScreen').style.display='block';
+    if(score>=6) spawnConfetti();
+  },2000);
+}
+
+function setStage(n){
+  stage=n;
+  [1,2].forEach(i=>document.getElementById('stage'+i).style.display=i===n?'block':'none');
+  document.getElementById('progressText').textContent=`Part ${n} of 2`;
+  document.getElementById('nextBtn').style.display='none';
+  if(n===2) buildSortItems();
+}
+
+function nextStage(){
+  if(stage<2) setStage(stage+1);
+}
+
+function updateBadge(){document.getElementById('scoreBadge').textContent=`${score} / ${totalQ}`;}
+function updateFill(){document.getElementById('progressFill').style.width=(score/totalQ*100)+'%';}
+function updateStars(){const c=Math.min(5,Math.ceil(score/totalQ*5));for(let i=1;i<=c;i++) document.getElementById('s'+i).classList.add('lit');}
+function showFB(id,type,msg){const el=document.getElementById(id);el.textContent=msg;el.className=`feedback ${type}`;el.style.display='block';}
+function showOverlay(emoji,title,fact){
+  document.getElementById('oEmoji').textContent=emoji;document.getElementById('oTitle').textContent=title;document.getElementById('oFact').innerHTML=fact;
+  const ov=document.getElementById('overlay');ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),2600);
+}
+function spawnConfetti(){
+  const colors=['#FFD166','#FF6B6B','#06D6A0','#4CC9F0','#C77DFF'];
+  for(let i=0;i<28;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[i%5]};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()*2}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),3500);}
+}
+function restartGame(){
+  stage=1;score=0;s1Chosen={};s2Chosen={};
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('completeScreen').style.display='none';
+  document.querySelectorAll('.section').forEach(s=>s.style.display='block');
+  document.querySelector('.progress-row').style.display='flex';
+  updateBadge(); updateFill();
+  document.getElementById('s1Btn').disabled=false;
+  setStage(1);
+  buildPassage(); buildComprehension();
+}
+
+// INIT
+buildPassage();
+buildComprehension();
+</script>
+</body>
+</html>

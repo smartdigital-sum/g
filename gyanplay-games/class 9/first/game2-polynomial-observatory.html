@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polynomial Observatory — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A;
+  --accent:var(--purple);--border-glow:rgba(199,125,255,.22);--card-glow:rgba(199,125,255,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:linear-gradient(160deg,#180A28,#0F0820);min-height:100vh;color:var(--text);font-family:'Nunito',sans-serif;font-size:20px;display:flex;justify-content:center;padding-bottom:40px;}
+.shell{width:100%;max-width:480px;display:flex;flex-direction:column;}
+.header{padding:18px 20px 12px;border-bottom:2px solid var(--border-glow);background:rgba(13,20,40,.7);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px);}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);line-height:1.2;}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+.stars{display:flex;gap:4px;margin-top:4px;}
+.star{font-size:1rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.score-display{font-family:'Baloo 2',cursive;font-size:1.1rem;color:var(--gold);}
+.wow-hook{margin:16px 16px 0;background:linear-gradient(135deg,rgba(199,125,255,.18),rgba(13,20,40,.9));border:1px solid var(--border-glow);border-radius:16px;padding:18px;box-shadow:0 4px 24px var(--card-glow);}
+.wow-hook .emoji{font-size:2rem;margin-bottom:8px;display:block;}
+.wow-hook p{font-size:.95rem;line-height:1.6;color:var(--text);}
+.wow-hook strong{color:var(--gold);}
+.stage-area{padding:16px;flex:1;}
+.stage{display:none;}
+.stage.active{display:block;animation:fadeIn .35s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.stage-title{font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:600;color:var(--purple);margin-bottom:10px;}
+.card{background:var(--card);border:1px solid var(--border-glow);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 16px var(--card-glow);}
+.info-box{background:rgba(199,125,255,.08);border-left:3px solid var(--purple);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.88rem;color:var(--dim);line-height:1.5;margin:10px 0;}
+.info-box strong{color:var(--text);}
+.result-msg{font-size:.9rem;min-height:22px;padding:4px 0;transition:color .2s;}
+.result-msg.ok{color:var(--teal);}
+.result-msg.err{color:var(--coral);}
+.bottom-bar{position:sticky;bottom:0;background:rgba(13,20,40,.9);border-top:1px solid var(--border-glow);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(8px);}
+.progress-label{font-size:.85rem;color:var(--dim);}
+.progress-label strong{color:var(--text);}
+.action-btn{background:var(--gold);color:#060A10;border:none;border-radius:24px;padding:10px 26px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;min-height:44px;}
+.action-btn:hover{transform:scale(1.04);box-shadow:0 4px 16px rgba(255,209,102,.4);}
+.action-btn:disabled{background:var(--dim);cursor:not-allowed;transform:none;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{text-align:center;padding:28px 24px;max-width:340px;}
+.overlay-emoji{font-size:3rem;margin-bottom:12px;}
+.overlay-msg{font-family:'Baloo 2',cursive;font-size:1.25rem;color:var(--gold);margin-bottom:8px;}
+.overlay-fact{font-size:.88rem;color:var(--dim);line-height:1.5;}
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:200;}
+.confetto{position:absolute;width:10px;height:10px;border-radius:2px;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.game-complete{display:none;text-align:center;padding:40px 20px;}
+.game-complete.show{display:block;animation:fadeIn .5s ease;}
+.complete-title{font-family:'Baloo 2',cursive;font-size:2rem;color:var(--gold);margin-bottom:12px;}
+.complete-sub{color:var(--dim);font-size:.95rem;line-height:1.6;margin-bottom:24px;}
+.replay-btn{background:transparent;border:2px solid var(--gold);color:var(--gold);border-radius:24px;padding:10px 28px;font-family:'Baloo 2',cursive;font-size:1rem;cursor:pointer;min-height:44px;}
+.replay-btn:hover{background:rgba(255,209,102,.15);}
+/* GRAPH */
+#polyCanvas{width:100%;height:200px;border-radius:10px;background:#080818;display:block;}
+.term-controls{display:flex;flex-direction:column;gap:8px;margin:10px 0;}
+.term-row{display:flex;align-items:center;gap:8px;}
+.term-row label{font-size:.82rem;color:var(--dim);min-width:80px;}
+.term-row input[type=range]{flex:1;accent-color:var(--purple);}
+.term-row .val{font-family:'Baloo 2',cursive;color:var(--gold);min-width:32px;text-align:right;font-size:.95rem;}
+.poly-display{font-family:'Baloo 2',cursive;font-size:1.1rem;color:var(--text);text-align:center;padding:8px;background:rgba(0,0,0,.3);border-radius:8px;margin-bottom:10px;}
+/* ZERO HUNTER */
+.zero-canvas-wrap{position:relative;}
+#zeroCanvas{width:100%;height:200px;border-radius:10px;background:#080818;display:block;cursor:crosshair;}
+.zero-hits{font-size:.88rem;color:var(--teal);margin-top:6px;text-align:center;}
+/* REMAINDER */
+.rem-controls{display:flex;flex-direction:column;gap:10px;margin:10px 0;}
+.rem-row{display:flex;align-items:center;gap:10px;}
+.rem-row label{font-size:.88rem;color:var(--dim);min-width:100px;}
+.rem-row select,.rem-row input{background:rgba(13,20,40,.8);border:1px solid var(--border-glow);border-radius:8px;color:var(--text);padding:6px 10px;font-family:'Nunito',sans-serif;font-size:.9rem;flex:1;min-height:40px;}
+.rem-result-box{background:rgba(6,214,160,.08);border:1px solid rgba(6,214,160,.25);border-radius:10px;padding:14px;text-align:center;min-height:60px;margin:10px 0;}
+.rem-result-box .big{font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--teal);}
+.rem-result-box .sub{font-size:.8rem;color:var(--dim);margin-top:4px;}
+/* IDENTITY */
+.identity-grid{display:grid;grid-template-columns:1fr;gap:10px;}
+.identity-card{background:rgba(199,125,255,.08);border:1px solid var(--border-glow);border-radius:12px;padding:14px;}
+.identity-formula{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--gold);margin-bottom:6px;}
+.identity-q{font-size:.88rem;color:var(--dim);margin-bottom:8px;}
+.identity-opts{display:flex;flex-wrap:wrap;gap:6px;}
+.id-opt{background:rgba(199,125,255,.1);border:1px solid var(--border-glow);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.82rem;color:var(--text);transition:all .2s;min-height:38px;}
+.id-opt:hover{background:rgba(199,125,255,.22);}
+.id-opt.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal);}
+.id-opt.wrong{background:rgba(255,107,107,.2);border-color:var(--coral);color:var(--coral);}
+/* ERROR SPOT */
+.err-sentence{background:var(--card);border:1px solid var(--border-glow);border-radius:10px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all .2s;}
+.err-sentence:hover{border-color:var(--purple);}
+.err-sentence.found{border-color:var(--teal);background:rgba(6,214,160,.08);}
+.err-sentence.wrong-pick{border-color:var(--coral);animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.err-formula{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--text);}
+.err-explain{font-size:.8rem;color:var(--teal);margin-top:6px;display:none;}
+.err-sentence.found .err-explain{display:block;}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="game-title">🔭 Polynomial Observatory</div>
+        <div class="subject-tag">📐 Mathematics · G9-02 · Ch 2: Polynomials</div>
+      </div>
+      <div class="score-display" id="scoreDisplay">0 pts</div>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="emoji">🧮</span>
+    <p>The Fundamental Theorem of Algebra — that every polynomial of degree n has <strong>EXACTLY n roots</strong> — was proved by Carl Friedrich Gauss <strong>at age 22 in 1799</strong>. It remained unproved for 200 years before Gauss. One theorem, 22 years old, completing what generations of mathematicians could not.</p>
+  </div>
+
+  <div class="stage-area">
+
+    <!-- STAGE 1: LIVE POLYNOMIAL GRAPHER -->
+    <div class="stage active" id="stage1">
+      <div class="stage-title">📈 Stage 1: Live Polynomial Grapher</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--dim);margin-bottom:10px;">Adjust the sliders to build your polynomial. Watch the graph redraw in real time!</p>
+        <div class="poly-display" id="polyDisplay">p(x) = 0</div>
+        <canvas id="polyCanvas" width="440" height="200"></canvas>
+        <div class="term-controls">
+          <div class="term-row">
+            <label>a (x³ coeff):</label>
+            <input type="range" id="ca" min="-3" max="3" step="1" value="0" oninput="updateGraph()">
+            <span class="val" id="va">0</span>
+          </div>
+          <div class="term-row">
+            <label>b (x² coeff):</label>
+            <input type="range" id="cb" min="-4" max="4" step="1" value="-2" oninput="updateGraph()">
+            <span class="val" id="vb">-2</span>
+          </div>
+          <div class="term-row">
+            <label>c (x coeff):</label>
+            <input type="range" id="cc" min="-4" max="4" step="1" value="-1" oninput="updateGraph()">
+            <span class="val" id="vc">-1</span>
+          </div>
+          <div class="term-row">
+            <label>d (constant):</label>
+            <input type="range" id="cd" min="-4" max="4" step="1" value="2" oninput="updateGraph()">
+            <span class="val" id="vd">2</span>
+          </div>
+        </div>
+        <div class="info-box" id="degreeInfo">Degree: 2 (quadratic) — maximum 2 zeros possible</div>
+        <div class="result-msg" id="r1"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 2: ZERO HUNTER -->
+    <div class="stage" id="stage2">
+      <div class="stage-title">🎯 Stage 2: Zero Hunter</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--dim);margin-bottom:10px;">p(x) = x³ − 2x² − x + 2. Tap where the curve crosses the x-axis to find the zeros!</p>
+        <div class="zero-canvas-wrap">
+          <canvas id="zeroCanvas" width="440" height="200" onclick="huntZero(event)"></canvas>
+        </div>
+        <div class="zero-hits" id="zeroHits">Zeros found: 0 / 3</div>
+        <div class="info-box">
+          <strong>Key fact:</strong> A zero of p(x) is a value 'a' where p(a) = 0. At that point, the graph crosses the x-axis — and (x−a) is a factor.
+        </div>
+        <div class="result-msg" id="r2"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 3: REMAINDER THEOREM MACHINE -->
+    <div class="stage" id="stage3">
+      <div class="stage-title">⚙️ Stage 3: Remainder Theorem Machine</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--dim);margin-bottom:10px;">When p(x) is divided by (x−a), the remainder = p(a). No long division needed!</p>
+        <div class="rem-controls">
+          <div class="rem-row">
+            <label>Polynomial:</label>
+            <select id="remPoly" onchange="calcRemainder()">
+              <option value="0">p(x) = x³ − 2x² − x + 2</option>
+              <option value="1">p(x) = x³ + 3x² − 4</option>
+              <option value="2">p(x) = 2x² + x − 6</option>
+              <option value="3">p(x) = x³ − 7x + 6</option>
+            </select>
+          </div>
+          <div class="rem-row">
+            <label>Divisor (x − a), a =</label>
+            <input type="number" id="remA" value="1" min="-5" max="5" oninput="calcRemainder()" style="width:80px;flex:none;">
+          </div>
+        </div>
+        <div class="rem-result-box" id="remResult">
+          <div class="big" id="remBig">—</div>
+          <div class="sub" id="remSub">Enter values above</div>
+        </div>
+        <div id="factorMsg" style="text-align:center;font-size:.9rem;min-height:24px;"></div>
+        <div class="info-box">
+          <strong>Factor Theorem:</strong> If p(a) = 0, the remainder is 0, so (x−a) IS a factor of p(x). The Factor Theorem follows directly from the Remainder Theorem!
+        </div>
+        <p style="font-size:.88rem;color:var(--dim);margin-bottom:8px;">Quick check — which value of 'a' makes p(x) = x² − 5x + 6 have remainder 0?</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button onclick="checkFactor(this,2)" style="background:rgba(199,125,255,.1);border:1px solid var(--border-glow);border-radius:8px;padding:8px 18px;color:var(--text);cursor:pointer;font-family:'Baloo 2',cursive;min-height:44px;">a = 2</button>
+          <button onclick="checkFactor(this,3)" style="background:rgba(199,125,255,.1);border:1px solid var(--border-glow);border-radius:8px;padding:8px 18px;color:var(--text);cursor:pointer;font-family:'Baloo 2',cursive;min-height:44px;">a = 3</button>
+          <button onclick="checkFactor(this,1)" style="background:rgba(199,125,255,.1);border:1px solid var(--border-glow);border-radius:8px;padding:8px 18px;color:var(--text);cursor:pointer;font-family:'Baloo 2',cursive;min-height:44px;">a = 1</button>
+          <button onclick="checkFactor(this,4)" style="background:rgba(199,125,255,.1);border:1px solid var(--border-glow);border-radius:8px;padding:8px 18px;color:var(--text);cursor:pointer;font-family:'Baloo 2',cursive;min-height:44px;">a = 4</button>
+        </div>
+        <div class="result-msg" id="r3" style="margin-top:8px;"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 4: CUBIC IDENTITIES -->
+    <div class="stage" id="stage4">
+      <div class="stage-title">🧊 Stage 4: Identity Forge</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--dim);margin-bottom:12px;">Match each expansion. These cubic identities are built from the algebraic structure — not memorised!</p>
+        <div class="identity-grid" id="identityGrid">
+
+          <div class="identity-card">
+            <div class="identity-formula">(a + b)³ = ?</div>
+            <div class="identity-q">Select the correct full expansion:</div>
+            <div class="identity-opts">
+              <div class="id-opt" onclick="checkId(this,0,'correct')">a³ + 3a²b + 3ab² + b³</div>
+              <div class="id-opt" onclick="checkId(this,0,'wrong1')">a³ + 3ab + b³</div>
+              <div class="id-opt" onclick="checkId(this,0,'wrong2')">a³ + 2a²b + 2ab² + b³</div>
+            </div>
+            <div class="result-msg" id="id0"></div>
+          </div>
+
+          <div class="identity-card">
+            <div class="identity-formula">(a − b)³ = ?</div>
+            <div class="identity-q">Select the correct full expansion:</div>
+            <div class="identity-opts">
+              <div class="id-opt" onclick="checkId(this,1,'wrong1')">a³ − 3a²b + 3ab² + b³</div>
+              <div class="id-opt" onclick="checkId(this,1,'correct')">a³ − 3a²b + 3ab² − b³</div>
+              <div class="id-opt" onclick="checkId(this,1,'wrong2')">a³ − b³</div>
+            </div>
+            <div class="result-msg" id="id1"></div>
+          </div>
+
+          <div class="identity-card">
+            <div class="identity-formula">(a+b+c)² = ?</div>
+            <div class="identity-q">Select the correct full expansion:</div>
+            <div class="identity-opts">
+              <div class="id-opt" onclick="checkId(this,2,'wrong1')">a² + b² + c² + ab + bc + ca</div>
+              <div class="id-opt" onclick="checkId(this,2,'wrong2')">a² + b² + c² + 2ab + 2bc</div>
+              <div class="id-opt" onclick="checkId(this,2,'correct')">a² + b² + c² + 2ab + 2bc + 2ca</div>
+            </div>
+            <div class="result-msg" id="id2"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 5: ERROR SPOT -->
+    <div class="stage" id="stage5">
+      <div class="stage-title">🔧 Stage 5: Error Spot Lab</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--dim);margin-bottom:12px;">Each expression below has ONE error. Tap the wrong one, then see the correction.</p>
+        <div id="errList">
+          <div class="err-sentence" onclick="spotError(this,0)" id="err0">
+            <div class="err-formula">(x + 3)² = x² + 9</div>
+            <div class="err-explain">❌ Wrong! Missing middle term. Correct: (x+3)² = x² + 6x + 9</div>
+          </div>
+          <div class="err-sentence" onclick="spotError(this,1)" id="err1">
+            <div class="err-formula">x³ − 8 = (x−2)(x² + 2x + 4)</div>
+            <div class="err-explain">✓ This is actually CORRECT! a³−b³ = (a−b)(a²+ab+b²). Good for spotting it.</div>
+          </div>
+          <div class="err-sentence" onclick="spotError(this,2)" id="err2">
+            <div class="err-formula">2(x² + 3x − 2) = 2x² + 3x − 4</div>
+            <div class="err-explain">❌ Wrong! Forgot to multiply 3x by 2. Correct: 2x² + 6x − 4</div>
+          </div>
+          <div class="err-sentence" onclick="spotError(this,3)" id="err3">
+            <div class="err-formula">(a−b)³ = a³ − 3a²b + 3ab² + b³</div>
+            <div class="err-explain">❌ Wrong! Last term sign is wrong. Correct: a³ − 3a²b + 3ab² − b³</div>
+          </div>
+        </div>
+        <div class="result-msg" id="r5" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="game-complete" id="gameComplete">
+      <div style="font-size:3rem;margin-bottom:16px;">🔭</div>
+      <div class="complete-title">Polynomial Observatory Complete!</div>
+      <div class="complete-sub">You graphed polynomials live, hunted zeros, applied the Remainder Theorem, forged cubic identities, and spotted 4 errors.<br><br><strong style="color:var(--gold);">Gauss proved this at 22.</strong> You're ahead of schedule.</div>
+      <br>
+      <button class="replay-btn" onclick="resetGame()">↺ Play Again</button>
+    </div>
+
+  </div>
+
+  <div class="bottom-bar" id="bottomBar">
+    <div class="progress-label">Stage <strong id="stageNum">1</strong> of 5</div>
+    <button class="action-btn" id="mainBtn" onclick="nextStage()">Continue →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="overlay-emoji" id="ovEmoji">✓</div>
+    <div class="overlay-msg" id="ovMsg">Stage Complete!</div>
+    <div class="overlay-fact" id="ovFact"></div>
+  </div>
+</div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<script>
+let score=0,currentStage=1,stageDone=[false,false,false,false,false];
+let zerosFound=0,idCorrect=0,errFound=0,factorFound=false;
+
+function addScore(p){score+=p;document.getElementById('scoreDisplay').textContent=score+' pts';}
+function lightStar(n){const s=document.getElementById('s'+n);if(s&&!s.classList.contains('lit'))s.classList.add('lit');}
+
+// ===== STAGE 1: POLYNOMIAL GRAPHER =====
+const pc=document.getElementById('polyCanvas');
+const pctx=pc.getContext('2d');
+pc.width=440;pc.height=200;
+
+function evalPoly(a,b,c,d,x){return a*x*x*x+b*x*x+c*x+d;}
+
+function updateGraph(){
+  const a=+document.getElementById('ca').value;
+  const b=+document.getElementById('cb').value;
+  const c=+document.getElementById('cc').value;
+  const d=+document.getElementById('cd').value;
+  document.getElementById('va').textContent=a;
+  document.getElementById('vb').textContent=b;
+  document.getElementById('vc').textContent=c;
+  document.getElementById('vd').textContent=d;
+
+  let deg=0;
+  if(a!==0)deg=3;else if(b!==0)deg=2;else if(c!==0)deg=1;
+  const degNames=['constant','linear','quadratic','cubic'];
+  const maxZeros=deg===0?0:deg;
+  document.getElementById('degreeInfo').innerHTML=`Degree: <strong style="color:var(--gold)">${deg}</strong> (${degNames[deg]}) — maximum <strong>${maxZeros}</strong> zero${maxZeros!==1?'s':''} possible`;
+
+  let terms=[];
+  if(a!==0)terms.push(`${a===1?'':a===-1?'-':a}x³`);
+  if(b!==0)terms.push(`${b>0&&terms.length?'+':''}${b===1?'':b===-1?'-':b}x²`);
+  if(c!==0)terms.push(`${c>0&&terms.length?'+':''}${c===1?'':c===-1?'-':c}x`);
+  if(d!==0)terms.push(`${d>0&&terms.length?'+':''}${d}`);
+  document.getElementById('polyDisplay').textContent='p(x) = '+(terms.length?terms.join(' '):'0');
+
+  drawPoly(a,b,c,d);
+
+  if(!stageDone[0]&&(a!==0||b!==0)){
+    stageDone[0]=true;lightStar(1);addScore(25);
+    document.getElementById('r1').textContent='Live graphing active. Degree observed. ✓';
+    document.getElementById('r1').className='result-msg ok';
+  }
+}
+
+function drawPoly(a,b,c,d){
+  const w=pc.width,h=pc.height;
+  pctx.clearRect(0,0,w,h);
+  pctx.fillStyle='#080818';
+  pctx.fillRect(0,0,w,h);
+
+  const xlo=-5,xhi=5;
+  function toX(v){return (v-xlo)/(xhi-xlo)*w;}
+  function toY(v){return h/2-v*20;}
+
+  // Grid
+  pctx.strokeStyle='#1a1a30';pctx.lineWidth=1;
+  for(let x=xlo;x<=xhi;x++){pctx.beginPath();pctx.moveTo(toX(x),0);pctx.lineTo(toX(x),h);pctx.stroke();}
+  for(let y=-4;y<=4;y++){pctx.beginPath();pctx.moveTo(0,toY(y));pctx.lineTo(w,toY(y));pctx.stroke();}
+
+  // Axes
+  pctx.strokeStyle='#4A6A8A';pctx.lineWidth=2;
+  pctx.beginPath();pctx.moveTo(0,h/2);pctx.lineTo(w,h/2);pctx.stroke();
+  pctx.beginPath();pctx.moveTo(toX(0),0);pctx.lineTo(toX(0),h);pctx.stroke();
+
+  // Labels
+  pctx.fillStyle='#4A6A8A';pctx.font='10px Courier New';pctx.textAlign='center';
+  for(let x=xlo;x<=xhi;x++){if(x!==0)pctx.fillText(x,toX(x),h/2+14);}
+
+  // Curve
+  pctx.strokeStyle='#C77DFF';pctx.lineWidth=2.5;pctx.beginPath();
+  let first=true;
+  for(let px=0;px<=w;px++){
+    const x=xlo+(px/w)*(xhi-xlo);
+    const y=evalPoly(a,b,c,d,x);
+    const py=toY(y);
+    if(py>-50&&py<h+50){
+      if(first){pctx.moveTo(px,py);first=false;}else pctx.lineTo(px,py);
+    }else{first=true;}
+  }
+  pctx.stroke();
+}
+
+updateGraph();
+
+// ===== STAGE 2: ZERO HUNTER =====
+const zc=document.getElementById('zeroCanvas');
+const zctx=zc.getContext('2d');
+zc.width=440;zc.height=200;
+const zeroTargets=[-1,1,2]; // zeros of x³-2x²-x+2
+let foundZeros=[];
+
+function drawZeroGraph(){
+  const w=zc.width,h=zc.height;
+  zctx.clearRect(0,0,w,h);
+  zctx.fillStyle='#080818';zctx.fillRect(0,0,w,h);
+  const xlo=-3,xhi=4;
+  function toX(v){return (v-xlo)/(xhi-xlo)*w;}
+  function toY(v){return h/2-v*28;}
+  function p(x){return x*x*x-2*x*x-x+2;}
+
+  zctx.strokeStyle='#1a1a30';zctx.lineWidth=1;
+  for(let x=xlo;x<=xhi;x++){zctx.beginPath();zctx.moveTo(toX(x),0);zctx.lineTo(toX(x),h);zctx.stroke();}
+
+  zctx.strokeStyle='#4A6A8A';zctx.lineWidth=2;
+  zctx.beginPath();zctx.moveTo(0,h/2);zctx.lineTo(w,h/2);zctx.stroke();
+  zctx.beginPath();zctx.moveTo(toX(0),0);zctx.lineTo(toX(0),h);zctx.stroke();
+
+  zctx.fillStyle='#4A6A8A';zctx.font='10px Courier New';zctx.textAlign='center';
+  for(let x=xlo;x<=xhi;x++)zctx.fillText(x,toX(x),h/2+14);
+
+  zctx.strokeStyle='#FFD166';zctx.lineWidth=2.5;zctx.beginPath();
+  let first=true;
+  for(let px=0;px<=w;px++){
+    const x=xlo+(px/w)*(xhi-xlo);
+    const y=p(x);const py=toY(y);
+    if(py>-60&&py<h+60){if(first){zctx.moveTo(px,py);first=false;}else zctx.lineTo(px,py);}else{first=true;}
+  }
+  zctx.stroke();
+
+  foundZeros.forEach(z=>{
+    const x=toX(z);
+    zctx.fillStyle='#06D6A0';zctx.beginPath();zctx.arc(x,h/2,8,0,Math.PI*2);zctx.fill();
+    zctx.fillStyle='#060A10';zctx.font='bold 10px Nunito';zctx.textAlign='center';zctx.textBaseline='middle';
+    zctx.fillText(z,x,h/2);zctx.textBaseline='alphabetic';
+  });
+}
+
+function huntZero(e){
+  const rect=zc.getBoundingClientRect();
+  const px=e.clientX-rect.left;
+  const xlo=-3,xhi=4;
+  const xVal=xlo+(px/zc.getBoundingClientRect().width)*(xhi-xlo);
+  let closest=null,minDist=0.4;
+  zeroTargets.forEach(z=>{
+    if(!foundZeros.includes(z)&&Math.abs(xVal-z)<minDist){closest=z;minDist=Math.abs(xVal-z);}
+  });
+  if(closest!==null){
+    foundZeros.push(closest);
+    addScore(20);zerosFound++;
+    drawZeroGraph();
+    document.getElementById('zeroHits').textContent=`Zeros found: ${zerosFound} / 3 → p(${closest}) = 0, so (x−${closest}) is a factor!`;
+    document.getElementById('r2').textContent=`x = ${closest} confirmed. ✓ The graph crossed the x-axis exactly there.`;
+    document.getElementById('r2').className='result-msg ok';
+    if(zerosFound>=3&&!stageDone[1]){
+      stageDone[1]=true;lightStar(2);addScore(25);
+      document.getElementById('r2').textContent='All 3 zeros found! p(x) = (x+1)(x−1)(x−2) ✓';
+    }
+  }
+}
+
+drawZeroGraph();
+
+// ===== STAGE 3: REMAINDER THEOREM =====
+const polys=[
+  {name:'x³−2x²−x+2',fn:x=>x**3-2*x**2-x+2},
+  {name:'x³+3x²−4',fn:x=>x**3+3*x**2-4},
+  {name:'2x²+x−6',fn:x=>2*x**2+x-6},
+  {name:'x³−7x+6',fn:x=>x**3-7*x+6}
+];
+
+function calcRemainder(){
+  const pi=+document.getElementById('remPoly').value;
+  const a=+document.getElementById('remA').value;
+  const rem=polys[pi].fn(a);
+  document.getElementById('remBig').textContent=`p(${a}) = ${rem}`;
+  const isFactor=rem===0;
+  document.getElementById('remSub').textContent=isFactor?`Remainder = 0 → (x−${a}) IS a factor of ${polys[pi].name}`:`Remainder = ${rem} ≠ 0 → (x−${a}) is NOT a factor`;
+  document.getElementById('factorMsg').textContent='';
+  document.getElementById('factorMsg').style.color=isFactor?'var(--teal)':'var(--dim)';
+}
+
+function checkFactor(btn,a){
+  const val=a*a-5*a+6;
+  if(val===0){
+    btn.style.background='rgba(6,214,160,.2)';btn.style.borderColor='var(--teal)';btn.style.color='var(--teal)';
+    document.getElementById('r3').textContent=`a = ${a}: p(${a}) = ${a}²−5·${a}+6 = ${val} = 0 ✓ (x−${a}) is a factor!`;
+    document.getElementById('r3').className='result-msg ok';
+    addScore(20);
+    if(!factorFound){factorFound=true;if(!stageDone[2]){stageDone[2]=true;lightStar(3);addScore(25);}}
+  }else{
+    btn.style.background='rgba(255,107,107,.15)';
+    setTimeout(()=>{btn.style.background='';},800);
+    document.getElementById('r3').textContent=`p(${a}) = ${val} ≠ 0. Not a factor. Try another value.`;
+    document.getElementById('r3').className='result-msg err';
+  }
+}
+
+calcRemainder();
+
+// ===== STAGE 4: IDENTITIES =====
+let idDone=0;
+function checkId(el,idx,status){
+  const parent=el.parentElement;
+  if(parent.querySelector('.correct'))return;
+  if(status==='correct'){
+    el.classList.add('correct');
+    document.getElementById('id'+idx).textContent='Correct expansion. ✓';
+    document.getElementById('id'+idx).className='result-msg ok';
+    addScore(20);idDone++;
+    if(idDone>=3&&!stageDone[3]){stageDone[3]=true;lightStar(4);addScore(25);}
+  }else{
+    el.classList.add('wrong');
+    setTimeout(()=>el.classList.remove('wrong'),900);
+  }
+}
+
+// ===== STAGE 5: ERROR SPOT =====
+const errCorrect=[true,false,true,true]; // which ones have errors
+let errFoundCount=0;
+function spotError(el,idx){
+  if(el.classList.contains('found')||el.classList.contains('wrong-pick'))return;
+  if(errCorrect[idx]){
+    el.classList.add('found');
+    addScore(18);errFoundCount++;
+    document.getElementById('r5').textContent=`Error ${errFoundCount} found. Precise identification. ✓`;
+    document.getElementById('r5').className='result-msg ok';
+    if(errFoundCount>=3&&!stageDone[4]){stageDone[4]=true;lightStar(5);addScore(30);}
+  }else{
+    el.classList.add('wrong-pick');
+    setTimeout(()=>el.classList.remove('wrong-pick'),600);
+    document.getElementById('r5').textContent='That expression is actually correct. Look more carefully.';
+    document.getElementById('r5').className='result-msg err';
+  }
+}
+
+// ===== NAVIGATION =====
+const ovData=[
+  {emoji:'📈',msg:'Graphing Complete!',fact:'The shape of a polynomial graph reveals its degree: no bends = linear, one turn = quadratic, two turns = cubic.'},
+  {emoji:'🎯',msg:'Zeros Found!',fact:'Every zero of a polynomial gives you a linear factor. A degree-3 polynomial with 3 zeros can be fully factored into 3 linear factors.'},
+  {emoji:'⚙️',msg:'Remainder Theorem Mastered!',fact:'Gauss used the Remainder Theorem as a building block in his proof of the Fundamental Theorem of Algebra at age 22.'},
+  {emoji:'🧊',msg:'Identities Forged!',fact:'The cubic identity (a+b)³ = a³+3a²b+3ab²+b³ can be proved geometrically — by decomposing a cube into 8 smaller pieces.'},
+];
+
+function nextStage(){
+  if(currentStage===5&&stageDone[4]){showComplete();return;}
+  if(currentStage>=5)return;
+  const d=ovData[currentStage-1];
+  document.getElementById('ovEmoji').textContent=d.emoji;
+  document.getElementById('ovMsg').textContent=d.msg;
+  document.getElementById('ovFact').textContent=d.fact;
+  document.getElementById('overlay').classList.add('show');
+  setTimeout(()=>{
+    document.getElementById('stage'+currentStage).classList.remove('active');
+    currentStage++;
+    document.getElementById('stage'+currentStage).classList.add('active');
+    document.getElementById('stageNum').textContent=currentStage;
+    document.getElementById('overlay').classList.remove('show');
+    if(currentStage===5)document.getElementById('mainBtn').textContent='Finish →';
+  },2500);
+}
+
+function showComplete(){
+  document.getElementById('bottomBar').style.display='none';
+  document.getElementById('stage5').classList.remove('active');
+  document.getElementById('gameComplete').classList.add('show');
+  fireConfetti();
+}
+
+function fireConfetti(){
+  const wrap=document.getElementById('confettiWrap');wrap.innerHTML='';
+  const colors=['#FFD166','#06D6A0','#4CC9F0','#C77DFF','#FF6B6B'];
+  for(let i=0;i<28;i++){
+    const c=document.createElement('div');c.className='confetto';
+    c.style.left=(Math.random()*100)+'%';c.style.background=colors[Math.floor(Math.random()*colors.length)];
+    c.style.animationDuration=(1.5+Math.random()*2)+'s';c.style.animationDelay=(Math.random()*.8)+'s';
+    wrap.appendChild(c);setTimeout(()=>c.remove(),4000);
+  }
+}
+
+function resetGame(){
+  score=0;currentStage=1;stageDone=[false,false,false,false,false];
+  zerosFound=0;foundZeros=[];idDone=0;errFoundCount=0;factorFound=false;
+  document.getElementById('scoreDisplay').textContent='0 pts';
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('gameComplete').classList.remove('show');
+  document.getElementById('bottomBar').style.display='flex';
+  document.getElementById('stageNum').textContent='1';
+  document.getElementById('mainBtn').textContent='Continue →';
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
+  document.getElementById('stage1').classList.add('active');
+  document.querySelectorAll('.id-opt').forEach(el=>el.classList.remove('correct','wrong'));
+  document.querySelectorAll('.err-sentence').forEach(el=>el.classList.remove('found','wrong-pick'));
+  for(let i=0;i<3;i++){document.getElementById('id'+i).textContent='';document.getElementById('id'+i).className='result-msg';}
+  document.getElementById('r5').textContent='';
+  drawZeroGraph();updateGraph();
+}
+</script>
+</body>
+</html>

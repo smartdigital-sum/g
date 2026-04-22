@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐱 Cat & Prepositions — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#1A0F00;--card:#2A1A05;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--orange:#FF9F1C;--warm:#FF8C42;--text:#FFF5E6;--dim:#9A7A50}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(255,209,102,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.3rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:18px 16px;gap:16px}
+.hook{background:linear-gradient(135deg,rgba(255,140,66,.12),rgba(255,209,102,.08));border:1px solid rgba(255,140,66,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.88rem;line-height:1.6;color:#FFD5B0}
+.hook strong{color:var(--gold)}
+.task-card{background:var(--card);border-radius:14px;padding:14px 22px;text-align:center;border:2px solid rgba(255,159,28,.25);width:100%;max-width:440px}
+.task-prep{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);line-height:1.5}
+.task-prep em{font-style:normal;color:var(--gold);font-size:1.3rem}
+.task-sub{font-size:.82rem;color:var(--dim);margin-top:4px}
+
+/* Room scene */
+.room{position:relative;width:100%;max-width:420px;height:240px;background:linear-gradient(180deg,#3D2B1A 0%,#2A1A05 60%,#1E1205 100%);border-radius:16px;border:2px solid rgba(255,159,28,.2);overflow:hidden}
+/* Floor */
+.room::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:rgba(255,140,66,.08);border-top:2px solid rgba(255,140,66,.15)}
+/* Furniture */
+.furniture{position:absolute;font-size:2.8rem;line-height:1;user-select:none}
+.furn-table{bottom:48px;left:50%;transform:translateX(-50%);font-size:3.5rem}
+.furn-box{bottom:52px;left:22%;font-size:2rem}
+.furn-chair{bottom:48px;right:14%;font-size:2.4rem}
+/* Cat - draggable */
+.cat{position:absolute;font-size:2.6rem;line-height:1;cursor:pointer;transition:all .3s cubic-bezier(.34,1.56,.64,1);user-select:none;z-index:10;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5))}
+.cat.highlight{animation:wiggle .4s ease}
+@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+
+/* Position hotspots */
+.hotspot{position:absolute;border:2px dashed rgba(255,209,102,.25);border-radius:10px;cursor:pointer;transition:background .2s,border-color .2s;display:flex;align-items:center;justify-content:center}
+.hotspot:hover{background:rgba(255,209,102,.12);border-color:rgba(255,209,102,.5)}
+.hotspot.correct-spot{background:rgba(6,214,160,.15);border-color:var(--teal)}
+.hotspot-label{font-size:.55rem;color:rgba(255,255,255,.3);text-align:center;pointer-events:none}
+
+/* Options */
+.prep-options{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:420px}
+.prep-btn{padding:12px 22px;background:var(--card);border:2px solid rgba(255,140,66,.25);border-radius:50px;color:var(--text);font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:transform .15s,border-color .2s,background .2s}
+.prep-btn:hover{transform:scale(1.08);border-color:var(--warm)}
+.prep-btn.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal)}
+.prep-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+
+.feedback{font-size:.85rem;color:var(--dim);text-align:center;min-height:1.2em}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#1B0A00;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(26,15,0,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4.5rem}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.9rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🐱 Cat & Prepositions</div><div class="subject-tag">English · Prepositions · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+
+<div class="game-area">
+  <div class="hook">🐱 A cat can be <strong>on</strong> the table, <strong>under</strong> the table, <strong>beside</strong> the table, or <strong>behind</strong> the table. One tiny word completely changes where everything IS — that's a <strong>preposition</strong>!</div>
+
+  <div class="task-card">
+    <div class="task-prep" id="taskText">Place the cat <em>on</em> the table</div>
+    <div class="task-sub" id="taskSub">Tap the correct spot in the room!</div>
+  </div>
+
+  <!-- Room scene -->
+  <div class="room" id="room">
+    <div class="furniture furn-table">🪑</div>
+    <div class="furniture furn-box" id="box">📦</div>
+    <div class="furniture furn-chair">🛋️</div>
+    <!-- Hotspots positioned for each preposition -->
+    <div class="hotspot" id="hs-on"    style="left:38%;top:22%;width:24%;height:22%" onclick="clickSpot('on')"   ><div class="hotspot-label">on table</div></div>
+    <div class="hotspot" id="hs-under" style="left:35%;bottom:60px;width:28%;height:18%" onclick="clickSpot('under')"><div class="hotspot-label">under table</div></div>
+    <div class="hotspot" id="hs-beside" style="left:66%;bottom:58px;width:18%;height:20%" onclick="clickSpot('beside')"><div class="hotspot-label">beside chair</div></div>
+    <div class="hotspot" id="hs-behind" style="left:40%;top:5%;width:20%;height:16%" onclick="clickSpot('behind')"><div class="hotspot-label">behind table</div></div>
+    <div class="hotspot" id="hs-in"    style="left:14%;bottom:58px;width:20%;height:20%" onclick="clickSpot('in')"><div class="hotspot-label">in box</div></div>
+    <div class="hotspot" id="hs-between" style="left:56%;bottom:56px;width:16%;height:18%" onclick="clickSpot('between')"><div class="hotspot-label">between</div></div>
+    <!-- Cat element -->
+    <div class="cat" id="cat" style="left:10%;top:10%">🐱</div>
+  </div>
+
+  <div class="feedback" id="feedback">Tap the correct spot in the room above!</div>
+
+  <!-- Mode B: identify preposition from scene -->
+  <div class="prep-options" id="prepOptions" style="display:none"></div>
+</div>
+
+<div class="bottom">
+  <div class="prog" id="prog">Round 1 of 10</div>
+  <button class="next-btn" id="nextBtn" onclick="nextRound()">Next →</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">Correct!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+
+<script>
+// cat positions (left%, top%) for each preposition in the room
+const POS={
+  'on':    {left:'42%',top:'18%'},
+  'under': {left:'41%',top:'56%'},
+  'beside':{left:'70%',top:'50%'},
+  'behind':{left:'46%',top:'6%'},
+  'in':    {left:'18%',top:'50%'},
+  'between':{left:'59%',top:'50%'}
+};
+const FACTS={
+  'on':'ON means touching the top surface. The cat is ON the table.',
+  'under':'UNDER means directly below something. The cat is UNDER the table.',
+  'beside':'BESIDE means next to or at the side. The cat is BESIDE the chair.',
+  'behind':'BEHIND means at the back of something. The cat is BEHIND the table.',
+  'in':'IN means inside something. The cat is IN the box!',
+  'between':'BETWEEN means in the middle of two things.'
+};
+
+// 10 rounds: 6 place-the-cat (mode A) + 4 identify-the-preposition (mode B)
+const ROUNDS=[
+  {mode:'A',prep:'on',sentence:'Place the cat <em>on</em> the table'},
+  {mode:'A',prep:'under',sentence:'Place the cat <em>under</em> the table'},
+  {mode:'A',prep:'beside',sentence:'Place the cat <em>beside</em> the chair'},
+  {mode:'A',prep:'in',sentence:'Place the cat <em>in</em> the box'},
+  {mode:'A',prep:'behind',sentence:'Place the cat <em>behind</em> the table'},
+  {mode:'B',prep:'on',catPos:'on',opts:['on','under','beside','in'],sentence:'The cat is ___ the table'},
+  {mode:'B',prep:'under',catPos:'under',opts:['under','on','behind','beside'],sentence:'The cat is ___ the table'},
+  {mode:'B',prep:'in',catPos:'in',opts:['in','on','beside','under'],sentence:'The cat is ___ the box'},
+  {mode:'A',prep:'between',sentence:'Place the cat <em>between</em> the table and the chair'},
+  {mode:'B',prep:'beside',catPos:'beside',opts:['beside','behind','between','in'],sentence:'The cat is ___ the chair'},
+];
+const MSGS=['Perfect spot! 🐱','Exactly right! ✨','The cat agrees! 🐾','Purrfect! 😸','Word wizard! 🌟','Spot on! 🎯','You found it! 🏅','Clever! 🧠','Grammar guru! 📚','Preposition pro! 🏆'];
+
+let round=0,score=0,answered=false;
+
+function loadRound(){
+  const r=ROUNDS[round]; answered=false;
+  document.getElementById('taskText').innerHTML=r.sentence;
+  document.getElementById('taskSub').textContent=r.mode==='A'?'Tap the correct spot in the room!':'Choose the correct preposition!';
+  document.getElementById('feedback').textContent='';
+  document.getElementById('nextBtn').style.display='none';
+  document.querySelectorAll('.hotspot').forEach(h=>h.classList.remove('correct-spot'));
+  // Reset cat
+  const cat=document.getElementById('cat');
+  cat.style.left='8%'; cat.style.top='8%';
+
+  if(r.mode==='A'){
+    document.getElementById('prepOptions').style.display='none';
+    document.querySelectorAll('.hotspot').forEach(h=>h.style.pointerEvents='all');
+  } else {
+    // Place cat at position and show options
+    const p=POS[r.catPos];
+    cat.style.left=p.left; cat.style.top=p.top;
+    document.getElementById('prepOptions').style.display='flex';
+    buildPrepOpts(r);
+    document.querySelectorAll('.hotspot').forEach(h=>h.style.pointerEvents='none');
+  }
+}
+
+function clickSpot(prep){
+  if(answered)return;
+  const r=ROUNDS[round];
+  if(r.mode!=='A')return;
+  const cat=document.getElementById('cat');
+  const p=POS[prep];
+  cat.style.left=p.left; cat.style.top=p.top;
+  cat.classList.add('highlight');
+  setTimeout(()=>cat.classList.remove('highlight'),400);
+
+  if(prep===r.prep){
+    document.getElementById(`hs-${prep}`).classList.add('correct-spot');
+    win(FACTS[prep]);
+  } else {
+    document.getElementById('feedback').textContent=`Not quite! Try a different spot.`;
+    setTimeout(()=>{cat.style.left='8%';cat.style.top='8%';},700);
+  }
+}
+
+function buildPrepOpts(r){
+  const div=document.getElementById('prepOptions'); div.innerHTML='';
+  r.opts.sort(()=>Math.random()-.5).forEach(o=>{
+    const b=document.createElement('button'); b.className='prep-btn'; b.textContent=o;
+    b.onclick=()=>pickPrep(b,o,r.prep);
+    div.appendChild(b);
+  });
+}
+
+function pickPrep(btn,val,correct){
+  if(answered)return; answered=true;
+  if(val===correct){btn.classList.add('correct');win(FACTS[correct]);}
+  else{btn.classList.add('wrong');document.querySelectorAll('.prep-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});document.getElementById('feedback').textContent=`The correct preposition is "${correct}". ${FACTS[correct]}`;}
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function win(fact){
+  answered=true; score++;
+  if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+  showOverlay(MSGS[round]||'Correct!',fact);
+  confetti(); setTimeout(hideOverlay,2500);
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function nextRound(){
+  round++; document.getElementById('nextBtn').style.display='none';
+  if(round>=ROUNDS.length){endGame();return;}
+  document.getElementById('prog').textContent=`Round ${round+1} of ${ROUNDS.length}`;
+  loadRound();
+}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOverlay(`Score: ${score}/${ROUNDS.length}!`,'Preposition pro — you always know where the cat is!');
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;round=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Next →';document.getElementById('nextBtn').onclick=nextRound;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='Correct!';hideOverlay();loadRound();};
+}
+function showOverlay(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOverlay(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#FFD166','#FF6B6B','#06D6A0','#C77DFF','#FF9F1C'];for(let i=0;i<28;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+loadRound();
+</script>
+</body>
+</html>

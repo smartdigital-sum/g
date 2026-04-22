@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GyanPlay Class 8 - Batch 1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060A10;
+            --card: #0D1428;
+            --gold: #FFD166;
+            --coral: #FF6B6B;
+            --teal: #06D6A0;
+            --blue: #4CC9F0;
+            --purple: #C77DFF;
+            --orange: #FF9F1C;
+            --lime: #A8E063;
+            --pink: #FF9CC2;
+            --red: #FF4757;
+            --text: #E8F0FF;
+            --dim: #4A6A8A;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid rgba(255, 209, 102, 0.2);
+            margin-bottom: 30px;
+        }
+        
+        .brand {
+            font-family: 'Baloo 2', cursive;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: var(--dim);
+            margin-top: 8px;
+        }
+        
+        .class-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+        
+        .batch-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .batch-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--gold);
+            border-radius: 2px;
+        }
+        
+        .games-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .game-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--gold);
+            box-shadow: 0 8px 32px rgba(255, 209, 102, 0.15);
+        }
+        
+        .game-card.maths {
+            border-left: 4px solid var(--purple);
+        }
+        
+        .game-card.english {
+            border-left: 4px solid var(--orange);
+        }
+        
+        .game-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .game-number {
+            font-family: 'Baloo 2', cursive;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--dim);
+            background: rgba(74, 106, 138, 0.2);
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+        
+        .game-emoji {
+            font-size: 1.5rem;
+        }
+        
+        .game-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text);
+            flex: 1;
+        }
+        
+        .subject-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+        
+        .subject-tag.maths {
+            background: rgba(199, 125, 255, 0.15);
+            color: var(--purple);
+        }
+        
+        .subject-tag.english {
+            background: rgba(255, 159, 28, 0.15);
+            color: var(--orange);
+        }
+        
+        .game-concept {
+            font-size: 0.85rem;
+            color: var(--dim);
+            line-height: 1.5;
+        }
+        
+        .progress-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(13, 20, 40, 0.8), rgba(13, 20, 40, 0.4));
+            border-radius: 16px;
+            border: 1px solid rgba(255, 209, 102, 0.15);
+        }
+        
+        .progress-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background: rgba(74, 106, 138, 0.3);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--orange));
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        
+        .progress-text {
+            font-size: 0.85rem;
+            color: var(--dim);
+            text-align: center;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .price-tag {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.2rem;
+            color: var(--gold);
+        }
+        
+        .features {
+            font-size: 0.8rem;
+            color: var(--dim);
+            margin-top: 8px;
+        }
+        
+        .difficulty {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 10px;
+        }
+        
+        .star {
+            color: var(--gold);
+            font-size: 1rem;
+        }
+        
+        .coming-soon {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(13, 20, 40, 0.5);
+            border-radius: 12px;
+            text-align: center;
+            border: 1px dashed rgba(74, 106, 138, 0.4);
+        }
+        
+        .coming-soon-text {
+            color: var(--dim);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="brand">GyanPlay</div>
+            <div class="subtitle">23 Games · 6 Subjects · NCERT / Assam Board</div>
+            <div class="class-badge">Class 8 · Ages 13-14</div>
+        </div>
+        
+        <div class="batch-title">Batch 1: Games 1-8</div>
+        
+        <div class="games-grid">
+            <a href="game1-compound-interest-casino.html" class="game-card maths">
+                <div class="game-header">
+                    <span class="game-number">G8-01</span>
+                    <span class="game-emoji">📈</span>
+                    <span class="game-title">Compound Interest Casino</span>
+                    <span class="subject-tag maths">Maths</span>
+                </div>
+                <div class="game-concept">Compound interest vs simple interest, loan traps, reverse percentages</div>
+            </a>
+            
+            <a href="game2-algebra-identity-forge.html" class="game-card maths">
+                <div class="game-header">
+                    <span class="game-number">G8-02</span>
+                    <span class="game-emoji">🧩</span>
+                    <span class="game-title">Algebra Identity Forge</span>
+                    <span class="subject-tag maths">Maths</span>
+                </div>
+                <div class="game-concept">Geometric proofs of algebraic identities, expansion, substitution</div>
+            </a>
+            
+            <a href="game3-mensuration-workshop.html" class="game-card maths">
+                <div class="game-header">
+                    <span class="game-number">G8-03</span>
+                    <span class="game-emoji">📦</span>
+                    <span class="game-title">Mensuration Workshop</span>
+                    <span class="subject-tag maths">Maths</span>
+                </div>
+                <div class="game-concept">Surface area & volume, net-folding, 3D shapes</div>
+            </a>
+            
+            <a href="game4-square-root-codebreaker.html" class="game-card maths">
+                <div class="game-header">
+                    <span class="game-number">G8-04</span>
+                    <span class="game-emoji">🔐</span>
+                    <span class="game-title">Square Root Codebreaker</span>
+                    <span class="subject-tag maths">Maths</span>
+                </div>
+                <div class="game-concept">Prime factorisation, long division method, Pythagorean triplets</div>
+            </a>
+            
+            <a href="game5-proportion-machine.html" class="game-card maths">
+                <div class="game-header">
+                    <span class="game-number">G8-05</span>
+                    <span class="game-emoji">⚙️</span>
+                    <span class="game-title">Proportion Machine</span>
+                    <span class="subject-tag maths">Maths</span>
+                </div>
+                <div class="game-concept">Direct & inverse proportion, unitary method, real-world applications</div>
+            </a>
+            
+            <a href="game6-modal-verb-theatre.html" class="game-card english">
+                <div class="game-header">
+                    <span class="game-number">G8-06</span>
+                    <span class="game-emoji">🎭</span>
+                    <span class="game-title">Modal Verb Theatre</span>
+                    <span class="subject-tag english">English</span>
+                </div>
+                <div class="game-concept">Modal verbs, degrees of certainty, conditional sentences</div>
+            </a>
+            
+            <a href="game7-argument-architect.html" class="game-card english">
+                <div class="game-header">
+                    <span class="game-number">G8-07</span>
+                    <span class="game-emoji">⚔️</span>
+                    <span class="game-title">Argument Architect</span>
+                    <span class="subject-tag english">English</span>
+                </div>
+                <div class="game-concept">Persuasive writing, logical fallacies, debate structure</div>
+            </a>
+            
+            <a href="game8-character-theme-lab.html" class="game-card english">
+                <div class="game-header">
+                    <span class="game-number">G8-08</span>
+                    <span class="game-emoji">📚</span>
+                    <span class="game-title">Character & Theme Lab</span>
+                    <span class="subject-tag english">English</span>
+                </div>
+                <div class="game-concept">Character analysis, theme identification, author's craft</div>
+            </a>
+        </div>
+        
+        <div class="progress-section">
+            <div class="progress-title">Your Progress</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0 of 8 games completed</div>
+        </div>
+        
+        <div class="coming-soon">
+            <div class="coming-soon-text">Batch 2 (Games 9-16) & Batch 3 (Games 17-23) coming soon</div>
+        </div>
+        
+        <div class="footer">
+            <div class="price-tag">₹750/month</div>
+            <div class="features">Offline-capable · No login · No ads</div>
+            <div class="difficulty">
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+            </div>
+            <div style="margin-top: 10px; font-size: 0.75rem; color: var(--dim);">Advanced Level</div>
+        </div>
+    </div>
+    
+    <script>
+        // Load progress from localStorage
+        function loadProgress() {
+            const games = ['G8-01', 'G8-02', 'G8-03', 'G8-04', 'G8-05', 'G8-06', 'G8-07', 'G8-08'];
+            let completed = 0;
+            
+            games.forEach(gameId => {
+                const data = localStorage.getItem(gameId);
+                if (data) {
+                    const parsed = JSON.parse(data);
+                    if (parsed.score > 0) completed++;
+                }
+            });
+            
+            const percentage = (completed / games.length) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = `${completed} of ${games.length} games started`;
+        }
+        
+        loadProgress();
+    </script>
+</body>
+</html>

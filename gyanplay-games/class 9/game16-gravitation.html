@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gravitation — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--green);color:#000;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--sky);color:#000;border-color:var(--sky);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--sky);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--sky),var(--green));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.55;margin-bottom:14px;}
+.formula-box{background:rgba(0,174,239,.1);border:1.5px solid rgba(0,174,239,.3);border-radius:12px;padding:10px 16px;margin-bottom:14px;font-family:monospace;font-size:1rem;color:var(--sky);text-align:center;letter-spacing:.04em;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;}
+.choice-btn:hover:not(:disabled){background:rgba(0,174,239,.12);border-color:var(--sky);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--sky);color:#000;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--sky);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Science · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en',event)">EN</button>
+      <button class="lang-btn" onclick="setLang('hi',event)">हि</button>
+      <button class="lang-btn" onclick="setLang('as',event)">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">🌍 Gravitation</span>
+    <span data-lang="hi" style="display:none">🌍 गुरुत्वाकर्षण</span>
+    <span data-lang="as" style="display:none">🌍 মহাকৰ্ষণ</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — Science Ch 10 · Universal Law of Gravitation</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — विज्ञान अध्याय 10 · गुरुत्वाकर्षण का सार्वत्रिक नियम</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — বিজ্ঞান অধ্যায় 10 · মহাকৰ্ষণৰ সাৰ্বজনীন নিয়ম</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="question-text" id="questionText"></div>
+    <div class="formula-box" id="formulaBox" style="display:none"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    en: "🌍 According to Newton's Universal Law of Gravitation, the gravitational force between two objects depends on:",
+    hi: "🌍 न्यूटन के गुरुत्वाकर्षण के सार्वत्रिक नियम के अनुसार, दो वस्तुओं के बीच गुरुत्वाकर्षण बल निर्भर करता है:",
+    as: "🌍 নিউটনৰ মহাকৰ্ষণৰ সাৰ্বজনীন নিয়ম অনুযায়ী, দুটা বস্তুৰ মাজৰ মহাকৰ্ষণ বল নিৰ্ভৰ কৰে:",
+    formula: "F = G × m₁ × m₂ / d²",
+    choices: {
+      en: ["Product of their masses and inversely on square of distance","Sum of masses and directly on distance","Product of masses and directly on distance","Only on distance between them"],
+      hi: ["उनके द्रव्यमानों के गुणनफल और दूरी के वर्ग के व्युत्क्रम पर","द्रव्यमानों के योग और सीधे दूरी पर","द्रव्यमानों के गुणनफल और सीधे दूरी पर","केवल उनके बीच की दूरी पर"],
+      as: ["ইহঁতৰ ভৰৰ গুণফল আৰু দূৰত্বৰ বৰ্গৰ বিপৰীতভাৱে","ভৰৰ যোগফল আৰু দূৰত্বৰ সৈতে প্ৰত্যক্ষভাৱে","ভৰৰ গুণফল আৰু দূৰত্বৰ সৈতে প্ৰত্যক্ষভাৱে","কেৱল ইহঁতৰ মাজৰ দূৰত্বত"]
+    },
+    correct: 0,
+    explain: {
+      en: "F = Gm₁m₂/d². Force is directly proportional to product of masses and inversely proportional to square of distance.",
+      hi: "F = Gm₁m₂/d². बल द्रव्यमानों के गुणनफल के सीधे अनुपात में और दूरी के वर्ग के व्युत्क्रम अनुपात में है।",
+      as: "F = Gm₁m₂/d². বল ভৰৰ গুণফলৰ সৈতে প্ৰত্যক্ষভাৱে আৰু দূৰত্বৰ বৰ্গৰ সৈতে বিপৰীতভাৱে সমানুপাতিক।"
+    }
+  },
+  {
+    en: "⚛️ What is the value of the Universal Gravitational Constant G?",
+    hi: "⚛️ सार्वत्रिक गुरुत्वाकर्षण स्थिरांक G का मान क्या है?",
+    as: "⚛️ সাৰ্বজনীন মহাকৰ্ষণ ধ্ৰুৱক G-ৰ মান কি?",
+    formula: "G = 6.67 × 10⁻¹¹ N·m²/kg²",
+    choices: {
+      en: ["6.67 × 10⁻¹¹ N·m²/kg²","9.8 m/s²","6.67 × 10¹¹ N·m²/kg²","3 × 10⁸ m/s"],
+      hi: ["6.67 × 10⁻¹¹ N·m²/kg²","9.8 m/s²","6.67 × 10¹¹ N·m²/kg²","3 × 10⁸ m/s"],
+      as: ["6.67 × 10⁻¹¹ N·m²/kg²","9.8 m/s²","6.67 × 10¹¹ N·m²/kg²","3 × 10⁸ m/s"]
+    },
+    correct: 0,
+    explain: {
+      en: "G = 6.67 × 10⁻¹¹ N·m²/kg². It is a universal constant (same everywhere in the universe).",
+      hi: "G = 6.67 × 10⁻¹¹ N·m²/kg²। यह एक सार्वत्रिक स्थिरांक है (ब्रह्मांड में सर्वत्र समान)।",
+      as: "G = 6.67 × 10⁻¹¹ N·m²/kg²। এয়া এটা সাৰ্বজনীন ধ্ৰুৱক (সমগ্ৰ মহাবিশ্বত একে)।"
+    }
+  },
+  {
+    en: "🍎 What is the value of acceleration due to gravity (g) on the surface of the Earth?",
+    hi: "🍎 पृथ्वी की सतह पर गुरुत्वीय त्वरण (g) का मान क्या है?",
+    as: "🍎 পৃথিৱীৰ পৃষ্ঠত মাধ্যাকৰ্ষণজনিত ত্বৰণ (g)-ৰ মান কি?",
+    formula: "g = 9.8 m/s²",
+    choices: {
+      en: ["9.8 m/s²","6.67 × 10⁻¹¹ m/s²","1.6 m/s²","10 m/s²"],
+      hi: ["9.8 m/s²","6.67 × 10⁻¹¹ m/s²","1.6 m/s²","10 m/s²"],
+      as: ["9.8 m/s²","6.67 × 10⁻¹¹ m/s²","1.6 m/s²","10 m/s²"]
+    },
+    correct: 0,
+    explain: {
+      en: "The acceleration due to gravity on Earth is 9.8 m/s². It acts downward toward the Earth's centre.",
+      hi: "पृथ्वी पर गुरुत्वीय त्वरण 9.8 m/s² है। यह पृथ्वी के केंद्र की ओर नीचे की तरफ कार्य करता है।",
+      as: "পৃথিৱীত মাধ্যাকৰ্ষণজনিত ত্বৰণ 9.8 m/s²। ই পৃথিৱীৰ কেন্দ্ৰৰ ফালে তললৈ কাৰ্য কৰে।"
+    }
+  },
+  {
+    en: "🌙 The value of g on the Moon compared to Earth is approximately:",
+    hi: "🌙 पृथ्वी की तुलना में चंद्रमा पर g का मान लगभग है:",
+    as: "🌙 পৃথিৱীৰ তুলনাত চন্দ্ৰত g-ৰ মান প্ৰায়:",
+    formula: "g(Moon) = g(Earth) / 6 ≈ 1.63 m/s²",
+    choices: {
+      en: ["1/6th of Earth's g (≈ 1.63 m/s²)","Same as Earth's g","1/2 of Earth's g","Twice Earth's g"],
+      hi: ["पृथ्वी के g का 1/6 (≈ 1.63 m/s²)","पृथ्वी के g के समान","पृथ्वी के g का 1/2","पृथ्वी के g का दोगुना"],
+      as: ["পৃথিৱীৰ g-ৰ 1/6 (≈ 1.63 m/s²)","পৃথিৱীৰ g-ৰ সমান","পৃথিৱীৰ g-ৰ 1/2","পৃথিৱীৰ g-ৰ দুগুণ"]
+    },
+    correct: 0,
+    explain: {
+      en: "Moon's gravity is about 1/6 of Earth's (≈ 1.63 m/s²) because the Moon's mass and radius are much smaller.",
+      hi: "चंद्रमा का गुरुत्व पृथ्वी का लगभग 1/6 है (≈ 1.63 m/s²) क्योंकि चंद्रमा का द्रव्यमान और त्रिज्या बहुत कम है।",
+      as: "চন্দ্ৰৰ মাধ্যাকৰ্ষণ পৃথিৱীৰ প্ৰায় 1/6 (≈ 1.63 m/s²) কাৰণ চন্দ্ৰৰ ভৰ আৰু ব্যাসাৰ্ধ বহুত কম।"
+    }
+  },
+  {
+    en: "🏋️ What is the difference between mass and weight?",
+    hi: "🏋️ द्रव्यमान और भार में क्या अंतर है?",
+    as: "🏋️ ভৰ আৰু ওজনৰ মাজত পাৰ্থক্য কি?",
+    choices: {
+      en: ["Mass is amount of matter (constant); Weight is gravitational force on mass (W = mg, varies with g)","Mass and weight are the same","Weight is constant; mass changes","Mass is measured in Newtons"],
+      hi: ["द्रव्यमान पदार्थ की मात्रा है (स्थिर); भार द्रव्यमान पर गुरुत्व बल है (W = mg, g के साथ बदलता है)","द्रव्यमान और भार समान हैं","भार स्थिर है; द्रव्यमान बदलता है","द्रव्यमान न्यूटन में मापा जाता है"],
+      as: ["ভৰ হৈছে পদাৰ্থৰ পৰিমাণ (স্থিৰ); ওজন হৈছে ভৰত মাধ্যাকৰ্ষণ বল (W = mg, g-ৰ সৈতে পৰিৱৰ্তন হয়)","ভৰ আৰু ওজন একে","ওজন স্থিৰ; ভৰ সলনি হয়","ভৰ নিউটনত জোখা হয়"]
+    },
+    correct: 0,
+    explain: {
+      en: "Mass is scalar (kg), constant everywhere. Weight = mg (Newtons), changes with gravitational field. On Moon, weight = 1/6 of Earth weight.",
+      hi: "द्रव्यमान अदिश (kg) है, सर्वत्र स्थिर। भार = mg (न्यूटन), गुरुत्वीय क्षेत्र के साथ बदलता है। चंद्रमा पर, भार = पृथ्वी भार का 1/6।",
+      as: "ভৰ স্কেলাৰ (kg), সৰ্বত্ৰ স্থিৰ। ওজন = mg (নিউটন), মাধ্যাকৰ্ষণ ক্ষেত্ৰৰ সৈতে সলনি হয়। চন্দ্ৰত ওজন = পৃথিৱীৰ ওজনৰ 1/6।"
+    }
+  },
+  {
+    en: "🪂 Free fall is defined as motion under the influence of gravity alone. During free fall, what is true about all objects (ignoring air resistance)?",
+    hi: "🪂 मुक्त पतन केवल गुरुत्व के प्रभाव में गति है। मुक्त पतन में (वायु प्रतिरोध नजरअंदाज करते हुए) सभी वस्तुओं के बारे में क्या सच है?",
+    as: "🪂 মুক্ত পতন হৈছে কেৱল মাধ্যাকৰ্ষণৰ প্ৰভাৱত গতি। মুক্ত পতনৰ সময়ত (বায়ু প্ৰতিৰোধ উপেক্ষা কৰি) সকলো বস্তুৰ বিষয়ে কি সত্য?",
+    choices: {
+      en: ["All objects fall with the same acceleration (g = 9.8 m/s²) regardless of mass","Heavier objects fall faster","Lighter objects fall faster","Acceleration depends on shape"],
+      hi: ["सभी वस्तुएं एक ही त्वरण (g = 9.8 m/s²) से गिरती हैं, चाहे द्रव्यमान कुछ भी हो","भारी वस्तुएं तेज गिरती हैं","हल्की वस्तुएं तेज गिरती हैं","त्वरण आकार पर निर्भर करता है"],
+      as: ["সকলো বস্তু একে ত্বৰণেৰে (g = 9.8 m/s²) পৰে, ভৰ যিয়েই নহওক","গধুৰ বস্তু বেছি বেগত পৰে","পাতল বস্তু বেছি বেগত পৰে","ত্বৰণ আকৃতিৰ ওপৰত নিৰ্ভৰ কৰে"]
+    },
+    correct: 0,
+    explain: {
+      en: "In free fall, all objects experience the same acceleration g = 9.8 m/s² regardless of mass. Galileo proved this by dropping objects from the Leaning Tower of Pisa.",
+      hi: "मुक्त पतन में, सभी वस्तुओं को समान त्वरण g = 9.8 m/s² मिलता है, चाहे द्रव्यमान कुछ भी हो। गैलीलियो ने पीसा की मीनार से वस्तुएं गिराकर यह सिद्ध किया।",
+      as: "মুক্ত পতনত, সকলো বস্তুৱে একে ত্বৰণ g = 9.8 m/s² অনুভৱ কৰে, ভৰ যিয়েই নহওক। গেলিলিঅ'ই পিছা টাৱাৰৰ পৰা বস্তু পেলাই এইটো প্ৰমাণ কৰিছিল।"
+    }
+  },
+  {
+    en: "💧 Archimedes' Principle states that when an object is immersed in a fluid, the buoyant force acting on it equals:",
+    hi: "💧 आर्किमिडीज के सिद्धांत के अनुसार जब कोई वस्तु तरल में डूबाई जाती है, तो उस पर लगने वाला उत्प्लावन बल बराबर होता है:",
+    as: "💧 আৰ্কিমিডিছৰ নীতি অনুযায়ী যেতিয়া কোনো বস্তু তৰলত ডুবায়, ইয়াৰ ওপৰত কাৰ্য কৰা উত্প্লাৱন বল সমান:",
+    choices: {
+      en: ["Weight of fluid displaced by the object","Weight of the object itself","Mass of the object","Volume of the object"],
+      hi: ["वस्तु द्वारा विस्थापित तरल का भार","वस्तु का अपना भार","वस्तु का द्रव्यमान","वस्तु का आयतन"],
+      as: ["বস্তুটোৱে বিস্থাপিত তৰলৰ ওজন","বস্তুটোৰ নিজৰ ওজন","বস্তুটোৰ ভৰ","বস্তুটোৰ আয়তন"]
+    },
+    correct: 0,
+    explain: {
+      en: "Archimedes' Principle: Buoyant force = weight of fluid displaced. This is why ships float — they displace water equal to their weight.",
+      hi: "आर्किमिडीज का सिद्धांत: उत्प्लावन बल = विस्थापित तरल का भार। इसीलिए जहाज तैरते हैं — वे अपने भार के बराबर पानी विस्थापित करते हैं।",
+      as: "আৰ্কিমিডিছৰ নীতি: উত্প্লাৱন বল = বিস্থাপিত তৰলৰ ওজন। এইকাৰণেই জাহাজ ভাহে — ইয়াৰ ওজনৰ সমান পানী বিস্থাপন কৰে।"
+    }
+  },
+  {
+    en: "⚖️ An object floats in a liquid when:",
+    hi: "⚖️ कोई वस्तु तरल में कब तैरती है?",
+    as: "⚖️ কোনো বস্তু তৰলত কেতিয়া ভাহে?",
+    choices: {
+      en: ["Its density is less than or equal to the density of the liquid","Its density is greater than the liquid's density","It is very heavy","It has no volume"],
+      hi: ["उसका घनत्व तरल के घनत्व से कम या बराबर हो","उसका घनत्व तरल के घनत्व से अधिक हो","वह बहुत भारी हो","उसका कोई आयतन न हो"],
+      as: ["ইয়াৰ ঘনত্ব তৰলৰ ঘনত্বতকৈ কম বা সমান হয়","ইয়াৰ ঘনত্ব তৰলৰ ঘনত্বতকৈ বেছি","ই বহুত গধুৰ","ইয়াৰ কোনো আয়তন নাই"]
+    },
+    correct: 0,
+    explain: {
+      en: "An object floats when its density ≤ liquid density. Ice floats on water because ice density (0.9 g/cm³) < water density (1 g/cm³).",
+      hi: "वस्तु तैरती है जब उसका घनत्व ≤ तरल घनत्व। बर्फ पानी पर तैरती है क्योंकि बर्फ का घनत्व (0.9 g/cm³) < पानी का घनत्व (1 g/cm³)।",
+      as: "বস্তু ভাহে যেতিয়া ইয়াৰ ঘনত্ব ≤ তৰলৰ ঘনত্ব। বৰফ পানীত ভাহে কাৰণ বৰফৰ ঘনত্ব (0.9 g/cm³) < পানীৰ ঘনত্ব (1 g/cm³)।"
+    }
+  },
+  {
+    en: "📦 Relative density (specific gravity) of a substance is defined as:",
+    hi: "📦 किसी पदार्थ का आपेक्षिक घनत्व (विशिष्ट गुरुत्व) परिभाषित है:",
+    as: "📦 কোনো পদাৰ্থৰ আপেক্ষিক ঘনত্ব (আপেক্ষিক মাধ্যাকৰ্ষণ) সংজ্ঞায়িত:",
+    formula: "Relative Density = Density of substance / Density of water",
+    choices: {
+      en: ["Density of substance divided by density of water (no unit)","Density of substance × density of water","Mass of substance / volume of water","Weight of substance / weight of water"],
+      hi: ["पदार्थ का घनत्व / जल का घनत्व (कोई इकाई नहीं)","पदार्थ का घनत्व × जल का घनत्व","पदार्थ का द्रव्यमान / जल का आयतन","पदार्थ का भार / जल का भार"],
+      as: ["পদাৰ্থৰ ঘনত্ব / পানীৰ ঘনত্ব (কোনো একক নাই)","পদাৰ্থৰ ঘনত্ব × পানীৰ ঘনত্ব","পদাৰ্থৰ ভৰ / পানীৰ আয়তন","পদাৰ্থৰ ওজন / পানীৰ ওজন"]
+    },
+    correct: 0,
+    explain: {
+      en: "Relative Density = Density of substance / Density of water. It has no unit. If RD > 1, the object sinks; if RD < 1, it floats.",
+      hi: "आपेक्षिक घनत्व = पदार्थ का घनत्व / जल का घनत्व। इसकी कोई इकाई नहीं है। RD > 1 हो तो डूबता है; RD < 1 हो तो तैरता है।",
+      as: "আপেক্ষিক ঘনত্ব = পদাৰ্থৰ ঘনত্ব / পানীৰ ঘনত্ব। ইয়াৰ কোনো একক নাই। RD > 1 হ'লে ডুবে; RD < 1 হ'লে ভাহে।"
+    }
+  },
+  {
+    en: "🚀 Thrust is defined as force per unit area applied on a surface. Pressure is related to force and area as:",
+    hi: "🚀 दाब किसी सतह पर प्रति इकाई क्षेत्रफल पर लगने वाला बल है। दाब और बल और क्षेत्रफल में संबंध है:",
+    as: "🚀 চাপ হৈছে পৃষ্ঠত প্ৰতি একক মাটিকালিত প্ৰয়োগ হোৱা বল। চাপ, বল আৰু মাটিকালিৰ সম্পৰ্ক:",
+    formula: "Pressure (P) = Force (F) / Area (A)  |  Unit: Pascal (Pa)",
+    choices: {
+      en: ["Pressure = Force / Area (unit: Pascal)","Pressure = Force × Area","Pressure = Area / Force","Pressure = Force + Area"],
+      hi: ["दाब = बल / क्षेत्रफल (इकाई: पास्कल)","दाब = बल × क्षेत्रफल","दाब = क्षेत्रफल / बल","दाब = बल + क्षेत्रफल"],
+      as: ["চাপ = বল / মাটিকালি (একক: পাস্কেল)","চাপ = বল × মাটিকালি","চাপ = মাটিকালি / বল","চাপ = বল + মাটিকালি"]
+    },
+    correct: 0,
+    explain: {
+      en: "Pressure P = F/A. Unit is Pascal (Pa) = N/m². A knife has small area → large pressure. A wide base → small pressure (e.g., snowshoes).",
+      hi: "दाब P = F/A। इकाई पास्कल (Pa) = N/m² है। चाकू का क्षेत्रफल कम → अधिक दाब। चौड़ा आधार → कम दाब (जैसे बर्फ के जूते)।",
+      as: "চাপ P = F/A। একক পাস্কেল (Pa) = N/m²। ছুৰিৰ মাটিকালি কম → বেছি চাপ। বহল আধাৰ → কম চাপ (যেনে স্নো-শ্ব)।"
+    }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l, event) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  if (event && event.target) event.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = `Question ${current + 1} of 10`;
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+  const fb = document.getElementById('formulaBox');
+  if (q.formula) { fb.textContent = q.formula; fb.style.display = 'block'; }
+  else { fb.style.display = 'none'; }
+  const choicesArr = (q.choices[lang] || q.choices.en);
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars, msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'Gravity Genius! Newton would be amazed! 🌍', hi: 'गुरुत्व प्रतिभा! न्यूटन चकित हो जाते! 🌍', as: 'মাধ্যাকৰ্ষণ প্ৰতিভা! নিউটন আচৰিত হ'ত! 🌍' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Great understanding of forces! Keep orbiting! 🍎', hi: 'बलों की शानदार समझ! आगे बढ़ते रहें! 🍎', as: 'বলৰ চমৎকাৰ বোধ! এগাই যাওক! 🍎' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Good try! Revisit Archimedes and g values.', hi: 'अच्छा प्रयास! आर्किमिडीज और g के मान दोबारा पढ़ें।', as: 'ভাল প্ৰচেষ্টা! আৰ্কিমিডিছ আৰু g মান পুনৰ পঢ়ক।' }; }
+  else { stars = '☆☆☆'; msg = { en: 'Keep going! Study gravity formulas and float/sink rules!', hi: 'जारी रखें! गुरुत्व सूत्र और तैरने/डूबने के नियम पढ़ें!', as: 'চেষ্টা জাৰি ৰাখক! মাধ্যাকৰ্ষণ সূত্ৰ আৰু ভাহ/ডুব নিয়ম পঢ়ক!' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

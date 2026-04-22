@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Map Reader - GyanPlay Class 2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 { color: #a29bfe; font-size: 2rem; }
+        
+        .score-board { display: flex; justify-content: center; gap: 30px; margin-top: 10px; }
+        
+        .score { background: #e94560; color: white; padding: 10px 20px; border-radius: 10px; font-size: 1.2rem; }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text { color: white; font-size: 1.3rem; }
+        
+        .question-box {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .question-text { font-size: 1.5rem; color: #2d3436; font-weight: bold; }
+        
+        .compass {
+            text-align: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .village-map {
+            background: linear-gradient(180deg, #90EE90 0%, #228B22 100%);
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 350px;
+            position: relative;
+        }
+        
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 5px;
+            height: 300px;
+        }
+        
+        .grid-cell {
+            background: rgba(255,255,255,0.3);
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.5rem;
+        }
+        
+        .grid-cell:hover { background: rgba(255,255,255,0.6); }
+        
+        .grid-cell.start { background: #74b9ff; }
+        .grid-cell.end { background: #fdcb6e; }
+        .grid-cell.path { background: #ffeaa7; }
+        
+        .grid-cell.selected { background: #e94560; }
+        
+        .direction-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .dir-btn {
+            background: white;
+            border: 3px solid #dfe6e9;
+            padding: 15px 20px;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .dir-btn:hover { transform: scale(1.1); border-color: #a29bfe; }
+        
+        .dir-btn.active { background: #a29bfe; color: white; border-color: #a29bfe; }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #00b894, #55efc4);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 184, 148, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover { transform: scale(1.05); }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        
+        .feedback-content.correct { border: 5px solid #00b894; }
+        .feedback-content.wrong { border: 5px solid #e94560; }
+        
+        .feedback-icon { font-size: 5rem; }
+        .feedback-text { font-size: 1.8rem; margin: 20px 0; color: #2d3436; }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-title { color: white; font-size: 1.1rem; margin-bottom: 10px; }
+        .info-text { color: #dfe6e9; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch3-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🗺️ Map Reader</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Challenge: <span id="challengeNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Follow the directions to reach the destination!</p>
+        </div>
+        
+        <div class="compass">⬆️ North | ⬇️ South | ⬅️ West | ➡️ East</div>
+        
+        <div class="question-box">
+            <div class="question-text" id="questionText">Start at 🏠 Home. Go 2 steps North, then 1 step East. Where are you?</div>
+        </div>
+        
+        <div class="village-map">
+            <div class="map-grid" id="mapGrid">
+                <!-- Grid will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="direction-controls">
+            <button class="dir-btn" onclick="addDirection('North', '⬆️')">⬆️ North</button>
+            <button class="dir-btn" onclick="addDirection('South', '⬇️')">⬇️ South</button>
+            <button class="dir-btn" onclick="addDirection('East', '➡️')">➡️ East</button>
+            <button class="dir-btn" onclick="addDirection('West', '⬅️')">⬅️ West</button>
+            <button class="dir-btn" onclick="resetDirections()">🔄 Reset</button>
+        </div>
+        
+        <div class="info-box">
+            <div class="info-title">🧭 Directions:</div>
+            <div class="info-text">⬆️ North - Up | ⬇️ South - Down</div>
+            <div class="info-text">➡️ East - Right | ⬅️ West - Left</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextChallenge()">Next Challenge →</button>
+        </div>
+    </div>
+    
+    <script>
+        const challenges = [
+            {
+                question: "Start at 🏠 Home. Go 2 steps North, then 1 step East. Where are you?",
+                start: { row: 4, col: 2 },
+                directions: [
+                    { dir: 'North', steps: 2 },
+                    { dir: 'East', steps: 1 }
+                ],
+                destinations: ['🛤️ Park', '🏫 School', '🏪 Shop', '🏥 Hospital'],
+                correct: '🏛️ Temple'
+            },
+            {
+                question: "Start at 🏫 School. Go 1 step South, then 2 steps East. Where are you?",
+                start: { row: 1, col: 1 },
+                directions: [
+                    { dir: 'South', steps: 1 },
+                    { dir: 'East', steps: 2 }
+                ],
+                destinations: ['🏥 Hospital', '🛤️ Park', '🏪 Shop', '🏠 Home'],
+                correct: '🏛️ Temple'
+            },
+            {
+                question: "Start at 🏪 Shop. Go 2 steps West, then 1 step North. Where are you?",
+                start: { row: 3, col: 3 },
+                directions: [
+                    { dir: 'West', steps: 2 },
+                    { dir: 'North', steps: 1 }
+                ],
+                destinations: ['🏫 School', '🏠 Home', '🛤️ Park', '🏛️ Temple'],
+                correct: '🏥 Hospital'
+            }
+        ];
+        
+        let currentIndex = 0;
+        let score = 0;
+        let playerPos = { row: 4, col: 2 };
+        let userDirections = [];
+        
+        const landmarks = {
+            '4,2': '🏠',
+            '1,1': '🏫',
+            '3,3': '🏪',
+            '0,4': '🏛️',
+            '2,0': '🛤️',
+            '0,0': '🏥'
+        };
+        
+        function loadChallenge() {
+            const challenge = challenges[currentIndex];
+            
+            document.getElementById('questionText').textContent = challenge.question;
+            document.getElementById('challengeNum').textContent = currentIndex + 1;
+            
+            // Reset player position
+            playerPos = { ...challenge.start };
+            userDirections = [];
+            
+            // Draw map
+            drawMap();
+        }
+        
+        function drawMap() {
+            const grid = document.getElementById('mapGrid');
+            grid.innerHTML = '';
+            
+            for (let r = 0; r < 5; r++) {
+                for (let c = 0; c < 5; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    
+                    // Show landmark
+                    if (landmarks[`${r},${c}`]) {
+                        cell.textContent = landmarks[`${r},${c}`];
+                    }
+                    
+                    // Show player position
+                    if (r === playerPos.row && c === playerPos.col) {
+                        cell.textContent = '🚶';
+                        cell.classList.add('start');
+                    }
+                    
+                    grid.appendChild(cell);
+                }
+            }
+        }
+        
+        function addDirection(dir, icon) {
+            userDirections.push(dir);
+            
+            // Move player
+            if (dir === 'North') playerPos.row = Math.max(0, playerPos.row - 1);
+            if (dir === 'South') playerPos.row = Math.min(4, playerPos.row + 1);
+            if (dir === 'East') playerPos.col = Math.min(4, playerPos.col + 1);
+            if (dir === 'West') playerPos.col = Math.max(0, playerPos.col - 1);
+            
+            drawMap();
+        }
+        
+        function resetDirections() {
+            const challenge = challenges[currentIndex];
+            playerPos = { ...challenge.start };
+            userDirections = [];
+            drawMap();
+        }
+        
+        function checkAnswer() {
+            const challenge = challenges[currentIndex];
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            // Check if player reached correct destination
+            const currentLandmark = landmarks[`${playerPos.row},${playerPos.col}`];
+            
+            if (currentLandmark === challenge.correct.split(' ')[0]) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Correct! You found the right place!';
+                score += 10;
+                document.getElementById('score').textContent = score;
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = `You reached ${currentLandmark || 'nothing'}. Try again!`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextChallenge() {
+            document.getElementById('feedback').classList.remove('show');
+            currentIndex = (currentIndex + 1) % challenges.length;
+            loadChallenge();
+        }
+        
+        loadChallenge();
+        
+        // Add check button
+        setTimeout(() => {
+            const btn = document.querySelector('.check-btn');
+            if (btn) btn.onclick = checkAnswer;
+        }, 100);
+    </script>
+</body>
+</html>

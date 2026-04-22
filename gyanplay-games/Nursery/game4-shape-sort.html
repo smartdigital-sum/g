@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GyanPlay Nursery — Shape Sort!</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+  .hello-screen { background: linear-gradient(160deg, #EDE7F6, #E8EAF6); }
+
+  /* Sort bins */
+  .bins-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sort-bin {
+    background: var(--surface);
+    border-radius: var(--r-md);
+    padding: 14px 10px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    touch-action: manipulation;
+  }
+  .sort-bin:active { transform: scale(0.94); }
+  .sort-bin.correct-bin {
+    border-color: var(--green);
+    box-shadow: 0 0 0 4px rgba(0,200,83,0.2);
+    animation: correctPulse 0.45s ease;
+    background: rgba(0,200,83,0.08);
+  }
+  .sort-bin.wrong-bin { animation: wobble 0.5s ease; }
+  .sort-bin.hint-bin {
+    border-color: var(--gold);
+    animation: hintGlow 1s ease-in-out infinite alternate;
+  }
+  .bin-svg { display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+  .bin-label {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+  .bin-count {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  /* Current shape display */
+  .current-shape-card {
+    background: var(--card);
+    border-radius: var(--r-lg);
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .shape-incoming {
+    animation: shapeIn 0.5s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes shapeIn {
+    0%   { transform: scale(0.4) rotate(-20deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+  .sort-prompt {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  /* Sorted items mini display in bins */
+  .bin-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    justify-content: center;
+    min-height: 24px;
+    margin-top: 4px;
+  }
+  .bin-item { font-size: 1rem; }
+</style>
+</head>
+<body>
+
+<nav class="game-topbar">
+  <a class="game-logo" href="batch1-index.html">Gyan<span>Play</span></a>
+  <div class="topbar-center">📦 Shape Sort!</div>
+  <div class="topbar-right">
+    <div class="lang-toggle">
+      <button onclick="setLang('en')">EN</button>
+      <button onclick="setLang('as')">অস</button>
+      <button onclick="setLang('hi')">हि</button>
+    </div>
+    <button class="sound-toggle" id="soundToggle">🔊</button>
+  </div>
+</nav>
+
+<div class="parent-tip-bar">
+  <span class="tip-icon">👨‍👩‍👧</span>
+  <div class="tip-text">
+    <span class="tip-label">Parent Tip</span>
+    <span data-lang="en" id="tipEn">Before each tap, ask: "Which box does this belong in?" Let them think for a moment!</span>
+    <span data-lang="as" id="tipAs">প্ৰতিটো টেপৰ আগতে সোধক: "এইটো কোন বাকচত যাব?" তেওঁলোকক অলপ ভাবিবলৈ দিয়ক!</span>
+    <span data-lang="hi" id="tipHi">हर tap से पहले पूछें: "यह कौन से डिब्बे में जाएगा?" उन्हें थोड़ा सोचने दें!</span>
+  </div>
+</div>
+
+<!-- HELLO SCREEN -->
+<div class="screen hello-screen" id="helloScreen">
+  <div class="hello-emoji">📦</div>
+  <div class="hello-title">
+    <span data-lang="en">Shape Sort!</span>
+    <span data-lang="as">আকৃতি সজাওক!</span>
+    <span data-lang="hi">आकार छांटो!</span>
+  </div>
+  <div class="hello-subtitle">
+    <span data-lang="en">Put each shape in the right box! 📦</span>
+    <span data-lang="as">প্ৰতিটো আকৃতি সঠিক বাকচত ৰাখক! 📦</span>
+    <span data-lang="hi">हर आकार को सही डिब्बे में डालो! 📦</span>
+  </div>
+  <button class="start-btn" onclick="startGame()">
+    <span data-lang="en">▶ Let's Sort!</span>
+    <span data-lang="as">▶ সজাওঁ!</span>
+    <span data-lang="hi">▶ छांटते हैं!</span>
+  </button>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="screen hidden" id="gameScreen">
+  <div class="game-wrapper">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <span style="background:rgba(124,58,237,0.1);color:#4a1aad;padding:3px 10px;border-radius:20px;font-size:0.7rem;font-weight:800;text-transform:uppercase;">⭕ Shapes</span>
+      <span class="round-indicator" id="roundLabel">1 / 8</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="stars-row">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+
+    <!-- Bins -->
+    <div class="bins-row" id="binsRow"></div>
+
+    <!-- Current shape -->
+    <div class="current-shape-card" id="currentShapeCard">
+      <div class="sort-prompt" id="sortPrompt">
+        <span data-lang="en">Where does this go?</span>
+        <span data-lang="as">এইটো ক'ত যাব?</span>
+        <span data-lang="hi">यह कहाँ जाएगा?</span>
+      </div>
+      <div id="currentShapeSvg" class="shape-incoming"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CELEBRATION -->
+<div class="celebration-overlay" id="celebrationOverlay">
+  <div class="cel-emoji" id="celEmoji">🎉</div>
+  <div class="cel-title" id="celTitle">Well done!</div>
+  <div class="cel-sub" id="celSub"></div>
+  <div class="cel-fact" id="celFact"></div>
+  <button class="play-again-btn" onclick="resetGame()">
+    <span data-lang="en">🔁 Play Again!</span>
+    <span data-lang="as">🔁 আকৌ খেলক!</span>
+    <span data-lang="hi">🔁 फिर खेलें!</span>
+  </button>
+</div>
+
+<script src="audio.js"></script>
+<script src="game-engine.js"></script>
+<script>
+// This game: 2 bins (ROUND vs POINTY, or CIRCLES vs NOT CIRCLES)
+// Stage 1: sort circles vs squares  (4 items)
+// Stage 2: sort triangles vs rectangles (4 items)
+
+const STAGES = [
+  {
+    bins: [
+      {
+        en: 'Circle', as: 'বৃত্ত', hi: 'गोला',
+        svg: `<svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="#E53935"/></svg>`,
+        label: 'circle', items: []
+      },
+      {
+        en: 'Square', as: 'বৰ্গক্ষেত্ৰ', hi: 'वर्ग',
+        svg: `<svg width="40" height="40" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="4" fill="#1E88E5"/></svg>`,
+        label: 'square', items: []
+      }
+    ],
+    shapes: [
+      { label: 'circle', svg: `<svg width="90" height="90" viewBox="0 0 90 90"><circle cx="45" cy="45" r="38" fill="#E53935"/></svg>` },
+      { label: 'square', svg: `<svg width="90" height="90" viewBox="0 0 90 90"><rect x="8" y="8" width="74" height="74" rx="8" fill="#1E88E5"/></svg>` },
+      { label: 'circle', svg: `<svg width="90" height="90" viewBox="0 0 90 90"><circle cx="45" cy="45" r="38" fill="#8E24AA"/></svg>` },
+      { label: 'square', svg: `<svg width="90" height="90" viewBox="0 0 90 90"><rect x="8" y="8" width="74" height="74" rx="8" fill="#FB8C00"/></svg>` },
+    ],
+    tip: {
+      en: "Round shapes (circles) vs shapes with corners (squares). Trace the edges with your finger!",
+      as: "ঘূৰণীয়া আকৃতি (বৃত্ত) বনাম চুক থকা আকৃতি (বৰ্গ)। আঙুলেৰে কিনাৰা আঁকক!",
+      hi: "गोल आकार (गोला) बनाम कोने वाले (वर्ग)। उंगली से किनारा बनाएं!"
+    }
+  },
+  {
+    bins: [
+      {
+        en: 'Triangle', as: 'ত্ৰিভুজ', hi: 'तिकोना',
+        svg: `<svg width="40" height="40" viewBox="0 0 40 40"><polygon points="20,4 37,36 3,36" fill="#43A047"/></svg>`,
+        label: 'triangle', items: []
+      },
+      {
+        en: 'Rectangle', as: 'আয়তক্ষেত্ৰ', hi: 'आयत',
+        svg: `<svg width="40" height="40" viewBox="0 0 40 40"><rect x="2" y="10" width="36" height="20" rx="4" fill="#FB8C00"/></svg>`,
+        label: 'rectangle', items: []
+      }
+    ],
+    shapes: [
+      { label: 'triangle', svg: `<svg width="90" height="90" viewBox="0 0 90 90"><polygon points="45,8 82,80 8,80" fill="#43A047"/></svg>` },
+      { label: 'rectangle', svg: `<svg width="90" height="90" viewBox="0 0 90 90"><rect x="5" y="22" width="80" height="46" rx="7" fill="#FB8C00"/></svg>` },
+      { label: 'triangle', svg: `<svg width="90" height="90" viewBox="0 0 90 90"><polygon points="45,8 82,80 8,80" fill="#FDD835"/></svg>` },
+      { label: 'rectangle', svg: `<svg width="90" height="90" viewBox="0 0 90 90"><rect x="5" y="22" width="80" height="46" rx="7" fill="#E53935"/></svg>` },
+    ],
+    tip: {
+      en: "Triangles have 3 sharp points! Rectangles are longer on two sides. Assam rooftops are triangles!",
+      as: "ত্ৰিভুজৰ ৩টা তীক্ষ্ণ চুক আছে! আয়তক্ষেত্ৰ দুটা দিশত দীঘল। অসমৰ চাল ত্ৰিভুজ!",
+      hi: "तिकोने के 3 नुकीले कोने होते हैं! आयत दो तरफ से लंबा होता है। असम की छत तिकोनी होती है!"
+    }
+  }
+];
+
+let stageIdx = 0, shapeQueue = [], shapeIdx = 0, score = 0;
+
+function startGame() {
+  markVisited('pn-04-shape-sort');
+  soundHello();
+  showScreen('gameScreen');
+  initStars();
+  stageIdx = 0; score = 0;
+  loadStage();
+}
+
+function loadStage() {
+  if (stageIdx >= STAGES.length) { endGame(); return; }
+  const stage = STAGES[stageIdx];
+  stage.bins.forEach(b => b.items = []);
+  shapeQueue = shuffle([...stage.shapes]);
+  shapeIdx = 0;
+
+  document.getElementById('tipEn').textContent = stage.tip.en;
+  document.getElementById('tipAs').textContent = stage.tip.as;
+  document.getElementById('tipHi').textContent = stage.tip.hi;
+  setLang(getLang());
+
+  renderBins();
+  loadShape();
+}
+
+function renderBins() {
+  const stage = STAGES[stageIdx];
+  const row = document.getElementById('binsRow');
+  row.innerHTML = '';
+  stage.bins.forEach((bin, i) => {
+    const el = document.createElement('div');
+    el.className = 'sort-bin';
+    el.id = `bin-${i}`;
+    el.innerHTML = `
+      <div class="bin-svg">${bin.svg}</div>
+      <div class="bin-label">
+        <span data-lang="en">${bin.en}</span>
+        <span data-lang="as" style="display:none">${bin.as}</span>
+        <span data-lang="hi" style="display:none">${bin.hi}</span>
+      </div>
+      <div class="bin-items" id="binItems-${i}"></div>
+      <div class="bin-count" id="binCount-${i}">0</div>
+    `;
+    el.addEventListener('click', () => handleBinTap(i, bin.label));
+    row.appendChild(el);
+  });
+  setLang(getLang());
+}
+
+function loadShape() {
+  const stage = STAGES[stageIdx];
+  const total = STAGES.reduce((a, s) => a + s.shapes.length, 0);
+  const current = STAGES.slice(0, stageIdx).reduce((a, s) => a + s.shapes.length, 0) + shapeIdx;
+
+  document.getElementById('roundLabel').textContent = `${current + 1} / ${total}`;
+  updateProgress(current, total);
+
+  if (shapeIdx >= shapeQueue.length) {
+    // stage done
+    stageIdx++;
+    loadStage();
+    return;
+  }
+
+  const shape = shapeQueue[shapeIdx];
+  const wrap = document.getElementById('currentShapeSvg');
+  wrap.innerHTML = shape.svg;
+  wrap.className = 'shape-incoming';
+  void wrap.offsetWidth;
+  wrap.className = 'shape-incoming';
+}
+
+function handleBinTap(binIdx, binLabel) {
+  const shape = shapeQueue[shapeIdx];
+  const binEl = document.getElementById(`bin-${binIdx}`);
+  soundTap();
+
+  if (binLabel === shape.label) {
+    // Correct
+    binEl.classList.add('correct-bin');
+    setTimeout(() => binEl.classList.remove('correct-bin'), 600);
+    soundCorrect();
+    score++;
+
+    // Add mini icon to bin
+    const itemsEl = document.getElementById(`binItems-${binIdx}`);
+    const mini = document.createElement('span');
+    mini.className = 'bin-item';
+    mini.textContent = shape.label === 'circle' ? '⭕' :
+                       shape.label === 'square' ? '🟦' :
+                       shape.label === 'triangle' ? '🔺' : '🟧';
+    itemsEl.appendChild(mini);
+
+    const countEl = document.getElementById(`binCount-${binIdx}`);
+    countEl.textContent = parseInt(countEl.textContent) + 1;
+
+    // Stars at intervals
+    if (score === 3) { awardStar(); soundStar(); }
+    if (score === 5) { awardStar(); soundStar(); }
+    if (score === 8) { awardStar(); soundStar(); }
+
+    shapeIdx++;
+    setTimeout(loadShape, 600);
+  } else {
+    binEl.classList.add('wrong-bin');
+    soundWrong();
+    setTimeout(() => binEl.classList.remove('wrong-bin'), 550);
+    // Hint: highlight correct bin
+    const correctBinIdx = STAGES[stageIdx].bins.findIndex(b => b.label === shape.label);
+    const correctBinEl = document.getElementById(`bin-${correctBinIdx}`);
+    if (correctBinEl) {
+      correctBinEl.classList.add('hint-bin');
+      setTimeout(() => correctBinEl.classList.remove('hint-bin'), 2500);
+    }
+  }
+}
+
+function endGame() {
+  soundComplete();
+  const lang = getLang();
+  const titles = { en: '📦 Sorting Superstar!', as: '📦 সজোৱা চুপাৰষ্টাৰ!', hi: '📦 छांटने में माहिर!' };
+  const subs = {
+    en: "You sorted all the shapes perfectly! Circles, squares, triangles and rectangles!",
+    as: "আপুনি সকলো আকৃতি নিখুঁতভাৱে সজালে! বৃত্ত, বৰ্গ, ত্ৰিভুজ আৰু আয়তক্ষেত্ৰ!",
+    hi: "आपने सभी आकार बिल्कुल सही छाँटे! गोले, वर्ग, तिकोने और आयत!"
+  };
+  const facts = {
+    en: '🏡 In Assam, flat RECTANGLES are rice fields, and TRIANGLE rooftops keep out the heavy monsoon rain!',
+    as: '🏡 অসমত সমতল আয়তক্ষেত্ৰ হৈছে ধানপথাৰ, আৰু ত্ৰিভুজ চালে বাৰিষাৰ বৃষ্টি ৰোধ কৰে!',
+    hi: '🏡 असम में चपटे आयत धान के खेत हैं, और तिकोनी छत भारी बारिश से बचाती है!'
+  };
+  showCelebration({ emoji: '📦', title: titles[lang], sub: subs[lang], fact: facts[lang] });
+}
+
+function resetGame() {
+  hideCelebration();
+  initStars();
+  stageIdx = 0; score = 0;
+  showScreen('gameScreen');
+  loadStage();
+}
+</script>
+</body>
+</html>

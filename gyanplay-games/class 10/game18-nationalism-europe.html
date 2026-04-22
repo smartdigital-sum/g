@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Rise of Nationalism in Europe – Class 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+    --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+    --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{min-height:100vh;font-family:'Nunito',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff;}
+  .topbar{display:flex;align-items:center;gap:12px;padding:12px 20px;
+    background:rgba(0,0,0,.35);flex-wrap:wrap;}
+  .back-btn{background:rgba(255,255,255,.12);border:none;color:#fff;
+    padding:7px 16px;border-radius:20px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.9rem;transition:background .2s;}
+  .back-btn:hover{background:rgba(255,255,255,.25);}
+  .subject-badge{background:var(--pink);color:#fff;padding:5px 14px;
+    border-radius:20px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.85rem;}
+  .title-bar{flex:1;font-family:'Baloo 2',sans-serif;font-weight:700;
+    font-size:1.05rem;color:var(--gold);}
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;transition:all .2s;}
+  .lang-btn.active{background:var(--sky);border-color:var(--sky);}
+  .progress-wrap{padding:14px 20px 0;}
+  .progress-info{display:flex;justify-content:space-between;font-size:.85rem;color:#ccc;margin-bottom:6px;}
+  .progress-bar-bg{background:rgba(255,255,255,.12);border-radius:10px;height:8px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--saffron),var(--pink));
+    border-radius:10px;transition:width .5s;}
+  .game-wrap{max-width:740px;margin:18px auto;padding:0 16px 40px;}
+  .card{background:var(--card);border-radius:18px;padding:26px;
+    box-shadow:0 8px 32px rgba(0,0,0,.45);animation:fadeIn .4s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .q-number{font-family:'Baloo 2',sans-serif;font-size:.85rem;color:var(--pink);margin-bottom:8px;font-weight:600;}
+  .q-text{font-size:1.08rem;line-height:1.6;margin-bottom:6px;font-weight:600;}
+  .year-tag{display:inline-block;background:rgba(255,107,0,.2);border:1px solid var(--saffron);
+    color:var(--saffron);padding:3px 12px;border-radius:12px;font-size:.8rem;
+    font-weight:700;margin-bottom:12px;}
+  .context-box{background:rgba(255,255,255,.06);border-left:3px solid var(--pink);
+    border-radius:0 10px 10px 0;padding:10px 14px;margin:10px 0;
+    font-size:.88rem;color:#ddd;line-height:1.5;}
+  .options{display:grid;gap:10px;margin-top:16px;}
+  .opt-btn{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);
+    color:#fff;padding:13px 18px;border-radius:12px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.97rem;text-align:left;transition:all .2s;}
+  .opt-btn:hover:not(:disabled){background:rgba(255,64,129,.18);border-color:var(--pink);}
+  .opt-btn.correct{background:rgba(0,200,83,.25);border-color:var(--green);}
+  .opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);}
+  .opt-btn:disabled{cursor:default;}
+  .feedback{margin-top:14px;padding:11px 16px;border-radius:10px;
+    font-weight:700;font-size:.95rem;display:none;}
+  .feedback.show{display:block;animation:fadeIn .3s ease;}
+  .feedback.ok{background:rgba(0,200,83,.2);color:var(--green);}
+  .feedback.no{background:rgba(255,64,129,.18);color:#ff7eb3;}
+  .next-btn{margin-top:18px;background:linear-gradient(135deg,var(--saffron),var(--pink));
+    border:none;color:#fff;padding:12px 32px;border-radius:25px;
+    font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;
+    cursor:pointer;display:none;transition:transform .15s;}
+  .next-btn:hover{transform:scale(1.04);}
+  .end-screen{display:none;text-align:center;}
+  .end-screen.show{display:block;animation:fadeIn .5s ease;}
+  .score-big{font-family:'Baloo 2',sans-serif;font-size:3.5rem;font-weight:800;
+    color:var(--gold);line-height:1;margin:10px 0;}
+  .score-label{color:#ccc;font-size:.95rem;margin-bottom:18px;}
+  .stars{font-size:2.5rem;margin:10px 0;}
+  .play-again{background:linear-gradient(135deg,var(--saffron),var(--gold));
+    border:none;color:#fff;padding:14px 36px;border-radius:28px;
+    font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;
+    cursor:pointer;margin-top:16px;transition:transform .15s;}
+  .play-again:hover{transform:scale(1.05);}
+  .result-detail{margin-top:22px;text-align:left;}
+  .result-detail h3{font-family:'Baloo 2',sans-serif;color:var(--sky);margin-bottom:10px;}
+  .result-item{padding:9px 14px;border-radius:8px;margin-bottom:7px;
+    font-size:.9rem;line-height:1.4;background:rgba(255,255,255,.06);}
+  .result-item.r-ok{border-left:3px solid var(--green);}
+  .result-item.r-no{border-left:3px solid var(--pink);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">পিছলৈ</span></button>
+  <span class="subject-badge">Social Studies</span>
+  <span class="title-bar">
+    <span data-lang="en">Rise of Nationalism in Europe</span>
+    <span data-lang="hi" style="display:none">यूरोप में राष्ट्रवाद का उदय</span>
+    <span data-lang="as" style="display:none">ইউৰোপত ৰাষ্ট্ৰবাদৰ উত্থান</span>
+  </span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span><span data-lang="en">Question</span><span data-lang="hi" style="display:none">प्रश्न</span><span data-lang="as" style="display:none">প্ৰশ্ন</span> <span id="qNum">1</span>/10</span>
+    <span><span data-lang="en">Score</span><span data-lang="hi" style="display:none">स्कोर</span><span data-lang="as" style="display:none">স্কোৰ</span>: <span id="scoreDisp">0</span>/100</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progBar" style="width:0%"></div></div>
+</div>
+
+<div class="game-wrap">
+  <div class="card" id="questionCard">
+    <div class="q-number" id="qLabel">Question 1 of 10</div>
+    <div id="yearTagWrap"></div>
+    <div class="q-text" id="qText"></div>
+    <div id="contextBox" style="display:none" class="context-box"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="card end-screen" id="endScreen">
+    <div class="score-big" id="finalScore">0</div>
+    <div class="score-label">
+      <span data-lang="en">out of 100</span>
+      <span data-lang="hi" style="display:none">100 में से</span>
+      <span data-lang="as" style="display:none">100ৰ মাজৰ পৰা</span>
+    </div>
+    <div class="stars" id="stars">⭐⭐⭐</div>
+    <p id="endMsg" style="color:#ccc;font-size:1rem;"></p>
+    <button class="play-again" onclick="restartGame()">
+      <span data-lang="en">Play Again</span>
+      <span data-lang="hi" style="display:none">फिर खेलें</span>
+      <span data-lang="as" style="display:none">পুনৰ খেলক</span>
+    </button>
+    <div class="result-detail" id="resultDetail"></div>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    year:"1789",
+    context:"The French Revolution marked the beginning of modern nationalism in Europe.",
+    en:{q:"🇪🇺 What idea did the French Revolution introduce that became the foundation of modern nationalism?",
+    opts:["The idea that the 'nation' is made up of its citizens who have sovereignty, not the king",
+          "The idea that kings rule by divine right over their subjects",
+          "The idea that only the aristocracy can govern the state",
+          "The idea that the Church should control all political power"],ans:0,
+    exp:"The French Revolution (1789) introduced the concept of la patrie (the fatherland) and le citoyen (the citizen). Power shifted from monarch to the nation. A new French flag (tricolour) replaced the royal standard, symbolising the nation-state."},
+    hi:{q:"🇪🇺 फ्रांसीसी क्रांति ने कौन-सा विचार दिया जो आधुनिक राष्ट्रवाद की नींव बना?",
+    opts:["'राष्ट्र' उसके नागरिकों से बना है जिनके पास संप्रभुता है, राजा के पास नहीं",
+          "राजा दैवीय अधिकार से शासन करते हैं","केवल कुलीन वर्ग ही शासन कर सकता है",
+          "चर्च को सारी राजनीतिक शक्ति होनी चाहिए"],exp:"फ्रांसीसी क्रांति ने la patrie (मातृभूमि) और le citoyen (नागरिक) की अवधारणा दी। शक्ति राजा से राष्ट्र की ओर स्थानांतरित हुई।"},
+    as:{q:"🇪🇺 ফৰাচী বিপ্লৱে কোন ধাৰণা আনিলে যি আধুনিক ৰাষ্ট্ৰবাদৰ ভিত্তি হ'ল?",
+    opts:["'ৰাষ্ট্ৰ' ইয়াৰ নাগৰিকসকলেৰে গঠিত যাৰ সার্বভৌমত্ব আছে, ৰজাৰ নহয়",
+          "ৰজাই ঈশ্বৰীয় অধিকাৰেৰে শাসন কৰে","কেৱল অভিজাত শ্ৰেণীয়েহে শাসন কৰিব পাৰে",
+          "চাৰ্চৰ সকলো ৰাজনৈতিক ক্ষমতা থাকা উচিত"],exp:"ফৰাচী বিপ্লৱে la patrie আৰু le citoyen ধাৰণা আনিলে। ক্ষমতা ৰজাৰ পৰা ৰাষ্ট্ৰলৈ স্থানান্তৰিত হ'ল।"}
+  },
+  {
+    year:"1799–1815",
+    context:"A military general rose to power and reshaped Europe through wars and laws.",
+    en:{q:"🗺️ How did Napoleon Bonaparte spread the ideas of nationalism across Europe?",
+    opts:["Through the Napoleonic Code — abolishing feudalism, establishing equality before law, and administrative reforms in conquered territories",
+          "By forcing all Europeans to speak French","By restoring the power of the Church everywhere",
+          "By dividing Europe into small city-states"],ans:0,
+    exp:"Napoleon's Civil Code (1804) abolished privileges based on birth, established equality before the law, and secured the right to property. He simplified administrative divisions, abolished feudal system, and removed guild restrictions — spreading revolutionary ideas across Europe."},
+    hi:{q:"🗺️ नेपोलियन बोनापार्ट ने यूरोप में राष्ट्रवाद के विचार कैसे फैलाए?",
+    opts:["नेपोलियन संहिता के माध्यम से — सामंतवाद समाप्त कर, कानून के सामने समानता स्थापित कर, और प्रशासनिक सुधार",
+          "सभी यूरोपीयों को फ्रेंच बोलने पर मजबूर करके","हर जगह चर्च की शक्ति बहाल करके",
+          "यूरोप को छोटे नगर-राज्यों में विभाजित करके"],exp:"नेपोलियन की सिविल संहिता (1804) ने जन्म आधारित विशेषाधिकार समाप्त किए, कानून के सामने समानता स्थापित की।"},
+    as:{q:"🗺️ নেপোলিয়ন বোনাপার্টে ইউৰোপত ৰাষ্ট্ৰবাদৰ ধাৰণা কেনেকৈ বিয়পালে?",
+    opts:["নেপোলিয়ন কোডৰ জৰিয়তে — সামন্তবাদ বাতিল কৰি, আইনৰ আগত সমতা প্ৰতিষ্ঠা কৰি, প্ৰশাসনিক সংস্কাৰ",
+          "সকলো ইউৰোপীয়ক ফৰাচী ভাষা বলিবলৈ বাধ্য কৰি","সৰ্বত্ৰ চাৰ্চৰ ক্ষমতা পুনৰুদ্ধাৰ কৰি",
+          "ইউৰোপক ক্ষুদ্ৰ নগৰ-ৰাজ্যত বিভক্ত কৰি"],exp:"নেপোলিয়নৰ চিভিল কোড (1804) জন্মভিত্তিক সুবিধা বাতিল কৰিলে, আইনৰ আগত সমতা প্ৰতিষ্ঠা কৰিলে।"}
+  },
+  {
+    year:"1815",
+    context:"After Napoleon's defeat, European powers tried to reverse the changes he had made.",
+    en:{q:"📜 What was the main goal of the Congress of Vienna (1815) led by Metternich?",
+    opts:["To restore conservative monarchies and reverse the democratic and nationalist changes Napoleon had spread",
+          "To create a united Europe with a single government","To give independence to all European colonies",
+          "To establish free trade across all European nations"],ans:0,
+    exp:"The Congress of Vienna (1815), chaired by Austria's Klemens von Metternich, aimed to undo the changes of the French Revolution and Napoleonic era. The Bourbon monarchy was restored in France, and the German Confederation of 39 states was created to maintain the balance of power."},
+    hi:{q:"📜 मेटर्निख के नेतृत्व में वियना कांग्रेस (1815) का मुख्य लक्ष्य क्या था?",
+    opts:["रूढ़िवादी राजतंत्र बहाल करना और नेपोलियन द्वारा फैले लोकतांत्रिक व राष्ट्रवादी परिवर्तनों को उलटना",
+          "एकल सरकार के साथ एकजुट यूरोप बनाना","सभी यूरोपीय उपनिवेशों को स्वतंत्रता देना",
+          "सभी यूरोपीय राष्ट्रों में मुक्त व्यापार स्थापित करना"],exp:"वियना कांग्रेस (1815) ने फ्रांसीसी क्रांति और नेपोलियन युग के परिवर्तनों को वापस करने की कोशिश की। बोर्बन राजतंत्र फ्रांस में बहाल किया गया।"},
+    as:{q:"📜 মেটাৰনিখৰ নেতৃত্বত ভিয়েনা কংগ্ৰেছ (1815)ৰ মূল লক্ষ্য কি আছিল?",
+    opts:["ৰক্ষণশীল ৰাজতন্ত্ৰ পুনৰুদ্ধাৰ কৰা আৰু নেপোলিয়নে বিয়পোৱা গণতান্ত্ৰিক পৰিৱৰ্তনসমূহ উলটাই দিয়া",
+          "এটা চৰকাৰেৰে একত্ৰিত ইউৰোপ গঢ়া","সকলো ইউৰোপীয় উপনিৱেশক স্বাধীনতা দিয়া",
+          "সকলো ইউৰোপীয় ৰাষ্ট্ৰত মুক্ত বাণিজ্য প্ৰতিষ্ঠা কৰা"],exp:"ভিয়েনা কংগ্ৰেছ (1815) ফৰাচী বিপ্লৱ আৰু নেপোলিয়ন যুগৰ পৰিৱৰ্তন উলটাই দিবলৈ চেষ্টা কৰিলে।"}
+  },
+  {
+    year:"1832",
+    context:"A secret revolutionary organisation was working to unite Italy.",
+    en:{q:"🇪🇺 Who founded 'Young Italy' and what was its aim?",
+    opts:["Giuseppe Mazzini — to unite the Italian states into a single republic through popular uprising",
+          "Count Cavour — to unite Italy under the Piedmont monarchy","Otto von Bismarck — to create a German-Italian alliance",
+          "Napoleon III — to make Italy part of the French Empire"],ans:0,
+    exp:"Giuseppe Mazzini founded 'Young Italy' (1832) with the aim of uniting the fragmented Italian states through popular revolution. He believed God had intended nations to be free. He also inspired 'Young Europe' — a broader nationalist movement."},
+    hi:{q:"🇪🇺 'यंग इटली' की स्थापना किसने की और इसका उद्देश्य क्या था?",
+    opts:["जोसेफ मेज़िनी — लोकप्रिय विद्रोह के माध्यम से इतालवी राज्यों को एक गणराज्य में एकजुट करना",
+          "काउंट कैवोर — पीडमोंट राजतंत्र के अधीन इटली को एकजुट करना","ओटो वॉन बिस्मार्क — जर्मन-इतालवी गठबंधन बनाना",
+          "नेपोलियन तृतीय — इटली को फ्रांसीसी साम्राज्य का हिस्सा बनाना"],exp:"जोसेफ मेज़िनी ने 1832 में 'यंग इटली' की स्थापना की। उनका मानना था कि ईश्वर ने राष्ट्रों को स्वतंत्र होने के लिए बनाया है।"},
+    as:{q:"🇪🇺 'ইয়াং ইটালী' কোনে প্ৰতিষ্ঠা কৰিলে আৰু ইয়াৰ লক্ষ্য কি আছিল?",
+    opts:["জিউছেপ মাজিনি — জনপ্ৰিয় বিদ্ৰোহৰ জৰিয়তে ইটালীৰ ৰাজ্যসমূহক এটা প্ৰজাতন্ত্ৰত একত্ৰিত কৰা",
+          "কাউণ্ট কেভোৰ — পিডমণ্ট ৰাজতন্ত্ৰৰ অধীনত ইটালী একত্ৰিত কৰা","অটো ভন বিছমাৰ্ক — জাৰ্মান-ইটালীয় মৈত্ৰী গঠন",
+          "তৃতীয় নেপোলিয়ন — ইটালীক ফৰাচী সাম্ৰাজ্যৰ অংশ কৰা"],exp:"জিউছেপ মাজিনিয়ে 1832 চনত 'ইয়াং ইটালী' প্ৰতিষ্ঠা কৰিলে। তেওঁ বিশ্বাস কৰিছিল ঈশ্বৰে ৰাষ্ট্ৰসমূহক মুক্ত হ'বলৈ সৃষ্টি কৰিছে।"}
+  },
+  {
+    year:"1848",
+    context:"Liberal revolutions swept across Europe — but most were crushed.",
+    en:{q:"🗺️ The Frankfurt Parliament (1848) is significant in German history because:",
+    opts:["It was the first elected parliament for a united Germany — but it failed as the Prussian king rejected the offer of the crown",
+          "It successfully united all German states under one constitution","It led to Germany defeating France in war",
+          "It created the German Confederation replacing the Holy Roman Empire"],ans:0,
+    exp:"The Frankfurt Parliament (May 1848) met at St Paul's Church and drafted a constitution for a united Germany. They offered the crown to the Prussian King Friedrich Wilhelm IV, who rejected it, calling it 'a crown from the gutter.' The parliament failed — troops were called in."},
+    hi:{q:"🗺️ जर्मन इतिहास में फ्रैंकफर्ट संसद (1848) क्यों महत्वपूर्ण है?",
+    opts:["यह एकीकृत जर्मनी के लिए पहली निर्वाचित संसद थी — लेकिन प्रशिया के राजा ने मुकुट अस्वीकार कर दिया",
+          "इसने सफलतापूर्वक सभी जर्मन राज्यों को एकजुट किया","इसने जर्मनी को फ्रांस के खिलाफ युद्ध जिताया",
+          "इसने जर्मन परिसंघ बनाया"],exp:"फ्रैंकफर्ट संसद (मई 1848) ने एकीकृत जर्मनी के लिए संविधान तैयार किया। प्रशिया के राजा ने 'मुकुट' अस्वीकार किया।"},
+    as:{q:"🗺️ জাৰ্মান ইতিহাসত ফ্ৰেংকফাৰ্ট সংসদ (1848) কিয় গুৰুত্বপূৰ্ণ?",
+    opts:["এইটো একত্ৰিত জাৰ্মানীৰ বাবে প্ৰথম নিৰ্বাচিত সংসদ আছিল — কিন্তু প্ৰাছিয়াৰ ৰজাই মুকুট প্ৰত্যাখ্যান কৰিলে",
+          "ইয়ে সফলতাৰে সকলো জাৰ্মান ৰাজ্য একত্ৰিত কৰিলে","ইয়ে জাৰ্মানীক ফ্ৰান্সৰ বিৰুদ্ধে যুদ্ধত জিতালে",
+          "ইয়ে জাৰ্মান কনফেডাৰেচন সৃষ্টি কৰিলে"],exp:"ফ্ৰেংকফাৰ্ট সংসদে (মে 1848) একত্ৰিত জাৰ্মানীৰ বাবে সংবিধান প্ৰস্তুত কৰিলে। প্ৰাছিয়াৰ ৰজাই মুকুট প্ৰত্যাখ্যান কৰিলে।"}
+  },
+  {
+    year:"1866–1871",
+    context:"A Prussian statesman used war and diplomacy to achieve German unification.",
+    en:{q:"📜 How did Otto von Bismarck achieve German unification?",
+    opts:["Through 'blood and iron' — three wars against Denmark (1864), Austria (1866), and France (1870–71), creating the German Empire in 1871",
+          "Through peaceful negotiations and treaties with all German states",
+          "By convincing the Pope to crown a German Emperor",
+          "Through an economic union (Zollverein) alone"],ans:0,
+    exp:"Bismarck, as Prussian Chancellor, followed Realpolitik — practical politics over idealism. He fought three wars: against Denmark (1864) for Schleswig-Holstein, against Austria (1866) at Sadowa, and against France (1870–71) at Sedan. The German Empire was proclaimed at Versailles in January 1871."},
+    hi:{q:"📜 ओटो वॉन बिस्मार्क ने जर्मन एकीकरण कैसे हासिल किया?",
+    opts:["'रक्त और लोहे' के माध्यम से — डेनमार्क (1864), ऑस्ट्रिया (1866), और फ्रांस (1870–71) के खिलाफ तीन युद्ध करके 1871 में जर्मन साम्राज्य बनाया",
+          "सभी जर्मन राज्यों के साथ शांतिपूर्ण वार्ता के माध्यम से",
+          "पोप को जर्मन सम्राट का राज्याभिषेक करने के लिए मना कर",
+          "केवल आर्थिक संघ (ज़ोलवेरेन) के माध्यम से"],exp:"बिस्मार्क ने Realpolitik अपनाई। तीन युद्धों के बाद जनवरी 1871 में वर्साय में जर्मन साम्राज्य की घोषणा हुई।"},
+    as:{q:"📜 অটো ভন বিছমাৰ্কে জাৰ্মান একীভূতকৰণ কেনেকৈ সাধন কৰিলে?",
+    opts:["'তেজ আৰু লোহা'ৰ জৰিয়তে — ডেনমাৰ্ক (1864), অষ্ট্ৰিয়া (1866), আৰু ফ্ৰান্স (1870–71)ৰ বিৰুদ্ধে তিনিটা যুদ্ধেৰে 1871 চনত জাৰ্মান সাম্ৰাজ্য গঠন",
+          "সকলো জাৰ্মান ৰাজ্যৰ সৈতে শান্তিপূৰ্ণ আলোচনাৰ জৰিয়তে",
+          "পোপক জাৰ্মান সম্ৰাটৰ মুকুট পৰাবলৈ ৰাজি কৰাই",
+          "কেৱল অৰ্থনৈতিক সংঘ (ছলভেৰেন)ৰ জৰিয়তে"],exp:"বিছমাৰ্কে Realpolitik অনুসৰণ কৰিলে। তিনিটা যুদ্ধৰ পিছত জানুৱাৰি 1871 চনত ভাৰচেলছত জাৰ্মান সাম্ৰাজ্য ঘোষণা হ'ল।"}
+  },
+  {
+    year:"1834",
+    context:"A customs union was created that laid economic groundwork for German unification.",
+    en:{q:"🇪🇺 What was the Zollverein and why was it important for German nationalism?",
+    opts:["A customs union (1834) among German states that abolished tariff barriers — creating a unified economic zone that fostered national identity",
+          "A military alliance among German states against France","A cultural society promoting German literature and music",
+          "A railway company connecting Prussian cities"],ans:0,
+    exp:"The Zollverein (1834), initiated by Prussia, abolished customs duties between German states, creating a single economic market. By removing trade barriers, it tied German states together economically before political unification and helped build a sense of common German identity."},
+    hi:{q:"🇪🇺 ज़ोलवेरेन क्या था और जर्मन राष्ट्रवाद के लिए यह क्यों महत्वपूर्ण था?",
+    opts:["जर्मन राज्यों के बीच एक सीमा शुल्क संघ (1834) जिसने टैरिफ बाधाएं समाप्त कीं — एकीकृत आर्थिक क्षेत्र बनाकर राष्ट्रीय पहचान को बढ़ावा दिया",
+          "फ्रांस के खिलाफ जर्मन राज्यों का सैन्य गठबंधन","जर्मन साहित्य और संगीत को बढ़ावा देने वाला सांस्कृतिक समाज",
+          "प्रशियाई शहरों को जोड़ने वाली रेलवे कंपनी"],exp:"ज़ोलवेरेन (1834) ने जर्मन राज्यों के बीच सीमा शुल्क समाप्त कर एकीकृत बाजार बनाया। राजनीतिक एकीकरण से पहले आर्थिक एकता आई।"},
+    as:{q:"🇪🇺 ছলভেৰেন কি আছিল আৰু জাৰ্মান ৰাষ্ট্ৰবাদৰ বাবে ই কিয় গুৰুত্বপূৰ্ণ আছিল?",
+    opts:["জাৰ্মান ৰাজ্যসমূহৰ মাজত এটা শুল্ক সংঘ (1834) যি শুল্ক বাধা বাতিল কৰিলে — একত্ৰিত অৰ্থনৈতিক অঞ্চল সৃষ্টি কৰি ৰাষ্ট্ৰীয় পৰিচয় গঢ়িলে",
+          "ফ্ৰান্সৰ বিৰুদ্ধে জাৰ্মান ৰাজ্যসমূহৰ সামৰিক মৈত্ৰী","জাৰ্মান সাহিত্য আৰু সংগীত প্ৰসাৰকাৰী সাংস্কৃতিক সমাজ",
+          "প্ৰাছিয়ান নগৰসমূহ সংযোগকাৰী ৰেলৱে কোম্পানী"],exp:"ছলভেৰেন (1834) জাৰ্মান ৰাজ্যসমূহৰ মাজত শুল্ক বাতিল কৰি একত্ৰিত বজাৰ গঠন কৰিলে। ৰাজনৈতিক একীভূতকৰণৰ আগতে অৰ্থনৈতিক ঐক্য আহিল।"}
+  },
+  {
+    year:"19th Century",
+    context:"Romanticism became a powerful cultural movement that shaped nationalist feelings.",
+    en:{q:"📜 How did Romanticism contribute to the growth of nationalism in Europe?",
+    opts:["Romantic artists and writers glorified folk culture, vernacular language, and shared history — creating emotional bonds that turned people into nations",
+          "Romanticism promoted science and reason over emotion","Romantic artists promoted loyalty to the Roman Catholic Church",
+          "Romanticism encouraged migration to cities and abandonment of rural traditions"],ans:0,
+    exp:"Romantic nationalists like Johann Gottfried Herder argued that true German culture lay in folk songs, poetry, and language (Volksgeist — spirit of the people). Collecting folk tales (Brothers Grimm), composing nationalist music, and reviving vernacular languages helped build national identity across Europe."},
+    hi:{q:"📜 रोमांटिकवाद ने यूरोप में राष्ट्रवाद के विकास में कैसे योगदान दिया?",
+    opts:["रोमांटिक कलाकारों और लेखकों ने लोक संस्कृति, देशी भाषा और साझा इतिहास का गुणगान किया — भावनात्मक बंधन बनाए जो लोगों को राष्ट्रों में बदलते हैं",
+          "रोमांटिकवाद ने भावना पर विज्ञान और तर्क को बढ़ावा दिया","रोमांटिक कलाकारों ने कैथोलिक चर्च के प्रति वफादारी बढ़ाई",
+          "रोमांटिकवाद ने शहरों में प्रवास को प्रोत्साहित किया"],exp:"हर्डर जैसे रोमांटिक राष्ट्रवादियों ने लोक गीतों, कविता और भाषा (Volksgeist) में सच्ची जर्मन संस्कृति देखी।"},
+    as:{q:"📜 ৰোমান্টিচিজমে ইউৰোপত ৰাষ্ট্ৰবাদৰ বিকাশত কেনেকৈ অৰিহণা যোগালে?",
+    opts:["ৰোমান্টিক শিল্পী আৰু লেখকসকলে লোক সংস্কৃতি, স্থানীয় ভাষা আৰু সামৰিক ইতিহাস মহিমান্বিত কৰিলে — মানুহক ৰাষ্ট্ৰলৈ ৰূপান্তৰিত কৰা আৱেগিক বন্ধন সৃষ্টি কৰিলে",
+          "ৰোমান্টিচিজমে আৱেগতকৈ বিজ্ঞান আৰু যুক্তি প্ৰচাৰ কৰিলে","ৰোমান্টিক শিল্পীসকলে কেথলিক চাৰ্চৰ প্ৰতি আনুগত্য বৃদ্ধি কৰিলে",
+          "ৰোমান্টিচিজমে চহৰলৈ পলায়ন উৎসাহিত কৰিলে"],exp:"হার্ডাৰৰ দৰে ৰোমান্টিক ৰাষ্ট্ৰবাদীসকলে লোক গীত, কবিতা আৰু ভাষাত (Volksgeist) সত্যিকাৰ জাৰ্মান সংস্কৃতি দেখিলে।"}
+  },
+  {
+    year:"Late 19th Century",
+    context:"A region in southeastern Europe became a powder keg of nationalist tensions.",
+    en:{q:"🗺️ Why did the Balkans become a major source of nationalist conflict in the late 19th–early 20th century?",
+    opts:["Because the declining Ottoman Empire left a power vacuum — and various Slavic nationalities, backed by Russia and Austria-Hungary, competed for independence and territory",
+          "Because the Balkans had the largest industrial economy in Europe","Because the Pope declared it a holy land",
+          "Because the British Empire wanted to colonise the Balkans"],ans:0,
+    exp:"The Balkans (Bulgaria, Romania, Serbia, Bosnia etc.) were under the declining Ottoman Empire. As the 'sick man of Europe' weakened, Slavic peoples sought independence, backed by Russia (Pan-Slavism). Austria-Hungary and Russia clashed over influence. This rivalry contributed to the outbreak of WWI in 1914."},
+    hi:{q:"🗺️ 19वीं–20वीं सदी में बाल्कन क्षेत्र राष्ट्रवादी संघर्ष का प्रमुख स्रोत क्यों बन गया?",
+    opts:["क्योंकि घटते ओटोमन साम्राज्य ने शक्ति शून्यता छोड़ी — और विभिन्न स्लाव राष्ट्रीयताएँ, रूस और ऑस्ट्रिया-हंगरी के समर्थन से, स्वतंत्रता के लिए प्रतिस्पर्धा करने लगीं",
+          "क्योंकि बाल्कन में यूरोप की सबसे बड़ी औद्योगिक अर्थव्यवस्था थी","क्योंकि पोप ने इसे पवित्र भूमि घोषित किया",
+          "क्योंकि ब्रिटिश साम्राज्य बाल्कन को उपनिवेश बनाना चाहता था"],exp:"बाल्कन ओटोमन साम्राज्य के अधीन था। 'यूरोप के बीमार आदमी' के कमजोर होते ही स्लाव लोगों ने स्वतंत्रता की माँग की। रूस-ऑस्ट्रिया की प्रतिद्वंद्विता से 1914 में WWI शुरू हुई।"},
+    as:{q:"🗺️ 19ম–20ম শতিকাত বলকান অঞ্চল ৰাষ্ট্ৰবাদী সংঘাতৰ প্ৰধান উৎস কিয় হ'ল?",
+    opts:["কাৰণ অৱনতিশীল অটোমান সাম্ৰাজ্যে শক্তি শূন্যতা সৃষ্টি কৰিলে — আৰু বিভিন্ন স্লাভ জাতীয়তাসমূহ ৰাছিয়া আৰু অষ্ট্ৰিয়া-হাংগেৰীৰ সমৰ্থনত স্বাধীনতাৰ বাবে প্ৰতিযোগিতা কৰিলে",
+          "কাৰণ বলকানত ইউৰোপৰ সৰ্ববৃহৎ শিল্প অৰ্থনীতি আছিল","কাৰণ পোপে ইয়াক পবিত্ৰ ভূমি ঘোষণা কৰিলে",
+          "কাৰণ ব্ৰিটিছ সাম্ৰাজ্য বলকান উপনিৱেশ কৰিব বিচাৰিছিল"],exp:"বলকান অটোমান সাম্ৰাজ্যৰ অধীনত আছিল। 'ইউৰোপৰ অসুস্থ মানুহ' দুৰ্বল হোৱাত স্লাভ জনগোষ্ঠীয়ে স্বাধীনতা বিচাৰিলে। ৰাছিয়া-অষ্ট্ৰিয়া প্ৰতিদ্বন্দ্বিতাই 1914 চনত প্ৰথম বিশ্বযুদ্ধৰ কাৰণ হ'ল।"}
+  },
+  {
+    year:"1870–1871",
+    context:"A war between two European powers completed a major unification and shifted the balance of power.",
+    en:{q:"🇪🇺 What was the role of the Franco-Prussian War (1870–71) in European nationalism?",
+    opts:["Prussia's victory led to the proclamation of the German Empire at Versailles, and France lost Alsace-Lorraine — fuelling French revanchism and tensions that led to WWI",
+          "France defeated Prussia and gained new territories in Germany",
+          "The war ended with a peaceful treaty that gave both sides equal territory",
+          "The war had no impact on nationalism as it was purely a border dispute"],ans:0,
+    exp:"In the Franco-Prussian War (1870–71), Prussia decisively defeated France. The German Empire was proclaimed in the Hall of Mirrors at Versailles (Jan 1871) — a deliberate humiliation of France. France lost Alsace-Lorraine, creating deep French resentment that became a major factor leading to WWI (1914)."},
+    hi:{q:"🇪🇺 यूरोपीय राष्ट्रवाद में फ्रेंको-प्रशियाई युद्ध (1870–71) की क्या भूमिका थी?",
+    opts:["प्रशिया की जीत से वर्साय में जर्मन साम्राज्य की घोषणा हुई, और फ्रांस ने अलसेस-लोरेन खो दिया — जिससे फ्रांसीसी प्रतिशोधवाद और WWI का मार्ग प्रशस्त हुआ",
+          "फ्रांस ने प्रशिया को हराया और जर्मनी में नए क्षेत्र प्राप्त किए",
+          "युद्ध एक शांतिपूर्ण संधि के साथ समाप्त हुआ","युद्ध का राष्ट्रवाद पर कोई प्रभाव नहीं पड़ा"],exp:"फ्रेंको-प्रशियाई युद्ध में प्रशिया ने फ्रांस को हराया। वर्साय में जर्मन साम्राज्य घोषित हुआ। फ्रांस ने अलसेस-लोरेन खोया — यह 1914 के WWI का प्रमुख कारण बना।"},
+    as:{q:"🇪🇺 ইউৰোপীয় ৰাষ্ট্ৰবাদত ফ্ৰেংকো-প্ৰাছিয়ান যুদ্ধ (1870–71)ৰ ভূমিকা কি আছিল?",
+    opts:["প্ৰাছিয়াৰ জয়ৰ ফলত ভাৰচেলছত জাৰ্মান সাম্ৰাজ্য ঘোষণা হ'ল, আৰু ফ্ৰান্সে আলছাচ-লোৰেন হেৰাইলে — ফৰাচী প্ৰতিশোধৰ মনোভাৱ আৰু প্ৰথম বিশ্বযুদ্ধৰ সৃষ্টি কৰিলে",
+          "ফ্ৰান্সে প্ৰাছিয়াক পৰাজিত কৰিলে আৰু জাৰ্মানীত নতুন অঞ্চল পালে",
+          "যুদ্ধ শান্তিপূৰ্ণ সন্ধিৰে শেষ হ'ল","যুদ্ধৰ ৰাষ্ট্ৰবাদত কোনো প্ৰভাৱ নাছিল"],exp:"ফ্ৰেংকো-প্ৰাছিয়ান যুদ্ধত প্ৰাছিয়াই ফ্ৰান্সক পৰাজিত কৰিলে। ভাৰচেলছত জাৰ্মান সাম্ৰাজ্য ঘোষণা হ'ল। ফ্ৰান্সে আলছাচ-লোৰেন হেৰাইলে — 1914 চনৰ প্ৰথম বিশ্বযুদ্ধৰ কাৰণ হ'ল।"}
+  }
+];
+
+let current=0,score=0,answered=[],currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display=el.getAttribute('data-lang')===l?'':'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['en','hi','as'][i]===l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(current>=questions.length){showEnd();return;}
+  const q=questions[current];
+  const lang=q[currentLang]||q['en'];
+  const enQ=q['en'];
+  document.getElementById('qNum').textContent=current+1;
+  document.getElementById('scoreDisp').textContent=score;
+  document.getElementById('qLabel').textContent='Question '+(current+1)+' of 10';
+  document.getElementById('progBar').style.width=((current)/10*100)+'%';
+  document.getElementById('yearTagWrap').innerHTML=q.year?
+    '<span class="year-tag">📅 '+q.year+'</span>':'';
+  document.getElementById('qText').textContent=lang.q||enQ.q;
+  const ctx=document.getElementById('contextBox');
+  if(q.context){ctx.textContent=q.context;ctx.style.display='block';}
+  else{ctx.style.display='none';}
+  const opts=lang.opts||enQ.opts;
+  const optDiv=document.getElementById('options');
+  optDiv.innerHTML='';
+  opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';b.textContent=o;
+    b.onclick=()=>selectAnswer(i,enQ.ans,lang.exp||enQ.exp);
+    optDiv.appendChild(b);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').style.display='none';
+}
+
+function selectAnswer(chosen,correct,exp){
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[correct].classList.add('correct');
+  const fb=document.getElementById('feedback');
+  if(chosen===correct){
+    score+=10;document.getElementById('scoreDisp').textContent=score;
+    fb.textContent='✓ Correct! '+exp;fb.className='feedback ok show';
+  } else {
+    btns[chosen].classList.add('wrong');
+    fb.textContent='✗ Not quite. '+exp;fb.className='feedback no show';
+  }
+  answered.push({q:questions[current]['en'].q,correct:chosen===correct,exp});
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextQuestion(){current++;renderQuestion();}
+
+function showEnd(){
+  document.getElementById('questionCard').style.display='none';
+  document.getElementById('progBar').style.width='100%';
+  document.getElementById('finalScore').textContent=score;
+  let stars='';
+  if(score>=90)stars='⭐⭐⭐';
+  else if(score>=70)stars='⭐⭐';
+  else if(score>=40)stars='⭐';
+  document.getElementById('stars').textContent=stars||'☆☆☆';
+  const msgs={en:['Keep studying history! 🗺️','Good work! 🇪🇺','History hero! 🏆'],
+    hi:['इतिहास पढ़ते रहें! 🗺️','अच्छा काम! 🇪🇺','इतिहास नायक! 🏆'],
+    as:['ইতিহাস পঢ়ি থাকক! 🗺️','ভাল কাম! 🇪🇺','ইতিহাসৰ নায়ক! 🏆']};
+  const mArr=msgs[currentLang]||msgs.en;
+  document.getElementById('endMsg').textContent=score>=90?mArr[2]:score>=70?mArr[1]:mArr[0];
+  let html='<h3>Review</h3>';
+  answered.forEach((a,i)=>{
+    html+='<div class="result-item '+(a.correct?'r-ok':'r-no')+'">'
+      +'<strong>Q'+(i+1)+':</strong> '+(a.correct?'✓':'✗')+' '+a.q
+      +'<br/><small>'+a.exp+'</small></div>';
+  });
+  document.getElementById('resultDetail').innerHTML=html;
+  const es=document.getElementById('endScreen');
+  es.style.display='block';es.classList.add('show');
+}
+
+function restartGame(){
+  current=0;score=0;answered=[];
+  document.getElementById('questionCard').style.display='block';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('endScreen').classList.remove('show');
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

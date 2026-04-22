@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Medieval India – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;
+  --pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;
+  --card:#1a1740;--text:#EEE;--muted:#aaa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  font-family:'Nunito',sans-serif;color:var(--text);padding-bottom:40px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeIn .45s ease both}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;
+  background:rgba(255,255,255,.04);backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.back-btn{background:none;border:1px solid rgba(255,255,255,.2);color:#fff;
+  padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;
+  font-size:.85rem;transition:all .2s}
+.back-btn:hover{background:rgba(255,255,255,.1)}
+.badge{background:var(--pink);color:#fff;padding:4px 14px;border-radius:20px;
+  font-size:.8rem;font-weight:700;font-family:'Baloo 2',sans-serif;letter-spacing:.5px}
+.title-bar{font-family:'Baloo 2',sans-serif;font-size:1.15rem;font-weight:700;
+  flex:1;text-align:center}
+.lang-toggle{display:flex;gap:4px;margin-left:auto}
+.lang-btn{background:rgba(255,255,255,.08);border:none;color:#ccc;
+  padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;
+  font-family:'Nunito',sans-serif;transition:all .2s}
+.lang-btn.active{background:var(--pink);color:#fff;font-weight:700}
+
+/* SCORE BAR */
+.score-wrap{max-width:700px;margin:18px auto 0;padding:0 16px}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.score-label{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;color:var(--gold)}
+.score-val{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--saffron)}
+.prog-bar{height:8px;background:rgba(255,255,255,.1);border-radius:8px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--gold));
+  border-radius:8px;transition:width .4s ease}
+
+/* QUESTION CARD */
+.q-wrap{max-width:700px;margin:22px auto 0;padding:0 16px}
+.q-card{background:var(--card);border-radius:18px;padding:28px 26px;
+  border:1px solid rgba(255,64,129,.2);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.q-num{font-size:.8rem;color:var(--muted);margin-bottom:6px;font-weight:600}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.15rem;font-weight:700;
+  line-height:1.5;margin-bottom:22px}
+.emoji-badge{font-size:1.5rem;margin-right:6px}
+.options{display:grid;gap:10px}
+.opt-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  color:var(--text);padding:13px 18px;border-radius:12px;cursor:pointer;
+  font-family:'Nunito',sans-serif;font-size:.97rem;font-weight:600;
+  text-align:left;transition:all .22s;display:flex;align-items:center;gap:10px}
+.opt-btn:hover:not(:disabled){background:rgba(255,64,129,.15);border-color:var(--pink);transform:translateX(4px)}
+.opt-btn:disabled{cursor:default}
+.opt-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:#fff}
+.opt-btn.wrong{background:rgba(255,64,129,.18);border-color:var(--pink);color:#fff}
+.opt-icon{font-size:1.1rem;min-width:22px}
+
+/* EXPLANATION */
+.explanation{margin-top:16px;padding:14px 18px;background:rgba(255,255,255,.06);
+  border-radius:12px;border-left:3px solid var(--gold);font-size:.92rem;line-height:1.6;
+  display:none}
+.explanation.show{display:block}
+.explanation strong{color:var(--gold)}
+
+/* NEXT BTN */
+.next-btn{margin-top:18px;width:100%;padding:14px;background:linear-gradient(90deg,var(--pink),var(--purple));
+  border:none;color:#fff;border-radius:12px;font-family:'Baloo 2',sans-serif;
+  font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s;display:none}
+.next-btn:hover{opacity:.88}
+.next-btn.show{display:block}
+
+/* RESULT */
+.result-card{max-width:700px;margin:40px auto;padding:0 16px;text-align:center}
+.result-inner{background:var(--card);border-radius:20px;padding:40px 30px;
+  border:1px solid rgba(255,64,129,.3)}
+.stars{font-size:2.5rem;letter-spacing:4px;margin-bottom:16px}
+.result-score{font-family:'Baloo 2',sans-serif;font-size:3rem;font-weight:800;color:var(--saffron)}
+.result-msg{font-size:1.1rem;color:var(--muted);margin:8px 0 28px}
+.play-again{padding:14px 40px;background:linear-gradient(90deg,var(--pink),var(--purple));
+  border:none;color:#fff;border-radius:12px;font-family:'Baloo 2',sans-serif;
+  font-size:1.1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.play-again:hover{opacity:.85}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="badge">Social Studies</span>
+  <span class="title-bar" data-lang>
+    <span class="en">🏯 Medieval India</span>
+    <span class="hi" style="display:none">🏯 मध्यकालीन भारत</span>
+    <span class="bn" style="display:none">🏯 মধ্যযুগীয় ভারত</span>
+  </span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('bn')">অ</button>
+  </div>
+</div>
+
+<div class="score-wrap">
+  <div class="score-row">
+    <span class="score-label" id="scoreLabel">Score</span>
+    <span class="score-val"><span id="scoreNum">0</span>/100</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<div class="q-wrap" id="gameArea"></div>
+<div class="result-card fade" id="resultCard" style="display:none"></div>
+
+<script>
+const questions=[
+  {
+    q:"🏯 Which dynasty ruled large parts of South India and is known for building the Kailasanatha temple at Kanchipuram?",
+    opts:["Chalukyas","Pallavas","Rashtrakutas","Cholas"],
+    ans:1,
+    exp:"<strong>Pallavas</strong> ruled from Kanchipuram and built the famous Kailasanatha temple. They were great patrons of Dravidian architecture."
+  },
+  {
+    q:"🏯 The Arab general who conquered Sind in 711 AD was:",
+    opts:["Mahmud of Ghazni","Muhammad bin Qasim","Muhammad Ghori","Timur"],
+    ans:1,
+    exp:"<strong>Muhammad bin Qasim</strong> defeated Raja Dahir and conquered Sind in 711 AD — the first significant Arab conquest on the Indian subcontinent."
+  },
+  {
+    q:"🏯 Mahmud of Ghazni is said to have raided India how many times?",
+    opts:["7","12","17","22"],
+    ans:2,
+    exp:"Mahmud of Ghazni made <strong>17 raids</strong> into India between 1000–1025 AD, famously looting the Somnath temple in 1025 AD."
+  },
+  {
+    q:"🏯 The Battle of Tarain (1191 AD) was fought between Muhammad Ghori and:",
+    opts:["Rana Pratap","Prithviraj Chauhan","Vikramaditya","Harshavardhana"],
+    ans:1,
+    exp:"<strong>Prithviraj Chauhan</strong> defeated Muhammad Ghori at the First Battle of Tarain in 1191 AD. However, Ghori won the Second Battle of Tarain in 1192 AD."
+  },
+  {
+    q:"🏯 The Chalukyas of Badami were known for rock-cut caves at which site?",
+    opts:["Ellora","Ajanta","Aihole and Pattadakal","Mahabalipuram"],
+    ans:2,
+    exp:"<strong>Aihole and Pattadakal</strong> in Karnataka were major Chalukyan centres. Aihole is called the 'cradle of Indian architecture'."
+  },
+  {
+    q:"🏯 Which Rashtrakuta ruler is credited with carving the Kailasa temple at Ellora?",
+    opts:["Dantidurga","Krishna I","Dhruva","Govinda III"],
+    ans:1,
+    exp:"<strong>Krishna I</strong> built the magnificent Kailasa temple at Ellora, carved entirely out of a single rock. It remains one of the world's largest monolithic structures."
+  },
+  {
+    q:"🏯 Prithviraj Raso, a famous epic poem, was written about the Rajput king Prithviraj Chauhan by:",
+    opts:["Kalidas","Chand Bardai","Banabhatta","Tulsidas"],
+    ans:1,
+    exp:"<strong>Chand Bardai</strong>, a court poet and close friend of Prithviraj Chauhan, composed the epic 'Prithviraj Raso', celebrating his deeds and bravery."
+  },
+  {
+    q:"🏯 After the decline of the Gupta Empire, which region became the most powerful in North India under Harshavardhana?",
+    opts:["Pataliputra","Thanesar / Kanauj","Ujjain","Mathura"],
+    ans:1,
+    exp:"<strong>Kanauj (Kanyakubja)</strong> became the political centre of North India under Harshavardhana who ruled from Thanesar and later Kanauj in the early 7th century."
+  },
+  {
+    q:"🏯 Which Rajput clan founded the city of Ajmer and ruled from Rajputana?",
+    opts:["Paramaras","Chandellas","Chahamanas (Chauhans)","Pratiharas"],
+    ans:2,
+    exp:"<strong>Chahamanas (Chauhans)</strong> founded Ajmer and were the most prominent Rajput clan in Rajputana. Prithviraj Chauhan III was their most famous ruler."
+  },
+  {
+    q:"🏯 The Second Battle of Tarain (1192 AD) resulted in:",
+    opts:["Prithviraj Chauhan defeating Ghori again","Muhammad Ghori defeating Prithviraj Chauhan","A peace treaty between both sides","Invasion being repelled by Rajput alliance"],
+    ans:1,
+    exp:"In the <strong>Second Battle of Tarain (1192 AD)</strong>, Muhammad Ghori decisively defeated Prithviraj Chauhan. This battle marked the beginning of the Delhi Sultanate and Turk rule in India."
+  }
+];
+
+let currentQ=0,score=0,lang='en',answered=false;
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('[data-lang] .en').forEach(e=>e.style.display=l==='en'?'':'none');
+  document.querySelectorAll('[data-lang] .hi').forEach(e=>e.style.display=l==='hi'?'':'none');
+  document.querySelectorAll('[data-lang] .bn').forEach(e=>e.style.display=l==='bn'?'':'none');
+  document.getElementById('scoreLabel').textContent=l==='hi'?'स्कोर':l==='bn'?'স্কোর':'Score';
+}
+
+function renderQ(){
+  answered=false;
+  const q=questions[currentQ];
+  const pct=Math.round((currentQ/questions.length)*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  const html=`
+    <div class="q-card fade">
+      <div class="q-num">Question ${currentQ+1} of ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts">
+        ${q.opts.map((o,i)=>`<button class="opt-btn" onclick="pick(${i})" id="opt${i}">
+          <span class="opt-icon">◦</span>${o}</button>`).join('')}
+      </div>
+      <div class="explanation" id="exp">${q.exp}</div>
+      <button class="next-btn" id="nextBtn" onclick="nextQ()">${currentQ===questions.length-1?'See Result →':'Next Question →'}</button>
+    </div>`;
+  document.getElementById('gameArea').innerHTML=html;
+}
+
+function pick(i){
+  if(answered)return;
+  answered=true;
+  const q=questions[currentQ];
+  const pts=Math.round(100/questions.length);
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  if(i===q.ans){
+    btns[i].classList.add('correct');
+    btns[i].querySelector('.opt-icon').textContent='✓';
+    score+=pts;
+    document.getElementById('scoreNum').textContent=score;
+  } else {
+    btns[i].classList.add('wrong');
+    btns[i].querySelector('.opt-icon').textContent='✗';
+    btns[q.ans].classList.add('correct');
+    btns[q.ans].querySelector('.opt-icon').textContent='✓';
+  }
+  document.getElementById('exp').classList.add('show');
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQ(){
+  currentQ++;
+  if(currentQ>=questions.length){showResult();return;}
+  renderQ();
+}
+
+function showResult(){
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('gameArea').style.display='none';
+  const pct=score;
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'';
+  const msg=pct>=90?'Outstanding! History master!':pct>=70?'Great work! Well done!':pct>=40?'Good effort! Keep learning!':'Keep practicing! You can do it!';
+  document.getElementById('resultCard').style.display='block';
+  document.getElementById('resultCard').innerHTML=`
+    <div class="result-inner fade">
+      <div class="stars">${stars||'🏯'}</div>
+      <div class="result-score">${score}/100</div>
+      <div class="result-msg">${msg}</div>
+      <button class="play-again" onclick="restart()">🔄 Play Again</button>
+    </div>`;
+}
+
+function restart(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('scoreNum').textContent=0;
+  document.getElementById('progFill').style.width='0%';
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  renderQ();
+}
+
+renderQ();
+</script>
+</body>
+</html>

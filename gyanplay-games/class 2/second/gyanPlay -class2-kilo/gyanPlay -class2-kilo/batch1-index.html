@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GyanPlay Class 2 - Batch 1</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+        
+        .header { text-align: center; padding: 30px; background: linear-gradient(90deg, #e94560, #0f3460); margin-bottom: 30px; }
+        
+        .header h1 { color: #fff; font-size: 2.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        
+        .header p { color: #eee; margin-top: 10px; font-size: 1.2rem; }
+        
+        .subject-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        
+        .subject-section { background: rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 20px; backdrop-filter: blur(10px); border: 2px solid rgba(255, 255, 255, 0.1); transition: transform 0.3s, box-shadow 0.3s; }
+        
+        .subject-section:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); }
+        
+        .subject-title { font-size: 1.5rem; margin-bottom: 15px; padding-bottom: 10px; }
+        
+        .game-card { background: linear-gradient(135deg, #2d3436, #1e272e); border-radius: 15px; padding: 15px; margin: 10px 0; cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
+        
+        .game-card:hover { border-color: #e94560; transform: scale(1.02); }
+        
+        .game-card h3 { color: #fff; font-size: 1.1rem; }
+        
+        .game-card p { color: #aaa; font-size: 0.9rem; margin-top: 5px; }
+        
+        .maths .subject-title { border-color: #f39c12; color: #f39c12; }
+        .english .subject-title { border-color: #3498db; color: #3498db; }
+        .science .subject-title { border-color: #2ecc71; color: #2ecc71; }
+        .social .subject-title { border-color: #9b59b6; color: #9b59b6; }
+        .hindi .subject-title { border-color: #e74c3c; color: #e74c3c; }
+        
+        .subject-section.maths .subject-title { border-color: #f39c12; color: #f39c12; }
+        .subject-section.english .subject-title { border-color: #3498db; color: #3498db; }
+        .subject-section.science .subject-title { border-color: #2ecc71; color: #2ecc71; }
+        .subject-section.social .subject-title { border-color: #9b59b6; color: #9b59b6; }
+        .subject-section.hindi .subject-title { border-color: #e74c3c; color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="loader">Loading Game...</div>
+    </div>
+    
+    <div class="header">
+        <h1>🎒 GyanPlay Class 2</h1>
+        <p>Batch 1 - Start Your Adventure!</p>
+    </div>
+    
+    <div class="subject-grid">
+        <div class="subject-section maths">
+            <h2 class="subject-title">🔢 Maths</h2>
+            <div class="game-card" onclick="loadGame('number-market.html')">
+                <h3>1. Number Market</h3>
+                <p>Learn place value - hundreds, tens, and ones</p>
+            </div>
+            <div class="game-card" onclick="loadGame('carry-coconuts.html')">
+                <h3>2. Carry the Coconuts</h3>
+                <p>Addition with carrying - column method</p>
+            </div>
+        </div>
+        
+        <div class="subject-section english">
+            <h2 class="subject-title">📝 English</h2>
+            <div class="game-card" onclick="loadGame('punctuation-fixer.html')">
+                <h3>1. Punctuation Fixer</h3>
+                <p>Full stop, question mark, exclamation mark</p>
+            </div>
+            <div class="game-card" onclick="loadGame('noun-town.html')">
+                <h3>2. Noun Town</h3>
+                <p>Common nouns, proper nouns, and pronouns</p>
+            </div>
+        </div>
+        
+        <div class="subject-section science">
+            <h2 class="subject-title">🔬 Science</h2>
+            <div class="game-card" onclick="loadGame('sense-safari.html')">
+                <h3>1. Sense Safari</h3>
+                <p>5 senses - eyes, ears, nose, tongue, skin</p>
+            </div>
+        </div>
+        
+        <div class="subject-section social">
+            <h2 class="subject-title">🌏 Social Studies</h2>
+            <div class="game-card" onclick="loadGame('my-neighbourhood.html')">
+                <h3>1. My Neighbourhood</h3>
+                <p>Community places - post office, hospital, school</p>
+            </div>
+        </div>
+        
+        <div class="subject-section hindi">
+            <h2 class="subject-title">🇮🇳 Hindi</h2>
+            <div class="game-card" onclick="loadGame('shabd-banao.html')">
+                <h3>1. शब्द बनाओ (Word Weaver)</h3>
+                <p>Build 2-3 syllable Hindi words</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function loadGame(url) {
+            document.getElementById('loading').classList.add('active');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 500);
+        }
+    </script>
+</body>
+</html>

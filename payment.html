@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GyanPlay — Unlock Class</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- Razorpay SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    :root {
+      --saffron: #FF6B00;
+      --gold:    #FFB800;
+      --sky:     #00AEEF;
+      --green:   #00C853;
+      --pink:    #FF4081;
+      --dark:    #1A1A2E;
+      --dark2:   #16213E;
+      --bg:      #F4F6FB;
+      --card:    #ffffff;
+      --muted:   #7a7a9a;
+      --shadow:  0 8px 32px rgba(26,26,46,0.12);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      animation: pageIn 0.4s ease;
+    }
+    @keyframes pageIn  { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pageOut { from { opacity: 1; } to { opacity: 0; } }
+    .page-out { animation: pageOut 0.3s ease forwards; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: var(--dark);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+      flex-shrink: 0;
+    }
+    .logo {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: var(--gold);
+      text-decoration: none;
+    }
+    .logo span { color: var(--sky); }
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: color 0.2s;
+    }
+    .back-btn:hover { color: #fff; }
+
+    .lang-toggle {
+      display: flex;
+      gap: 3px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 30px;
+      padding: 3px;
+    }
+    .lang-toggle button {
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.4);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      padding: 3px 9px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-toggle button.active { background: var(--gold); color: var(--dark); }
+
+    /* ── MAIN LAYOUT ── */
+    .page {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+    }
+
+    .payment-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      max-width: 820px;
+      width: 100%;
+    }
+    @media (max-width: 640px) {
+      .payment-wrapper { grid-template-columns: 1fr; }
+    }
+
+    /* ── LEFT: CLASS CARD ── */
+    .class-preview {
+      background: linear-gradient(145deg, var(--dark), var(--dark2));
+      border-radius: 28px;
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 320px;
+    }
+    .class-preview::before {
+      content: '';
+      position: absolute;
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(255,107,0,0.2), transparent 70%);
+      top: -60px; right: -60px;
+      border-radius: 50%;
+    }
+    .class-preview::after {
+      content: '';
+      position: absolute;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(0,174,239,0.15), transparent 70%);
+      bottom: -40px; left: -40px;
+      border-radius: 50%;
+    }
+    .preview-emoji {
+      font-size: 5rem;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+      animation: bob 3s ease-in-out infinite;
+    }
+    @keyframes bob {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-10px); }
+    }
+    .preview-class {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 1.8rem;
+      color: #fff;
+      position: relative; z-index: 1;
+      margin-bottom: 0.5rem;
+    }
+    .preview-price {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      font-size: 2.5rem;
+      color: var(--gold);
+      position: relative; z-index: 1;
+    }
+    .preview-per-year {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      position: relative; z-index: 1;
+      margin-top: 0.2rem;
+    }
+
+    .includes-list {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      position: relative; z-index: 1;
+    }
+    .include-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.75);
+      text-align: left;
+    }
+
+    /* ── RIGHT: PAYMENT FORM ── */
+    .payment-form {
+      background: var(--card);
+      border-radius: 28px;
+      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .form-title {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--dark);
+      margin-bottom: 0.25rem;
+    }
+    .form-sub {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* order summary */
+    .order-summary {
+      background: var(--bg);
+      border-radius: 16px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+    .summary-row .label { color: var(--muted); font-weight: 600; }
+    .summary-row .value { font-weight: 700; color: var(--dark); }
+    .summary-row.total {
+      border-top: 1.5px dashed #dde;
+      padding-top: 10px;
+      margin-top: 2px;
+    }
+    .summary-row.total .value {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.3rem;
+      color: var(--saffron);
+    }
+
+    /* pay button */
+    .pay-btn {
+      width: 100%;
+      background: var(--saffron);
+      color: #fff;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 16px;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 6px 24px rgba(255,107,0,0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .pay-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(255,107,0,0.45); }
+    .pay-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* security note */
+    .security-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* payment methods */
+    .pay-methods {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .method-pill {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    /* ── STATUS SCREENS ── */
+    .status-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
+    .status-screen.show { display: flex; }
+    .status-screen .big-icon { font-size: 5rem; }
+    .status-screen h2 {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 1.6rem;
+      color: var(--dark);
+    }
+    .status-screen p { color: var(--muted); font-size: 0.95rem; line-height: 1.6; }
+    .btn-dash {
+      margin-top: 0.5rem;
+      background: var(--saffron);
+      color: #fff;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 12px 28px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(255,107,0,0.3);
+      transition: transform 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-dash:hover { transform: translateY(-2px); }
+
+    /* spinner */
+    .spinner {
+      width: 22px; height: 22px;
+      border: 3px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── ERROR STATE ── */
+    .error-msg {
+      background: rgba(255,70,70,0.08);
+      border: 1px solid rgba(255,70,70,0.25);
+      color: #d32f2f;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <nav class="topbar">
+    <button class="back-btn" onclick="history.back()">
+      ← <span data-lang="en">Back</span>
+      <span data-lang="as" style="display:none">আগলৈ</span>
+      <span data-lang="hi" style="display:none">वापस</span>
+    </button>
+    <a class="logo" href="/index.html">Gyan<span>Play</span></a>
+    <div class="lang-toggle">
+      <button id="lbEn" class="active" onclick="setLang('en')">EN</button>
+      <button id="lbHi" onclick="setLang('hi')">हि</button>
+      <button id="lbAs" onclick="setLang('as')">অ</button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="page">
+    <div class="payment-wrapper" id="paymentWrapper">
+
+      <!-- LEFT: CLASS PREVIEW -->
+      <div class="class-preview">
+        <div class="preview-emoji" id="previewEmoji">🎒</div>
+        <div class="preview-class" id="previewClass">Class 1</div>
+        <div class="preview-price" id="previewPrice">₹500</div>
+        <div class="preview-per-year">
+          <span data-lang="en">per year</span>
+          <span data-lang="as" style="display:none">প্ৰতি বছৰ</span>
+          <span data-lang="hi" style="display:none">प्रति वर्ष</span>
+        </div>
+        <div class="includes-list">
+          <div class="include-item">🎮
+            <span data-lang="en">All subject games for this class</span>
+            <span data-lang="as" style="display:none">এই ক্লাছৰ সকলো বিষয়ৰ গেম</span>
+            <span data-lang="hi" style="display:none">इस class के सभी subject games</span>
+          </div>
+          <div class="include-item">📅
+            <span data-lang="en">12 months full access</span>
+            <span data-lang="as" style="display:none">১২ মাহৰ সম্পূৰ্ণ প্ৰৱেশ</span>
+            <span data-lang="hi" style="display:none">12 महीने की full access</span>
+          </div>
+          <div class="include-item">🌐
+            <span data-lang="en">All 3 languages supported</span>
+            <span data-lang="as" style="display:none">তিনিটা ভাষা সমৰ্থিত</span>
+            <span data-lang="hi" style="display:none">3 भाषाओं में उपलब्ध</span>
+          </div>
+          <div class="include-item">🔐
+            <span data-lang="en">Secure, ad-free environment</span>
+            <span data-lang="as" style="display:none">সুৰক্ষিত, বিজ্ঞাপনমুক্ত পৰিৱেশ</span>
+            <span data-lang="hi" style="display:none">सुरक्षित, विज्ञापन-मुक्त माहौल</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: PAYMENT FORM -->
+      <div class="payment-form">
+        <div>
+          <div class="form-title">
+            <span data-lang="en">Complete Your Purchase</span>
+            <span data-lang="as" style="display:none">আপোনাৰ ক্ৰয় সম্পূৰ্ণ কৰক</span>
+            <span data-lang="hi" style="display:none">अपनी Purchase पूरी करें</span>
+          </div>
+          <p class="form-sub">
+            <span data-lang="en">You'll be redirected to Razorpay's secure checkout. Supports UPI, Cards & Net Banking.</span>
+            <span data-lang="as" style="display:none">আপোনাক Razorpay ৰ সুৰক্ষিত checkout লৈ পঠোৱা হ'ব।</span>
+            <span data-lang="hi" style="display:none">आपको Razorpay के secure checkout पर भेजा जाएगा।</span>
+          </p>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary">
+          <div class="summary-row">
+            <span class="label">
+              <span data-lang="en">Class</span>
+              <span data-lang="as" style="display:none">ক্লাছ</span>
+              <span data-lang="hi" style="display:none">Class</span>
+            </span>
+            <span class="value" id="summaryClass">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">
+              <span data-lang="en">Duration</span>
+              <span data-lang="as" style="display:none">সময়কাল</span>
+              <span data-lang="hi" style="display:none">अवधि</span>
+            </span>
+            <span class="value">
+              <span data-lang="en">1 Year</span>
+              <span data-lang="as" style="display:none">১ বছৰ</span>
+              <span data-lang="hi" style="display:none">1 साल</span>
+            </span>
+          </div>
+          <div class="summary-row">
+            <span class="label">
+              <span data-lang="en">Subjects</span>
+              <span data-lang="as" style="display:none">বিষয়</span>
+              <span data-lang="hi" style="display:none">विषय</span>
+            </span>
+            <span class="value">5</span>
+          </div>
+          <div class="summary-row total">
+            <span class="label">
+              <span data-lang="en">Total</span>
+              <span data-lang="as" style="display:none">মুঠ</span>
+              <span data-lang="hi" style="display:none">कुल</span>
+            </span>
+            <span class="value" id="summaryTotal">₹0</span>
+          </div>
+        </div>
+
+        <div class="error-msg" id="errorMsg"></div>
+
+        <!-- Pay Button -->
+        <button class="pay-btn" id="payBtn" onclick="handlePay()">
+          <span id="payBtnContent">
+            🔒
+            <span data-lang="en">Pay Securely with Razorpay</span>
+            <span data-lang="as" style="display:none">Razorpay ৰে সুৰক্ষিতভাৱে পেমেণ্ট কৰক</span>
+            <span data-lang="hi" style="display:none">Razorpay से सुरक्षित Payment करें</span>
+          </span>
+        </button>
+
+        <!-- Payment methods -->
+        <div class="pay-methods">
+          <span class="method-pill">UPI</span>
+          <span class="method-pill">Cards</span>
+          <span class="method-pill">Net Banking</span>
+          <span class="method-pill">Wallets</span>
+        </div>
+
+        <div class="security-note">
+          🔐
+          <span data-lang="en">256-bit SSL encrypted · Powered by Razorpay</span>
+          <span data-lang="as" style="display:none">256-bit SSL এনক্ৰিপ্টেড · Razorpay দ্বাৰা চালিত</span>
+          <span data-lang="hi" style="display:none">256-bit SSL encrypted · Razorpay द्वारा संचालित</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCCESS SCREEN (hidden until payment done) -->
+    <div class="status-screen" id="successScreen">
+      <div class="big-icon">🎉</div>
+      <h2>
+        <span data-lang="en">Payment Successful!</span>
+        <span data-lang="as" style="display:none">পেমেণ্ট সফল হৈছে!</span>
+        <span data-lang="hi" style="display:none">Payment सफल!</span>
+      </h2>
+      <p>
+        <span data-lang="en">
+          <strong id="successClassName">Your class</strong> has been unlocked for 1 year.<br/>
+          Start playing and learning right now!
+        </span>
+        <span data-lang="as" style="display:none">
+          <strong id="successClassNameAs">আপোনাৰ ক্লাছ</strong> ১ বছৰৰ বাবে আনলক হৈছে।
+        </span>
+        <span data-lang="hi" style="display:none">
+          <strong id="successClassNameHi">आपकी class</strong> 1 साल के लिए unlock हो गई।
+        </span>
+      </p>
+      <a class="btn-dash" href="/dashboard.html">
+        <span data-lang="en">Go to Dashboard →</span>
+        <span data-lang="as" style="display:none">Dashboard লৈ যাওক →</span>
+        <span data-lang="hi" style="display:none">Dashboard पर जाएं →</span>
+      </a>
+    </div>
+
+    <!-- FAILURE SCREEN -->
+    <div class="status-screen" id="failureScreen">
+      <div class="big-icon">😕</div>
+      <h2>
+        <span data-lang="en">Payment Failed</span>
+        <span data-lang="as" style="display:none">পেমেণ্ট বিফল হৈছে</span>
+        <span data-lang="hi" style="display:none">Payment विफल</span>
+      </h2>
+      <p id="failureReason">
+        <span data-lang="en">Something went wrong. Please try again.</span>
+        <span data-lang="as" style="display:none">কিবা সমস্যা হৈছে। পুনৰ চেষ্টা কৰক।</span>
+        <span data-lang="hi" style="display:none">कुछ गलत हुआ। कृपया दोबारा कोशिश करें।</span>
+      </p>
+      <button class="btn-dash" onclick="resetToPayment()">
+        <span data-lang="en">Try Again</span>
+        <span data-lang="as" style="display:none">পুনৰ চেষ্টা কৰক</span>
+        <span data-lang="hi" style="display:none">फिर कोशिश करें</span>
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    // ── Language toggle ──
+    function setLang(l) {
+      ['en','hi','as'].forEach(code => {
+        const btn = document.getElementById('lb' + code.charAt(0).toUpperCase() + code.slice(1));
+        if (btn) btn.classList.toggle('active', code === l);
+      });
+      document.querySelectorAll('[data-lang]').forEach(el => {
+        el.style.display = el.getAttribute('data-lang') === l ? 'inline' : 'none';
+      });
+      localStorage.setItem('gyanplay_lang', l);
+    }
+
+    function navTo(href) {
+      document.body.classList.add('page-out');
+      setTimeout(() => { window.location.href = href; }, 300);
+    }
+
+    // ── Restore pay button text ──
+    function restorePayBtn() {
+      const l = localStorage.getItem('gyanplay_lang') || 'en';
+      const labels = {
+        en: '🔒 Pay Securely with Razorpay',
+        hi: '🔒 Razorpay से सुरक्षित Payment करें',
+        as: '🔒 Razorpay ৰে সুৰক্ষিতভাৱে পেমেণ্ট কৰক'
+      };
+      document.getElementById('payBtnContent').textContent = labels[l] || labels.en;
+      document.getElementById('payBtn').disabled = false;
+    }
+
+    window.resetToPayment = () => {
+      document.getElementById('paymentWrapper').style.display = 'grid';
+      document.getElementById('failureScreen').classList.remove('show');
+      restorePayBtn();
+    };
+
+    // ── Payment stub (swap for Razorpay when deploying) ──
+    window.handlePay = async function () {
+      const btn    = document.getElementById('payBtn');
+      const errMsg = document.getElementById('errorMsg');
+      btn.disabled = true;
+      document.getElementById('payBtnContent').innerHTML = '<div class="spinner"></div>';
+      errMsg.className = 'error-msg';
+
+      // Simulate payment processing
+      await new Promise(r => setTimeout(r, 1400));
+
+      const expiry = new Date();
+      expiry.setFullYear(expiry.getFullYear() + 1);
+
+      // Grant access in localStorage (for dashboard)
+      localStorage.setItem('gyanplay_access_' + window._classId, 'true');
+      localStorage.setItem('gyanplay_expiry_' + window._classId, expiry.toISOString());
+
+      // Grant access in Firestore (for classroom — checked by checkAccess)
+      if (window.__savePurchaseToFirestore) {
+        await window.__savePurchaseToFirestore(window._classId, expiry);
+      }
+
+      // Show success screen
+      const clsName = document.getElementById('previewClass').textContent;
+      document.getElementById('successClassName').textContent   = clsName;
+      document.getElementById('successClassNameAs').textContent = clsName;
+      document.getElementById('successClassNameHi').textContent = clsName;
+      document.getElementById('paymentWrapper').style.display   = 'none';
+      document.getElementById('successScreen').classList.add('show');
+    };
+
+    // ── Load class info from games.json ──
+    async function init() {
+      const params  = new URLSearchParams(window.location.search);
+      const classId = params.get('class') || 'class-1';
+      window._classId = classId;
+      const lang = localStorage.getItem('gyanplay_lang') || 'en';
+
+      try {
+        const res  = await fetch('data/games.json');
+        const data = await res.json();
+        const cls  = data.classes.find(c => c.id === classId);
+
+        if (!cls) { navTo('dashboard.html'); return; }
+
+        const price = data.pricing[classId] || 0;
+        const name  = cls.name[lang] || cls.name.en;
+
+        document.getElementById('previewEmoji').textContent = cls.emoji;
+        document.getElementById('previewClass').textContent = name;
+        document.getElementById('previewPrice').textContent = '₹' + price.toLocaleString('en-IN');
+        document.getElementById('summaryClass').textContent = name;
+        document.getElementById('summaryTotal').textContent = '₹' + price.toLocaleString('en-IN');
+        document.title = 'GyanPlay — Unlock ' + name;
+      } catch(e) {
+        console.error('Failed to load games.json', e);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const l = localStorage.getItem('gyanplay_lang') || 'en';
+      setLang(l);
+      init();
+    });
+  </script>
+
+  <!-- Module: write purchase to Firestore on payment success -->
+  <script type="module">
+    import { auth, db } from "./src/firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { doc, setDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    let currentUser = null;
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) { window.location.href = "login.html"; return; }
+      currentUser = user;
+      console.log("[Payment] Auth state changed, uid:", user.uid);
+    });
+
+    window.__savePurchaseToFirestore = async (classId, expiryDate) => {
+      // Wait for auth to resolve if needed
+      if (!currentUser) {
+        console.log("[Payment] Waiting for auth...");
+        await new Promise(resolve => {
+          const unsub = onAuthStateChanged(auth, (user) => {
+            unsub();
+            currentUser = user;
+            resolve();
+          });
+        });
+      }
+
+      if (!currentUser) {
+        console.error("[Payment] No authenticated user — cannot save purchase to Firestore");
+        return;
+      }
+
+      console.log("[Payment] Saving purchase to Firestore:", {
+        uid: currentUser.uid,
+        classId,
+        expiresOn: expiryDate
+      });
+
+      try {
+        await setDoc(doc(db, "users", currentUser.uid, "purchases", classId), {
+          classId,
+          className: classId.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase()),
+          amountPaid: 0, // will be replaced with actual amount in Razorpay callback
+          razorpayPaymentId: "stub",
+          paidOn:    Timestamp.now(),
+          expiresOn: Timestamp.fromDate(expiryDate),
+          active:    true,
+        }, { merge: false });
+
+        console.log("[Payment] Purchase saved successfully!");
+      } catch (err) {
+        console.error("[Payment] Failed to save purchase:", err);
+        throw err;
+      }
+    };
+  </script>
+
+</body>
+</html>

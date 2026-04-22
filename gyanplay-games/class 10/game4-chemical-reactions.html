@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Chemical Reactions & Equations – Class 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+    --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+    --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    min-height:100vh;font-family:'Nunito',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:#fff;
+  }
+  /* TOP BAR */
+  .topbar{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 20px;background:rgba(0,0,0,.35);
+    flex-wrap:wrap;
+  }
+  .back-btn{
+    background:rgba(255,255,255,.12);border:none;color:#fff;
+    padding:7px 16px;border-radius:20px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.9rem;
+    transition:background .2s;
+  }
+  .back-btn:hover{background:rgba(255,255,255,.25);}
+  .subject-badge{
+    background:var(--green);color:#fff;padding:5px 14px;
+    border-radius:20px;font-family:'Baloo 2',sans-serif;
+    font-weight:700;font-size:.85rem;letter-spacing:.5px;
+  }
+  .title-bar{
+    flex:1;font-family:'Baloo 2',sans-serif;font-weight:700;
+    font-size:1.05rem;color:var(--gold);
+  }
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{
+    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;
+    font-size:.82rem;transition:all .2s;
+  }
+  .lang-btn.active{background:var(--sky);border-color:var(--sky);}
+
+  /* PROGRESS */
+  .progress-wrap{padding:14px 20px 0;}
+  .progress-info{display:flex;justify-content:space-between;
+    font-size:.85rem;color:#ccc;margin-bottom:6px;}
+  .progress-bar-bg{
+    background:rgba(255,255,255,.12);border-radius:10px;height:8px;overflow:hidden;
+  }
+  .progress-bar-fill{
+    height:100%;background:linear-gradient(90deg,var(--green),var(--gold));
+    border-radius:10px;transition:width .5s;
+  }
+
+  /* MAIN CARD */
+  .game-wrap{max-width:740px;margin:18px auto;padding:0 16px 40px;}
+  .card{
+    background:var(--card);border-radius:18px;padding:26px;
+    box-shadow:0 8px 32px rgba(0,0,0,.45);
+    animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  .q-number{
+    font-family:'Baloo 2',sans-serif;font-size:.85rem;
+    color:var(--sky);margin-bottom:8px;font-weight:600;
+  }
+  .q-text{
+    font-size:1.08rem;line-height:1.6;margin-bottom:6px;font-weight:600;
+  }
+  .eq-box{
+    background:#0d0b22;border:1px solid rgba(255,184,0,.25);
+    border-radius:10px;padding:12px 16px;margin:12px 0;
+    font-family:'Courier New',monospace;font-size:1.05rem;
+    color:var(--gold);letter-spacing:.5px;
+  }
+  .options{display:grid;gap:10px;margin-top:16px;}
+  .opt-btn{
+    background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);
+    color:#fff;padding:13px 18px;border-radius:12px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.97rem;text-align:left;
+    transition:all .2s;
+  }
+  .opt-btn:hover:not(:disabled){
+    background:rgba(0,174,239,.18);border-color:var(--sky);
+  }
+  .opt-btn.correct{background:rgba(0,200,83,.25);border-color:var(--green);}
+  .opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);}
+  .opt-btn:disabled{cursor:default;}
+
+  .feedback{
+    margin-top:14px;padding:11px 16px;border-radius:10px;
+    font-weight:700;font-size:.95rem;display:none;
+  }
+  .feedback.show{display:block;animation:fadeIn .3s ease;}
+  .feedback.ok{background:rgba(0,200,83,.2);color:var(--green);}
+  .feedback.no{background:rgba(255,64,129,.18);color:#ff7eb3;}
+
+  .next-btn{
+    margin-top:18px;background:linear-gradient(135deg,var(--saffron),var(--gold));
+    border:none;color:#fff;padding:12px 32px;border-radius:25px;
+    font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;
+    cursor:pointer;display:none;transition:transform .15s;
+  }
+  .next-btn:hover{transform:scale(1.04);}
+
+  /* END SCREEN */
+  .end-screen{display:none;text-align:center;}
+  .end-screen.show{display:block;animation:fadeIn .5s ease;}
+  .score-big{
+    font-family:'Baloo 2',sans-serif;font-size:3.5rem;font-weight:800;
+    color:var(--gold);line-height:1;margin:10px 0;
+  }
+  .score-label{color:#ccc;font-size:.95rem;margin-bottom:18px;}
+  .stars{font-size:2.5rem;margin:10px 0;}
+  .play-again{
+    background:linear-gradient(135deg,var(--purple),var(--sky));
+    border:none;color:#fff;padding:14px 36px;border-radius:28px;
+    font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;
+    cursor:pointer;margin-top:16px;transition:transform .15s;
+  }
+  .play-again:hover{transform:scale(1.05);}
+  .result-detail{margin-top:22px;text-align:left;}
+  .result-detail h3{font-family:'Baloo 2',sans-serif;color:var(--sky);margin-bottom:10px;}
+  .result-item{
+    padding:9px 14px;border-radius:8px;margin-bottom:7px;
+    font-size:.9rem;line-height:1.4;
+    background:rgba(255,255,255,.06);
+  }
+  .result-item.r-ok{border-left:3px solid var(--green);}
+  .result-item.r-no{border-left:3px solid var(--pink);}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">পিছলৈ</span></button>
+  <span class="subject-badge">Science</span>
+  <span class="title-bar">
+    <span data-lang="en">Chemical Reactions &amp; Equations</span>
+    <span data-lang="hi" style="display:none">रासायनिक अभिक्रियाएँ और समीकरण</span>
+    <span data-lang="as" style="display:none">ৰাসায়নিক বিক্ৰিয়া আৰু সমীকৰণ</span>
+  </span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span><span data-lang="en">Question</span><span data-lang="hi" style="display:none">प्रश्न</span><span data-lang="as" style="display:none">প্ৰশ্ন</span> <span id="qNum">1</span>/10</span>
+    <span><span data-lang="en">Score</span><span data-lang="hi" style="display:none">स्कोर</span><span data-lang="as" style="display:none">স্কোৰ</span>: <span id="scoreDisp">0</span>/100</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progBar" style="width:0%"></div></div>
+</div>
+
+<!-- GAME AREA -->
+<div class="game-wrap">
+  <!-- QUESTION CARD -->
+  <div class="card" id="questionCard">
+    <div class="q-number" id="qLabel">Question 1 of 10</div>
+    <div class="q-text" id="qText"></div>
+    <div class="eq-box" id="eqBox" style="display:none"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <!-- END SCREEN -->
+  <div class="card end-screen" id="endScreen">
+    <div class="score-big" id="finalScore">0</div>
+    <div class="score-label">
+      <span data-lang="en">out of 100</span>
+      <span data-lang="hi" style="display:none">100 में से</span>
+      <span data-lang="as" style="display:none">100ৰ মাজৰ পৰা</span>
+    </div>
+    <div class="stars" id="stars">⭐⭐⭐</div>
+    <p id="endMsg" style="color:#ccc;font-size:1rem;"></p>
+    <button class="play-again" onclick="restartGame()">
+      <span data-lang="en">Play Again</span>
+      <span data-lang="hi" style="display:none">फिर खेलें</span>
+      <span data-lang="as" style="display:none">পুনৰ খেলক</span>
+    </button>
+    <div class="result-detail" id="resultDetail"></div>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    en:{q:"What type of reaction is: 2H₂ + O₂ → 2H₂O ?",eq:"2H₂ + O₂ → 2H₂O",
+    opts:["Combination reaction","Decomposition reaction","Displacement reaction","Double displacement"],ans:0,
+    exp:"Two reactants combine to form a single product — this is a combination (synthesis) reaction."},
+    hi:{q:"2H₂ + O₂ → 2H₂O किस प्रकार की अभिक्रिया है?",
+    opts:["संयोजन अभिक्रिया","अपघटन अभिक्रिया","विस्थापन अभिक्रिया","द्विविस्थापन"],exp:"दो अभिकारक मिलकर एक उत्पाद बनाते हैं — यह संयोजन अभिक्रिया है।"},
+    as:{q:"2H₂ + O₂ → 2H₂O কি ধৰণৰ বিক্ৰিয়া?",
+    opts:["সংযোজন বিক্ৰিয়া","বিশ্লেষণ বিক্ৰিয়া","স্থানচ্যুতি বিক্ৰিয়া","দ্বিস্থানচ্যুতি"],exp:"দুটা বিকাৰক মিলি এটা উৎপাদ গঠন কৰে — এইটো সংযোজন বিক্ৰিয়া।"}
+  },
+  {
+    en:{q:"Iron displaces copper from copper sulphate solution. Which type of reaction is this?",eq:"Fe + CuSO₄ → FeSO₄ + Cu",
+    opts:["Displacement reaction","Combination reaction","Decomposition reaction","Neutralisation"],ans:0,
+    exp:"A more reactive metal (Fe) displaces a less reactive metal (Cu) from its salt solution — displacement reaction."},
+    hi:{q:"लोहा, कॉपर सल्फेट विलयन से तांबे को विस्थापित करता है। यह किस प्रकार की अभिक्रिया है?",
+    opts:["विस्थापन अभिक्रिया","संयोजन अभिक्रिया","अपघटन अभिक्रिया","उदासीनीकरण"],exp:"अधिक क्रियाशील धातु (Fe) कम क्रियाशील धातु (Cu) को विस्थापित करती है।"},
+    as:{q:"লো, কপাৰ চালফেট দ্ৰৱণৰ পৰা তামক স্থানচ্যুত কৰে। এইটো কি বিক্ৰিয়া?",
+    opts:["স্থানচ্যুতি বিক্ৰিয়া","সংযোজন বিক্ৰিয়া","বিশ্লেষণ বিক্ৰিয়া","প্ৰশমন"],exp:"অধিক সক্ৰিয় ধাতু (Fe) কম সক্ৰিয় ধাতু (Cu)ক স্থানচ্যুত কৰে।"}
+  },
+  {
+    en:{q:"Which of the following is the correctly BALANCED equation?",
+    opts:["H₂ + O₂ → H₂O","2H₂ + O₂ → 2H₂O","H₂ + O → H₂O","2H₂ + 2O₂ → 2H₂O"],ans:1,
+    exp:"2H₂ + O₂ → 2H₂O is balanced: left has 4H, 2O; right has 4H, 2O."},
+    hi:{q:"निम्न में से कौन सा संतुलित समीकरण है?",
+    opts:["H₂ + O₂ → H₂O","2H₂ + O₂ → 2H₂O","H₂ + O → H₂O","2H₂ + 2O₂ → 2H₂O"],exp:"2H₂ + O₂ → 2H₂O संतुलित है: बाईं तरफ 4H, 2O; दाईं तरफ 4H, 2O।"},
+    as:{q:"নিম্নলিখিতৰ মধ্যৰ পৰা কোনটো সঠিক সাম্য সমীকৰণ?",
+    opts:["H₂ + O₂ → H₂O","2H₂ + O₂ → 2H₂O","H₂ + O → H₂O","2H₂ + 2O₂ → 2H₂O"],exp:"2H₂ + O₂ → 2H₂O সাম্যপূৰ্ণ: বাওঁফালে 4H, 2O; সোঁফালে 4H, 2O।"}
+  },
+  {
+    en:{q:"In the reaction 2H₂O → 2H₂ + O₂, what type of reaction is this?",eq:"2H₂O → 2H₂ + O₂",
+    opts:["Decomposition reaction","Combination reaction","Double displacement","Precipitation"],ans:0,
+    exp:"A single reactant breaks into two products — this is a decomposition reaction."},
+    hi:{q:"2H₂O → 2H₂ + O₂ में यह किस प्रकार की अभिक्रिया है?",
+    opts:["अपघटन अभिक्रिया","संयोजन अभिक्रिया","द्विविस्थापन","अवक्षेपण"],exp:"एक अभिकारक दो उत्पादों में टूटता है — यह अपघटन अभिक्रिया है।"},
+    as:{q:"2H₂O → 2H₂ + O₂ বিক্ৰিয়াটো কি ধৰণৰ?",
+    opts:["বিশ্লেষণ বিক্ৰিয়া","সংযোজন বিক্ৰিয়া","দ্বিস্থানচ্যুতি","অৱক্ষেপণ"],exp:"এটা বিকাৰক দুটা উৎপাদত ভাঙে — এইটো বিশ্লেষণ বিক্ৰিয়া।"}
+  },
+  {
+    en:{q:"In a redox reaction, what happens to the substance that is OXIDISED?",
+    opts:["It loses electrons","It gains electrons","It gains hydrogen","It loses oxygen"],ans:0,
+    exp:"Oxidation means loss of electrons (OIL — Oxidation Is Loss). The oxidised substance loses electrons."},
+    hi:{q:"रेडॉक्स अभिक्रिया में ऑक्सीकृत पदार्थ का क्या होता है?",
+    opts:["वह इलेक्ट्रॉन खोता है","वह इलेक्ट्रॉन पाता है","वह हाइड्रोजन पाता है","वह ऑक्सीजन खोता है"],exp:"ऑक्सीकरण का अर्थ है इलेक्ट्रॉन का खोना (OIL — Oxidation Is Loss)।"},
+    as:{q:"ৰেডক্স বিক্ৰিয়াত অক্সিডাইজড পদাৰ্থৰ কি হয়?",
+    opts:["ই ইলেক্ট্ৰন হেৰুৱায়","ই ইলেক্ট্ৰন লাভ কৰে","ই হাইড্ৰজেন লাভ কৰে","ই অক্সিজেন হেৰুৱায়"],exp:"অক্সিডেচনৰ অৰ্থ ইলেক্ট্ৰন হেৰুওৱা।"}
+  },
+  {
+    en:{q:"Which of the following is an EXOTHERMIC reaction?",
+    opts:["Burning of natural gas (CH₄ + 2O₂ → CO₂ + 2H₂O + energy)","Photosynthesis","Decomposition of limestone (CaCO₃ → CaO + CO₂)","Electrolysis of water"],ans:0,
+    exp:"Burning natural gas releases energy as heat and light — it is exothermic. Photosynthesis and electrolysis absorb energy."},
+    hi:{q:"निम्न में से कौन सी ऊष्माक्षेपी अभिक्रिया है?",
+    opts:["प्राकृतिक गैस का दहन","प्रकाश संश्लेषण","चूना पत्थर का अपघटन","जल का विद्युत अपघटन"],exp:"प्राकृतिक गैस के दहन से ऊष्मा निकलती है — यह ऊष्माक्षेपी है।"},
+    as:{q:"নিম্নলিখিতৰ মাজৰ কোনটো তাপোৎপাদী বিক্ৰিয়া?",
+    opts:["প্ৰাকৃতিক গেছৰ দহন","সালোকসংশ্লেষণ","চূণশিলৰ বিশ্লেষণ","পানীৰ বিদ্যুৎ বিশ্লেষণ"],exp:"প্ৰাকৃতিক গেছৰ দহনত তাপ নিৰ্গত হয় — এইটো তাপোৎপাদী।"}
+  },
+  {
+    en:{q:"What is CORROSION? Which of these is the best example?",
+    opts:["Slow oxidation of metals — rusting of iron","Food going stale due to oxidation","Heat released during burning","Formation of salts from acids"],ans:0,
+    exp:"Corrosion is slow oxidation of metals, e.g., iron rusting (Fe → Fe₂O₃). Rancidity is food going stale."},
+    hi:{q:"संक्षारण क्या है? इसका सबसे अच्छा उदाहरण कौन सा है?",
+    opts:["धातुओं का धीमा ऑक्सीकरण — लोहे का जंग लगना","भोजन का बासी होना","दहन में ऊष्मा निकलना","अम्लों से लवण बनना"],exp:"संक्षारण धातुओं का धीमा ऑक्सीकरण है, जैसे लोहे पर जंग लगना।"},
+    as:{q:"ক্ষয় কি? ইয়াৰ শ্ৰেষ্ঠ উদাহৰণ কোনটো?",
+    opts:["ধাতুৰ ধীৰ অক্সিডেচন — লোৰ মামৰ পৰা","খাদ্য বাসি হোৱা","দহনত তাপ নিৰ্গত হোৱা","এছিডৰ পৰা লৱণ গঠন"],exp:"ক্ষয় হৈছে ধাতুৰ ধীৰ অক্সিডেচন, যেনে লোৰ মামৰ।"}
+  },
+  {
+    en:{q:"Which is a DOUBLE DISPLACEMENT reaction?",eq:"Na₂SO₄ + BaCl₂ → BaSO₄↓ + 2NaCl",
+    opts:["It is double displacement — ions exchange partners","It is a combination reaction","It is decomposition","It is displacement"],ans:0,
+    exp:"Both salts exchange their ions (Na⁺, Ba²⁺ swap partners). BaSO₄ precipitates. This is double displacement."},
+    hi:{q:"निम्न में से कौन सी द्विविस्थापन अभिक्रिया है?",
+    opts:["यह द्विविस्थापन है — आयन अपने साथी बदलते हैं","यह संयोजन अभिक्रिया है","यह अपघटन है","यह विस्थापन है"],exp:"दोनों लवणों के आयन अपने जोड़ीदार बदलते हैं। BaSO₄ अवक्षेपित होता है।"},
+    as:{q:"নিম্নলিখিতৰ মাজৰ কোনটো দ্বিস্থানচ্যুতি বিক্ৰিয়া?",
+    opts:["এইটো দ্বিস্থানচ্যুতি — আয়নসমূহে অংশীদাৰ বিনিময় কৰে","এইটো সংযোজন বিক্ৰিয়া","এইটো বিশ্লেষণ","এইটো স্থানচ্যুতি"],exp:"দুয়োটা লৱণৰ আয়নে অংশীদাৰ বিনিময় কৰে। BaSO₄ অৱক্ষেপিত হয়।"}
+  },
+  {
+    en:{q:"What is RANCIDITY and how can it be prevented?",
+    opts:["Oxidation of fats/oils in food, prevented by antioxidants or nitrogen flushing","Rusting of iron, prevented by painting","Decomposition of sugar, prevented by cooling","Burning of wood, prevented by water"],ans:0,
+    exp:"Rancidity is the oxidation of fats/oils causing bad smell and taste. Antioxidants and nitrogen flushing (replacing air) prevent it."},
+    hi:{q:"विकृतगंधिता क्या है और इसे कैसे रोकें?",
+    opts:["वसा/तेल का ऑक्सीकरण, एंटीऑक्सीडेंट या नाइट्रोजन से रोकें","लोहे का जंग, पेंटिंग से रोकें","चीनी का अपघटन, ठंडा करके रोकें","लकड़ी का जलना, पानी से रोकें"],exp:"वसा/तेल के ऑक्सीकरण से बुरी गंध आती है। एंटीऑक्सीडेंट या नाइट्रोजन से रोका जा सकता है।"},
+    as:{q:"ৰেঞ্চিডিটি কি আৰু কেনেকৈ প্ৰতিৰোধ কৰিব?",
+    opts:["চৰ্বি/তেলৰ অক্সিডেচন, এন্টিঅক্সিডেন্ট বা নাইট্ৰজেনেৰে প্ৰতিৰোধ","লোৰ মামৰ, ৰং কৰি প্ৰতিৰোধ","চেনিৰ বিশ্লেষণ, ঠাণ্ডা কৰি","কাঠৰ দহন, পানীৰে"],exp:"চৰ্বি/তেলৰ অক্সিডেচনত বেয়া গোন্ধ আহে। এন্টিঅক্সিডেন্ট বা নাইট্ৰজেনেৰে প্ৰতিৰোধ কৰিব পাৰি।"}
+  },
+  {
+    en:{q:"In the reaction CuO + H₂ → Cu + H₂O, which substance is REDUCED?",eq:"CuO + H₂ → Cu + H₂O",
+    opts:["CuO (copper oxide) is reduced","H₂ is reduced","Cu is reduced","H₂O is reduced"],ans:0,
+    exp:"CuO loses oxygen → it is reduced to Cu. H₂ gains oxygen → it is oxidised. Reduction = gain of electrons / loss of oxygen."},
+    hi:{q:"CuO + H₂ → Cu + H₂O में कौन सा पदार्थ अपचयित होता है?",
+    opts:["CuO (कॉपर ऑक्साइड) अपचयित होता है","H₂ अपचयित होता है","Cu अपचयित होता है","H₂O अपचयित होता है"],exp:"CuO ऑक्सीजन खोता है → Cu में अपचयित होता है। H₂ ऑक्सीजन पाता है → ऑक्सीकृत होता है।"},
+    as:{q:"CuO + H₂ → Cu + H₂O বিক্ৰিয়াত কোনটো পদাৰ্থ বিজাৰিত হয়?",
+    opts:["CuO (কপাৰ অক্সাইড) বিজাৰিত হয়","H₂ বিজাৰিত হয়","Cu বিজাৰিত হয়","H₂O বিজাৰিত হয়"],exp:"CuO অক্সিজেন হেৰুৱায় → Cu লৈ বিজাৰিত হয়। H₂ অক্সিজেন লাভ কৰে → অক্সিডাইজড হয়।"}
+  }
+];
+
+let current=0,score=0,answered=[],currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display=el.getAttribute('data-lang')===l?'':'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['en','hi','as'][i]===l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(current>=questions.length){showEnd();return;}
+  const q=questions[current];
+  const lang=q[currentLang]||q['en'];
+  const enQ=q['en'];
+  document.getElementById('qNum').textContent=current+1;
+  document.getElementById('scoreDisp').textContent=score;
+  document.getElementById('qLabel').textContent=`Question ${current+1} of 10`;
+  document.getElementById('qText').textContent=lang.q||enQ.q;
+  document.getElementById('progBar').style.width=((current)/10*100)+'%';
+
+  const eq=enQ.eq;
+  const eqBox=document.getElementById('eqBox');
+  if(eq){eqBox.textContent=eq;eqBox.style.display='block';}
+  else{eqBox.style.display='none';}
+
+  const opts=lang.opts||enQ.opts;
+  const optDiv=document.getElementById('options');
+  optDiv.innerHTML='';
+  opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';b.textContent=o;
+    b.onclick=()=>selectAnswer(i,enQ.ans,lang.exp||enQ.exp);
+    optDiv.appendChild(b);
+  });
+
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('feedback').textContent='';
+  document.getElementById('nextBtn').style.display='none';
+}
+
+function selectAnswer(chosen,correct,exp){
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[correct].classList.add('correct');
+  const fb=document.getElementById('feedback');
+  if(chosen===correct){
+    btns[chosen].classList.add('correct');
+    score+=10;
+    document.getElementById('scoreDisp').textContent=score;
+    fb.textContent='✓ Correct! '+exp;
+    fb.className='feedback ok show';
+  } else {
+    btns[chosen].classList.add('wrong');
+    fb.textContent='✗ Not quite. '+exp;
+    fb.className='feedback no show';
+  }
+  answered.push({q:questions[current]['en'].q,correct:chosen===correct,exp});
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextQuestion(){current++;renderQuestion();}
+
+function showEnd(){
+  document.getElementById('questionCard').style.display='none';
+  document.getElementById('progBar').style.width='100%';
+  const pct=score;
+  document.getElementById('finalScore').textContent=score;
+  let stars='';
+  if(pct>=90)stars='⭐⭐⭐';
+  else if(pct>=70)stars='⭐⭐';
+  else if(pct>=40)stars='⭐';
+  document.getElementById('stars').textContent=stars||'☆☆☆';
+  const msgs={en:['Great effort!','Well done!','Outstanding! Chemistry master!'],
+    hi:['अच्छा प्रयास!','शाबाश!','शानदार! रसायन गुरु!'],
+    as:['ভাল প্ৰচেষ্টা!','শাবাশ!','অসাধাৰণ! ৰসায়ন বিশেষজ্ঞ!']};
+  const mArr=msgs[currentLang]||msgs.en;
+  document.getElementById('endMsg').textContent=pct>=90?mArr[2]:pct>=70?mArr[1]:mArr[0];
+
+  let html='<h3>Review</h3>';
+  answered.forEach((a,i)=>{
+    html+=`<div class="result-item ${a.correct?'r-ok':'r-no'}">
+      <strong>Q${i+1}:</strong> ${a.correct?'✓':'✗'} ${a.q}<br/><small>${a.exp}</small></div>`;
+  });
+  document.getElementById('resultDetail').innerHTML=html;
+  const es=document.getElementById('endScreen');
+  es.style.display='block';es.classList.add('show');
+}
+
+function restartGame(){
+  current=0;score=0;answered=[];
+  document.getElementById('questionCard').style.display='block';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('endScreen').classList.remove('show');
+  renderQuestion();
+}
+
+// init
+setLang('en');
+</script>
+</body>
+</html>

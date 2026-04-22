@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Brahmaputra Flood Mission 🌊</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --river-deep:#0a1a3a;
+  --river-mid:#0d2a5a;
+  --river-top:#1a4a8a;
+  --water:#1565c0;
+  --water-light:#42a5f5;
+  --foam:#90caf9;
+  --sky-storm:#0d1b2a;
+  --sky-mid:#162032;
+  --gold:#f5c518;
+  --gold2:#ffd740;
+  --orange:#ff8f00;
+  --red:#e53935;
+  --green:#43a047;
+  --white:#fff;
+  --text-dim:rgba(255,255,255,0.55);
+  --card:rgba(255,255,255,0.08);
+  --card-border:rgba(255,255,255,0.12);
+  --warning:#ff6f00;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{
+  font-family:'Baloo 2',cursive;
+  background:var(--sky-storm);
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;
+  overflow:hidden;
+}
+
+/* ── GAME WRAPPER ── */
+#game-wrap{
+  width:min(520px,100vw);
+  height:min(700px,100vh);
+  position:relative;overflow:hidden;
+  border-radius:28px;
+  box-shadow:0 30px 80px rgba(0,0,0,0.8);
+}
+
+/* ── SKY / STORM BG ── */
+.storm-bg{
+  position:absolute;inset:0;z-index:0;
+  background:linear-gradient(180deg,
+    #060e1a 0%,
+    #0a1a2e 25%,
+    #0d2040 45%,
+    #0a3060 65%,
+    #1565c0 80%,
+    #1976d2 100%
+  );
+}
+/* Lightning flash overlay */
+.lightning-flash{
+  position:absolute;inset:0;z-index:1;
+  background:rgba(180,220,255,0);
+  pointer-events:none;
+  transition:background 0.05s;
+}
+
+/* ── ANIMATED RAIN ── */
+.rain-layer{
+  position:absolute;inset:0;z-index:2;
+  pointer-events:none;overflow:hidden;
+}
+.raindrop{
+  position:absolute;
+  width:1.5px;
+  background:linear-gradient(180deg,transparent,rgba(150,210,255,0.7));
+  border-radius:2px;
+  animation:rainFall linear infinite;
+}
+@keyframes rainFall{
+  0%{transform:translateY(-60px) scaleY(0.5);opacity:0;}
+  10%{opacity:1;}
+  90%{opacity:0.8;}
+  100%{transform:translateY(720px) scaleY(1);opacity:0;}
+}
+
+/* ── CLOUDS ── */
+.cloud{
+  position:absolute;
+  border-radius:50px;
+  filter:blur(6px);
+  animation:cloudDrift linear infinite;
+  opacity:0.35;
+}
+@keyframes cloudDrift{
+  0%{transform:translateX(-120%);}
+  100%{transform:translateX(130%);}
+}
+
+/* ── WATER SURFACE ── */
+.water-surface{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:240px;
+  background:linear-gradient(180deg,
+    rgba(21,101,192,0.9) 0%,
+    rgba(13,40,90,0.98) 100%
+  );
+  z-index:3;
+  border-radius:60% 60% 0 0 / 30px 30px 0 0;
+  animation:waterRise 30s linear infinite;
+}
+@keyframes waterRise{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-6px);}
+}
+/* Water ripples */
+.water-surface::before{
+  content:'';
+  position:absolute;
+  top:-8px;left:-10%;right:-10%;
+  height:20px;
+  background:radial-gradient(ellipse 60px 12px at 20% 50%, rgba(100,180,255,0.4) 0%, transparent 100%),
+             radial-gradient(ellipse 80px 10px at 60% 50%, rgba(100,180,255,0.35) 0%, transparent 100%),
+             radial-gradient(ellipse 50px 8px at 85% 50%, rgba(100,180,255,0.3) 0%, transparent 100%);
+  animation:ripple 3s ease-in-out infinite;
+}
+@keyframes ripple{
+  0%,100%{opacity:0.6;transform:scaleX(1);}
+  50%{opacity:1;transform:scaleX(1.04);}
+}
+/* Foam bits */
+.water-surface::after{
+  content:'~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~';
+  position:absolute;
+  top:-4px;left:0;right:0;
+  text-align:center;letter-spacing:12px;
+  color:rgba(150,210,255,0.4);font-size:11px;
+  animation:foamDrift 4s ease-in-out infinite;
+}
+@keyframes foamDrift{
+  0%,100%{letter-spacing:12px;opacity:0.4;}
+  50%{letter-spacing:18px;opacity:0.7;}
+}
+
+/* ── SUBMERGED VILLAGE ── */
+.village-layer{
+  position:absolute;
+  bottom:160px;left:0;right:0;
+  z-index:2;
+  display:flex;justify-content:space-between;
+  padding:0 12px;
+  pointer-events:none;
+}
+.house{
+  display:flex;flex-direction:column;align-items:center;
+  animation:houseSway 5s ease-in-out infinite;
+  opacity:0.6;
+}
+@keyframes houseSway{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-3px);}
+}
+.house svg{filter:drop-shadow(0 3px 8px rgba(0,0,0,0.5));}
+
+/* ── FLOATING BOATS ── */
+.boats-layer{
+  position:absolute;
+  bottom:200px;left:0;right:0;
+  z-index:5;
+  pointer-events:none;
+}
+.boat{
+  position:absolute;
+  font-size:32px;
+  animation:boatBob ease-in-out infinite;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+}
+@keyframes boatBob{
+  0%,100%{transform:translateY(0) rotate(-2deg);}
+  50%{transform:translateY(-8px) rotate(2deg);}
+}
+
+/* ── SCREENS ── */
+.screen{
+  position:absolute;inset:0;z-index:10;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;
+  transition:opacity 0.35s,transform 0.35s;
+}
+.screen.hidden{opacity:0;pointer-events:none;transform:scale(0.97);}
+
+/* ── INTRO ── */
+#screen-intro{gap:14px;text-align:center;}
+.intro-title{
+  font-size:28px;font-weight:900;color:var(--gold);
+  text-shadow:0 3px 16px rgba(0,0,0,0.7);line-height:1.15;
+}
+.intro-title .as{
+  font-family:'Hind Siliguri',sans-serif;
+  display:block;font-size:18px;color:var(--foam);margin-top:4px;
+}
+.intro-badge{
+  background:var(--warning);color:#fff;
+  font-size:12px;font-weight:800;padding:5px 18px;border-radius:20px;
+  text-transform:uppercase;letter-spacing:1px;
+  box-shadow:0 3px 12px rgba(255,111,0,0.5);
+  animation:pulseBadge 1.5s ease-in-out infinite;
+}
+@keyframes pulseBadge{
+  0%,100%{transform:scale(1);}50%{transform:scale(1.05);}
+}
+.rongmon-boat{
+  position:relative;width:180px;
+  animation:bobMascot 2.5s ease-in-out infinite;
+  filter:drop-shadow(0 8px 20px rgba(0,0,0,0.6));
+}
+@keyframes bobMascot{
+  0%,100%{transform:translateY(0) rotate(-2deg);}
+  50%{transform:translateY(-14px) rotate(2deg);}
+}
+.speech-bubble{
+  background:var(--white);border-radius:18px;padding:13px 18px;
+  font-size:13px;color:#1a1a2e;font-weight:600;max-width:310px;
+  line-height:1.5;box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  position:relative;
+}
+.speech-bubble::after{
+  content:'';position:absolute;
+  top:-11px;left:50%;transform:translateX(-50%);
+  border:7px solid transparent;border-bottom-color:var(--white);
+}
+.speech-bubble .as{font-family:'Hind Siliguri',sans-serif;color:#1565c0;display:block;font-size:12px;margin-top:4px;}
+.btn-start{
+  font-family:'Baloo 2',cursive;
+  font-size:20px;font-weight:900;
+  padding:14px 44px;border-radius:50px;border:none;
+  background:var(--gold);color:#0a1a3a;
+  cursor:pointer;
+  box-shadow:0 6px 24px rgba(245,197,24,0.5);
+  transition:all 0.2s;animation:pulse 2s ease-in-out infinite;
+}
+.btn-start:hover{transform:scale(1.06);}
+@keyframes pulse{
+  0%,100%{box-shadow:0 6px 24px rgba(245,197,24,0.5);}
+  50%{box-shadow:0 6px 40px rgba(245,197,24,0.8);}
+}
+
+/* ── HUD ── */
+#hud{
+  position:absolute;top:0;left:0;right:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px 8px;
+  background:linear-gradient(180deg,rgba(0,0,0,0.65) 0%,transparent 100%);
+}
+.hud-score{font-size:16px;font-weight:800;color:var(--gold);display:flex;align-items:center;gap:5px;}
+.hud-level{font-size:13px;font-weight:700;color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.15);padding:3px 12px;border-radius:20px;}
+.hud-lives{font-size:20px;letter-spacing:3px;}
+#prog-wrap{
+  position:absolute;top:48px;left:16px;right:16px;height:5px;
+  background:rgba(255,255,255,0.12);border-radius:3px;z-index:20;overflow:hidden;
+}
+#prog-bar{height:100%;background:linear-gradient(90deg,var(--water-light),var(--gold));border-radius:3px;transition:width 0.5s ease;width:0%;}
+
+/* ── WATER LEVEL INDICATOR ── */
+#water-indicator{
+  position:absolute;right:14px;bottom:250px;z-index:20;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+}
+.wi-label{font-size:9px;font-weight:800;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;writing-mode:vertical-rl;}
+.wi-bar-wrap{width:10px;height:80px;background:rgba(255,255,255,0.1);border-radius:5px;overflow:hidden;position:relative;}
+.wi-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(180deg,var(--water-light),var(--water));
+  border-radius:5px;
+  transition:height 0.8s ease;
+}
+.wi-danger{font-size:11px;animation:flashDanger 0.8s ease-in-out infinite;}
+@keyframes flashDanger{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* ── GAME SCREEN ── */
+#screen-game{gap:14px;padding-top:65px;}
+
+/* Mission card */
+.mission-card{
+  background:rgba(0,0,0,0.45);
+  border:1px solid var(--card-border);
+  border-radius:20px;
+  padding:16px 20px;
+  text-align:center;
+  max-width:400px;width:100%;
+  backdrop-filter:blur(12px);
+  box-shadow:0 8px 28px rgba(0,0,0,0.4);
+}
+.mission-label{
+  font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--warning);margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.mission-label span{animation:flashDanger 1s ease-in-out infinite;}
+.mission-question{
+  font-size:17px;font-weight:700;color:var(--white);line-height:1.5;
+  margin-bottom:4px;
+}
+.mission-question .as{
+  font-family:'Hind Siliguri',sans-serif;
+  display:block;font-size:14px;color:var(--foam);
+  margin-top:3px;
+}
+.mission-visual{
+  margin:10px 0 4px;
+  font-size:28px;letter-spacing:6px;
+  min-height:36px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;
+}
+.mv-item{
+  display:inline-block;
+  transition:transform 0.3s cubic-bezier(0.34,1.8,0.64,1);
+  cursor:default;
+}
+.mv-item:hover{transform:scale(1.3);}
+.mv-plus{font-size:20px;color:var(--gold);font-weight:900;align-self:center;}
+.mv-equals{font-size:18px;color:rgba(255,255,255,0.5);font-weight:900;align-self:center;}
+.mv-blank{
+  font-size:28px;font-weight:900;color:var(--gold);
+  border-bottom:3px solid var(--gold);min-width:36px;text-align:center;
+}
+
+/* Answer buttons */
+.answers-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:10px;width:100%;max-width:360px;
+}
+.ans-btn{
+  font-family:'Baloo 2',cursive;
+  font-size:32px;font-weight:900;
+  padding:16px 10px;border-radius:18px;
+  border:3px solid rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.09);
+  color:var(--white);cursor:pointer;
+  transition:all 0.15s cubic-bezier(0.34,1.56,0.64,1);
+  backdrop-filter:blur(10px);
+  box-shadow:0 4px 14px rgba(0,0,0,0.35);
+  position:relative;overflow:hidden;
+}
+.ans-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.08),transparent);
+  pointer-events:none;
+}
+.ans-btn:hover:not(:disabled){
+  transform:scale(1.08) translateY(-4px);
+  background:rgba(255,255,255,0.16);
+  border-color:var(--gold);
+  box-shadow:0 8px 24px rgba(245,197,24,0.35);
+}
+.ans-btn.correct{
+  background:var(--green) !important;
+  border-color:#2e7d32 !important;
+  transform:scale(1.14) !important;
+  box-shadow:0 8px 30px rgba(67,160,71,0.7) !important;
+}
+.ans-btn.wrong{
+  background:var(--red) !important;
+  border-color:#b71c1c !important;
+  animation:shakeBtn 0.4s ease;
+}
+@keyframes shakeBtn{
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-8px);}
+  40%{transform:translateX(8px);}
+  60%{transform:translateX(-5px);}
+  80%{transform:translateX(5px);}
+}
+.ans-btn:disabled{cursor:default;}
+
+/* Hint strip */
+.hint-strip{
+  display:flex;align-items:center;gap:6px;
+  font-size:12px;font-weight:700;color:rgba(255,255,255,0.55);
+  background:rgba(255,255,255,0.06);padding:6px 14px;border-radius:12px;
+}
+
+/* ── LEVEL COMPLETE ── */
+#screen-levelup{gap:12px;text-align:center;}
+.lu-title{font-size:28px;font-weight:900;color:var(--gold);text-shadow:0 3px 12px rgba(0,0,0,0.5);}
+.lu-visual{font-size:70px;animation:popIn 0.5s cubic-bezier(0.34,1.8,0.64,1);}
+@keyframes popIn{
+  0%{transform:scale(0.2) rotate(-20deg);opacity:0;}
+  100%{transform:scale(1) rotate(0deg);opacity:1;}
+}
+.lu-fact-card{
+  background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px;padding:14px 20px;max-width:320px;width:100%;
+  backdrop-filter:blur(12px);
+}
+.lu-fact-title{font-size:12px;font-weight:800;color:var(--water-light);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.lu-fact-body{font-size:14px;color:var(--white);font-weight:600;line-height:1.55;}
+.lu-fact-body .as{font-family:'Hind Siliguri',sans-serif;color:var(--foam);display:block;margin-top:3px;font-size:13px;}
+.lu-stars{font-size:34px;letter-spacing:8px;}
+.btn-next{
+  font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;
+  padding:12px 40px;border-radius:50px;border:none;
+  background:var(--gold);color:#0a1a3a;cursor:pointer;
+  box-shadow:0 5px 20px rgba(245,197,24,0.5);transition:all 0.2s;
+}
+.btn-next:hover{transform:translateY(-3px) scale(1.05);}
+
+/* ── GAME OVER ── */
+#screen-gameover{text-align:center;gap:14px;}
+.go-title{font-size:30px;font-weight:900;color:var(--red);text-shadow:0 3px 12px rgba(0,0,0,0.6);}
+.go-sub{font-size:14px;color:rgba(255,255,255,0.75);font-weight:600;line-height:1.5;}
+.btn-retry{
+  font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;
+  padding:12px 36px;border-radius:50px;border:none;
+  background:var(--red);color:#fff;cursor:pointer;
+  box-shadow:0 5px 20px rgba(229,57,53,0.5);transition:all 0.2s;
+}
+.btn-retry:hover{transform:scale(1.05);}
+
+/* ── VICTORY ── */
+#screen-victory{text-align:center;gap:12px;}
+.vic-title{font-size:32px;font-weight:900;color:var(--gold);text-shadow:0 3px 16px rgba(0,0,0,0.6);line-height:1.1;}
+.vic-visual{font-size:60px;letter-spacing:6px;}
+.vic-score{font-size:22px;font-weight:800;color:var(--foam);}
+.vic-fact{
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);
+  border-radius:14px;padding:12px 18px;max-width:300px;
+  font-size:13px;color:rgba(255,255,255,0.8);font-weight:600;line-height:1.6;
+}
+.btn-replay{
+  font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;
+  padding:12px 36px;border-radius:50px;border:none;
+  background:var(--water-light);color:#0a1a3a;cursor:pointer;
+  box-shadow:0 5px 20px rgba(66,165,245,0.4);transition:all 0.2s;
+}
+.btn-replay:hover{transform:scale(1.05);}
+.btn-home{
+  font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;
+  padding:9px 28px;border-radius:50px;
+  border:2px solid rgba(255,255,255,0.3);background:transparent;color:#fff;
+  cursor:pointer;transition:all 0.2s;
+}
+.btn-home:hover{background:rgba(255,255,255,0.1);}
+
+/* ── LANG PILL ── */
+.lang-pill{position:absolute;top:11px;left:50%;transform:translateX(-50%);z-index:30;display:flex;gap:4px;}
+.lpill{font-family:'Baloo 2',cursive;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1.5px solid transparent;cursor:pointer;background:transparent;color:rgba(255,255,255,0.45);}
+.lpill.active{background:var(--gold);color:#0a1a3a;border-color:var(--gold);}
+.lpill:hover:not(.active){color:#fff;border-color:rgba(255,255,255,0.3);}
+
+/* ── CONFETTI ── */
+.confetti-piece{
+  position:absolute;z-index:50;border-radius:2px;
+  animation:confettiFall linear forwards;pointer-events:none;
+}
+@keyframes confettiFall{
+  0%{transform:translate(0,0) rotate(0deg);opacity:1;}
+  100%{transform:translate(var(--cx),var(--cy)) rotate(720deg);opacity:0;}
+}
+</style>
+<style>.hidden { display: none !important; }</style>
+</head>
+<body>
+<div id="game-wrap">
+
+  <!-- BG layers -->
+  <div class="storm-bg"></div>
+  <div class="lightning-flash" id="lightning"></div>
+  <div class="rain-layer" id="rain"></div>
+
+  <!-- Clouds -->
+  <div class="cloud" style="width:160px;height:50px;background:#1a2a3a;top:30px;animation-duration:28s;animation-delay:0s;"></div>
+  <div class="cloud" style="width:200px;height:60px;background:#162030;top:10px;animation-duration:22s;animation-delay:-8s;"></div>
+  <div class="cloud" style="width:120px;height:40px;background:#1a2a3a;top:55px;animation-duration:35s;animation-delay:-14s;"></div>
+
+  <!-- Submerged village -->
+  <div class="village-layer">
+    <!-- House 1 -->
+    <div class="house" style="animation-delay:0s;">
+      <svg width="55" height="65" viewBox="0 0 55 65">
+        <polygon points="27,4 52,28 2,28" fill="#7a4a2a"/>
+        <rect x="8" y="28" width="39" height="37" fill="#a06030" rx="2"/>
+        <rect x="20" y="42" width="15" height="23" fill="#4a2a10"/>
+        <rect x="12" y="34" width="10" height="10" fill="#87ceeb" opacity="0.6"/>
+        <rect x="33" y="34" width="10" height="10" fill="#87ceeb" opacity="0.6"/>
+      </svg>
+    </div>
+    <!-- Tree -->
+    <div class="house" style="animation-delay:0.8s;">
+      <svg width="35" height="70" viewBox="0 0 35 70">
+        <rect x="14" y="40" width="7" height="30" fill="#5a3a1a"/>
+        <circle cx="17" cy="30" r="18" fill="#2d6a2a" opacity="0.8"/>
+        <circle cx="10" cy="38" r="12" fill="#245720" opacity="0.7"/>
+        <circle cx="25" cy="36" r="12" fill="#2d6a2a" opacity="0.7"/>
+      </svg>
+    </div>
+    <!-- House 2 -->
+    <div class="house" style="animation-delay:1.2s;">
+      <svg width="60" height="70" viewBox="0 0 60 70">
+        <polygon points="30,2 58,26 2,26" fill="#8b3a20"/>
+        <rect x="4" y="26" width="52" height="44" fill="#b05030" rx="2"/>
+        <rect x="22" y="46" width="16" height="24" fill="#5a2a10"/>
+        <rect x="8" y="32" width="12" height="12" fill="#87ceeb" opacity="0.5"/>
+        <rect x="40" y="32" width="12" height="12" fill="#87ceeb" opacity="0.5"/>
+        <!-- SOS sign -->
+        <rect x="14" y="14" width="32" height="8" fill="#ff6f00" rx="3"/>
+        <text x="30" y="21" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold" font-family="sans-serif">SOS!</text>
+      </svg>
+    </div>
+    <!-- Temple -->
+    <div class="house" style="animation-delay:0.4s;">
+      <svg width="48" height="75" viewBox="0 0 48 75">
+        <rect x="4" y="55" width="40" height="20" fill="#c8a060"/>
+        <rect x="8" y="38" width="32" height="22" fill="#d4a870"/>
+        <rect x="12" y="24" width="24" height="18" fill="#c8a060"/>
+        <polygon points="24,8 40,24 8,24" fill="#b08040"/>
+        <circle cx="24" cy="4" r="5" fill="#f5c518"/>
+        <rect x="18" y="52" width="12" height="23" fill="#8b6030"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Floating boats layer (decorative, added by JS) -->
+  <div class="boats-layer" id="boats-layer"></div>
+
+  <!-- Water surface -->
+  <div class="water-surface"></div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-score">⭐ <span id="score-disp">0</span></div>
+    <div class="hud-level" id="level-disp">Mission 1/8</div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="lang-pill" style="position:static; transform:none; display:flex; gap:4px; z-index:100;">
+        <button class="lpill active" id="lp-en" onclick="setLang('en')">EN</button>
+        <button class="lpill" id="lp-as" onclick="setLang('as')">অস</button>
+      </div>
+      <div class="hud-lives" id="lives-disp">❤️❤️❤️</div>
+    </div>
+  </div>
+  <div id="prog-wrap" class="hidden">
+    <div id="prog-bar"></div>
+  </div>
+
+  <!-- Water indicator -->
+  <div id="water-indicator" style="display:none;">
+    <span class="wi-danger">⚠️</span>
+    <div class="wi-bar-wrap">
+      <div class="wi-bar" id="wi-fill" style="height:30%;"></div>
+    </div>
+    <span class="wi-label">WATER</span>
+  </div>
+
+  <!-- ══ INTRO ══ -->
+  <div class="screen" id="screen-intro">
+    <div class="intro-badge">🚨 <span id="ib-text">EMERGENCY FLOOD MISSION</span></div>
+    <div class="intro-title">
+      Brahmaputra Flood Mission
+      <span class="as">ব্ৰহ্মপুত্ৰ বানপানী অভিযান</span>
+    </div>
+
+    <!-- Rongmon in rescue boat SVG -->
+    <svg class="rongmon-boat" viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Water waves -->
+      <path d="M0 130 Q30 120 60 130 Q90 140 120 130 Q150 120 180 130 Q200 136 220 130 L220 160 L0 160 Z" fill="#1565c0" opacity="0.8"/>
+      <path d="M0 138 Q40 130 80 138 Q120 146 160 138 Q190 132 220 138 L220 160 L0 160 Z" fill="#0d47a1" opacity="0.9"/>
+      <!-- Boat hull -->
+      <path d="M30 118 L190 118 Q200 118 202 128 L18 128 Q20 118 30 118 Z" fill="#e65100"/>
+      <path d="M18 128 Q20 140 110 145 Q200 140 202 128 Z" fill="#bf360c"/>
+      <!-- Boat interior -->
+      <rect x="35" y="105" width="150" height="15" rx="3" fill="#ff7043"/>
+      <!-- Life ring on side -->
+      <circle cx="45" cy="122" r="8" fill="none" stroke="#fff" stroke-width="3"/>
+      <circle cx="45" cy="122" r="5" fill="none" stroke="#e53935" stroke-width="3"/>
+      <!-- Rongmon body in boat -->
+      <!-- Body -->
+      <ellipse cx="130" cy="98" rx="28" ry="22" fill="#a08060"/>
+      <!-- Tummy -->
+      <ellipse cx="128" cy="104" rx="18" ry="16" fill="#c4a882"/>
+      <!-- Legs hidden in boat -->
+      <!-- Head -->
+      <ellipse cx="128" cy="74" rx="26" ry="22" fill="#b09070"/>
+      <!-- Ears -->
+      <ellipse cx="105" cy="60" rx="9" ry="13" fill="#a08060" transform="rotate(-10 105 60)"/>
+      <ellipse cx="105" cy="60" rx="5" ry="8" fill="#e8c0a0" transform="rotate(-10 105 60)"/>
+      <ellipse cx="152" cy="58" rx="9" ry="13" fill="#a08060" transform="rotate(10 152 58)"/>
+      <ellipse cx="152" cy="58" rx="5" ry="8" fill="#e8c0a0" transform="rotate(10 152 58)"/>
+      <!-- Snout -->
+      <ellipse cx="128" cy="84" rx="20" ry="14" fill="#c4a882"/>
+      <!-- Eyes -->
+      <ellipse cx="116" cy="68" rx="9" ry="9" fill="#fff"/>
+      <ellipse cx="140" cy="68" rx="9" ry="9" fill="#fff"/>
+      <circle cx="116" cy="68" r="6" fill="#3a2a10"/>
+      <circle cx="140" cy="68" r="6" fill="#3a2a10"/>
+      <circle cx="118" cy="66" r="2.5" fill="#fff"/>
+      <circle cx="142" cy="66" r="2.5" fill="#fff"/>
+      <!-- Nose -->
+      <ellipse cx="128" cy="83" rx="10" ry="7" fill="#8b7355"/>
+      <circle cx="124" cy="82" r="3" fill="#5a4020"/>
+      <circle cx="132" cy="82" r="3" fill="#5a4020"/>
+      <!-- Smile -->
+      <path d="M115 92 Q128 102 141 92" stroke="#7a5030" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Horn -->
+      <path d="M123 54 Q128 38 133 54 Z" fill="#b0a060"/>
+      <!-- Rescue helmet -->
+      <ellipse cx="128" cy="57" rx="22" ry="10" fill="#e65100"/>
+      <path d="M106 57 Q128 40 150 57" fill="#bf360c"/>
+      <text x="128" y="55" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold" font-family="sans-serif">🦏</text>
+      <!-- Paddle arm -->
+      <line x1="155" y1="90" x2="185" y2="115" stroke="#8b5e3c" stroke-width="5" stroke-linecap="round"/>
+      <ellipse cx="186" cy="116" rx="10" ry="5" fill="#6a4020" transform="rotate(35 186 116)"/>
+      <!-- Flag on boat -->
+      <line x1="70" y1="108" x2="70" y2="80" stroke="#8b5e3c" stroke-width="2.5"/>
+      <polygon points="70,80 90,86 70,92" fill="#f5c518"/>
+    </svg>
+
+    <div class="speech-bubble">
+      <span id="intro-msg">The Brahmaputra is flooding! 🌊 Villagers need rescue boats! Count carefully and answer correctly to save them!</span>
+      <span class="as" id="intro-msg-as">ব্ৰহ্মপুত্ৰত বানপানী! গাঁৱৰ মানুহক সাহায্য কৰক! সঠিক উত্তৰ দিয়ক!</span>
+    </div>
+    <button class="btn-start" onclick="startGame()" id="btn-start-txt">🚨 Start Mission!</button>
+  </div>
+
+  <!-- ══ GAME ══ -->
+  <div class="screen hidden" id="screen-game">
+    <div class="mission-card">
+      <div class="mission-label">
+        <span>⚠️</span> <span id="ml-text">RESCUE MISSION</span>
+      </div>
+      <div class="mission-question" id="mission-q">How many boats can you count?</div>
+      <div class="mission-visual" id="mission-visual"></div>
+    </div>
+    <div class="answers-grid" id="answers-grid"></div>
+    <div class="hint-strip" id="hint-strip">💡 <span id="hint-txt">Count each one carefully!</span></div>
+  </div>
+
+  <!-- ══ LEVEL COMPLETE ══ -->
+  <div class="screen hidden" id="screen-levelup">
+    <div class="lu-title" id="lu-title">🎉 Villagers Saved!</div>
+    <div class="lu-visual" id="lu-visual">🚣</div>
+    <div class="lu-fact-card">
+      <div class="lu-fact-title" id="lu-fact-title">🌊 DID YOU KNOW?</div>
+      <div class="lu-fact-body" id="lu-fact-body">The Brahmaputra is one of the longest rivers in the world!</div>
+    </div>
+    <div class="lu-stars" id="lu-stars">⭐⭐⭐</div>
+    <button class="btn-next" id="btn-next" onclick="nextLevel()">Next Mission ▶</button>
+  </div>
+
+  <!-- ══ GAME OVER ══ -->
+  <div class="screen hidden" id="screen-gameover">
+    <div style="font-size:64px">🌊</div>
+    <div class="go-title" id="go-title">Oh No! The village flooded!</div>
+    <div class="go-sub" id="go-sub">Rongmon needs your counting skills!<br/>Take a deep breath and try again! 🦏</div>
+    <div style="font-family:'Hind Siliguri',sans-serif;font-size:15px;color:rgba(255,255,255,0.5);margin-top:-4px;" id="go-sub-as">চিন্তা নকৰিব! আকৌ চেষ্টা কৰক!</div>
+    <button class="btn-retry" onclick="startGame()" id="btn-retry-txt">🔄 Try Again</button>
+  </div>
+
+  <!-- ══ VICTORY ══ -->
+  <div class="screen hidden" id="screen-victory">
+    <div style="font-size:72px;animation:bobMascot 2s ease-in-out infinite">🦏</div>
+    <div class="vic-title" id="vic-title">🎉 All Villagers Rescued!<br/>You're a Hero!</div>
+    <div class="vic-visual">🏠🚣🌊🏡⭐🎉</div>
+    <div class="vic-score" id="vic-score">⭐ Score: 0</div>
+    <div class="vic-fact" id="vic-fact">
+      The Brahmaputra river flows through Assam and floods every year during monsoon season. 
+      Real rescue teams use boats just like in this game! 🚣
+    </div>
+    <button class="btn-replay" onclick="startGame()" id="btn-replay-txt">🔄 Play Again</button>
+    <button class="btn-home" onclick="shareScore()" style="background:rgba(37,211,102,0.15);border-color:rgba(37,211,102,0.4);color:#25d366;">📤 Share on WhatsApp</button>
+    <button class="btn-home" onclick="window.location.href='../index.html'" id="btn-home-v">🏠 Back to Home</button>
+  </div>
+
+</div><!-- /game-wrap -->
+
+<!-- Onboarding Overlay -->
+<div id="onboarding" class="hidden" style="position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:linear-gradient(135deg,#0a1a3a,#162447);border-radius:24px;padding:32px 24px;max-width:320px;width:100%;text-align:center;border:2px solid rgba(66,165,245,0.4);">
+    <div style="font-size:60px;margin-bottom:8px;">🦏</div>
+    <div style="font-size:22px;font-weight:900;color:#42a5f5;margin-bottom:8px;">How to Play</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.8;margin-bottom:20px;">
+      🌊 <strong>The Brahmaputra is flooding!</strong><br/>
+      🚣 Count the rescue items shown on screen.<br/>
+      ➕ Some questions need addition or subtraction!<br/>
+      🏠 Get all 8 right to save the village!
+    </div>
+    <button onclick="dismissOnboarding()" style="font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;padding:12px 36px;border-radius:50px;border:none;background:#42a5f5;color:#0a1a3a;cursor:pointer;width:100%;">
+      Got it! Let's Go ▶
+    </button>
+  </div>
+</div>
+
+<!-- Mute Toggle -->
+<button id="mute-btn-game" onclick="toggleMuteGame()" style="position:fixed;bottom:20px;right:20px;z-index:500;width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);background:rgba(10,26,58,0.9);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🔊</button>
+
+<script>
+// ══ LEVEL DATA ══
+// Types: 'count', 'add', 'subtract', 'add3'
+const levels = [
+  // COUNTING (simple)
+  {
+    type:'count',
+    q_en:"How many rescue boats are on the river?",
+    q_as:"নদীত কিমানটা নাও আছে?",
+    items:['⛵','⛵','⛵'],
+    answer:3, wrong:[1,2,4],
+    hint_en:"Count every boat one by one!",
+    hint_as:"প্ৰতিটো নাও এটা এটাকৈ গণক!",
+    fact_en:"3 নাও (naao) = 3 Boats. 'নাও' is the Assamese word for boat!",
+    fact_as:"৩ নাও — 'নাও' মানে Boat!",
+    visual_after:"⛵⛵⛵",
+  },
+  {
+    type:'count',
+    q_en:"Villagers are waving for help! How many people do you see?",
+    q_as:"কিমানজন মানুহ সহায়ৰ বাবে হাত নাড়িছে?",
+    items:['🙋','🙋','🙋','🙋','🙋'],
+    answer:5, wrong:[3,4,6],
+    hint_en:"Count each person — 1, 2, 3...",
+    hint_as:"এজন এজনকৈ গণক — ১, ২, ৩...",
+    fact_en:"5 মানুহ (maanuh) = 5 People. Good counting!",
+    fact_as:"৫ মানুহ — দুৰ্দান্ত গণনা!",
+    visual_after:"🙋🙋🙋🙋🙋",
+  },
+  {
+    type:'count',
+    q_en:"Count the life rings thrown into the river:",
+    q_as:"নদীত কিমানটা লাইফ ৰিং দেখা পাইছে?",
+    items:['🔵','🔵','🔵','🔵'],
+    answer:4, wrong:[2,3,5],
+    hint_en:"Each circle is a life ring — count them!",
+    hint_as:"প্ৰতিটো চক্ৰ এটা লাইফ ৰিং!",
+    fact_en:"4 — Excellent! Life rings help people float in floods.",
+    fact_as:"৪ — চমৎকাৰ! বানপানীত লাইফ ৰিং মানুহক ভাহিব সহায় কৰে।",
+    visual_after:"🔵🔵🔵🔵",
+  },
+  // ADDITION
+  {
+    type:'add',
+    q_en:"2 boats came from the north + 3 from the south. How many boats total?",
+    q_as:"উত্তৰৰ পৰা ২টা নাও + দক্ষিণৰ পৰা ৩টা নাও। মুঠ কিমানটা?",
+    items:['⛵','⛵','+','⛵','⛵','⛵'],
+    answer:5, wrong:[4,6,7],
+    hint_en:"Add them together: 2 + 3 = ?",
+    hint_as:"একেলগে যোগ কৰক: ২ + ৩ = ?",
+    fact_en:"2 + 3 = 5 ✅ Adding helps us know how many rescue boats we have!",
+    fact_as:"২ + ৩ = ৫ ✅ যোগফলে আমাক জনায় মুঠ কিমানটা নাও আছে!",
+    visual_after:"⛵⛵⛵⛵⛵",
+  },
+  {
+    type:'add',
+    q_en:"4 families rescued + 2 more families. Total families saved?",
+    q_as:"৪টা পৰিয়াল উদ্ধাৰ + আৰু ২টা পৰিয়াল। মুঠ কিমানটা পৰিয়াল?",
+    items:['👨‍👩‍👧','👨‍👩‍👧','👨‍👩‍👧','👨‍👩‍👧','+','👨‍👩‍👧','👨‍👩‍👧'],
+    answer:6, wrong:[5,7,8],
+    hint_en:"Count the families: 4 + 2 = ?",
+    hint_as:"পৰিয়ালবোৰ গণক: ৪ + ২ = ?",
+    fact_en:"4 + 2 = 6 ✅ Great job helping families get to safety!",
+    fact_as:"৪ + ২ = ৬ ✅ পৰিয়ালবোৰক সুৰক্ষিত ঠাইলৈ লৈ যোৱাত সহায় কৰিলে!",
+    visual_after:"👨‍👩‍👧".repeat(6),
+  },
+  {
+    type:'add',
+    q_en:"Rongmon has 3 food packets. He gets 5 more. How many total?",
+    q_as:"ৰংমনৰ হাতত ৩টা খাদ্যৰ পেকেট আছে। আৰু ৫টা পালে। মুঠ কিমানটা?",
+    items:['🍱','🍱','🍱','+','🍱','🍱','🍱','🍱','🍱'],
+    answer:8, wrong:[6,7,9],
+    hint_en:"3 + 5 = ? Count the food packets!",
+    hint_as:"৩ + ৫ = ? খাদ্যৰ পেকেটবোৰ গণক!",
+    fact_en:"3 + 5 = 8 ✅ Rongmon can now feed 8 families!",
+    fact_as:"৩ + ৫ = ৮ ✅ ৰংমনে এতিয়া ৮টা পৰিয়ালক খাদ্য দিব পাৰিব!",
+    visual_after:"🍱".repeat(8),
+  },
+  // SUBTRACTION
+  {
+    type:'subtract',
+    q_en:"7 people are stranded. Rongmon rescues 3. How many still need help?",
+    q_as:"৭জন মানুহ আবদ্ধ। ৰংমনে ৩জনক উদ্ধাৰ কৰিলে। আৰু কিমানজনক সহায় লাগে?",
+    items:['🙋','🙋','🙋','🙋','🙋','🙋','🙋'],
+    answer:4, wrong:[3,5,6],
+    hint_en:"7 take away 3 = ? How many are left?",
+    hint_as:"৭ৰ পৰা ৩ বিয়োগ = ? কিমানজন বাকী?",
+    fact_en:"7 − 3 = 4 ✅ 4 more people still need rescue!",
+    fact_as:"৭ − ৩ = ৪ ✅ আৰু ৪জন মানুহক উদ্ধাৰ লাগে!",
+    visual_after:"🙋🙋🙋🙋",
+  },
+  {
+    type:'subtract',
+    q_en:"9 houses are flooded. Water level drops and 4 houses are safe again. How many still flooded?",
+    q_as:"৯টা ঘৰ বানত ডুবিছে। পানী কমিল আৰু ৪টা ঘৰ সুৰক্ষিত হ'ল। এতিয়াও কিমানটা ডুবিছে?",
+    items:['🏠','🏠','🏠','🏠','🏠','🏠','🏠','🏠','🏠'],
+    answer:5, wrong:[4,6,7],
+    hint_en:"9 minus 4 = ? Count what's left!",
+    hint_as:"৯ বিয়োগ ৪ = ? বাকীখিনি গণক!",
+    fact_en:"9 − 4 = 5 ✅ 5 houses still need help. Keep going!",
+    fact_as:"৯ − ৪ = ৫ ✅ ৫টা ঘৰত এতিয়াও সহায় লাগে!",
+    visual_after:"🏠🏠🏠🏠🏠",
+  },
+];
+
+// ══ STATE ══
+let currentLevel=0, lives=3, score=0, lang='en', locked=false;
+
+// ══ LANG ══
+const langText={
+  en:{
+    'ib-text':'🚨 EMERGENCY FLOOD MISSION',
+    'intro-msg':'The Brahmaputra is flooding! 🌊 Villagers need rescue boats! Count carefully and answer correctly to save them!',
+    'btn-start-txt':'🚨 Start Mission!',
+    'ml-text':'RESCUE MISSION',
+    'hint-txt':'Count each one carefully!',
+    'lu-fact-title':'🌊 DID YOU KNOW?',
+    'btn-next':'Next Mission ▶',
+    'go-title':'Oh No! The village flooded!',
+    'go-sub':"Rongmon needs your counting skills!<br/>Take a deep breath and try again! 🦏",
+    'btn-retry-txt':'🔄 Try Again',
+    'vic-title':'🎉 All Villagers Rescued!<br/>You\'re a Hero!',
+    'vic-fact':'The Brahmaputra river flows through Assam and floods every year during monsoon. Real rescue teams use boats just like in this game! 🚣',
+    'btn-replay-txt':'🔄 Play Again',
+    'btn-home-v':'🏠 Back to Home',
+  },
+  as:{
+    'ib-text':'🚨 জৰুৰী বানপানী অভিযান',
+    'intro-msg':'ব্ৰহ্মপুত্ৰত বানপানী! 🌊 গাঁৱৰ মানুহক সাহায্যৰ বাবে নাও লাগে! সাৱধানে গণক!',
+    'btn-start-txt':'🚨 অভিযান আৰম্ভ কৰক!',
+    'ml-text':'উদ্ধাৰ অভিযান',
+    'hint-txt':'প্ৰতিটো সাৱধানে গণক!',
+    'lu-fact-title':'🌊 আপুনি জানে নে?',
+    'btn-next':'পৰৱৰ্তী অভিযান ▶',
+    'go-title':'হায়! গাঁওখন ডুবিল!',
+    'go-sub':'ৰংমনক আপোনাৰ গণনাৰ দক্ষতা লাগে!<br/>এটু জিৰণি লওক আৰু আকৌ চেষ্টা কৰক! 🦏',
+    'btn-retry-txt':'🔄 আকৌ চেষ্টা কৰক',
+    'vic-title':'🎉 সকলো বাসিন্দা উদ্ধাৰ হ\'ল!<br/>তুমি এজন নায়ক!',
+    'vic-fact':'ব্ৰহ্মপুত্ৰ নদী অসমেদি বৈ যায় আৰু প্ৰতিবছৰ বৰষুণৰ মৌচুমত বানপানী হয়। ৰাজহুৱা উদ্ধাৰকাৰীবোৰ এই খেলৰ দৰেই নাও ব্যৱহাৰ কৰে! 🚣',
+    'btn-replay-txt':'🔄 আকৌ খেলক',
+    'btn-home-v':'🏠 মূল পৃষ্ঠালৈ',
+  }
+};
+function setLang(l){
+  lang=l;
+  document.getElementById('lp-en').classList.toggle('active',l==='en');
+  document.getElementById('lp-as').classList.toggle('active',l==='as');
+  const t=langText[l];
+  for(const [id,val] of Object.entries(t)){
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=val;
+  }
+  if(!document.getElementById('screen-game').classList.contains('hidden')) renderLevel(currentLevel);
+}
+
+// ══ SHOW SCREEN ══
+function showScreen(id){
+  ['screen-intro','screen-game','screen-levelup','screen-gameover','screen-victory'].forEach(s=>{
+    document.getElementById(s).classList.add('hidden');
+  });
+  document.getElementById(id).classList.remove('hidden');
+  const isGame=id==='screen-game';
+  document.getElementById('hud').classList.toggle('hidden',!isGame);
+  document.getElementById('prog-wrap').classList.toggle('hidden',!isGame);
+  document.getElementById('water-indicator').style.display=isGame?'flex':'none';
+}
+
+function updateHUD(){
+  document.getElementById('score-disp').textContent=score;
+  document.getElementById('level-disp').textContent=`Mission ${currentLevel+1}/8`;
+  const hearts=['','❤️','❤️❤️','❤️❤️❤️'];
+  document.getElementById('lives-disp').textContent=hearts[Math.max(0,lives)]||'';
+  document.getElementById('prog-bar').style.width=(currentLevel/8*100)+'%';
+  // water level climbs as lives lost
+  const waterPct=30+(3-lives)*25;
+  document.getElementById('wi-fill').style.height=waterPct+'%';
+}
+
+function startGame(){
+  currentLevel=0; lives=3; score=0;
+  showScreen('screen-game');
+  renderLevel(0);
+  updateHUD();
+  startLightning();
+}
+
+// ══ RENDER LEVEL ══
+function renderLevel(i){
+  locked=false;
+  const lv=levels[i];
+  updateHUD();
+
+  // question
+  document.getElementById('mission-q').innerHTML=
+    `${lang==='en'?lv.q_en:lv.q_as}<span class="as"></span>`;
+
+  // visual
+  const vis=document.getElementById('mission-visual');
+  vis.innerHTML='';
+  lv.items.forEach(item=>{
+    if(item==='+'){
+      const s=document.createElement('span');
+      s.className='mv-plus';s.textContent='+';vis.appendChild(s);
+    } else {
+      const s=document.createElement('span');
+      s.className='mv-item';s.textContent=item;vis.appendChild(s);
+    }
+  });
+
+  // hint
+  document.getElementById('hint-txt').textContent=lang==='en'?lv.hint_en:lv.hint_as;
+
+  // shuffle answers
+  const choices=[lv.answer,...lv.wrong].sort(()=>Math.random()-0.5);
+  const grid=document.getElementById('answers-grid');
+  grid.innerHTML='';
+  choices.forEach(num=>{
+    const btn=document.createElement('button');
+    btn.className='ans-btn';
+    btn.textContent=num;
+    btn.onclick=()=>handleAnswer(btn,num,lv);
+    grid.appendChild(btn);
+  });
+}
+
+function handleAnswer(btn,chosen,lv){
+  if(locked)return;
+  locked=true;
+
+  if(chosen===lv.answer){
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playCorrect();
+    btn.classList.add('correct');
+    score+=10+(lives*5);
+    updateHUD();
+    spawnConfetti();
+    setTimeout(()=>{
+      if(typeof RongmonAudio!=='undefined') RongmonAudio.playLevelUp();
+      showLevelComplete(lv);
+    },900);
+  } else {
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playWrong();
+    btn.classList.add('wrong');
+    lives=Math.max(0,lives-1);
+    updateHUD();
+    // flash screen red
+    const wrap=document.getElementById('game-wrap');
+    wrap.style.boxShadow='0 0 0 4px rgba(229,57,53,0.8), 0 30px 80px rgba(0,0,0,0.8)';
+    setTimeout(()=>{
+      wrap.style.boxShadow='0 30px 80px rgba(0,0,0,0.8)';
+    },400);
+    setTimeout(()=>{
+      btn.classList.remove('wrong');
+      btn.disabled=true;
+      locked=false;
+      if(lives===0) setTimeout(()=>showScreen('screen-gameover'),400);
+    },500);
+  }
+}
+
+function showLevelComplete(lv){
+  document.getElementById('lu-title').textContent=
+    lang==='en'?'🎉 Mission Complete!':'🎉 অভিযান সফল!';
+  document.getElementById('lu-visual').textContent=lv.visual_after.slice(0,8);
+  document.getElementById('lu-fact-body').innerHTML=
+    lang==='en'?lv.fact_en:lv.fact_as;
+  const st=lives===3?'⭐⭐⭐':lives===2?'⭐⭐':'⭐';
+  document.getElementById('lu-stars').textContent=st;
+  document.getElementById('btn-next').textContent=
+    lang==='en'
+      ?(currentLevel>=levels.length-1?'🏆 Finish!':'Next Mission ▶')
+      :(currentLevel>=levels.length-1?'🏆 শেষ!':'পৰৱৰ্তী অভিযান ▶');
+  showScreen('screen-levelup');
+}
+
+function nextLevel(){
+  currentLevel++;
+  if(currentLevel>=levels.length){
+    showVictory();
+  } else {
+    renderLevel(currentLevel);
+    showScreen('screen-game');
+    updateHUD();
+  }
+}
+
+function showVictory(){
+  document.getElementById('vic-score').textContent=`⭐ Score: ${score}`;
+  document.getElementById('vic-title').innerHTML=
+    lang==='en'
+      ?'🎉 All Villagers Rescued!<br/>You\'re a Hero!'
+      :'🎉 সকলো বাসিন্দা উদ্ধাৰ হ\'ল!<br/>তুমি এজন নায়ক!';
+  document.getElementById('vic-fact').textContent=
+    lang==='en'
+      ?'The Brahmaputra river flows through Assam and floods every year during monsoon. Real rescue teams use boats just like in this game! 🚣'
+      :'ব্ৰহ্মপুত্ৰ নদী অসমেদি বৈ যায় আৰু প্ৰতিবছৰ বানপানী হয়। সঁচাকৈয়ে উদ্ধাৰকাৰীবোৰ এনেকৈয়ে নাও ব্যৱহাৰ কৰে! 🚣';
+  document.getElementById('prog-bar').style.width='100%';
+  if(typeof RongmonAudio!=='undefined') RongmonAudio.playVictory();
+  showScreen('screen-victory');
+  setTimeout(spawnConfetti,300);
+  setTimeout(spawnConfetti,700);
+  setTimeout(spawnConfetti,1100);
+}
+
+// ══ CONFETTI ══
+function spawnConfetti(){
+  const colors=['#f5c518','#42a5f5','#e53935','#66bb6a','#ff7043','#fff','#90caf9'];
+  const wrap=document.getElementById('game-wrap');
+  for(let i=0;i<28;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    const cx=(Math.random()-0.5)*380;
+    const cy=(Math.random())*280+180;
+    p.style.cssText=`
+      left:${Math.random()*100}%;top:${15+Math.random()*35}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      --cx:${cx}px;--cy:${cy}px;
+      animation-duration:${0.9+Math.random()*0.8}s;
+      animation-delay:${Math.random()*0.25}s;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+      width:${6+Math.random()*7}px;height:${6+Math.random()*7}px;
+    `;
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(),2000);
+  }
+}
+
+// ══ RAIN ══
+function spawnRain(){
+  const layer=document.getElementById('rain');
+  for(let i=0;i<80;i++){
+    const r=document.createElement('div');
+    r.className='raindrop';
+    const h=12+Math.random()*22;
+    r.style.cssText=`
+      left:${Math.random()*110-5}%;
+      height:${h}px;
+      animation-duration:${0.5+Math.random()*0.6}s;
+      animation-delay:${Math.random()*2}s;
+      opacity:${0.3+Math.random()*0.5};
+    `;
+    layer.appendChild(r);
+  }
+}
+spawnRain();
+
+// ══ LIGHTNING ══
+function startLightning(){
+  function flash(){
+    if(Math.random()<0.35){
+      const el=document.getElementById('lightning');
+      el.style.background='rgba(180,220,255,0.18)';
+      setTimeout(()=>el.style.background='rgba(180,220,255,0)',80);
+      setTimeout(()=>{
+        el.style.background='rgba(180,220,255,0.10)';
+        setTimeout(()=>el.style.background='rgba(180,220,255,0)',60);
+      },120);
+    }
+    setTimeout(flash,2000+Math.random()*5000);
+  }
+  flash();
+}
+startLightning();
+
+// ══ DECORATIVE BOATS ══
+function spawnDecorativeBoats(){
+  const layer=document.getElementById('boats-layer');
+  const boats=['⛵','🚣','⛵'];
+  boats.forEach((b,i)=>{
+    const div=document.createElement('div');
+    div.className='boat';
+    div.textContent=b;
+    div.style.cssText=`
+      left:${12+i*30}%;
+      bottom:${i%2===0?'0px':'10px'};
+      animation-duration:${2+i*0.8}s;
+      animation-delay:${i*0.5}s;
+      font-size:${24+i*4}px;
+    `;
+    layer.appendChild(div);
+  });
+}
+spawnDecorativeBoats();
+
+// ── Shared modules ──
+window.addEventListener('load', () => {
+  if (typeof RongmonData !== 'undefined' && !RongmonData.hasSeenOnboarding('flood-mission')) {
+    document.getElementById('onboarding').classList.remove('hidden');
+  }
+  if (typeof RongmonData !== 'undefined') {
+    const m = RongmonData.getSetting('muted');
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+});
+function dismissOnboarding() {
+  document.getElementById('onboarding').classList.add('hidden');
+  if (typeof RongmonData !== 'undefined') RongmonData.markOnboardingSeen('flood-mission');
+}
+function toggleMuteGame() {
+  if (typeof RongmonAudio !== 'undefined') {
+    const m = RongmonAudio.toggleMute();
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+}
+function shareScore() {
+  const msg = `I scored ${score} pts in Brahmaputra Flood Mission! 🌊 Help Rongmon rescue more villagers! #AssamKids`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+</script>
+<script src="rongmon-data.js"></script>
+<script src="rongmon-audio.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Baby Animal Match - GyanPlay Class 2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #fdcb6e, #f39c12);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 { color: #fdcb6e; font-size: 2rem; }
+        
+        .score-board { display: flex; justify-content: center; gap: 30px; margin-top: 10px; }
+        
+        .score { background: #e94560; color: white; padding: 10px 20px; border-radius: 10px; font-size: 1.2rem; }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text { color: white; font-size: 1.3rem; }
+        
+        .farm-scene {
+            background: linear-gradient(180deg, #87CEEB 0%, #90EE90 50%, #228B22 100%);
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 350px;
+        }
+        
+        .farm-title {
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .pairs-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .animal-pair {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+        }
+        
+        .parent {
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        
+        .parent:hover { transform: scale(1.2); }
+        
+        .parent.selected {
+            background: #ffeaa7;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .parent.matched {
+            background: #55efc4;
+        }
+        
+        .arrow-icon { font-size: 1.5rem; color: #636e72; }
+        
+        .baby {
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        
+        .baby:hover { transform: scale(1.2); }
+        
+        .baby.selected {
+            background: #ffeaa7;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .baby.matched {
+            background: #55efc4;
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #00b894, #55efc4);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 184, 148, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover { transform: scale(1.05); }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        
+        .feedback-content.correct { border: 5px solid #00b894; }
+        .feedback-content.wrong { border: 5px solid #e94560; }
+        
+        .feedback-icon { font-size: 5rem; }
+        .feedback-text { font-size: 1.8rem; margin: 20px 0; color: #2d3436; }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        
+        .progress-text { color: white; text-align: center; margin-bottom: 5px; }
+        
+        .progress-track {
+            background: #dfe6e9;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #f39c12, #f1c40f);
+            height: 100%;
+            transition: width 0.5s;
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-title { color: white; font-size: 1.1rem; margin-bottom: 10px; }
+        .info-text { color: #dfe6e9; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch3-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🐾 Baby Animal Match</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Matches: <span id="matchCount">0</span>/15</div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Match each parent animal with its baby!</p>
+        </div>
+        
+        <div class="farm-scene">
+            <div class="farm-title">🌾 Animal Families</div>
+            <div class="pairs-container" id="pairsContainer">
+                <!-- Pairs will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-text">Progress: <span id="matchedCount">0</span> matched</div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <div class="info-title">🐄 Animal Babies:</div>
+            <div class="info-text">Hen → Chick | Cow → Calf | Dog → Pup</div>
+            <div class="info-text">Frog → Tadpole | Butterfly → Caterpillar</div>
+            <div class="info-text">Cat → Kitten | Duck → Duckling</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="resetGame()">Play Again</button>
+        </div>
+    </div>
+    
+    <script>
+        const animals = [
+            { parent: '🐔', baby: '🐥', parentName: 'Hen', babyName: 'Chick' },
+            { parent: '🐄', baby: '🐂', parentName: 'Cow', babyName: 'Calf' },
+            { parent: '🐕', baby: '🐶', parentName: 'Dog', babyName: 'Pup' },
+            { parent: '🐱', baby: '😺', parentName: 'Cat', babyName: 'Kitten' },
+            { parent: '🦆', baby: '🐤', parentName: 'Duck', babyName: 'Duckling' },
+            { parent: '🐸', baby: '🐛', parentName: 'Frog', babyName: 'Tadpole' },
+            { parent: '🦋', baby: '🐛', parentName: 'Butterfly', babyName: 'Caterpillar' },
+            { parent: '🐴', baby: '🐎', parentName: 'Horse', babyName: 'Foal' },
+            { parent: '🐷', baby: '🐖', parentName: 'Pig', babyName: 'Piglet' },
+            { parent: '🐐', baby: '🐏', parentName: 'Goat', babyName: 'Kid' },
+            { parent: '🐑', baby: '🐑', parentName: 'Sheep', babyName: 'Lamb' },
+            { parent: '🦁', baby: '🦁', parentName: 'Lion', babyName: 'Cub' },
+            { parent: '🐯', baby: '🐯', parentName: 'Tiger', babyName: 'Cub' },
+            { parent: '🐻', baby: '🐻', parentName: 'Bear', babyName: 'Cub' },
+            { parent: '🐼', baby: '🐼', parentName: 'Panda', babyName: 'Cub' }
+        ];
+        
+        let score = 0;
+        let matched = 0;
+        let selectedParent = null;
+        let selectedBaby = null;
+        
+        function initGame() {
+            // Shuffle animals
+            const shuffled = [...animals].sort(() => Math.random() - 0.5).slice(0, 8);
+            
+            const container = document.getElementById('pairsContainer');
+            container.innerHTML = '';
+            
+            // Create rows with shuffled babies
+            shuffled.forEach((animal, index) => {
+                const babyOptions = [...animals].sort(() => Math.random() - 0.5).slice(0, 4);
+                
+                const row = document.createElement('div');
+                row.className = 'animal-pair';
+                row.innerHTML = `
+                    <span class="parent" data-index="${index}" onclick="selectParent(this, ${index})">${animal.parent}</span>
+                    <span class="arrow-icon">→</span>
+                    <span class="baby" data-index="${index}" data-name="${animal.babyName}" onclick="selectBaby(this, ${index})">${animal.baby}</span>
+                `;
+                container.appendChild(row);
+            });
+            
+            // Shuffle the baby positions
+            const babyElements = container.querySelectorAll('.baby');
+            const babyData = Array.from(babyElements).map(el => ({
+                icon: el.textContent,
+                name: el.dataset.name,
+                index: el.dataset.index
+            }));
+            
+            babyData.sort(() => Math.random() - 0.5);
+            
+            babyElements.forEach((el, i) => {
+                el.textContent = babyData[i].icon;
+                el.dataset.name = babyData[i].name;
+                el.dataset.index = babyData[i].index;
+            });
+            
+            matched = 0;
+            document.getElementById('matchedCount').textContent = '0';
+            document.getElementById('matchCount').textContent = shuffled.length;
+            document.getElementById('progressFill').style.width = '0%';
+            selectedParent = null;
+            selectedBaby = null;
+        }
+        
+        function selectParent(el, index) {
+            // Clear previous selection
+            document.querySelectorAll('.parent').forEach(p => p.classList.remove('selected'));
+            
+            el.classList.add('selected');
+            selectedParent = { element: el, index: index };
+            
+            checkMatch();
+        }
+        
+        function selectBaby(el, index) {
+            // Clear previous selection
+            document.querySelectorAll('.baby').forEach(b => b.classList.remove('selected'));
+            
+            el.classList.add('selected');
+            selectedBaby = { element: el, index: index };
+            
+            checkMatch();
+        }
+        
+        function checkMatch() {
+            if (!selectedParent || !selectedBaby) return;
+            
+            if (selectedParent.index === selectedBaby.index) {
+                // Correct match!
+                selectedParent.element.classList.remove('selected');
+                selectedParent.element.classList.add('matched');
+                selectedBaby.element.classList.remove('selected');
+                selectedBaby.element.classList.add('matched');
+                
+                matched++;
+                score += 10;
+                document.getElementById('score').textContent = score;
+                document.getElementById('matchedCount').textContent = matched;
+                document.getElementById('progressFill').style.width = (matched / 8 * 100) + '%';
+                
+                // Show feedback
+                const feedback = document.getElementById('feedback');
+                const content = document.getElementById('feedbackContent');
+                const icon = document.getElementById('feedbackIcon');
+                const text = document.getElementById('feedbackText');
+                
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Correct Match!';
+                
+                setTimeout(() => {
+                    feedback.classList.add('show');
+                }, 500);
+                
+                selectedParent = null;
+                selectedBaby = null;
+            } else {
+                // Wrong match - show briefly then reset
+                selectedBaby.element.style.background = '#ff7675';
+                setTimeout(() => {
+                    selectedParent.element.classList.remove('selected');
+                    selectedBaby.element.classList.remove('selected');
+                    selectedBaby.element.style.background = '';
+                    selectedParent = null;
+                    selectedBaby = null;
+                }, 500);
+            }
+        }
+        
+        function resetGame() {
+            document.getElementById('feedback').classList.remove('show');
+            score = 0;
+            document.getElementById('score').textContent = '0';
+            initGame();
+        }
+        
+        initGame();
+    </script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integer Adventures — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#180A28 0%,#0F0820 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:0.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(199,125,255,.13),rgba(199,125,255,.04));border:1px solid rgba(199,125,255,.3);border-radius:16px;padding:16px;margin-bottom:16px;position:relative;overflow:hidden}
+.wow-hook::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(199,125,255,.18),transparent);border-radius:50%}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55;color:var(--text)}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(199,125,255,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--purple);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:700}
+.question-text{font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:600;color:var(--text);margin-bottom:16px;line-height:1.45}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.opt-btn{background:rgba(199,125,255,.07);border:2px solid rgba(199,125,255,.2);border-radius:14px;padding:14px 8px;font-family:'Baloo 2',cursive;font-size:1.25rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--purple);background:rgba(199,125,255,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:600;min-height:26px;margin:10px 0 4px;transition:all .3s}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+.bank-display{background:rgba(199,125,255,.07);border:1px solid rgba(199,125,255,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.bal-label{font-size:.72rem;color:var(--dim);letter-spacing:.5px;margin-bottom:4px}
+.bal-amount{font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800}
+.op-row{display:flex;align-items:center;justify-content:center;gap:12px;margin:12px 0 8px;font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:700}
+.op-plus{color:var(--teal)}
+.op-minus{color:var(--coral)}
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#0F0820 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--purple);color:var(--purple);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.play-again-btn:hover{background:rgba(199,125,255,.1)}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(199,125,255,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-score{font-family:'Baloo 2',cursive;font-size:1.9rem;font-weight:800;color:var(--purple);margin:10px 0}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+/* Number line visual */
+.nl-wrapper{display:flex;flex-direction:column;align-items:center;gap:0;margin:0 auto 8px;width:fit-content}
+.nl-row{display:flex;align-items:center;height:32px;gap:8px}
+.nl-num{font-family:'Baloo 2',cursive;font-size:.85rem;width:28px;text-align:right}
+.nl-num.positive{color:var(--teal)}
+.nl-num.negative{color:var(--coral)}
+.nl-num.zero-num{color:var(--gold);font-weight:800;font-size:.95rem}
+.nl-bar{width:4px;height:32px;background:rgba(199,125,255,.25)}
+.nl-tick{width:14px;height:2px;background:rgba(199,125,255,.35)}
+.nl-spot{width:0;height:0}
+.stage-transition{background:linear-gradient(135deg,rgba(199,125,255,.1),rgba(199,125,255,.03));border:1px solid rgba(199,125,255,.2);border-radius:14px;padding:14px;text-align:center;margin-bottom:14px}
+.stage-transition .big-emoji{font-size:2.5rem}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--purple);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">➖ Integer Adventures</div>
+      <span class="subject-tag">Maths · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="wow-emoji">🚀</span>
+    <div class="wow-text">
+      Temperature on Mars can drop to <strong>−125°C</strong>. The difference between Mars daytime (+20°C) and night (−125°C) is <strong>145 degrees</strong> — larger than anywhere on Earth. Negative numbers describe <strong>REAL, extreme things!</strong>
+    </div>
+  </div>
+
+  <div id="gameArea"></div>
+
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Question 1 of 10</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-score" id="ovScore"></div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+const S1 = [
+  {q:'Which integer correctly represents <em>5 floors below ground</em> in a building?',correct:-5,opts:[-5,-2,5,2]},
+  {q:'The temperature is <em>8 degrees above zero</em>. Which integer?',correct:8,opts:[8,-8,-3,3]},
+  {q:'A fish swims <em>12 metres below sea level</em>. Which integer?',correct:-12,opts:[-12,12,-7,7]},
+  {q:'Assam floods raise water level <em>9 metres above normal</em>. Which integer?',correct:9,opts:[9,-9,-4,4]},
+  {q:'A bank overdraft shows <em>₹300 less than zero</em>. Which integer?',correct:-300,opts:[-300,300,-100,100]},
+];
+const S2 = [
+  {balance:500,op:+200,opLabel:'+₹200 deposit',answer:700},
+  {balance:300,op:-450,opLabel:'−₹450 spent (more than balance!)',answer:-150},
+  {balance:-150,op:+350,opLabel:'+₹350 received as gift',answer:200},
+  {balance:200,op:-600,opLabel:'−₹600 for school trip',answer:-400},
+  {balance:-400,op:+1000,opLabel:'+₹1000 earned from helping',answer:600},
+];
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+const FACTS=[
+  'On a number line, negative numbers sit to the LEFT of zero — they are mirror images of positives!',
+  'Zero (0) is the only integer that is neither positive nor negative — it is the balance point.',
+  'The absolute value of −9 is 9 — it measures distance from zero, ignoring direction.',
+  'Negative numbers were first used in China around 200 BC for recording debts.',
+  'Integers include: ...−3, −2, −1, 0, +1, +2, +3... — all whole numbers with their negatives!',
+  'In cricket, a negative Duckworth-Lewis target adjustment uses integer arithmetic.',
+  'Adding a negative is the same as subtracting: 5 + (−3) = 5 − 3 = 2.',
+  'Sea depth uses negative integers — the Mariana Trench is about −11,000 metres!',
+  'Your phone\'s altitude app uses integers: positive above sea level, negative below.',
+  'Banks use negative integers daily — an overdraft balance is a negative integer!',
+];
+let qIdx=0, stg=1, score=0, answered=false;
+
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  const C=['#FFD166','#C77DFF','#06D6A0','#4CC9F0','#FF9F1C'];
+  for(let i=0;i<28;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),3500);
+  }
+}
+function stars(){
+  const lit=Math.min(5,Math.floor(score/2));
+  for(let i=1;i<=5;i++) document.getElementById('s'+i).classList.toggle('lit',i<=lit);
+}
+function showOverlay(emoji,title,scoreText,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;
+  document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovScore').textContent=scoreText;
+  document.getElementById('ovFact').textContent=fact;
+  document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay');
+  ov.classList.add('show');
+  if(!isEnd) setTimeout(()=>ov.classList.remove('show'),2600);
+}
+function setProgress(q,total){document.getElementById('progressLabel').textContent=`Question ${q} of ${total}`}
+function showNext(show){
+  const b=document.getElementById('nextBtn');
+  b.classList.toggle('visible',show);
+}
+
+function renderS1(i){
+  setProgress(i+1,10); answered=false; showNext(false);
+  const q=S1[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">⚡ Stage 1 — Integer Identification</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS1(${o},${q.correct},this)">${o>0?'+':''}${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS1(sel,correct,btn){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct'); score++; stars();
+    fb.textContent=cheer()+' '+(correct>0?'+':'')+correct+' is the right integer!';
+    fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🌟',cheer(),'',FACTS[qIdx%FACTS.length],false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(parseInt(b.textContent.replace('+',''))==correct)b.classList.add('correct')});
+    fb.textContent=`The correct integer is ${correct>0?'+':''}${correct}.`;
+    fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function renderS2(i){
+  const total=5, qNum=S1.length+i+1;
+  setProgress(qNum,10); answered=false; showNext(false);
+  const q=S2[i];
+  const ans=q.answer;
+  let opts=new Set([ans]);
+  const offsets=[-200,-100,100,200,50,-50];
+  let oi=0;
+  while(opts.size<4){opts.add(ans+offsets[oi++])}
+  const shuffled=[...opts].sort(()=>Math.random()-.5);
+  const balCol=q.balance>=0?'var(--teal)':'var(--coral)';
+  const opCol=q.op>0?'var(--teal)':'var(--coral)';
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">💰 Stage 2 — Bank Account</div>
+      <div class="question-text">${q.opLabel}</div>
+      <div class="bank-display">
+        <div class="bal-label">CURRENT BALANCE</div>
+        <div class="bal-amount" style="color:${balCol}">₹${q.balance}</div>
+        <div class="op-row">
+          <span style="color:${opCol};font-size:1.5rem">${q.op>0?'+':''} ₹${Math.abs(q.op)}</span>
+        </div>
+        <div style="font-size:.8rem;color:var(--dim)">What is the new balance?</div>
+      </div>
+      <div class="options-grid">
+        ${shuffled.map(o=>`<button class="opt-btn" onclick="checkS2(${o},${ans},this)">₹${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS2(sel,correct,btn){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct'); score++; stars();
+    fb.textContent=cheer()+(correct<0?' Your account went into overdraft — negative balance!':' Perfect calculation!');
+    fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('💰',cheer(),'',FACTS[(qIdx+5)%FACTS.length],false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(parseInt(b.textContent.replace('₹','').trim())===correct)b.classList.add('correct')});
+    fb.textContent=`New balance = ₹${q.balance} ${correct>q.balance?'+ ₹':'− ₹'}${Math.abs(q.op)} = ₹${correct}`;
+    fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function nextQ(){
+  qIdx++;
+  if(stg===1){
+    if(qIdx<S1.length) renderS1(qIdx);
+    else { stg=2; qIdx=0; renderTransition(); }
+  } else {
+    if(qIdx<S2.length) renderS2(qIdx);
+    else endGame();
+  }
+}
+function renderTransition(){
+  showNext(false);
+  document.getElementById('progressLabel').textContent='Stage 2 of 2';
+  document.getElementById('gameArea').innerHTML=`
+    <div class="stage-transition">
+      <div class="big-emoji">💰</div>
+      <h3>Stage 2: Bank Account!</h3>
+      <p>Now apply integers to real banking! Deposits are positive, withdrawals are negative. Can your account go below zero?</p>
+    </div>`;
+  const nb=document.getElementById('nextBtn');
+  nb.textContent='Start Stage 2 →';
+  nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →';nb.onclick=nextQ;renderS2(0)};
+}
+function endGame(){
+  confetti();
+  const medals=['Integer Learner 🌱','Number Explorer 🔍','Integer Master 🎯','Integer Champion 🏆','Integer Legend 🌟'];
+  const medal=medals[Math.min(4,Math.floor(score/2))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--purple);margin:10px 0">${score} / 10</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        Integers appear on every thermometer, bank statement, elevator panel, and weather map. You now think in both directions — positive and negative!
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  document.getElementById('progressLabel').textContent=`Final Score: ${score}/10`;
+  showNext(false);
+}
+function resetGame(){
+  qIdx=0; stg=1; score=0; answered=false;
+  for(let i=1;i<=5;i++) document.getElementById('s'+i).classList.remove('lit');
+  document.getElementById('nextBtn').textContent='Next →';
+  document.getElementById('nextBtn').onclick=nextQ;
+  renderS1(0);
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{
+  document.getElementById('overlay').classList.remove('show'); resetGame();
+});
+renderS1(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Acid-Base Explorer — Class 7 Science</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#0F0C29;--dark:#1A1A2E;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Nunito',sans-serif;background:var(--bg);color:#fff;min-height:100vh;
+         display:flex;flex-direction:column;align-items:center;padding:1rem;animation:fadeIn .4s ease}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    .topbar{width:100%;max-width:700px;display:flex;align-items:center;
+            justify-content:space-between;padding:.75rem 0;margin-bottom:.5rem}
+    .back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:.85rem;
+              font-weight:700;padding:6px 14px;border-radius:20px;cursor:pointer;
+              text-decoration:none;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.18)}
+    .subject-tag{background:var(--purple);color:#fff;font-size:.75rem;font-weight:800;
+                 padding:4px 12px;border-radius:20px;letter-spacing:.5px}
+    .stars{display:flex;gap:4px;font-size:1.3rem}
+    .star{opacity:.3;transition:all .3s}
+    .star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+
+    .lang-row{display:flex;gap:6px;margin-bottom:1rem}
+    .lang-btn{background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);
+              font-weight:700;font-size:.75rem;padding:4px 10px;border-radius:16px;
+              cursor:pointer;transition:all .2s}
+    .lang-btn.active{background:var(--gold);color:var(--dark)}
+
+    .game-card{width:100%;max-width:680px;background:rgba(255,255,255,.05);
+               border:1px solid rgba(255,255,255,.1);border-radius:24px;
+               padding:2rem 1.5rem;text-align:center}
+
+    /* pH strip visual */
+    .ph-strip{display:flex;align-items:center;justify-content:center;gap:.3rem;
+              margin-bottom:1.2rem;padding:.5rem;background:rgba(0,0,0,.2);border-radius:12px}
+    .ph-seg{flex:1;height:14px;border-radius:3px;transition:all .3s}
+    .ph-arrow{font-size:.65rem;color:rgba(255,255,255,.5);margin-top:2px}
+    .ph-labels{display:flex;justify-content:space-between;font-size:.58rem;
+               color:rgba(255,255,255,.4);padding:0 2px;margin-top:2px}
+
+    /* Beaker display */
+    .beaker-wrap{display:flex;justify-content:center;margin-bottom:1rem}
+    .beaker-outer{position:relative;width:80px;height:90px}
+    .beaker-svg{width:80px;height:90px}
+    .beaker-emoji{font-size:2rem;position:absolute;top:50%;left:50%;
+                  transform:translate(-50%,-50%);pointer-events:none}
+    .substance-name{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.1rem;
+                    color:var(--gold);margin-top:.25rem;margin-bottom:.75rem}
+
+    .q-header{font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:1rem;font-style:italic}
+    .progress-bar{width:100%;background:rgba(255,255,255,.08);border-radius:20px;
+                  height:7px;margin-bottom:.4rem;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));
+                   border-radius:20px;transition:width .4s}
+    .progress-text{font-size:.78rem;color:rgba(255,255,255,.4);text-align:right;margin-bottom:1.2rem}
+    .q-number{font-size:.75rem;font-weight:800;color:var(--gold);letter-spacing:1px;
+              text-transform:uppercase;margin-bottom:.5rem}
+    .q-text{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.2rem;
+             line-height:1.4;margin-bottom:1.2rem;color:#fff}
+
+    /* 3-choice row for Acid/Base/Neutral */
+    .choices{display:flex;gap:.6rem;margin-bottom:1rem;flex-wrap:wrap;justify-content:center}
+    .choice-btn{flex:1;min-width:130px;background:rgba(255,255,255,.07);
+                border:2px solid rgba(255,255,255,.12);border-radius:14px;
+                padding:.75rem .5rem;font-family:'Nunito',sans-serif;
+                font-size:.9rem;font-weight:800;color:#fff;cursor:pointer;
+                transition:all .2s;text-align:center}
+    .choice-btn:hover:not(:disabled){transform:translateY(-3px);filter:brightness(1.15)}
+    .choice-btn.acid-btn{border-color:var(--pink)}
+    .choice-btn.base-btn{border-color:var(--sky)}
+    .choice-btn.neutral-btn{border-color:var(--green)}
+    .choice-btn.correct{filter:brightness(1.2);box-shadow:0 0 12px rgba(0,200,83,.4)}
+    .choice-btn.correct.acid-btn{background:rgba(255,64,129,.25)}
+    .choice-btn.correct.base-btn{background:rgba(0,174,239,.25)}
+    .choice-btn.correct.neutral-btn{background:rgba(0,200,83,.25)}
+    .choice-btn.wrong{background:rgba(255,64,129,.1);border-color:var(--pink);opacity:.7}
+    .choice-btn:disabled{cursor:default}
+
+    /* MCQ choices (vertical) */
+    .choices-v{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1rem}
+    .choice-btn-v{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);
+                  border-radius:14px;padding:.75rem 1.2rem;font-family:'Nunito',sans-serif;
+                  font-size:.9rem;font-weight:700;color:#fff;cursor:pointer;
+                  text-align:left;transition:all .2s}
+    .choice-btn-v:hover:not(:disabled){background:rgba(255,255,255,.13);
+                                        border-color:rgba(255,255,255,.3);transform:translateX(4px)}
+    .choice-btn-v.correct{background:rgba(0,200,83,.18);border-color:var(--green)}
+    .choice-btn-v.wrong{background:rgba(255,64,129,.15);border-color:var(--pink)}
+    .choice-btn-v:disabled{cursor:default}
+
+    .feedback{font-size:.85rem;font-weight:700;min-height:1.4rem;margin-bottom:.5rem}
+    .feedback.correct{color:var(--green)}
+    .feedback.wrong{color:var(--pink)}
+    .next-btn{background:var(--purple);color:#fff;font-family:'Baloo 2',cursive;
+              font-weight:800;font-size:1rem;padding:.7rem 2rem;border:none;
+              border-radius:50px;cursor:pointer;display:none;transition:transform .15s}
+    .next-btn:hover{transform:scale(1.04)}
+
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);
+             backdrop-filter:blur(8px);align-items:center;justify-content:center;
+             z-index:100;padding:1.5rem}
+    .overlay.show{display:flex}
+    .result-box{background:linear-gradient(135deg,#10012a,#0F0C29);
+                border:1px solid rgba(255,255,255,.12);border-radius:28px;
+                padding:2.5rem 2rem;text-align:center;max-width:420px;width:100%;
+                animation:popIn .35s ease}
+    @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+    .result-emoji{font-size:3.5rem;margin-bottom:.75rem}
+    .result-title{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.8rem;color:#fff;margin-bottom:.5rem}
+    .result-score{font-size:1rem;color:rgba(255,255,255,.6);margin-bottom:.75rem}
+    .result-stars{font-size:2rem;margin-bottom:.75rem}
+    .result-fact{background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.3);
+                 border-radius:14px;padding:.75rem 1rem;font-size:.82rem;
+                 color:rgba(255,255,255,.8);line-height:1.6;margin-bottom:1.5rem;text-align:left}
+    .btn-play-again{background:var(--gold);color:var(--dark);font-family:'Baloo 2',cursive;
+                    font-weight:800;font-size:1rem;padding:.8rem 2rem;border:none;
+                    border-radius:50px;cursor:pointer;width:100%;transition:transform .15s}
+    .btn-play-again:hover{transform:scale(1.03)}
+    .confetti-piece{position:fixed;width:8px;height:8px;pointer-events:none;
+                    animation:fall var(--dur,1.8s) ease-in forwards}
+    @keyframes fall{0%{transform:translateY(0) rotate(0)}
+                    100%{transform:translateY(100vh) rotate(720deg) translateX(var(--dx));opacity:0}}
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="subject-tag">⚗️ Science · Class 7</span>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span>
+      <span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span>
+    </div>
+  </div>
+
+  <div class="lang-row">
+    <button class="lang-btn active" onclick="setLang('en')" id="lbEn">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')" id="lbHi">हि</button>
+    <button class="lang-btn" onclick="setLang('as')" id="lbAs">অ</button>
+  </div>
+
+  <div class="game-card">
+    <div class="q-header" id="qHeader">Classify substances and test your chemistry knowledge!</div>
+
+    <!-- pH Strip -->
+    <div class="ph-strip" id="phStrip"></div>
+    <div class="ph-labels"><span>Acid</span><span>Neutral</span><span>Base</span></div>
+
+    <div class="progress-bar" style="margin-top:.6rem"><div class="progress-fill" id="pFill" style="width:0%"></div></div>
+    <div class="progress-text" id="pText">1 / 10</div>
+    <div class="q-number" id="qNum">Question 1</div>
+
+    <!-- Substance display for classify-type -->
+    <div id="substanceDisplay" style="display:none">
+      <div class="beaker-wrap">
+        <div>
+          <div class="beaker-outer">
+            <svg class="beaker-svg" viewBox="0 0 80 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="25" y="10" width="30" height="3" rx="1.5" fill="rgba(255,255,255,0.3)"/>
+              <path d="M28 13 L18 80 Q18 85 28 85 L52 85 Q62 85 62 80 L52 13 Z" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+              <rect id="liquidFill" x="20" y="50" width="40" height="33" rx="2" fill="rgba(124,58,237,0.25)"/>
+            </svg>
+            <div class="beaker-emoji" id="substEmoji">🍋</div>
+          </div>
+          <div class="substance-name" id="substName">Lemon Juice</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-text" id="qText"></div>
+    <div id="choicesContainer"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQ()">Next →</button>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="result-box">
+      <div class="result-emoji" id="rEmoji">⚗️</div>
+      <div class="result-title" id="rTitle"></div>
+      <div class="result-score" id="rScore"></div>
+      <div class="result-stars" id="rStars"></div>
+      <div class="result-fact" id="rFact"></div>
+      <button class="btn-play-again" onclick="restartGame()" id="rBtn">Restart</button>
+    </div>
+  </div>
+
+<script>
+// type: 'classify' shows beaker + 3 buttons (Acid/Base/Neutral)
+// type: 'mcq' shows standard MCQ
+const QUESTIONS = [
+  {type:'classify', emoji:'🍋',
+    en:"Lemon juice is",hi:"नींबू का रस है",as:"নেমুৰ ৰস হ'ল",
+    subst_en:"Lemon Juice",subst_hi:"नींबू का रस",subst_as:"নেমুৰ ৰস",
+    choices:["Acid","Base","Neutral"],
+    choicesHi:["अम्ल","क्षार","उदासीन"],
+    choicesAs:["অম্ল","ক্ষাৰ","নিৰপেক্ষ"],
+    answer:0, liquidColor:"rgba(255,220,50,0.35)"
+  },
+  {type:'classify', emoji:'🧂',
+    en:"Baking soda is",hi:"बेकिंग सोडा है",as:"বেকিং ছ'ডা হ'ল",
+    subst_en:"Baking Soda",subst_hi:"बेकिंग सोडा",subst_as:"বেকিং ছ'ডা",
+    choices:["Acid","Base","Neutral"],
+    choicesHi:["अम्ल","क्षार","उदासीन"],
+    choicesAs:["অম্ল","ক্ষাৰ","নিৰপেক্ষ"],
+    answer:1, liquidColor:"rgba(0,174,239,0.35)"
+  },
+  {type:'classify', emoji:'💧',
+    en:"Pure water is",hi:"शुद्ध जल है",as:"বিশুদ্ধ পানী হ'ল",
+    subst_en:"Pure Water",subst_hi:"शुद्ध जल",subst_as:"বিশুদ্ধ পানী",
+    choices:["Acid","Base","Neutral"],
+    choicesHi:["अम्ल","क्षार","उदासीन"],
+    choicesAs:["অম্ল","ক্ষাৰ","নিৰপেক্ষ"],
+    answer:2, liquidColor:"rgba(0,174,239,0.2)"
+  },
+  {type:'classify', emoji:'🫙',
+    en:"Vinegar is",hi:"सिरका है",as:"ভিনেগাৰ হ'ল",
+    subst_en:"Vinegar",subst_hi:"सिरका",subst_as:"ভিনেগাৰ",
+    choices:["Acid","Base","Neutral"],
+    choicesHi:["अम्ल","क्षार","उदासीन"],
+    choicesAs:["অম্ল","ক্ষাৰ","নিৰপেক্ষ"],
+    answer:0, liquidColor:"rgba(200,180,100,0.35)"
+  },
+  {type:'classify', emoji:'🧼',
+    en:"Soap is",hi:"साबुन है",as:"চাবোন হ'ল",
+    subst_en:"Soap",subst_hi:"साबुन",subst_as:"চাবোন",
+    choices:["Acid","Base","Neutral"],
+    choicesHi:["अम्ल","क्षार","उदासीन"],
+    choicesAs:["অম্ল","ক্ষাৰ","নিৰপেক্ষ"],
+    answer:1, liquidColor:"rgba(0,174,239,0.4)"
+  },
+  {type:'mcq',
+    en:"Litmus turns red in",hi:"लिटमस किसमें लाल हो जाता है?",as:"লিটমাছ কিহত ৰঙা হয়?",
+    choices:["Acid","Base","Neutral solution"],
+    choicesHi:["अम्ल में","क्षार में","उदासीन घोल में"],
+    choicesAs:["অম্লত","ক্ষাৰত","নিৰপেক্ষ দ্ৰৱণত"],
+    answer:0
+  },
+  {type:'mcq',
+    en:"Litmus turns blue in",hi:"लिटमस किसमें नीला हो जाता है?",as:"লিটমাছ কিহত নীলা হয়?",
+    choices:["Acid","Base","Salt"],
+    choicesHi:["अम्ल में","क्षार में","नमक में"],
+    choicesAs:["অম্লত","ক্ষাৰত","নিমখত"],
+    answer:1
+  },
+  {type:'mcq',
+    en:"Neutralisation produces",hi:"उदासीनीकरण से बनता है",as:"প্ৰশমন বিক্ৰিয়াত উৎপন্ন হয়",
+    choices:["Salt and water","Acid","Gas"],
+    choicesHi:["नमक और पानी","अम्ल","गैस"],
+    choicesAs:["নিমখ আৰু পানী","অম্ল","গেছ"],
+    answer:0
+  },
+  {type:'mcq',
+    en:"pH of 7 means the solution is",hi:"pH 7 का मतलब घोल है",as:"pH ৭ মানে দ্ৰৱণটো হ'ল",
+    choices:["Acidic","Basic","Neutral"],
+    choicesHi:["अम्लीय","क्षारीय","उदासीन"],
+    choicesAs:["অম্লীয়","ক্ষাৰীয়","নিৰপেক্ষ"],
+    answer:2
+  },
+  {type:'mcq',
+    en:"Antacids are used to treat",hi:"एंटासिड किसके उपचार के लिए उपयोग होता है?",as:"এন্টাচিড কিহৰ চিকিৎসাত ব্যৱহাৰ হয়?",
+    choices:["Fever","Acidity","Cold"],
+    choicesHi:["बुखार","अम्लता","सर्दी"],
+    choicesAs:["জ্বৰ","এচিডিটি","চৰ্দি"],
+    answer:1
+  }
+];
+
+const PH_COLORS = [
+  '#FF2020','#FF4500','#FF7800','#FFA800','#FFD000',
+  '#CCCC00','#88CC00','#44CC00','#00BB44','#0066CC','#4400CC','#7700AA','#9900BB'
+];
+
+const T = {
+  en:{
+    header:"Classify substances and test your chemistry knowledge!",
+    qLabel:"Question",
+    feedback_correct:["Correct! ⚗️","Brilliant! ✅","Spot on! 🌟","Well done! 👏","Right! 🎯"],
+    feedback_wrong:"Not quite — the answer is",
+    next:"Next →",restart:"Restart",
+    result_title:["Chemistry Genius! ⚗️","Great Work! 🎉","Good Effort! 👏","Keep Studying! 💪"],
+    result_score:(c)=>`You scored ${c} out of 10`,
+    fact:"⚗️ Fun Fact: The pH scale goes from 0 to 14. Below 7 is acidic (like vinegar, lemon juice), above 7 is basic (like baking soda, soap), and exactly 7 is neutral (pure water). When an acid and base mix, they neutralise each other!"
+  },
+  hi:{
+    header:"पदार्थों को वर्गीकृत करें और रसायन विज्ञान का परीक्षण करें!",
+    qLabel:"प्रश्न",
+    feedback_correct:["सही! ⚗️","शानदार! ✅","बिल्कुल सही! 🌟","शाबाश! 👏","सटीक! 🎯"],
+    feedback_wrong:"सही उत्तर है",
+    next:"अगला →",restart:"दोबारा खेलें",
+    result_title:["रसायन विशेषज्ञ! ⚗️","बहुत अच्छा! 🎉","अच्छा प्रयास! 👏","पढ़ते रहो! 💪"],
+    result_score:(c)=>`आपने 10 में से ${c} अंक पाए`,
+    fact:"⚗️ मज़ेदार तथ्य: pH पैमाना 0 से 14 तक होता है। 7 से कम अम्लीय होता है (जैसे सिरका, नींबू), 7 से अधिक क्षारीय (जैसे बेकिंग सोडा, साबुन), और बिल्कुल 7 उदासीन (शुद्ध जल) होता है!"
+  },
+  as:{
+    header:"পদাৰ্থ শ্ৰেণীবদ্ধ কৰক আৰু ৰসায়ন বিজ্ঞান পৰীক্ষা কৰক!",
+    qLabel:"প্ৰশ্ন",
+    feedback_correct:["শুদ্ধ! ⚗️","চমৎকাৰ! ✅","একদম শুদ্ধ! 🌟","শাবাশ! 👏","সঠিক! 🎯"],
+    feedback_wrong:"শুদ্ধ উত্তৰ হ'ল",
+    next:"পৰৱৰ্তী →",restart:"পুনৰ খেলক",
+    result_title:["ৰসায়ন বিশেষজ্ঞ! ⚗️","বহুত ভাল! 🎉","ভাল প্ৰচেষ্টা! 👏","পঢ়ি থাকক! 💪"],
+    result_score:(c)=>`আপুনি ১০ৰ মাজত ${c} পাইছে`,
+    fact:"⚗️ মজাৰ তথ্য: pH স্কেল ০ৰ পৰা ১৪লৈ যায়। ৭ৰ তলে অম্লীয় (ভিনেগাৰ, নেমু), ৭ৰ ওপৰে ক্ষাৰীয় (বেকিং ছ'ডা, চাবোন), আৰু ঠিক ৭ নিৰপেক্ষ (বিশুদ্ধ পানী) হয়!"
+  }
+};
+
+let lang='en', cur=0, score=0, answered=false, litStars=0;
+
+function buildPhStrip(){
+  const strip=document.getElementById('phStrip');
+  strip.innerHTML=PH_COLORS.map((c,i)=>
+    `<div class="ph-seg" style="background:${c}"></div>`
+  ).join('');
+}
+
+function setLang(l){
+  lang=l;
+  ['en','hi','as'].forEach(x=>{
+    document.getElementById('lb'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('active',x===l);
+  });
+  document.getElementById('qHeader').textContent=T[l].header;
+  renderQ();
+}
+
+function renderQ(){
+  const t=T[lang], q=QUESTIONS[cur];
+  answered=false;
+  document.getElementById('qHeader').textContent=t.header;
+  document.getElementById('pFill').style.width=(cur/10*100)+'%';
+  document.getElementById('pText').textContent=`${cur+1} / 10`;
+  document.getElementById('qNum').textContent=`${t.qLabel} ${cur+1}`;
+  document.getElementById('qText').textContent=q[lang];
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').style.display='none';
+
+  const choiceKey = lang==='en' ? 'choices' : lang==='hi' ? 'choicesHi' : 'choicesAs';
+  const substKey = lang==='en' ? 'subst_en' : lang==='hi' ? 'subst_hi' : 'subst_as';
+
+  if(q.type==='classify'){
+    document.getElementById('substanceDisplay').style.display='block';
+    document.getElementById('substEmoji').textContent=q.emoji;
+    document.getElementById('substName').textContent=q[substKey]||q.subst_en;
+    document.getElementById('liquidFill').setAttribute('fill', q.liquidColor||'rgba(124,58,237,0.25)');
+    document.getElementById('qText').textContent=q[lang];
+
+    const classes=['acid-btn','base-btn','neutral-btn'];
+    document.getElementById('choicesContainer').innerHTML=
+      `<div class="choices">${q[choiceKey].map((c,i)=>
+        `<button class="choice-btn ${classes[i]}" onclick="pick(${i})">${c}</button>`
+      ).join('')}</div>`;
+  } else {
+    document.getElementById('substanceDisplay').style.display='none';
+    document.getElementById('qText').textContent=q[lang];
+    document.getElementById('choicesContainer').innerHTML=
+      `<div class="choices-v">${q[choiceKey].map((c,i)=>
+        `<button class="choice-btn-v" onclick="pick(${i})">${c}</button>`
+      ).join('')}</div>`;
+  }
+}
+
+function pick(idx){
+  if(answered) return;
+  answered=true;
+  const q=QUESTIONS[cur], t=T[lang];
+  const choiceKey = lang==='en' ? 'choices' : lang==='hi' ? 'choicesHi' : 'choicesAs';
+  const correct=idx===q.answer;
+
+  if(q.type==='classify'){
+    const btns=document.querySelectorAll('.choice-btn');
+    btns.forEach(b=>b.disabled=true);
+    btns[idx].classList.add(correct?'correct':'wrong');
+    if(!correct) btns[q.answer].classList.add('correct');
+  } else {
+    const btns=document.querySelectorAll('.choice-btn-v');
+    btns.forEach(b=>b.disabled=true);
+    btns[idx].classList.add(correct?'correct':'wrong');
+    if(!correct) btns[q.answer].classList.add('correct');
+  }
+
+  const fb=document.getElementById('feedback');
+  if(correct){
+    score++;
+    const msgs=t.feedback_correct;
+    fb.textContent=msgs[Math.floor(Math.random()*msgs.length)];
+    fb.className='feedback correct';
+    playTone(660,'sine',.15);playTone(880,'sine',.2,.25,.12);
+    updateStars();
+  } else {
+    fb.textContent=`${t.feedback_wrong}: ${q[choiceKey][q.answer]}`;
+    fb.className='feedback wrong';
+    playTone(280,'sawtooth',.18);
+  }
+  document.getElementById('nextBtn').style.display='inline-block';
+  document.getElementById('nextBtn').textContent=cur<9?t.next:t.restart;
+  if(cur>=9) document.getElementById('nextBtn').onclick=showResult;
+}
+
+function nextQ(){cur++;if(cur>=10){showResult();return;}renderQ();}
+
+function updateStars(){
+  const pct=score/10;
+  if(pct>=.4&&litStars<1){litStars=1;litStar(1);}
+  if(pct>=.7&&litStars<2){litStars=2;litStar(2);}
+  if(pct>=.9&&litStars<3){litStars=3;litStar(3);}
+}
+function litStar(n){
+  const el=document.getElementById('s'+n);
+  el.classList.add('lit');
+  el.animate([{transform:'scale(1.6)'},{transform:'scale(1)'}],{duration:400});
+}
+
+function showResult(){
+  const t=T[lang], pct=score/10;
+  const idx=pct>=.9?0:pct>=.7?1:pct>=.4?2:3;
+  document.getElementById('rEmoji').textContent=['⚗️','🎉','👏','💪'][idx];
+  document.getElementById('rTitle').textContent=t.result_title[idx];
+  document.getElementById('rScore').textContent=t.result_score(score);
+  document.getElementById('rStars').textContent='⭐'.repeat(litStars)+'☆'.repeat(3-litStars);
+  document.getElementById('rFact').textContent=t.fact;
+  document.getElementById('rBtn').textContent=t.restart;
+  document.getElementById('overlay').classList.add('show');
+  if(pct>=.4) launchConfetti();
+}
+
+function restartGame(){
+  cur=score=litStars=0;answered=false;
+  ['s1','s2','s3'].forEach(id=>document.getElementById(id).classList.remove('lit'));
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('nextBtn').onclick=nextQ;
+  renderQ();
+}
+
+let _ctx;
+function getCtx(){return _ctx||(_ctx=new(window.AudioContext||window.webkitAudioContext)());}
+function playTone(f,t,d,g,dl){
+  try{const c=getCtx(),dly=dl||0,o=c.createOscillator(),gn=c.createGain();
+  o.type=t;o.frequency.setValueAtTime(f,c.currentTime+dly);
+  gn.gain.setValueAtTime(0,c.currentTime+dly);
+  gn.gain.linearRampToValueAtTime(g||.22,c.currentTime+dly+.01);
+  gn.gain.exponentialRampToValueAtTime(.001,c.currentTime+dly+d);
+  o.connect(gn);gn.connect(c.destination);
+  o.start(c.currentTime+dly);o.stop(c.currentTime+dly+d+.05);}catch(e){}
+}
+document.addEventListener('click',()=>{try{getCtx().resume();}catch(e){}},{once:true});
+function launchConfetti(){
+  const cols=['#FFB800','#00AEEF','#FF4081','#00C853','#7C3AED'];
+  for(let i=0;i<35;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%cols.length]};--dur:${1.4+Math.random()*1.2}s;--dx:${(Math.random()-.5)*160}px;border-radius:${Math.random()>.5?'50%':'3px'}`;
+    document.body.appendChild(el);el.addEventListener('animationend',()=>el.remove());
+  }
+}
+
+buildPhStrip();
+setLang('en');
+</script>
+</body>
+</html>

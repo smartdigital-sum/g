@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fruit or Veggie? 🍎🥦 | GyanPlay Nursery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--gold:#FFB800;--green:#00C853;--pink:#FF4081;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Nunito',sans-serif;
+      background:linear-gradient(135deg,#C8E6C9,#A5D6A7);
+      color:#1B5E20;min-height:100vh;
+      display:flex;flex-direction:column;align-items:center;
+      padding:16px;animation:fadeIn .4s ease;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes bounce{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+    @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+    @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+    @keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+    /* TOP BAR */
+    .top-bar{
+      width:100%;max-width:680px;
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:14px;flex-wrap:wrap;gap:8px;
+    }
+    .back-btn{
+      background:rgba(255,255,255,.45);border:none;color:#1B5E20;
+      padding:9px 22px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
+      cursor:pointer;transition:background .2s;
+    }
+    .back-btn:hover{background:rgba(255,255,255,.65)}
+    .subject-badge{
+      background:rgba(255,255,255,.45);padding:7px 20px;
+      border-radius:999px;font-size:.9rem;font-weight:800;
+      font-family:'Baloo 2',sans-serif;color:#1B5E20;
+    }
+    .lang-toggle{display:flex;gap:6px}
+    .lang-btn{
+      background:rgba(255,255,255,.3);border:none;color:#1B5E20;
+      padding:7px 14px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;
+      cursor:pointer;transition:all .2s;
+    }
+    .lang-btn.active{background:#fff;color:#2E7D32}
+    .lang-btn:hover:not(.active){background:rgba(255,255,255,.5)}
+
+    /* CARD */
+    .game-card{
+      background:rgba(255,255,255,.4);
+      backdrop-filter:blur(14px);
+      border:2.5px solid rgba(255,255,255,.55);
+      border-radius:28px;padding:24px 20px;
+      width:100%;max-width:680px;
+      box-shadow:0 12px 50px rgba(0,0,0,.1);
+    }
+    .game-title{
+      font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;
+      text-align:center;color:#1B5E20;margin-bottom:6px;
+    }
+    .score-bar{display:flex;justify-content:space-between;margin:6px 0;font-size:1rem;font-weight:800;color:#2E7D32}
+    .prog-wrap{background:rgba(255,255,255,.35);border-radius:999px;height:12px;margin-bottom:16px}
+    .prog-fill{height:12px;border-radius:999px;background:linear-gradient(90deg,#43A047,#A5D6A7);transition:width .4s ease}
+
+    /* INSTRUCTION */
+    .instruction{
+      font-size:1.3rem;font-weight:800;text-align:center;
+      margin-bottom:14px;background:rgba(255,255,255,.35);
+      border-radius:16px;padding:10px 14px;color:#1B5E20;line-height:1.4;
+    }
+
+    /* FOOD DISPLAY */
+    .food-show{
+      display:flex;flex-direction:column;align-items:center;gap:8px;
+      background:rgba(255,255,255,.28);border-radius:24px;
+      padding:24px 20px;margin-bottom:18px;
+      border:3px solid rgba(255,255,255,.5);
+    }
+    .food-emoji{
+      font-size:7rem;line-height:1;
+      animation:bounce 2s ease infinite;
+      filter:drop-shadow(0 4px 16px rgba(0,0,0,.12));
+    }
+    .food-label{
+      font-family:'Baloo 2',sans-serif;font-size:1.9rem;font-weight:800;
+      color:#1B5E20;
+    }
+
+    /* SORT BUTTONS */
+    .sort-buttons{
+      display:grid;grid-template-columns:1fr 1fr;
+      gap:14px;margin-bottom:12px;
+    }
+    .sort-btn{
+      background:rgba(255,255,255,.35);
+      border:3px solid rgba(255,255,255,.55);
+      border-radius:22px;padding:18px 12px;
+      font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;
+      color:#1B5E20;cursor:pointer;
+      text-align:center;transition:all .2s;
+      min-height:80px;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:4px;
+    }
+    .sort-btn span.btn-emoji{font-size:2.2rem;display:block}
+    .sort-btn:hover:not(:disabled){background:rgba(255,255,255,.6);transform:scale(1.04)}
+    .sort-btn.correct{background:rgba(0,200,83,.35);border-color:#00C853;animation:pop .4s ease}
+    .sort-btn.wrong{background:rgba(255,64,129,.25);border-color:#FF4081;animation:shake .4s ease}
+    .sort-btn:disabled{cursor:default}
+
+    /* FEEDBACK */
+    .feedback{
+      font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;
+      text-align:center;min-height:1.8rem;margin:8px 0 6px;
+    }
+    .feedback.correct{color:#1B5E20}
+    .feedback.wrong{color:#C62828}
+
+    /* FUN FACT */
+    .fun-fact{
+      font-size:1rem;color:#2E7D32;background:rgba(255,255,255,.3);
+      border-radius:14px;padding:9px 14px;margin-bottom:10px;
+      line-height:1.5;display:none;text-align:center;font-weight:700;
+    }
+    .fun-fact.show{display:block}
+
+    /* NEXT BTN */
+    .next-btn{
+      background:#388E3C;color:#fff;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.8rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;display:none;transition:transform .15s;
+      width:100%;margin-top:4px;
+    }
+    .next-btn:hover{transform:scale(1.04)}
+
+    /* OVERLAY */
+    .overlay{
+      display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,.55);backdrop-filter:blur(10px);
+      align-items:center;justify-content:center;z-index:100;padding:1.5rem;
+    }
+    .overlay.show{display:flex}
+    .result-box{
+      background:linear-gradient(135deg,#E8F5E9,#C8E6C9);
+      border:3px solid rgba(67,160,71,.4);border-radius:28px;
+      padding:2.5rem 2rem;text-align:center;max-width:400px;width:100%;
+      animation:popIn .35s ease;
+    }
+    .res-emoji{font-size:4rem;margin-bottom:.5rem}
+    .res-title{font-family:'Baloo 2',sans-serif;font-size:2.2rem;font-weight:800;color:#1B5E20;margin-bottom:.4rem}
+    .res-score{font-size:1.1rem;color:#2E7D32;margin-bottom:.8rem;font-weight:700}
+    .res-stars{font-size:3rem;margin-bottom:1.2rem;letter-spacing:6px}
+    .play-again-btn{
+      background:#388E3C;color:#fff;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.85rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;transition:transform .15s;
+    }
+    .play-again-btn:hover{transform:scale(1.05)}
+
+    [data-lang]{display:none}
+    [data-lang="en"]{display:inline}
+
+    @media(max-width:480px){
+      .food-emoji{font-size:5.5rem}
+      .sort-btn{font-size:1.2rem;padding:14px 8px;min-height:72px}
+      .sort-btn span.btn-emoji{font-size:1.8rem}
+      .game-title{font-size:1.65rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi">वापस</span><span data-lang="as">পাছে</span></button>
+  <div class="subject-badge">🌱 <span data-lang="en">Science</span><span data-lang="hi">विज्ञान</span><span data-lang="as">বিজ্ঞান</span></div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<!-- GAME CARD -->
+<div class="game-card">
+  <div class="game-title">
+    <span data-lang="en">Fruit or Veggie? 🍎🥦</span>
+    <span data-lang="hi">फल या सब्ज़ी? 🍎🥦</span>
+    <span data-lang="as">ফল নে পাচলি? 🍎🥦</span>
+  </div>
+  <div class="score-bar">
+    <span><span data-lang="en">Score</span><span data-lang="hi">स्कोर</span><span data-lang="as">স্কোৰ</span>: <b id="score-val">0</b> / 80</span>
+    <span><span data-lang="en">Round</span><span data-lang="hi">दौर</span><span data-lang="as">ৰাউণ্ড</span> <b id="round-num">1</b> / 8</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+
+  <div class="instruction">
+    <span data-lang="en">👆 Is it a Fruit or a Vegetable? Tap to sort!</span>
+    <span data-lang="hi">👆 यह फल है या सब्ज़ी? छूकर बताओ!</span>
+    <span data-lang="as">👆 এইটো ফল নে পাচলি? চাপি বাছনি কৰা!</span>
+  </div>
+
+  <div class="food-show">
+    <div class="food-emoji" id="food-emoji"></div>
+    <div class="food-label" id="food-label"></div>
+  </div>
+
+  <div class="sort-buttons">
+    <button class="sort-btn" id="btn-fruit" onclick="handleAnswer('fruit')">
+      <span class="btn-emoji">🍎</span>
+      <span data-lang="en">Fruit</span><span data-lang="hi">फल</span><span data-lang="as">ফল</span>
+    </button>
+    <button class="sort-btn" id="btn-veg" onclick="handleAnswer('vegetable')">
+      <span class="btn-emoji">🥦</span>
+      <span data-lang="en">Vegetable</span><span data-lang="hi">सब्ज़ी</span><span data-lang="as">পাচলি</span>
+    </button>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+  <div class="fun-fact" id="fun-fact"></div>
+  <button class="next-btn" id="next-btn" onclick="nextRound()">
+    <span data-lang="en">Next Food →</span>
+    <span data-lang="hi">अगला खाना →</span>
+    <span data-lang="as">পৰৱৰ্তী খাদ্য →</span>
+  </button>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="result-box">
+    <div class="res-emoji" id="res-emoji"></div>
+    <div class="res-title" id="res-title"></div>
+    <div class="res-score" id="res-score"></div>
+    <div class="res-stars" id="res-stars"></div>
+    <button class="play-again-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again!</span>
+      <span data-lang="hi">🔄 फिर खेलें!</span>
+      <span data-lang="as">🔄 আকৌ খেলক!</span>
+    </button>
+  </div>
+</div>
+
+<script>
+let currentLang='en';
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display=el.dataset.lang===l?'inline':'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((btn,i)=>{
+    btn.classList.toggle('active',['en','hi','as'][i]===l);
+  });
+}
+
+const foods=[
+  {
+    emoji:'🍎',
+    name:{en:'Apple',hi:'सेब',as:'পিঠালু'},
+    type:'fruit',
+    fact:{en:'An apple is a fruit! It grows on trees and has seeds inside. 🌳',
+          hi:'सेब एक फल है! यह पेड़ पर उगता है और इसमें बीज होते हैं। 🌳',
+          as:'পিঠালু এটা ফল! ই গছত ফলে আৰু ভিতৰত গুটি থাকে। 🌳'}
+  },
+  {
+    emoji:'🥕',
+    name:{en:'Carrot',hi:'गाजर',as:'গাজৰ'},
+    type:'vegetable',
+    fact:{en:'Carrot is a vegetable! It grows underground and is orange. 🧡',
+          hi:'गाजर एक सब्ज़ी है! यह ज़मीन के नीचे उगती है और नारंगी रंग की होती है। 🧡',
+          as:'গাজৰ এটা পাচলি! ই মাটিৰ তলত হয় আৰু কমলা ৰঙৰ। 🧡'}
+  },
+  {
+    emoji:'🍌',
+    name:{en:'Banana',hi:'केला',as:'কল'},
+    type:'fruit',
+    fact:{en:'Banana is a fruit! It is yellow and sweet. Monkeys love them! 🐒',
+          hi:'केला एक फल है! यह पीला और मीठा होता है। बंदरों को बहुत पसंद है! 🐒',
+          as:'কল এটা ফল! এইটো হালধীয়া আৰু মিঠা। বান্দৰে ইয়াক ভাল পায়! 🐒'}
+  },
+  {
+    emoji:'🥦',
+    name:{en:'Broccoli',hi:'ब्रोकली',as:'ব্ৰ\'কলি'},
+    type:'vegetable',
+    fact:{en:'Broccoli is a vegetable! It looks like a tiny green tree. 🌲',
+          hi:'ब्रोकली एक सब्ज़ी है! यह एक छोटे हरे पेड़ जैसी दिखती है। 🌲',
+          as:"ব্ৰ'কলি এটা পাচলি! ই এটা সৰু সেউজীয়া গছৰ দৰে দেখা যায়। 🌲"}
+  },
+  {
+    emoji:'🍇',
+    name:{en:'Grapes',hi:'अंगूर',as:'আঙুৰ'},
+    type:'fruit',
+    fact:{en:'Grapes are a fruit! They grow in bunches on vines. 🍷',
+          hi:'अंगूर एक फल है! ये बेल पर गुच्छों में उगते हैं। 🍷',
+          as:'আঙুৰ এটা ফল! ই লতাত গুচ্ছত জন্মে। 🍷'}
+  },
+  {
+    emoji:'🥔',
+    name:{en:'Potato',hi:'आलू',as:'আলু'},
+    type:'vegetable',
+    fact:{en:'Potato is a vegetable! It grows underground and makes tasty chips! 🍟',
+          hi:'आलू एक सब्ज़ी है! यह ज़मीन के नीचे उगता है और स्वादिष्ट चिप्स बनते हैं! 🍟',
+          as:'আলু এটা পাচলি! ই মাটিৰ তলত হয় আৰু মজাদাৰ চিপছ বনায়! 🍟'}
+  },
+  {
+    emoji:'🍓',
+    name:{en:'Strawberry',hi:'स्ट्रॉबेरी',as:'ষ্ট্ৰবেৰী'},
+    type:'fruit',
+    fact:{en:'Strawberry is a fruit! It is red and heart-shaped. So sweet! ❤️',
+          hi:'स्ट्रॉबेरी एक फल है! यह लाल और दिल के आकार की होती है। कितनी मीठी! ❤️',
+          as:'ষ্ট্ৰবেৰী এটা ফল! এইটো ৰঙা আৰু হৃদয়-আকৃতিৰ। বহুত মিঠা! ❤️'}
+  },
+  {
+    emoji:'🌽',
+    name:{en:'Corn',hi:'मक्का',as:'মকৈ'},
+    type:'vegetable',
+    fact:{en:'Corn is a vegetable! It is yellow and crunchy. Great for roasting! 🔥',
+          hi:'मक्का एक सब्ज़ी है! यह पीला और कुरकुरा होता है। भूनने के लिए बढ़िया! 🔥',
+          as:'মকৈ এটা পাচলি! এইটো হালধীয়া আৰু মচমচীয়া। ভাজিবলৈ বহুত ভাল! 🔥'}
+  }
+];
+
+let order=[],ri=0,score=0,answered=false;
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+
+function startGame(){
+  order=shuffle([...Array(foods.length).keys()]);
+  ri=0;score=0;
+  document.getElementById('overlay').classList.remove('show');
+  loadRound();
+}
+
+function loadRound(){
+  const f=foods[order[ri]];
+  answered=false;
+
+  const pct=(ri/foods.length)*100;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('score-val').textContent=score;
+  document.getElementById('round-num').textContent=ri+1;
+  document.getElementById('food-emoji').textContent=f.emoji;
+  document.getElementById('food-label').textContent=f.name[currentLang]||f.name['en'];
+
+  document.getElementById('btn-fruit').disabled=false;
+  document.getElementById('btn-veg').disabled=false;
+  document.getElementById('btn-fruit').className='sort-btn';
+  document.getElementById('btn-veg').className='sort-btn';
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('fun-fact').classList.remove('show');
+  document.getElementById('next-btn').style.display='none';
+}
+
+function handleAnswer(chosen){
+  if(answered)return;
+  answered=true;
+  const f=foods[order[ri]];
+  const isCorrect=chosen===f.type;
+
+  document.getElementById('btn-fruit').disabled=true;
+  document.getElementById('btn-veg').disabled=true;
+
+  const correctBtn=document.getElementById(f.type==='fruit'?'btn-fruit':'btn-veg');
+  const chosenBtn=document.getElementById(chosen==='fruit'?'btn-fruit':'btn-veg');
+
+  correctBtn.classList.add('correct');
+  if(!isCorrect) chosenBtn.classList.add('wrong');
+
+  const fb=document.getElementById('feedback');
+  const ff=document.getElementById('fun-fact');
+
+  if(isCorrect){
+    score+=10;
+    fb.textContent='✓ '+(f.type==='fruit'?{en:'Yes, it\'s a fruit!',hi:'हाँ, यह फल है!',as:'হয়, এইটো ফল!'}[currentLang]:{en:'Yes, it\'s a vegetable!',hi:'हाँ, यह सब्ज़ी है!',as:'হয়, এইটো পাচলি!'}[currentLang]);
+    fb.className='feedback correct';
+  } else {
+    fb.textContent='✗ '+(f.type==='fruit'?{en:'It\'s a fruit!',hi:'यह फल है!',as:'এইটো ফল!'}[currentLang]:{en:'It\'s a vegetable!',hi:'यह सब्ज़ी है!',as:'এইটো পাচলি!'}[currentLang]);
+    fb.className='feedback wrong';
+  }
+
+  ff.textContent=f.fact[currentLang]||f.fact['en'];
+  ff.classList.add('show');
+  document.getElementById('score-val').textContent=score;
+  document.getElementById('next-btn').style.display='block';
+}
+
+function nextRound(){
+  ri++;
+  if(ri>=foods.length){showResult();return;}
+  loadRound();
+}
+
+function showResult(){
+  document.getElementById('prog-fill').style.width='100%';
+  const pct=(score/(foods.length*10))*100;
+  let emoji='😊',title='Good Try!';
+  if(pct>=90){emoji='🏆';title='Super Sorter!';}
+  else if(pct>=70){emoji='🎉';title='Well Done!';}
+  else if(pct>=40){emoji='👍';title='Good Job!';}
+
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'';
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-title').textContent=title;
+  document.getElementById('res-score').textContent='Score: '+score+' / '+(foods.length*10);
+  document.getElementById('res-stars').textContent=stars;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function restartGame(){startGame();}
+startGame();
+</script>
+</body>
+</html>

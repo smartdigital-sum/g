@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎨 विशेषण चित्रशाला — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#180A28;--card:#261040;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--purple:#C77DFF;--pink:#FF9CC2;--text:#FFF0FF;--dim:#8060AA}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(199,125,255,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.35rem;font-weight:800;color:var(--gold)}
+.hindi-sub{font-family:'Noto Sans Devanagari',sans-serif;font-size:.9rem;color:var(--purple)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.2rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+.hook{background:linear-gradient(135deg,rgba(199,125,255,.12),rgba(255,156,194,.08));border:1px solid rgba(199,125,255,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.87rem;line-height:1.65;color:#E8C4FF}
+.hook strong{color:var(--gold)}
+.hook .hindi{font-family:'Noto Sans Devanagari',sans-serif;font-size:.95rem;color:var(--purple)}
+/* Scene */
+.scene-card{background:var(--card);border-radius:16px;padding:20px;width:100%;max-width:460px;border:2px solid rgba(199,125,255,.18);text-align:center;position:relative;overflow:hidden}
+.scene-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(199,125,255,.07),transparent 60%)}
+.scene-emoji{font-size:4.5rem;display:block;margin-bottom:10px;transition:all .4s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(0 4px 16px rgba(199,125,255,.3))}
+.sentence-display{font-family:'Noto Sans Devanagari',sans-serif;font-size:1.15rem;color:var(--text);line-height:1.6;margin-bottom:6px}
+.sentence-display .blank{display:inline-block;min-width:80px;border-bottom:2px dashed rgba(199,125,255,.6);color:var(--purple);padding:0 8px}
+.sentence-display .filled-adj{color:var(--teal);font-weight:700}
+.sentence-meaning{font-size:.82rem;color:var(--dim);font-style:italic}
+/* Word bank */
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:460px}
+.hindi-word{padding:12px 18px;background:var(--card);border:2px solid rgba(199,125,255,.25);border-radius:50px;cursor:pointer;font-family:'Noto Sans Devanagari',sans-serif;font-size:1rem;color:var(--text);transition:all .2s;user-select:none;display:flex;flex-direction:column;align-items:center;gap:2px}
+.hindi-word:hover{border-color:var(--purple);transform:scale(1.06);background:rgba(199,125,255,.1)}
+.hindi-word.correct{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal);pointer-events:none}
+.hindi-word.wrong{border-color:var(--coral);animation:wrongShake .4s ease}
+.hindi-word .meaning{font-size:.6rem;font-family:'Nunito',sans-serif;color:var(--dim);font-style:italic}
+@keyframes wrongShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.result-msg{font-size:.88rem;color:var(--dim);text-align:center;min-height:1.3em;font-family:'Noto Sans Devanagari',sans-serif}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#180A28;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(24,10,40,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4rem}.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.9rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.88rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="game-title">🎨 <span class="hindi-sub">विशेषण चित्रशाला</span></div>
+    <div class="subject-tag">Hindi · Adjectives (Visheshan) · Class 3</div>
+  </div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+<div class="game-area">
+  <div class="hook">
+    <span class="hindi">एक शब्द से पूरी तस्वीर बदल जाती है!</span><br>
+    One word changes the whole picture — <strong>"बड़ा घर"</strong> and <strong>"टूटा हुआ घर"</strong> are completely different stories. Pick the right विशेषण!
+  </div>
+  <div class="scene-card">
+    <span class="scene-emoji" id="sceneEmoji">🏠</span>
+    <div class="sentence-display" id="sentDisplay">Loading...</div>
+    <div class="sentence-meaning" id="sentMeaning"></div>
+  </div>
+  <div class="result-msg" id="resultMsg">सही विशेषण चुनो! (Choose the correct adjective!)</div>
+  <div class="word-bank" id="wordBank"></div>
+</div>
+<div class="bottom">
+  <div class="prog" id="prog">सवाल 1 / 8</div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()">अगला →</button>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">शाबाश!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+<script>
+const QS=[
+  {emoji:'🐘',sentence:'___ हाथी जंगल में रहता है।',meaning:'___ elephant lives in the forest.',correct:'बड़ा',meaning_adj:'big',opts:[{h:'बड़ा',e:'big'},{h:'छोटा',e:'small'},{h:'लाल',e:'red'},{h:'गोल',e:'round'}],fact:'हाथी बड़ा होता है। (Elephant is BIG!)'},
+  {emoji:'🌹',sentence:'बगीचे में ___ गुलाब खिला है।',meaning:'A ___ rose has bloomed in the garden.',correct:'लाल',meaning_adj:'red',opts:[{h:'लाल',e:'red'},{h:'मीठा',e:'sweet'},{h:'भारी',e:'heavy'},{h:'लंबा',e:'tall'}],fact:'गुलाब लाल होता है। (Rose is RED!)'},
+  {emoji:'🍯',sentence:'मधुमक्खी का शहद ___ होता है।',meaning:'Honeybee\'s honey is ___.',correct:'मीठा',meaning_adj:'sweet',opts:[{h:'मीठा',e:'sweet'},{h:'कड़वा',e:'bitter'},{h:'बड़ा',e:'big'},{h:'ठंडा',e:'cold'}],fact:'शहद मीठा होता है। (Honey is SWEET!)'},
+  {emoji:'⛰️',sentence:'हिमालय बहुत ___ पहाड़ है।',meaning:'Himalaya is a very ___ mountain.',correct:'ऊँचा',meaning_adj:'tall/high',opts:[{h:'ऊँचा',e:'tall'},{h:'छोटा',e:'small'},{h:'गोल',e:'round'},{h:'नीला',e:'blue'}],fact:'हिमालय ऊँचा है। (Himalaya is TALL!)'},
+  {emoji:'🌊',sentence:'ब्रह्मपुत्र ___ नदी है।',meaning:'Brahmaputra is a ___ river.',correct:'चौड़ी',meaning_adj:'wide',opts:[{h:'चौड़ी',e:'wide'},{h:'पतली',e:'thin'},{h:'काली',e:'black'},{h:'छोटी',e:'small'}],fact:'ब्रह्मपुत्र चौड़ी नदी है। (Brahmaputra is a WIDE river!)'},
+  {emoji:'🐅',sentence:'बाघ एक ___ जानवर है।',meaning:'Tiger is a ___ animal.',correct:'ताकतवर',meaning_adj:'powerful',opts:[{h:'ताकतवर',e:'powerful'},{h:'कमज़ोर',e:'weak'},{h:'छोटा',e:'small'},{h:'मीठा',e:'sweet'}],fact:'बाघ ताकतवर होता है। (Tiger is POWERFUL!)'},
+  {emoji:'❄️',sentence:'बर्फ ___ होती है।',meaning:'Ice/Snow is ___.',correct:'ठंडी',meaning_adj:'cold',opts:[{h:'ठंडी',e:'cold'},{h:'गर्म',e:'hot'},{h:'लाल',e:'red'},{h:'भारी',e:'heavy'}],fact:'बर्फ ठंडी होती है। (Ice is COLD!)'},
+  {emoji:'🌙',sentence:'रात का आकाश ___ होता है।',meaning:'The night sky is ___.',correct:'काला',meaning_adj:'black/dark',opts:[{h:'काला',e:'dark'},{h:'सफ़ेद',e:'white'},{h:'मीठा',e:'sweet'},{h:'छोटा',e:'small'}],fact:'रात का आकाश काला होता है। (Night sky is DARK!)'},
+];
+let qi=0,score=0,answered=false;
+function loadQ(){
+  const q=QS[qi];answered=false;
+  document.getElementById('prog').textContent=`सवाल ${qi+1} / ${QS.length}`;
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('sceneEmoji').textContent=q.emoji;
+  document.getElementById('sentDisplay').innerHTML=q.sentence.replace('___','<span class="blank">___</span>');
+  document.getElementById('sentMeaning').textContent=q.meaning.replace('___','[?]');
+  document.getElementById('resultMsg').textContent='सही विशेषण चुनो! (Choose the right adjective!)';
+  buildBank(q);
+}
+function buildBank(q){
+  const bank=document.getElementById('wordBank');bank.innerHTML='';
+  [...q.opts].sort(()=>Math.random()-.5).forEach(o=>{
+    const el=document.createElement('div');el.className='hindi-word';
+    el.innerHTML=`${o.h}<span class="meaning">${o.e}</span>`;
+    el.onclick=()=>pick(el,o.h,q);
+    bank.appendChild(el);
+  });
+}
+function pick(el,val,q){
+  if(answered)return;answered=true;
+  if(val===q.correct){
+    el.classList.add('correct');score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+    document.getElementById('sentDisplay').innerHTML=q.sentence.replace('___',`<span class="filled-adj">${q.correct}</span>`);
+    document.getElementById('sentMeaning').textContent=q.meaning.replace('___',`"${q.meaning_adj}"`);
+    document.getElementById('resultMsg').textContent=`✅ ${q.fact}`;
+    document.getElementById('sceneEmoji').style.transform='scale(1.25)';
+    setTimeout(()=>document.getElementById('sceneEmoji').style.transform='scale(1)',400);
+    showOv('शाबाश! 🌟',q.fact);confetti();setTimeout(hideOv,2000);
+  } else {
+    el.classList.add('wrong');
+    document.querySelectorAll('.hindi-word').forEach(w=>{if(w.textContent.startsWith(q.correct))w.classList.add('correct');});
+    document.getElementById('resultMsg').textContent=`सही जवाब: ${q.correct} (${q.meaning_adj})`;
+  }
+  document.getElementById('nextBtn').style.display='block';
+}
+function nextQ(){qi++;document.getElementById('nextBtn').style.display='none';if(qi>=QS.length){endGame();return;}loadQ();}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOv(`Score: ${score}/${QS.length}!`,'विशेषण उस्ताद! You are an Adjective Master!');
+  document.getElementById('nextBtn').textContent='फिर खेलो ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;qi=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='अगला →';document.getElementById('nextBtn').onclick=nextQ;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='शाबाश!';hideOv();loadQ();};
+}
+function showOv(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOv(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#C77DFF','#FFD166','#06D6A0','#FF9CC2','#FF9F1C'];for(let i=0;i<25;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+loadQ();
+</script>
+</body>
+</html>

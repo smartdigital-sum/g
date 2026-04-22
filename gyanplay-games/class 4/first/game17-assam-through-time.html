@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Assam Through Time — GyanPlay Class 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --lime:#A8E063;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#071A12,#040E0A);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 40px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.h-left{display:flex;flex-direction:column;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.game-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);}
+.subject-tag{font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:1.3rem;opacity:.25;transition:opacity .3s,filter .3s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.wow{background:linear-gradient(135deg,rgba(255,209,102,.15),rgba(255,159,28,.04));
+  border:1px solid rgba(255,209,102,.3);border-radius:16px;padding:16px;margin-bottom:18px;}
+.wow-emoji{font-size:2rem;margin-bottom:6px;}
+.wow p{font-size:.88rem;line-height:1.55;}
+.wow p span{color:var(--gold);font-weight:700;}
+.wow-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-top:6px;}
+/* Phase indicator */
+.phase-bar{display:flex;align-items:center;gap:6px;margin-bottom:14px;}
+.phase-step{flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.1);transition:background .4s;}
+.phase-step.done{background:var(--teal);}
+.phase-step.active{background:var(--gold);}
+.phase-label{font-size:.72rem;color:var(--dim);}
+/* Timeline cards */
+.timeline-scroll{display:flex;flex-direction:column;gap:0;margin-bottom:14px;}
+.era-card{background:var(--card);border-radius:16px;margin-bottom:10px;overflow:hidden;
+  border:1px solid rgba(255,209,102,.12);cursor:pointer;touch-action:manipulation;transition:border-color .2s;}
+.era-card:active{border-color:var(--gold);}
+.era-card.explored{border-color:rgba(6,214,160,.3);}
+.era-header{display:flex;align-items:center;gap:12px;padding:14px 16px;}
+.era-emoji{font-size:1.8rem;}
+.era-info{flex:1;}
+.era-period{font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:800;color:var(--gold);}
+.era-name{font-size:.78rem;color:var(--dim);margin-top:2px;}
+.era-name-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.7rem;color:var(--dim);}
+.era-badge{font-size:.65rem;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.06);color:var(--dim);}
+.era-badge.explored{background:rgba(6,214,160,.15);color:var(--teal);border:1px solid rgba(6,214,160,.3);}
+.era-body{padding:0 16px 14px;display:none;border-top:1px solid rgba(255,255,255,.05);padding-top:12px;}
+.era-body.show{display:block;}
+.era-text{font-size:.85rem;line-height:1.6;margin-bottom:8px;}
+.era-text-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.76rem;color:var(--dim);line-height:1.6;margin-bottom:8px;}
+.era-fact{font-size:.78rem;color:var(--teal);font-style:italic;padding:8px 10px;
+  background:rgba(6,214,160,.06);border-radius:8px;}
+.era-fact .as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.7rem;display:block;margin-top:3px;}
+/* Explore progress */
+.explore-progress{text-align:center;font-size:.78rem;color:var(--dim);margin-bottom:10px;}
+.start-quiz-btn{width:100%;padding:12px;background:var(--gold);color:#040E04;border:none;border-radius:12px;
+  font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;
+  touch-action:manipulation;display:none;transition:transform .1s;}
+.start-quiz-btn:active{transform:scale(.97);}
+.start-quiz-btn.show{display:block;}
+/* Quiz */
+.quiz-wrap{background:var(--card);border-radius:20px;padding:20px;margin-bottom:14px;
+  border:1px solid rgba(255,209,102,.15);display:none;}
+.quiz-wrap.show{display:block;}
+.q-num{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.q-text{font-size:.9rem;line-height:1.5;margin-bottom:6px;}
+.q-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:12px;}
+.q-opts{display:flex;flex-direction:column;gap:8px;}
+.q-opt{padding:12px 14px;background:rgba(255,209,102,.06);border:2px solid rgba(255,209,102,.15);
+  border-radius:12px;font-size:.88rem;cursor:pointer;touch-action:manipulation;transition:all .15s;}
+.q-opt:active{transform:scale(.98);}
+.q-opt.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal);}
+.q-opt.wrong{background:rgba(255,107,107,.12);border-color:var(--coral);color:var(--coral);}
+.q-opt.disabled{pointer-events:none;}
+.feedback{text-align:center;font-size:.85rem;min-height:1.2em;font-weight:600;margin-top:8px;}
+.feedback.ok{color:var(--teal);}
+.feedback.err{color:var(--coral);}
+.progress-wrap{margin-bottom:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);margin-bottom:5px;}
+.prog-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--gold);border-radius:99px;transition:width .4s;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;
+  justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-card{background:var(--card);border:1px solid rgba(255,209,102,.3);border-radius:22px;
+  padding:28px 24px;text-align:center;max-width:320px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);}to{transform:scale(1) translateY(0);}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px;}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.ov-fact{font-size:.83rem;line-height:1.5;margin-bottom:12px;}
+.ov-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+.ov-btn{padding:12px 28px;background:var(--gold);color:#0F0820;border:none;border-radius:12px;
+  font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:200;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen"><div style="font-size:2.5rem">🏺</div><p>Loading… / লোড হৈছে…</p></div>
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="h-left">
+      <div class="game-title">Assam Through Time</div>
+      <div class="game-title-as">সময়ৰ মাজেৰে অসম</div>
+      <div class="subject-tag">SST · শ্ৰেণী ৪</div>
+    </div>
+    <div class="stars" id="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+  <div class="wow">
+    <div class="wow-emoji">⚔️</div>
+    <p>The Ahom Kingdom ruled Assam for <span>600 years</span> and <span>NEVER fell</span> to the Mughal Empire — in <span>17 invasions!</span> Tiny Assam defeated the most powerful empire in Asia again and again!</p>
+    <div class="wow-as">আহোম ৰাজ্যই ৬০০ বছৰ অসম শাসন কৰিলে আৰু মোগল সাম্ৰাজ্যৰ ১৭টা আক্ৰমণত কেতিয়াও হাৰ নামানিলে!</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-label"><span>Score / স্কোৰ: <span id="scoreDisplay">0</span>/6</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="phase-bar">
+    <div class="phase-step active" id="ps0"></div>
+    <div class="phase-step" id="ps1"></div>
+    <div class="phase-step" id="ps2"></div>
+    <div class="phase-step" id="ps3"></div>
+    <div class="phase-label" id="phaseLabel">Explore the eras first</div>
+  </div>
+  <div id="exploreSection">
+    <div class="timeline-scroll" id="timelineCards"></div>
+    <div class="explore-progress" id="exploreProgress">0/4 eras explored — tap each card to read</div>
+    <button class="start-quiz-btn" id="startQuizBtn" onclick="startQuiz()">✓ Start Quiz! / প্ৰশ্নোত্তৰ আৰম্ভ কৰক!</button>
+  </div>
+  <div class="quiz-wrap" id="quizWrap">
+    <div class="q-num" id="qNum">Question 1/6</div>
+    <div class="q-text" id="qText"></div>
+    <div class="q-as" id="qAs"></div>
+    <div class="q-opts" id="qOpts"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <div class="ov-as" id="ovAs"></div>
+    <button class="ov-btn" id="ovBtn">Next →</button>
+  </div>
+</div>
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let currentUser=null;
+auth.onAuthStateChanged(u=>{
+  if(!u){window.location.href='/login.html';return;}
+  currentUser=u;
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initGame();
+});
+
+const ERAS=[
+  {emoji:'🏔️',period:'Ancient Assam (Pragjyotisha)',name:'Before 7th Century',nameAs:'৭ম শতাব্দীৰ আগত',
+   text:'Ancient Assam was known as Pragjyotisha — meaning "the land of eastern light." It appears in the Mahabharata and Ramayana. The legendary king Naraka ruled here, and it was believed to be a land of magic and power.',
+   textAs:'প্ৰাচীন অসমক প্ৰাগজ্যোতিষ বুলি কোৱা হৈছিল — অৰ্থাৎ "পূবৰ পোহৰৰ দেশ।" মহাভাৰত আৰু ৰামায়ণত ইয়াৰ উল্লেখ আছে।',
+   fact:'Pragjyotisha is mentioned in the Mahabharata as a kingdom of great warriors — Assam has ancient connections to India\'s greatest epics!',
+   factAs:'প্ৰাগজ্যোতিষৰ কথা মহাভাৰতত মহান যোদ্ধাৰ ৰাজ্য হিচাপে উল্লেখ আছে।'},
+  {emoji:'⚔️',period:'Ahom Kingdom',name:'1228–1826 CE (598 years!)',nameAs:'১২২৮–১৮২৬ খ্ৰী.',
+   text:'The Ahom people came from Southeast Asia (present-day Myanmar/Thailand) and established their kingdom in 1228 CE. They were brilliant administrators who built a system of governance called Paik system. They defeated 17 Mughal invasions — most famously in the Battle of Saraighat (1671) under commander Lachit Borphukan.',
+   textAs:'আহোম লোকসকল দক্ষিণ-পূব এছিয়াৰ পৰা আহি ১২২৮ চনত ৰাজ্য স্থাপন কৰিছিল। ১৬৭১ চনৰ সৰাইঘাটৰ যুদ্ধত লাচিত বৰফুকনে মোগলক পৰাস্ত কৰিছিল।',
+   fact:'Lachit Borphukan is Assam\'s greatest hero — he defeated the Mughal navy at Saraighat. His statue stands at the famous battle site today!',
+   factAs:'লাচিত বৰফুকন অসমৰ সৰ্বশ্ৰেষ্ঠ বীৰ। সৰাইঘাটত মোগল নৌবাহিনীক পৰাস্ত কৰিছিল।'},
+  {emoji:'🇬🇧',period:'British Era',name:'1826–1947 CE',nameAs:'১৮২৬–১৯৪৭ খ্ৰী.',
+   text:'After the Yandaboo Treaty (1826), Assam came under British control. The British discovered tea in Assam (1823) and established the tea industry. Assam became famous worldwide for its tea. Freedom fighters like Kushal Konwar and Maniram Dewan fought against British rule.',
+   textAs:'ইয়ান্দাবু চুক্তিৰ পিছত অসম ব্ৰিটিছ নিয়ন্ত্ৰণলৈ আহে। ব্ৰিটিছে অসমত চাহ আৱিষ্কাৰ কৰে আৰু চাহ শিল্প স্থাপন কৰে।',
+   fact:'Maniram Dewan was Assam\'s first tea planter AND a freedom fighter — he was executed by the British in 1858 for joining the 1857 revolt!',
+   factAs:'মানিৰাম দেৱান অসমৰ প্ৰথম চাহ ৰোপণকাৰী আৰু স্বাধীনতা যোদ্ধা।'},
+  {emoji:'🇮🇳',period:'Independence & Modern Assam',name:'1947 CE – Present',nameAs:'১৯৪৭ খ্ৰী. – বৰ্তমান',
+   text:'Assam joined India at Independence in 1947. Gopinath Bordoloi, Assam\'s first Chief Minister, played a key role in keeping Assam with India. Assam became a state with 33 districts. Today Assam is famous for tea, oil, silk (Muga and Eri), wildlife (Kaziranga), and the Bihu festival.',
+   textAs:'গোপীনাথ বৰদলৈ অসমৰ প্ৰথম মুখ্যমন্ত্ৰী আছিল। তেওঁ অসমক ভাৰতৰ লগত ৰখাত মূল ভূমিকা পালন কৰিছিল।',
+   fact:'Gopinath Bordoloi received the Bharat Ratna (India\'s highest honour) posthumously in 1999 for his role in keeping Assam united with India!',
+   factAs:'গোপীনাথ বৰদলৈক ১৯৯৯ত মৰণোত্তৰভাৱে ভাৰতৰত্ন প্ৰদান কৰা হৈছিল।'},
+];
+
+const QUIZ=[
+  {q:"The Battle of Saraighat (1671) was fought against which empire?",qAs:"সৰাইঘাটৰ যুদ্ধ (১৬৭১) কোন সাম্ৰাজ্যৰ বিৰুদ্ধে হৈছিল?",
+   opts:['British','Mughal','Maratha','Portuguese'],ans:1,
+   fact:"Lachit Borphukan defeated the Mughal navy on the Brahmaputra. This is celebrated as Lachit Diwas on Nov 24!",factAs:"লাচিত বৰফুকনে ব্ৰহ্মপুত্ৰত মোগল নৌবাহিনীক পৰাজিত কৰিছিল। লাচিত দিৱস ২৪ নৱেম্বৰত পালন হয়!"},
+  {q:"What was ancient Assam called?",qAs:"প্ৰাচীন অসমক কি বুলি কোৱা হৈছিল?",
+   opts:['Kamarupa','Pragjyotisha','Kamakhya','Ahom Raj'],ans:1,
+   fact:"Pragjyotisha means 'land of eastern light' — and Assam still lights up the eastern horizon of India!",factAs:"প্ৰাগজ্যোতিষ মানে 'পূবৰ পোহৰৰ দেশ' — অসম এতিয়াও ভাৰতৰ পূবৰ দিগন্ত উজলাই আছে!"},
+  {q:"Which treaty brought Assam under British control?",qAs:"কোন চুক্তিয়ে অসমক ব্ৰিটিছ নিয়ন্ত্ৰণলৈ আনিলে?",
+   opts:['Treaty of Amritsar','Treaty of Yandaboo','Treaty of Allahabad','Treaty of Lahore'],ans:1,
+   fact:"The Yandaboo Treaty was signed in 1826 after the First Anglo-Burmese War. It ended 598 years of Ahom rule!",factAs:"ইয়ান্দাবু চুক্তি ১৮২৬ চনত প্ৰথম ইংৰাজ-বাৰ্মিজ যুদ্ধৰ পিছত স্বাক্ষৰিত হৈছিল।"},
+  {q:"Who was Assam's first Chief Minister after Independence?",qAs:"স্বাধীনতাৰ পিছত অসমৰ প্ৰথম মুখ্যমন্ত্ৰী কোন আছিল?",
+   opts:['Bimala Prasad Chaliha','Sarat Chandra Singha','Gopinath Bordoloi','Tarun Gogoi'],ans:2,
+   fact:"Gopinath Bordoloi received the Bharat Ratna in 1999 — 50 years after his death in 1950!",factAs:"গোপীনাথ বৰদলৈক ১৯৫০ত মৃত্যুৰ ৫০ বছৰ পিছত ১৯৯৯ত ভাৰতৰত্ন দিয়া হৈছিল।"},
+  {q:"For how many years did the Ahom Kingdom rule Assam?",qAs:"আহোম ৰাজ্যই কিমান বছৰ অসম শাসন কৰিছিল?",
+   opts:['200 years','400 years','600 years','800 years'],ans:2,
+   fact:"598 years! From 1228 to 1826. No other Indian dynasty ruled for this long continuously in the same region!",factAs:"৫৯৮ বছৰ! ১২২৮ৰ পৰা ১৮২৬লৈ। কোনো আন ভাৰতীয় ৰাজবংশ ইমান দীৰ্ঘকাল একেঠাইত শাসন কৰা নাই!"},
+  {q:"Assam is famous for which unique silk, found nowhere else?",qAs:"অসম কোন অনন্য ৰেচম কাপোৰৰ বাবে বিখ্যাত?",
+   opts:['Silk from China','Muga silk','Cotton silk','Polyester silk'],ans:1,
+   fact:"Muga silk is produced only in Assam — it has a natural golden sheen and gets more beautiful with each wash!",factAs:"মুগা ৰেচম কেৱল অসমতহে উৎপাদিত হয় — ইয়াৰ প্ৰাকৃতিক সোণালী ৰং আৰু প্ৰতিটো ধোৱাৰ সৈতে আৰু সুন্দৰ হয়!"},
+];
+
+let explored=new Set(),quizQ=0,score=0;
+
+function initGame(){explored=new Set();quizQ=0;score=0;updateStars(0);buildCards();updatePhaseBar();}
+
+function buildCards(){
+  const container=document.getElementById('timelineCards');
+  container.innerHTML='';
+  ERAS.forEach((e,i)=>{
+    const card=document.createElement('div');
+    card.className='era-card'+(explored.has(i)?' explored':'');
+    card.id='era-'+i;
+    card.innerHTML=`
+      <div class="era-header">
+        <div class="era-emoji">${e.emoji}</div>
+        <div class="era-info">
+          <div class="era-period">${e.period}</div>
+          <div class="era-name">${e.name}</div>
+          <div class="era-name-as">${e.nameAs}</div>
+        </div>
+        <div class="era-badge${explored.has(i)?' explored':''}" id="badge-${i}">${explored.has(i)?'✓ Read':'Tap to explore'}</div>
+      </div>
+      <div class="era-body" id="body-${i}">
+        <div class="era-text">${e.text}</div>
+        <div class="era-text-as">${e.textAs}</div>
+        <div class="era-fact">💡 ${e.fact}<span class="as">${e.factAs}</span></div>
+      </div>`;
+    card.addEventListener('click',()=>toggleEra(i));
+    container.appendChild(card);
+  });
+}
+
+function toggleEra(i){
+  const body=document.getElementById('body-'+i);
+  const isOpen=body.classList.contains('show');
+  // close all
+  document.querySelectorAll('.era-body').forEach(b=>b.classList.remove('show'));
+  if(!isOpen){
+    body.classList.add('show');
+    explored.add(i);
+    document.getElementById('era-'+i).classList.add('explored');
+    document.getElementById('badge-'+i).className='era-badge explored';
+    document.getElementById('badge-'+i).textContent='✓ Read';
+  }
+  updatePhaseBar();
+  if(explored.size>=4){document.getElementById('startQuizBtn').classList.add('show');}
+  document.getElementById('exploreProgress').textContent=`${explored.size}/4 eras explored`;
+}
+
+function updatePhaseBar(){
+  const n=explored.size;
+  [0,1,2,3].forEach(i=>{
+    const s=document.getElementById('ps'+i);
+    s.className='phase-step'+(i<n?' done':i===n?' active':'');
+  });
+  document.getElementById('phaseLabel').textContent=n>=4?'All eras explored! Start quiz →':`${n}/4 eras explored`;
+}
+
+function startQuiz(){
+  document.getElementById('exploreSection').style.display='none';
+  document.getElementById('quizWrap').classList.add('show');
+  renderQ(0);
+}
+
+function renderQ(idx){
+  const q=QUIZ[idx];
+  document.getElementById('qNum').textContent=`Question ${idx+1}/6 · প্ৰশ্ন ${idx+1}/৬`;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('qAs').textContent=q.qAs;
+  document.getElementById('feedback').textContent='';
+  document.getElementById('progFill').style.width=(idx/6*100)+'%';
+  const opts=document.getElementById('qOpts');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const btn=document.createElement('div');btn.className='q-opt';btn.textContent=o;
+    btn.addEventListener('click',()=>answerQ(btn,i,q,idx));
+    opts.appendChild(btn);
+  });
+}
+
+function answerQ(btn,chosen,q,idx){
+  document.querySelectorAll('.q-opt').forEach(o=>o.classList.add('disabled'));
+  if(chosen===q.ans){
+    btn.classList.add('correct');score++;
+    document.getElementById('scoreDisplay').textContent=score;
+    document.getElementById('progFill').style.width=((idx+1)/6*100)+'%';
+    updateStars(Math.min(5,Math.ceil(score/1.2)));confetti();
+    document.getElementById('ovEmoji').textContent='🏺';
+    document.getElementById('ovTitle').textContent=['Excellent!','Brilliant!','Spot on!','Amazing!','Outstanding!'][Math.floor(Math.random()*5)];
+    document.getElementById('ovFact').textContent=q.fact;
+    document.getElementById('ovAs').textContent=q.factAs;
+    const isLast=idx>=5;
+    document.getElementById('ovBtn').textContent=isLast?'Finish! / শেষ!':'Next →';
+    document.getElementById('ovBtn').onclick=()=>{showOverlay(false);if(isLast)endGame();else renderQ(idx+1);};
+    setTimeout(()=>showOverlay(true),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.q-opt').forEach((o,i)=>{if(i===q.ans)o.classList.add('correct');});
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent='❌ Not quite — check the correct answer above!';
+    setTimeout(()=>{document.getElementById('feedback').textContent='';if(idx<5)renderQ(idx+1);else endGame();},2200);
+  }
+}
+
+function endGame(){
+  trackProgress();
+  document.getElementById('ovEmoji').textContent='🏆';
+  document.getElementById('ovTitle').textContent='Assam Historian! / অসম ইতিহাসবিদ!';
+  document.getElementById('ovFact').textContent=`Score: ${score}/6! You explored Assam from ancient Pragjyotisha through the Ahom kingdom to modern India!`;
+  document.getElementById('ovAs').textContent=`স্কোৰ: ${score}/৬! প্ৰাগজ্যোতিষৰ পৰা আহোম ৰাজ্য আৰু আধুনিক অসমলৈকে যাত্ৰা সম্পন্ন!`;
+  document.getElementById('ovBtn').textContent='🔄 Play Again / আকৌ খেলক';
+  document.getElementById('ovBtn').onclick=()=>{showOverlay(false);document.getElementById('quizWrap').classList.remove('show');document.getElementById('exploreSection').style.display='';initGame();};
+  showOverlay(true);
+}
+async function trackProgress(){
+  if(!currentUser)return;
+  try{await db.collection('users').doc(currentUser.uid).collection('progress').doc('class4-game17').set(
+    {score,total:6,gameId:'class4-game17',gameName:'Assam Through Time',class:4,subject:'SST',completedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+}
+function updateStars(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function showOverlay(s){document.getElementById('overlay').classList.toggle('show',s);}
+function confetti(){
+  const cols=['#FFD166','#A8E063','#06D6A0','#FF6B6B','#FF9F1C'];
+  for(let i=0;i<26;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%5]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}
+}
+</script>
+</body>
+</html>

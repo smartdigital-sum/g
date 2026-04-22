@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Force &amp; Laws of Motion — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--green);color:#000;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--sky);color:#000;border-color:var(--sky);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--sky);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--sky),var(--green));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.55;margin-bottom:18px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;}
+.choice-btn:hover:not(:disabled){background:rgba(0,174,239,.12);border-color:var(--sky);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--sky);color:#000;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--sky);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Science · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('hi')">हि</button>
+      <button class="lang-btn" onclick="setLang('as')">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">⚡ Force &amp; Laws of Motion</span>
+    <span data-lang="hi" style="display:none">⚡ बल और गति के नियम</span>
+    <span data-lang="as" style="display:none">⚡ বল আৰু গতিৰ নিয়ম</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — Science Ch 8 &amp; 9 · Motion + Force</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — विज्ञान अध्याय 8 &amp; 9 · गति + बल</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — বিজ্ঞান অধ্যায় 8 &amp; 9 · গতি + বল</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    en: "🏃‍♂️ Distance is a scalar quantity and displacement is a vector. The main difference is:",
+    hi: "🏃‍♂️ दूरी एक अदिश राशि है और विस्थापन एक सदिश। मुख्य अंतर है:",
+    as: "🏃‍♂️ দূৰত্ব এটা স্কেলাৰ ৰাশি আৰু সৰণ এটা ভেক্টৰ। মুখ্য পাৰ্থক্য হৈছে:",
+    choices: { en: ["Displacement has both magnitude and direction; distance has only magnitude","Distance is always larger than displacement","They are the same thing","Displacement can never be zero"], hi: ["विस्थापन में परिमाण और दिशा दोनों हैं; दूरी में केवल परिमाण","दूरी हमेशा विस्थापन से बड़ी होती है","वे एक ही चीज हैं","विस्थापन कभी शून्य नहीं हो सकता"], as: ["সৰণত পৰিমাণ আৰু দিশ দুয়োটা আছে; দূৰত্বত কেৱল পৰিমাণ","দূৰত্ব সদায় সৰণতকৈ ডাঙৰ","এইবোৰ একেই বস্তু","সৰণ কেতিয়াও শূন্য হ'ব নোৱাৰে"] },
+    correct: 0,
+    explain: { en: "Displacement is the shortest straight-line path from start to end point with direction. Distance is the total path length (scalar).", hi: "विस्थापन शुरू से अंत बिंदु तक सबसे छोटा सीधा रास्ता है जिसमें दिशा है। दूरी कुल पथ की लंबाई है (अदिश)।", as: "সৰণ হৈছে আৰম্ভ বিন্দুৰ পৰা শেষ বিন্দুলৈ চমু সৰল ৰেখাৰ পথ, যাত দিশ আছে। দূৰত্ব হৈছে মুঠ পথৰ দৈৰ্ঘ্য (স্কেলাৰ)।" }
+  },
+  {
+    en: "⚡ A car is moving at a constant speed but changing direction continuously. This means it has:",
+    hi: "⚡ एक कार निरंतर गति से लेकिन लगातार दिशा बदलते हुए चल रही है। इसका अर्थ है:",
+    as: "⚡ এখন গাড়ী নিৰন্তৰ গতিত কিন্তু দিশ সলনি কৰি চলি আছে। ইয়াৰ মানে:",
+    choices: { en: ["Constant speed but changing velocity (acceleration exists)","Zero acceleration","Constant velocity","Both speed and velocity are zero"], hi: ["निरंतर चाल लेकिन बदलती वेग (त्वरण है)","शून्य त्वरण","निरंतर वेग","चाल और वेग दोनों शून्य हैं"], as: ["নিৰন্তৰ গতি কিন্তু পৰিৱৰ্তনশীল বেগ (ত্বৰণ আছে)","শূন্য ত্বৰণ","নিৰন্তৰ বেগ","গতি আৰু বেগ দুয়োটা শূন্য"] },
+    correct: 0,
+    explain: { en: "Velocity is speed + direction. Changing direction = changing velocity = acceleration (e.g., circular motion).", hi: "वेग = चाल + दिशा। दिशा बदलना = वेग बदलना = त्वरण (जैसे वृत्तीय गति)।", as: "বেগ = গতি + দিশ। দিশ সলনি = বেগ সলনি = ত্বৰণ (যেনে বৃত্তাকাৰ গতি)।" }
+  },
+  {
+    en: "🔄 Newton's First Law of Motion (Law of Inertia) states that:",
+    hi: "🔄 न्यूटन का गति का पहला नियम (जड़त्व का नियम) कहता है:",
+    as: "🔄 নিউটনৰ গতিৰ প্ৰথম নিয়ম (জাড্যৰ নিয়ম)ত কোৱা হৈছে:",
+    choices: { en: ["An object remains at rest or in uniform motion unless acted on by an external force","F = ma","Every action has an equal and opposite reaction","Momentum is always conserved"], hi: ["कोई वस्तु तब तक विराम या एकसमान गति में रहती है जब तक बाहरी बल न लगे","F = ma","प्रत्येक क्रिया की समान और विपरीत प्रतिक्रिया होती है","संवेग हमेशा संरक्षित रहता है"], as: ["কোনো বস্তু বাহ্যিক বল প্ৰয়োগ নহ'লে বিশ্ৰামত বা সমান গতিত থাকে","F = ma","প্ৰতিটো ক্ৰিয়াৰ সমান আৰু বিপৰীত প্ৰতিক্ৰিয়া আছে","ভৰবেগ সদায় সংৰক্ষিত থাকে"] },
+    correct: 0,
+    explain: { en: "Newton's 1st Law: An object at rest stays at rest, and an object in motion stays in motion at constant velocity, unless an unbalanced external force acts on it.", hi: "न्यूटन का पहला नियम: विराम में वस्तु विराम में रहती है, गतिशील वस्तु समान वेग से चलती रहती है, जब तक असंतुलित बाहरी बल न लगे।", as: "নিউটনৰ প্ৰথম নিয়ম: বিশ্ৰামত থকা বস্তু বিশ্ৰামত থাকে, গতিশীল বস্তু একে বেগত চলে, যেতিয়ালৈকে অসমান বাহ্যিক বল প্ৰয়োগ নহয়।" }
+  },
+  {
+    en: "⚡ Newton's Second Law of Motion gives us the formula F = ma. If a force of 20 N acts on a 5 kg object, the acceleration is:",
+    hi: "⚡ न्यूटन के गति के दूसरे नियम का सूत्र F = ma है। यदि 5 kg वस्तु पर 20 N बल लगे तो त्वरण है:",
+    as: "⚡ নিউটনৰ গতিৰ দ্বিতীয় নিয়মৰ সূত্ৰ F = ma। যদি 5 kg বস্তুত 20 N বল প্ৰয়োগ হয়, ত্বৰণ হ'ব:",
+    choices: { en: ["4 m/s²","100 m/s²","0.25 m/s²","15 m/s²"], hi: ["4 m/s²","100 m/s²","0.25 m/s²","15 m/s²"], as: ["4 m/s²","100 m/s²","0.25 m/s²","15 m/s²"] },
+    correct: 0,
+    explain: { en: "F = ma → a = F/m = 20/5 = 4 m/s². The larger the mass, the smaller the acceleration for the same force.", hi: "F = ma → a = F/m = 20/5 = 4 m/s². द्रव्यमान जितना अधिक, उतना कम त्वरण।", as: "F = ma → a = F/m = 20/5 = 4 m/s². ভৰ যিমান বেছি, ত্বৰণ সিমান কম।" }
+  },
+  {
+    en: "🔄 Newton's Third Law of Motion states: 'Every action has an equal and opposite reaction.' Which example best shows this?",
+    hi: "🔄 न्यूटन का तीसरा नियम: 'हर क्रिया की समान और विपरीत प्रतिक्रिया होती है।' कौन सा उदाहरण इसे सबसे अच्छा दिखाता है?",
+    as: "🔄 নিউটনৰ তৃতীয় নিয়ম: 'প্ৰতিটো ক্ৰিয়াৰ সমান আৰু বিপৰীত প্ৰতিক্ৰিয়া আছে।' কোনটো উদাহৰণে এইটো সৰ্বোত্তমভাৱে দেখুৱায়?",
+    choices: { en: ["A rocket pushes gases downward; gases push rocket upward","A ball falling under gravity","A car moving in a circle","A book resting on a table (gravity only)"], hi: ["रॉकेट गैसों को नीचे धकेलता है; गैसें रॉकेट को ऊपर धकेलती हैं","गुरुत्वाकर्षण में गिरती गेंद","वृत्त में घूमती कार","मेज पर रखी किताब (केवल गुरुत्वाकर्षण)"], as: ["ৰকেটে গেছ তললৈ ঠেলে; গেছে ৰকেট ওপৰলৈ ঠেলে","মাধ্যাকৰ্ষণত পৰা বল","বৃত্তত চলা গাড়ী","টেবুলত থকা কিতাপ (কেৱল মাধ্যাকৰ্ষণ)"] },
+    correct: 0,
+    explain: { en: "Rocket propulsion is a classic action-reaction pair: rocket pushes exhaust gases backward (action), gases push rocket forward (reaction).", hi: "रॉकेट प्रणोदन क्रिया-प्रतिक्रिया का उत्तम उदाहरण है: रॉकेट गैसों को पीछे धकेलता है (क्रिया), गैसें रॉकेट को आगे धकेलती हैं (प्रतिक्रिया)।", as: "ৰকেট চালনা ক্ৰিয়া-প্ৰতিক্ৰিয়াৰ উৎকৃষ্ট উদাহৰণ: ৰকেটে গেছ পিছলৈ ঠেলে (ক্ৰিয়া), গেছে ৰকেট আগলৈ ঠেলে (প্ৰতিক্ৰিয়া)।" }
+  },
+  {
+    en: "🏃‍♂️ Inertia is the tendency of an object to resist change in its state of motion. A heavier object has:",
+    hi: "🏃‍♂️ जड़त्व किसी वस्तु की अपनी गति की स्थिति में परिवर्तन का विरोध करने की प्रवृत्ति है। भारी वस्तु में:",
+    as: "🏃‍♂️ জাড্য হৈছে বস্তুৰ গতিৰ অৱস্থা পৰিৱৰ্তনৰ প্ৰতিৰোধ কৰাৰ প্ৰৱণতা। গধুৰ বস্তুৰ:",
+    choices: { en: ["More inertia (harder to start or stop)","Less inertia","Zero inertia","Inertia that depends on speed only"], hi: ["अधिक जड़त्व (शुरू करना या रोकना कठिन)","कम जड़त्व","शून्य जड़त्व","केवल गति पर निर्भर जड़त्व"], as: ["অধিক জাড্য (আৰম্ভ বা বন্ধ কৰা কঠিন)","কম জাড্য","শূন্য জাড্য","কেৱল গতিৰ ওপৰত নিৰ্ভৰশীল জাড্য"] },
+    correct: 0,
+    explain: { en: "Inertia is directly proportional to mass. A heavier object resists changes to its state of motion more than a lighter one.", hi: "जड़त्व द्रव्यमान के सीधे अनुपात में होता है। भारी वस्तु हल्की वस्तु की तुलना में अपनी गति की स्थिति में परिवर्तन का अधिक विरोध करती है।", as: "জাড্য ভৰৰ সৈতে প্ৰত্যক্ষভাৱে সমানুপাতিক। গধুৰ বস্তুৱে পাতল বস্তুতকৈ বেছি গতিৰ অৱস্থা পৰিৱৰ্তনৰ প্ৰতিৰোধ কৰে।" }
+  },
+  {
+    en: "⚡ Momentum (p) of an object is defined as:",
+    hi: "⚡ किसी वस्तु का संवेग (p) परिभाषित है:",
+    as: "⚡ কোনো বস্তুৰ ভৰবেগ (p) সংজ্ঞায়িত:",
+    choices: { en: ["p = mass × velocity (p = mv)","p = mass × acceleration","p = force × time","p = mass × distance"], hi: ["p = द्रव्यमान × वेग (p = mv)","p = द्रव्यमान × त्वरण","p = बल × समय","p = द्रव्यमान × दूरी"], as: ["p = ভৰ × বেগ (p = mv)","p = ভৰ × ত্বৰণ","p = বল × সময়","p = ভৰ × দূৰত্ব"] },
+    correct: 0,
+    explain: { en: "Momentum p = mv (mass × velocity). It is a vector quantity (has direction). Unit: kg·m/s.", hi: "संवेग p = mv (द्रव्यमान × वेग)। यह सदिश राशि है (दिशा होती है)। इकाई: kg·m/s।", as: "ভৰবেগ p = mv (ভৰ × বেগ)। এয়া ভেক্টৰ ৰাশি (দিশ আছে)। একক: kg·m/s।" }
+  },
+  {
+    en: "🔄 The Law of Conservation of Momentum states that when no external force acts on a system:",
+    hi: "🔄 संवेग संरक्षण का नियम कहता है कि जब किसी सिस्टम पर बाहरी बल न लगे:",
+    as: "🔄 ভৰবেগ সংৰক্ষণৰ নিয়মত কোৱা হৈছে যে যেতিয়া কোনো বাহ্যিক বল প্ৰয়োগ নহয়:",
+    choices: { en: ["Total momentum before collision = total momentum after collision","Total momentum increases","Total momentum decreases","Momentum is always zero"], hi: ["टक्कर से पहले कुल संवेग = टक्कर के बाद कुल संवेग","कुल संवेग बढ़ता है","कुल संवेग घटता है","संवेग हमेशा शून्य है"], as: ["সংঘৰ্ষৰ আগৰ মুঠ ভৰবেগ = সংঘৰ্ষৰ পিছৰ মুঠ ভৰবেগ","মুঠ ভৰবেগ বৃদ্ধি পায়","মুঠ ভৰবেগ হ্ৰাস পায়","ভৰবেগ সদায় শূন্য"] },
+    correct: 0,
+    explain: { en: "Law of Conservation of Momentum: In the absence of external forces, total momentum of a system remains constant. e.g., in gun-bullet system.", hi: "संवेग संरक्षण नियम: बाहरी बल की अनुपस्थिति में, सिस्टम का कुल संवेग स्थिर रहता है। जैसे बंदूक-गोली सिस्टम।", as: "ভৰবেগ সংৰক্ষণৰ নিয়ম: বাহ্যিক বলৰ অনুপস্থিতিত, তন্ত্ৰৰ মুঠ ভৰবেগ স্থিৰ থাকে। যেনে বন্দুক-বুলেট তন্ত্ৰ।" }
+  },
+  {
+    en: "🏃‍♂️ Uniform motion means an object travels equal distances in equal intervals of time. What does non-uniform motion mean?",
+    hi: "🏃‍♂️ एकसमान गति का अर्थ है कि वस्तु समान समय अंतराल में समान दूरी तय करती है। असमान गति का क्या अर्थ है?",
+    as: "🏃‍♂️ সমগতি মানে বস্তুৱে সমান সময়ৰ ব্যৱধানত সমান দূৰত্ব অতিক্ৰম কৰে। অসমগতি মানে কি?",
+    choices: { en: ["Object covers unequal distances in equal time intervals (varying speed)","Object remains stationary","Object always accelerates","Object moves in circles only"], hi: ["वस्तु समान समय अंतराल में असमान दूरी तय करती है (बदलती चाल)","वस्तु स्थिर रहती है","वस्तु हमेशा त्वरित होती है","वस्तु केवल वृत्त में घूमती है"], as: ["বস্তুৱে সমান সময়ৰ ব্যৱধানত অসমান দূৰত্ব অতিক্ৰম কৰে (পৰিৱৰ্তনশীল গতি)","বস্তু স্থিৰ থাকে","বস্তু সদায় ত্বৰিত হয়","বস্তু কেৱল বৃত্তত চলে"] },
+    correct: 0,
+    explain: { en: "Non-uniform motion = the object covers unequal distances in equal time intervals, meaning its speed is changing.", hi: "असमान गति = वस्तु समान समय अंतराल में असमान दूरी तय करती है, यानी इसकी चाल बदल रही है।", as: "অসমগতি = বস্তুৱে সমান সময়ৰ ব্যৱধানত অসমান দূৰত্ব অতিক্ৰম কৰে, মানে ইয়াৰ গতি সলনি হৈ আছে।" }
+  },
+  {
+    en: "⚡ Which of Newton's laws best explains why you feel pushed backward when a bus suddenly accelerates forward?",
+    hi: "⚡ न्यूटन का कौन सा नियम बताता है कि बस अचानक आगे बढ़ने पर आप पीछे की ओर धकेले क्यों जाते हैं?",
+    as: "⚡ নিউটনৰ কোনটো নিয়মে ব্যাখ্যা কৰে কিয় বাছ হঠাতে আগলৈ গ'লে তুমি পিছলৈ ঠেলা খোৱা যেন অনুভৱ কৰা?",
+    choices: { en: ["Newton's First Law — inertia keeps your body at rest while bus moves forward","Newton's Second Law — F = ma","Newton's Third Law — action-reaction","Law of Conservation of Momentum"], hi: ["न्यूटन का पहला नियम — जड़त्व आपके शरीर को विराम में रखता है जब बस आगे बढ़ती है","न्यूटन का दूसरा नियम — F = ma","न्यूटन का तीसरा नियम — क्रिया-प्रतिक्रिया","संवेग संरक्षण का नियम"], as: ["নিউটনৰ প্ৰথম নিয়ম — জাড্যই তোমাৰ শৰীৰক বিশ্ৰামত ৰাখে যেতিয়া বাছ আগলৈ যায়","নিউটনৰ দ্বিতীয় নিয়ম — F = ma","নিউটনৰ তৃতীয় নিয়ম — ক্ৰিয়া-প্ৰতিক্ৰিয়া","ভৰবেগ সংৰক্ষণৰ নিয়ম"] },
+    correct: 0,
+    explain: { en: "Newton's 1st Law (Inertia): Your body tends to stay at rest. When the bus moves forward, your body stays behind — you feel pushed backward.", hi: "न्यूटन का पहला नियम (जड़त्व): आपका शरीर विराम में रहना चाहता है। बस आगे बढ़ने पर शरीर पीछे रह जाता है — आप पीछे धकेले महसूस करते हैं।", as: "নিউটনৰ প্ৰথম নিয়ম (জাড্য): তোমাৰ শৰীৰ বিশ্ৰামত থাকিব বিচাৰে। বাছ আগলৈ যোৱাত শৰীৰ পিছত থাকে — তুমি পিছলৈ ঠেলা খোৱা অনুভৱ কৰা।" }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = `Question ${current + 1} of 10`;
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+  const choicesArr = (q.choices[lang] || q.choices.en);
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars, msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'Physics Master! Newton would be proud! ⚡', hi: 'भौतिकी मास्टर! न्यूटन गर्वित होते! ⚡', as: 'পদাৰ্থবিজ্ঞানৰ মাষ্টাৰ! নিউটন গৌৰৱান্বিত হ'ত! ⚡' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Great force of knowledge! Keep it up! 🏃‍♂️', hi: 'ज्ञान का जबरदस्त बल! जारी रखें! 🏃‍♂️', as: 'জ্ঞানৰ চমৎকাৰ বল! এগাই যাওক! 🏃‍♂️' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Good attempt! Review Newton\'s 3 laws and momentum.', hi: 'अच्छी कोशिश! न्यूटन के 3 नियम और संवेग दोबारा पढ़ें।', as: 'ভাল প্ৰচেষ্টা! নিউটনৰ 3 নিয়ম আৰু ভৰবেগ পুনৰায় পঢ়ক।' }; }
+  else { stars = '☆☆☆'; msg = { en: 'Keep trying! Forces are with you if you study more! 🔄', hi: 'कोशिश करते रहें! अधिक पढ़ें तो बल आपके साथ है! 🔄', as: 'চেষ্টা জাৰি ৰাখক! অধিক পঢ়িলে বল তোমাৰ লগত থাকিব! 🔄' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Computer Fundamentals &amp; Python — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--sky);color:#000;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--sky);color:#000;border-color:var(--sky);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--sky);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--sky),var(--purple));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.code-box{background:rgba(0,0,0,.35);border:1px solid rgba(0,174,239,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Courier New',monospace;font-size:.9rem;color:#7dd3fc;white-space:pre-wrap;line-height:1.6;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.55;margin-bottom:18px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.97rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;}
+.choice-btn:hover:not(:disabled){background:rgba(0,174,239,.12);border-color:var(--sky);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--sky);color:#000;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--sky);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Computer · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en',event)">EN</button>
+      <button class="lang-btn" onclick="setLang('hi',event)">हि</button>
+      <button class="lang-btn" onclick="setLang('as',event)">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">💻 Computer &amp; Python Basics</span>
+    <span data-lang="hi" style="display:none">💻 कंप्यूटर और पायथन मूल बातें</span>
+    <span data-lang="as" style="display:none">💻 কম্পিউটাৰ আৰু পাইথন মূল কথা</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">Class 9 Computer Science · Fundamentals + Python Introduction</span>
+    <span data-lang="hi" style="display:none">कक्षा 9 कंप्यूटर विज्ञान · मूल बातें + पायथन परिचय</span>
+    <span data-lang="as" style="display:none">শ্ৰেণী 9 কম্পিউটাৰ বিজ্ঞান · মূল কথা + পাইথন পৰিচয়</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="code-box" id="codeBox"></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    code: "💻 Generations of Computers:\n1st: Vacuum Tubes | 2nd: Transistors\n3rd: ICs | 4th: Microprocessors | 5th: AI",
+    en: "💻 The First Generation of computers (1940s–1950s) used which technology?",
+    hi: "💻 पहली पीढ़ी के कंप्यूटर (1940–1950) में कौन सी तकनीक का उपयोग किया गया?",
+    as: "💻 প্ৰথম প্ৰজন্মৰ কম্পিউটাৰ (1940–1950)-ত কোনটো প্ৰযুক্তি ব্যৱহাৰ কৰা হৈছিল?",
+    choices: {
+      en: ["Vacuum Tubes — large, slow, generated lots of heat (e.g., ENIAC, UNIVAC)","Transistors — smaller and faster","Integrated Circuits (ICs)","Microprocessors"],
+      hi: ["वैक्यूम ट्यूब — बड़े, धीमे, बहुत गर्मी उत्पन्न करते थे (जैसे ENIAC, UNIVAC)","ट्रांजिस्टर — छोटे और तेज़","एकीकृत परिपथ (IC)","माइक्रोप्रोसेसर"],
+      as: ["ভেকুয়াম টিউব — ডাঙৰ, লেহেমীয়া, প্ৰচুৰ তাপ উৎপন্ন কৰিছিল (যেনে ENIAC, UNIVAC)","ট্ৰানজিষ্টৰ — সৰু আৰু দ্ৰুত","সংহত পৰিপথ (IC)","মাইক্ৰ'প্ৰচেছাৰ"]
+    },
+    correct: 0,
+    explain: {
+      en: "1st Gen (1940s–50s): Vacuum tubes, machine language, magnetic drums. Examples: ENIAC, UNIVAC. 2nd Gen (1950s–60s): Transistors. 3rd Gen (1960s–70s): ICs. 4th Gen (1970s–present): Microprocessors. 5th Gen: AI, parallel processing.",
+      hi: "पहली पीढ़ी (1940–50): वैक्यूम ट्यूब, मशीन भाषा, चुम्बकीय ड्रम। उदाहरण: ENIAC, UNIVAC। दूसरी पीढ़ी: ट्रांजिस्टर। तीसरी: IC। चौथी: माइक्रोप्रोसेसर। पांचवीं: AI।",
+      as: "প্ৰথম প্ৰজন্ম (1940–50): ভেকুয়াম টিউব, মেচিন ভাষা, চুম্বকীয় ড্ৰাম। উদাহৰণ: ENIAC, UNIVAC। দ্বিতীয় প্ৰজন্ম: ট্ৰানজিষ্টৰ। তৃতীয়: IC। চতুৰ্থ: মাইক্ৰ'প্ৰচেছাৰ। পঞ্চম: AI।"
+    }
+  },
+  {
+    code: "🖥️ CPU = ALU + CU + Registers\nALU = Arithmetic & Logic Unit\nCU = Control Unit",
+    en: "⌨️ The CPU (Central Processing Unit) is the brain of a computer. Which component of the CPU performs arithmetic and logical operations?",
+    hi: "⌨️ CPU (केंद्रीय प्रसंस्करण इकाई) कंप्यूटर का मस्तिष्क है। CPU का कौन सा घटक अंकगणितीय और तार्किक क्रियाएं करता है?",
+    as: "⌨️ CPU (কেন্দ্ৰীয় প্ৰক্ৰিয়াকৰণ একক) কম্পিউটাৰৰ মগজু। CPUৰ কোনটো অংশই গাণিতিক আৰু যুক্তিসম্মত কাৰ্য সম্পাদন কৰে?",
+    choices: {
+      en: ["ALU (Arithmetic Logic Unit) — performs +, −, ×, ÷ and logical comparisons (AND, OR, NOT)","CU (Control Unit) — coordinates all CPU operations","RAM — stores data temporarily","Hard Disk — stores data permanently"],
+      hi: ["ALU (अंकगणित तर्क इकाई) — +, −, ×, ÷ और तार्किक तुलना (AND, OR, NOT) करती है","CU (नियंत्रण इकाई) — सभी CPU संचालन समन्वित करती है","RAM — अस्थायी रूप से डेटा संग्रहीत करती है","हार्ड डिस्क — स्थायी रूप से डेटा संग्रहीत"],
+      as: ["ALU (গাণিতিক যুক্তি একক) — +, −, ×, ÷ আৰু যুক্তিসম্মত তুলনা (AND, OR, NOT) কৰে","CU (নিয়ন্ত্ৰণ একক) — সকলো CPU কাৰ্য সমন্বয় কৰে","RAM — অস্থায়ীভাৱে ডেটা সংৰক্ষণ কৰে","হাৰ্ড ডিস্ক — স্থায়ীভাৱে ডেটা সংৰক্ষণ কৰে"]
+    },
+    correct: 0,
+    explain: {
+      en: "CPU has 3 parts: (1) ALU — does all arithmetic (+, −, ×, ÷) and logical operations (comparisons). (2) Control Unit (CU) — directs and coordinates all computer operations. (3) Registers — tiny, fastest memory inside CPU for current operations.",
+      hi: "CPU के 3 भाग: (1) ALU — सभी अंकगणितीय और तार्किक क्रियाएं। (2) CU — सभी कंप्यूटर संचालनों को निर्देशित करती है। (3) रजिस्टर — CPU के अंदर सबसे तेज़ और छोटी मेमोरी।",
+      as: "CPUৰ 3 অংশ: (1) ALU — সকলো গাণিতিক আৰু যুক্তিসম্মত কাৰ্য। (2) CU — সকলো কম্পিউটাৰ কাৰ্য পৰিচালনা কৰে। (3) ৰেজিষ্টাৰ — CPUৰ ভিতৰৰ সৰ্বদ্ৰুত আৰু সৰু মেমৰি।"
+    }
+  },
+  {
+    code: "🗄️ Primary Memory: RAM (volatile) + ROM (non-volatile)\nSecondary Memory: HDD, SSD, CD, USB",
+    en: "💻 What is the difference between Primary Memory (RAM) and Secondary Memory (Hard Disk)?",
+    hi: "💻 प्राथमिक मेमोरी (RAM) और द्वितीयक मेमोरी (हार्ड डिस्क) में क्या अंतर है?",
+    as: "💻 প্ৰাথমিক মেমৰি (RAM) আৰু দ্বিতীয় মেমৰি (হাৰ্ড ডিস্ক)-ৰ মাজৰ পাৰ্থক্য কি?",
+    choices: {
+      en: ["RAM: fast, volatile (data lost when power off), directly accessed by CPU | HDD: slow, non-volatile (permanent storage), large capacity","RAM is permanent; HDD is temporary","Both store data permanently","RAM is slower than HDD"],
+      hi: ["RAM: तेज़, वाष्पशील (बिजली बंद होने पर डेटा खो जाता है), CPU द्वारा सीधे पहुंच | HDD: धीमी, गैर-वाष्पशील (स्थायी भंडारण), बड़ी क्षमता","RAM स्थायी है; HDD अस्थायी","दोनों स्थायी रूप से डेटा संग्रहीत करती हैं","RAM, HDD से धीमी है"],
+      as: ["RAM: দ্ৰুত, উদ্বায়ী (বিদ্যুৎ বন্ধ হ'লে ডেটা হেৰায়), CPU-এ প্ৰত্যক্ষভাৱে অভিগম কৰে | HDD: লেহেমীয়া, অউদ্বায়ী (স্থায়ী সংৰক্ষণ), বৃহৎ ধাৰণক্ষমতা","RAM স্থায়ী; HDD অস্থায়ী","দুয়োটাই স্থায়ীভাৱে ডেটা সংৰক্ষণ কৰে","RAM, HDD-তকৈ লেহেমীয়া"]
+    },
+    correct: 0,
+    explain: {
+      en: "Primary Memory: RAM (Random Access Memory) — fast, directly used by CPU, volatile (lost on power off). ROM (Read Only Memory) — non-volatile, stores BIOS. Secondary Memory: HDD/SSD/CD/USB — permanent, large capacity, slower than RAM.",
+      hi: "प्राथमिक मेमोरी: RAM — तेज़, CPU द्वारा सीधे उपयोग, वाष्पशील। ROM — गैर-वाष्पशील, BIOS संग्रहीत। द्वितीयक मेमोरी: HDD/SSD/CD/USB — स्थायी, बड़ी क्षमता, RAM से धीमी।",
+      as: "প্ৰাথমিক মেমৰি: RAM — দ্ৰুত, CPU-এ প্ৰত্যক্ষভাৱে ব্যৱহাৰ, উদ্বায়ী। ROM — অউদ্বায়ী, BIOS সংৰক্ষণ। দ্বিতীয় মেমৰি: HDD/SSD/CD/USB — স্থায়ী, বৃহৎ ধাৰণক্ষমতা, RAMতকৈ লেহেমীয়া।"
+    }
+  },
+  {
+    code: "🔢 Binary: Base 2 (0,1)\nDecimal: Base 10 (0-9)\nOctal: Base 8 (0-7)\nHex: Base 16 (0-9, A-F)",
+    en: "🐍 What is the decimal equivalent of the binary number 1010?",
+    hi: "🐍 बाइनरी संख्या 1010 का दशमलव तुल्य क्या है?",
+    as: "🐍 বাইনাৰি সংখ্যা 1010-ৰ দশমিক সমতুল্য কি?",
+    choices: {
+      en: ["10 → (1×8) + (0×4) + (1×2) + (0×1) = 8+0+2+0 = 10","8","12","16"],
+      hi: ["10 → (1×8) + (0×4) + (1×2) + (0×1) = 8+0+2+0 = 10","8","12","16"],
+      as: ["10 → (1×8) + (0×4) + (1×2) + (0×1) = 8+0+2+0 = 10","8","12","16"]
+    },
+    correct: 0,
+    explain: {
+      en: "Binary to Decimal: multiply each bit by its positional value (powers of 2) from right to left. 1010 = (1×2³) + (0×2²) + (1×2¹) + (0×2⁰) = 8+0+2+0 = 10. Binary 1111 = 15. Binary 1100 = 12.",
+      hi: "बाइनरी से दशमलव: दाईं से बाईं ओर प्रत्येक बिट को उसके स्थानीय मान (2 की शक्तियां) से गुणा करें। 1010 = (1×2³)+(0×2²)+(1×2¹)+(0×2⁰) = 8+0+2+0 = 10।",
+      as: "বাইনাৰিৰ পৰা দশমিক: সোঁফালৰ পৰা বাঁওফাললৈ প্ৰতিটো বিট তাৰ স্থানীয় মান (2-ৰ শক্তি)-ৰে গুণ কৰক। 1010 = (1×2³)+(0×2²)+(1×2¹)+(0×2⁰) = 8+0+2+0 = 10।"
+    }
+  },
+  {
+    code: "🔢 Hexadecimal: Base 16\nDigits: 0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F\nA=10, B=11, C=12, D=13, E=14, F=15",
+    en: "💻 In the hexadecimal number system, what does the letter 'A' represent?",
+    hi: "💻 हेक्साडेसिमल संख्या प्रणाली में 'A' अक्षर क्या दर्शाता है?",
+    as: "💻 হেক্সাডেচিমেল সংখ্যা পদ্ধতিত 'A' আখৰে কি প্ৰতিনিধিত্ব কৰে?",
+    choices: {
+      en: ["10 (decimal) — Hex uses A=10, B=11, C=12, D=13, E=14, F=15","1 (decimal)","16 (decimal)","0 (decimal)"],
+      hi: ["10 (दशमलव) — हेक्स में A=10, B=11, C=12, D=13, E=14, F=15","1 (दशमलव)","16 (दशमलव)","0 (दशमलव)"],
+      as: ["10 (দশমিক) — হেক্সত A=10, B=11, C=12, D=13, E=14, F=15","1 (দশমিক)","16 (দশমিক)","0 (দশমিক)"]
+    },
+    correct: 0,
+    explain: {
+      en: "Hexadecimal (Base 16): uses 16 symbols — 0–9 and A–F. A=10, B=11, C=12, D=13, E=14, F=15. Example: Hex 1F = (1×16) + 15 = 31 in decimal. Used in computer memory addresses and color codes (#FF5733).",
+      hi: "हेक्साडेसिमल (आधार 16): 16 प्रतीक — 0–9 और A–F। A=10, B=11, C=12, D=13, E=14, F=15। उदाहरण: हेक्स 1F = (1×16)+15 = 31 दशमलव। कंप्यूटर मेमोरी पतों और रंग कोड में उपयोग।",
+      as: "হেক্সাডেচিমেল (ভিত্তি 16): 16 প্ৰতীক — 0–9 আৰু A–F। A=10, B=11, C=12, D=13, E=14, F=15। উদাহৰণ: হেক্স 1F = (1×16)+15 = 31 দশমিক। কম্পিউটাৰ মেমৰি ঠিকনা আৰু ৰং কোডত ব্যৱহাৰ।"
+    }
+  },
+  {
+    code: "🐍 Python — print() and input()\nprint('Hello')  → Hello\nname = input('Enter name: ')",
+    en: "🐍 In Python, which function is used to display output on the screen?",
+    hi: "🐍 Python में स्क्रीन पर आउटपुट प्रदर्शित करने के लिए कौन सा फ़ंक्शन उपयोग किया जाता है?",
+    as: "🐍 Python-ত স্ক্ৰীনত আউটপুট প্ৰদৰ্শন কৰিবলৈ কোনটো ফাংচন ব্যৱহাৰ কৰা হয়?",
+    choices: {
+      en: ["print() — e.g., print('Hello, World!') displays Hello, World!","display()","show()","output()"],
+      hi: ["print() — जैसे print('Hello, World!') Hello, World! प्रदर्शित करता है","display()","show()","output()"],
+      as: ["print() — যেনে print('Hello, World!') Hello, World! প্ৰদৰ্শন কৰে","display()","show()","output()"]
+    },
+    correct: 0,
+    explain: {
+      en: "Python: print() is used for output. input() is used to take input from the user. Example: name = input('Enter your name: ') — stores user input in variable 'name'. print('Hello', name) — displays greeting.",
+      hi: "Python: print() आउटपुट के लिए। input() उपयोगकर्ता से इनपुट लेने के लिए। उदाहरण: name = input('अपना नाम दर्ज करें: ') — चर 'name' में उपयोगकर्ता इनपुट संग्रहीत। print('नमस्ते', name) — अभिवादन प्रदर्शित।",
+      as: "Python: print() আউটপুটৰ বাবে। input() ব্যৱহাৰকাৰীৰ পৰা ইনপুট লোৱাৰ বাবে। উদাহৰণ: name = input('নাম দিয়ক: ') — চলকত ব্যৱহাৰকাৰী ইনপুট সংৰক্ষণ। print('নমস্কাৰ', name) — অভিবাদন প্ৰদৰ্শন।"
+    }
+  },
+  {
+    code: "🐍 Python Data Types:\nx = 10      # int\ny = 3.14    # float\nz = 'Hello' # str\nb = True    # bool",
+    en: "🐍 In Python, what data type is assigned to the variable x in: x = 3.14?",
+    hi: "🐍 Python में x = 3.14 में चर x को कौन सा डेटा प्रकार असाइन किया जाता है?",
+    as: "🐍 Python-ত x = 3.14-ত চলক x-ক কোনটো ডেটা প্ৰকাৰ নিযুক্ত হয়?",
+    choices: {
+      en: ["float — decimal (floating point) numbers","int — whole numbers only","str — text/string","bool — True or False"],
+      hi: ["float — दशमलव (फ्लोटिंग पॉइंट) संख्याएं","int — केवल पूर्णांक","str — पाठ/स्ट्रिंग","bool — True या False"],
+      as: ["float — দশমিক (ফ্লোটিং পইণ্ট) সংখ্যা","int — কেৱল পূৰ্ণসংখ্যা","str — লিখনি/ষ্ট্ৰিং","bool — True বা False"]
+    },
+    correct: 0,
+    explain: {
+      en: "Python Data Types: int = whole numbers (e.g., x=5), float = decimal numbers (e.g., x=3.14), str = text in quotes (e.g., x='Hello'), bool = True/False. Python automatically detects the data type (dynamic typing). type(x) gives the data type.",
+      hi: "Python डेटा प्रकार: int = पूर्णांक (जैसे x=5), float = दशमलव (जैसे x=3.14), str = उद्धरण में पाठ (जैसे x='Hello'), bool = True/False। Python स्वतः डेटा प्रकार पहचानता है। type(x) डेटा प्रकार देता है।",
+      as: "Python ডেটা প্ৰকাৰ: int = পূৰ্ণসংখ্যা (যেনে x=5), float = দশমিক (যেনে x=3.14), str = উদ্ধৃতিত লিখনি (যেনে x='Hello'), bool = True/False। Python স্বয়ংক্ৰিয়ভাৱে ডেটা প্ৰকাৰ চিনাক্ত কৰে। type(x)-এ ডেটা প্ৰকাৰ দিয়ে।"
+    }
+  },
+  {
+    code: "🐍 Python Operators:\n+  -  *  /    → Arithmetic\n== != > < >= <= → Comparison\n//  %  **      → Floor div, Modulo, Power",
+    en: "🐍 In Python, what does the operator // (double slash) do?",
+    hi: "🐍 Python में // (डबल स्लैश) ऑपरेटर क्या करता है?",
+    as: "🐍 Python-ত // (ডাবল স্লেছ) অপাৰেটৰে কি কৰে?",
+    choices: {
+      en: ["Floor division — divides and returns the largest integer (e.g., 7//2 = 3, not 3.5)","Regular division — same as /","Modulo — gives remainder","Power — x raised to y"],
+      hi: ["फ्लोर भाग — भाग देता है और सबसे बड़ा पूर्णांक लौटाता है (जैसे 7//2 = 3, 3.5 नहीं)","सामान्य भाग — / जैसा ही","मॉड्यूलो — शेषफल देता है","घात — x की y शक्ति"],
+      as: ["ফ্ল'ৰ বিভাজন — বিভাজন কৰে আৰু বৃহত্তম পূৰ্ণসংখ্যা ঘূৰাই দিয়ে (যেনে 7//2 = 3, 3.5 নহয়)","সাধাৰণ বিভাজন — /-ৰ দৰেই","মডুলো — ভাগশেষ দিয়ে","শক্তি — x-ক y-ৰ শক্তিলৈ"]
+    },
+    correct: 0,
+    explain: {
+      en: "Python operators: / = regular division (7/2=3.5), // = floor division (7//2=3), % = modulo/remainder (7%2=1), ** = exponent/power (2**3=8). These are essential for arithmetic in Python programs.",
+      hi: "Python ऑपरेटर: / = सामान्य भाग (7/2=3.5), // = फ्लोर भाग (7//2=3), % = मॉड्यूलो/शेषफल (7%2=1), ** = घात (2**3=8)।",
+      as: "Python অপাৰেটৰ: / = সাধাৰণ বিভাজন (7/2=3.5), // = ফ্ল'ৰ বিভাজন (7//2=3), % = মডুলো/ভাগশেষ (7%2=1), ** = শক্তি (2**3=8)।"
+    }
+  },
+  {
+    code: "🐍 Variables in Python:\nage = 15          # int\nname = 'Rahul'    # str\nmarks = 98.5      # float\nis_pass = True    # bool",
+    en: "🐍 Which of the following is a VALID variable name in Python?",
+    hi: "🐍 Python में निम्नलिखित में से कौन सा एक वैध चर नाम है?",
+    as: "🐍 Python-ত তলৰ কোনটো এটা বৈধ চলকৰ নাম?",
+    choices: {
+      en: ["student_name — underscores and letters are valid","2nd_student — cannot start with a digit","class — 'class' is a reserved keyword in Python","my-variable — hyphens are not allowed"],
+      hi: ["student_name — अंडरस्कोर और अक्षर वैध हैं","2nd_student — अंक से शुरू नहीं हो सकता","class — 'class' Python में आरक्षित कीवर्ड है","my-variable — हाइफन की अनुमति नहीं"],
+      as: ["student_name — আণ্ডাৰস্কোৰ আৰু আখৰ বৈধ","2nd_student — অংকেৰে আৰম্ভ কৰিব নোৱাৰি","class — 'class' Python-ত সংৰক্ষিত কীৱাৰ্ড","my-variable — হাইফেন অনুমোদিত নহয়"]
+    },
+    correct: 0,
+    explain: {
+      en: "Python variable naming rules: (1) Must start with a letter or underscore _ (not a digit). (2) Can contain letters, digits, underscores. (3) Case-sensitive (age ≠ Age). (4) Cannot be a reserved keyword (if, for, while, class, def, etc.).",
+      hi: "Python चर नामकरण नियम: (1) अक्षर या _ से शुरू होना चाहिए (अंक से नहीं)। (2) अक्षर, अंक, अंडरस्कोर हो सकते हैं। (3) केस-संवेदी (age ≠ Age)। (4) आरक्षित कीवर्ड नहीं हो सकता।",
+      as: "Python চলকৰ নামকৰণৰ নিয়ম: (1) আখৰ বা _ ৰে আৰম্ভ হ'ব লাগিব (অংকেৰে নহয়)। (2) আখৰ, অংক, আণ্ডাৰস্কোৰ থাকিব পাৰে। (3) কেছ-সংবেদনশীল (age ≠ Age)। (4) সংৰক্ষিত কীৱাৰ্ড হ'ব নোৱাৰে।"
+    }
+  },
+  {
+    code: "🐍 Python — What will this print?\nx = 5\ny = 3\nprint(x + y)\nprint(x * y)\nprint(x % y)",
+    en: "🐍 In the Python code shown, what are the three outputs printed?",
+    hi: "🐍 दिखाए गए Python कोड में तीन आउटपुट क्या हैं?",
+    as: "🐍 দেখুওৱা Python কোডত তিনিটা আউটপুট কি?",
+    choices: {
+      en: ["8, 15, 2 → (5+3=8), (5×3=15), (5 mod 3 = remainder 2)","8, 8, 8","15, 15, 2","5, 3, 2"],
+      hi: ["8, 15, 2 → (5+3=8), (5×3=15), (5 mod 3 = शेषफल 2)","8, 8, 8","15, 15, 2","5, 3, 2"],
+      as: ["8, 15, 2 → (5+3=8), (5×3=15), (5 mod 3 = ভাগশেষ 2)","8, 8, 8","15, 15, 2","5, 3, 2"]
+    },
+    correct: 0,
+    explain: {
+      en: "x=5, y=3: print(x+y) = print(8) → 8. print(x*y) = print(15) → 15. print(x%y) = print(5%3) = print(2) → 2 (because 5 = 1×3 + 2, remainder is 2). The % operator gives the remainder of division.",
+      hi: "x=5, y=3: print(x+y) = print(8) → 8। print(x*y) = print(15) → 15। print(x%y) = print(5%3) = print(2) → 2 (क्योंकि 5 = 1×3+2, शेषफल 2)।",
+      as: "x=5, y=3: print(x+y) = print(8) → 8। print(x*y) = print(15) → 15। print(x%y) = print(5%3) = print(2) → 2 (কাৰণ 5 = 1×3+2, ভাগশেষ 2)।"
+    }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l, e) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = 'Question ' + (current + 1) + ' of 10';
+  document.getElementById('codeBox').textContent = q.code;
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+  const choicesArr = q.choices[lang] || q.choices.en;
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars, msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'Tech Genius! You are ready to code the future! 🐍💻', hi: 'तकनीकी प्रतिभा! आप भविष्य कोड करने के लिए तैयार हैं! 🐍💻', as: 'প্ৰযুক্তিৰ প্ৰতিভা! তুমি ভৱিষ্যৎ কোড কৰিবলৈ সাজু! 🐍💻' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Great coding knowledge! Keep debugging and learning! ⌨️', hi: 'शानदार कोडिंग ज्ञान! सीखते और डीबग करते रहें! ⌨️', as: 'চমৎকাৰ কোডিং জ্ঞান! শিকি আৰু ডিবাগ কৰি থাকক! ⌨️' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Good try! Revise Python basics, number systems, and CPU components.', hi: 'अच्छी कोशिश! Python की मूल बातें, संख्या प्रणाली और CPU घटक दोबारा पढ़ें।', as: 'ভাল প্ৰচেষ্টা! Python মূল কথা, সংখ্যা পদ্ধতি আৰু CPU অংশ পুনৰায় পঢ়ক।' }; }
+  else { stars = '☆☆☆'; msg = { en: 'Keep going! Every coder starts with one print("Hello World")! 💻', hi: 'जारी रखो! हर कोडर print("Hello World") से शुरू करता है! 💻', as: 'এগাই যাওক! প্ৰতিটো কোডাৰ print("Hello World")-ৰে আৰম্ভ কৰে! 💻' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

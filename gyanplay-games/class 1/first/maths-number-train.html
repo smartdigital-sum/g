@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Number Train 🚂 — Class 1 Maths</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--red:#E53935;--correct:#00C853;--wrong:#FF5252;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#87CEEB 0%,#b8e4f9 45%,#c8f4a2 70%,#4CAF50 100%);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+.cloud{position:fixed;font-size:clamp(2rem,6vw,3.5rem);opacity:.8;animation:cloudMove linear infinite;z-index:1;pointer-events:none;}
+@keyframes cloudMove{from{transform:translateX(-200px);}to{transform:translateX(calc(100vw+200px));}}
+.hills{position:fixed;bottom:0;left:0;right:0;height:100px;z-index:2;background:radial-gradient(ellipse 55% 100% at 25% 100%,#388E3C 48%,transparent 50%),radial-gradient(ellipse 50% 90% at 78% 100%,#2E7D32 48%,transparent 50%),linear-gradient(180deg,transparent 50%,#43A047);}
+.track{position:fixed;bottom:85px;left:0;right:0;height:24px;z-index:3;}
+.track::before{content:'';position:absolute;top:6px;left:0;right:0;height:5px;background:#8B6914;border-radius:2px;}
+.track::after{content:'';position:absolute;bottom:0;left:0;right:0;height:5px;background:#8B6914;border-radius:2px;}
+.sleeper{position:absolute;bottom:0;width:16px;height:22px;background:#6D4C41;border-radius:2px;z-index:3;}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.4rem);color:#1a1a2e;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.level-chip{display:inline-block;background:rgba(255,255,255,.75);backdrop-filter:blur(8px);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#1a1a2e;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.score-pill{background:rgba(255,255,255,.75);backdrop-filter:blur(8px);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#1a1a2e;}
+.score-pill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+.instr{position:relative;z-index:20;background:rgba(255,255,255,.78);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.95);border-radius:22px;padding:11px 22px;margin:8px 18px;text-align:center;font-weight:700;font-size:clamp(.95rem,3.5vw,1.25rem);color:#1a1a2e;box-shadow:0 6px 20px rgba(0,0,0,.1);max-width:620px;width:calc(100% - 36px);}
+
+.train-wrap{position:relative;z-index:15;width:100%;max-width:780px;padding:0 14px;margin-top:8px;}
+.train-row{display:flex;align-items:flex-end;gap:clamp(3px,1.2vw,7px);overflow-x:auto;padding-bottom:12px;scrollbar-width:none;}
+.train-row::-webkit-scrollbar{display:none;}
+
+.engine{flex-shrink:0;width:clamp(68px,16vw,98px);height:clamp(58px,13vw,85px);background:linear-gradient(145deg,#EF5350,#B71C1C);border-radius:14px 20px 8px 8px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.3),inset 0 2px 6px rgba(255,255,255,.2);position:relative;font-size:clamp(1.6rem,5vw,2.2rem);animation:chug .45s ease-in-out infinite alternate;flex-direction:column;}
+@keyframes chug{from{transform:translateY(0);}to{transform:translateY(-3px);}}
+.engine::after{content:'';position:absolute;top:-14px;left:12px;width:22px;height:16px;background:#616161;border-radius:5px 5px 0 0;}
+.smoke{position:absolute;top:-28px;left:14px;font-size:1rem;animation:smokeUp .9s ease-out infinite;opacity:.7;}
+@keyframes smokeUp{0%{transform:translateY(0) scale(1);opacity:.7;}100%{transform:translateY(-18px) scale(1.5);opacity:0;}}
+.eng-wheels{position:absolute;bottom:-11px;display:flex;gap:10px;}
+.ewh{width:20px;height:20px;border-radius:50%;background:#424242;border:3px solid #757575;animation:spinW .5s linear infinite;}
+@keyframes spinW{to{transform:rotate(360deg);}}
+
+.coach{flex-shrink:0;width:clamp(60px,13.5vw,86px);height:clamp(54px,12.5vw,78px);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5.5vw,2.3rem);color:#fff;box-shadow:0 5px 14px rgba(0,0,0,.25),inset 0 2px 5px rgba(255,255,255,.2);cursor:pointer;position:relative;transition:transform .2s;border:3px solid rgba(255,255,255,.25);}
+.coach:hover{transform:translateY(-4px);}
+.coach.filled{cursor:default;}
+.coach.empty{border:3px dashed rgba(255,255,255,.6);background:rgba(255,255,255,.15) !important;font-size:clamp(1.5rem,5vw,2rem);color:rgba(255,255,255,.7);}
+.coach.correct-flash{animation:cPop .4s ease;}
+@keyframes cPop{0%{transform:scale(1);}50%{transform:scale(1.22);}100%{transform:scale(1);}}
+.coach.wrong-shake{animation:cShake .35s ease;}
+@keyframes cShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+.cwh-row{position:absolute;bottom:-11px;display:flex;gap:8px;}
+.cwh{width:16px;height:16px;border-radius:50%;background:#555;border:2px solid #888;}
+.cwin{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:26px;height:16px;background:rgba(255,255,255,.3);border-radius:4px;}
+
+.choices-area{position:relative;z-index:20;background:rgba(255,255,255,.72);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.9);border-radius:22px;padding:12px 14px;margin:8px 14px;max-width:700px;width:calc(100% - 28px);box-shadow:0 6px 20px rgba(0,0,0,.1);}
+.choices-lbl{font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(0,0,0,.3);margin-bottom:8px;text-align:center;}
+.choices-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.cnum{width:clamp(50px,11.5vw,66px);height:clamp(50px,11.5vw,66px);border-radius:14px;border:none;cursor:pointer;font-family:'Fredoka One',cursive;font-size:clamp(1.2rem,4vw,1.8rem);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.25),0 6px 14px rgba(0,0,0,.12);transition:all .15s;position:relative;top:0;}
+.cnum:hover{top:-3px;box-shadow:0 7px 0 rgba(0,0,0,.2);}
+.cnum:active{top:3px;box-shadow:0 1px 0 rgba(0,0,0,.25);}
+.cnum.used{opacity:.22;pointer-events:none;transform:scale(.85);}
+
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.95rem,3.5vw,1.25rem);margin-bottom:22px;text-align:center;padding:0 20px;}
+.ov-btn{background:linear-gradient(135deg,#E53935,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(229,57,53,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+.explain{position:fixed;bottom:120px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(26,26,46,.93);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:340px;width:90%;text-align:center;animation:exIn .3s ease both,exOut .3s 2.5s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes exIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes exOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="cloud" style="top:8%;animation-duration:18s;">☁️</div>
+<div class="cloud" style="top:14%;animation-duration:25s;animation-delay:7s;">⛅</div>
+<div class="cloud" style="top:4%;animation-duration:21s;animation-delay:13s;">☁️</div>
+<div class="hills"></div>
+<div class="track" id="trackEl"></div>
+
+<div class="header">
+  <div class="title">🚂 Number Train</div>
+  <div class="level-chip" id="levelChip">Level 1 · Numbers 1–10</div>
+</div>
+<div class="score-bar">
+  <div class="score-pill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="score-pill">🚂 Round: <span id="roundVal">1</span>/8</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+<div class="instr" id="instrEl">Fill in the missing number to complete the train!</div>
+<div class="train-wrap"><div class="train-row" id="trainRow"></div></div>
+<div class="choices-area">
+  <div class="choices-lbl">👆 Tap the missing number</div>
+  <div class="choices-row" id="choicesRow"></div>
+</div>
+
+<script>
+const LEVELS=[
+  {name:'Numbers 1–10',   seq:()=>range(1,10,1),  gaps:1,choices:4},
+  {name:'Numbers 1–20',   seq:()=>range(1,20,1),  gaps:2,choices:5},
+  {name:'Skip-count by 2',seq:()=>range(2,20,2),  gaps:2,choices:4},
+  {name:'Skip-count by 5',seq:()=>range(5,50,5),  gaps:2,choices:4},
+];
+const COLORS=['#E53935','#1E88E5','#43A047','#FB8C00','#8E24AA','#00897B','#F4511E','#3949AB','#039BE5','#7CB342'];
+const TOTAL=8;
+let score=0,round=0,lvIdx=0,answered=false,missingIdx=[],curMissing=0,trainNums=[];
+
+function range(s,e,step){const a=[];for(let i=s;i<=e;i+=step)a.push(i);return a;}
+
+let ctx;
+function ac(){if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();return ctx;}
+function playTone(freqs,type='sine',vol=.28){
+  const c=ac();
+  freqs.forEach((f,i)=>setTimeout(()=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type=type;
+    g.gain.setValueAtTime(vol,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);
+    o.start();o.stop(c.currentTime+.4);
+  },i*100));
+}
+function playCorrect(){playTone([523,659,784,1047]);}
+function playWrong(){
+  const c=ac(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;
+  g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);
+  o.start();o.stop(c.currentTime+.3);
+}
+function playWhistle(){
+  const c=ac(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type='sine';
+  o.frequency.setValueAtTime(1200,c.currentTime);o.frequency.exponentialRampToValueAtTime(1600,c.currentTime+.15);
+  o.frequency.exponentialRampToValueAtTime(1000,c.currentTime+.4);
+  g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);
+  o.start();o.stop(c.currentTime+.5);
+}
+
+function speak(t){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;
+  window.speechSynthesis.speak(u);
+}
+
+function makeDots(){
+  const p=document.getElementById('progRow');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='pdot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+function makeSleepers(){
+  const el=document.getElementById('trackEl');el.innerHTML='';
+  for(let i=0;i<Math.ceil(window.innerWidth/28);i++){
+    const s=document.createElement('div');s.className='sleeper';
+    s.style.left=(i*28)+'px';el.appendChild(s);
+  }
+}
+function spawnConf(){
+  const cols=['#E53935','#FFD700','#43A047','#1E88E5','#FB8C00','#fff'];
+  for(let i=0;i<22;i++){
+    const c=document.createElement('div');c.className='conf';
+    c.style.cssText=`left:${Math.random()*100}%;top:12%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;
+    document.body.appendChild(c);setTimeout(()=>c.remove(),1600);
+  }
+}
+function showExplain(txt){
+  document.querySelector('.explain')?.remove();
+  const el=document.createElement('div');el.className='explain';el.textContent=txt;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),3000);
+}
+
+function pickLevel(){
+  lvIdx=round<2?0:round<4?1:round<6?2:3;
+  document.getElementById('levelChip').textContent=`Level ${lvIdx+1} · ${LEVELS[lvIdx].name}`;
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;curMissing=0;
+  pickLevel();makeDots();
+  document.getElementById('roundVal').textContent=round+1;
+
+  const lv=LEVELS[lvIdx];
+  const full=lv.seq();
+  const win=Math.min(8,full.length);
+  const si=Math.floor(Math.random()*(full.length-win));
+  trainNums=full.slice(si,si+win);
+
+  missingIdx=[];
+  const pool=[...Array(trainNums.length).keys()].filter(i=>i>0&&i<trainNums.length-1);
+  pool.sort(()=>Math.random()-.5);
+  for(let i=0;i<Math.min(lv.gaps,pool.length);i++)missingIdx.push(pool[i]);
+  missingIdx.sort((a,b)=>a-b);
+
+  buildTrain();buildChoices();
+  const first=trainNums[missingIdx[0]];
+  setTimeout(()=>speak(`The train is missing number ${first}. Can you find it?`),400);
+}
+
+function buildTrain(){
+  const row=document.getElementById('trainRow');row.innerHTML='';
+  const eng=document.createElement('div');eng.className='engine';
+  eng.innerHTML=`🚂<div class="smoke">💨</div><div class="eng-wheels"><div class="ewh"></div><div class="ewh"></div></div>`;
+  row.appendChild(eng);
+  trainNums.forEach((num,i)=>{
+    const c=document.createElement('div');
+    const col=COLORS[i%COLORS.length];
+    if(missingIdx.includes(i)){
+      c.className='coach empty';c.dataset.idx=i;c.dataset.val=num;
+      c.innerHTML=`?<div class="cwh-row"><div class="cwh"></div><div class="cwh"></div></div>`;
+    } else {
+      c.className='coach filled';
+      c.style.background=`linear-gradient(145deg,${lgt(col)},${col})`;
+      c.innerHTML=`<div class="cwin"></div>${num}<div class="cwh-row"><div class="cwh"></div><div class="cwh"></div></div>`;
+    }
+    row.appendChild(c);
+  });
+  const cab=document.createElement('div');cab.className='coach filled';
+  cab.style.background='linear-gradient(145deg,#90A4AE,#607D8B)';
+  cab.innerHTML=`🚃<div class="cwh-row"><div class="cwh"></div><div class="cwh"></div></div>`;
+  row.appendChild(cab);
+}
+
+function buildChoices(){
+  const lv=LEVELS[lvIdx];
+  const row=document.getElementById('choicesRow');row.innerHTML='';
+  const correct=trainNums[missingIdx[curMissing]];
+  const full=lv.seq();
+  const wrongs=full.filter(n=>n!==correct).sort(()=>Math.random()-.5).slice(0,lv.choices-1);
+  [...wrongs,correct].sort(()=>Math.random()-.5).forEach((num,ci)=>{
+    const btn=document.createElement('button');
+    btn.className='cnum';btn.textContent=num;
+    btn.style.background=`linear-gradient(135deg,${COLORS[ci%COLORS.length]},${COLORS[(ci+3)%COLORS.length]})`;
+    btn.onclick=()=>answer(btn,num,correct);
+    row.appendChild(btn);
+  });
+}
+
+function answer(btn,chosen,correct){
+  if(answered)return;
+  const idx=missingIdx[curMissing];
+  if(chosen===correct){
+    playCorrect();spawnConf();
+    const empties=document.querySelectorAll('.coach.empty');
+    if(empties[0]){
+      const col=COLORS[idx%COLORS.length];
+      empties[0].className='coach filled correct-flash';
+      empties[0].style.background=`linear-gradient(145deg,${lgt(col)},${col})`;
+      empties[0].innerHTML=`<div class="cwin"></div>${correct}<div class="cwh-row"><div class="cwh"></div><div class="cwh"></div></div>`;
+    }
+    score+=10;document.getElementById('scoreVal').textContent=score;
+    curMissing++;speak(`${correct}! Correct!`);
+    if(curMissing>=missingIdx.length){
+      playWhistle();round++;makeDots();setTimeout(newRound,1400);
+    } else {
+      const next=trainNums[missingIdx[curMissing]];
+      speak(`Great! Now find ${next}!`);setTimeout(buildChoices,900);
+    }
+  } else {
+    playWrong();btn.classList.add('used');
+    const prev=trainNums[idx-1],next=trainNums[idx+1];
+    showExplain(`💡 The train goes: ${prev} → ? → ${next}\nWhat number comes after ${prev}?`);
+    speak(`Not quite! After ${prev} comes...?`);
+  }
+}
+
+function showCelebration(){
+  playWhistle();spawnConf();
+  speak(`Fantastic! You completed the Number Train! All numbers in order!`);
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🏆</div><div class="ov-title">Number Master!</div>
+    <div class="ov-sub">Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!<br/>You can count forward perfectly!</div>
+    <button class="ov-btn" onclick="restart()">Play Again 🚂</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+function lgt(hex){
+  try{const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+    return `rgb(${Math.min(255,r+65)},${Math.min(255,g+65)},${Math.min(255,b+65)})`;}catch{return hex;}
+}
+
+window.addEventListener('load',()=>{
+  makeSleepers();window.speechSynthesis.getVoices();makeDots();
+  setTimeout(()=>{speak('Welcome to Number Train! Fill the missing number!');setTimeout(newRound,1400);},400);
+});
+</script>
+</body>
+</html>

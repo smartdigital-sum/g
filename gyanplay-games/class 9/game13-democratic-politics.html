@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Democratic Politics — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--pink);color:#fff;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--pink);color:#fff;border-color:var(--pink);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--saffron);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--saffron),var(--pink));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.55;margin-bottom:18px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;}
+.choice-btn:hover:not(:disabled){background:rgba(255,107,0,.1);border-color:var(--saffron);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--saffron);color:#fff;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--saffron);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Social Studies · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('hi')">हि</button>
+      <button class="lang-btn" onclick="setLang('as')">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">🗳️ Democratic Politics</span>
+    <span data-lang="hi" style="display:none">🗳️ लोकतांत्रिक राजनीति</span>
+    <span data-lang="as" style="display:none">🗳️ গণতান্ত্ৰিক ৰাজনীতি</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — Civics Ch 3 &amp; 4 · Constitution &amp; Elections</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — नागरिक शास्त्र अध्याय 3 &amp; 4 · संविधान और चुनाव</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — নাগৰিকশাস্ত্ৰ অধ্যায় 3 &amp; 4 · সংবিধান আৰু নিৰ্বাচন</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    en: "The Constituent Assembly of India drafted the Constitution. Who was its Chairman (President)?",
+    hi: "भारत की संविधान सभा ने संविधान का मसौदा तैयार किया। इसके अध्यक्ष कौन थे?",
+    as: "ভাৰতৰ গণপৰিষদে সংবিধান প্ৰস্তুত কৰিছিল। ইয়াৰ অধ্যক্ষ (ৰাষ্ট্ৰপতি) কোন আছিল?",
+    choices: { en: ["Dr. Rajendra Prasad","Dr. B.R. Ambedkar","Jawaharlal Nehru","Sardar Patel"], hi: ["डॉ. राजेंद्र प्रसाद","डॉ. बी.आर. अम्बेडकर","जवाहरलाल नेहरू","सरदार पटेल"], as: ["ড° ৰাজেন্দ্ৰ প্ৰসাদ","ড° বি.আৰ. আম্বেদকাৰ","জৱাহৰলাল নেহৰু","সৰদাৰ পটেল"] },
+    correct: 0,
+    explain: { en: "Dr. Rajendra Prasad was the President of the Constituent Assembly. Dr. B.R. Ambedkar was the Chairman of the Drafting Committee.", hi: "डॉ. राजेंद्र प्रसाद संविधान सभा के अध्यक्ष थे। डॉ. अम्बेडकर प्रारूप समिति के अध्यक्ष थे।", as: "ড° ৰাজেন্দ্ৰ প্ৰসাদ গণপৰিষদৰ অধ্যক্ষ আছিল। ড° আম্বেদকাৰ খচৰা সমিতিৰ অধ্যক্ষ আছিল।" }
+  },
+  {
+    en: "Dr. B.R. Ambedkar's key role in the Indian Constitution was as:",
+    hi: "भारतीय संविधान में डॉ. बी.आर. अम्बेडकर की प्रमुख भूमिका थी:",
+    as: "ভাৰতীয় সংবিধানত ড° বি.আৰ. আম্বেদকাৰৰ মুখ্য ভূমিকা আছিল:",
+    choices: { en: ["Chairman of the Drafting Committee","Prime Minister of India","President of Constituent Assembly","Chief Justice of India"], hi: ["प्रारूप समिति के अध्यक्ष","भारत के प्रधानमंत्री","संविधान सभा के अध्यक्ष","भारत के मुख्य न्यायाधीश"], as: ["খচৰা সমিতিৰ অধ্যক্ষ","ভাৰতৰ প্ৰধানমন্ত্ৰী","গণপৰিষদৰ অধ্যক্ষ","ভাৰতৰ মুখ্য ন্যায়ধীশ"] },
+    correct: 0,
+    explain: { en: "Dr. Ambedkar chaired the Drafting Committee of the Constituent Assembly and is known as the 'Father of the Indian Constitution'.", hi: "डॉ. अम्बेडकर ने संविधान सभा की प्रारूप समिति की अध्यक्षता की और उन्हें 'भारतीय संविधान का पिता' कहा जाता है।", as: "ড° আম্বেদকাৰ গণপৰিষদৰ খচৰা সমিতিৰ অধ্যক্ষ আছিল আৰু তেওঁক 'ভাৰতীয় সংবিধানৰ পিতৃ' বুলি কোৱা হয়।" }
+  },
+  {
+    en: "The Preamble to the Indian Constitution begins with 'We, the People of India…' and declares India to be:",
+    hi: "भारतीय संविधान की प्रस्तावना 'हम, भारत के लोग…' से शुरू होती है और भारत को घोषित करती है:",
+    as: "ভাৰতীয় সংবিধানৰ প্ৰস্তাৱনা 'আমি, ভাৰতৰ জনগণ…' ৰে আৰম্ভ হয় আৰু ভাৰতক ঘোষণা কৰে:",
+    choices: { en: ["Sovereign, Socialist, Secular, Democratic Republic","Federal, Capitalist, Religious, Monarchy","Unitary, Communist, Theocratic State","Colonial, Aristocratic, Imperial Nation"], hi: ["संप्रभु, समाजवादी, पंथनिरपेक्ष, लोकतांत्रिक गणराज्य","संघीय, पूंजीवादी, धार्मिक, राजशाही","एकात्मक, साम्यवादी, धर्मशासित राज्य","औपनिवेशिक, कुलीन, साम्राज्यवादी राष्ट्र"], as: ["সাৰ্বভৌম, সমাজতান্ত্ৰিক, ধৰ্মনিৰপেক্ষ, গণতান্ত্ৰিক গণৰাজ্য","ফেডাৰেল, পুঁজিবাদী, ধাৰ্মিক, ৰাজতন্ত্ৰ","একাত্মক, কমিউনিষ্ট, ধৰ্মশাসিত ৰাজ্য","ঔপনিৱেশিক, অভিজাত, সাম্ৰাজ্যবাদী ৰাষ্ট্ৰ"] },
+    correct: 0,
+    explain: { en: "The Preamble declares India a Sovereign, Socialist, Secular, Democratic Republic — these words (Socialist and Secular) were added by the 42nd Amendment in 1976.", hi: "प्रस्तावना भारत को संप्रभु, समाजवादी, पंथनिरपेक्ष, लोकतांत्रिक गणराज्य घोषित करती है।", as: "প্ৰস্তাৱনাই ভাৰতক সাৰ্বভৌম, সমাজতান্ত্ৰিক, ধৰ্মনিৰপেক্ষ, গণতান্ত্ৰিক গণৰাজ্য ঘোষণা কৰে।" }
+  },
+  {
+    en: "Universal Adult Franchise means:",
+    hi: "सार्वभौमिक वयस्क मताधिकार का अर्थ है:",
+    as: "সাৰ্বজনীন প্ৰাপ্তবয়স্ক ভোটাধিকাৰ মানে:",
+    choices: { en: ["Every citizen 18 years and above has the right to vote","Only educated adults can vote","Only taxpayers can vote","Only men above 21 years can vote"], hi: ["18 वर्ष और उससे अधिक का प्रत्येक नागरिक मतदान का अधिकार रखता है","केवल शिक्षित वयस्क मतदान कर सकते हैं","केवल करदाता मतदान कर सकते हैं","केवल 21 वर्ष से ऊपर के पुरुष मतदान कर सकते हैं"], as: ["18 বছৰ আৰু তাতকৈ বেছি বয়সৰ প্ৰতিটো নাগৰিকৰ ভোট দিয়াৰ অধিকাৰ আছে","কেৱল শিক্ষিত প্ৰাপ্তবয়স্কে ভোট দিব পাৰে","কেৱল কৰদাতাসকলে ভোট দিব পাৰে","কেৱল 21 বছৰৰ ওপৰৰ পুৰুষে ভোট দিব পাৰে"] },
+    correct: 0,
+    explain: { en: "Universal Adult Franchise gives every citizen aged 18+ the right to vote, regardless of caste, religion, gender, or wealth.", hi: "सार्वभौमिक वयस्क मताधिकार 18 वर्ष से अधिक प्रत्येक नागरिक को जाति, धर्म, लिंग या धन की परवाह किए बिना मतदान का अधिकार देता है।", as: "সাৰ্বজনীন প্ৰাপ্তবয়স্ক ভোটাধিকাৰে 18 বছৰ বা তাতকৈ বেছি বয়সৰ প্ৰতিটো নাগৰিকক জাতি, ধৰ্ম, লিঙ্গ বা সম্পদ নিৰ্বিশেষে ভোট দিয়াৰ অধিকাৰ দিয়ে।" }
+  },
+  {
+    en: "The Election Commission of India is responsible for:",
+    hi: "भारत का चुनाव आयोग किसके लिए जिम्मेदार है:",
+    as: "ভাৰতৰ নিৰ্বাচন আয়োগ দায়ী:",
+    choices: { en: ["Conducting free and fair elections for Parliament and State Assemblies","Making laws for the country","Appointing judges of the Supreme Court","Collecting taxes from citizens"], hi: ["संसद और विधानसभाओं के लिए स्वतंत्र और निष्पक्ष चुनाव कराना","देश के लिए कानून बनाना","सर्वोच्च न्यायालय के न्यायाधीशों की नियुक्ति","नागरिकों से कर वसूलना"], as: ["সংসদ আৰু ৰাজ্য বিধানসভাৰ বাবে মুক্ত আৰু ন্যায্য নিৰ্বাচন অনুষ্ঠিত কৰা","দেশৰ বাবে আইন প্ৰস্তুত কৰা","সৰ্বোচ্চ ন্যায়ালয়ৰ ন্যায়ধীশ নিযুক্তি","নাগৰিকৰ পৰা কৰ সংগ্ৰহ"] },
+    correct: 0,
+    explain: { en: "The Election Commission of India (ECI) is a constitutional body that oversees free, fair, and transparent elections for Lok Sabha, Rajya Sabha, and State Assemblies.", hi: "भारत का चुनाव आयोग (ECI) एक संवैधानिक निकाय है जो लोकसभा, राज्यसभा और विधानसभाओं के लिए स्वतंत्र चुनाव की निगरानी करता है।", as: "ভাৰতৰ নিৰ্বাচন আয়োগ (ECI) এটা সাংবিধানিক সংস্থা যি লোকসভা, ৰাজ্যসভা আৰু বিধানসভাৰ বাবে মুক্ত নিৰ্বাচনৰ তদাৰক কৰে।" }
+  },
+  {
+    en: "The Model Code of Conduct (MCC) comes into force when:",
+    hi: "आदर्श आचार संहिता (MCC) कब लागू होती है:",
+    as: "আদৰ্শ আচাৰ বিধি (MCC) কেতিয়া কাৰ্যকৰী হয়:",
+    choices: { en: ["Election schedule is announced by the Election Commission","Parliament passes a law","President gives approval","Prime Minister declares elections"], hi: ["चुनाव आयोग द्वारा चुनाव कार्यक्रम घोषित होने पर","संसद कानून पास करने पर","राष्ट्रपति की मंजूरी देने पर","प्रधानमंत्री चुनाव घोषित करने पर"], as: ["নিৰ্বাচন আয়োগে নিৰ্বাচনৰ সময়সূচী ঘোষণা কৰিলে","সংসদে আইন পাছ কৰিলে","ৰাষ্ট্ৰপতিয়ে অনুমোদন দিলে","প্ৰধানমন্ত্ৰীয়ে নিৰ্বাচন ঘোষণা কৰিলে"] },
+    correct: 0,
+    explain: { en: "The Model Code of Conduct automatically comes into force from the date the election schedule is announced by the Election Commission of India.", hi: "आदर्श आचार संहिता चुनाव आयोग द्वारा चुनाव कार्यक्रम घोषित होने की तारीख से स्वचालित रूप से लागू हो जाती है।", as: "আদৰ্শ আচাৰ বিধি নিৰ্বাচন আয়োগে নিৰ্বাচনৰ সময়সূচী ঘোষণা কৰা তাৰিখৰ পৰা স্বয়ংক্ৰিয়ভাৱে কাৰ্যকৰী হয়।" }
+  },
+  {
+    en: "In India's 'First-Past-The-Post' (FPTP) electoral system, the winner is:",
+    hi: "भारत की 'फर्स्ट-पास्ट-द-पोस्ट' (FPTP) चुनाव प्रणाली में विजेता वह होता है:",
+    as: "ভাৰতৰ 'ফাৰ্ষ্ট-পাষ্ট-দ্য-পোষ্ট' (FPTP) নিৰ্বাচনী ব্যৱস্থাত বিজয়ী হয়:",
+    choices: { en: ["The candidate who gets the most votes (even without majority)","The candidate who gets more than 50% of votes","The party with highest national vote share","The candidate selected by the President"], hi: ["सबसे अधिक मत पाने वाला उम्मीदवार (बहुमत के बिना भी)","50% से अधिक मत पाने वाला उम्मीदवार","सबसे अधिक राष्ट्रीय वोट शेयर वाली पार्टी","राष्ट्रपति द्वारा चुना गया उम्मीदवार"], as: ["সৰ্বাধিক ভোট পোৱা প্ৰাৰ্থী (সংখ্যাগৰিষ্ঠতা নোহোৱাকৈও)","50%-তকৈ বেছি ভোট পোৱা প্ৰাৰ্থী","সৰ্বোচ্চ ৰাষ্ট্ৰীয় ভোটৰ অংশ থকা দল","ৰাষ্ট্ৰপতিয়ে নিৰ্বাচিত প্ৰাৰ্থী"] },
+    correct: 0,
+    explain: { en: "In FPTP (used in India for Lok Sabha elections), the candidate with the highest number of votes wins — even if they don't have a majority.", hi: "FPTP में (भारत में लोकसभा चुनावों के लिए), सबसे अधिक मत पाने वाला उम्मीदवार जीतता है — बहुमत न होने पर भी।", as: "FPTP-ত (ভাৰতত লোকসভা নিৰ্বাচনৰ বাবে), সৰ্বাধিক ভোট পোৱা প্ৰাৰ্থী জয়ী হয় — সংখ্যাগৰিষ্ঠতা নোহোৱাকৈও।" }
+  },
+  {
+    en: "The Chief Election Commissioner of India:",
+    hi: "भारत के मुख्य चुनाव आयुक्त:",
+    as: "ভাৰতৰ মুখ্য নিৰ্বাচন আয়ুক্ত:",
+    choices: { en: ["Can only be removed by a parliamentary process similar to removing a Supreme Court judge","Is appointed by the Prime Minister directly","Serves a lifetime tenure","Can be removed by the President any time"], hi: ["केवल सर्वोच्च न्यायालय के न्यायाधीश हटाने जैसी संसदीय प्रक्रिया से ही हटाए जा सकते हैं","प्रधानमंत्री द्वारा सीधे नियुक्त किए जाते हैं","आजीवन कार्यकाल सेवा करते हैं","राष्ट्रपति द्वारा कभी भी हटाए जा सकते हैं"], as: ["সৰ্বোচ্চ ন্যায়ালয়ৰ ন্যায়ধীশ অপসাৰণৰ দৰে সংসদীয় প্ৰক্ৰিয়াৰে কেৱল অপসাৰণ কৰিব পাৰি","প্ৰধানমন্ত্ৰীয়ে পোনপটীয়াকৈ নিযুক্তি দিয়ে","আজীৱন কাৰ্যকাল সেৱা কৰে","ৰাষ্ট্ৰপতিয়ে যিকোনো সময়তে অপসাৰণ কৰিব পাৰে"] },
+    correct: 0,
+    explain: { en: "The CEC is protected from arbitrary removal — they can only be removed by Parliament through a special resolution, ensuring independence of the Election Commission.", hi: "मुख्य चुनाव आयुक्त को मनमाने ढंग से नहीं हटाया जा सकता — उन्हें केवल संसद द्वारा विशेष प्रस्ताव से हटाया जा सकता है।", as: "CEC-ক স্বেচ্ছামূলকভাৱে অপসাৰণ কৰিব নোৱাৰি — সংসদৰ বিশেষ প্ৰস্তাৱৰ দ্বাৰাহে অপসাৰণ সম্ভৱ।" }
+  },
+  {
+    en: "In Indian elections, a candidate must submit a 'nomination paper'. This means:",
+    hi: "भारतीय चुनावों में, एक उम्मीदवार को 'नामांकन पत्र' जमा करना होता है। इसका अर्थ है:",
+    as: "ভাৰতীয় নিৰ্বাচনত, এজন প্ৰাৰ্থীয়ে 'মনোনয়ন পত্ৰ' দাখিল কৰিব লাগে। ইয়াৰ মানে:",
+    choices: { en: ["Formally declaring their candidacy by filing a legal form with the Election Commission","Paying taxes to the government","Getting endorsement from the Prime Minister","Getting selected by political party headquarters only"], hi: ["चुनाव आयोग के साथ कानूनी फॉर्म भरकर अपनी उम्मीदवारी औपचारिक रूप से घोषित करना","सरकार को कर चुकाना","प्रधानमंत्री से समर्थन प्राप्त करना","केवल राजनीतिक पार्टी मुख्यालय द्वारा चुना जाना"], as: ["নিৰ্বাচন আয়োগৰ সৈতে আইনী ফৰ্ম পূৰণ কৰি নিজৰ প্ৰাৰ্থীতা আনুষ্ঠানিকভাৱে ঘোষণা কৰা","চৰকাৰক কৰ পৰিশোধ কৰা","প্ৰধানমন্ত্ৰীৰ পৰা সমৰ্থন লাভ কৰা","কেৱল ৰাজনৈতিক দলৰ মুখ্যালয়ে নিৰ্বাচন কৰা"] },
+    correct: 0,
+    explain: { en: "A nomination paper is a legal document filed with the returning officer formally declaring that a person wants to contest the election.", hi: "नामांकन पत्र एक कानूनी दस्तावेज है जो रिटर्निंग ऑफिसर के पास दाखिल किया जाता है।", as: "মনোনয়ন পত্ৰ এটা আইনী নথি যি ৰিটাৰ্নিং অফিচাৰৰ ওচৰত দাখিল কৰা হয়।" }
+  },
+  {
+    en: "Political parties are essential in a democracy because they:",
+    hi: "लोकतंत्र में राजनीतिक दल आवश्यक हैं क्योंकि वे:",
+    as: "গণতন্ত্ৰত ৰাজনৈতিক দলসমূহ অপৰিহাৰ্য কাৰণ সেইবোৰ:",
+    choices: { en: ["Contest elections, form governments, and represent different sections of society","Control the military and police forces","Decide the budget without Parliament","Appoint the President and Prime Minister directly"], hi: ["चुनाव लड़ते, सरकारें बनाते और समाज के विभिन्न वर्गों का प्रतिनिधित्व करते हैं","सैन्य और पुलिस बलों को नियंत्रित करते हैं","संसद के बिना बजट तय करते हैं","सीधे राष्ट्रपति और प्रधानमंत्री नियुक्त करते हैं"], as: ["নিৰ্বাচনত প্ৰতিযোগিতা কৰে, চৰকাৰ গঠন কৰে আৰু সমাজৰ বিভিন্ন শ্ৰেণীক প্ৰতিনিধিত্ব কৰে","সামৰিক আৰু আৰক্ষী বাহিনী নিয়ন্ত্ৰণ কৰে","সংসদ নোহোৱাকৈ বাজেট ঠিক কৰে","সৰাসৰি ৰাষ্ট্ৰপতি আৰু প্ৰধানমন্ত্ৰী নিযুক্তি দিয়ে"] },
+    correct: 0,
+    explain: { en: "Political parties are essential in democracy — they contest elections, form governments, create opposition, and represent diverse interests of citizens.", hi: "लोकतंत्र में राजनीतिक दल आवश्यक हैं — वे चुनाव लड़ते, सरकारें बनाते, विपक्ष बनाते और नागरिकों के विविध हितों का प्रतिनिधित्व करते हैं।", as: "গণতন্ত্ৰত ৰাজনৈতিক দল অপৰিহাৰ্য — সেইবোৰে নিৰ্বাচনত প্ৰতিযোগিতা কৰে, চৰকাৰ গঠন কৰে, বিৰোধী দল তৈৰি কৰে আৰু নাগৰিকৰ বৈচিত্ৰ্যময় স্বাৰ্থ প্ৰতিনিধিত্ব কৰে।" }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = `Question ${current + 1} of 10`;
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+  const choicesArr = (q.choices[lang] || q.choices.en);
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars, msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'Civics Champion! You know Indian democracy inside out! 🗳️', hi: 'नागरिकशास्त्र चैंपियन! आप भारतीय लोकतंत्र को अंदर से जानते हैं! 🗳️', as: 'নাগৰিকশাস্ত্ৰ চেম্পিয়ন! আপুনি ভাৰতীয় গণতন্ত্ৰ ভালদৰে জানে! 🗳️' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Well done! You understand democratic processes well.', hi: 'शाबाश! आप लोकतांत्रिक प्रक्रियाओं को अच्छी तरह समझते हैं।', as: 'ভাল কাম! আপুনি গণতান্ত্ৰিক প্ৰক্ৰিয়াসমূহ ভালদৰে বোঝে।' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Keep going! Review the Election Commission and Constitution.', hi: 'चलते रहो! चुनाव आयोग और संविधान दोबारा पढ़ें।', as: 'এগাই যাওক! নিৰ্বাচন আয়োগ আৰু সংবিধান পুনৰায় পঢ়ক।' }; }
+  else { stars = '☆☆☆'; msg = { en: 'Democracy needs informed citizens — study more! 🗳️', hi: 'लोकतंत्र को जानकार नागरिकों की जरूरत है — अधिक पढ़ें! 🗳️', as: 'গণতন্ত্ৰত সচেতন নাগৰিক প্ৰয়োজন — অধিক পঢ়ক! 🗳️' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

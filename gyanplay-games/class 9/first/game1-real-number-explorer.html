@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Number Explorer — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060A10;
+  --card: #0D1428;
+  --gold: #FFD166;
+  --coral: #FF6B6B;
+  --teal: #06D6A0;
+  --purple: #C77DFF;
+  --text: #E8F0FF;
+  --dim: #4A6A8A;
+  --bg-grad-start: #180A28;
+  --bg-grad-end: #0F0820;
+  --accent: var(--purple);
+  --border-glow: rgba(199,125,255,.22);
+  --card-glow: rgba(199,125,255,.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: linear-gradient(160deg, var(--bg-grad-start), var(--bg-grad-end));
+  min-height: 100vh;
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  padding: 0 0 40px 0;
+}
+
+.game-shell {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.header {
+  padding: 18px 20px 12px;
+  border-bottom: 2px solid var(--border-glow);
+  background: rgba(13,20,40,0.7);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.game-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1.2;
+}
+.subject-tag {
+  font-size: 0.7rem;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+.stars {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+.star {
+  font-size: 1rem;
+  opacity: 0.3;
+  transition: opacity 0.4s, filter 0.4s;
+}
+.star.lit {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px var(--gold));
+}
+
+/* WOW HOOK */
+.wow-hook {
+  margin: 16px 16px 0;
+  background: linear-gradient(135deg, rgba(199,125,255,0.18), rgba(13,20,40,0.9));
+  border: 1px solid var(--border-glow);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 4px 24px var(--card-glow);
+}
+.wow-hook .emoji {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  display: block;
+}
+.wow-hook p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+.wow-hook strong {
+  color: var(--gold);
+}
+
+/* STAGE AREA */
+.stage-area {
+  padding: 16px;
+  flex: 1;
+}
+
+.stage {
+  display: none;
+}
+.stage.active {
+  display: block;
+  animation: fadeIn 0.35s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stage-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--purple);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border-glow);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 16px var(--card-glow);
+}
+
+/* NUMBER LINE */
+.numberline-wrap {
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.3);
+  padding: 16px 8px;
+  position: relative;
+  cursor: grab;
+}
+.numberline-svg-wrap {
+  overflow: hidden;
+  width: 100%;
+}
+#numberline-svg {
+  width: 100%;
+  height: 140px;
+  transition: transform 0.1s;
+}
+.zoom-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  justify-content: center;
+}
+.zoom-btn {
+  background: rgba(199,125,255,0.2);
+  border: 1px solid var(--purple);
+  color: var(--purple);
+  border-radius: 8px;
+  padding: 6px 18px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-height: 44px;
+}
+.zoom-btn:hover { background: rgba(199,125,255,0.35); }
+
+.drag-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+.drag-num {
+  background: rgba(255,209,102,0.15);
+  border: 2px dashed var(--gold);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 1rem;
+  color: var(--gold);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  user-select: none;
+}
+.drag-num:hover { background: rgba(255,209,102,0.28); transform: scale(1.05); }
+.drag-num.placed { opacity: 0.4; pointer-events: none; border-style: solid; }
+
+.info-box {
+  background: rgba(199,125,255,0.08);
+  border-left: 3px solid var(--purple);
+  padding: 10px 14px;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.88rem;
+  color: var(--dim);
+  line-height: 1.5;
+  margin: 10px 0;
+}
+.info-box strong { color: var(--text); }
+
+/* DECIMAL VIEWER */
+.decimal-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.decimal-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.decimal-toggle {
+  background: rgba(199,125,255,0.15);
+  border: 1px solid var(--purple);
+  border-radius: 8px;
+  padding: 6px 14px;
+  color: var(--purple);
+  font-family: 'Baloo 2', cursive;
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 80px;
+  transition: background 0.2s;
+  font-size: 0.95rem;
+}
+.decimal-toggle:hover { background: rgba(199,125,255,0.28); }
+.decimal-display {
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+  color: var(--teal);
+  flex: 1;
+  word-break: break-all;
+  padding: 6px 10px;
+  background: rgba(6,214,160,0.07);
+  border-radius: 6px;
+  min-width: 160px;
+}
+.decimal-type-badge {
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.badge-term { background: rgba(255,209,102,0.18); color: var(--gold); }
+.badge-rep { background: rgba(76,201,240,0.18); color: #4CC9F0; }
+.badge-irr { background: rgba(255,107,107,0.18); color: var(--coral); }
+
+/* RATIONALISATION */
+.rat-problem {
+  text-align: center;
+  margin: 10px 0;
+}
+.rat-expr {
+  font-size: 1.6rem;
+  font-family: 'Baloo 2', cursive;
+  color: var(--text);
+}
+.rat-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+}
+.rat-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rat-step label {
+  font-size: 0.88rem;
+  color: var(--dim);
+  min-width: 90px;
+}
+.rat-step select, .rat-step input {
+  background: rgba(13,20,40,0.8);
+  border: 1px solid var(--border-glow);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 6px 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  flex: 1;
+  min-height: 40px;
+}
+.step-result {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.2rem;
+  color: var(--teal);
+  text-align: center;
+  min-height: 32px;
+  padding: 6px;
+  border-radius: 8px;
+  background: rgba(6,214,160,0.07);
+  transition: all 0.3s;
+}
+
+/* EXPONENT TILES */
+.exp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 10px 0;
+}
+.exp-law {
+  background: rgba(199,125,255,0.1);
+  border: 1px solid var(--border-glow);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 44px;
+}
+.exp-law:hover { background: rgba(199,125,255,0.22); border-color: var(--purple); }
+.exp-law.selected { background: rgba(199,125,255,0.35); border-color: var(--purple); box-shadow: 0 0 10px var(--card-glow); }
+.exp-law.correct { background: rgba(6,214,160,0.18); border-color: var(--teal); }
+.exp-law.wrong { background: rgba(255,107,107,0.18); border-color: var(--coral); }
+.law-formula {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1rem;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.law-name {
+  font-size: 0.72rem;
+  color: var(--dim);
+}
+.exp-example {
+  background: rgba(0,0,0,0.3);
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.exp-example .problem {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.4rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.exp-example .hint {
+  font-size: 0.8rem;
+  color: var(--dim);
+}
+
+/* BOTTOM BAR */
+.bottom-bar {
+  position: sticky;
+  bottom: 0;
+  background: rgba(13,20,40,0.9);
+  border-top: 1px solid var(--border-glow);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(8px);
+}
+.progress-label {
+  font-size: 0.85rem;
+  color: var(--dim);
+}
+.progress-label strong {
+  color: var(--text);
+}
+.action-btn {
+  background: var(--gold);
+  color: #060A10;
+  border: none;
+  border-radius: 24px;
+  padding: 10px 26px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  min-height: 44px;
+}
+.action-btn:hover { transform: scale(1.04); box-shadow: 0 4px 16px rgba(255,209,102,0.4); }
+.action-btn:disabled { background: var(--dim); cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* OVERLAY */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6,10,16,0.88);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+.overlay-box {
+  text-align: center;
+  padding: 28px 24px;
+  max-width: 340px;
+}
+.overlay-emoji { font-size: 3rem; margin-bottom: 12px; }
+.overlay-msg {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.25rem;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.overlay-fact {
+  font-size: 0.88rem;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+/* CONFETTI */
+.confetti-wrap {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200;
+}
+.confetto {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  animation: fall linear forwards;
+}
+@keyframes fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* SCORE */
+.score-display {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.1rem;
+  color: var(--gold);
+}
+
+/* RESULT MSG */
+.result-msg {
+  font-size: 0.9rem;
+  min-height: 22px;
+  padding: 4px 0;
+  transition: color 0.2s;
+}
+.result-msg.ok { color: var(--teal); }
+.result-msg.err { color: var(--coral); }
+
+/* GAME COMPLETE */
+.game-complete {
+  display: none;
+  text-align: center;
+  padding: 40px 20px;
+}
+.game-complete.show { display: block; animation: fadeIn 0.5s ease; }
+.complete-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 2rem;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.complete-sub {
+  color: var(--dim);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.replay-btn {
+  background: transparent;
+  border: 2px solid var(--gold);
+  color: var(--gold);
+  border-radius: 24px;
+  padding: 10px 28px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-height: 44px;
+}
+.replay-btn:hover { background: rgba(255,209,102,0.15); }
+
+/* ASSAM BADGE */
+.assam-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(6,214,160,0.1);
+  border: 1px solid rgba(6,214,160,0.3);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  color: var(--teal);
+  margin-top: 8px;
+}
+
+/* Number placement feedback */
+.placement-result {
+  font-size: 0.88rem;
+  margin-top: 8px;
+  min-height: 20px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="game-shell">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="game-title">🔢 Real Number Explorer</div>
+        <div class="subject-tag">📐 Mathematics · G9-01 · Ch 1: Number Systems</div>
+      </div>
+      <div class="score-display" id="scoreDisplay">0 pts</div>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span>
+      <span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span>
+      <span class="star" id="s4">⭐</span>
+      <span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <!-- WOW HOOK -->
+  <div class="wow-hook">
+    <span class="emoji">⚠️</span>
+    <p>The existence of irrational numbers was considered so dangerous to ancient Greek mathematics that <strong>Hippasus — the mathematician who proved √2 cannot be a fraction — was allegedly thrown into the sea</strong> by his colleagues. The discovery that broke their entire number system was so threatening, they tried to drown the truth.</p>
+    <div class="assam-badge">🌊 Like the Brahmaputra — its depth cannot be expressed as a simple fraction</div>
+  </div>
+
+  <!-- STAGES -->
+  <div class="stage-area">
+
+    <!-- STAGE 1: INFINITE NUMBER LINE -->
+    <div class="stage active" id="stage1">
+      <div class="stage-title">🔭 Stage 1: The Infinite Number Line</div>
+      <div class="card">
+        <p style="font-size:0.9rem;color:var(--dim);margin-bottom:10px;">Zoom in between any two rationals — you'll always find more numbers hiding there.</p>
+        <div class="numberline-wrap">
+          <div class="numberline-svg-wrap">
+            <canvas id="nlCanvas" width="440" height="140" style="width:100%;height:140px;border-radius:8px;"></canvas>
+          </div>
+          <div class="zoom-controls">
+            <button class="zoom-btn" onclick="zoomIn()">🔍 Zoom In</button>
+            <button class="zoom-btn" onclick="zoomOut()">🔎 Zoom Out</button>
+            <button class="zoom-btn" onclick="resetZoom()">↺ Reset</button>
+          </div>
+        </div>
+        <div class="info-box">
+          <strong>Zoom secret:</strong> Between any two rational numbers, there are infinitely many more rational numbers — and also infinitely many irrational numbers. The number line is incomprehensibly dense.
+        </div>
+        <p style="font-size:0.9rem;color:var(--dim);margin-bottom:8px;">Tap a number to place it on the line:</p>
+        <div class="drag-items" id="dragItems">
+          <div class="drag-num" onclick="placeNum(this,'√2',1.414)">√2 ≈ 1.414</div>
+          <div class="drag-num" onclick="placeNum(this,'√3',1.732)">√3 ≈ 1.732</div>
+          <div class="drag-num" onclick="placeNum(this,'π',3.14159)">π ≈ 3.14159</div>
+          <div class="drag-num" onclick="placeNum(this,'e',2.718)">e ≈ 2.718</div>
+        </div>
+        <div class="placement-result" id="placeResult"></div>
+      </div>
+      <div class="result-msg" id="r1"></div>
+    </div>
+
+    <!-- STAGE 2: DECIMAL EXPANSION VIEWER -->
+    <div class="stage" id="stage2">
+      <div class="stage-title">🔬 Stage 2: Decimal Expansion Lab</div>
+      <div class="card">
+        <p style="font-size:0.9rem;color:var(--dim);margin-bottom:12px;">Toggle each number to reveal its decimal expansion. Discover which terminate, which repeat, and which do neither.</p>
+        <div class="decimal-items">
+          <div class="decimal-row">
+            <button class="decimal-toggle" onclick="toggleDecimal(this,'1/4','0.25000...','Terminates','term')">1/4</button>
+            <span class="decimal-display" id="d1" style="display:none;"></span>
+            <span class="decimal-type-badge badge-term" id="db1" style="display:none;">Terminating</span>
+          </div>
+          <div class="decimal-row">
+            <button class="decimal-toggle" onclick="toggleDecimal(this,'1/3','0.333333... (repeating 3)','Repeats','rep')">1/3</button>
+            <span class="decimal-display" id="d2" style="display:none;"></span>
+            <span class="decimal-type-badge badge-rep" id="db2" style="display:none;">Repeating</span>
+          </div>
+          <div class="decimal-row">
+            <button class="decimal-toggle" onclick="toggleDecimal(this,'√2','1.41421356237... (never repeats)','Irrational','irr')">√2</button>
+            <span class="decimal-display" id="d3" style="display:none;"></span>
+            <span class="decimal-type-badge badge-irr" id="db3" style="display:none;">Irrational</span>
+          </div>
+          <div class="decimal-row">
+            <button class="decimal-toggle" onclick="toggleDecimal(this,'22/7','3.142857142857... (repeating 142857)','Repeats','rep')">22/7</button>
+            <span class="decimal-display" id="d4" style="display:none;"></span>
+            <span class="decimal-type-badge badge-rep" id="db4" style="display:none;">Repeating (≠π)</span>
+          </div>
+          <div class="decimal-row">
+            <button class="decimal-toggle" onclick="toggleDecimal(this,'π','3.14159265358979... (never repeats)','Irrational','irr')">π</button>
+            <span class="decimal-display" id="d5" style="display:none;"></span>
+            <span class="decimal-type-badge badge-irr" id="db5" style="display:none;">Irrational</span>
+          </div>
+          <div class="decimal-row">
+            <button class="decimal-toggle" onclick="toggleDecimal(this,'7/8','0.875000...','Terminates','term')">7/8</button>
+            <span class="decimal-display" id="d6" style="display:none;"></span>
+            <span class="decimal-type-badge badge-term" id="db6" style="display:none;">Terminating</span>
+          </div>
+        </div>
+        <div class="info-box" style="margin-top:12px;">
+          <strong>The rule:</strong> Rational numbers → decimal either terminates or repeats. Irrational numbers → decimal never terminates AND never repeats.
+        </div>
+        <div class="result-msg" id="r2"></div>
+      </div>
+      <p style="font-size:0.88rem;color:var(--dim);margin-bottom:8px;">Classify each: which is rational?</p>
+      <div class="exp-grid" id="classifyGrid">
+        <div class="exp-law" onclick="classifyNum(this,'rat','√9')">
+          <div class="law-formula">√9</div>
+          <div class="law-name">Rational or Irrational?</div>
+        </div>
+        <div class="exp-law" onclick="classifyNum(this,'irr','√5')">
+          <div class="law-formula">√5</div>
+          <div class="law-name">Rational or Irrational?</div>
+        </div>
+        <div class="exp-law" onclick="classifyNum(this,'rat','0.1̄')">
+          <div class="law-formula">0.1̄</div>
+          <div class="law-name">Rational or Irrational?</div>
+        </div>
+        <div class="exp-law" onclick="classifyNum(this,'irr','√7')">
+          <div class="law-formula">√7</div>
+          <div class="law-name">Rational or Irrational?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 3: RATIONALISATION WORKSHOP -->
+    <div class="stage" id="stage3">
+      <div class="stage-title">🧹 Stage 3: Rationalisation Workshop</div>
+      <div class="card">
+        <p style="font-size:0.9rem;color:var(--dim);margin-bottom:12px;">Clear the irrational from the denominator by multiplying by its conjugate. Watch it <em style="color:var(--teal);">clean up</em>.</p>
+
+        <div id="ratProblems">
+          <!-- Problem 1 -->
+          <div class="rat-problem" id="ratP0">
+            <div style="font-size:0.82rem;color:var(--dim);margin-bottom:6px;">Problem 1 of 3</div>
+            <div class="rat-expr">1 / √3</div>
+            <div style="font-size:0.8rem;color:var(--dim);margin-top:4px;">Multiply numerator AND denominator by:</div>
+          </div>
+          <div class="rat-steps">
+            <div class="rat-step">
+              <label>Multiply by:</label>
+              <select id="ratSel0" onchange="checkRat(0)">
+                <option value="">— choose —</option>
+                <option value="√3">√3</option>
+                <option value="√2">√2</option>
+                <option value="3">3</option>
+                <option value="1/√3">1/√3</option>
+              </select>
+            </div>
+          </div>
+          <div class="step-result" id="ratRes0">Your answer will appear here</div>
+          <div class="result-msg" id="ratMsg0" style="text-align:center;"></div>
+        </div>
+
+        <div id="ratP1Wrap" style="display:none;margin-top:16px;border-top:1px solid var(--border-glow);padding-top:14px;">
+          <div class="rat-problem">
+            <div style="font-size:0.82rem;color:var(--dim);margin-bottom:6px;">Problem 2 of 3</div>
+            <div class="rat-expr">5 / (2+√3)</div>
+            <div style="font-size:0.8rem;color:var(--dim);margin-top:4px;">Multiply by the conjugate:</div>
+          </div>
+          <div class="rat-steps">
+            <div class="rat-step">
+              <label>Conjugate of (2+√3):</label>
+              <select id="ratSel1" onchange="checkRat(1)">
+                <option value="">— choose —</option>
+                <option value="(2-√3)">(2-√3)</option>
+                <option value="(2+√3)">(2+√3)</option>
+                <option value="√3">√3</option>
+                <option value="(-2+√3)">(-2+√3)</option>
+              </select>
+            </div>
+          </div>
+          <div class="step-result" id="ratRes1">Your answer will appear here</div>
+          <div class="result-msg" id="ratMsg1" style="text-align:center;"></div>
+        </div>
+
+        <div id="ratP2Wrap" style="display:none;margin-top:16px;border-top:1px solid var(--border-glow);padding-top:14px;">
+          <div class="rat-problem">
+            <div style="font-size:0.82rem;color:var(--dim);margin-bottom:6px;">Problem 3 of 3</div>
+            <div class="rat-expr">1 / (√5 - √2)</div>
+            <div style="font-size:0.8rem;color:var(--dim);margin-top:4px;">Conjugate is (√5 + √2). Result = ?</div>
+          </div>
+          <div class="rat-steps">
+            <div class="rat-step">
+              <label>Simplified form:</label>
+              <select id="ratSel2" onchange="checkRat(2)">
+                <option value="">— choose —</option>
+                <option value="(√5+√2)/3">(√5+√2) / 3</option>
+                <option value="(√5-√2)/3">(√5-√2) / 3</option>
+                <option value="(√5+√2)/7">(√5+√2) / 7</option>
+                <option value="3/(√5+√2)">3 / (√5+√2)</option>
+              </select>
+            </div>
+          </div>
+          <div class="step-result" id="ratRes2">Your answer will appear here</div>
+          <div class="result-msg" id="ratMsg2" style="text-align:center;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 4: EXPONENT LAWS -->
+    <div class="stage" id="stage4">
+      <div class="stage-title">⚡ Stage 4: Exponent Law Builder</div>
+      <div class="card">
+        <p style="font-size:0.9rem;color:var(--dim);margin-bottom:12px;">Match each example to the correct law. Select the law, then confirm.</p>
+
+        <div id="expProblems">
+          <div class="exp-example" id="expEx">
+            <div class="problem" id="expProblem">Loading...</div>
+            <div class="hint" id="expHint"></div>
+          </div>
+          <p style="font-size:0.88rem;color:var(--dim);margin-bottom:8px;">Which law applies?</p>
+          <div class="exp-grid" id="expLawGrid">
+            <div class="exp-law" onclick="selectLaw(this,'product')">
+              <div class="law-formula">aᵐ · aⁿ = aᵐ⁺ⁿ</div>
+              <div class="law-name">Product of Powers</div>
+            </div>
+            <div class="exp-law" onclick="selectLaw(this,'quotient')">
+              <div class="law-formula">aᵐ / aⁿ = aᵐ⁻ⁿ</div>
+              <div class="law-name">Quotient of Powers</div>
+            </div>
+            <div class="exp-law" onclick="selectLaw(this,'power')">
+              <div class="law-formula">(aᵐ)ⁿ = aᵐⁿ</div>
+              <div class="law-name">Power of a Power</div>
+            </div>
+            <div class="exp-law" onclick="selectLaw(this,'zero')">
+              <div class="law-formula">a⁰ = 1</div>
+              <div class="law-name">Zero Exponent</div>
+            </div>
+            <div class="exp-law" onclick="selectLaw(this,'neg')">
+              <div class="law-formula">a⁻ⁿ = 1/aⁿ</div>
+              <div class="law-name">Negative Exponent</div>
+            </div>
+            <div class="exp-law" onclick="selectLaw(this,'frac')">
+              <div class="law-formula">a^(1/n) = ⁿ√a</div>
+              <div class="law-name">Fractional Exponent</div>
+            </div>
+          </div>
+          <div class="result-msg" id="r4" style="text-align:center;margin-top:8px;"></div>
+          <div style="text-align:center;margin-top:10px;">
+            <button class="action-btn" onclick="confirmLaw()" style="font-size:0.9rem;padding:8px 20px;" id="expConfirmBtn" disabled>Confirm</button>
+          </div>
+          <div style="text-align:center;margin-top:8px;font-size:0.82rem;color:var(--dim);" id="expProgress">Question 1 of 5</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAME COMPLETE -->
+    <div class="game-complete" id="gameComplete">
+      <div style="font-size:3rem;margin-bottom:16px;">🎉</div>
+      <div class="complete-title">Real Numbers Mastered!</div>
+      <div class="complete-sub">
+        You've explored irrational numbers, decimal expansions, rationalisation, and all 6 laws of exponents.<br><br>
+        <strong style="color:var(--gold);">Hippasus was right</strong> — irrational numbers are real. And now you can work with them.
+      </div>
+      <div class="assam-badge" style="margin: 0 auto 20px; display:inline-flex;">🌊 Brahmaputra: its exact depth is irrational — like √2, it cannot be fully expressed</div>
+      <br><br>
+      <button class="replay-btn" onclick="resetGame()">↺ Play Again</button>
+    </div>
+
+  </div><!-- stage-area -->
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar" id="bottomBar">
+    <div class="progress-label">Stage <strong id="stageNum">1</strong> of 4</div>
+    <button class="action-btn" id="mainBtn" onclick="nextStage()">Continue →</button>
+  </div>
+
+</div><!-- game-shell -->
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="overlay-emoji" id="ovEmoji">✓</div>
+    <div class="overlay-msg" id="ovMsg">Stage Complete!</div>
+    <div class="overlay-fact" id="ovFact"></div>
+  </div>
+</div>
+
+<!-- CONFETTI -->
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<script>
+// ===================== STATE =====================
+let score = 0;
+let currentStage = 1;
+let stage1Done = false;
+let stage2Done = false;
+let stage3Done = false;
+let stage4Done = false;
+let placedCount = 0;
+let decimalToggled = 0;
+let classifyCorrect = 0;
+let ratDone = [false, false, false];
+let expCurrent = 0;
+let expSelected = null;
+
+// ===================== STARS =====================
+function lightStar(n) {
+  const s = document.getElementById('s'+n);
+  if(s && !s.classList.contains('lit')) {
+    s.classList.add('lit');
+  }
+}
+
+function addScore(pts) {
+  score += pts;
+  document.getElementById('scoreDisplay').textContent = score + ' pts';
+}
+
+// ===================== CANVAS NUMBER LINE =====================
+const canvas = document.getElementById('nlCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 440; canvas.height = 140;
+
+let zoomLevel = 1;
+let viewCenter = 2;
+let placedNumbers = [];
+
+function drawNumberLine() {
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+
+  const range = 6 / zoomLevel;
+  const lo = viewCenter - range/2;
+  const hi = viewCenter + range/2;
+
+  function toX(val) { return (val - lo) / (hi - lo) * w; }
+
+  // Background
+  ctx.fillStyle = '#0a0a18';
+  ctx.roundRect(0,0,w,h,8);
+  ctx.fill();
+
+  // Axis
+  ctx.strokeStyle = '#4A6A8A';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(10, h/2);
+  ctx.lineTo(w-10, h/2);
+  ctx.stroke();
+
+  // Arrow
+  ctx.fillStyle = '#4A6A8A';
+  ctx.beginPath();
+  ctx.moveTo(w-10, h/2);
+  ctx.lineTo(w-20, h/2-5);
+  ctx.lineTo(w-20, h/2+5);
+  ctx.fill();
+
+  // Tick marks
+  let step = 1;
+  if(zoomLevel > 3) step = 0.5;
+  if(zoomLevel > 6) step = 0.25;
+  if(zoomLevel > 12) step = 0.1;
+
+  const startTick = Math.ceil(lo / step) * step;
+  for(let v = startTick; v <= hi; v += step) {
+    v = Math.round(v * 1000)/1000;
+    const x = toX(v);
+    if(x < 15 || x > w-15) continue;
+    ctx.strokeStyle = '#2A4060';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, h/2-12);
+    ctx.lineTo(x, h/2+12);
+    ctx.stroke();
+    if(zoomLevel <= 8 || step >= 0.25) {
+      ctx.fillStyle = '#4A6A8A';
+      ctx.font = '11px Courier New';
+      ctx.textAlign = 'center';
+      const label = Number(v.toFixed(2)).toString();
+      ctx.fillText(label, x, h/2+26);
+    }
+  }
+
+  // Zero line
+  const x0 = toX(0);
+  if(x0 > 10 && x0 < w-10) {
+    ctx.strokeStyle = '#7A5A9A';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x0, h/2-16);
+    ctx.lineTo(x0, h/2+16);
+    ctx.stroke();
+    ctx.fillStyle = '#9A7ABA';
+    ctx.font = 'bold 12px Courier New';
+    ctx.textAlign = 'center';
+    ctx.fillText('0', x0, h/2+28);
+  }
+
+  // Placed numbers
+  const cols = ['#FFD166','#06D6A0','#4CC9F0','#FF9CC2'];
+  placedNumbers.forEach((p,i) => {
+    const x = toX(p.val);
+    if(x < 10 || x > w-10) return;
+    ctx.fillStyle = cols[i % cols.length];
+    ctx.beginPath();
+    ctx.arc(x, h/2, 7, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#060A10';
+    ctx.font = 'bold 9px Nunito';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(p.sym, x, h/2);
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = cols[i % cols.length];
+    ctx.font = 'bold 10px Nunito';
+    ctx.fillText(p.sym, x, h/2 - 18);
+  });
+
+  // Glow effect for zoom
+  if(zoomLevel > 4) {
+    ctx.fillStyle = 'rgba(199,125,255,0.05)';
+    ctx.fillRect(0,0,w,h);
+    ctx.fillStyle = 'rgba(199,125,255,0.06)';
+    const mid = w/2;
+    ctx.fillRect(mid-2,0,4,h);
+  }
+}
+
+function zoomIn() {
+  zoomLevel = Math.min(zoomLevel * 2, 64);
+  const placeResult = document.getElementById('placeResult');
+  if(zoomLevel > 4) {
+    placeResult.textContent = `Zoom ×${zoomLevel}: Incredible! There are still infinitely many rationals between any two ticks!`;
+    placeResult.style.color = 'var(--teal)';
+  }
+  drawNumberLine();
+}
+
+function zoomOut() {
+  zoomLevel = Math.max(zoomLevel / 2, 1);
+  drawNumberLine();
+}
+
+function resetZoom() {
+  zoomLevel = 1;
+  viewCenter = 2;
+  drawNumberLine();
+}
+
+function placeNum(el, sym, val) {
+  if(el.classList.contains('placed')) return;
+  el.classList.add('placed');
+  placedNumbers.push({sym, val});
+  drawNumberLine();
+  placedCount++;
+  addScore(10);
+
+  const placeResult = document.getElementById('placeResult');
+  placeResult.textContent = `${sym} placed! Its decimal ${val} never terminates or repeats.`;
+  placeResult.style.color = 'var(--teal)';
+
+  if(placedCount >= 2 && !stage1Done) {
+    stage1Done = true;
+    lightStar(1);
+    addScore(20);
+    document.getElementById('r1').textContent = 'Precise placement. ✓ Irrational numbers exist between every pair of rationals.';
+    document.getElementById('r1').className = 'result-msg ok';
+  }
+}
+
+drawNumberLine();
+
+// ===================== STAGE 2: DECIMAL =====================
+let toggleCount = 0;
+function toggleDecimal(btn, num, expansion, type, cls) {
+  const idx = ['1/4','1/3','√2','22/7','π','7/8'].indexOf(num)+1;
+  const d = document.getElementById('d'+idx);
+  const db = document.getElementById('db'+idx);
+  if(d.style.display === 'none') {
+    d.style.display = 'inline';
+    d.textContent = expansion;
+    db.style.display = 'inline';
+    btn.style.background = 'rgba(199,125,255,0.3)';
+    toggleCount++;
+    if(toggleCount >= 3) {
+      document.getElementById('r2').textContent = 'Well spotted. Terminating and repeating → rational. Never-ending, never-repeating → irrational. ✓';
+      document.getElementById('r2').className = 'result-msg ok';
+    }
+  } else {
+    d.style.display = 'none';
+    db.style.display = 'none';
+    btn.style.background = '';
+  }
+}
+
+let classifyDone = 0;
+function classifyNum(el, correct, num) {
+  if(el.classList.contains('correct') || el.classList.contains('wrong')) return;
+  // √9 = 3 (rational), √5 irrational, 0.1̄ rational, √7 irrational
+  const isRat = (num === '√9' || num === '0.1̄');
+  const userSaysRat = correct === 'rat';
+  const isCorrect = isRat === userSaysRat;
+
+  if(isCorrect) {
+    el.classList.add('correct');
+    addScore(15);
+    classifyDone++;
+    const hint = num === '√9' ? '√9 = 3, a whole number → rational' :
+                 num === '0.1̄' ? '0.111... repeats → rational' :
+                 num === '√5' ? '√5 = 2.2360679... never repeats → irrational' :
+                                 '√7 = 2.6457513... never repeats → irrational';
+    el.querySelector('.law-name').textContent = hint;
+    if(classifyDone >= 3 && !stage2Done) {
+      stage2Done = true;
+      lightStar(2);
+      addScore(20);
+    }
+  } else {
+    el.classList.add('wrong');
+    setTimeout(() => { el.classList.remove('wrong'); }, 900);
+  }
+}
+
+// ===================== STAGE 3: RATIONALISATION =====================
+let ratCorrect = [false,false,false];
+const ratAnswers = ['√3', '(2-√3)', '(√5+√2)/3'];
+const ratResults = [
+  '= √3/3 ✓ Denominator cleared!',
+  '= 5(2-√3) / (4-3) = 5(2-√3) ✓',
+  '= (√5+√2)/(5-2) = (√5+√2)/3 ✓'
+];
+
+function checkRat(idx) {
+  const sel = document.getElementById('ratSel'+idx);
+  const res = document.getElementById('ratRes'+idx);
+  const msg = document.getElementById('ratMsg'+idx);
+  const val = sel.value;
+  if(!val) return;
+
+  if(val === ratAnswers[idx]) {
+    res.textContent = ratResults[idx];
+    res.style.color = 'var(--teal)';
+    msg.textContent = 'Correct. Rational denominator achieved. ✓';
+    msg.className = 'result-msg ok';
+    ratCorrect[idx] = true;
+    addScore(20);
+
+    if(idx === 0 && !document.getElementById('ratP1Wrap').style.display.includes('block')) {
+      setTimeout(() => { document.getElementById('ratP1Wrap').style.display = 'block'; }, 600);
+    }
+    if(idx === 1 && !document.getElementById('ratP2Wrap').style.display.includes('block')) {
+      setTimeout(() => { document.getElementById('ratP2Wrap').style.display = 'block'; }, 600);
+    }
+    if(idx === 2 && !stage3Done) {
+      stage3Done = true;
+      lightStar(3);
+      lightStar(4);
+      addScore(25);
+    }
+  } else {
+    res.textContent = 'Not quite. Think about what multiplied by the denominator gives a rational.';
+    res.style.color = 'var(--coral)';
+    msg.textContent = 'Incorrect. Analyse the denominator again.';
+    msg.className = 'result-msg err';
+  }
+}
+
+// ===================== STAGE 4: EXPONENT LAWS =====================
+const expProblems = [
+  { problem: 'x³ · x⁵ = x?', hint: 'Same base, both multiplied', answer: 'product', result: 'x³⁺⁵ = x⁸' },
+  { problem: 'y⁷ / y³ = y?', hint: 'Same base, dividing', answer: 'quotient', result: 'y⁷⁻³ = y⁴' },
+  { problem: '(a²)⁴ = a?', hint: 'A power raised to another power', answer: 'power', result: 'a²ˣ⁴ = a⁸' },
+  { problem: '(100)⁰ = ?', hint: 'Any non-zero base to the power 0', answer: 'zero', result: '= 1' },
+  { problem: 'a^(1/3) = ?', hint: 'Fractional exponent ↔ nth root', answer: 'frac', result: '= ∛a (cube root of a)' },
+];
+
+function loadExpProblem() {
+  if(expCurrent >= expProblems.length) {
+    finishStage4();
+    return;
+  }
+  const p = expProblems[expCurrent];
+  document.getElementById('expProblem').textContent = p.problem;
+  document.getElementById('expHint').textContent = p.hint;
+  document.getElementById('expProgress').textContent = `Question ${expCurrent+1} of ${expProblems.length}`;
+  document.getElementById('r4').textContent = '';
+  expSelected = null;
+  document.getElementById('expConfirmBtn').disabled = true;
+  document.querySelectorAll('.exp-law').forEach(el => {
+    el.classList.remove('selected','correct','wrong');
+  });
+}
+
+function selectLaw(el, type) {
+  document.querySelectorAll('.exp-law').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  expSelected = type;
+  document.getElementById('expConfirmBtn').disabled = false;
+}
+
+function confirmLaw() {
+  if(!expSelected) return;
+  const p = expProblems[expCurrent];
+  const correct = expSelected === p.answer;
+
+  document.querySelectorAll('.exp-law').forEach(el => {
+    const t = el.querySelector('.law-name')?.textContent;
+    // find by onclick
+    const oc = el.getAttribute('onclick');
+    if(oc && oc.includes("'"+p.answer+"'")) el.classList.add('correct');
+    else if(el.classList.contains('selected') && !correct) el.classList.add('wrong');
+  });
+
+  if(correct) {
+    document.getElementById('r4').textContent = p.result + ' — Correct. ✓';
+    document.getElementById('r4').className = 'result-msg ok';
+    addScore(18);
+    expCurrent++;
+    setTimeout(() => {
+      if(expCurrent < expProblems.length) loadExpProblem();
+      else finishStage4();
+    }, 1200);
+  } else {
+    document.getElementById('r4').textContent = 'Incorrect. Analyse the operation type.';
+    document.getElementById('r4').className = 'result-msg err';
+    setTimeout(() => {
+      document.querySelectorAll('.exp-law').forEach(e => e.classList.remove('wrong','selected'));
+      expSelected = null;
+      document.getElementById('expConfirmBtn').disabled = true;
+    }, 900);
+  }
+}
+
+function finishStage4() {
+  stage4Done = true;
+  lightStar(5);
+  addScore(30);
+  document.getElementById('r4').textContent = 'All 5 exponent laws mastered. Correct reasoning throughout. ✓';
+  document.getElementById('r4').className = 'result-msg ok';
+  document.getElementById('mainBtn').textContent = 'Complete! 🎓';
+}
+
+loadExpProblem();
+
+// ===================== NAVIGATION =====================
+function nextStage() {
+  if(currentStage === 4 && stage4Done) {
+    showGameComplete();
+    return;
+  }
+  if(currentStage >= 4) return;
+
+  showOverlay(currentStage);
+
+  setTimeout(() => {
+    document.getElementById('stage'+currentStage).classList.remove('active');
+    currentStage++;
+    document.getElementById('stage'+currentStage).classList.add('active');
+    document.getElementById('stageNum').textContent = currentStage;
+    hideOverlay();
+    if(currentStage === 4) {
+      document.getElementById('mainBtn').textContent = 'Finish →';
+    }
+  }, 2500);
+}
+
+const overlayData = [
+  { emoji: '🔍', msg: 'Stage 1 Complete!', fact: 'The number line between 0 and 1 contains more numbers than all the integers combined — yet integers seem to go on forever. Infinity is strange.' },
+  { emoji: '🧮', msg: 'Stage 2 Complete!', fact: '22/7 is often confused with π — but it\'s rational (repeating decimal). π is irrational — its decimal never repeats. The difference matters.' },
+  { emoji: '🧹', msg: 'Stage 3 Complete!', fact: 'Rationalising denominators isn\'t just convention — it\'s necessary for comparing fractions with irrational denominators. You can\'t easily add 1/√2 + 1/√3 without rationalising first.' },
+];
+
+function showOverlay(stageNum) {
+  const d = overlayData[stageNum-1] || overlayData[0];
+  document.getElementById('ovEmoji').textContent = d.emoji;
+  document.getElementById('ovMsg').textContent = d.msg;
+  document.getElementById('ovFact').textContent = d.fact;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function hideOverlay() {
+  document.getElementById('overlay').classList.remove('show');
+}
+
+function showGameComplete() {
+  document.getElementById('bottomBar').style.display = 'none';
+  document.getElementById('stage4').classList.remove('active');
+  document.getElementById('gameComplete').classList.add('show');
+  fireConfetti();
+}
+
+// ===================== CONFETTI =====================
+function fireConfetti() {
+  const wrap = document.getElementById('confettiWrap');
+  wrap.innerHTML = '';
+  const colors = ['#FFD166','#06D6A0','#4CC9F0','#C77DFF','#FF6B6B','#FF9CC2'];
+  for(let i=0;i<28;i++) {
+    const c = document.createElement('div');
+    c.className = 'confetto';
+    c.style.left = (Math.random()*100)+'%';
+    c.style.top = '-20px';
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.animationDuration = (1.5+Math.random()*2)+'s';
+    c.style.animationDelay = (Math.random()*0.8)+'s';
+    c.style.width = (7+Math.random()*8)+'px';
+    c.style.height = (7+Math.random()*8)+'px';
+    wrap.appendChild(c);
+    setTimeout(()=>c.remove(), 4000);
+  }
+}
+
+// ===================== RESET =====================
+function resetGame() {
+  score = 0; currentStage = 1;
+  stage1Done = false; stage2Done = false; stage3Done = false; stage4Done = false;
+  placedCount = 0; placedNumbers = []; zoomLevel = 1; viewCenter = 2;
+  toggleCount = 0; classifyDone = 0; ratCorrect = [false,false,false];
+  expCurrent = 0; expSelected = null;
+
+  document.getElementById('scoreDisplay').textContent = '0 pts';
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('gameComplete').classList.remove('show');
+  document.getElementById('bottomBar').style.display = 'flex';
+  document.getElementById('stageNum').textContent = '1';
+  document.getElementById('mainBtn').textContent = 'Continue →';
+
+  // Reset stage 1
+  document.querySelectorAll('.drag-num').forEach(el=>el.classList.remove('placed'));
+  document.getElementById('placeResult').textContent = '';
+  document.getElementById('r1').textContent = '';
+  document.getElementById('r1').className = 'result-msg';
+  drawNumberLine();
+
+  // Reset stage 2
+  toggleCount = 0;
+  for(let i=1;i<=6;i++){
+    document.getElementById('d'+i).style.display='none';
+    document.getElementById('db'+i).style.display='none';
+  }
+  document.querySelectorAll('#classifyGrid .exp-law').forEach(el=>{
+    el.classList.remove('correct','wrong','selected');
+    const d = el.querySelector('.law-name');
+    if(d) d.textContent = 'Rational or Irrational?';
+  });
+  document.getElementById('r2').textContent = '';
+
+  // Reset stage 3
+  for(let i=0;i<3;i++){
+    const sel = document.getElementById('ratSel'+i);
+    if(sel) sel.value = '';
+    const res = document.getElementById('ratRes'+i);
+    if(res) { res.textContent = 'Your answer will appear here'; res.style.color = ''; }
+    const msg = document.getElementById('ratMsg'+i);
+    if(msg) { msg.textContent = ''; msg.className = 'result-msg'; }
+  }
+  document.getElementById('ratP1Wrap').style.display = 'none';
+  document.getElementById('ratP2Wrap').style.display = 'none';
+
+  // Reset stage 4
+  expCurrent = 0;
+  loadExpProblem();
+  document.getElementById('r4').textContent = '';
+
+  // Show stage 1
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
+  document.getElementById('stage1').classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vehicle Sorter 🚗 — Class 1 Social Studies</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--sky:#0288D1;--ground:#4CAF50;--water:#1565C0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#E3F2FD 0%,#87CEEB 35%,#B3E5FC 55%,#C8E6C9 75%,#4CAF50 100%);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* ENVIRONMENT LAYERS */
+.sky-layer{position:fixed;top:0;left:0;right:0;height:40%;background:linear-gradient(180deg,#B3E5FC,#87CEEB);z-index:1;}
+.cloud-deco{position:fixed;z-index:2;pointer-events:none;font-size:2rem;opacity:.7;animation:cloudDrift linear infinite;}
+@keyframes cloudDrift{from{transform:translateX(-150px);}to{transform:translateX(calc(100vw+150px));}}
+.road-layer{position:fixed;bottom:100px;left:0;right:0;height:30px;background:#616161;z-index:3;}
+.road-layer::after{content:'';position:absolute;top:50%;left:0;right:0;height:3px;background:repeating-linear-gradient(90deg,#FFD700 0 28px,transparent 28px 56px);transform:translateY(-50%);}
+.water-layer{position:fixed;bottom:40px;left:0;right:0;height:62px;background:linear-gradient(180deg,rgba(21,101,192,.6),rgba(21,101,192,.9));z-index:3;}
+.water-layer::before{content:'';position:absolute;top:0;left:0;right:0;height:10px;background:radial-gradient(ellipse 40px 10px,rgba(144,202,249,.6) 50%,transparent 50%) repeat-x;background-size:50px 10px;animation:waves 2s ease-in-out infinite;}
+@keyframes waves{0%,100%{background-position:0 0;}50%{background-position:25px 0;}}
+.ground-layer{position:fixed;bottom:0;left:0;right:0;height:42px;background:linear-gradient(180deg,#66BB6A,#388E3C);z-index:3;}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 4px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#01579B;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.8);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#01579B;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.8);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#01579B;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* VEHICLE DISPLAY */
+.vehicle-card{
+  position:relative;z-index:20;
+  background:rgba(255,255,255,.88);backdrop-filter:blur(10px);
+  border:4px solid rgba(255,255,255,.95);border-radius:28px;
+  padding:clamp(10px,2.5vw,18px) clamp(16px,4vw,28px);
+  margin:6px 16px;text-align:center;
+  max-width:580px;width:calc(100% - 32px);
+  box-shadow:0 8px 28px rgba(0,0,0,.1);
+}
+.v-emoji{font-size:clamp(4rem,15vw,7rem);animation:vFloat 2s ease-in-out infinite;display:block;}
+@keyframes vFloat{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.v-name{font-family:'Fredoka One',cursive;font-size:clamp(1.3rem,5.5vw,2rem);color:#01579B;margin-top:6px;}
+.v-hint{font-size:clamp(.8rem,3vw,1.05rem);color:#0277BD;font-weight:700;margin-top:3px;}
+.v-question{font-family:'Fredoka One',cursive;font-size:clamp(1rem,4vw,1.5rem);color:#C62828;margin-top:6px;}
+
+/* 3 ZONE BUTTONS */
+.zones-row{
+  position:relative;z-index:20;
+  display:flex;gap:clamp(8px,3vw,18px);
+  padding:0 14px;max-width:680px;width:100%;
+  margin:6px 0;
+}
+.zone-btn{
+  flex:1;border-radius:22px;border:none;cursor:pointer;
+  padding:clamp(12px,3vw,20px) clamp(8px,2vw,14px);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  box-shadow:0 6px 0 rgba(0,0,0,.2),0 10px 20px rgba(0,0,0,.12);
+  transition:all .15s;position:relative;top:0;
+}
+.zone-btn:hover{top:-4px;box-shadow:0 10px 0 rgba(0,0,0,.16);}
+.zone-btn:active{top:5px;box-shadow:0 1px 0 rgba(0,0,0,.2);}
+.zone-btn.sky-zone{background:linear-gradient(145deg,#B3E5FC,#29B6F6);}
+.zone-btn.land-zone{background:linear-gradient(145deg,#C8E6C9,#66BB6A);}
+.zone-btn.water-zone{background:linear-gradient(145deg,#BBDEFB,#1E88E5);}
+.zone-btn.correct{animation:zbPop .45s ease;}
+@keyframes zbPop{0%{transform:scale(1);}50%{transform:scale(1.12);}100%{transform:scale(1.04);}}
+.zone-btn.wrong{animation:zbShake .35s ease;opacity:.4;pointer-events:none;}
+@keyframes zbShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-9px);}75%{transform:translateX(9px);}}
+.zb-icon{font-size:clamp(2rem,8vw,3rem);}
+.zb-label{font-family:'Fredoka One',cursive;font-size:clamp(.9rem,3.5vw,1.3rem);color:#fff;text-shadow:1px 1px 0 rgba(0,0,0,.2);}
+.zb-examples{font-size:clamp(.6rem,2vw,.78rem);color:rgba(255,255,255,.85);font-weight:700;}
+
+/* VEHICLE FLY ANIMATION */
+.v-fly{position:fixed;pointer-events:none;z-index:200;font-size:clamp(2.5rem,8vw,4rem);animation:vFly .7s ease-out forwards;}
+.v-fly.sky{bottom:50%;animation-name:vFlyUp;}
+.v-fly.land{bottom:28%;}
+.v-fly.water{bottom:15%;}
+@keyframes vFly{0%{opacity:1;transform:scale(1);}80%{opacity:1;transform:scale(1.3);}100%{opacity:0;transform:scale(0);}}
+@keyframes vFlyUp{0%{opacity:1;transform:scale(1) translateY(0);}80%{opacity:1;transform:scale(1.3) translateY(-30px);}100%{opacity:0;transform:scale(0) translateY(-60px);}}
+
+/* FACT */
+.fact-box{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(1,87,155,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:420px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.88rem,3vw,1.1rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:2;}
+.ov-btn{background:linear-gradient(135deg,#01579B,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(1,87,155,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="sky-layer"></div>
+<div class="cloud-deco" style="top:5%;animation-duration:18s;">☁️</div>
+<div class="cloud-deco" style="top:12%;animation-duration:24s;animation-delay:7s;">⛅</div>
+<div class="road-layer"></div>
+<div class="water-layer"></div>
+<div class="ground-layer"></div>
+
+<div class="header">
+  <div class="title">🚗 Vehicle Sorter</div>
+  <div class="lvchip" id="lvChip">Land · Water · Air</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">🚗 Round: <span id="roundVal">1</span>/15</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="vehicle-card">
+  <span class="v-emoji" id="vEmoji">✈️</span>
+  <div class="v-name" id="vName">Aeroplane</div>
+  <div class="v-hint" id="vHint">It flies very high in the sky!</div>
+  <div class="v-question">Where does this vehicle travel? 🤔</div>
+</div>
+
+<div class="zones-row">
+  <button class="zone-btn sky-zone" onclick="checkZone('sky',this)">
+    <span class="zb-icon">✈️</span>
+    <span class="zb-label">Sky</span>
+    <span class="zb-examples">Plane, Helicopter</span>
+  </button>
+  <button class="zone-btn land-zone" onclick="checkZone('land',this)">
+    <span class="zb-icon">🚗</span>
+    <span class="zb-label">Land</span>
+    <span class="zb-examples">Car, Bus, Train</span>
+  </button>
+  <button class="zone-btn water-zone" onclick="checkZone('water',this)">
+    <span class="zb-icon">⛵</span>
+    <span class="zb-label">Water</span>
+    <span class="zb-examples">Boat, Ship</span>
+  </button>
+</div>
+
+<script>
+const VEHICLES=[
+  {e:'✈️',name:'Aeroplane',  zone:'sky',  hint:'It flies in the sky between cities!',  fact:'✈️ Aeroplanes fly in the SKY! They take us to faraway places very quickly!'},
+  {e:'🚗',name:'Car',         zone:'land', hint:'It runs on roads and has 4 wheels!',   fact:'🚗 Cars travel on LAND! They run on roads. Cars have 4 wheels!'},
+  {e:'⛵',name:'Boat',        zone:'water',hint:'It floats on rivers and lakes!',       fact:'⛵ Boats travel on WATER! In Assam, boats are used on the Brahmaputra river!'},
+  {e:'🚂',name:'Train',       zone:'land', hint:'It runs on railway tracks!',           fact:'🚂 Trains travel on LAND on railway tracks! Trains can carry many passengers!'},
+  {e:'🚁',name:'Helicopter',  zone:'sky',  hint:'It has rotating blades and flies!',   fact:'🚁 Helicopters fly in the SKY! They can go up and down without a runway!'},
+  {e:'🚢',name:'Ship',        zone:'water',hint:'A very big boat that crosses oceans!', fact:'🚢 Ships travel on WATER — in oceans and seas! They carry heavy goods!'},
+  {e:'🚌',name:'Bus',         zone:'land', hint:'It carries many people on roads!',    fact:'🚌 Buses travel on LAND on roads! School buses take children to school!'},
+  {e:'🛸',name:'Rocket',      zone:'sky',  hint:'It goes to outer space!',             fact:'🚀 Rockets fly very high into the SKY and into space! India has its own rockets!'},
+  {e:'🚲',name:'Bicycle',     zone:'land', hint:'It has 2 wheels and you pedal it!',   fact:'🚲 Bicycles travel on LAND! You use your legs to pedal. They are eco-friendly!'},
+  {e:'🛥️',name:'Speed Boat',  zone:'water',hint:'A fast motor boat on water!',        fact:'🛥️ Speed boats travel on WATER very fast! They are used in rivers and seas!'},
+  {e:'🛺',name:'Auto Rickshaw',zone:'land',hint:'Three wheels, used in Indian cities!', fact:'🛺 Auto rickshaws travel on LAND! They are very common in cities of Assam!'},
+  {e:'🚜',name:'Tractor',     zone:'land', hint:'Used by farmers in fields!',          fact:'🚜 Tractors travel on LAND! Farmers in Assam use tractors in their rice fields!'},
+  {e:'🛩️',name:'Small Plane', zone:'sky',  hint:'A small aircraft for short trips!',  fact:'🛩️ Small planes fly in the SKY! They connect small towns in North-East India!'},
+  {e:'🚣',name:'Rowboat',     zone:'water',hint:'Use oars to row on rivers!',          fact:'🚣 Rowboats travel on WATER! In Assam, people row boats on rivers and ponds!'},
+  {e:'🏍️',name:'Motorbike',   zone:'land', hint:'2 wheels, faster than bicycle!',     fact:'🏍️ Motorbikes travel on LAND! They are fast and popular in cities and villages!'},
+];
+
+const TOTAL=15;
+let score=0,round=0,answered=false,current=null;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playWhoosh(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(400,c.currentTime);o.frequency.exponentialRampToValueAtTime(1200,c.currentTime+.25);o.frequency.exponentialRampToValueAtTime(300,c.currentTime+.5);g.gain.setValueAtTime(.15,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.start();o.stop(c.currentTime+.5);}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;window.speechSynthesis.speak(u);}
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#01579B','#FFD700','#43A047','#E53935','#0288D1'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showFact(txt){document.querySelector('.fact-box')?.remove();const el=document.createElement('div');el.className='fact-box';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+
+function vehicleFly(emoji,zone){
+  const el=document.createElement('div');el.className=`v-fly ${zone}`;
+  el.textContent=emoji;el.style.left='40%';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),800);
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+  current=VEHICLES[round%VEHICLES.length];
+  document.getElementById('vEmoji').textContent=current.e;
+  document.getElementById('vName').textContent=current.name;
+  document.getElementById('vHint').textContent=current.hint;
+  document.querySelectorAll('.zone-btn').forEach(b=>b.classList.remove('correct','wrong'));
+  setTimeout(()=>speak(`${current.name}! ${current.hint} Does it go by sky, land or water?`),400);
+}
+
+function checkZone(zone,btn){
+  if(answered)return;
+  if(zone===current.zone){
+    answered=true;btn.classList.add('correct');
+    playWhoosh();spawnConf();vehicleFly(current.e,zone);
+    showFact(current.fact);score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(current.fact.replace(/[✈️🚗⛵🚂🚁🚢🚌🚀🚲🛥️🛺🚜🛩️🚣🏍️]/g,''));
+    round++;makeDots();setTimeout(newRound,3000);
+  } else {
+    btn.classList.add('wrong');playWrong();
+    speak(`${current.name} doesn't go on ${zone}! Think again!`);
+  }
+}
+window.checkZone=checkZone;
+
+function showCelebration(){
+  playChime();spawnConf();speak('Excellent! You know all the vehicles and where they travel!');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🚗</div>
+    <div class="ov-title">Transport Expert!</div>
+    <div class="ov-sub">
+      ✈️ SKY — Aeroplane, Helicopter, Rocket<br/>
+      🚗 LAND — Car, Bus, Train, Bicycle, Auto<br/>
+      ⛵ WATER — Boat, Ship, Speed Boat<br/>
+      In Assam, boats are used on the Brahmaputra! 🌊<br/><br/>
+      Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!
+    </div>
+    <button class="ov-btn" onclick="restart()">Play Again 🚗</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Sort the vehicles — sky, land or water?');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

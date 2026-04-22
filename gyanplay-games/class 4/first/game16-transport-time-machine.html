@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Transport Time Machine — GyanPlay Class 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --lime:#A8E063;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#071A12,#040E0A);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 40px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.h-left{display:flex;flex-direction:column;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.game-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);}
+.subject-tag{font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:1.3rem;opacity:.25;transition:opacity .3s,filter .3s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.wow{background:linear-gradient(135deg,rgba(255,159,28,.15),rgba(255,159,28,.04));
+  border:1px solid rgba(255,159,28,.3);border-radius:16px;padding:16px;margin-bottom:18px;}
+.wow-emoji{font-size:2rem;margin-bottom:6px;}
+.wow p{font-size:.88rem;line-height:1.55;}
+.wow p span{color:var(--gold);font-weight:700;}
+.wow-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-top:6px;}
+.stage-tabs{display:flex;gap:8px;margin-bottom:14px;}
+.stab{flex:1;padding:9px 6px;background:rgba(255,159,28,.06);border:2px solid rgba(255,159,28,.12);
+  border-radius:12px;text-align:center;font-family:'Baloo 2',sans-serif;font-size:.72rem;font-weight:700;
+  color:var(--dim);transition:all .2s;}
+.stab.active{background:rgba(255,159,28,.15);border-color:var(--orange);color:var(--orange);}
+.stab.done{border-color:rgba(6,214,160,.4);color:var(--teal);}
+.game-area{background:var(--card);border-radius:20px;padding:20px;margin-bottom:14px;
+  border:1px solid rgba(255,159,28,.12);}
+.stage-title{font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:800;color:var(--orange);margin-bottom:3px;}
+.stage-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.72rem;color:var(--dim);margin-bottom:12px;}
+/* Sort bins */
+.item-pool{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;min-height:50px;
+  padding:10px;background:rgba(255,255,255,.03);border:1px dashed rgba(255,159,28,.2);border-radius:12px;}
+.t-chip{padding:8px 12px;background:rgba(255,159,28,.09);border:2px solid rgba(255,159,28,.22);
+  border-radius:10px;font-size:.85rem;cursor:pointer;touch-action:manipulation;transition:all .15s;}
+.t-chip:active{transform:scale(.95);}
+.t-chip.selected{background:rgba(255,159,28,.22);border-color:var(--orange);color:var(--orange);}
+.t-chip.placed{opacity:.3;pointer-events:none;}
+.bins{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
+.bin{min-height:80px;padding:10px 8px;background:rgba(255,255,255,.03);
+  border:2px dashed rgba(255,255,255,.1);border-radius:12px;text-align:center;
+  cursor:pointer;touch-action:manipulation;transition:all .2s;}
+.bin:active{background:rgba(255,255,255,.06);}
+.bin-label{font-family:'Baloo 2',sans-serif;font-size:.75rem;font-weight:800;margin-bottom:4px;}
+.bin-label-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.62rem;color:var(--dim);margin-bottom:6px;}
+.bin-items{display:flex;flex-direction:column;gap:3px;min-height:24px;}
+.bin-item{font-size:.72rem;padding:3px 6px;border-radius:6px;background:rgba(255,255,255,.06);}
+.bin.land .bin-label{color:#4CC9F0;}.bin.land{border-color:rgba(76,201,240,.25);}
+.bin.water .bin-label{color:#06D6A0;}.bin.water{border-color:rgba(6,214,160,.25);}
+.bin.air .bin-label{color:#C77DFF;}.bin.air{border-color:rgba(199,125,255,.25);}
+.check-btn{width:100%;padding:12px;background:var(--orange);color:#0F0820;border:none;border-radius:12px;
+  font-family:'Baloo 2',sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;
+  touch-action:manipulation;margin-top:8px;transition:transform .1s;}
+.check-btn:active{transform:scale(.97);}
+/* Sequence stage */
+.seq-pool{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;min-height:50px;
+  padding:10px;background:rgba(255,255,255,.03);border:1px dashed rgba(255,159,28,.2);border-radius:12px;}
+.seq-chip{padding:9px 12px;background:rgba(255,159,28,.09);border:2px solid rgba(255,159,28,.22);
+  border-radius:10px;font-size:.82rem;cursor:pointer;touch-action:manipulation;transition:all .15s;text-align:center;}
+.seq-chip:active{transform:scale(.95);}
+.seq-chip.selected{background:rgba(255,159,28,.22);border-color:var(--orange);}
+.seq-chip.placed{opacity:.3;pointer-events:none;}
+.timeline-slots{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.tl-slot{display:flex;align-items:center;gap:10px;}
+.tl-dot{width:14px;height:14px;border-radius:50%;background:rgba(255,159,28,.3);border:2px solid rgba(255,159,28,.5);flex-shrink:0;}
+.tl-dot.filled{background:var(--orange);}
+.tl-box{flex:1;min-height:40px;padding:8px 12px;background:rgba(255,159,28,.06);
+  border:2px dashed rgba(255,159,28,.2);border-radius:10px;font-size:.85rem;
+  cursor:pointer;touch-action:manipulation;display:flex;align-items:center;transition:all .2s;}
+.tl-box.filled{background:rgba(255,159,28,.14);border-style:solid;color:var(--orange);}
+.tl-box.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal);}
+.tl-box.wrong{background:rgba(255,107,107,.12);border-color:var(--coral);color:var(--coral);}
+.tl-line{width:2px;height:12px;background:rgba(255,159,28,.2);margin-left:6px;}
+/* Match stage */
+.match-rows{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.match-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.m-left{padding:10px 12px;background:rgba(255,159,28,.08);border:2px solid rgba(255,159,28,.2);
+  border-radius:10px;font-size:.82rem;line-height:1.4;}
+.m-left .as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.65rem;color:var(--dim);display:block;}
+.m-right-opts{display:flex;flex-direction:column;gap:5px;}
+.m-opt{padding:7px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;font-size:.78rem;cursor:pointer;touch-action:manipulation;transition:all .15s;}
+.m-opt:active{transform:scale(.97);}
+.m-opt.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal);}
+.m-opt.wrong{background:rgba(255,107,107,.12);border-color:var(--coral);color:var(--coral);}
+.m-opt.disabled{pointer-events:none;}
+.feedback{text-align:center;font-size:.85rem;min-height:1.2em;font-weight:600;margin-top:4px;}
+.feedback.ok{color:var(--teal);}
+.feedback.err{color:var(--coral);}
+.progress-wrap{margin-bottom:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);margin-bottom:5px;}
+.prog-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--orange);border-radius:99px;transition:width .4s;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-card{background:var(--card);border:1px solid rgba(255,159,28,.3);border-radius:22px;padding:28px 24px;text-align:center;max-width:320px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);}to{transform:scale(1) translateY(0);}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px;}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.ov-fact{font-size:.83rem;line-height:1.5;margin-bottom:12px;}
+.ov-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+.ov-btn{padding:12px 28px;background:var(--gold);color:#0F0820;border:none;border-radius:12px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:200;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen"><div style="font-size:2.5rem">🚂</div><p>Loading… / লোড হৈছে…</p></div>
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="h-left">
+      <div class="game-title">Transport Time Machine</div>
+      <div class="game-title-as">পৰিবহন টাইম মেচিন</div>
+      <div class="subject-tag">SST · শ্ৰেণী ৪</div>
+    </div>
+    <div class="stars" id="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+  <div class="wow">
+    <div class="wow-emoji">⚡</div>
+    <p>Before trains, a letter from Delhi to Calcutta took <span>3 WEEKS</span>. Today a WhatsApp message takes <span>0.1 seconds</span>. The same distance — <span>35 million times faster!</span></p>
+    <div class="wow-as">ট্ৰেনৰ আগত দিল্লীৰ পৰা কলকাতালৈ চিঠি যাবলৈ ৩ সপ্তাহ লাগিছিল। আজি ০.১ ছেকেণ্ড!</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-label"><span>Score: <span id="scoreDisplay">0</span></span><span style="font-family:'Noto Sans Devanagari',sans-serif;">স্কোৰ: <span id="scoreAs">০</span></span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="stage-tabs">
+    <div class="stab active" id="stab1">Stage 1<br><span style="font-size:.6rem;">Sort</span></div>
+    <div class="stab" id="stab2">Stage 2<br><span style="font-size:.6rem;">Timeline</span></div>
+    <div class="stab" id="stab3">Stage 3<br><span style="font-size:.6rem;">Match</span></div>
+  </div>
+  <div class="game-area" id="gameArea"></div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <div class="ov-as" id="ovAs"></div>
+    <button class="ov-btn" id="ovBtn">Next →</button>
+  </div>
+</div>
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let currentUser=null;
+auth.onAuthStateChanged(u=>{
+  if(!u){window.location.href='/login.html';return;}
+  currentUser=u;
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initGame();
+});
+
+// Stage 1: sort transport into land / water / air
+const TRANSPORT_ITEMS=[
+  {name:'🚂 Train',as:'ৰেলগাড়ী',bin:'land'},
+  {name:'⛵ Boat',as:'নাও',bin:'water'},
+  {name:'✈️ Aeroplane',as:'বিমান',bin:'air'},
+  {name:'🚌 Bus',as:'বাছ',bin:'land'},
+  {name:'🚢 Ship',as:'জাহাজ',bin:'water'},
+  {name:'🚁 Helicopter',as:'হেলিকপ্টাৰ',bin:'air'},
+  {name:'🛵 Motorcycle',as:'মটৰচাইকেল',bin:'land'},
+  {name:'⛴️ Ferry',as:'ফেৰী',bin:'water'},
+  {name:'🪂 Hot air balloon',as:'গৰম বায়ু বেলুন',bin:'air'},
+];
+
+// Stage 2: arrange transport on timeline oldest→newest
+const TIMELINE=[
+  {name:'🐎 Horse cart',as:'ঘোঁৰাৰ গাড়ী',year:'Ancient'},
+  {name:'⛵ Sailboat',as:'পালতোলা নাও',year:'~3000 BC'},
+  {name:'🚂 Steam train',as:'ষ্টীম ৰেলগাড়ী',year:'1825'},
+  {name:'🚗 Petrol car',as:'পেট্ৰল গাড়ী',year:'1885'},
+  {name:'✈️ Aeroplane',as:'বিমান',year:'1903'},
+  {name:'🚀 Rocket / Space',as:'ৰকেট',year:'1957'},
+];
+
+// Stage 3: match communication invention to approximate decade
+const COMM_MATCH=[
+  {inv:'📬 Postal mail system',as:'ডাক সেৱা',year:'1800s',fact:"India's postal service is one of the world's largest — 1.5 lakh post offices!",factAs:"ভাৰতৰ ডাক সেৱা বিশ্বৰ বৃহত্তম — ১.৫ লাখ ডাকঘৰ!"},
+  {inv:'📞 Telephone',as:'টেলিফোন',year:'1870s',fact:"Alexander Graham Bell invented the telephone in 1876 — the first words were 'Mr Watson, come here!'",factAs:"আলেকজেন্ডাৰ গ্ৰাহাম বেলে ১৮৭৬ত টেলিফোন আৱিষ্কাৰ কৰিছিল!"},
+  {inv:'📻 Radio broadcast',as:'ৰেডিঅ',year:'1900s',fact:"Radio brought news to Assam's tea gardens — workers heard India's independence announcement in 1947!",factAs:"ৰেডিঅ অসমৰ চাহ বাগানলৈ বাতৰি আনিছিল — ১৯৪৭ত স্বাধীনতাৰ ঘোষণা শুনিছিল!"},
+  {inv:'📱 Mobile phone',as:'মোবাইল ফোন',year:'1980s',fact:"The first mobile phone call was made in 1973 — the phone weighed 1.1 kg!",factAs:"প্ৰথম মোবাইল ফোন কল ১৯৭৩ত হৈছিল — ফোনটোৰ ওজন ছিল ১.১ কেজি!"},
+];
+
+let stage=1,score=0,totalScore=0,selectedChip=null,binContents={land:[],water:[],air:[]},seqSlots=[],seqSelected=null;
+
+function initGame(){stage=1;score=0;totalScore=0;selectedChip=null;binContents={land:[],water:[],air:[]};seqSlots=new Array(6).fill(null);seqSelected=null;updateStars(0);setTab(1);renderStage1();}
+
+function setTab(s){
+  [1,2,3].forEach(i=>{
+    const t=document.getElementById('stab'+i);
+    t.className='stab'+(i===s?' active':'')+(i<s?' done':'');
+  });
+}
+
+// ---- STAGE 1: Sort ----
+function renderStage1(){
+  const shuffled=[...TRANSPORT_ITEMS].sort(()=>Math.random()-.5);
+  const ga=document.getElementById('gameArea');
+  ga.innerHTML=`
+    <div class="stage-title">Stage 1: Sort by Type</div>
+    <div class="stage-as">ধৰণ অনুসাৰে সজাওক</div>
+    <p style="font-size:.75rem;color:var(--dim);margin-bottom:10px;">Tap a transport item, then tap the correct bin. / এটা পৰিবহন বাচক, তাৰপিছত সঠিক বাকচত টেপ কৰক।</p>
+    <div class="item-pool" id="itemPool">
+      ${shuffled.map((t,i)=>`<div class="t-chip" id="chip-${TRANSPORT_ITEMS.indexOf(t)}" onclick="selectChip(${TRANSPORT_ITEMS.indexOf(t)})">${t.name}</div>`).join('')}
+    </div>
+    <div class="bins">
+      <div class="bin land" onclick="dropIntoBin('land')">
+        <div class="bin-label">🚗 Land</div><div class="bin-label-as">স্থল</div>
+        <div class="bin-items" id="bin-land"></div>
+      </div>
+      <div class="bin water" onclick="dropIntoBin('water')">
+        <div class="bin-label">🌊 Water</div><div class="bin-label-as">জল</div>
+        <div class="bin-items" id="bin-water"></div>
+      </div>
+      <div class="bin air" onclick="dropIntoBin('air')">
+        <div class="bin-label">✈️ Air</div><div class="bin-label-as">আকাশ</div>
+        <div class="bin-items" id="bin-air"></div>
+      </div>
+    </div>
+    <button class="check-btn" onclick="checkSort()">Check Sort ✓ / সজোৱা পৰীক্ষা কৰক</button>
+    <div class="feedback" id="feedback"></div>`;
+}
+
+function selectChip(idx){
+  selectedChip=idx;
+  document.querySelectorAll('.t-chip').forEach((c,i)=>c.style.outline=i===idx?'2px solid var(--orange)':'none');
+}
+
+function dropIntoBin(binKey){
+  if(selectedChip===null){
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent='Tap a transport item first! / আগে পৰিবহন বাচক!';
+    setTimeout(()=>document.getElementById('feedback').textContent='',1500);return;
+  }
+  // Remove from previous bin
+  Object.keys(binContents).forEach(k=>{const idx=binContents[k].indexOf(selectedChip);if(idx>-1)binContents[k].splice(idx,1);});
+  binContents[binKey].push(selectedChip);
+  document.getElementById('chip-'+selectedChip).classList.add('placed');
+  refreshBins();
+  selectedChip=null;
+  document.querySelectorAll('.t-chip').forEach(c=>c.style.outline='none');
+}
+
+function refreshBins(){
+  ['land','water','air'].forEach(k=>{
+    const el=document.getElementById('bin-'+k);
+    if(el)el.innerHTML=binContents[k].map(i=>`<div class="bin-item">${TRANSPORT_ITEMS[i].name}</div>`).join('');
+  });
+}
+
+function checkSort(){
+  const total=Object.values(binContents).flat().length;
+  if(total<TRANSPORT_ITEMS.length){
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent='Place all items first! / সকলো ৰাখক!';return;
+  }
+  let correct=0;
+  Object.keys(binContents).forEach(k=>{binContents[k].forEach(i=>{if(TRANSPORT_ITEMS[i].bin===k)correct++;});});
+  score+=correct;totalScore=score;updateDisplay();
+  if(correct>=8){
+    confetti();
+    document.getElementById('ovEmoji').textContent='🚂';
+    document.getElementById('ovTitle').textContent='Sorted! / ক্ৰমবদ্ধ!';
+    document.getElementById('ovFact').textContent=`${correct}/9 correct! Land, water, and air transport — now let's put them in order of invention!`;
+    document.getElementById('ovAs').textContent=`${correct}/৯ সঠিক! স্থল, জল আৰু বায়ু পৰিবহন — এতিয়া আৱিষ্কাৰৰ ক্ৰমত ৰাখোঁ!`;
+    document.getElementById('ovBtn').textContent='Stage 2 → / পৰৱৰ্তী পৰ্যায়';
+    document.getElementById('ovBtn').onclick=()=>{showOverlay(false);stage=2;setTab(2);renderStage2();};
+    showOverlay(true);
+  } else {
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent=`${correct}/9 correct — check misplaced items! / ${correct}/৯ সঠিক!`;
+    setTimeout(()=>{binContents={land:[],water:[],air:[]};document.querySelectorAll('.t-chip').forEach(c=>{c.classList.remove('placed');c.style.outline='none';});refreshBins();document.getElementById('feedback').textContent='';},2500);
+  }
+}
+
+// ---- STAGE 2: Timeline sequence ----
+function renderStage2(){
+  const shuffled=[...TIMELINE].sort(()=>Math.random()-.5);
+  seqSlots=new Array(TIMELINE.length).fill(null);seqSelected=null;
+  const ga=document.getElementById('gameArea');
+  ga.innerHTML=`
+    <div class="stage-title">Stage 2: Timeline — Oldest to Newest</div>
+    <div class="stage-as">পুৰণিৰ পৰা নতুনলৈ সজাওক</div>
+    <p style="font-size:.75rem;color:var(--dim);margin-bottom:10px;">Tap a transport, then tap a timeline slot to place it. / পৰিবহন টেপ কৰক, তাৰপিছত স্লটত ৰাখক।</p>
+    <div class="seq-pool" id="seqPool">
+      ${shuffled.map((t,i)=>`<div class="seq-chip" id="sc-${TIMELINE.indexOf(t)}" onclick="selectSeq(${TIMELINE.indexOf(t)})">${t.name}</div>`).join('')}
+    </div>
+    <div class="timeline-slots" id="tlSlots">
+      ${TIMELINE.map((_,i)=>`
+        <div>
+          <div class="tl-slot">
+            <div class="tl-dot" id="td-${i}"></div>
+            <div class="tl-box" id="ts-${i}" onclick="placeSeq(${i})">Slot ${i+1} — tap to place</div>
+          </div>
+          ${i<TIMELINE.length-1?'<div class="tl-line" style="margin-left:6px;"></div>':''}
+        </div>`).join('')}
+    </div>
+    <button class="check-btn" onclick="checkSeq()">Check Order ✓ / ক্ৰম পৰীক্ষা কৰক</button>
+    <div class="feedback" id="feedback"></div>`;
+}
+
+function selectSeq(idx){
+  seqSelected=idx;
+  document.querySelectorAll('.seq-chip').forEach((c,i)=>c.style.outline=i===idx?'2px solid var(--orange)':'none');
+}
+
+function placeSeq(slot){
+  if(seqSelected===null)return;
+  const prev=seqSlots.indexOf(seqSelected);
+  if(prev>=0){seqSlots[prev]=null;document.getElementById('ts-'+prev).textContent='Slot '+(prev+1)+' — tap to place';document.getElementById('ts-'+prev).className='tl-box';document.getElementById('td-'+prev).classList.remove('filled');}
+  seqSlots[slot]=seqSelected;
+  const t=TIMELINE[seqSelected];
+  document.getElementById('ts-'+slot).className='tl-box filled';
+  document.getElementById('ts-'+slot).innerHTML=`${t.name} <span style="font-family:'Noto Sans Devanagari',sans-serif;font-size:.65rem;">${t.as}</span>`;
+  document.getElementById('td-'+slot).classList.add('filled');
+  document.getElementById('sc-'+seqSelected).classList.add('placed');
+  seqSelected=null;
+  document.querySelectorAll('.seq-chip').forEach(c=>c.style.outline='none');
+}
+
+function checkSeq(){
+  if(seqSlots.some(s=>s===null)){
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent='Fill all slots! / সকলো স্লট পূৰণ কৰক!';return;
+  }
+  let correct=0;
+  seqSlots.forEach((tIdx,slot)=>{
+    const box=document.getElementById('ts-'+slot);
+    if(tIdx===slot){box.className='tl-box correct';correct++;}
+    else{box.className='tl-box wrong';}
+  });
+  score+=correct;totalScore=score;updateDisplay();
+  if(correct===TIMELINE.length){
+    confetti();
+    document.getElementById('ovEmoji').textContent='⏳';
+    document.getElementById('ovTitle').textContent='Perfect Timeline! / নিখুঁত টাইমলাইন!';
+    document.getElementById('ovFact').textContent='Humans went from horse cart to rocket in just 150 years — the fastest progress in all of history!';
+    document.getElementById('ovAs').textContent='মানুহে মাত্ৰ ১৫০ বছৰত ঘোঁৰাৰ গাড়ীৰ পৰা ৰকেটলৈ গ'ল!';
+    document.getElementById('ovBtn').textContent='Stage 3 → / পৰৱৰ্তী পৰ্যায়';
+    document.getElementById('ovBtn').onclick=()=>{showOverlay(false);stage=3;setTab(3);renderStage3(0);};
+    showOverlay(true);
+  } else {
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent=`${correct}/6 correct. Red items are out of order! / ${correct}/৬ সঠিক।`;
+    setTimeout(()=>{seqSlots=new Array(6).fill(null);renderStage2();},2500);
+  }
+}
+
+// ---- STAGE 3: Match communication ----
+let matchQ=0;
+function renderStage3(qIdx){
+  matchQ=qIdx;
+  if(qIdx>=COMM_MATCH.length){endGame();return;}
+  const m=COMM_MATCH[qIdx];
+  const years=['1800s','1870s','1900s','1980s'].sort(()=>Math.random()-.5);
+  const ga=document.getElementById('gameArea');
+  ga.innerHTML=`
+    <div class="stage-title">Stage 3: Match Invention to Era</div>
+    <div class="stage-as">আৱিষ্কাৰ যুগৰ সৈতে মিলাওক</div>
+    <div style="font-size:.88rem;margin-bottom:10px;">When was <strong style="color:var(--gold)">${m.inv}</strong> invented?<br><span style="font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);">${m.as} কেতিয়া আৱিষ্কাৰ হৈছিল?</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;" id="matchOpts">
+      ${years.map(y=>`<div class="m-opt" onclick="answerMatch('${y}','${m.year}',${qIdx})">${y}</div>`).join('')}
+    </div>
+    <div class="feedback" id="feedback"></div>`;
+}
+
+function answerMatch(chosen,correct,qIdx){
+  document.querySelectorAll('.m-opt').forEach(o=>o.classList.add('disabled'));
+  const m=COMM_MATCH[qIdx];
+  document.querySelectorAll('.m-opt').forEach(o=>{
+    if(o.textContent===chosen)o.classList.add(chosen===correct?'correct':'wrong');
+    if(o.textContent===correct)o.classList.add('correct');
+  });
+  if(chosen===correct){
+    score++;totalScore=score;updateDisplay();confetti();
+    document.getElementById('ovEmoji').textContent='📡';
+    document.getElementById('ovTitle').textContent=['Brilliant!','Spot on!','Excellent!','Outstanding!'][Math.floor(Math.random()*4)];
+    document.getElementById('ovFact').textContent=m.fact;
+    document.getElementById('ovAs').textContent=m.factAs;
+    document.getElementById('ovBtn').textContent=qIdx>=3?'Finish! / শেষ!':'Next →';
+    document.getElementById('ovBtn').onclick=()=>{showOverlay(false);if(qIdx>=3)endGame();else renderStage3(qIdx+1);};
+    setTimeout(()=>showOverlay(true),300);
+  } else {
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent='❌ Not quite! / ঠিক নহয়!';
+    setTimeout(()=>renderStage3(qIdx+1),2000);
+  }
+}
+
+function updateDisplay(){
+  document.getElementById('scoreDisplay').textContent=totalScore;
+  const as=['০','১','২','৩','৪','৫','৬','৭','৮','৯','১০','১১','১২','১৩','১৪','১৫','১৬','১৭','১৮','১৯'];
+  document.getElementById('scoreAs').textContent=as[totalScore]||totalScore;
+  document.getElementById('progFill').style.width=(totalScore/19*100)+'%';
+  updateStars(Math.min(5,Math.ceil(totalScore/3.8)));
+}
+
+function endGame(){
+  trackProgress();
+  document.getElementById('ovEmoji').textContent='🏆';
+  document.getElementById('ovTitle').textContent='Time Traveller! / সময়-যাত্ৰী!';
+  document.getElementById('ovFact').textContent=`Score: ${totalScore}! You sorted transport, built the invention timeline, and matched communication to its era!`;
+  document.getElementById('ovAs').textContent=`স্কোৰ: ${totalScore}! পৰিবহন সজোৱা, টাইমলাইন নিৰ্মাণ কৰা, যোগাযোগ মিলালে!`;
+  document.getElementById('ovBtn').textContent='🔄 Play Again / আকৌ খেলক';
+  document.getElementById('ovBtn').onclick=()=>{showOverlay(false);initGame();};
+  showOverlay(true);
+}
+async function trackProgress(){
+  if(!currentUser)return;
+  try{await db.collection('users').doc(currentUser.uid).collection('progress').doc('class4-game16').set(
+    {score:totalScore,total:19,gameId:'class4-game16',gameName:'Transport Time Machine',class:4,subject:'SST',completedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+}
+function updateStars(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function showOverlay(s){document.getElementById('overlay').classList.toggle('show',s);}
+function confetti(){
+  const cols=['#FFD166','#FF9F1C','#06D6A0','#FF6B6B','#4CC9F0'];
+  for(let i=0;i<22;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%5]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}
+}
+</script>
+</body>
+</html>

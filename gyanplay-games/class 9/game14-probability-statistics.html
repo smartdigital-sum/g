@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probability &amp; Statistics — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--saffron);color:#fff;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--saffron);color:#fff;border-color:var(--saffron);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--saffron),var(--gold));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.55;margin-bottom:12px;}
+.dataset-box{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,183,0,.25);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:1.05rem;font-weight:800;color:var(--gold);letter-spacing:.03em;text-align:center;}
+.formula-hint{background:rgba(0,174,239,.08);border:1px solid rgba(0,174,239,.2);border-radius:10px;padding:8px 14px;font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:14px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;}
+.choice-btn:hover:not(:disabled){background:rgba(255,107,0,.12);border-color:var(--saffron);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--gold);color:#000;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+.type-tag{display:inline-block;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:999px;margin-bottom:10px;letter-spacing:.05em;}
+.type-stat{background:rgba(255,183,0,.15);color:var(--gold);border:1px solid rgba(255,183,0,.3);}
+.type-prob{background:rgba(0,174,239,.15);color:var(--sky);border:1px solid rgba(0,174,239,.3);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Maths · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('hi')">हि</button>
+      <button class="lang-btn" onclick="setLang('as')">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">📊 Probability &amp; Statistics</span>
+    <span data-lang="hi" style="display:none">📊 प्रायिकता और सांख्यिकी</span>
+    <span data-lang="as" style="display:none">📊 সম্ভাৱিতা আৰু পৰিসংখ্যা</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — Maths Ch 14 &amp; 15 · Stats + Probability</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — गणित अध्याय 14 &amp; 15 · सांख्यिकी + प्रायिकता</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — গণিত অধ্যায় 14 &amp; 15 · পৰিসংখ্যা + সম্ভাৱিতা</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Round 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div id="typeTag"></div>
+    <div class="question-text" id="questionText"></div>
+    <div id="datasetBox" class="dataset-box" style="display:none"></div>
+    <div id="formulaHint" class="formula-hint" style="display:none"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    type: "stat",
+    en: "Find the MEAN of the dataset:",
+    hi: "डेटासेट का माध्य (MEAN) ज्ञात करें:",
+    as: "ডেটাছেটৰ গড় (MEAN) উলিয়াওক:",
+    dataset: "4, 7, 10, 13, 6",
+    formula: { en: "Mean = Sum of all values ÷ Number of values", hi: "माध्य = सभी मानों का योग ÷ मानों की संख्या", as: "গড় = সকলো মানৰ যোগফল ÷ মানৰ সংখ্যা" },
+    choices: { en: ["8","7","9","10"], hi: ["8","7","9","10"], as: ["8","7","9","10"] },
+    correct: 0,
+    explain: { en: "Sum = 4+7+10+13+6 = 40. Mean = 40 ÷ 5 = 8.", hi: "योग = 4+7+10+13+6 = 40. माध्य = 40 ÷ 5 = 8।", as: "যোগ = 4+7+10+13+6 = 40. গড় = 40 ÷ 5 = 8।" }
+  },
+  {
+    type: "stat",
+    en: "Find the MEDIAN of the dataset:",
+    hi: "डेटासेट का माध्यिका (MEDIAN) ज्ञात करें:",
+    as: "ডেটাছেটৰ মধ্যমা (MEDIAN) উলিয়াওক:",
+    dataset: "3, 7, 2, 9, 5",
+    formula: { en: "Median: Arrange in order, pick the middle value. n=5 → 3rd value.", hi: "माध्यिका: क्रम में सजाएं, बीच का मान चुनें। n=5 → तीसरा मान।", as: "মধ্যমা: ক্ৰমত সজাওক, মাজৰ মান বাছক। n=5 → তৃতীয় মান।" },
+    choices: { en: ["5","3","7","4"], hi: ["5","3","7","4"], as: ["5","3","7","4"] },
+    correct: 0,
+    explain: { en: "Arranged: 2, 3, 5, 7, 9. Middle (3rd) value = 5. Median = 5.", hi: "क्रम में: 2, 3, 5, 7, 9. बीच का (तीसरा) मान = 5. माध्यिका = 5।", as: "ক্ৰমত: 2, 3, 5, 7, 9. মাজৰ (তৃতীয়) মান = 5. মধ্যমা = 5।" }
+  },
+  {
+    type: "stat",
+    en: "Find the MODE of the dataset:",
+    hi: "डेटासेट का बहुलक (MODE) ज्ञात करें:",
+    as: "ডেটাছেটৰ বহুলক (MODE) উলিয়াওক:",
+    dataset: "4, 2, 4, 7, 4, 9, 2",
+    formula: { en: "Mode = Most frequently occurring value.", hi: "बहुलक = सबसे अधिक बार आने वाला मान।", as: "বহুলক = সৰ্বাধিক বাৰ আহা মান।" },
+    choices: { en: ["4","2","7","9"], hi: ["4","2","7","9"], as: ["4","2","7","9"] },
+    correct: 0,
+    explain: { en: "4 appears 3 times (most frequent), 2 appears twice. Mode = 4.", hi: "4 तीन बार (सबसे अधिक), 2 दो बार आता है। बहुलक = 4।", as: "4 তিনিবাৰ আহে (সৰ্বাধিক), 2 দুইবাৰ। বহুলক = 4।" }
+  },
+  {
+    type: "prob",
+    en: "🎲 A fair six-sided die is rolled once. What is P(getting a 6)?",
+    hi: "🎲 एक निष्पक्ष छह-पक्षीय पासा एक बार फेंका गया। P(6 आना) क्या है?",
+    as: "🎲 এটা ন্যায্য ছয়-ফালীয়া পাশা এবাৰ ঘূৰোৱা হ'ল। P(6 পোৱা) কি?",
+    formula: { en: "P(event) = Favourable outcomes ÷ Total outcomes. Die has 6 faces.", hi: "P(घटना) = अनुकूल परिणाम ÷ कुल परिणाम. पासे में 6 फलक।", as: "P(ঘটনা) = অনুকূল ফলাফল ÷ মুঠ ফলাফল। পাশাত 6টা ফলক।" },
+    choices: { en: ["1/6","1/3","1/2","1/4"], hi: ["1/6","1/3","1/2","1/4"], as: ["1/6","1/3","1/2","1/4"] },
+    correct: 0,
+    explain: { en: "Only 1 face shows 6 out of 6 total faces. P(6) = 1/6 ≈ 0.167.", hi: "6 कुल फलकों में से केवल 1 फलक पर 6 है। P(6) = 1/6 ≈ 0.167।", as: "6টা মুঠ ফলকৰ মাত্ৰ 1টা ফলকত 6 আছে। P(6) = 1/6 ≈ 0.167।" }
+  },
+  {
+    type: "prob",
+    en: "🪙 A fair coin is tossed. What is P(getting Heads)?",
+    hi: "🪙 एक निष्पक्ष सिक्का उछाला गया। P(चित आना) क्या है?",
+    as: "🪙 এটা ন্যায্য মুদ্ৰা টছ কৰা হ'ল। P(শিৰ পোৱা) কি?",
+    formula: { en: "Coin has 2 outcomes: Heads (H) and Tails (T).", hi: "सिक्के के 2 परिणाम: चित (H) और पट (T)।", as: "মুদ্ৰাৰ 2টা ফলাফল: শিৰ (H) আৰু লেজ (T)।" },
+    choices: { en: ["1/2","1/4","1/3","1"], hi: ["1/2","1/4","1/3","1"], as: ["1/2","1/4","1/3","1"] },
+    correct: 0,
+    explain: { en: "P(Heads) = 1 favourable ÷ 2 total outcomes = 1/2 = 0.5.", hi: "P(चित) = 1 अनुकूल ÷ 2 कुल परिणाम = 1/2 = 0.5।", as: "P(শিৰ) = 1 অনুকূল ÷ 2 মুঠ ফলাফল = 1/2 = 0.5।" }
+  },
+  {
+    type: "stat",
+    en: "Find the MEAN of the dataset:",
+    hi: "डेटासेट का माध्य (MEAN) ज्ञात करें:",
+    as: "ডেটাছেটৰ গড় (MEAN) উলিয়াওক:",
+    dataset: "12, 18, 6, 24, 10",
+    formula: { en: "Mean = Sum ÷ n", hi: "माध्य = योग ÷ n", as: "গড় = যোগ ÷ n" },
+    choices: { en: ["14","15","16","12"], hi: ["14","15","16","12"], as: ["14","15","16","12"] },
+    correct: 0,
+    explain: { en: "Sum = 12+18+6+24+10 = 70. Mean = 70 ÷ 5 = 14.", hi: "योग = 12+18+6+24+10 = 70. माध्य = 70 ÷ 5 = 14।", as: "যোগ = 12+18+6+24+10 = 70. গড় = 70 ÷ 5 = 14।" }
+  },
+  {
+    type: "prob",
+    en: "🃏 A card is drawn at random from a standard deck (52 cards). P(getting a King) = ?",
+    hi: "🃏 52 पत्तों की गड्डी से एक पत्ता यादृच्छिक रूप से निकाला गया। P(राजा आना) = ?",
+    as: "🃏 52 খনৰ এটা প্যাকেটৰ পৰা আকস্মিকভাৱে এখন পত্ৰ টানা হ'ল। P(ৰজা পোৱা) = ?",
+    formula: { en: "Deck has 52 cards. There are 4 Kings (one per suit).", hi: "गड्डी में 52 पत्ते। 4 राजा हैं (एक प्रत्येक सूट में)।", as: "প্যাকেটত 52 খন পত্ৰ। 4টা ৰজা আছে (প্ৰতি ছুটত এটা)।" },
+    choices: { en: ["4/52 (= 1/13)","1/52","2/13","4/26"], hi: ["4/52 (= 1/13)","1/52","2/13","4/26"], as: ["4/52 (= 1/13)","1/52","2/13","4/26"] },
+    correct: 0,
+    explain: { en: "P(King) = 4 kings ÷ 52 total cards = 4/52 = 1/13.", hi: "P(राजा) = 4 राजा ÷ 52 कुल पत्ते = 4/52 = 1/13।", as: "P(ৰজা) = 4 ৰজা ÷ 52 মুঠ পত্ৰ = 4/52 = 1/13।" }
+  },
+  {
+    type: "stat",
+    en: "Find the MEDIAN of the dataset:",
+    hi: "डेटासेट का माध्यिका (MEDIAN) ज्ञात करें:",
+    as: "ডেটাছেটৰ মধ্যমা (MEDIAN) উলিয়াওক:",
+    dataset: "11, 5, 8, 2, 14, 9",
+    formula: { en: "For even n, Median = average of 2 middle values. Sort first!", hi: "सम n के लिए, माध्यिका = 2 बीच के मानों का औसत। पहले क्रम में लगाएं!", as: "জোৰ n-ৰ বাবে, মধ্যমা = 2 মাজৰ মানৰ গড়। প্ৰথমে ক্ৰমত সজাওক!" },
+    choices: { en: ["8.5","8","9","7.5"], hi: ["8.5","8","9","7.5"], as: ["8.5","8","9","7.5"] },
+    correct: 0,
+    explain: { en: "Sorted: 2, 5, 8, 9, 11, 14. n=6 (even). Middle values: 8 and 9. Median = (8+9)÷2 = 8.5.", hi: "क्रम में: 2, 5, 8, 9, 11, 14. n=6 (सम). बीच के मान: 8 और 9. माध्यिका = (8+9)÷2 = 8.5।", as: "ক্ৰমত: 2, 5, 8, 9, 11, 14. n=6 (জোৰ). মাজৰ মান: 8 আৰু 9. মধ্যমা = (8+9)÷2 = 8.5।" }
+  },
+  {
+    type: "prob",
+    en: "🎲 A die is rolled. What is the probability of getting an EVEN number?",
+    hi: "🎲 पासा फेंका गया। सम संख्या आने की प्रायिकता क्या है?",
+    as: "🎲 পাশা ঘূৰোৱা হ'ল। জোৰ সংখ্যা পোৱাৰ সম্ভাৱিতা কি?",
+    formula: { en: "Die faces: 1,2,3,4,5,6. Even faces: 2,4,6.", hi: "पासे के फलक: 1,2,3,4,5,6. सम फलक: 2,4,6।", as: "পাশাৰ ফলক: 1,2,3,4,5,6. জোৰ ফলক: 2,4,6।" },
+    choices: { en: ["3/6 = 1/2","2/6 = 1/3","1/6","4/6"], hi: ["3/6 = 1/2","2/6 = 1/3","1/6","4/6"], as: ["3/6 = 1/2","2/6 = 1/3","1/6","4/6"] },
+    correct: 0,
+    explain: { en: "Even numbers on a die: 2, 4, 6 = 3 outcomes. P(even) = 3/6 = 1/2.", hi: "पासे पर सम संख्याएं: 2, 4, 6 = 3 परिणाम। P(सम) = 3/6 = 1/2।", as: "পাশাত জোৰ সংখ্যা: 2, 4, 6 = 3 ফলাফল। P(জোৰ) = 3/6 = 1/2।" }
+  },
+  {
+    type: "stat",
+    en: "The range of a dataset is:",
+    hi: "एक डेटासेट की परिसर (range) है:",
+    as: "এটা ডেটাছেটৰ পৰিসীমা (range) হৈছে:",
+    dataset: "15, 3, 22, 8, 19, 11",
+    formula: { en: "Range = Maximum value − Minimum value", hi: "परिसर = अधिकतम मान − न्यूनतम मान", as: "পৰিসীমা = সৰ্বোচ্চ মান − সৰ্বনিম্ন মান" },
+    choices: { en: ["19","22","18","17"], hi: ["19","22","18","17"], as: ["19","22","18","17"] },
+    correct: 0,
+    explain: { en: "Max = 22, Min = 3. Range = 22 − 3 = 19.", hi: "अधिकतम = 22, न्यूनतम = 3. परिसर = 22 − 3 = 19।", as: "সৰ্বোচ্চ = 22, সৰ্বনিম্ন = 3. পৰিসীমা = 22 − 3 = 19।" }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = `Round ${current + 1} of 10`;
+
+  const tag = document.getElementById('typeTag');
+  if (q.type === 'stat') {
+    tag.innerHTML = '<span class="type-tag type-stat">📊 Statistics</span>';
+  } else {
+    tag.innerHTML = '<span class="type-tag type-prob">🎲 Probability</span>';
+  }
+
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+
+  const ds = document.getElementById('datasetBox');
+  if (q.dataset) {
+    ds.style.display = 'block';
+    ds.textContent = q.dataset;
+  } else {
+    ds.style.display = 'none';
+  }
+
+  const fh = document.getElementById('formulaHint');
+  if (q.formula) {
+    fh.style.display = 'block';
+    fh.innerHTML = '💡 ' + ((q.formula[lang]) || q.formula.en);
+  } else {
+    fh.style.display = 'none';
+  }
+
+  const choicesArr = (q.choices[lang] || q.choices.en);
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars, msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'Maths Genius! Probability & Statistics mastered! 📊', hi: 'गणित प्रतिभा! प्रायिकता और सांख्यिकी में महारत! 📊', as: 'গণিতৰ প্ৰতিভা! সম্ভাৱিতা আৰু পৰিসংখ্যা আয়ত্ত কৰিলে! 📊' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Great work! Numbers are your friends. 🎲', hi: 'बहुत अच्छा! संख्याएं आपकी मित्र हैं। 🎲', as: 'ভাল কাম! সংখ্যাসমূহ তোমাৰ বন্ধু। 🎲' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Keep practicing! Review mean, median, mode and probability formulas.', hi: 'अभ्यास जारी रखें! माध्य, माध्यिका, बहुलक और प्रायिकता सूत्र दोबारा पढ़ें।', as: 'অনুশীলন জাৰি ৰাখক! গড়, মধ্যমা, বহুলক আৰু সম্ভাৱিতা সূত্ৰ পুনৰায় পঢ়ক।' }; }
+  else { stars = '☆☆☆'; msg = { en: 'Math needs more practice — start with mean formula!', hi: 'गणित के लिए अधिक अभ्यास चाहिए — माध्य सूत्र से शुरू करें!', as: 'গণিতত অধিক অনুশীলন প্ৰয়োজন — গড় সূত্ৰৰ পৰা আৰম্ভ কৰক!' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

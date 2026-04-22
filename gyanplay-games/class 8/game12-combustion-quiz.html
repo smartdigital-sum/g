@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Combustion Challenge — GyanPlay Class 8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F0C29;
+  --dark: #1A1A2E;
+  --gold: #FFB800;
+  --sky: #00AEEF;
+  --green: #00C853;
+  --pink: #FF4081;
+  --purple: #7C3AED;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+body { background: var(--bg); min-height: 100vh; color: #fff; font-family: 'Nunito', sans-serif; display: flex; justify-content: center; align-items: flex-start; padding: 24px 16px 48px; animation: fadeIn .4s ease; }
+.shell { width: 100%; max-width: 520px; }
+.top-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.back-btn { background: rgba(255,255,255,.1); color: #fff; border: none; border-radius: 999px; padding: 8px 20px; font-family: 'Nunito', sans-serif; font-size: .9rem; font-weight: 700; cursor: pointer; transition: background .2s; }
+.back-btn:hover { background: rgba(255,255,255,.18); }
+.badge { background: var(--pink); color: #fff; border-radius: 999px; padding: 6px 16px; font-size: .8rem; font-weight: 800; letter-spacing: .04em; }
+.lang-toggle { display: flex; gap: 6px; margin-left: auto; }
+.lang-btn { background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,255,255,.18); color: #fff; border-radius: 999px; padding: 5px 14px; font-size: .82rem; font-weight: 700; cursor: pointer; transition: all .2s; }
+.lang-btn.active { background: var(--pink); color: #fff; border-color: var(--pink); }
+.game-title { font-family: 'Baloo 2', cursive; font-size: 2rem; font-weight: 800; color: var(--pink); margin-bottom: 4px; line-height: 1.1; }
+.game-sub { font-size: .9rem; color: rgba(255,255,255,.55); margin-bottom: 24px; }
+.progress-bar-wrap { background: rgba(255,255,255,.08); border-radius: 999px; height: 8px; margin-bottom: 20px; }
+.progress-bar { height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--pink), var(--gold)); transition: width .4s ease; }
+.q-counter { font-size: .85rem; color: rgba(255,255,255,.55); margin-bottom: 12px; }
+.question-card { background: var(--dark); border: 1.5px solid rgba(255,255,255,.08); border-radius: 20px; padding: 24px; margin-bottom: 18px; }
+.question-text { font-size: 1.08rem; font-weight: 700; line-height: 1.5; margin-bottom: 20px; }
+.choices { display: flex; flex-direction: column; gap: 10px; }
+.choice-btn { background: rgba(255,255,255,.06); border: 1.5px solid rgba(255,255,255,.12); border-radius: 14px; padding: 13px 18px; color: #fff; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: left; transition: all .18s; }
+.choice-btn:hover:not(:disabled) { background: rgba(255,64,129,.12); border-color: var(--pink); }
+.choice-btn.correct { background: rgba(0,200,83,.18); border-color: var(--green); color: var(--green); }
+.choice-btn.wrong { background: rgba(255,64,129,.15); border-color: var(--pink); color: var(--pink); }
+.choice-btn:disabled { cursor: default; }
+.feedback { margin-top: 14px; padding: 12px 16px; border-radius: 12px; font-weight: 700; font-size: .95rem; display: none; }
+.feedback.correct { background: rgba(0,200,83,.15); color: var(--green); border: 1px solid rgba(0,200,83,.3); }
+.feedback.wrong { background: rgba(255,64,129,.12); color: var(--pink); border: 1px solid rgba(255,64,129,.28); }
+.next-btn { background: var(--pink); color: #fff; border: none; border-radius: 999px; padding: 13px 32px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; margin-top: 16px; display: none; transition: transform .15s; }
+.next-btn:hover { transform: scale(1.04); }
+.result-card { background: var(--dark); border: 1.5px solid rgba(255,255,255,.1); border-radius: 24px; padding: 36px 28px; text-align: center; display: none; }
+.result-title { font-family: 'Baloo 2', cursive; font-size: 2rem; font-weight: 800; color: var(--pink); margin-bottom: 8px; }
+.result-score { font-size: 3.5rem; font-weight: 800; color: #fff; margin: 12px 0; }
+.result-stars { font-size: 2.8rem; margin: 10px 0 20px; }
+.result-msg { font-size: 1rem; color: rgba(255,255,255,.7); margin-bottom: 24px; }
+.restart-btn { background: var(--purple); color: #fff; border: none; border-radius: 999px; padding: 14px 36px; font-family: 'Nunito', sans-serif; font-size: 1.05rem; font-weight: 800; cursor: pointer; transition: transform .15s; }
+.restart-btn:hover { transform: scale(1.05); }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Science · Class 8</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('hi')">हि</button>
+      <button class="lang-btn" onclick="setLang('as')">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">Combustion Challenge</span>
+    <span data-lang="hi" style="display:none">दहन चैलेंज</span>
+    <span data-lang="as" style="display:none">দহন চেলেঞ্জ</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 8 — Combustion and Flame</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 8 — दहन और ज्वाला</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 8 — দহন আৰু শিখা</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">आगे →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Challenge Complete!</span>
+      <span data-lang="hi" style="display:none">चैलेंज पूरा!</span>
+      <span data-lang="as" style="display:none">চেলেঞ্জ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore">0/10</div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">Play Again 🔄</span>
+      <span data-lang="hi" style="display:none">फिर खेलें 🔄</span>
+      <span data-lang="as" style="display:none">পুনৰ খেলক 🔄</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  { en: "Combustion requires ___", hi: "दहन के लिए ___ आवश्यक है", as: "দহনৰ বাবে ___ প্ৰয়োজন", choices: { en: ["Only fuel", "Fuel and water", "Fuel, Heat, and Oxygen"], hi: ["केवल ईंधन", "ईंधन और पानी", "ईंधन, ताप और ऑक्सीजन"], as: ["কেৱল ইন্ধন", "ইন্ধন আৰু পানী", "ইন্ধন, তাপ আৰু অক্সিজেন"] }, answer: 2 },
+  { en: "The lowest temperature at which a substance catches fire is called ___", hi: "वह न्यूनतम तापमान जिस पर कोई पदार्थ आग पकड़ लेता है, कहलाता है ___", as: "যিটো ন্যূনতম তাপমাত্ৰাত কোনো পদাৰ্থ জ্বলি উঠে, তাক ___ বোলে", choices: { en: ["Boiling point", "Ignition temperature", "Melting point"], hi: ["क्वथनांक", "ज्वलन-ताप", "गलनांक"], as: ["উতলাংক", "জ্বলন তাপমাত্ৰা", "গলনাংক"] }, answer: 1 },
+  { en: "CO₂ is used in fire extinguishers because ___", hi: "CO₂ अग्निशामक यंत्रों में इसलिए प्रयोग किया जाता है क्योंकि ___", as: "CO₂ অগ্নি-নিৰ্বাপক যন্ত্ৰত ব্যৱহাৰ কৰা হয় কাৰণ ___", choices: { en: ["It supports combustion", "It does not support combustion", "It is very cold"], hi: ["यह दहन को सहायता करता है", "यह दहन को सहायता नहीं करता", "यह बहुत ठंडा होता है"], as: ["ই দহনত সহায় কৰে", "ই দহনত সহায় নকৰে", "ই অতি ঠাণ্ডা"] }, answer: 1 },
+  { en: "A candle flame has ___ zones", hi: "मोमबत्ती की ज्वाला में ___ क्षेत्र होते हैं", as: "মোমবাতিৰ শিখাত ___ অঞ্চল থাকে", choices: { en: ["1", "2", "3"], hi: ["1", "2", "3"], as: ["1", "2", "3"] }, answer: 2 },
+  { en: "The innermost zone of a candle flame is ___", hi: "मोमबत्ती की ज्वाला का अंतरतम क्षेत्र ___ होता है", as: "মোমবাতিৰ শিখাৰ আটাইতকৈ ভিতৰৰ অঞ্চলটো ___", choices: { en: ["Brightest zone", "Darkest zone (unburnt wax vapours)", "Blue zone"], hi: ["सबसे चमकदार क्षेत्र", "सबसे अंधेरा क्षेत्र (अजले मोम वाष्प)", "नीला क्षेत्र"], as: ["সৰ্বাধিক উজ্জ্বল অঞ্চল", "ক'লা অঞ্চল (নজ্বলা মোম বাষ্প)", "নীলা অঞ্চল"] }, answer: 1 },
+  { en: "LPG is a ___", hi: "LPG एक ___ है", as: "LPG হ'ল ___", choices: { en: ["Renewable fuel", "Fossil fuel", "Nuclear fuel"], hi: ["नवीकरणीय ईंधन", "जीवाश्म ईंधन", "परमाणु ईंधन"], as: ["নবীকৰণযোগ্য ইন্ধন", "জীৱাশ্ম ইন্ধন", "পাৰমাণৱিক ইন্ধন"] }, answer: 1 },
+  { en: "Calorific value is measured in ___", hi: "ऊष्मीय मूल्य को ___ में मापा जाता है", as: "তাপীয় মান ___ ত জুখা হয়", choices: { en: ["kJ/kg", "km/h", "kg/m³"], hi: ["kJ/kg", "km/h", "kg/m³"], as: ["kJ/kg", "km/h", "kg/m³"] }, answer: 0 },
+  { en: "Burning of fuels causes ___", hi: "ईंधन के जलने से ___ होता है", as: "ইন্ধন জ্বলাৰ ফলত ___ হয়", choices: { en: ["Rainfall", "Global warming", "Cooling effect"], hi: ["वर्षा", "वैश्विक ताप (ग्लोबल वार्मिंग)", "शीतलन प्रभाव"], as: ["বৰষুণ", "বৈশ্বিক উষ্ণতা", "শীতলন"] }, answer: 1 },
+  { en: "CNG is mainly ___", hi: "CNG मुख्यतः ___ है", as: "CNG মূলতঃ ___", choices: { en: ["Propane", "Methane", "Butane"], hi: ["प्रोपेन", "मेथेन", "ब्यूटेन"], as: ["প্ৰ'পেন", "মিথেন", "বিউটেন"] }, answer: 1 },
+  { en: "Water is used to extinguish fires because it ___", hi: "आग बुझाने के लिए पानी का प्रयोग किया जाता है क्योंकि यह ___", as: "পানীৰে জুই নিৰ্বাপণ কৰা হয় কাৰণ ই ___", choices: { en: ["Burns quickly", "Cools the fuel and cuts off oxygen supply", "Adds more fuel"], hi: ["जल्दी जलता है", "ईंधन को ठंडा करता और ऑक्सीजन काटता है", "अधिक ईंधन जोड़ता है"], as: ["দ্ৰুত জ্বলে", "ইন্ধন ঠাণ্ডা কৰে আৰু অক্সিজেন কাটে", "অধিক ইন্ধন যোগ কৰে"] }, answer: 1 }
+];
+
+let currentQ = 0, score = 0, lang = 'en', answered = false;
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach((b, i) => b.classList.toggle('active', ['en','hi','as'][i] === l));
+  document.querySelectorAll('[data-lang]').forEach(el => el.style.display = el.getAttribute('data-lang') === l ? '' : 'none');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (currentQ >= questions.length) { showResult(); return; }
+  const q = questions[currentQ];
+  document.getElementById('qCounter').textContent = `Question ${currentQ + 1} of ${questions.length}`;
+  document.getElementById('progressBar').style.width = `${(currentQ / questions.length) * 100}%`;
+  document.getElementById('questionText').textContent = q[lang] || q.en;
+  const ch = q.choices[lang] || q.choices.en;
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  ch.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = c;
+    btn.onclick = () => handleAnswer(i);
+    choicesEl.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').style.display = 'none';
+  answered = false;
+}
+
+function handleAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const ch = q.choices[lang] || q.choices.en;
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.answer) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.textContent = '✅ Correct!';
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.answer].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.textContent = `❌ Wrong — correct answer: ${ch[q.answer]}`;
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() { currentQ++; renderQuestion(); }
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  document.getElementById('resultScore').textContent = `${score}/10`;
+  const pct = score / 10;
+  let stars = '', msg = '';
+  if (pct >= .9) { stars = '⭐⭐⭐'; msg = 'Fire expert! You aced the Combustion Challenge! 🔥'; }
+  else if (pct >= .7) { stars = '⭐⭐'; msg = 'Great knowledge about combustion!'; }
+  else if (pct >= .4) { stars = '⭐'; msg = 'Good try! Keep studying combustion!'; }
+  else { stars = ''; msg = 'Don\'t give up — review the chapter and try again!'; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg;
+}
+
+function restartGame() {
+  currentQ = 0; score = 0; answered = false;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

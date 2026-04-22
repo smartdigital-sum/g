@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cell & Reproduction — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:#fff;padding-bottom:40px}
+  h1,h2,h3{font-family:'Baloo 2',sans-serif}
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);position:sticky;top:0;z-index:99}
+  .back-btn{background:rgba(255,255,255,0.12);border:none;color:#fff;padding:7px 16px;border-radius:20px;cursor:pointer;font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;transition:background .2s}
+  .back-btn:hover{background:rgba(255,255,255,0.22)}
+  .badge{background:var(--green);color:#fff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;font-family:'Baloo 2',sans-serif}
+  .lang-toggle{margin-left:auto;display:flex;gap:6px}
+  .lang-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s}
+  .lang-btn.active{background:var(--purple);border-color:var(--purple)}
+  .progress-wrap{padding:16px 20px 0}
+  .progress-info{display:flex;justify-content:space-between;font-size:13px;opacity:.8;margin-bottom:6px}
+  .progress-bar{height:8px;background:rgba(255,255,255,0.12);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:4px;transition:width .5s ease}
+  .card{background:var(--card);border-radius:20px;padding:28px 24px;margin:20px auto;max-width:680px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:fadeIn .4s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .q-meta{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;opacity:.7}
+  .q-num{background:var(--purple);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;font-family:'Baloo 2',sans-serif;flex-shrink:0}
+  .scene-emoji{font-size:40px;text-align:center;margin-bottom:10px}
+  .question{font-size:18px;font-weight:700;line-height:1.5;margin-bottom:20px;font-family:'Baloo 2',sans-serif}
+  .options{display:grid;gap:12px}
+  .opt-btn{background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);color:#fff;padding:14px 18px;border-radius:14px;cursor:pointer;text-align:left;font-size:15px;font-family:'Nunito',sans-serif;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:10px}
+  .opt-btn:hover:not(:disabled){background:rgba(124,58,237,0.15);border-color:var(--purple)}
+  .opt-btn.correct{background:rgba(0,200,83,0.2);border-color:var(--green)}
+  .opt-btn.wrong{background:rgba(255,64,129,0.18);border-color:var(--pink)}
+  .opt-btn:disabled{cursor:default}
+  .opt-label{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:14px;line-height:1.6;display:none;animation:fadeIn .3s ease}
+  .feedback.show{display:block}
+  .feedback.correct-fb{background:rgba(0,200,83,0.15);border:1px solid var(--green)}
+  .feedback.wrong-fb{background:rgba(255,64,129,0.12);border:1px solid var(--pink)}
+  .score-live{background:rgba(124,58,237,0.2);border:1px solid var(--purple);padding:4px 12px;border-radius:12px;font-size:13px;font-weight:700;color:#c4b5fd}
+  .next-btn{display:none;margin:20px auto 0;background:linear-gradient(135deg,var(--purple),#6d28d9);border:none;color:#fff;padding:13px 36px;border-radius:24px;font-size:16px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 18px rgba(124,58,237,0.4)}
+  .next-btn:hover{transform:translateY(-2px)}
+  .next-btn.show{display:block}
+  .end-screen{display:none;text-align:center;padding:30px 20px;max-width:520px;margin:40px auto}
+  .end-screen.show{display:block;animation:fadeIn .5s ease}
+  .stars{font-size:44px;letter-spacing:4px;margin:10px 0}
+  .final-score{font-size:54px;font-weight:800;color:var(--gold);line-height:1;font-family:'Baloo 2',sans-serif}
+  .score-label{font-size:15px;opacity:.7;margin-bottom:20px}
+  .play-again{background:linear-gradient(135deg,var(--purple),var(--pink));border:none;color:#fff;padding:14px 40px;border-radius:28px;font-size:17px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s;box-shadow:0 4px 20px rgba(124,58,237,0.4)}
+  .play-again:hover{transform:scale(1.05)}
+  .end-title{font-size:26px;font-weight:800;margin-bottom:8px;font-family:'Baloo 2',sans-serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">উভতি যাওক</span></button>
+  <span class="badge">Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-info">
+    <span data-lang="en">Question <span id="qNum">1</span>/10</span>
+    <span data-lang="hi" style="display:none">प्रश्न <span id="qNumHi">1</span>/10</span>
+    <span data-lang="as" style="display:none">প্ৰশ্ন <span id="qNumAs">1</span>/10</span>
+    <span class="score-live">Score: <span id="scoreLive">0</span>/100</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+</div>
+
+<div class="card" id="questionCard">
+  <div class="q-meta">
+    <div class="q-num" id="qBadge">1</div>
+    <span data-lang="en">Cell &amp; Reproduction</span>
+    <span data-lang="hi" style="display:none">कोशिका और जनन</span>
+    <span data-lang="as" style="display:none">কোষ আৰু জনন</span>
+  </div>
+  <div class="scene-emoji" id="sceneEmoji">🔬</div>
+  <div class="question" id="questionText"></div>
+  <div class="options" id="optionsDiv"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+    <span data-lang="en">Next Question →</span>
+    <span data-lang="hi" style="display:none">अगला प्रश्न →</span>
+    <span data-lang="as" style="display:none">পৰৱৰ্তী প্ৰশ্ন →</span>
+  </button>
+</div>
+
+<div class="end-screen" id="endScreen">
+  <div class="end-title" data-lang="en">Quiz Complete! 🎉</div>
+  <div class="end-title" data-lang="hi" style="display:none">क्विज़ पूर्ण! 🎉</div>
+  <div class="end-title" data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ! 🎉</div>
+  <div class="stars" id="starsDisplay">⭐⭐⭐</div>
+  <div class="final-score" id="finalScore">0</div>
+  <div class="score-label">/100</div>
+  <button class="play-again" onclick="restartGame()">
+    <span data-lang="en">Play Again 🔄</span>
+    <span data-lang="hi" style="display:none">फिर खेलें 🔄</span>
+    <span data-lang="as" style="display:none">আকৌ খেলক 🔄</span>
+  </button>
+</div>
+
+<script>
+const questions=[
+  {
+    emoji:"🔬",
+    en:"What is the basic structural and functional unit of life?",
+    hi:"जीवन की मूल संरचनात्मक और कार्यात्मक इकाई क्या है?",
+    as:"জীৱনৰ মূল গাঁথনিগত আৰু কাৰ্যকৰী এককটো কি?",
+    options:{en:["Cell","Tissue","Organ","Molecule"],hi:["कोशिका","ऊतक","अंग","अणु"],as:["কোষ","কলা","অংগ","অণু"]},
+    correct:0,
+    explanation:{en:"The cell is the basic structural and functional unit of all living organisms. Robert Hooke first discovered cells in 1665 by observing cork under a microscope.",hi:"कोशिका सभी जीवों की मूल संरचनात्मक और कार्यात्मक इकाई है। रॉबर्ट हुक ने 1665 में कॉर्क में कोशिकाएँ खोजी थीं।",as:"কোষ হৈছে সকলো জীৱৰ মূল গাঁথনিগত আৰু কাৰ্যকৰী একক। ৰবাৰ্ট হুকে ১৬৬৫ চনত কৰ্কত কোষ আৱিষ্কাৰ কৰিছিল।"}
+  },
+  {
+    emoji:"🧬",
+    en:"Which organelle is called the 'powerhouse of the cell'?",
+    hi:"किस अंगक को कोशिका का 'पावरहाउस' कहते हैं?",
+    as:"কোন অংগাণুক কোষৰ 'পাৱাৰহাউছ' বোলা হয়?",
+    options:{en:["Mitochondria","Nucleus","Ribosome","Lysosome"],hi:["माइटोकॉन्ड्रिया","केन्द्रक","राइबोसोम","लाइसोसोम"],as:["মাইট'কণ্ড্ৰিয়া","নিউক্লিয়াছ","ৰাইব'জ'ম","লাইজ'জ'ম"]},
+    correct:0,
+    explanation:{en:"Mitochondria are called the powerhouse of the cell because they produce ATP (energy) through cellular respiration. They have their own DNA.",hi:"माइटोकॉन्ड्रिया को कोशिका का पावरहाउस कहते हैं क्योंकि यह कोशिकीय श्वसन द्वारा ATP (ऊर्जा) उत्पन्न करता है।",as:"মাইট'কণ্ড্ৰিয়াক কোষৰ পাৱাৰহাউছ বোলা হয় কাৰণ ই কোষীয় শ্বসনৰ জৰিয়তে ATP (শক্তি) উৎপন্ন কৰে।"}
+  },
+  {
+    emoji:"🦠",
+    en:"Which structure is present in plant cells but NOT in animal cells?",
+    hi:"कौन सी संरचना पादप कोशिका में होती है लेकिन जंतु कोशिका में नहीं?",
+    as:"কোন গঠন উদ্ভিদ কোষত থাকে কিন্তু প্ৰাণী কোষত নাথাকে?",
+    options:{en:["Cell wall and chloroplast","Cell membrane","Nucleus","Mitochondria"],hi:["कोशिका भित्ति और हरितलवक","कोशिका झिल्ली","केन्द्रक","माइटोकॉन्ड्रिया"],as:["কোষ বেৰ আৰু ক্লৰ'প্লাষ্ট","কোষ আৱৰণ","নিউক্লিয়াছ","মাইট'কণ্ড্ৰিয়া"]},
+    correct:0,
+    explanation:{en:"Plant cells have a cell wall (made of cellulose) and chloroplasts (for photosynthesis) which are absent in animal cells. Both cell types have cell membrane, nucleus and mitochondria.",hi:"पादप कोशिका में कोशिका भित्ति (सेल्युलोज से बनी) और हरितलवक होते हैं जो जंतु कोशिका में नहीं होते।",as:"উদ্ভিদ কোষত কোষ বেৰ (চেলুলোজৰ পৰা তৈয়াৰ) আৰু ক্লৰ'প্লাষ্ট থাকে যি প্ৰাণী কোষত নাথাকে।"}
+  },
+  {
+    emoji:"🔬",
+    en:"What is the function of the nucleus in a cell?",
+    hi:"कोशिका में केन्द्रक का क्या कार्य है?",
+    as:"কোষত নিউক্লিয়াছৰ কাম কি?",
+    options:{en:["Controls all cell activities and contains DNA","Produces energy for the cell","Helps in photosynthesis","Digests waste material"],hi:["सभी कोशिकीय गतिविधियों को नियंत्रित करता है और DNA रखता है","कोशिका के लिए ऊर्जा उत्पन्न करता है","प्रकाश संश्लेषण में सहायता करता है","अपशिष्ट पदार्थ पचाता है"],as:["সকলো কোষীয় কাৰ্যকলাপ নিয়ন্ত্ৰণ কৰে আৰু DNA ধাৰণ কৰে","কোষৰ বাবে শক্তি উৎপন্ন কৰে","সালোক সংশ্লেষণত সহায় কৰে","আৱৰ্জনা পদাৰ্থ হজম কৰে"]},
+    correct:0,
+    explanation:{en:"The nucleus is the control centre of the cell. It contains DNA (genetic material) that carries instructions for all cell activities and hereditary information.",hi:"केन्द्रक कोशिका का नियंत्रण केन्द्र है। इसमें DNA होता है जो सभी कोशिकीय गतिविधियों के निर्देश और आनुवंशिक जानकारी रखता है।",as:"নিউক্লিয়াছ হৈছে কোষৰ নিয়ন্ত্ৰণ কেন্দ্ৰ। ইয়াত DNA থাকে যি সকলো কোষীয় কাৰ্যকলাপৰ নিৰ্দেশ আৰু বংশগত তথ্য বহন কৰে।"}
+  },
+  {
+    emoji:"🧫",
+    en:"Binary fission is a type of which reproduction?",
+    hi:"द्विखंडन किस प्रकार के जनन का एक प्रकार है?",
+    as:"দ্বি-বিভাজন কোন প্ৰকাৰৰ জননৰ এটা ধৰন?",
+    options:{en:["Asexual reproduction","Sexual reproduction","Both A and B","Neither A nor B"],hi:["अलैंगिक जनन","लैंगिक जनन","A और B दोनों","न A न B"],as:["অযৌন জনন","যৌন জনন","A আৰু B দুয়োটা","A নে B নহয়"]},
+    correct:0,
+    explanation:{en:"Binary fission is asexual reproduction where a single organism splits into two equal halves. Amoeba and bacteria reproduce by binary fission.",hi:"द्विखंडन अलैंगिक जनन है जिसमें एक जीव दो समान भागों में विभाजित होता है। अमीबा और बैक्टीरिया द्विखंडन द्वारा जनन करते हैं।",as:"দ্বি-বিভাজন হৈছে অযৌন জনন য'ত এটা জীৱ দুটা সমান ভাগত বিভক্ত হয়। অ্যামিবা আৰু বেক্টেৰিয়াই দ্বি-বিভাজনেৰে জনন কৰে।"}
+  },
+  {
+    emoji:"🌿",
+    en:"Budding is a method of asexual reproduction seen in which organism?",
+    hi:"मुकुलन किस जीव में देखी जाने वाली अलैंगिक जनन की विधि है?",
+    as:"মুকুলন কোন জীৱত দেখা যোৱা অযৌন জননৰ পদ্ধতি?",
+    options:{en:["Hydra and yeast","Amoeba","Earthworm","Frog"],hi:["हाइड्रा और यीस्ट","अमीबा","केंचुआ","मेंढक"],as:["হাইড্ৰা আৰু ইষ্ট","অ্যামিবা","কেঁচোৱা","ভেক"]},
+    correct:0,
+    explanation:{en:"Hydra (an animal) and yeast (a fungus) reproduce by budding. A bud grows as an outgrowth on the parent organism and eventually detaches to form a new individual.",hi:"हाइड्रा (एक जंतु) और यीस्ट (एक कवक) मुकुलन द्वारा जनन करते हैं। मुकुल एक उभार के रूप में बढ़ता है और अलग होकर नया जीव बनाता है।",as:"হাইড্ৰা (এটা প্ৰাণী) আৰু ইষ্ট (এটা ছত্ৰাক) মুকুলনৰ দ্বাৰা জনন কৰে।"}
+  },
+  {
+    emoji:"🦎",
+    en:"Which organism can regenerate a lost body part — a well-known example of regeneration?",
+    hi:"कौन सा जीव खोए हुए शरीर के अंग को पुनः उत्पन्न कर सकता है?",
+    as:"কোন জীৱে হেৰোৱা শৰীৰৰ অংশ পুনৰ উৎপন্ন কৰিব পাৰে?",
+    options:{en:["Planaria (flatworm)","Dog","Snake","Frog"],hi:["प्लेनेरिया (चपटा कृमि)","कुत्ता","सांप","मेंढक"],as:["প্লেনেৰিয়া (চেপটা কৃমি)","কুকুৰ","সাপ","ভেক"]},
+    correct:0,
+    explanation:{en:"Planaria, a flatworm, can regenerate a complete organism from any cut piece. If cut into pieces, each piece can grow into a full new organism. This is called regeneration.",hi:"प्लेनेरिया, एक चपटा कृमि, किसी भी कटे टुकड़े से पूर्ण जीव पुनः उत्पन्न कर सकता है। इसे पुनर्जनन कहते हैं।",as:"প্লেনেৰিয়া, এটা চেপটা কৃমি, যিকোনো কটা টুকুৰাৰ পৰা সম্পূৰ্ণ জীৱ পুনৰ উৎপন্ন কৰিব পাৰে।"}
+  },
+  {
+    emoji:"🧬",
+    en:"In sexual reproduction, fertilisation is the process of:",
+    hi:"लैंगिक जनन में निषेचन (फर्टिलाइजेशन) किस प्रक्रिया को कहते हैं?",
+    as:"যৌন জননত নিষেচন মানে কোন প্ৰক্ৰিয়া?",
+    options:{en:["Fusion of male and female gametes","Division of a single cell","Formation of buds","Separation of chromosomes"],hi:["नर और मादा युग्मकों का संलयन","एकल कोशिका का विभाजन","मुकुलों का निर्माण","गुणसूत्रों का पृथक्करण"],as:["নৰ আৰু মাইকী গেমিটৰ মিলন","এটা কোষৰ বিভাজন","মুকুল গঠন","ক্ৰমোজোমৰ পৃথকীকৰণ"]},
+    correct:0,
+    explanation:{en:"Fertilisation is the fusion of the male gamete (sperm) with the female gamete (egg/ovum) to form a zygote. The zygote develops into a new organism.",hi:"निषेचन नर युग्मक (शुक्राणु) और मादा युग्मक (अंडाणु) के संलयन से युग्मनज (जाइगोट) बनने की प्रक्रिया है।",as:"নিষেচন হৈছে নৰ গেমিট (শুক্ৰাণু) আৰু মাইকী গেমিট (ডিম্বাণু)ৰ মিলনৰ ফলত জাইগোট গঠনৰ প্ৰক্ৰিয়া।"}
+  },
+  {
+    emoji:"🧫",
+    en:"Cytoplasm in a cell is:",
+    hi:"कोशिका में कोशिकाद्रव्य (साइटोप्लाज्म) क्या है?",
+    as:"কোষত ছাইট'প্লাজম কি?",
+    options:{en:["Jelly-like fluid filling the cell between nucleus and membrane","The outer boundary of the cell","The genetic material","The energy-producing organelle"],hi:["केन्द्रक और कोशिका झिल्ली के बीच की जेली जैसी तरल पदार्थ","कोशिका की बाहरी सीमा","आनुवंशिक सामग्री","ऊर्जा उत्पादक अंगक"],as:["নিউক্লিয়াছ আৰু কোষ আৱৰণৰ মাজৰ জেলিৰ নিচিনা তৰল পদাৰ্থ","কোষৰ বাহ্যিক সীমা","বংশগত পদাৰ্থ","শক্তি উৎপাদক অংগাণু"]},
+    correct:0,
+    explanation:{en:"Cytoplasm is the jelly-like fluid that fills the cell between the nucleus and the cell membrane. It contains various organelles and is the site of many metabolic reactions.",hi:"कोशिकाद्रव्य जेली जैसा तरल पदार्थ है जो केन्द्रक और कोशिका झिल्ली के बीच भरा होता है। इसमें विभिन्न अंगक होते हैं।",as:"ছাইট'প্লাজম হৈছে জেলিৰ নিচিনা তৰল পদাৰ্থ যি নিউক্লিয়াছ আৰু কোষ আৱৰণৰ মাজৰ অংশ পূৰ্ণ কৰি ৰাখে।"}
+  },
+  {
+    emoji:"🦠",
+    en:"Viviparous animals give birth to:",
+    hi:"जरायुज जन्तु किसे जन्म देते हैं?",
+    as:"জৰায়ুজ প্ৰাণীয়ে কিহক জন্ম দিয়ে?",
+    options:{en:["Young ones directly","Eggs only","Both eggs and young ones","Neither"],hi:["सीधे बच्चों को","केवल अंडों को","अंडे और बच्चे दोनों को","कोई नहीं"],as:["পোনপটীয়াকৈ পোৱালিক","কেৱল কণীক","কণী আৰু পোৱালি দুয়োটাক","একোকে নহয়"]},
+    correct:0,
+    explanation:{en:"Viviparous animals (like humans, cows, dogs) give birth to young ones that develop inside the mother's body. Oviparous animals (like birds, frogs) lay eggs.",hi:"जरायुज जन्तु (मनुष्य, गाय, कुत्ते) सीधे बच्चों को जन्म देते हैं जो माँ के शरीर के अंदर विकसित होते हैं।",as:"জৰায়ুজ প্ৰাণী (মানুহ, গাই, কুকুৰ) পোনপটীয়াকৈ পোৱালি জন্ম দিয়ে যি মাতৃৰ শৰীৰৰ ভিতৰত বিকশিত হয়।"}
+  }
+];
+
+let current=0,score=0,answered=false,lang='en';
+function setLang(l){lang=l;document.querySelectorAll('.lang-btn').forEach((b,i)=>{b.classList.toggle('active',['en','hi','as'][i]===l)});document.querySelectorAll('[data-lang]').forEach(el=>{el.style.display=el.dataset.lang===l?'':'none'});updateQNum()}
+function updateQNum(){const n=current+1;['qNum','qNumHi','qNumAs'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n});document.getElementById('qBadge').textContent=n}
+function renderQuestion(){
+  if(current>=questions.length){showEnd();return}
+  answered=false;const q=questions[current];
+  document.getElementById('progressFill').style.width=((current+1)/questions.length*100)+'%';
+  updateQNum();document.getElementById('sceneEmoji').textContent=q.emoji;
+  document.getElementById('questionText').textContent=q[lang]||q.en;
+  const opts=q.options[lang]||q.options.en;const labels=['A','B','C','D'];
+  document.getElementById('optionsDiv').innerHTML=opts.map((o,i)=>`<button class="opt-btn" onclick="answer(${i})" id="opt${i}"><span class="opt-label">${labels[i]}</span>${o}</button>`).join('');
+  const fb=document.getElementById('feedback');fb.className='feedback';fb.textContent='';
+  document.getElementById('nextBtn').classList.remove('show');
+}
+function answer(idx){
+  if(answered)return;answered=true;const q=questions[current];const isCorrect=idx===q.correct;
+  if(isCorrect)score+=10;document.getElementById('scoreLive').textContent=score;
+  document.querySelectorAll('.opt-btn').forEach((b,i)=>{b.disabled=true;if(i===q.correct)b.classList.add('correct');else if(i===idx&&!isCorrect)b.classList.add('wrong')});
+  const fb=document.getElementById('feedback');fb.className='feedback show '+(isCorrect?'correct-fb':'wrong-fb');
+  fb.innerHTML=`<span class="fb-icon">${isCorrect?'✓':'✗'}</span> ${(q.explanation&&q.explanation[lang])||q.explanation.en}`;
+  document.getElementById('nextBtn').classList.add('show');
+}
+function nextQuestion(){current++;if(current>=questions.length){showEnd();return}renderQuestion()}
+function showEnd(){
+  document.getElementById('questionCard').style.display='none';document.getElementById('progressWrap').style.display='none';
+  const es=document.getElementById('endScreen');es.classList.add('show');
+  document.getElementById('finalScore').textContent=score;const p=score;
+  document.getElementById('starsDisplay').textContent=p>=90?'⭐⭐⭐':p>=70?'⭐⭐':p>=40?'⭐':'☆☆☆';
+}
+function restartGame(){
+  current=0;score=0;answered=false;document.getElementById('scoreLive').textContent=0;
+  document.getElementById('endScreen').classList.remove('show');
+  document.getElementById('questionCard').style.display='';document.getElementById('progressWrap').style.display='';
+  renderQuestion();
+}
+setLang('en');renderQuestion();
+</script>
+</body>
+</html>

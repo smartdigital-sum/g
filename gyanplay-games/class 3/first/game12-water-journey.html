@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💧 Water Journey — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050E1A;--card:#0A1828;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--navy:#1A3A5C;--text:#D0EEFF;--dim:#4A7A9A}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(76,201,240,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.3rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:18px 16px;gap:16px}
+.hook{background:linear-gradient(135deg,rgba(76,201,240,.12),rgba(6,214,160,.08));border:1px solid rgba(76,201,240,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.88rem;line-height:1.6;color:#B0DCFF}
+.hook strong{color:var(--gold)}
+/* Cycle diagram */
+.cycle-wrap{position:relative;width:100%;max-width:440px;height:220px;background:linear-gradient(180deg,#0A1828 0%,#051828 50%,#0A1420 100%);border-radius:16px;border:2px solid rgba(76,201,240,.15);overflow:hidden}
+/* static scene elements */
+.scene-cloud{position:absolute;top:12px;left:50%;transform:translateX(-50%);font-size:2.6rem;transition:filter .5s}
+.scene-sun{position:absolute;top:14px;right:18px;font-size:1.8rem;opacity:.7}
+.scene-mountain{position:absolute;bottom:0;left:0;right:0;font-size:2rem;text-align:center;line-height:1}
+.scene-river{position:absolute;bottom:12px;left:20%;width:60%;height:18px;background:linear-gradient(90deg,rgba(76,201,240,.3),rgba(6,214,160,.3));border-radius:9px}
+.scene-drop{position:absolute;font-size:1rem;animation:dropFall 2.5s ease-in infinite;opacity:0}
+@keyframes dropFall{0%{opacity:0;top:55px}20%{opacity:1}80%{opacity:1}100%{opacity:0;top:140px}}
+.scene-steam{position:absolute;font-size:.8rem;animation:steamRise 2s ease-out infinite;opacity:0}
+@keyframes steamRise{0%{opacity:0;top:145px}30%{opacity:.7}100%{opacity:0;top:30px}}
+/* Stage buttons */
+.stages-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:440px}
+.stage-btn{padding:14px 12px;background:var(--card);border:2px solid rgba(76,201,240,.2);border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s;text-align:left}
+.stage-btn:hover{border-color:var(--blue);background:rgba(76,201,240,.07)}
+.stage-btn.done{border-color:var(--teal);background:rgba(6,214,160,.08)}
+.stage-btn.active{border-color:var(--gold);background:rgba(255,209,102,.08);box-shadow:0 0 14px rgba(255,209,102,.2)}
+.stage-icon{font-size:1.8rem;flex-shrink:0}
+.stage-info{flex:1}
+.stage-name{font-size:.88rem;font-weight:700;color:var(--text)}
+.stage-desc{font-size:.72rem;color:var(--dim);line-height:1.4;margin-top:2px}
+.stage-check{font-size:1rem;color:var(--teal);display:none}
+.stage-btn.done .stage-check{display:block}
+/* Fact panel */
+.fact-panel{background:var(--card);border-radius:12px;padding:14px 18px;border-left:4px solid var(--blue);width:100%;max-width:440px;min-height:48px;font-size:.88rem;color:var(--dim);line-height:1.5;transition:all .3s}
+.fact-panel.active{color:var(--text);border-color:var(--teal)}
+/* Mystery mode */
+.mystery-card{background:var(--card);border-radius:14px;padding:18px;border:2px solid rgba(255,107,107,.25);width:100%;max-width:440px}
+.mystery-title{font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;color:var(--coral);margin-bottom:10px}
+.mystery-text{font-size:.88rem;color:var(--dim);line-height:1.6;margin-bottom:14px}
+.mystery-opts{display:flex;flex-direction:column;gap:7px}
+.mystery-opt{padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(76,201,240,.2);border-radius:8px;cursor:pointer;font-size:.88rem;color:var(--dim);transition:all .15s;text-align:left}
+.mystery-opt:hover{border-color:var(--blue);color:var(--text)}
+.mystery-opt.correct{border-color:var(--teal);background:rgba(6,214,160,.12);color:var(--teal)}
+.mystery-opt.wrong{border-color:var(--coral);background:rgba(255,107,107,.1);color:var(--coral)}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#050E1A;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(5,14,26,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4.5rem}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.9rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">💧 Water Journey</div><div class="subject-tag">Science · Water Cycle · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+
+<div class="game-area">
+  <div class="hook">💧 The water you're drinking right now might be <strong>millions of years old</strong>. The same water has been raining, evaporating, raining again since before dinosaurs. You are drinking <strong>ancient water</strong>!</div>
+
+  <div class="cycle-wrap" id="cycleWrap">
+    <div class="scene-sun">☀️</div>
+    <div class="scene-cloud" id="cloud">☁️</div>
+    <div class="scene-mountain">⛰️🌲⛰️</div>
+    <div class="scene-river"></div>
+    <!-- Animated drops (hidden until evaporation shown) -->
+    <div class="scene-drop" id="drop1" style="left:38%;animation-delay:.2s">💧</div>
+    <div class="scene-drop" id="drop2" style="left:48%;animation-delay:.9s">💧</div>
+    <div class="scene-drop" id="drop3" style="left:58%;animation-delay:1.6s">💧</div>
+    <div class="scene-steam" id="steam1" style="left:32%;animation-delay:0s">💨</div>
+    <div class="scene-steam" id="steam2" style="left:46%;animation-delay:.7s">💨</div>
+    <div class="scene-steam" id="steam3" style="left:60%;animation-delay:1.4s">💨</div>
+  </div>
+
+  <div class="stages-grid" id="stagesGrid"></div>
+  <div class="fact-panel" id="factPanel">Tap a stage above to learn how the water cycle works!</div>
+</div>
+
+<div class="bottom">
+  <div class="prog" id="prog">Explore all 4 stages</div>
+  <button class="next-btn" id="nextBtn" onclick="startMystery()">🔍 Solve the Mystery →</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">Stage explored!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+
+<script>
+const STAGES=[
+  {icon:'☀️',name:'Evaporation',desc:'Sun heats water → rises as vapour',fact:'The sun heats water in rivers, lakes and the sea. The water turns into invisible vapour and floats up. You can\'t see it — but it\'s happening right now on the Brahmaputra!',steam:true,rain:false},
+  {icon:'☁️',name:'Condensation',desc:'Vapour cools → forms clouds',fact:'As water vapour rises and cools, it turns back into tiny water droplets. Millions of these droplets cluster together and form clouds. Every cloud is made of water!',steam:false,rain:false,cloud:true},
+  {icon:'🌧️',name:'Precipitation',desc:'Clouds get heavy → rain falls',fact:'When clouds collect too much water, it falls as rain (or snow on mountains). Assam gets some of the heaviest rainfall in India — the Brahmaputra river gets all that rain!',steam:false,rain:true},
+  {icon:'🌊',name:'Collection',desc:'Rain flows → rivers → sea',fact:'Rain flows down mountains into rivers. Rivers carry water to the sea — and the whole cycle begins again! The same water has been cycling for billions of years.', steam:false,rain:false}
+];
+const MYSTERY={
+  title:'🔍 Mystery: The Village\'s Dirty Water',
+  text:'A village finds their river water has turned brown and smells bad. The village is downstream. Upstream there is a factory, then a farm, then a forest. Where is the pollution coming from?',
+  opts:['The forest — trees are dirty','The factory upstream — it dumps chemicals','The village itself — they use too much water','The clouds — acid rain'],
+  ans:1,
+  exp:'Pollution flows DOWNSTREAM with water. The factory upstream dumps waste into the river, and that water travels down to the village. This is why factories must never dump chemicals near water sources!'
+};
+
+let explored=new Set(),score=0,mode='explore';
+
+function buildStages(){
+  const grid=document.getElementById('stagesGrid');grid.innerHTML='';
+  STAGES.forEach((s,i)=>{
+    const btn=document.createElement('div');btn.className='stage-btn';
+    btn.innerHTML=`<div class="stage-icon">${s.icon}</div><div class="stage-info"><div class="stage-name">${s.name}</div><div class="stage-desc">${s.desc}</div></div><div class="stage-check">✓</div>`;
+    btn.onclick=()=>exploreStage(i,btn,s);
+    grid.appendChild(btn);
+  });
+}
+
+function exploreStage(i,btn,s){
+  document.querySelectorAll('.stage-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  // Animate scene
+  document.getElementById('steam1').style.display=s.steam?'block':'none';
+  document.getElementById('steam2').style.display=s.steam?'block':'none';
+  document.getElementById('steam3').style.display=s.steam?'block':'none';
+  document.getElementById('drop1').style.display=s.rain?'block':'none';
+  document.getElementById('drop2').style.display=s.rain?'block':'none';
+  document.getElementById('drop3').style.display=s.rain?'block':'none';
+  if(s.cloud)document.getElementById('cloud').style.filter='brightness(1.4) drop-shadow(0 0 12px rgba(76,201,240,.6))';
+  else document.getElementById('cloud').style.filter='';
+  // Show fact
+  const fp=document.getElementById('factPanel');
+  fp.textContent=`${s.icon} ${s.name}: ${s.fact}`;fp.classList.add('active');
+  // Mark explored
+  if(!explored.has(i)){
+    explored.add(i);btn.classList.add('done');score++;
+    if(score<=4)document.getElementById(`s${score}`).classList.add('lit');
+    document.getElementById('prog').textContent=`${explored.size} / ${STAGES.length} stages explored`;
+    if(explored.size===STAGES.length){
+      document.getElementById('nextBtn').style.display='block';
+      showOverlay('Water Cycle unlocked! 💧','You\'ve explored all 4 stages. Now solve the mystery!');
+      confetti();setTimeout(hideOverlay,2400);
+    }
+  }
+}
+
+function startMystery(){
+  mode='mystery';
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('prog').textContent='🔍 Mystery round';
+  document.getElementById('stagesGrid').innerHTML='';
+  document.getElementById('factPanel').style.display='none';
+  // Build mystery
+  const area=document.getElementById('stagesGrid');
+  const m=document.createElement('div');m.className='mystery-card';m.style.gridColumn='1/-1';
+  m.innerHTML=`<div class="mystery-title">${MYSTERY.title}</div><div class="mystery-text">${MYSTERY.text}</div><div class="mystery-opts" id="mOpts"></div><div class="fact-panel" id="mExp" style="display:none;margin-top:10px">${MYSTERY.exp}</div>`;
+  area.appendChild(m);
+  MYSTERY.opts.forEach((o,oi)=>{
+    const b=document.createElement('button');b.className='mystery-opt';b.textContent=o;
+    b.onclick=()=>pickMystery(b,oi);
+    document.getElementById('mOpts').appendChild(b);
+  });
+}
+function pickMystery(btn,oi){
+  document.querySelectorAll('.mystery-opt').forEach(b=>b.style.pointerEvents='none');
+  if(oi===MYSTERY.ans){btn.classList.add('correct');score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');showOverlay('Mystery Solved! 🔍',MYSTERY.exp);confetti();setTimeout(hideOverlay,3000);}
+  else{btn.classList.add('wrong');document.querySelectorAll('.mystery-opt')[MYSTERY.ans].classList.add('correct');}
+  document.getElementById('mExp').style.display='block';
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').style.display='block';
+  document.getElementById('nextBtn').onclick=()=>{score=0;explored=new Set();mode='explore';for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='🔍 Solve the Mystery →';document.getElementById('nextBtn').onclick=startMystery;document.getElementById('factPanel').style.display='block';document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='Stage explored!';hideOverlay();document.getElementById('prog').textContent='Explore all 4 stages';buildStages();};
+}
+function showOverlay(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOverlay(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#4CC9F0','#06D6A0','#FFD166','#C77DFF','#FF9F1C'];for(let i=0;i<28;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+buildStages();
+// Hide drops/steam initially
+['drop1','drop2','drop3','steam1','steam2','steam3'].forEach(id=>document.getElementById(id).style.display='none');
+</script>
+</body>
+</html>

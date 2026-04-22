@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>G5-13 · Soil Science Lab · GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--lime:#A8E063;--text:#E8F0FF;--dim:#4A6A8A;
+  --grad-from:#071A07;--grad-to:#040E04;--accent:var(--lime);
+  --border:rgba(168,224,99,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(145deg,var(--grad-from),var(--grad-to));min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;padding:0 0 48px;}
+.header{width:100%;max-width:480px;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;}
+.subject-tag{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);}
+.stars{display:flex;gap:3px;}
+.star{font-size:1rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+
+.wow-card{width:calc(100% - 32px);max-width:448px;background:linear-gradient(135deg,rgba(168,224,99,.18),rgba(6,214,160,.08));border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin:8px 16px 16px;text-align:center;}
+.wow-label{font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.wow-card p{font-size:.95rem;line-height:1.6;}
+.wow-card strong{color:var(--gold);}
+
+.stage-tabs{width:calc(100% - 32px);max-width:448px;margin:0 16px 14px;display:flex;gap:6px;}
+.tab-btn{flex:1;padding:8px 4px;border-radius:10px;border:2px solid transparent;font-family:'Baloo 2',cursive;font-weight:700;font-size:.72rem;background:var(--card);color:var(--dim);cursor:pointer;transition:all .2s;text-align:center;}
+.tab-btn.active{border-color:var(--lime);color:var(--lime);background:rgba(168,224,99,.1);}
+
+.section{width:calc(100% - 32px);max-width:448px;margin:0 16px;}
+
+/* SOIL PROFILE */
+.soil-profile{
+  background:var(--card);border:2px solid var(--border);
+  border-radius:18px;overflow:hidden;margin-bottom:14px;
+}
+.profile-header{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);text-align:center;}
+.soil-layer{
+  padding:14px 18px;cursor:pointer;transition:all .25s;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  display:flex;align-items:center;gap:12px;
+  position:relative;overflow:hidden;
+}
+.soil-layer:last-child{border-bottom:none;}
+.soil-layer:hover{opacity:.85;}
+.soil-layer.active{box-shadow:inset 0 0 0 2px var(--lime);}
+.layer-swatch{width:40px;height:40px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;}
+.l-topsoil{background:rgba(101,67,33,.5);}
+.l-subsoil{background:rgba(139,90,43,.4);}
+.l-parent{background:rgba(120,100,80,.35);}
+.l-bedrock{background:rgba(80,80,90,.45);}
+.layer-info{flex:1;}
+.layer-name{font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:800;color:#fff;}
+.layer-depth{font-size:.72rem;color:var(--dim);margin-bottom:3px;}
+.layer-tap{font-size:.72rem;color:var(--lime);font-weight:700;}
+
+/* FACT REVEAL */
+.fact-reveal{
+  background:rgba(168,224,99,.08);border:1px solid var(--border);
+  border-radius:14px;padding:14px 16px;margin-bottom:14px;
+  animation:slideIn .3s ease;
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.fr-label{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--lime);margin-bottom:6px;}
+.fr-text{font-size:.9rem;line-height:1.7;color:var(--text);}
+.fr-text strong{color:var(--gold);}
+
+/* CROP MATCH */
+.crop-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.crop-card{
+  background:var(--card);border:2px solid var(--border);
+  border-radius:12px;padding:10px 12px;cursor:pointer;transition:all .2s;
+}
+.crop-card:hover{border-color:var(--lime);}
+.crop-card.selected{border-color:var(--lime);background:rgba(168,224,99,.1);}
+.crop-card.correct-a{border-color:var(--teal);background:rgba(6,214,160,.15);}
+.crop-card.wrong-a{border-color:var(--coral);background:rgba(255,107,107,.1);}
+.crop-emoji{font-size:1.6rem;margin-bottom:4px;}
+.crop-name{font-size:.8rem;font-weight:700;color:var(--text);}
+.crop-need{font-size:.7rem;color:var(--dim);}
+
+/* EXPERIMENT */
+.experiment-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;}
+.exp-title{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--dim);text-align:center;margin-bottom:12px;}
+.soil-jars{display:flex;gap:10px;justify-content:center;}
+.jar-col{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+.jar-label{font-size:.72rem;font-weight:800;color:var(--text);text-align:center;}
+.jar{width:50px;height:90px;border-radius:0 0 10px 10px;border:2px solid rgba(255,255,255,.15);background:linear-gradient(180deg,rgba(255,255,255,.06) 0%,rgba(13,20,40,.8) 100%);position:relative;overflow:hidden;cursor:pointer;transition:border-color .2s;}
+.jar:hover{border-color:var(--lime);}
+.jar.draining .water-fill{animation:drain 2s ease-in forwards;}
+.water-fill{position:absolute;bottom:0;width:100%;background:rgba(76,201,240,.5);border-radius:0 0 8px 8px;transition:height .5s;height:0;}
+@keyframes drain{from{height:90%;opacity:.8;}to{height:10%;opacity:.4;}}
+.drain-speed{font-size:.65rem;font-weight:800;color:var(--dim);text-align:center;}
+
+.quiz-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:12px;}
+.quiz-q{font-size:.92rem;font-weight:700;line-height:1.6;color:var(--text);margin-bottom:10px;}
+.quiz-q strong{color:var(--gold);}
+.quiz-opts{display:flex;flex-direction:column;gap:7px;}
+.q-opt{background:rgba(168,224,99,.08);border:2px solid rgba(168,224,99,.18);color:var(--text);font-weight:600;font-size:.88rem;padding:10px 14px;border-radius:10px;cursor:pointer;transition:all .2s;}
+.q-opt:hover{border-color:var(--lime);}
+.q-opt.chosen{border-color:var(--lime);background:rgba(168,224,99,.15);color:var(--lime);}
+.q-opt.correct-a{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal);}
+.q-opt.wrong-a{border-color:var(--coral);background:rgba(255,107,107,.1);color:var(--coral);}
+
+.check-btn{width:100%;padding:14px;border-radius:14px;border:none;font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--lime),var(--teal));color:#000;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(168,224,99,.3);}
+.check-btn:hover{opacity:.9;}
+.check-btn:disabled{opacity:.4;cursor:not-allowed;}
+.feedback{margin-top:12px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.9rem;text-align:center;display:none;}
+.feedback.correct{background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.4);color:var(--teal);}
+.feedback.wrong{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:var(--coral);}
+
+.progress-row{width:calc(100% - 32px);max-width:448px;margin:16px 16px 0;display:flex;align-items:center;justify-content:space-between;}
+.progress-text{font-size:.8rem;font-weight:700;color:var(--dim);}
+.next-btn{background:var(--gold);color:#1A0F00;font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;border:none;border-radius:50px;padding:8px 22px;cursor:pointer;display:none;}
+
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:28px;max-width:360px;width:90%;text-align:center;}
+.overlay-box .o-emoji{font-size:3rem;margin-bottom:10px;}
+.overlay-box h3{font-family:'Baloo 2',cursive;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.overlay-box p{font-size:.88rem;color:var(--text);line-height:1.6;}
+.overlay-box strong{color:var(--teal);}
+
+.complete-screen{width:calc(100% - 32px);max-width:448px;margin:20px 16px;background:var(--card);border:2px solid rgba(6,214,160,.3);border-radius:22px;padding:32px 24px;text-align:center;display:none;}
+.complete-screen .big{font-size:4rem;margin-bottom:12px;}
+.complete-screen h2{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--gold);margin-bottom:8px;}
+.complete-screen p{color:var(--text);font-size:.95rem;line-height:1.6;margin-bottom:20px;}
+.play-again{background:var(--teal);color:#040E04;font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;border:none;border-radius:50px;padding:12px 28px;cursor:pointer;}
+
+.confetti-piece{position:fixed;width:10px;height:10px;opacity:0;animation:confFall 1.8s ease-in forwards;pointer-events:none;z-index:200;}
+@keyframes confFall{0%{opacity:1;transform:translateY(0) rotate(0deg);}100%{opacity:0;transform:translateY(80vh) rotate(720deg);}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="subject-tag">Science</div>
+  <div class="game-title">🌱 Soil Science Lab</div>
+  <div class="stars">
+    <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+    <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+  </div>
+</div>
+
+<div class="wow-card">
+  <div class="wow-label">🤯 Did You Know?</div>
+  <p>It takes <strong>1,000 YEARS</strong> to form just <strong>1 centimetre</strong> of topsoil naturally. The thin layer we farm on is one of the most precious and <strong>irreplaceable</strong> things on Earth!</p>
+</div>
+
+<div class="stage-tabs">
+  <div class="tab-btn active" id="tab1">1. Explore Profile</div>
+  <div class="tab-btn" id="tab2">2. Match Crops</div>
+  <div class="tab-btn" id="tab3">3. Quiz</div>
+</div>
+
+<!-- STAGE 1: SOIL PROFILE -->
+<div class="section" id="stage1">
+  <div class="soil-profile">
+    <div class="profile-header">🪱 Tap each layer to explore</div>
+    <div class="soil-layer" onclick="exploreLayer(0)">
+      <div class="layer-swatch l-topsoil">🪱</div>
+      <div class="layer-info">
+        <div class="layer-depth">0–30 cm deep</div>
+        <div class="layer-name">Topsoil</div>
+        <div class="layer-tap">👆 Tap to explore</div>
+      </div>
+    </div>
+    <div class="soil-layer" onclick="exploreLayer(1)">
+      <div class="layer-swatch l-subsoil">🪨</div>
+      <div class="layer-info">
+        <div class="layer-depth">30–60 cm deep</div>
+        <div class="layer-name">Subsoil</div>
+        <div class="layer-tap">👆 Tap to explore</div>
+      </div>
+    </div>
+    <div class="soil-layer" onclick="exploreLayer(2)">
+      <div class="layer-swatch l-parent">🔶</div>
+      <div class="layer-info">
+        <div class="layer-depth">60–200 cm deep</div>
+        <div class="layer-name">Parent Material</div>
+        <div class="layer-tap">👆 Tap to explore</div>
+      </div>
+    </div>
+    <div class="soil-layer" onclick="exploreLayer(3)">
+      <div class="layer-swatch l-bedrock">⬛</div>
+      <div class="layer-info">
+        <div class="layer-depth">200+ cm deep</div>
+        <div class="layer-name">Bedrock</div>
+        <div class="layer-tap">👆 Tap to explore</div>
+      </div>
+    </div>
+  </div>
+  <div class="fact-reveal" id="factReveal" style="display:none;"></div>
+  <button class="check-btn" id="s1Btn" onclick="completeExplore()">I've Explored All Layers ✓</button>
+  <div class="feedback" id="s1FB"></div>
+</div>
+
+<!-- STAGE 2: CROP MATCH -->
+<div class="section" id="stage2" style="display:none;">
+  <div style="background:rgba(168,224,99,.08);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:.88rem;line-height:1.6;">
+    <strong style="color:var(--lime);">🌾 Which soil type suits which crop?</strong><br/>
+    Match the correct soil to the crop below. Consider drainage, nutrients and texture!
+  </div>
+  <div id="cropQuestions"></div>
+  <button class="check-btn" id="s2Btn" onclick="checkCrops()">Check Crop Matches ✓</button>
+  <div class="feedback" id="s2FB"></div>
+</div>
+
+<!-- STAGE 3: QUIZ -->
+<div class="section" id="stage3" style="display:none;">
+  <div id="quizArea"></div>
+  <button class="check-btn" id="s3Btn" onclick="checkQuiz()">Submit Answers ✓</button>
+  <div class="feedback" id="s3FB"></div>
+</div>
+
+<div class="progress-row">
+  <span class="progress-text" id="progressText">Stage 1 of 3</span>
+  <button class="next-btn" id="nextBtn" onclick="nextStage()">Next Stage →</button>
+</div>
+
+<div class="complete-screen" id="completeScreen">
+  <div class="big">🌍</div>
+  <h2>Soil Scientist!</h2>
+  <p>You've explored all 4 soil layers, matched crops to soil types, and answered the quiz. Remember — <strong>1,000 years</strong> to make 1cm of topsoil. Protect every grain!</p>
+  <button class="play-again" onclick="restartGame()">New Lab 🔄</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="o-emoji" id="oEmoji">🌱</div>
+    <h3 id="oTitle">Discovered!</h3>
+    <p id="oFact"></p>
+  </div>
+</div>
+
+<script>
+const LAYERS=[
+  {name:'Topsoil',emoji:'🪱',color:'rgba(101,67,33,.6)',
+   facts:'<strong>Topsoil</strong> is the treasure layer! It contains organic matter (humus), minerals, billions of microbes, and earthworm tunnels. This is where plants grow their roots. Takes <strong>1,000 years</strong> to form 1cm naturally.',
+   composition:'Humus: 5% · Mineral particles: 45% · Water: 25% · Air: 25%'},
+  {name:'Subsoil',emoji:'🪨',color:'rgba(139,90,43,.5)',
+   facts:'<strong>Subsoil</strong> has fewer nutrients and less organic matter. But it stores water and provides deeper root support for trees. Dense clay subsoils can cause waterlogging and harm crops!',
+   composition:'Clay minerals: 55% · Silt: 30% · Sand: 15% · Very little humus'},
+  {name:'Parent Material',emoji:'🔶',color:'rgba(120,100,80,.5)',
+   facts:'<strong>Parent material</strong> is weathered rock fragments — the source from which topsoil eventually forms over thousands of years. The type of parent rock determines soil colour and mineral content!',
+   composition:'Weathered rock: 80% · Fine minerals: 20% · Almost no organic matter'},
+  {name:'Bedrock',emoji:'⬛',color:'rgba(60,60,70,.6)',
+   facts:'<strong>Bedrock</strong> is solid unweathered rock. It takes millions of years for bedrock to become parent material through physical and chemical weathering. The foundation of all soil above it!',
+   composition:'Solid rock: 100% · No soil formation yet possible here'},
+];
+
+const CROP_QS=[
+  {crop:'🌾 Rice',need:'Needs waterlogged, clay-heavy soil',soils:['Clay soil','Sandy soil','Rocky soil','Laterite soil'],answer:0},
+  {crop:'🌵 Cactus / Drought crops',need:'Needs fast-draining, loose soil',soils:['Clay soil','Sandy soil','Loamy soil','Black soil'],answer:1},
+  {crop:'🍊 Citrus fruits',need:'Needs deep, well-draining fertile soil',soils:['Sandy soil','Waterlogged clay','Loamy soil','Pure bedrock'],answer:2},
+  {crop:'🌻 Cotton',need:'Grows best in black (regur) soil — retains moisture',soils:['Sandy soil','Saline soil','Black (regur) soil','Pure sand'],answer:2},
+];
+
+const QUIZ_QS=[
+  {q:'Which layer of soil contains the most nutrients and organic matter?',opts:['Bedrock','Parent Material','Subsoil','Topsoil'],answer:3},
+  {q:'What is "humus" in soil?',opts:['Type of rock','Decayed plant and animal matter','A type of water','A mineral crystal'],answer:1},
+  {q:'Why does clay soil cause waterlogging?',opts:['It has too many air pockets','Clay particles are very fine and tightly packed — water can\'t drain','Clay absorbs all the water','Clay is found very deep'],answer:1},
+  {q:'How long does it take to form 1cm of topsoil naturally?',opts:['1 year','10 years','100 years','1,000 years'],answer:3},
+];
+
+let stage=1, score=0, exploredLayers=new Set(), cropSels={}, quizSels={};
+
+window.exploreLayer=function(idx){
+  const l=LAYERS[idx];
+  exploredLayers.add(idx);
+  const rev=document.getElementById('factReveal');
+  rev.style.display='block';
+  rev.innerHTML=`<div class="fr-label">🔬 ${l.name} — Explored!</div><div class="fr-text">${l.facts}<br/><br/><strong>Composition:</strong> ${l.composition}</div>`;
+  document.querySelectorAll('.soil-layer')[idx].classList.add('active');
+  showOverlay('🌍',l.name+' Layer!',l.facts.substring(0,150)+'...');
+  if(exploredLayers.size>=4){
+    document.getElementById('s1FB').textContent='✅ All 4 layers explored!';
+    document.getElementById('s1FB').className='feedback correct';
+    document.getElementById('s1FB').style.display='block';
+    document.getElementById('nextBtn').style.display='block';
+  }
+}
+
+function completeExplore(){
+  if(exploredLayers.size<4){
+    showFB('s1FB','wrong','⚠️ Tap all 4 soil layers first!'); return;
+  }
+  score++;updateStars();
+  showFB('s1FB','correct','✅ Soil profile fully explored! Now match crops to soil types.');
+  document.getElementById('nextBtn').style.display='block';
+  document.getElementById('s1Btn').disabled=true;
+  spawnConfetti();
+}
+
+function buildCrops(){
+  const c=document.getElementById('cropQuestions');
+  c.innerHTML='';
+  CROP_QS.forEach((q,i)=>{
+    const div=document.createElement('div');
+    div.style.marginBottom='14px';
+    const shuffled=q.soils.map((s,j)=>({s,j})).sort(()=>Math.random()-.5);
+    div.innerHTML=`
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;">
+        <div style="font-size:.95rem;font-weight:700;color:var(--gold);margin-bottom:4px;">${q.crop}</div>
+        <div style="font-size:.8rem;color:var(--dim);margin-bottom:10px;">${q.need}</div>
+        <div class="crop-grid">
+          ${shuffled.map(({s,j})=>`<div class="crop-card" id="crop_${i}_${j}" onclick="pickCrop(${i},${j},this)">
+            <div class="crop-name">${s}</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    c.appendChild(div);
+  });
+}
+
+window.pickCrop=function(qi,oi,el){
+  cropSels[qi]=oi;
+  el.closest('.crop-grid').querySelectorAll('.crop-card').forEach(c=>c.classList.toggle('selected',c===el));
+}
+
+function checkCrops(){
+  if(Object.keys(cropSels).length<CROP_QS.length){showFB('s2FB','wrong','⚠️ Match all 4 crops!');return;}
+  let correct=0;
+  CROP_QS.forEach((q,i)=>{
+    const isRight=cropSels[i]===q.answer;
+    if(isRight) correct++;
+    document.getElementById(`crop_${i}_${q.answer}`).classList.add('correct-a');
+    if(!isRight) document.getElementById(`crop_${i}_${cropSels[i]}`)?.classList.add('wrong-a');
+  });
+  score+=correct; updateStars();
+  document.getElementById('s2Btn').disabled=true;
+  showFB('s2FB',correct>=3?'correct':'wrong',correct===4?'✅ Perfect crop matching!':` ${correct}/4 correct!`);
+  if(correct>=3) spawnConfetti();
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function buildQuiz(){
+  const c=document.getElementById('quizArea');
+  c.innerHTML='';
+  QUIZ_QS.forEach((q,i)=>{
+    const card=document.createElement('div');
+    card.className='quiz-card';
+    card.innerHTML=`
+      <div class="quiz-q">${i+1}. ${q.q}</div>
+      <div class="quiz-opts">
+        ${q.opts.map((o,j)=>`<button class="q-opt" id="qopt_${i}_${j}" onclick="pickQ(${i},${j},this)">${o}</button>`).join('')}
+      </div><div class="feedback" id="qfb_${i}" style="margin-top:6px;"></div>`;
+    c.appendChild(card);
+  });
+}
+
+window.pickQ=function(qi,oi,el){quizSels[qi]=oi;document.querySelectorAll(`[id^="qopt_${qi}_"]`).forEach(b=>b.classList.toggle('chosen',b===el));}
+
+function checkQuiz(){
+  if(Object.keys(quizSels).length<QUIZ_QS.length){showFB('s3FB','wrong','⚠️ Answer all 4!');return;}
+  let correct=0;
+  QUIZ_QS.forEach((q,i)=>{
+    const isRight=quizSels[i]===q.answer;
+    if(isRight) correct++;
+    document.getElementById(`qopt_${i}_${q.answer}`).classList.add('correct-a');
+    if(!isRight) document.getElementById(`qopt_${i}_${quizSels[i]}`)?.classList.add('wrong-a');
+    const fb=document.getElementById(`qfb_${i}`);
+    fb.textContent=isRight?'✅ Correct!':'❌ Review the soil profile!';
+    fb.className=`feedback ${isRight?'correct':'wrong'}`;fb.style.display='block';
+  });
+  score+=correct; updateStars();
+  document.getElementById('s3Btn').disabled=true;
+  showFB('s3FB',correct>=3?'correct':'wrong',correct===4?'✅ Perfect! Soil Scientist achieved!':` ${correct}/4 correct!`);
+  if(correct>=3) spawnConfetti();
+  setTimeout(()=>{
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+    document.querySelector('.stage-tabs').style.display='none';
+    document.querySelector('.progress-row').style.display='none';
+    document.getElementById('completeScreen').style.display='block';
+    if(correct>=3) spawnConfetti();
+  },2200);
+}
+
+function setStage(n){
+  stage=n;
+  [1,2,3].forEach(i=>{document.getElementById('stage'+i).style.display=i===n?'block':'none';document.getElementById('tab'+i).classList.toggle('active',i===n);});
+  document.getElementById('progressText').textContent=`Stage ${n} of 3`;
+  document.getElementById('nextBtn').style.display='none';
+  if(n===2) buildCrops();
+  if(n===3) buildQuiz();
+}
+function nextStage(){if(stage<3) setStage(stage+1);}
+function showFB(id,type,msg){const el=document.getElementById(id);el.textContent=msg;el.className=`feedback ${type}`;el.style.display='block';}
+function updateStars(){const c=Math.min(5,Math.ceil(score/2));for(let i=1;i<=c;i++) document.getElementById('s'+i).classList.add('lit');}
+function showOverlay(emoji,title,fact){
+  document.getElementById('oEmoji').textContent=emoji;document.getElementById('oTitle').textContent=title;document.getElementById('oFact').innerHTML=fact;
+  const ov=document.getElementById('overlay');ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),2400);
+}
+function spawnConfetti(){
+  const colors=['#FFD166','#A8E063','#06D6A0','#4CC9F0','#FF9F1C'];
+  for(let i=0;i<28;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[i%5]};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()*2}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),3500);}
+}
+function restartGame(){
+  stage=1;score=0;exploredLayers=new Set();cropSels={};quizSels={};
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('completeScreen').style.display='none';
+  document.querySelectorAll('.section').forEach(s=>s.style.display='block');
+  document.querySelector('.stage-tabs').style.display='flex';
+  document.querySelector('.progress-row').style.display='flex';
+  document.querySelectorAll('.soil-layer').forEach(l=>l.classList.remove('active'));
+  document.getElementById('factReveal').style.display='none';
+  document.getElementById('s1Btn').disabled=false;
+  setStage(1);
+}
+</script>
+</body>
+</html>

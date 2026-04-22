@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tea Garden Tycoon 🍵</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Hind+Siliguri:wght@400;600;700&family=Righteous&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --sky-top: #4fc3f7; --sky-bot: #b3e5fc;
+      --hill1: #1b5e20; --hill2: #2e7d32; --hill3: #388e3c; --hill4: #43a047;
+      --tea-bush: #2e7d32; --tea-row: #1b5e20;
+      --sun: #fff176; --sun2: #ffee58;
+      --gold: #f9a825; --gold2: #f5c518; --gold3: #ffe082;
+      --brown: #5d4037; --brown2: #795548; --brown-light: #a1887f;
+      --basket: #8d6e63; --basket2: #6d4c41;
+      --cream: #fffde7; --white: #fff;
+      --dark: #1a2e0a; --text-dim: rgba(0,0,0,0.45);
+      --card-bg: #fffef5; --card-border: #e6d59a;
+      --profit: #2e7d32; --red: #c62828;
+      --rupee: #f9a825;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      font-family: 'Baloo 2', cursive;
+      background: var(--sky-top);
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+    }
+    #game-wrap {
+      width: min(520px, 100vw);
+      height: min(710px, 100vh);
+      position: relative; overflow: hidden;
+      border-radius: 28px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    }
+    .sky-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(180deg, #29b6f6 0%, #4fc3f7 30%, #81d4fa 55%, #b3e5fc 75%, #e1f5fe 88%, #f1f8e9 100%);
+    }
+    .sun {
+      position: absolute; top: 28px; right: 40px; z-index: 1;
+      width: 64px; height: 64px; border-radius: 50%;
+      background: radial-gradient(circle, #fff9c4 0%, #fff176 40%, #ffee58 70%, rgba(255,238,88,0) 100%);
+      animation: sunSpin 20s linear infinite;
+    }
+    @keyframes sunSpin { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    .cloud { position: absolute; z-index: 1; border-radius: 50px; background: #fff; opacity: 0.85; animation: cloudFloat linear infinite; }
+    @keyframes cloudFloat { 0% { transform: translateX(-150px); } 100% { transform: translateX(620px); } }
+    .hills-svg { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; pointer-events: none; }
+    .tea-rows { position: absolute; bottom: 110px; left: 0; right: 0; z-index: 3; display: flex; flex-direction: column; gap: 3px; padding: 0 10px; pointer-events: none; }
+    .tea-row-line { display: flex; justify-content: center; gap: 3px; animation: teaSwayRow 3s ease-in-out infinite alternate; }
+    @keyframes teaSwayRow { 0% { transform: translateX(0); } 100% { transform: translateX(4px); } }
+    .tea-bush-icon { font-size: 16px; line-height: 1; }
+    .worker { position: absolute; bottom: 118px; font-size: 20px; animation: workerWalk linear infinite; z-index: 4; }
+    @keyframes workerWalk { 0% { transform: translateX(-40px) scaleX(1); } 50% { transform: translateX(var(--wdist)) scaleX(1); } 51% { transform: translateX(var(--wdist)) scaleX(-1); } 100% { transform: translateX(-40px) scaleX(-1); } }
+    .screen { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 18px 16px; transition: opacity 0.35s; }
+    .hidden { display: none !important; }
+    
+    /* ══ HUD ══ */
+    #hud {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px 6px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 100%);
+    }
+    .hud-money { font-family: 'Righteous', cursive; font-size: 16px; color: var(--gold3); display: flex; align-items: center; gap: 4px; }
+    .hud-level { font-size: 12px; font-weight: 800; color: #fff; background: rgba(0,0,0,0.3); padding: 3px 12px; border-radius: 20px; }
+    .hud-lives { font-size: 18px; letter-spacing: 2px; }
+    .hud-right { display: flex; align-items: center; gap: 10px; }
+    
+    .lang-pill { display: flex; gap: 4px; background: rgba(0,0,0,0.2); border-radius: 20px; padding: 2px; }
+    .lpill { font-family: 'Baloo 2', cursive; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 15px; border: none; cursor: pointer; background: transparent; color: rgba(255,255,255,0.6); }
+    .lpill.active { background: var(--gold); color: var(--dark); }
+
+    /* Forms & Cards */
+    .tycoon-card { background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 20px; width: 100%; max-width: 400px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .tc-header { background: #2e7d32; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
+    .scenario-vis { padding: 15px; display: flex; align-items: center; gap: 12px; }
+    .scenario-emoji-big { font-size: 48px; }
+    .equation-row { padding: 15px; display: flex; justify-content: center; gap: 10px; font-size: 28px; font-weight: 800; background: rgba(0,0,0,0.03); }
+    .ans-outer { width: 100%; max-width: 400px; margin-top: 15px; }
+    .answers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .ans-btn { font-family: 'Righteous', cursive; font-size: 20px; padding: 12px 5px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.2); color: #fff; cursor: pointer; backdrop-filter: blur(5px); }
+    .ans-btn.correct { background: #2e7d32; border-color: #fff; }
+    .ans-btn.wrong { background: #c62828; border-color: #fff; }
+    
+    .basket-bar-wrap { width: 100%; max-width: 400px; margin-top: 15px; }
+    .bb-track { background: rgba(0,0,0,0.1); height: 16px; border-radius: 10px; overflow: hidden; position: relative; }
+    .bb-fill { background: #4caf50; height: 100%; transition: width 0.3s; }
+  </style>
+</head>
+<body>
+  <div id="game-wrap">
+    <div class="sky-bg"></div>
+    <div class="sun"></div>
+    <div class="cloud" style="width:100px;height:30px;top:50px;animation-duration:35s;"></div>
+    
+    <svg class="hills-svg" viewBox="0 0 520 220" preserveAspectRatio="none">
+      <path d="M0 220 L0 160 Q130 100 260 140 Q390 180 520 140 L520 220 Z" fill="#1b5e20"/>
+      <path d="M0 220 L0 180 Q130 140 260 170 Q390 200 520 170 L520 220 Z" fill="#2e7d32"/>
+      <rect x="0" y="200" width="520" height="20" fill="#4caf50"/>
+    </svg>
+    <div class="tea-rows" id="tea-rows"></div>
+    <div id="workers-layer"></div>
+
+    <div id="hud" class="hidden">
+      <div class="hud-money">₹ <span id="money-disp">0</span></div>
+      <div class="hud-level" id="level-disp">Season 1</div>
+      <div class="hud-right">
+        <div class="lang-pill">
+          <button class="lpill active" id="lp-en" onclick="setLang('en')">EN</button>
+          <button class="lpill" id="lp-as" onclick="setLang('as')">অস</button>
+        </div>
+        <div class="hud-lives" id="lives-disp">❤️❤️❤️</div>
+      </div>
+    </div>
+
+    <!-- SCREENS -->
+    <div class="screen" id="screen-intro">
+      <h1 style="font-family:'Righteous';color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.3);margin-bottom:10px;">Tea Garden Tycoon!</h1>
+      <div style="background:#fff;padding:15px;border-radius:15px;max-width:300px;font-size:14px;line-height:1.5;box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+        <span id="intro-text">Welcome to your tea garden! Solve the maths to fill your baskets and earn money!</span>
+        <span class="as hidden" id="intro-text-as">চাহ বাগানলৈ আদৰণি! গণিত সমাধান কৰি চাহপাত গোটোৱা আৰু টকা উপাৰ্জন কৰা!</span>
+      </div>
+      <button onclick="startGame()" style="margin-top:20px;padding:12px 40px;border-radius:30px;border:none;background:#f9a825;color:#fff;font-weight:900;cursor:pointer;font-family:'Righteous';">START GARDENING!</button>
+    </div>
+
+    <div class="screen hidden" id="screen-game">
+      <div class="tycoon-card">
+        <div class="tc-header">
+          <span id="tc-season">SPRING ☀️</span>
+          <span id="tc-goal">Goal: Fill Basket</span>
+        </div>
+        <div class="scenario-vis">
+          <div class="scenario-emoji-big" id="scene-emoji">🧺</div>
+          <div style="font-weight:800;color:#333;">
+            <div id="q-text">Problem loading...</div>
+          </div>
+        </div>
+        <div class="equation-row">
+          <span id="eq-a">0</span> <span id="eq-op">×</span> <span id="eq-b">0</span> = <span id="eq-ans">?</span>
+        </div>
+      </div>
+      <div class="basket-bar-wrap">
+        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;margin-bottom:4px;color:#fff;">
+          <span>Basket Fill</span>
+          <span id="pct-disp">0%</span>
+        </div>
+        <div class="bb-track"><div class="bb-fill" id="bb-fill" style="width:0%"></div></div>
+      </div>
+      <div class="ans-outer">
+        <div class="answers-grid" id="ans-grid"></div>
+      </div>
+    </div>
+
+    <div class="screen hidden" id="screen-levelup">
+      <div style="font-size:50px">🧺✅</div>
+      <h2 style="color:#fff;">Season Clear!</h2>
+      <div style="background:#fff;padding:15px;border-radius:15px;margin:15px 0;">
+        Earned: ₹ <span id="earned-disp">0</span>
+      </div>
+      <button onclick="nextLevel()" style="padding:10px 30px;border-radius:20px;border:none;background:#4caf50;color:#fff;font-weight:800;cursor:pointer;">NEXT SEASON ▶</button>
+    </div>
+
+    <div class="screen hidden" id="screen-victory">
+      <div style="font-size:70px">🏆</div>
+      <h2 style="color:#fff;">Tea Master!</h2>
+      <p style="color:#fff;margin:10px 0;">Total Wealth: ₹ <span id="total-money">0</span></p>
+      <button onclick="shareScore()" style="background:#25d366;color:#fff;border:none;padding:10px 20px;border-radius:10px;margin-bottom:10px;cursor:pointer;">Share on WhatsApp</button>
+      <button onclick="window.location.href='../index.html'" style="background:rgba(255,255,255,0.2);color:#fff;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;">Home</button>
+    </div>
+
+    <div class="screen hidden" id="screen-gameover">
+      <div style="font-size:60px">😢</div>
+      <h2 style="color:#fff;">Try Again!</h2>
+      <button onclick="startGame()" style="margin-top:20px;padding:10px 30px;background:#c62828;color:#fff;border:none;border-radius:20px;cursor:pointer;">RETRY</button>
+    </div>
+  </div>
+
+  <div id="onboarding" class="hidden" style="position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border-radius:20px;padding:25px;max-width:300px;text-align:center;">
+      <h3>How to Play</h3>
+      <p style="font-size:14px;margin:15px 0;">Solve tea maths to fill your basket! Fill it 100% to sell and move to the next season.</p>
+      <button onclick="dismissOnboarding()" style="background:#2e7d32;color:#fff;border:none;padding:10px 30px;border-radius:20px;cursor:pointer;">Got it!</button>
+    </div>
+  </div>
+
+  <button id="mute-btn" onclick="toggleMute()" style="position:fixed;bottom:20px;right:20px;z-index:500;width:44px;height:44px;border-radius:50%;background:#2e7d32;color:#fff;border:none;cursor:pointer;">🔊</button>
+
+  <script src="rongmon-data.js"></script>
+  <script src="rongmon-audio.js"></script>
+  <script>
+    let currentLevel = 0, money = 0, lives = 3, lang = 'en';
+    const levels = [
+      { a:3, b:4, earn:120, season:'SPRING', q_en:'3 boxes with 4 kg each. Total?', q_as:'৩টা বাকচত ৪ কেজি কৈ আছে। মুঠ কিমান?' },
+      { a:5, b:2, earn:100, season:'SUMMER', q_en:'5 workers pick 2 kg each. Total?', q_as:'৫ জন শ্ৰমিকে ২ কেজি কৈ তোলে। মুঠ কিমান?' },
+      { a:4, b:4, earn:160, season:'AUTUMN', q_en:'4 trucks with 4 sacks each. Total?', q_as:'৪খন ট্ৰাকত ৪টাকৈ বস্তা আছে। মুঠ কিমান?' },
+      { a:6, b:3, earn:180, season:'WINTER', q_en:'6 rows with 3 bushes each. Total?', q_as:'৬টা শাৰীত ৩টাকৈ জোপোহা আছে। মুঠ কিমান?' }
+    ];
+
+    function setLang(l) {
+      lang = l;
+      document.getElementById('lp-en').classList.toggle('active', l==='en');
+      document.getElementById('lp-as').classList.toggle('active', l==='as');
+      document.querySelectorAll('.as').forEach(el => el.classList.toggle('hidden', l==='en'));
+      document.getElementById('intro-text').classList.toggle('hidden', l==='as');
+      if (!document.getElementById('screen-game').classList.contains('hidden')) updateLevel();
+    }
+
+    function toggleMute() {
+      if (typeof RongmonAudio !== 'undefined') {
+        const m = RongmonAudio.toggleMute();
+        document.getElementById('mute-btn').textContent = m ? '🔇' : '🔊';
+      }
+    }
+
+    function startGame() {
+      currentLevel = 0; money = 0; lives = 3;
+      showScreen('screen-game');
+      updateLevel();
+    }
+
+    function updateLevel() {
+      const lv = levels[currentLevel];
+      document.getElementById('tc-season').textContent = lv.season;
+      document.getElementById('q-text').textContent = lang==='en' ? lv.q_en : lv.q_as;
+      document.getElementById('eq-a').textContent = lv.a;
+      document.getElementById('eq-b').textContent = lv.b;
+      document.getElementById('money-disp').textContent = money;
+      document.getElementById('level-disp').textContent = `Season ${currentLevel+1}`;
+      document.getElementById('lives-disp').textContent = '❤️'.repeat(lives);
+      
+      const grid = document.getElementById('ans-grid');
+      grid.innerHTML = '';
+      const ans = lv.a * lv.b;
+      const options = [ans, ans+2, ans-1, ans+5].sort(()=>Math.random()-0.5);
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'ans-btn';
+        btn.textContent = opt;
+        btn.onclick = () => checkAns(opt, ans);
+        grid.appendChild(btn);
+      });
+    }
+
+    function checkAns(val, correct) {
+      if (val === correct) {
+        if (typeof RongmonAudio !== 'undefined') RongmonAudio.playCorrect();
+        document.getElementById('bb-fill').style.width = '100%';
+        document.getElementById('pct-disp').textContent = '100%';
+        setTimeout(() => {
+          money += levels[currentLevel].earn;
+          if (typeof RongmonAudio !== 'undefined') RongmonAudio.playLevelUp();
+          showScreen('screen-levelup');
+          document.getElementById('earned-disp').textContent = levels[currentLevel].earn;
+        }, 500);
+      } else {
+        lives--;
+        if (typeof RongmonAudio !== 'undefined') RongmonAudio.playWrong();
+        if (lives <= 0) showScreen('screen-gameover');
+        else updateLevel();
+      }
+    }
+
+    function nextLevel() {
+      currentLevel++;
+      if (currentLevel >= levels.length) {
+        if (typeof RongmonAudio !== 'undefined') RongmonAudio.playVictory();
+        showScreen('screen-victory');
+        document.getElementById('total-money').textContent = money;
+      } else {
+        showScreen('screen-game');
+        document.getElementById('bb-fill').style.width = '0%';
+        document.getElementById('pct-disp').textContent = '0%';
+        updateLevel();
+      }
+    }
+
+    function showScreen(id) {
+      ['screen-intro', 'screen-game', 'screen-levelup', 'screen-victory', 'screen-gameover'].forEach(s => {
+        document.getElementById(s).classList.add('hidden');
+      });
+      document.getElementById(id).classList.remove('hidden');
+      document.getElementById('hud').classList.toggle('hidden', id !== 'screen-game');
+    }
+
+    function shareScore() {
+      const msg = `I earned ₹${money} in Tea Garden Tycoon! 🍵 Run your own tea garden with Rongmon! #AssamKids`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function dismissOnboarding() {
+      document.getElementById('onboarding').classList.add('hidden');
+      if (typeof RongmonData !== 'undefined') RongmonData.markOnboardingSeen('tea-garden');
+    }
+
+    window.onload = () => {
+      if (typeof RongmonData !== 'undefined' && !RongmonData.hasSeenOnboarding('tea-garden')) {
+        document.getElementById('onboarding').classList.remove('hidden');
+      }
+    };
+  </script>
+</body>
+</html>

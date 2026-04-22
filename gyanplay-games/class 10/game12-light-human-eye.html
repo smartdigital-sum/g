@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Light &amp; Human Eye — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+  --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+  --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));min-height:100vh;color:#fff;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fadeIn{animation:fadeIn .45s ease both;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:99;}
+.back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:.95rem;padding:7px 16px;border-radius:20px;cursor:pointer;transition:.2s;}
+.back-btn:hover{background:rgba(255,255,255,.22);}
+.badge{background:var(--green);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.82rem;padding:5px 14px;border-radius:20px;letter-spacing:.5px;}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:.8rem;padding:5px 11px;border-radius:14px;cursor:pointer;transition:.2s;}
+.lang-btn.active,.lang-btn:hover{background:var(--purple);}
+.container{max-width:780px;margin:0 auto;padding:24px 16px 60px;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.7rem;font-weight:800;text-align:center;margin-bottom:4px;background:linear-gradient(90deg,var(--sky),var(--saffron));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.game-sub{text-align:center;font-size:.88rem;color:#bbb;margin-bottom:22px;}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.prog-bar{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--saffron));border-radius:4px;transition:width .4s ease;}
+.prog-label{font-size:.82rem;color:#aaa;white-space:nowrap;}
+.score-display{text-align:right;font-family:'Baloo 2',sans-serif;font-size:1rem;color:var(--gold);margin-bottom:14px;}
+.q-card{background:var(--card);border-radius:18px;padding:26px 24px;border:1px solid rgba(255,255,255,.09);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.q-num{font-size:.78rem;color:var(--sky);font-weight:700;letter-spacing:1px;margin-bottom:8px;}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.12rem;font-weight:600;line-height:1.55;margin-bottom:20px;}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.options{grid-template-columns:1fr;}}
+.opt-btn{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);color:#e8e8e8;font-family:'Nunito',sans-serif;font-size:.95rem;padding:13px 16px;border-radius:12px;cursor:pointer;text-align:left;transition:.22s;line-height:1.4;}
+.opt-btn:hover:not(:disabled){background:rgba(255,107,0,.2);border-color:var(--saffron);}
+.opt-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);color:#fff;}
+.opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);color:#fff;}
+.opt-btn:disabled{cursor:not-allowed;}
+.feedback{margin-top:16px;padding:12px 16px;border-radius:12px;font-size:.92rem;line-height:1.5;display:none;}
+.feedback.show{display:block;}
+.feedback.correct{background:rgba(0,200,83,.15);border:1px solid var(--green);color:#b9f6ca;}
+.feedback.wrong{background:rgba(255,64,129,.15);border:1px solid var(--pink);color:#ffd0dd;}
+.next-btn{display:block;margin:20px auto 0;background:linear-gradient(135deg,var(--saffron),#cc5500);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:13px 36px;border-radius:24px;cursor:pointer;transition:.2s;opacity:0;pointer-events:none;}
+.next-btn.visible{opacity:1;pointer-events:all;}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,107,0,.4);}
+.end-screen{background:var(--card);border-radius:20px;padding:36px 28px;text-align:center;border:1px solid rgba(255,255,255,.09);}
+.stars{font-size:2.8rem;margin-bottom:10px;letter-spacing:4px;}
+.final-score{font-family:'Baloo 2',sans-serif;font-size:2.4rem;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.final-msg{color:#ccc;font-size:1rem;margin-bottom:24px;}
+.play-again{background:linear-gradient(135deg,var(--purple),#5b21b6);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:14px 38px;border-radius:24px;cursor:pointer;transition:.2s;}
+.play-again:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(124,58,237,.5);}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">&#8592; Back</button>
+  <span class="badge">Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('bn')">অ</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="game-title">
+    <span data-lang="en">Light &amp; the Human Eye</span>
+    <span data-lang="hi" class="hidden">प्रकाश एवं मानव नेत्र</span>
+    <span data-lang="bn" class="hidden">আলো ও মানব চোখ</span>
+  </div>
+  <div class="game-sub">Class 10 Science &nbsp;|&nbsp; Ch 10–11 NCERT &nbsp;|&nbsp; 10 Questions</div>
+
+  <div class="prog-row">
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-label" id="progLabel">0 / 10</div>
+  </div>
+  <div class="score-display">Score: <span id="scoreVal">0</span> / 100</div>
+
+  <div class="q-card fadeIn" id="qCard">
+    <div class="q-num" id="qNum">QUESTION 1</div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="optionsGrid"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next &#8594;</button>
+  </div>
+
+  <div class="end-screen fadeIn hidden" id="endScreen">
+    <div class="stars" id="stars"></div>
+    <div class="final-score" id="finalScore"></div>
+    <div class="final-msg" id="finalMsg"></div>
+    <button class="play-again" onclick="restartGame()">&#9654; Play Again</button>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    en:"The two laws of reflection state that the angle of incidence equals the angle of reflection, and that the incident ray, reflected ray, and normal are:",
+    hi:"परावर्तन के दो नियम कहते हैं कि आपतन कोण परावर्तन कोण के बराबर है, और आपतित किरण, परावर्तित किरण और अभिलंब:",
+    bn:"প্রতিফলনের দুটি সূত্র বলে যে আপতন কোণ প্রতিফলন কোণের সমান, এবং আপতিত রশ্মি, প্রতিফলিত রশ্মি ও অভিলম্ব:",
+    opts:{
+      en:["In the same plane (coplanar)","Parallel to each other","Perpendicular to each other","In different planes"],
+      hi:["एक ही तल में (समतलीय)","एक-दूसरे के समानांतर","एक-दूसरे के लंबवत","अलग-अलग तलों में"],
+      bn:["একই তলে (সমতলীয়)","পরস্পর সমান্তরাল","পরস্পর লম্ব","ভিন্ন তলে"]
+    },
+    ans:0,
+    exp:{
+      en:"Both laws of reflection: (1) angle of incidence = angle of reflection; (2) incident ray, reflected ray, and the normal at the point of incidence all lie in the same plane. These apply to all surfaces — plane mirrors, curved mirrors.",
+      hi:"परावर्तन के दोनों नियम: (1) आपतन कोण = परावर्तन कोण; (2) आपतित किरण, परावर्तित किरण और आपतन बिंदु पर अभिलंब एक ही तल में होते हैं। ये सभी सतहों पर लागू होते हैं।",
+      bn:"প্রতিফলনের উভয় সূত্র: (১) আপতন কোণ = প্রতিফলন কোণ; (২) আপতিত রশ্মি, প্রতিফলিত রশ্মি ও আপতন বিন্দুতে অভিলম্ব একই তলে থাকে। এগুলি সব পৃষ্ঠে প্রযোজ্য।"
+    }
+  },
+  {
+    en:"A concave mirror forms a real, inverted, and same-sized image when the object is placed at:",
+    hi:"एक अवतल दर्पण वास्तविक, उल्टा और समान आकार का प्रतिबिंब तब बनाता है जब वस्तु स्थित हो:",
+    bn:"একটি অবতল দর্পণ বাস্তব, উল্টো এবং সমান আকারের প্রতিবিম্ব গঠন করে যখন বস্তু থাকে:",
+    opts:{
+      en:["At the focus (F)","At the centre of curvature (C)","Between F and C","Beyond C"],
+      hi:["फोकस (F) पर","वक्रता केंद्र (C) पर","F और C के बीच","C से परे"],
+      bn:["ফোকাস (F)-এ","বক্রতার কেন্দ্র (C)-এ","F ও C-এর মধ্যে","C-এর বাইরে"]
+    },
+    ans:1,
+    exp:{
+      en:"At C (radius of curvature = 2f): image is real, inverted, same size, formed at C. Beyond C: real, inverted, diminished. Between F and C: real, inverted, magnified. At F: image at infinity. Between pole and F: virtual, erect, magnified.",
+      hi:"C पर (वक्रता त्रिज्या = 2f): प्रतिबिंब वास्तविक, उल्टा, समान आकार का, C पर बनता है। C से परे: वास्तविक, उल्टा, छोटा। F और C के बीच: वास्तविक, उल्टा, बड़ा। F पर: प्रतिबिंब अनंत पर।",
+      bn:"C-এ (বক্রতার ব্যাসার্ধ = 2f): প্রতিবিম্ব বাস্তব, উল্টো, সমান আকার, C-এ গঠিত। C-এর বাইরে: বাস্তব, উল্টো, ছোট। F ও C-এর মধ্যে: বাস্তব, উল্টো, বড়। F-এ: প্রতিবিম্ব অসীমে।"
+    }
+  },
+  {
+    en:"Which of the following correctly describes a virtual image?",
+    hi:"निम्नलिखित में से कौन-सा आभासी प्रतिबिंब का सही वर्णन करता है?",
+    bn:"নিচের কোনটি আভাসী প্রতিবিম্বের সঠিক বিবরণ দেয়?",
+    opts:{
+      en:["It can be projected on a screen","Formed by actual convergence of light rays","Cannot be projected on a screen; rays appear to diverge from it","It is always smaller than the object"],
+      hi:["इसे पर्दे पर प्रक्षेपित किया जा सकता है","प्रकाश किरणों के वास्तविक अभिसरण से बनता है","इसे पर्दे पर प्रक्षेपित नहीं किया जा सकता; किरणें इससे अपसरित होती प्रतीत होती हैं","यह हमेशा वस्तु से छोटा होता है"],
+      bn:["এটি পর্দায় প্রক্ষেপণ করা যায়","আলোক রশ্মির প্রকৃত অভিসরণে গঠিত","পর্দায় প্রক্ষেপণ করা যায় না; রশ্মি এ থেকে অপসারিত হচ্ছে মনে হয়","এটি সবসময় বস্তুর চেয়ে ছোট"]
+    },
+    ans:2,
+    exp:{
+      en:"A virtual image cannot be caught on a screen — it is formed where reflected/refracted rays appear to meet (but don't actually). A plane mirror always forms a virtual, erect, laterally inverted image behind the mirror. A real image can be projected on a screen.",
+      hi:"आभासी प्रतिबिंब पर्दे पर नहीं बन सकता — यह वहाँ बनता है जहाँ परावर्तित/अपवर्तित किरणें मिलती प्रतीत होती हैं (लेकिन वास्तव में नहीं)। समतल दर्पण हमेशा दर्पण के पीछे आभासी, सीधा, पार्श्व उलटा प्रतिबिंब बनाता है।",
+      bn:"আভাসী প্রতিবিম্ব পর্দায় ধরা যায় না — যেখানে প্রতিফলিত/প্রতিসৃত রশ্মিগুলি মিলছে মনে হয় সেখানে গঠিত হয়। সমতল দর্পণ সবসময় দর্পণের পেছনে আভাসী, সোজা, পার্শ্ব-উল্টো প্রতিবিম্ব গঠন করে।"
+    }
+  },
+  {
+    en:"Snell's Law of Refraction relates:",
+    hi:"अपवर्तन का स्नेल का नियम संबंधित करता है:",
+    bn:"প্রতিসরণের স্নেলের সূত্র সম্পর্কিত করে:",
+    opts:{
+      en:["Speed of light and wavelength","The ratio of sine of angle of incidence to sine of angle of refraction equals the refractive index","Angle of incidence equals angle of refraction","The speed of light equals frequency × wavelength only"],
+      hi:["प्रकाश की गति और तरंगदैर्ध्य","आपतन कोण की ज्या और अपवर्तन कोण की ज्या का अनुपात अपवर्तनांक के बराबर है","आपतन कोण अपवर्तन कोण के बराबर है","प्रकाश की गति = आवृत्ति × तरंगदैर्ध्य"],
+      bn:["আলোর গতি ও তরঙ্গদৈর্ঘ্য","আপতন কোণের সাইন ও প্রতিসরণ কোণের সাইনের অনুপাত প্রতিসরাঙ্কের সমান","আপতন কোণ প্রতিসরণ কোণের সমান","আলোর গতি = কম্পাঙ্ক × তরঙ্গদৈর্ঘ্য"]
+    },
+    ans:1,
+    exp:{
+      en:"Snell's Law: n = sin i / sin r = speed in medium 1 / speed in medium 2. When light goes from a less dense to a denser medium, it bends TOWARD the normal (r < i). In a denser medium, light slows down and the wavelength decreases.",
+      hi:"स्नेल का नियम: n = sin i / sin r = माध्यम 1 में गति / माध्यम 2 में गति। जब प्रकाश कम घने से घने माध्यम में जाता है, यह अभिलंब की ओर झुकता है (r < i)। घने माध्यम में प्रकाश धीमा होता है।",
+      bn:"স্নেলের সূত্র: n = sin i / sin r = মাধ্যম ১-এ গতি / মাধ্যম ২-এ গতি। আলো কম ঘন থেকে বেশি ঘন মাধ্যমে গেলে অভিলম্বের দিকে বাঁকে (r < i)। ঘন মাধ্যমে আলো ধীর হয় এবং তরঙ্গদৈর্ঘ্য কমে।"
+    }
+  },
+  {
+    en:"Total Internal Reflection occurs when light travels from a denser to a rarer medium AND:",
+    hi:"पूर्ण आंतरिक परावर्तन तब होता है जब प्रकाश सघन माध्यम से विरल माध्यम में जाता है और:",
+    bn:"পূর্ণ অভ্যন্তরীণ প্রতিফলন ঘটে যখন আলো ঘন থেকে হালকা মাধ্যমে যায় এবং:",
+    opts:{
+      en:["The angle of incidence is less than the critical angle","The angle of incidence exceeds the critical angle","The surfaces are parallel","The light source is very bright"],
+      hi:["आपतन कोण क्रांतिक कोण से कम है","आपतन कोण क्रांतिक कोण से अधिक है","सतहें समानांतर हैं","प्रकाश स्रोत बहुत तेज है"],
+      bn:["আপতন কোণ সংকট কোণের চেয়ে কম","আপতন কোণ সংকট কোণ অতিক্রম করে","পৃষ্ঠগুলি সমান্তরাল","আলোর উৎস খুব উজ্জ্বল"]
+    },
+    ans:1,
+    exp:{
+      en:"TIR: when the angle of incidence exceeds the critical angle (for that pair of media), no refraction occurs — all light is reflected internally. Used in optical fibres (communication, medical endoscopes) and diamond sparkle.",
+      hi:"पूर्ण आंतरिक परावर्तन: जब आपतन कोण क्रांतिक कोण से अधिक हो जाता है (उन माध्यमों की जोड़ी के लिए), कोई अपवर्तन नहीं होता — सारा प्रकाश आंतरिक रूप से परावर्तित होता है। ऑप्टिकल फाइबर (संचार, चिकित्सा एंडोस्कोप) और हीरे की चमक में उपयोग।",
+      bn:"TIR: যখন আপতন কোণ সংকট কোণ অতিক্রম করে (সেই মাধ্যমযুগলের জন্য), কোনো প্রতিসরণ হয় না — সমস্ত আলো অভ্যন্তরীণভাবে প্রতিফলিত হয়। অপটিক্যাল ফাইবার (যোগাযোগ, চিকিৎসা এন্ডোস্কোপ) এবং হীরার ঝলকানিতে ব্যবহৃত।"
+    }
+  },
+  {
+    en:"The power of a lens is defined as P = 1/f. A convex lens of focal length 25 cm has a power of:",
+    hi:"लेंस की शक्ति P = 1/f के रूप में परिभाषित है। 25 सेमी फोकस दूरी वाले उत्तल लेंस की शक्ति है:",
+    bn:"লেন্সের ক্ষমতা P = 1/f হিসেবে সংজ্ঞায়িত। ২৫ সেমি ফোকাস দূরত্বের উত্তল লেন্সের ক্ষমতা:",
+    opts:{
+      en:["+4 D","-4 D","+0.25 D","-25 D"],
+      hi:["+4 D","-4 D","+0.25 D","-25 D"],
+      bn:["+4 D","-4 D","+0.25 D","-25 D"]
+    },
+    ans:0,
+    exp:{
+      en:"P = 1/f (in metres). f = 25 cm = 0.25 m. P = 1/0.25 = +4 D. Convex (converging) lenses have POSITIVE power; concave (diverging) lenses have NEGATIVE power. The unit is dioptre (D).",
+      hi:"P = 1/f (मीटर में)। f = 25 cm = 0.25 m। P = 1/0.25 = +4 D। उत्तल (अभिसारी) लेंस की शक्ति धनात्मक होती है; अवतल (अपसारी) लेंस की शक्ति ऋणात्मक। इकाई डायोप्टर (D) है।",
+      bn:"P = 1/f (মিটারে)। f = 25 cm = 0.25 m। P = 1/0.25 = +4 D। উত্তল (অভিসারী) লেন্সের ক্ষমতা ধনাত্মক; অবতল (অপসারী) লেন্সের ক্ষমতা ঋণাত্মক। একক ডায়োপ্টার (D)।"
+    }
+  },
+  {
+    en:"The part of the human eye that controls the amount of light entering the eye is the:",
+    hi:"मानव नेत्र का वह भाग जो आँख में प्रवेश करने वाले प्रकाश की मात्रा को नियंत्रित करता है:",
+    bn:"মানব চোখের যে অংশ চোখে প্রবেশকারী আলোর পরিমাণ নিয়ন্ত্রণ করে:",
+    opts:{
+      en:["Cornea","Retina","Iris","Optic nerve"],
+      hi:["कॉर्निया","रेटिना","आइरिस","दृक् तंत्रिका"],
+      bn:["কর্নিয়া","রেটিনা","আইরিস","অপটিক স্নায়ু"]
+    },
+    ans:2,
+    exp:{
+      en:"The IRIS is the coloured part of the eye. It contains muscles that control the size of the PUPIL (the dark opening). In bright light, the iris contracts to make the pupil smaller; in dim light, the iris expands to let more light in.",
+      hi:"आइरिस आँख का रंगीन हिस्सा है। इसमें पुतली (काला छिद्र) का आकार नियंत्रित करने वाली मांसपेशियाँ हैं। तेज रोशनी में, आइरिस सिकुड़कर पुतली छोटी करता है; कम रोशनी में, आइरिस फैलकर अधिक प्रकाश आने देता है।",
+      bn:"আইরিস হলো চোখের রঙিন অংশ। এতে পিউপিল (কালো ছিদ্র) এর আকার নিয়ন্ত্রণকারী পেশী আছে। উজ্জ্বল আলোতে আইরিস সংকুচিত হয়ে পিউপিল ছোট করে; মৃদু আলোতে প্রসারিত হয়ে বেশি আলো প্রবেশ করতে দেয়।"
+    }
+  },
+  {
+    en:"A person cannot see nearby objects clearly (near point has moved beyond 25 cm). This defect is:",
+    hi:"एक व्यक्ति पास की वस्तुएँ स्पष्ट नहीं देख सकता (निकट बिंदु 25 सेमी से आगे चला गया है)। यह दोष है:",
+    bn:"একজন ব্যক্তি নিকটস্থ বস্তু স্পষ্ট দেখতে পারেন না (নিকট বিন্দু ২৫ সেমি-এর বাইরে চলে গেছে)। এই ত্রুটি হলো:",
+    opts:{
+      en:["Myopia (short-sightedness)","Hypermetropia (long-sightedness)","Presbyopia","Astigmatism"],
+      hi:["मायोपिया (निकटदृष्टि दोष)","हाइपरमेट्रोपिया (दूरदृष्टि दोष)","जरादूरदर्शिता","दृष्टिवैषम्य"],
+      bn:["মায়োপিয়া (ক্ষীণদৃষ্টি)","হাইপারমেট্রোপিয়া (দূরদৃষ্টি)","প্রেসবায়োপিয়া","দৃষ্টিবিভ্রম"]
+    },
+    ans:1,
+    exp:{
+      en:"Hypermetropia: eye is too short OR lens is too weak — image forms BEHIND the retina. Near objects are blurred. Corrected with a CONVEX lens (+ve power). Myopia: cannot see distant objects clearly — image forms in front of retina; corrected with CONCAVE lens.",
+      hi:"हाइपरमेट्रोपिया: आँख बहुत छोटी है या लेंस बहुत कमजोर है — प्रतिबिंब रेटिना के पीछे बनता है। पास की वस्तुएँ धुंधली हैं। उत्तल लेंस (+ve शक्ति) से सुधार। मायोपिया: दूर की वस्तुएँ स्पष्ट नहीं — अवतल लेंस से सुधार।",
+      bn:"হাইপারমেট্রোপিয়া: চোখ খুব ছোট বা লেন্স দুর্বল — প্রতিবিম্ব রেটিনার পিছনে গঠিত হয়। নিকটবর্তী বস্তু ঝাপসা। উত্তল লেন্স (+ve ক্ষমতা) দিয়ে সংশোধন। মায়োপিয়া: দূরের বস্তু অস্পষ্ট — অবতল লেন্স দিয়ে সংশোধন।"
+    }
+  },
+  {
+    en:"The ability of the human eye to change the focal length of its lens to focus on objects at different distances is called:",
+    hi:"मानव नेत्र की विभिन्न दूरियों पर वस्तुओं पर ध्यान केंद्रित करने के लिए अपने लेंस की फोकल लंबाई बदलने की क्षमता कहलाती है:",
+    bn:"বিভিন্ন দূরত্বের বস্তুতে ফোকাস করতে মানব চোখের লেন্সের ফোকাস দূরত্ব পরিবর্তন করার ক্ষমতাকে বলা হয়:",
+    opts:{
+      en:["Persistence of vision","Power of accommodation","Binocular vision","Stereoscopic vision"],
+      hi:["दृष्टि की अनुस्थायिता","समंजन-क्षमता","द्विनेत्री दृष्टि","त्रिविम दृष्टि"],
+      bn:["দৃষ্টির স্থায়িত্ব","সমঞ্জসন ক্ষমতা","দ্বিনেত্র দৃষ্টি","ত্রিমাত্রিক দৃষ্টি"]
+    },
+    ans:1,
+    exp:{
+      en:"Accommodation: the ciliary muscles change the thickness (and therefore focal length) of the eye lens. To see near objects, the lens becomes thicker (shorter focal length). For far objects, the lens becomes thinner (longer focal length).",
+      hi:"समंजन: पक्ष्माभी मांसपेशियाँ नेत्र लेंस की मोटाई (और फोकस दूरी) बदलती हैं। पास की वस्तुओं के लिए लेंस मोटा होता है (कम फोकस दूरी)। दूर की वस्तुओं के लिए लेंस पतला होता है।",
+      bn:"সমঞ্জসন: সিলিয়ারি পেশী চোখের লেন্সের পুরুত্ব (এবং ফোকাস দূরত্ব) পরিবর্তন করে। নিকটবর্তী বস্তুর জন্য লেন্স মোটা হয় (কম ফোকাস দূরত্ব)। দূরের বস্তুর জন্য লেন্স পাতলা হয়।"
+    }
+  },
+  {
+    en:"When white light passes through a glass prism, it splits into a band of colours (VIBGYOR). This phenomenon is called dispersion. The colour that deviates the MOST is:",
+    hi:"जब श्वेत प्रकाश काँच के प्रिज्म से गुजरता है, यह रंगों की एक पट्टी (VIBGYOR) में बंट जाता है। इस घटना को वर्ण-विक्षेपण कहते हैं। सर्वाधिक विचलन दिखाने वाला रंग है:",
+    bn:"সাদা আলো কাচের প্রিজমের মধ্য দিয়ে গেলে রঙের পট্টিতে (VIBGYOR) বিভক্ত হয়। এই ঘটনাকে বিচ্ছুরণ বলে। সবচেয়ে বেশি বিচ্যুতি দেখায় যে রঙ:",
+    opts:{
+      en:["Red (least deviated)","Violet (most deviated)","Green (middle)","Yellow"],
+      hi:["लाल (सबसे कम विचलन)","बैंगनी (सबसे अधिक विचलन)","हरा (मध्य)","पीला"],
+      bn:["লাল (সবচেয়ে কম বিচ্যুতি)","বেগুনি (সবচেয়ে বেশি বিচ্যুতি)","সবুজ (মধ্য)","হলুদ"]
+    },
+    ans:1,
+    exp:{
+      en:"Dispersion: different colours have different wavelengths and travel at slightly different speeds in glass. Violet (shortest wavelength) refracts the most → most deviation. Red (longest wavelength) refracts the least → least deviation. Order: VIBGYOR (Violet Indigo Blue Green Yellow Orange Red).",
+      hi:"वर्ण-विक्षेपण: विभिन्न रंगों की तरंगदैर्ध्य भिन्न होती है और वे काँच में थोड़ी भिन्न गति से चलते हैं। बैंगनी (सबसे छोटी तरंगदैर्ध्य) सबसे अधिक अपवर्तित होती है → सबसे अधिक विचलन। लाल (सबसे लंबी) → सबसे कम विचलन।",
+      bn:"বিচ্ছুরণ: বিভিন্ন রঙের তরঙ্গদৈর্ঘ্য আলাদা এবং কাচে সামান্য ভিন্ন গতিতে চলে। বেগুনি (সবচেয়ে ছোট তরঙ্গদৈর্ঘ্য) সবচেয়ে বেশি প্রতিসৃত → সর্বাধিক বিচ্যুতি। লাল (দীর্ঘতম) → ন্যূনতম বিচ্যুতি।"
+    }
+  }
+];
+
+let currentQ=0,score=0,answered=false,currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.classList.toggle('hidden', el.dataset.lang!==l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(currentQ>=questions.length){showEnd();return;}
+  const q=questions[currentQ];
+  document.getElementById('qNum').textContent='QUESTION '+(currentQ+1)+' OF '+questions.length;
+  document.getElementById('qText').textContent=q[currentLang]||q.en;
+  const grid=document.getElementById('optionsGrid');
+  grid.innerHTML='';
+  const opts=(q.opts[currentLang]||q.opts.en);
+  opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.textContent=opt;
+    btn.onclick=()=>selectAnswer(i);
+    grid.appendChild(btn);
+  });
+  const fb=document.getElementById('feedback');
+  fb.className='feedback';
+  fb.textContent='';
+  document.getElementById('nextBtn').classList.remove('visible');
+  document.getElementById('progFill').style.width=(currentQ/questions.length*100)+'%';
+  document.getElementById('progLabel').textContent=currentQ+' / '+questions.length;
+  document.getElementById('qCard').classList.remove('fadeIn');
+  void document.getElementById('qCard').offsetWidth;
+  document.getElementById('qCard').classList.add('fadeIn');
+  answered=false;
+}
+
+function selectAnswer(i){
+  if(answered)return;
+  answered=true;
+  const q=questions[currentQ];
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('feedback');
+  if(i===q.ans){
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    btns[i].classList.add('correct');
+    fb.className='feedback correct show';
+    fb.innerHTML='&#10003; Correct! '+(q.exp[currentLang]||q.exp.en);
+  } else {
+    btns[i].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    fb.className='feedback wrong show';
+    fb.innerHTML='&#10007; Incorrect. '+(q.exp[currentLang]||q.exp.en);
+  }
+  document.getElementById('nextBtn').classList.add('visible');
+  if(currentQ===questions.length-1){
+    document.getElementById('nextBtn').textContent='See Results ★';
+  }
+}
+
+function nextQuestion(){
+  currentQ++;
+  renderQuestion();
+}
+
+function showEnd(){
+  document.getElementById('qCard').classList.add('hidden');
+  document.getElementById('endScreen').classList.remove('hidden');
+  const pct=score;
+  let stars='☆☆☆';
+  if(pct>=90)stars='★★★';
+  else if(pct>=70)stars='★★☆';
+  else if(pct>=40)stars='★☆☆';
+  document.getElementById('stars').textContent=stars;
+  document.getElementById('finalScore').textContent=score+' / 100';
+  let msg='Keep going! Review mirror/lens rules and eye defects.';
+  if(pct>=90)msg='Brilliant! You have mastered Light & the Human Eye!';
+  else if(pct>=70)msg='Well done! Revise refraction and accommodation.';
+  else if(pct>=40)msg='Good effort! Focus on lens power and eye defects.';
+  document.getElementById('finalMsg').textContent=msg;
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('progLabel').textContent='10 / 10';
+}
+
+function restartGame(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('scoreVal').textContent=0;
+  document.getElementById('endScreen').classList.add('hidden');
+  document.getElementById('qCard').classList.remove('hidden');
+  document.getElementById('nextBtn').textContent='Next →';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>

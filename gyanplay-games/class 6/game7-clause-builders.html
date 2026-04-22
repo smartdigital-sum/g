@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clause Builders — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#1A0F00 0%,#0F0800 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(255,159,28,.13),rgba(255,159,28,.04));border:1px solid rgba(255,159,28,.3);border-radius:16px;padding:16px;margin-bottom:16px}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(255,159,28,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--orange);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:700}
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.45}
+
+/* Colour-coded clause display */
+.clause-sentence{font-size:1.05rem;line-height:1.9;background:rgba(255,159,28,.05);border:1px solid rgba(255,159,28,.15);border-radius:14px;padding:14px;margin-bottom:14px;text-align:center}
+.main-clause{background:rgba(6,214,160,.2);border-radius:6px;padding:2px 6px;color:var(--teal);font-weight:700}
+.sub-clause{background:rgba(255,209,102,.18);border-radius:6px;padding:2px 6px;color:var(--gold);font-weight:700}
+.rel-clause{background:rgba(199,125,255,.22);border-radius:6px;padding:2px 6px;color:var(--purple);font-weight:700}
+.clause-legend{display:flex;gap:10px;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
+.legend-chip{display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--dim)}
+.chip-dot{width:10px;height:10px;border-radius:3px}
+.chip-main{background:rgba(6,214,160,.35)}
+.chip-sub{background:rgba(255,209,102,.35)}
+.chip-rel{background:rgba(199,125,255,.35)}
+
+/* Tap-to-label mechanic */
+.tap-sentence{font-size:1rem;line-height:2.1;background:rgba(255,159,28,.05);border:1px solid rgba(255,159,28,.15);border-radius:14px;padding:14px;margin-bottom:12px;text-align:center}
+.clause-span{cursor:pointer;border-radius:6px;padding:2px 5px;border:2px solid transparent;transition:all .2s}
+.clause-span:hover{border-color:var(--orange);background:rgba(255,159,28,.1)}
+.clause-span.selected-main{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal);font-weight:700}
+.clause-span.selected-sub{background:rgba(255,209,102,.18);border-color:var(--gold);color:var(--gold);font-weight:700}
+.clause-span.selected-rel{background:rgba(199,125,255,.22);border-color:var(--purple);color:var(--purple);font-weight:700}
+.clause-span.correct-label{border-color:var(--teal)!important;background:rgba(6,214,160,.15)!important}
+.clause-span.wrong-label{border-color:var(--coral)!important;background:rgba(255,107,107,.12)!important}
+.label-toolbar{display:flex;gap:8px;margin-bottom:12px;justify-content:center}
+.label-btn{background:rgba(255,159,28,.07);border:2px solid rgba(255,159,28,.2);border-radius:100px;padding:8px 14px;font-size:.8rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s}
+.label-btn.active-main{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal)}
+.label-btn.active-sub{background:rgba(255,209,102,.12);border-color:var(--gold);color:var(--gold)}
+.label-btn.active-rel{background:rgba(199,125,255,.15);border-color:var(--purple);color:var(--purple)}
+
+/* Combine sentences mechanic */
+.sentence-pair{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.sent-box{background:rgba(255,159,28,.06);border:1px solid rgba(255,159,28,.15);border-radius:12px;padding:12px;font-size:.9rem;line-height:1.5;color:var(--text)}
+.sent-box span{font-size:.68rem;color:var(--orange);display:block;margin-bottom:4px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.connector-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;justify-content:center}
+.conn-chip{background:rgba(255,159,28,.08);border:2px solid rgba(255,159,28,.2);border-radius:100px;padding:7px 14px;font-family:'Baloo 2',cursive;font-size:.9rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s}
+.conn-chip:hover{border-color:var(--orange);background:rgba(255,159,28,.15);transform:scale(1.05)}
+.conn-chip.selected{background:rgba(255,159,28,.2);border-color:var(--orange);color:var(--orange)}
+.conn-chip.correct-conn{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal)}
+.conn-chip.wrong-conn{background:rgba(255,107,107,.12);border-color:var(--coral);color:var(--coral)}
+.result-sentence{background:rgba(6,214,160,.06);border:1px solid rgba(6,214,160,.2);border-radius:12px;padding:12px;font-size:.9rem;line-height:1.6;color:var(--text);margin-bottom:10px;min-height:52px;font-style:italic;text-align:center;display:none}
+.result-sentence.show{display:block}
+.confirm-btn{background:var(--orange);color:#060A10;border:none;border-radius:100px;padding:10px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;width:100%;margin-top:6px}
+.confirm-btn:disabled{opacity:.4;cursor:default}
+.confirm-btn:hover:not(:disabled){opacity:.85;transform:scale(1.02)}
+
+/* Options for MCQ rounds */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(255,159,28,.07);border:2px solid rgba(255,159,28,.2);border-radius:14px;padding:12px 8px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--orange);background:rgba(255,159,28,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.92rem;font-weight:600;min-height:26px;margin:10px 0 4px}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#0F0800 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--orange);color:var(--orange);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.play-again-btn:hover{background:rgba(255,159,28,.1)}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(255,159,28,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stage-transition{background:linear-gradient(135deg,rgba(255,159,28,.1),rgba(255,159,28,.03));border:1px solid rgba(255,159,28,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--orange);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+.tip-box{background:rgba(255,159,28,.06);border-left:3px solid var(--orange);border-radius:0 10px 10px 0;padding:10px 12px;font-size:.8rem;line-height:1.5;color:var(--dim);margin-bottom:12px}
+.tip-box strong{color:var(--orange)}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">🧩 Clause Builders</div>
+      <span class="subject-tag">English · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="wow-emoji">💡</span>
+    <div class="wow-text">Every great sentence is actually <strong>TWO ideas joined cleverly.</strong> <em>"The man who lost his keys found them in his pocket."</em> — the relative clause makes this sentence <strong>1000% more interesting</strong> than: "The man found his keys."</div>
+  </div>
+
+  <div id="gameArea"></div>
+
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Question 1 of 11</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+/* ── Stage 1: Identify clause type — MCQ (4 Qs) ── */
+const S1 = [
+  {
+    sentence:'Although it was raining, the children played outside.',
+    parts:[
+      {text:'Although it was raining', type:'Subordinate Clause', color:'sub'},
+      {text:', ', type:null},
+      {text:'the children played outside', type:'Main Clause', color:'main'},
+      {text:'.', type:null}
+    ],
+    q:'What type is "Although it was raining"?',
+    correct:'Subordinate Clause',
+    opts:['Main Clause','Subordinate Clause','Relative Clause','Independent Clause'],
+    fact:'A subordinate clause begins with a conjunction (although, because, when, if) and CANNOT stand alone — it needs the main clause!'
+  },
+  {
+    sentence:'The girl who won the prize smiled.',
+    parts:[
+      {text:'The girl', type:null},
+      {text:' who won the prize ', type:'Relative Clause', color:'rel'},
+      {text:'smiled', type:'Main Clause', color:'main'},
+      {text:'.', type:null}
+    ],
+    q:'What type is "who won the prize"?',
+    correct:'Relative Clause',
+    opts:['Main Clause','Subordinate Clause','Relative Clause','Noun Clause'],
+    fact:'A relative clause begins with who, which, that, whom, or whose — it describes a noun in the main clause!'
+  },
+  {
+    sentence:'She reads every night because she loves stories.',
+    parts:[
+      {text:'She reads every night', type:'Main Clause', color:'main'},
+      {text:' because ', type:null},
+      {text:'she loves stories', type:'Subordinate Clause', color:'sub'},
+      {text:'.', type:null}
+    ],
+    q:'Which part is the MAIN clause?',
+    correct:'She reads every night',
+    opts:['She reads every night','she loves stories','because she loves','reads every night because'],
+    fact:'The main clause can stand alone as a complete sentence. "She reads every night." — complete! "she loves stories" alone also could work here, but "because" makes it depend on context.'
+  },
+  {
+    sentence:'The book that Mita borrowed was very interesting.',
+    parts:[
+      {text:'The book', type:null},
+      {text:' that Mita borrowed ', type:'Relative Clause', color:'rel'},
+      {text:'was very interesting', type:'Main Clause', color:'main'},
+      {text:'.', type:null}
+    ],
+    q:'What does "that Mita borrowed" describe?',
+    correct:'The book',
+    opts:['The book','Mita','very interesting','was'],
+    fact:'Relative clauses describe a noun. "that Mita borrowed" tells us WHICH book — it describes "The book"!'
+  },
+];
+
+/* ── Stage 2: Combine two sentences using the right connector (4 Qs) ── */
+const S2 = [
+  {
+    sent1:'The dog barked loudly.',
+    sent2:'It was midnight.',
+    correct:'although',
+    connectors:['although','because','who','which'],
+    result:'The dog barked loudly although it was midnight.',
+    fact:'"Although" introduces a contrast — two things that seem surprising together!'
+  },
+  {
+    sent1:'I could not sleep.',
+    sent2:'I was very tired.',
+    correct:'because',
+    connectors:['although','because','which','when'],
+    result:'I could not sleep because I was very tired. (Wait — that\'s a surprise! "Although I was very tired" makes more sense for contrast.)',
+    result:'I could not sleep although I was very tired.',
+    correct:'although',
+    fact:'"Although" expresses contrast — not being able to sleep despite being tired is surprising!'
+  },
+  {
+    sent1:'The Brahmaputra is a mighty river.',
+    sent2:'The river flows through Assam.',
+    correct:'which',
+    connectors:['although','because','which','when'],
+    result:'The Brahmaputra, which flows through Assam, is a mighty river.',
+    fact:'"Which" is a relative pronoun used for things. It joins a relative clause to describe the Brahmaputra!'
+  },
+  {
+    sent1:'The farmer harvested rice.',
+    sent2:'The rains stopped.',
+    correct:'when',
+    connectors:['although','because','which','when'],
+    result:'The farmer harvested rice when the rains stopped.',
+    fact:'"When" introduces a time clause — showing that one action happened at the same time as another!'
+  },
+];
+
+/* ── Stage 3: Choose correct relative pronoun (3 Qs) ── */
+const S3 = [
+  {sentence:'The student ___ topped the class received a medal.',correct:'who',opts:['who','which','whom','whose'],fact:'"Who" is used for people as the subject of a relative clause. "The student who topped…" — student is a person!'},
+  {sentence:'The phone ___ I bought is very fast.',correct:'which',opts:['who','which','whom','whose'],fact:'"Which" is used for things (objects, animals, places). "The phone which I bought" — phone is a thing!'},
+  {sentence:'The boy ___ bag was lost is my friend.',correct:'whose',opts:['who','which','whom','whose'],fact:'"Whose" shows belonging. "The boy whose bag…" — the bag belongs to the boy!'},
+];
+
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+const TOTAL=11; let qIdx=0,stg=1,score=0,answered=false,selectedConn=null;
+
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  const C=['#FFD166','#FF9F1C','#06D6A0','#C77DFF','#4CC9F0'];
+  for(let i=0;i<28;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+}
+function updateStars(){const lit=Math.min(5,Math.ceil(score*5/TOTAL));for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.toggle('lit',i<=lit)}
+function showOverlay(emoji,title,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovFact').textContent=fact;document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay');ov.classList.add('show');
+  if(!isEnd)setTimeout(()=>ov.classList.remove('show'),2700);
+}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(q){document.getElementById('progressLabel').textContent=`Question ${q} of ${TOTAL}`}
+
+function buildClauseHtml(parts){
+  return parts.map(p=>{
+    if(!p.type)return `<span>${p.text}</span>`;
+    const cls=p.color==='main'?'main-clause':p.color==='sub'?'sub-clause':'rel-clause';
+    return `<span class="${cls}">${p.text}</span>`;
+  }).join('');
+}
+
+function renderS1(i){
+  setProgress(i+1);answered=false;showNext(false);
+  const q=S1[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🔍 Stage 1 — Spot the Clause</div>
+      <div class="clause-legend">
+        <div class="legend-chip"><div class="chip-dot chip-main"></div>Main clause</div>
+        <div class="legend-chip"><div class="chip-dot chip-sub"></div>Subordinate clause</div>
+        <div class="legend-chip"><div class="chip-dot chip-rel"></div>Relative clause</div>
+      </div>
+      <div class="clause-sentence">${buildClauseHtml(q.parts)}</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS1('${o}','${q.correct}','${q.fact}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS1(sel,correct,fact,btn){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct');score++;updateStars();
+    fb.textContent=cheer()+' Correct!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🧩',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function renderS2(i){
+  setProgress(S1.length+i+1);answered=false;showNext(false);selectedConn=null;
+  const q=S2[i];
+  const conns=[...q.connectors].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🔗 Stage 2 — Join the Sentences</div>
+      <div class="tip-box"><strong>Tip:</strong> A subordinating conjunction joins a main clause to a dependent clause. Choose the one that makes the BEST logical sense.</div>
+      <div class="sentence-pair">
+        <div class="sent-box"><span>Sentence A</span>${q.sent1}</div>
+        <div class="sent-box"><span>Sentence B</span>${q.sent2}</div>
+      </div>
+      <div style="font-family:'Baloo 2',cursive;font-size:.9rem;color:var(--dim);text-align:center;margin-bottom:8px">Pick the best connector:</div>
+      <div class="connector-row">
+        ${conns.map(c=>`<div class="conn-chip" onclick="selectConn('${c}','${q.correct}',this)">${c}</div>`).join('')}
+      </div>
+      <div class="result-sentence" id="resultSent"></div>
+      <button class="confirm-btn" id="confirmBtn" disabled onclick="confirmConn('${q.correct}','${q.result}','${q.fact}')">Confirm →</button>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function selectConn(val,correct,el){
+  if(answered)return;
+  document.querySelectorAll('.conn-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');selectedConn=val;
+  document.getElementById('confirmBtn').disabled=false;
+}
+function confirmConn(correct,result,fact){
+  if(!selectedConn||answered)return;answered=true;
+  document.querySelectorAll('.conn-chip').forEach(c=>c.style.pointerEvents='none');
+  document.getElementById('confirmBtn').disabled=true;
+  const rs=document.getElementById('resultSent');
+  rs.textContent=result;rs.classList.add('show');
+  const fb=document.getElementById('fb');
+  if(selectedConn===correct){
+    document.querySelectorAll('.conn-chip.selected')[0]?.classList.add('correct-conn');
+    score++;updateStars();
+    fb.textContent=cheer()+' "'+correct+'" is perfect!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🔗',cheer(),fact,false),300);
+  } else {
+    document.querySelectorAll('.conn-chip.selected')[0]?.classList.add('wrong-conn');
+    document.querySelectorAll('.conn-chip').forEach(c=>{if(c.textContent===correct)c.classList.add('correct-conn')});
+    fb.textContent='Best choice: "'+correct+'". '+fact;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function renderS3(i){
+  setProgress(S1.length+S2.length+i+1);answered=false;showNext(false);
+  const q=S3[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🎯 Stage 3 — Relative Pronouns</div>
+      <div class="tip-box">
+        <strong>who</strong> = person (subject) &nbsp;·&nbsp; <strong>which</strong> = thing &nbsp;·&nbsp; <strong>whose</strong> = belonging &nbsp;·&nbsp; <strong>whom</strong> = person (object)
+      </div>
+      <div class="clause-sentence" style="font-size:1.05rem;padding:14px">${q.sentence}</div>
+      <div class="question-text">Choose the correct relative pronoun:</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS3('${o}','${q.correct}','${q.fact}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS3(sel,correct,fact,btn){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct');score++;updateStars();
+    fb.textContent=cheer()+' "'+correct+'" is right!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🎯',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct')});
+    fb.textContent='Answer: "'+correct+'". '+fact;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function nextQ(){
+  qIdx++;
+  if(stg===1){
+    if(qIdx<S1.length)renderS1(qIdx);
+    else{stg=2;qIdx=0;showTrans('🔗','Stage 2: Join the Sentences!','Use conjunctions and relative pronouns to combine two simple ideas into one complex sentence.',()=>renderS2(0))}
+  } else if(stg===2){
+    if(qIdx<S2.length)renderS2(qIdx);
+    else{stg=3;qIdx=0;showTrans('🎯','Stage 3: Relative Pronouns!','who, which, whose, whom — each one connects a relative clause to a noun differently.',()=>renderS3(0))}
+  } else {
+    if(qIdx<S3.length)renderS3(qIdx);
+    else endGame();
+  }
+}
+function showTrans(emoji,title,desc,cb){
+  showNext(false);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="stage-transition">
+      <div style="font-size:2.5rem">${emoji}</div>
+      <h3>${title}</h3><p>${desc}</p>
+    </div>`;
+  const nb=document.getElementById('nextBtn');
+  nb.textContent='Start →';nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →';nb.onclick=nextQ;cb()};
+}
+function endGame(){
+  confetti();
+  const medals=['Clause Learner 🌱','Sentence Builder 🔍','Clause Master 🧩','Grammar Champion 🏆','Clause Legend 🌟'];
+  const medal=medals[Math.min(4,Math.floor(score*5/TOTAL))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--orange);margin:10px 0">${score} / ${TOTAL}</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        Every novelist, journalist, and orator uses complex sentences to make ideas vivid. You now have the tools to build sentences that are not just correct — but <em>powerful</em>.
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  document.getElementById('progressLabel').textContent=`Final Score: ${score}/${TOTAL}`;
+  showNext(false);
+}
+function resetGame(){
+  qIdx=0;stg=1;score=0;answered=false;selectedConn=null;
+  for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.remove('lit');
+  const nb=document.getElementById('nextBtn');nb.textContent='Next →';nb.onclick=nextQ;
+  renderS1(0);
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{document.getElementById('overlay').classList.remove('show');resetGame()});
+renderS1(0);
+</script>
+</body>
+</html>

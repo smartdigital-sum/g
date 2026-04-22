@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍕 Fraction Street — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#1A0A0A;--card:#2D1212;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--orange:#FF9F1C;--purple:#C77DFF;--text:#FFF0F0;--dim:#A06868}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(255,209,102,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.3rem}
+.star{opacity:.3;transition:all .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:18px 16px;gap:18px}
+.hook{background:linear-gradient(135deg,rgba(255,107,107,.12),rgba(255,159,28,.08));border:1px solid rgba(255,107,107,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.88rem;line-height:1.6;color:#FFCAB0}
+.hook strong{color:var(--gold)}
+.task-card{background:var(--card);border-radius:16px;padding:18px 24px;text-align:center;border:2px solid rgba(255,107,107,.25);width:100%;max-width:420px}
+.task-frac{font-family:'Baloo 2',sans-serif;font-size:2.8rem;font-weight:800;color:var(--gold);display:flex;align-items:center;justify-content:center;gap:16px}
+.frac-stack{display:flex;flex-direction:column;align-items:center;line-height:1.1}
+.frac-line{width:40px;height:3px;background:var(--gold);border-radius:2px;margin:3px 0}
+.task-label{font-size:.9rem;color:var(--dim);margin-top:6px}
+.food-label{font-size:1rem;color:var(--text);margin-top:4px;font-weight:600}
+/* Food display area */
+.food-area{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:420px}
+.food-container{background:var(--card);border-radius:16px;padding:24px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;border:2px solid rgba(255,159,28,.2);min-height:100px;align-items:center}
+.food-piece{width:70px;height:70px;border-radius:8px;cursor:pointer;transition:transform .15s,box-shadow .2s;display:flex;align-items:center;justify-content:center;font-size:1.6rem;border:3px solid transparent;user-select:none}
+.food-piece:hover{transform:scale(1.08)}
+.food-piece.unshaded{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)}
+.food-piece.shaded{background:var(--coral);border-color:#c94040;box-shadow:0 0 12px rgba(255,107,107,.4)}
+.food-piece.correct-shade{background:var(--teal);border-color:#048f84;box-shadow:0 0 12px rgba(6,214,160,.4)}
+.fraction-display{font-size:.9rem;color:var(--dim);text-align:center}
+.fraction-display span{color:var(--gold);font-weight:700;font-family:'Baloo 2',sans-serif;font-size:1.1rem}
+/* Comparison mode */
+.compare-area{display:flex;gap:20px;align-items:center;justify-content:center;flex-wrap:wrap}
+.compare-card{background:var(--card);border-radius:14px;padding:18px;text-align:center;cursor:pointer;border:2px solid transparent;transition:border-color .2s,transform .15s;min-width:120px}
+.compare-card:hover{transform:scale(1.04)}
+.compare-card.selected{border-color:var(--teal);box-shadow:0 0 14px rgba(6,214,160,.3)}
+.compare-card.wrong{border-color:var(--coral);box-shadow:0 0 14px rgba(255,107,107,.3)}
+.compare-frac{font-family:'Baloo 2',sans-serif;font-size:2.4rem;font-weight:800;color:var(--gold)}
+.compare-bar-wrap{height:16px;background:rgba(255,255,255,.1);border-radius:8px;margin-top:10px;width:100%}
+.compare-bar{height:100%;background:var(--coral);border-radius:8px;transition:width .5s ease}
+.compare-label{font-size:.75rem;color:var(--dim);margin-top:6px}
+.vs-text{font-size:1.4rem;color:var(--dim);font-weight:700}
+.check-btn{padding:13px 30px;background:var(--coral);color:#fff;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(255,107,107,.35)}
+.check-btn:hover{transform:scale(1.05)}
+.feedback{font-size:.92rem;text-align:center;min-height:1.4em;color:var(--dim)}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#1B0A3C;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(26,10,10,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4.5rem}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.9rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🍕 Fraction Street</div><div class="subject-tag">Maths · Fractions · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+
+<div class="game-area">
+  <div class="hook">🍕 A pizza cut into 8 pieces — eat 3 pieces and you've eaten <strong>3/8</strong> of it! Fractions are <strong>everywhere</strong> — in recipes, maps, clocks, even music beats. Tap the pieces to shade the correct fraction!</div>
+  <div id="gameContent"></div>
+</div>
+
+<div class="bottom">
+  <div class="prog" id="prog">Round 1 of 7</div>
+  <button class="next-btn" id="nextBtn" onclick="nextRound()">Next →</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">Correct!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+
+<script>
+const ROUNDS=[
+  {type:'shade',numerator:1,denominator:2,food:'🫓',name:'Roti',pieces:2},
+  {type:'shade',numerator:1,denominator:4,food:'🍫',name:'Chocolate bar',pieces:4},
+  {type:'shade',numerator:3,denominator:4,food:'🍕',name:'Pizza',pieces:4},
+  {type:'shade',numerator:2,denominator:4,food:'🍊',name:'Orange',pieces:4},
+  {type:'compare',f1:{n:1,d:2},f2:{n:1,d:4},bigger:0,label:'Which is bigger?'},
+  {type:'compare',f1:{n:3,d:4},f2:{n:1,d:2},bigger:0,label:'Which is bigger?'},
+  {type:'shade',numerator:3,denominator:4,food:'🍰',name:'Cake',pieces:8},
+];
+const MSGS=['Great!','Correct! 🎯','You got it! 🌟','Brilliant! 🧠','Smart! 🤓','Excellent! 🎉','Fraction Master! 🏆'];
+const FACTS=[
+  '½ means 1 out of 2 equal parts. Like splitting something right in the middle!',
+  '¼ means 1 out of 4 equal parts. Smaller denominator = bigger pieces!',
+  '¾ means 3 out of 4 parts. Almost the whole thing!',
+  '2/4 is the same as 1/2! They\'re called equivalent fractions.',
+  '½ is bigger than ¼ — fewer cuts means bigger pieces!',
+  '¾ is bigger than ½ — you have 3 pieces instead of 2!',
+  'When the denominator is bigger, the pieces get smaller. Always!'
+];
+let round=0,score=0,shaded=0,selectedCompare=-1,done=false;
+
+function render(){
+  const r=ROUNDS[round];done=false;
+  const gc=document.getElementById('gameContent');
+  gc.innerHTML='';
+  if(r.type==='shade') renderShade(r,gc);
+  else renderCompare(r,gc);
+}
+
+function renderShade(r,gc){
+  shaded=0;
+  gc.innerHTML=`
+  <div class="task-card">
+    <div class="task-frac">Shade <span style="display:flex;flex-direction:column;align-items:center;gap:2px;margin:0 8px"><span style="font-size:2.4rem">${r.numerator}</span><div style="width:36px;height:3px;background:var(--gold);border-radius:2px"></div><span style="font-size:2.4rem">${r.denominator}</span></span> of the ${r.name}</div>
+    <div class="task-label">Tap the pieces to shade them. Shade <strong style="color:var(--gold)">${r.numerator} out of ${r.denominator}</strong> equal pieces.</div>
+  </div>
+  <div class="food-area">
+    <div class="food-container" id="foodCont"></div>
+    <div class="fraction-display">Shaded: <span id="shadedCount">0</span> / ${r.denominator} pieces</div>
+    <div class="feedback" id="feedback"></div>
+  </div>`;
+  const cont=document.getElementById('foodCont');
+  // Always show denominator pieces for clarity
+  const numPieces = r.denominator <= 4 ? r.denominator : r.denominator;
+  for(let i=0;i<numPieces;i++){
+    const el=document.createElement('div');
+    el.className='food-piece unshaded';el.textContent=r.food;el.id=`fp-${i}`;
+    el.onclick=()=>togglePiece(i,r);
+    cont.appendChild(el);
+  }
+}
+
+function togglePiece(i,r){
+  if(done)return;
+  const el=document.getElementById(`fp-${i}`);
+  if(el.classList.contains('shaded')){el.classList.remove('shaded');el.classList.add('unshaded');shaded--;}
+  else{el.classList.add('shaded');el.classList.remove('unshaded');shaded++;}
+  document.getElementById('shadedCount').textContent=shaded;
+  if(shaded===r.numerator){checkShade(r);}
+}
+
+function checkShade(r){
+  done=true;
+  const pieces=document.querySelectorAll('.food-piece.shaded');
+  pieces.forEach(p=>p.classList.replace('shaded','correct-shade'));
+  win();
+}
+
+function renderCompare(r,gc){
+  const pct1=Math.round((r.f1.n/r.f1.d)*100);
+  const pct2=Math.round((r.f2.n/r.f2.d)*100);
+  gc.innerHTML=`
+  <div class="task-card">
+    <div style="font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:700;color:var(--gold)">${r.label}</div>
+    <div class="task-label">Tap the bigger fraction!</div>
+  </div>
+  <div class="compare-area">
+    <div class="compare-card" id="cc0" onclick="pickCompare(0,${r.bigger})">
+      <div class="compare-frac">${r.f1.n}/${r.f1.d}</div>
+      <div class="compare-bar-wrap"><div class="compare-bar" id="cb0" style="width:0%"></div></div>
+      <div class="compare-label">${r.f1.n} out of ${r.f1.d} parts</div>
+    </div>
+    <div class="vs-text">VS</div>
+    <div class="compare-card" id="cc1" onclick="pickCompare(1,${r.bigger})">
+      <div class="compare-frac">${r.f2.n}/${r.f2.d}</div>
+      <div class="compare-bar-wrap"><div class="compare-bar" id="cb1" style="width:0%"></div></div>
+      <div class="compare-label">${r.f2.n} out of ${r.f2.d} parts</div>
+    </div>
+  </div>
+  <div class="feedback" id="feedback"></div>`;
+  setTimeout(()=>{
+    document.getElementById('cb0').style.width=pct1+'%';
+    document.getElementById('cb1').style.width=pct2+'%';
+  },100);
+}
+
+function pickCompare(choice,correct){
+  if(done)return;done=true;
+  if(choice===correct){document.getElementById(`cc${choice}`).classList.add('selected');win();}
+  else{document.getElementById(`cc${choice}`).classList.add('wrong');document.getElementById(`cc${correct}`).classList.add('selected');document.getElementById('feedback').textContent='Not quite — look at the bars to see which is longer!';}
+}
+
+function win(){
+  score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+  showOverlay(MSGS[round]||'Great!',FACTS[round]||'');
+  confetti();setTimeout(hideOverlay,2600);
+  document.getElementById('nextBtn').style.display='block';
+}
+function nextRound(){
+  round++;document.getElementById('nextBtn').style.display='none';
+  if(round>=ROUNDS.length){endGame();return;}
+  document.getElementById('prog').textContent=`Round ${round+1} of ${ROUNDS.length}`;
+  render();
+}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOverlay(`Score: ${score}/${ROUNDS.length}!`,'Fraction Street champion! You know your fractions!');
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;round=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Next →';document.getElementById('nextBtn').onclick=nextRound;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='Correct!';hideOverlay();render();};
+}
+function showOverlay(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOverlay(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#FFD166','#FF6B6B','#06D6A0','#C77DFF','#FF9F1C'];for(let i=0;i<28;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+render();
+</script>
+</body>
+</html>

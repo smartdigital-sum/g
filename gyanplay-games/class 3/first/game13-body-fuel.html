@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Fuel for the Body — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#1A0828;--card:#2A1040;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--orange:#FF9F1C;--purple:#C77DFF;--red:#FF4757;--text:#F8E8FF;--dim:#8A60B0}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(255,209,102,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.3rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:18px 16px;gap:16px}
+.hook{background:linear-gradient(135deg,rgba(199,125,255,.12),rgba(255,159,28,.08));border:1px solid rgba(199,125,255,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.88rem;line-height:1.6;color:#E8C8FF}
+.hook strong{color:var(--gold)}
+/* Meters */
+.meters{display:flex;gap:10px;width:100%;max-width:440px}
+.meter{flex:1;background:var(--card);border-radius:12px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;border:2px solid transparent;transition:border-color .3s}
+.meter.energy{border-color:rgba(255,159,28,.2)}
+.meter.growth{border-color:rgba(6,214,160,.2)}
+.meter.protection{border-color:rgba(199,125,255,.2)}
+.meter.balanced.energy{border-color:var(--orange);box-shadow:0 0 12px rgba(255,159,28,.25)}
+.meter.balanced.growth{border-color:var(--teal);box-shadow:0 0 12px rgba(6,214,160,.25)}
+.meter.balanced.protection{border-color:var(--purple);box-shadow:0 0 12px rgba(199,125,255,.25)}
+.meter-icon{font-size:1.4rem}
+.meter-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;text-align:center}
+.meter.energy .meter-label{color:var(--orange)}
+.meter.growth .meter-label{color:var(--teal)}
+.meter.protection .meter-label{color:var(--purple)}
+.meter-bar-wrap{width:100%;height:80px;background:rgba(255,255,255,.05);border-radius:6px;display:flex;flex-direction:column-reverse;overflow:hidden}
+.meter-bar{width:100%;height:0%;transition:height .5s cubic-bezier(.34,1.56,.64,1);border-radius:4px 4px 0 0}
+.meter.energy .meter-bar{background:linear-gradient(180deg,#FF9F1C,#FF6B35)}
+.meter.growth .meter-bar{background:linear-gradient(180deg,#06D6A0,#04A880)}
+.meter.protection .meter-bar{background:linear-gradient(180deg,#C77DFF,#9B5DE5)}
+.meter-val{font-family:'Baloo 2',sans-serif;font-size:.88rem;font-weight:700}
+.meter.energy .meter-val{color:var(--orange)}
+.meter.growth .meter-val{color:var(--teal)}
+.meter.protection .meter-val{color:var(--purple)}
+/* Plate */
+.plate-area{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:440px}
+.plate-title{font-size:.8rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.plate{width:200px;height:200px;border-radius:50%;border:6px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;padding:28px;position:relative}
+.plate::before{content:'';position:absolute;inset:-2px;border-radius:50%;border:2px solid rgba(255,255,255,.05)}
+.plate-food{font-size:1.7rem;animation:plop .3s ease}
+@keyframes plop{0%{transform:scale(0) rotate(-10deg)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+/* Food bank */
+.food-bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:440px}
+.food-item{padding:10px 14px;background:var(--card);border-radius:12px;cursor:pointer;transition:transform .15s,box-shadow .2s;display:flex;flex-direction:column;align-items:center;gap:4px;border:2px solid transparent;user-select:none;min-width:72px}
+.food-item:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.food-item.energy-food{border-color:rgba(255,159,28,.3)}
+.food-item.growth-food{border-color:rgba(6,214,160,.3)}
+.food-item.protect-food{border-color:rgba(199,125,255,.3)}
+.food-item.junk-food{border-color:rgba(255,71,87,.3)}
+.food-emoji{font-size:1.8rem;line-height:1}
+.food-name{font-size:.6rem;color:var(--dim);text-align:center;font-weight:700}
+.food-type{font-size:.55rem;font-weight:700;padding:2px 6px;border-radius:10px;text-transform:uppercase}
+.energy-food .food-type{background:rgba(255,159,28,.2);color:var(--orange)}
+.growth-food .food-type{background:rgba(6,214,160,.2);color:var(--teal)}
+.protect-food .food-type{background:rgba(199,125,255,.2);color:var(--purple)}
+.junk-food .food-type{background:rgba(255,71,87,.2);color:var(--red)}
+/* Feedback */
+.balance-msg{text-align:center;font-size:.85rem;min-height:1.2em;color:var(--dim)}
+.btn-row{display:flex;gap:10px}
+.action-btn{padding:11px 22px;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:transform .15s}
+.clear-btn{background:rgba(255,107,107,.2);color:var(--coral)}
+.clear-btn:hover{background:rgba(255,107,107,.35)}
+.check-btn{background:var(--gold);color:#1A0828}
+.check-btn:hover{transform:scale(1.05)}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#1A0828;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(26,8,40,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4.5rem}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:320px;font-size:.9rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">⚡ Fuel for the Body</div><div class="subject-tag">Science · Nutrition · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+
+<div class="game-area">
+  <div class="hook">⚡ Different foods give your body different <strong>superpowers</strong> — carbs give energy, protein builds muscle, vitamins fight sickness. Your body is an engine that needs <strong>the right fuel</strong>. Build a balanced plate!</div>
+
+  <div class="meters" id="meters">
+    <div class="meter energy"><div class="meter-icon">⚡</div><div class="meter-bar-wrap"><div class="meter-bar" id="bar-e"></div></div><div class="meter-val" id="val-e">0%</div><div class="meter-label">Energy</div></div>
+    <div class="meter growth"><div class="meter-icon">💪</div><div class="meter-bar-wrap"><div class="meter-bar" id="bar-g"></div></div><div class="meter-val" id="val-g">0%</div><div class="meter-label">Growth</div></div>
+    <div class="meter protection"><div class="meter-icon">🛡️</div><div class="meter-bar-wrap"><div class="meter-bar" id="bar-p"></div></div><div class="meter-val" id="val-p">0%</div><div class="meter-label">Protection</div></div>
+  </div>
+
+  <div class="plate-area">
+    <div class="plate-title">Your plate (tap food below to add)</div>
+    <div class="plate" id="plate"></div>
+  </div>
+
+  <div class="balance-msg" id="balMsg">Add food items to your plate to fill all three meters!</div>
+
+  <div class="food-bank" id="foodBank"></div>
+
+  <div class="btn-row">
+    <button class="action-btn clear-btn" onclick="clearPlate()">🗑️ Clear Plate</button>
+    <button class="action-btn check-btn" onclick="checkBalance()">✅ Check Balance</button>
+  </div>
+</div>
+
+<div class="bottom">
+  <div class="prog" id="prog">Challenge 1 of 3</div>
+  <button class="next-btn" id="nextBtn" onclick="nextChallenge()">Next Challenge →</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">Balanced!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+
+<script>
+const FOODS=[
+  {emoji:'🍚',name:'Rice',type:'energy',e:35,g:5,p:0,cat:'energy-food'},
+  {emoji:'🍞',name:'Bread',type:'energy',e:30,g:5,p:2,cat:'energy-food'},
+  {emoji:'🍌',name:'Banana',type:'energy',e:25,g:3,p:8,cat:'energy-food'},
+  {emoji:'🥚',name:'Egg',type:'protein',e:5,g:35,p:10,cat:'growth-food'},
+  {emoji:'🍗',name:'Chicken',type:'protein',e:5,g:40,p:5,cat:'growth-food'},
+  {emoji:'🫘',name:'Dal',type:'protein',e:10,g:30,p:8,cat:'growth-food'},
+  {emoji:'🥦',name:'Broccoli',type:'vitamin',e:2,g:5,p:35,cat:'protect-food'},
+  {emoji:'🍊',name:'Orange',type:'vitamin',e:8,g:2,p:38,cat:'protect-food'},
+  {emoji:'🥕',name:'Carrot',type:'vitamin',e:5,g:3,p:32,cat:'protect-food'},
+  {emoji:'🍫',name:'Chocolate',type:'junk',e:15,g:0,p:0,cat:'junk-food',junk:true},
+  {emoji:'🍟',name:'Chips',type:'junk',e:20,g:0,p:0,cat:'junk-food',junk:true},
+];
+const CHALLENGES=[
+  {title:'Build a healthy lunch!',target:{e:40,g:40,p:40},desc:'Fill all three meters to at least 40%!'},
+  {title:'No junk food allowed!',target:{e:50,g:50,p:50},noJunk:true,desc:'Balance all meters above 50% — no junk!'},
+  {title:'The all-rice plate challenge',prefill:['🍚','🍚','🍚'],target:{e:30,g:30,p:30},desc:'Start with only rice. What\'s missing? Add what\'s needed!'},
+];
+let plate=[],energy=0,growth=0,protection=0,challenge=0,score=0;
+
+function setup(){
+  const c=CHALLENGES[challenge];
+  plate=[];energy=0;growth=0;protection=0;
+  clearPlateVisual();updateMeters();
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('balMsg').textContent=c.desc;
+  document.getElementById('balMsg').style.color='var(--dim)';
+  document.getElementById('prog').textContent=`Challenge ${challenge+1} of ${CHALLENGES.length}`;
+  buildBank(c);
+  // Prefill if needed
+  if(c.prefill){c.prefill.forEach(e=>{const f=FOODS.find(f=>f.emoji===e);if(f)addFood(f);});}
+}
+
+function buildBank(c){
+  const bank=document.getElementById('foodBank');bank.innerHTML='';
+  FOODS.filter(f=>!c.noJunk||!f.junk).forEach(f=>{
+    const el=document.createElement('div');el.className=`food-item ${f.cat}`;
+    el.innerHTML=`<div class="food-emoji">${f.emoji}</div><div class="food-name">${f.name}</div><div class="food-type">${f.type}</div>`;
+    el.onclick=()=>addFood(f);
+    bank.appendChild(el);
+  });
+}
+
+function addFood(f){
+  if(plate.length>=8)return;
+  plate.push(f);
+  energy=Math.min(100,energy+f.e);growth=Math.min(100,growth+f.g);protection=Math.min(100,protection+f.p);
+  updateMeters();
+  const span=document.createElement('span');span.className='plate-food';span.textContent=f.emoji;
+  document.getElementById('plate').appendChild(span);
+  if(f.junk){
+    document.getElementById('balMsg').textContent=`${f.emoji} ${f.name} gives energy but has no vitamins or protein. Too much junk = poor health!`;
+    document.getElementById('balMsg').style.color='var(--coral)';
+  } else {
+    document.getElementById('balMsg').textContent=`${f.emoji} added! ${f.type==='energy'?'⚡ Gives energy!':f.type==='protein'?'💪 Builds muscle!':'🛡️ Fights sickness!'}`;
+    document.getElementById('balMsg').style.color='var(--teal)';
+  }
+}
+
+function clearPlate(){plate=[];energy=0;growth=0;protection=0;clearPlateVisual();updateMeters();document.getElementById('balMsg').textContent='Plate cleared! Start fresh.';document.getElementById('balMsg').style.color='var(--dim)';}
+function clearPlateVisual(){document.getElementById('plate').innerHTML='';}
+
+function updateMeters(){
+  const c=CHALLENGES[challenge];
+  ['energy','growth','protection'].forEach((k,i)=>{
+    const val=[energy,growth,protection][i];
+    const bar=document.getElementById(`bar-${'eg p'[i*2]}`);
+    const valEl=document.getElementById(`val-${'eg p'[i*2]}`);
+    bar.style.height=val+'%';
+    valEl.textContent=val+'%';
+    const meter=document.querySelectorAll('.meter')[i];
+    const target=[c.target.e,c.target.g,c.target.p][i]||30;
+    if(val>=target)meter.classList.add('balanced');else meter.classList.remove('balanced');
+  });
+}
+
+function checkBalance(){
+  const c=CHALLENGES[challenge];
+  const ok=energy>=c.target.e&&growth>=c.target.g&&protection>=c.target.p;
+  const hasJunk=plate.some(f=>f.junk);
+  if(c.noJunk&&hasJunk){document.getElementById('balMsg').textContent='Junk food sneaked in! Remove it and try again.';document.getElementById('balMsg').style.color='var(--coral)';return;}
+  if(ok){
+    score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+    showOverlay('Perfectly balanced! ⚡','Your body gets energy from carbs, strength from protein and protection from vitamins. All three together = a healthy body!');
+    confetti();setTimeout(hideOverlay,2800);
+    document.getElementById('nextBtn').style.display='block';
+  } else {
+    const missing=[];if(energy<c.target.e)missing.push('⚡ more carbs');if(growth<c.target.g)missing.push('💪 more protein');if(protection<c.target.p)missing.push('🛡️ more vitamins');
+    document.getElementById('balMsg').textContent=`Not balanced yet — add ${missing.join(' and ')}!`;
+    document.getElementById('balMsg').style.color='var(--coral)';
+  }
+}
+
+function nextChallenge(){
+  challenge++;document.getElementById('nextBtn').style.display='none';
+  if(challenge>=CHALLENGES.length){endGame();return;}
+  setup();
+}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOverlay(`Score: ${score}/${CHALLENGES.length}!`,'Nutrition champion! You know exactly what your body needs to thrive.');
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;challenge=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Next Challenge →';document.getElementById('nextBtn').onclick=nextChallenge;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='Balanced!';hideOverlay();setup();};
+}
+function showOverlay(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOverlay(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#FFD166','#FF6B6B','#06D6A0','#C77DFF','#FF9F1C'];for(let i=0;i<28;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+
+// Fix meter bar IDs
+document.getElementById('bar-e');// energy
+// Rebuild with correct IDs
+document.querySelector('.meter.energy .meter-bar').id='bar-e';
+document.querySelector('.meter.growth .meter-bar').id='bar-g';
+document.querySelector('.meter.protection .meter-bar').id='bar-p';
+document.querySelector('.meter.energy .meter-val').id='val-e';
+document.querySelector('.meter.growth .meter-val').id='val-g';
+document.querySelector('.meter.protection .meter-val').id='val-p';
+
+function updateMeters(){
+  const c=CHALLENGES[challenge];
+  const vals={e:energy,g:growth,p:protection};
+  const targets={e:c.target.e,g:c.target.g,p:c.target.p};
+  ['e','g','p'].forEach(k=>{
+    document.getElementById(`bar-${k}`).style.height=vals[k]+'%';
+    document.getElementById(`val-${k}`).textContent=vals[k]+'%';
+  });
+  const meters=document.querySelectorAll('.meter');
+  [[energy,'energy',c.target.e],[growth,'growth',c.target.g],[protection,'protection',c.target.p]].forEach(([v,cls,t],i)=>{
+    if(v>=t)meters[i].classList.add('balanced');else meters[i].classList.remove('balanced');
+  });
+}
+setup();
+</script>
+</body>
+</html>

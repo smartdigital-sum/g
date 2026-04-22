@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Colours World 🌈 | GyanPlay Nursery</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#FFB800;--green:#00C853;--pink:#FF4081;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:linear-gradient(135deg,#fa709a 0%,#fee140 50%,#30cfd0 100%);
+    color:#fff;
+    font-family:'Nunito',sans-serif;
+    min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;
+    padding:20px;
+    animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes rainbow{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.2)}100%{transform:scale(1)}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+  .top-bar{width:100%;max-width:680px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+  .back-btn{background:rgba(255,255,255,.25);border:none;color:#fff;padding:8px 20px;border-radius:999px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:background .2s;}
+  .back-btn:hover{background:rgba(255,255,255,.4);}
+  .subject-badge{background:rgba(255,255,255,.25);padding:6px 18px;border-radius:999px;font-size:.85rem;font-weight:800;font-family:'Baloo 2',sans-serif;}
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{background:rgba(255,255,255,.2);border:none;color:#fff;padding:6px 14px;border-radius:999px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;}
+  .lang-btn.active{background:#fff;color:#fa709a;}
+  .lang-btn:hover:not(.active){background:rgba(255,255,255,.35);}
+
+  .game-card{
+    background:rgba(255,255,255,.2);
+    backdrop-filter:blur(14px);
+    border:2px solid rgba(255,255,255,.35);
+    border-radius:28px;
+    padding:28px 22px;
+    width:100%;max-width:680px;
+    box-shadow:0 12px 50px rgba(0,0,0,.2);
+  }
+  .game-title{font-family:'Baloo 2',sans-serif;font-size:2.1rem;font-weight:800;text-align:center;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.15);margin-bottom:8px;}
+
+  .score-bar{display:flex;justify-content:space-between;margin:8px 0;font-size:1rem;font-weight:700;}
+  .progress-wrap{background:rgba(255,255,255,.22);border-radius:999px;height:10px;margin-bottom:20px;}
+  .progress-fill{height:10px;border-radius:999px;background:linear-gradient(90deg,#fff,#FFB800);transition:width .4s ease;}
+
+  .instruction{font-size:1.1rem;font-weight:700;text-align:center;margin-bottom:16px;background:rgba(255,255,255,.18);border-radius:14px;padding:10px 16px;}
+
+  .colour-showcase{
+    display:flex;flex-direction:column;align-items:center;
+    gap:12px;
+    margin-bottom:20px;
+    padding:20px;
+    background:rgba(255,255,255,.15);
+    border-radius:22px;
+    border:3px solid rgba(255,255,255,.3);
+  }
+  .colour-circle{
+    width:110px;height:110px;
+    border-radius:50%;
+    border:5px solid rgba(255,255,255,.6);
+    box-shadow:0 6px 24px rgba(0,0,0,.2);
+    animation:pulse 2s ease infinite;
+    flex-shrink:0;
+  }
+  .colour-name{
+    font-family:'Baloo 2',sans-serif;
+    font-size:2rem;font-weight:800;
+    color:#fff;
+    text-shadow:0 2px 8px rgba(0,0,0,.2);
+    letter-spacing:1px;
+  }
+
+  .choices{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .emoji-btn{
+    background:rgba(255,255,255,.22);
+    border:3px solid rgba(255,255,255,.4);
+    border-radius:20px;
+    padding:16px 8px 12px;
+    cursor:pointer;
+    transition:all .2s;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    min-height:110px;
+  }
+  .emoji-btn:hover:not(:disabled){background:rgba(255,255,255,.38);border-color:#fff;transform:translateY(-4px) scale(1.05);}
+  .emoji-btn.correct{background:rgba(0,200,83,.45);border-color:#00C853;animation:pop .35s ease;}
+  .emoji-btn.wrong{background:rgba(255,64,129,.35);border-color:#FF4081;}
+  .emoji-btn:disabled{cursor:not-allowed;}
+  .choice-emoji{font-size:2.8rem;line-height:1;}
+  .choice-label{font-size:.85rem;font-weight:800;opacity:.95;}
+
+  .feedback{margin-top:16px;padding:14px;border-radius:14px;font-weight:800;font-size:1.1rem;text-align:center;animation:fadeIn .3s ease;display:none;}
+  .feedback.show{display:block;}
+  .feedback.correct-fb{background:rgba(0,200,83,.35);border:2px solid #00C853;}
+  .feedback.wrong-fb{background:rgba(255,64,129,.3);border:2px solid #FF4081;}
+
+  .next-btn{margin-top:16px;width:100%;background:#FFB800;border:none;color:#000;padding:16px;border-radius:16px;font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;cursor:pointer;transition:all .2s;display:none;}
+  .next-btn.show{display:block;}
+  .next-btn:hover{background:#e6a600;transform:translateY(-2px) scale(1.02);}
+
+  .result-screen{display:none;text-align:center;padding:10px 0;}
+  .result-screen.show{display:block;}
+  .result-emoji{font-size:5rem;margin:10px 0;animation:rainbow 3s linear infinite;}
+  .stars{font-size:3.5rem;margin:10px 0;}
+  .result-score{font-family:'Baloo 2',sans-serif;font-size:2.8rem;font-weight:800;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.15);}
+  .result-msg{font-size:1.2rem;font-weight:700;margin:10px 0 24px;opacity:.95;}
+  .restart-btn{background:#fff;color:#fa709a;border:none;padding:16px 40px;border-radius:999px;font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;cursor:pointer;transition:all .2s;}
+  .restart-btn:hover{background:#fff0f5;transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="subject-badge">🌈 Colours – Nursery</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="game-card">
+  <div class="game-title">Colours World 🌈</div>
+
+  <div id="quizArea">
+    <div class="score-bar">
+      <span id="qCounter">1 / 8</span>
+      <span id="scoreDisplay">⭐ 0</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="instruction" id="instruction">Which is this colour?</div>
+    <div class="colour-showcase">
+      <div class="colour-circle" id="colourCircle"></div>
+      <div class="colour-name" id="colourName">RED</div>
+    </div>
+    <div class="choices" id="choicesContainer"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next ➡️</button>
+  </div>
+
+  <div class="result-screen" id="resultScreen">
+    <div class="result-emoji" id="resultEmoji">🌈</div>
+    <div class="stars" id="starsDisplay">⭐⭐⭐</div>
+    <div class="result-score" id="resultScore">8 / 8</div>
+    <div class="result-msg" id="resultMsg">Amazing! You know all colours!</div>
+    <button class="restart-btn" onclick="restartGame()">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    colourEn:"RED", colourHi:"लाल", colourAs:"ৰঙা",
+    hex:"#FF4040",
+    ans:{emoji:"🍎",label:"Apple"},
+    opts:[{emoji:"🍎",label:"Apple"},{emoji:"🍌",label:"Banana"},{emoji:"🌿",label:"Leaf"}]
+  },
+  {
+    colourEn:"YELLOW", colourHi:"पीला", colourAs:"হালধীয়া",
+    hex:"#FFE100",
+    ans:{emoji:"🍌",label:"Banana"},
+    opts:[{emoji:"🍌",label:"Banana"},{emoji:"🍎",label:"Apple"},{emoji:"🍇",label:"Grapes"}]
+  },
+  {
+    colourEn:"GREEN", colourHi:"हरा", colourAs:"সেউজীয়া",
+    hex:"#22C55E",
+    ans:{emoji:"🌿",label:"Leaf"},
+    opts:[{emoji:"🌿",label:"Leaf"},{emoji:"☁️",label:"Cloud"},{emoji:"🔥",label:"Fire"}]
+  },
+  {
+    colourEn:"BLUE", colourHi:"नीला", colourAs:"নীলা",
+    hex:"#3B82F6",
+    ans:{emoji:"🌊",label:"Ocean"},
+    opts:[{emoji:"🌊",label:"Ocean"},{emoji:"🌸",label:"Flower"},{emoji:"🌙",label:"Moon"}]
+  },
+  {
+    colourEn:"ORANGE", colourHi:"नारंगी", colourAs:"কমলা",
+    hex:"#FF8C00",
+    ans:{emoji:"🍊",label:"Orange"},
+    opts:[{emoji:"🍊",label:"Orange"},{emoji:"🍓",label:"Strawberry"},{emoji:"🍆",label:"Eggplant"}]
+  },
+  {
+    colourEn:"PURPLE", colourHi:"बैंगनी", colourAs:"বেঙুনীয়া",
+    hex:"#9333EA",
+    ans:{emoji:"🍇",label:"Grapes"},
+    opts:[{emoji:"🍇",label:"Grapes"},{emoji:"🍋",label:"Lemon"},{emoji:"🥕",label:"Carrot"}]
+  },
+  {
+    colourEn:"WHITE", colourHi:"सफेद", colourAs:"বগা",
+    hex:"#E8E8E8",
+    ans:{emoji:"☁️",label:"Cloud"},
+    opts:[{emoji:"☁️",label:"Cloud"},{emoji:"🌊",label:"Sea"},{emoji:"🌲",label:"Forest"}]
+  },
+  {
+    colourEn:"PINK", colourHi:"गुलाबी", colourAs:"গোলাপী",
+    hex:"#FF69B4",
+    ans:{emoji:"🌸",label:"Flower"},
+    opts:[{emoji:"🌸",label:"Flower"},{emoji:"🍎",label:"Apple"},{emoji:"🌿",label:"Leaf"}]
+  },
+];
+
+const labels = {
+  en:{inst:"Which is this colour?",score:"⭐",next:"Next ➡️",correct:"✅ Yes! That's right! 🌟",wrong:"❌ Oops! Try next!",play:"🔄 Play Again",result:["Amazing! You know all colours! 🌈","Great job! 🎉","Good try! Keep learning! 🌸","Keep practicing! 💪"],cn:"en"},
+  hi:{inst:"यह रंग कौन सा है?",score:"⭐",next:"आगे ➡️",correct:"✅ हाँ! बिल्कुल सही! 🌟",wrong:"❌ अरे! अगला देखो!",play:"🔄 फिर खेलें",result:["शानदार! सभी रंग पता हैं! 🌈","बहुत अच्छा! 🎉","अच्छा प्रयास! 🌸","अभ्यास करो! 💪"],cn:"hi"},
+  as:{inst:"এইটো কোন ৰং?",score:"⭐",next:"পৰৱৰ্তী ➡️",correct:"✅ হয়! একদম শুদ্ধ! 🌟",wrong:"❌ আৰে! পৰৱৰ্তীটো চোৱা!",play:"🔄 পুনৰ খেলক",result:["অসাধাৰণ! সকলো ৰং জানা! 🌈","বহুত ভাল! 🎉","ভাল চেষ্টা! 🌸","অভ্যাস কৰক! 💪"],cn:"as"},
+};
+
+let current=0,score=0,lang='en',answered=false;
+
+function setLang(l){lang=l;document.querySelectorAll('.lang-btn').forEach((b,i)=>{b.classList.toggle('active',['en','hi','as'][i]===l);});renderQuestion();}
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+
+function renderQuestion(){
+  if(current>=questions.length){showResult();return;}
+  answered=false;
+  const q=questions[current],L=labels[lang];
+  document.getElementById('qCounter').textContent=`${current+1} / 8`;
+  document.getElementById('scoreDisplay').textContent=`${L.score} ${score}`;
+  document.getElementById('instruction').textContent=L.inst;
+  document.getElementById('progressFill').style.width=`${(current/questions.length)*100}%`;
+
+  // Colour display
+  document.getElementById('colourCircle').style.backgroundColor=q.hex;
+  const cname=lang==='hi'?q.colourHi:lang==='as'?q.colourAs:q.colourEn;
+  document.getElementById('colourName').textContent=cname;
+
+  // Choices
+  const shuffled=shuffle(q.opts);
+  const cont=document.getElementById('choicesContainer');
+  cont.innerHTML='';
+  shuffled.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='emoji-btn';
+    btn.dataset.label=opt.label;
+    btn.innerHTML=`<span class="choice-emoji">${opt.emoji}</span><span class="choice-label">${opt.label}</span>`;
+    btn.onclick=()=>handleAnswer(opt.label,q.ans.label,btn);
+    cont.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').className='next-btn';
+}
+
+function handleAnswer(chosen,correct,btn){
+  if(answered)return;answered=true;
+  const L=labels[lang];
+  document.querySelectorAll('.emoji-btn').forEach(b=>{
+    b.disabled=true;
+    if(b.dataset.label===correct)b.classList.add('correct');
+  });
+  const fb=document.getElementById('feedback');
+  if(chosen===correct){score++;btn.classList.add('correct');fb.textContent=L.correct;fb.className='feedback show correct-fb';}
+  else{btn.classList.add('wrong');fb.textContent=L.wrong;fb.className='feedback show wrong-fb';}
+  document.getElementById('scoreDisplay').textContent=`${L.score} ${score}`;
+  const nb=document.getElementById('nextBtn');nb.className='next-btn show';nb.textContent=current===questions.length-1?'See Results 🏆':L.next;
+}
+
+function nextQuestion(){current++;renderQuestion();}
+
+function showResult(){
+  document.getElementById('quizArea').style.display='none';
+  const rs=document.getElementById('resultScreen');rs.className='result-screen show';
+  const pct=(score/questions.length)*100,L=labels[lang];
+  const idx=pct>=90?0:pct>=70?1:pct>=40?2:3;
+  document.getElementById('resultEmoji').textContent='🌈';
+  document.getElementById('starsDisplay').textContent=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'💪';
+  document.getElementById('resultScore').textContent=`${score} / ${questions.length}`;
+  document.getElementById('resultMsg').textContent=L.result[idx];
+  document.querySelector('.restart-btn').textContent=L.play;
+}
+
+function restartGame(){
+  current=0;score=0;answered=false;
+  document.getElementById('quizArea').style.display='block';
+  document.getElementById('resultScreen').className='result-screen';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>

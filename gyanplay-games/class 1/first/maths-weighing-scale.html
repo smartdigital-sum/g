@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Market Scale ⚖️ — Class 1 Maths</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--brown:#5D4037;--orange:#E65100;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#FFF3E0,#FFE0B2,#FFCC80,#FFF3E0);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* MARKET BG */
+.market-banner{position:fixed;top:0;left:0;right:0;height:8px;background:repeating-linear-gradient(90deg,#E53935 0 20px,#FFD700 20px 40px,#43A047 40px 60px,#1E88E5 60px 80px);z-index:1;}
+.stall{position:fixed;bottom:0;left:0;right:0;height:70px;background:linear-gradient(180deg,#8D6E63,#5D4037);z-index:1;}
+.stall::before{content:'';position:absolute;top:0;left:0;right:0;height:12px;background:repeating-linear-gradient(90deg,#E53935 0 30px,#FFD700 30px 60px);opacity:.8;}
+
+.header{position:relative;z-index:20;text-align:center;padding:18px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#BF360C;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#BF360C;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#BF360C;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* QUESTION */
+.q-card{position:relative;z-index:20;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.95);border-radius:24px;padding:10px 22px;margin:6px 16px;text-align:center;max-width:640px;width:calc(100% - 32px);}
+.q-main{font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4.5vw,1.7rem);color:#BF360C;}
+.q-sub{font-size:clamp(.78rem,2.8vw,.98rem);color:#E65100;font-weight:700;margin-top:3px;}
+
+/* SCALE SCENE */
+.scale-scene{position:relative;z-index:15;width:100%;max-width:600px;padding:0 14px;flex:1;display:flex;flex-direction:column;align-items:center;}
+
+/* THE SCALE SVG */
+.scale-wrap{position:relative;width:clamp(260px,70vw,400px);height:clamp(180px,45vw,260px);flex-shrink:0;}
+.scale-svg{width:100%;height:100%;}
+
+/* PANS */
+.pan-left, .pan-right{
+  position:absolute;bottom:0;
+  width:clamp(90px,22vw,130px);height:clamp(50px,13vw,70px);
+  display:flex;align-items:center;justify-content:center;
+  flex-wrap:wrap;gap:4px;
+  transition:transform .6s cubic-bezier(.34,1.56,.64,1);
+  z-index:5;
+}
+.pan-left{left:2%;}
+.pan-right{right:2%;}
+.pan-left.down{transform:translateY(clamp(20px,5vw,35px));}
+.pan-right.down{transform:translateY(clamp(20px,5vw,35px));}
+.pan-left.up{transform:translateY(clamp(-20px,-5vw,-35px));}
+.pan-right.up{transform:translateY(clamp(-20px,-5vw,-35px));}
+
+.pan-item{font-size:clamp(1.8rem,6vw,2.8rem);animation:itemBob 2s ease-in-out infinite;}
+@keyframes itemBob{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+
+/* ANSWER BUTTONS */
+.ans-row{position:relative;z-index:20;display:flex;gap:clamp(10px,3vw,20px);flex-wrap:wrap;justify-content:center;margin-top:8px;}
+.ans-btn{
+  padding:clamp(12px,3vw,18px) clamp(18px,5vw,32px);
+  border-radius:20px;border:none;cursor:pointer;
+  font-family:'Fredoka One',cursive;font-size:clamp(1rem,4vw,1.5rem);color:#fff;
+  box-shadow:0 5px 0 rgba(0,0,0,.2),0 8px 18px rgba(0,0,0,.12);
+  transition:all .15s;position:relative;top:0;
+  display:flex;align-items:center;gap:8px;
+}
+.ans-btn:hover{top:-3px;box-shadow:0 8px 0 rgba(0,0,0,.18);}
+.ans-btn:active{top:4px;box-shadow:0 1px 0 rgba(0,0,0,.2);}
+.ans-btn.heavy{background:linear-gradient(135deg,#5D4037,#8D6E63);}
+.ans-btn.light{background:linear-gradient(135deg,#0288D1,#4FC3F7);}
+.ans-btn.equal{background:linear-gradient(135deg,#388E3C,#81C784);}
+.ans-btn.correct-flash{animation:abPop .45s ease;}
+@keyframes abPop{0%{transform:scale(1);}50%{transform:scale(1.2);}100%{transform:scale(1);}}
+.ans-btn.wrong-flash{animation:abShake .35s ease;opacity:.35;pointer-events:none;}
+@keyframes abShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+
+/* LEVEL 3 — number weights */
+.weight-row{position:relative;z-index:20;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 14px;}
+.weight-btn{
+  width:clamp(56px,13vw,74px);height:clamp(62px,14vw,78px);
+  border-radius:16px;border:none;cursor:pointer;
+  font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.6rem);color:#fff;
+  box-shadow:0 4px 0 rgba(0,0,0,.25);transition:all .15s;position:relative;top:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+}
+.weight-btn:hover{top:-3px;}
+.weight-btn:active{top:3px;}
+.weight-btn .wb-num{font-size:clamp(1.1rem,4vw,1.5rem);}
+.weight-btn .wb-unit{font-size:clamp(.55rem,2vw,.72rem);opacity:.85;}
+.weight-btn.used{opacity:.25;pointer-events:none;}
+
+/* FACT BOX */
+.fact-box{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(191,54,12,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:400px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.88rem,3vw,1.1rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:1.8;}
+.ov-btn{background:linear-gradient(135deg,#E65100,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(230,81,0,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="market-banner"></div>
+<div class="stall"></div>
+
+<div class="header">
+  <div class="title">⚖️ Market Weighing Scale</div>
+  <div class="lvchip" id="lvChip">Level 1 · Heavy or Light?</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">⚖️ Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="q-card">
+  <div class="q-main" id="qMain">Which side is <span id="qTarget" style="color:#E53935;">HEAVIER</span>?</div>
+  <div class="q-sub" id="qSub">Watch the scale tip — the heavy side goes down!</div>
+</div>
+
+<div class="scale-scene">
+  <!-- Scale SVG (drawn) -->
+  <div class="scale-wrap">
+    <svg class="scale-svg" viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- Base -->
+      <rect x="160" y="230" width="80" height="20" rx="6" fill="#8D6E63"/>
+      <rect x="170" y="200" width="60" height="32" rx="4" fill="#A1887F"/>
+      <!-- Pole -->
+      <rect x="196" y="80" width="8" height="125" rx="4" fill="#795548"/>
+      <!-- Pivot -->
+      <circle cx="200" cy="80" r="10" fill="#5D4037"/>
+      <!-- Beam -->
+      <rect id="beam" x="60" y="74" width="280" height="12" rx="6" fill="#6D4C41" style="transform-origin:200px 80px;transition:transform .6s cubic-bezier(.34,1.56,.64,1);"/>
+      <!-- Pan L string -->
+      <line id="strL1" x1="100" y1="86" x2="80" y2="140" stroke="#795548" stroke-width="3"/>
+      <line id="strL2" x1="100" y1="86" x2="120" y2="140" stroke="#795548" stroke-width="3"/>
+      <!-- Pan L -->
+      <ellipse id="panL" cx="100" cy="148" rx="48" ry="14" fill="#BCAAA4" stroke="#795548" stroke-width="2" style="transition:cy .6s cubic-bezier(.34,1.56,.64,1);"/>
+      <!-- Pan R string -->
+      <line id="strR1" x1="300" y1="86" x2="280" y2="140" stroke="#795548" stroke-width="3"/>
+      <line id="strR2" x1="300" y1="86" x2="320" y2="140" stroke="#795548" stroke-width="3"/>
+      <!-- Pan R -->
+      <ellipse id="panR" cx="300" cy="148" rx="48" ry="14" fill="#BCAAA4" stroke="#795548" stroke-width="2" style="transition:cy .6s cubic-bezier(.34,1.56,.64,1);"/>
+    </svg>
+    <div class="pan-left" id="panLeft"></div>
+    <div class="pan-right" id="panRight"></div>
+  </div>
+
+  <div id="answerArea"></div>
+  <div id="weightArea"></div>
+</div>
+
+<script>
+const COMPARE_ITEMS=[
+  {left:{emoji:'🐘',name:'Elephant',w:10},right:{emoji:'🐭',name:'Mouse',w:1}},
+  {left:{emoji:'🍎',name:'Apple',w:3},    right:{emoji:'🌸',name:'Flower',w:1}},
+  {left:{emoji:'📚',name:'Books',w:6},     right:{emoji:'🪶',name:'Feather',w:1}},
+  {left:{emoji:'🏠',name:'House',w:9},    right:{emoji:'🎈',name:'Balloon',w:1}},
+  {left:{emoji:'🚗',name:'Car',w:8},       right:{emoji:'🍃',name:'Leaf',w:1}},
+  {left:{emoji:'🍉',name:'Watermelon',w:7},right:{emoji:'🍇',name:'Grapes',w:3}},
+  {left:{emoji:'🐮',name:'Cow',w:9},       right:{emoji:'🐝',name:'Bee',w:1}},
+  {left:{emoji:'🪨',name:'Rock',w:8},      right:{emoji:'🍃',name:'Leaf',w:1}},
+  // Equal
+  {left:{emoji:'⚖️',name:'2kg',w:2},       right:{emoji:'⚖️',name:'2kg',w:2},equal:true},
+  {left:{emoji:'🍎',name:'Apple',w:3},      right:{emoji:'🍊',name:'Orange',w:3},equal:true},
+];
+
+const TOTAL=10;
+let score=0,round=0,answered=false,tiltState='none';
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playTilt(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(300,c.currentTime);o.frequency.exponentialRampToValueAtTime(200,c.currentTime+.4);g.gain.setValueAtTime(.15,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);}
+function playCorrect(){const c=ac();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*100));}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;window.speechSynthesis.speak(u);}
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#E65100','#FFD700','#43A047','#1E88E5','#8D6E63'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showFact(txt){document.querySelector('.fact-box')?.remove();const el=document.createElement('div');el.className='fact-box';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+
+function animateScale(leftW,rightW){
+  const beam=document.getElementById('beam');
+  const panL=document.getElementById('panL');
+  const panR=document.getElementById('panR');
+  let angle=0;
+  if(leftW>rightW){angle=12;panL.setAttribute('cy','168');panR.setAttribute('cy','128');tiltState='left';}
+  else if(rightW>leftW){angle=-12;panL.setAttribute('cy','128');panR.setAttribute('cy','168');tiltState='right';}
+  else{angle=0;panL.setAttribute('cy','148');panR.setAttribute('cy','148');tiltState='equal';}
+  beam.style.transform=`rotate(${angle}deg)`;
+  playTilt();
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  makeDots();
+  document.getElementById('roundVal').textContent=round+1;
+  const lvIdx=round<4?0:round<7?1:2;
+  const lvNames=['Heavy or Light?','Compare Weights','Find the Balance'];
+  document.getElementById('lvChip').textContent=`Level ${lvIdx+1} · ${lvNames[lvIdx]}`;
+
+  const scenario=COMPARE_ITEMS[round%COMPARE_ITEMS.length];
+  const {left,right,equal}=scenario;
+
+  // set pans
+  const panLeft=document.getElementById('panLeft');
+  const panRight=document.getElementById('panRight');
+  panLeft.innerHTML=`<span class="pan-item">${left.emoji}</span>`;
+  panRight.innerHTML=`<span class="pan-item">${right.emoji}</span>`;
+
+  // animate after delay
+  document.getElementById('beam').style.transform='rotate(0deg)';
+  document.getElementById('panL').setAttribute('cy','148');
+  document.getElementById('panR').setAttribute('cy','148');
+  setTimeout(()=>animateScale(left.w,right.w),600);
+
+  const ansArea=document.getElementById('answerArea');
+  const weightArea=document.getElementById('weightArea');
+  weightArea.innerHTML='';
+
+  if(lvIdx<2){
+    // Level 1 & 2: tap which side is heavier/lighter
+    const askHeavier=Math.random()>.3;
+    const qTarget=askHeavier?'HEAVIER':'LIGHTER';
+    document.getElementById('qTarget').textContent=qTarget;
+    document.getElementById('qMain').innerHTML=`Which side is <span id="qTarget" style="color:#E53935;">${qTarget}</span>?`;
+    document.getElementById('qSub').textContent=equal?'Are they EQUAL?':'Watch the scale — the heavy side goes DOWN!';
+
+    ansArea.innerHTML=`
+      <div class="ans-row">
+        <button class="ans-btn heavy" onclick="checkSide('left','${askHeavier?'left':'right'}','${left.name}','${right.name}',${equal||false})">
+          ← ${left.emoji} ${left.name}
+        </button>
+        ${equal?`<button class="ans-btn equal" onclick="checkSide('equal','equal','${left.name}','${right.name}',true)">⚖️ Equal</button>`:''}
+        <button class="ans-btn light" onclick="checkSide('right','${askHeavier?'left':'right'}','${left.name}','${right.name}',${equal||false})">
+          ${right.emoji} ${right.name} →
+        </button>
+      </div>`;
+    const correctSide=equal?'equal':left.w>right.w?'left':'right';
+    const correctIsLeft=askHeavier?(correctSide==='left'):(correctSide==='right');
+    speak(`The ${left.name} and the ${right.name} are on the scale. Which is ${qTarget.toLowerCase()}?`);
+  }
+}
+
+window.checkSide=function(chosen,correctSide,leftName,rightName,isEqual){
+  if(answered)return;
+  // re-compute from current tiltState
+  const actualCorrect=isEqual?'equal':tiltState;
+  const actualAnswer=isEqual&&chosen==='equal'?'equal':chosen;
+  // For heavier: correct is 'left' if tilt is left, etc.
+  // qTarget is stored in DOM
+  const qTarget=document.getElementById('qTarget').textContent;
+  let isCorrect=false;
+  if(isEqual&&chosen==='equal'){isCorrect=tiltState==='equal';}
+  else if(qTarget==='HEAVIER'){isCorrect=(chosen==='left'&&tiltState==='left')||(chosen==='right'&&tiltState==='right');}
+  else{isCorrect=(chosen==='left'&&tiltState==='right')||(chosen==='right'&&tiltState==='left');}
+
+  // if equal items
+  if(tiltState==='equal'&&qTarget==='HEAVIER'){isCorrect=false;}
+  if(tiltState==='equal'&&qTarget==='LIGHTER'){isCorrect=false;}
+  if(tiltState==='equal'&&chosen==='equal'){isCorrect=true;}
+
+  const btns=document.querySelectorAll('.ans-btn');
+  const clickedBtn=[...btns].find(b=>b.textContent.includes(chosen==='left'?leftName:chosen==='right'?rightName:'Equal'));
+
+  if(isCorrect){
+    answered=true;
+    if(clickedBtn)clickedBtn.classList.add('correct-flash');
+    playCorrect();spawnConf();
+    const heavySide=tiltState==='left'?leftName:tiltState==='right'?rightName:'Both are equal!';
+    showFact(`⚖️ ${leftName} vs ${rightName} — ${tiltState==='equal'?'They are EQUAL weight!':heavySide+' is HEAVIER because it goes DOWN on the scale!'}`);
+    score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(`Correct! ${tiltState==='equal'?'They are equal!':heavySide+' is heavier! The heavy side always goes down on a scale!'}`);
+    round++;makeDots();setTimeout(newRound,2800);
+  } else {
+    if(clickedBtn)clickedBtn.classList.add('wrong-flash');
+    playWrong();
+    speak(`Look at the scale! The heavy side goes DOWN! Which side is lower?`);
+  }
+};
+
+function showCelebration(){
+  playChime();spawnConf();speak('Wonderful! You understand weight and measurement!');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">⚖️</div>
+    <div class="ov-title">Measurement Expert!</div>
+    <div class="ov-sub">The HEAVY side goes DOWN on a scale!<br/>The LIGHT side goes UP!<br/>When both sides are the same — it BALANCES!<br/><br/>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</div>
+    <button class="ov-btn" onclick="restart()">Play Again ⚖️</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Welcome to the market! Use the scale to find what is heavier!');setTimeout(newRound,1500);},400);});
+</script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Climate &amp; Natural Vegetation — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--pink);color:#fff;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--sky);color:#000;border-color:var(--sky);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--pink);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--pink),var(--gold));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.55;margin-bottom:18px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;}
+.choice-btn:hover:not(:disabled){background:rgba(255,64,129,.1);border-color:var(--pink);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--pink);color:#fff;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--pink);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Social Studies · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en',event)">EN</button>
+      <button class="lang-btn" onclick="setLang('hi',event)">हि</button>
+      <button class="lang-btn" onclick="setLang('as',event)">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">🌧️ Climate &amp; Natural Vegetation</span>
+    <span data-lang="hi" style="display:none">🌧️ जलवायु और प्राकृतिक वनस्पति</span>
+    <span data-lang="as" style="display:none">🌧️ জলবায়ু আৰু প্ৰাকৃতিক উদ্ভিদ</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — Geography Ch 4 &amp; 5 · Climate + Natural Vegetation &amp; Wildlife</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — भूगोल अध्याय 4 &amp; 5 · जलवायु + प्राकृतिक वनस्पति &amp; वन्यजीव</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — ভূগোল অধ্যায় 4 &amp; 5 · জলবায়ু + প্ৰাকৃতিক উদ্ভিদ &amp; বন্যপ্ৰাণী</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    en: "🌧️ Which is the MOST important factor that controls India's climate by influencing temperature distribution?",
+    hi: "🌧️ कौन सा सबसे महत्वपूर्ण कारक है जो तापमान वितरण को प्रभावित करके भारत की जलवायु को नियंत्रित करता है?",
+    as: "🌧️ কোনটো সৰ্বাধিক গুৰুত্বপূৰ্ণ কাৰক যি উষ্ণতা বিতৰণক প্ৰভাৱিত কৰি ভাৰতৰ জলবায়ু নিয়ন্ত্ৰণ কৰে?",
+    choices: {
+      en: ["Latitude — India lies between 8°N and 37°N, affecting solar radiation received","Longitude — determines time zones","Ocean currents from the Pacific","Soil type in different regions"],
+      hi: ["अक्षांश — भारत 8°N और 37°N के बीच है, सौर विकिरण प्राप्ति प्रभावित होती है","देशांतर — समय क्षेत्र निर्धारित करता है","प्रशांत महासागर की समुद्री धाराएं","विभिन्न क्षेत्रों में मिट्टी का प्रकार"],
+      as: ["অক্ষাংশ — ভাৰত 8°N আৰু 37°N-ৰ মাজত আছে, সৌৰ বিকিৰণ প্ৰাপ্তি প্ৰভাৱিত হয়","দ্ৰাঘিমাংশ — সময় অঞ্চল নিৰ্ধাৰণ কৰে","প্ৰশান্ত মহাসাগৰৰ সমুদ্ৰ স্ৰোত","বিভিন্ন অঞ্চলত মাটিৰ প্ৰকাৰ"]
+    },
+    correct: 0,
+    explain: {
+      en: "Latitude is the most important factor. India spans 8°N to 37°N. The Tropic of Cancer (23.5°N) divides India. Southern India is tropical; northern India is sub-tropical. Other factors: altitude, distance from sea, pressure belts, winds.",
+      hi: "अक्षांश सबसे महत्वपूर्ण कारक है। भारत 8°N से 37°N तक फैला है। कर्क रेखा (23.5°N) भारत को विभाजित करती है। दक्षिण भारत उष्णकटिबंधीय है; उत्तर भारत उपोष्णकटिबंधीय। अन्य कारक: ऊंचाई, समुद्र से दूरी, दाब पेटियां, पवनें।",
+      as: "অক্ষাংশ সৰ্বাধিক গুৰুত্বপূৰ্ণ কাৰক। ভাৰত 8°N ৰ পৰা 37°N লৈ বিস্তৃত। কৰ্কটক্ৰান্তি (23.5°N) ভাৰতক বিভাজন কৰে। দক্ষিণ ভাৰত ক্রান্তীয়; উত্তৰ ভাৰত উপক্রান্তীয়। অন্যান্য কাৰক: উচ্চতা, সমুদ্ৰৰ পৰা দূৰত্ব, চাপ পেটি, বায়ু।"
+    }
+  },
+  {
+    en: "🌊 The Indian Monsoon is caused primarily by:",
+    hi: "🌊 भारतीय मानसून मुख्यतः किसके कारण होता है?",
+    as: "🌊 ভাৰতীয় মানসুন মূলত: কিহৰ কাৰণে হয়?",
+    choices: {
+      en: ["Differential heating of land and sea — land heats faster, creating low pressure that draws moist ocean winds","Earth's rotation only","Himalayan snowmelt","Ocean temperature alone"],
+      hi: ["भूमि और समुद्र के विभेदक तापन — भूमि तेज़ी से गर्म होती है, कम दाब बनता है जो नम समुद्री पवनें खींचता है","केवल पृथ्वी का घुमाव","हिमालय की बर्फ पिघलना","केवल समुद्र का तापमान"],
+      as: ["ভূমি আৰু সমুদ্ৰৰ বিভিন্ন উত্তাপন — ভূমি দ্ৰুতগতিত গৰম হয়, নিম্নচাপ সৃষ্টি হয় যি আৰ্দ্ৰ সমুদ্ৰীয় বায়ু আকৰ্ষণ কৰে","কেৱল পৃথিৱীৰ ঘূৰণ","হিমালয়ৰ তুষাৰ গলন","কেৱল সমুদ্ৰৰ উষ্ণতা"]
+    },
+    correct: 0,
+    explain: {
+      en: "Monsoon mechanism: In summer, the Indian subcontinent heats rapidly → low pressure forms over land → moist Southwest Trade Winds from the Indian Ocean rush in → brings heavy rainfall (June–September). Jet streams also play a role.",
+      hi: "मानसून तंत्र: गर्मियों में भारतीय उपमहाद्वीप तेज़ी से गर्म होता है → भूमि पर कम दाब → हिंद महासागर से नम दक्षिण-पश्चिम व्यापारिक पवनें अंदर आती हैं → भारी वर्षा (जून-सितंबर)। जेट धाराएं भी भूमिका निभाती हैं।",
+      as: "মানসুন প্ৰক্ৰিয়া: গ্ৰীষ্মকালত ভাৰতীয় উপমহাদেশ দ্ৰুতগতিত গৰম হয় → ভূমিত নিম্নচাপ → ভাৰত মহাসাগৰৰ পৰা আৰ্দ্ৰ দক্ষিণ-পশ্চিম বাণিজ্যিক বায়ু প্ৰবেশ কৰে → ভাৰী বৰষুণ (জুন-ছেপ্টেম্বৰ)। জেট ষ্ট্ৰিমেও ভূমিকা পালন কৰে।"
+    }
+  },
+  {
+    en: "🌿 How many seasons does India officially experience? Name them in order:",
+    hi: "🌿 भारत में आधिकारिक रूप से कितने मौसम होते हैं? उन्हें क्रम में नाम दें:",
+    as: "🌿 ভাৰতত আনুষ্ঠানিকভাৱে কেইটা ঋতু থাকে? সেইবোৰৰ নাম ক্ৰমানুসাৰে দিয়া:",
+    choices: {
+      en: ["4 seasons — Winter (Dec–Feb), Summer (Mar–May), Southwest Monsoon (Jun–Sep), Retreating Monsoon (Oct–Nov)","2 seasons — Summer and Winter","6 seasons — like Hindu calendar","3 seasons — Summer, Monsoon, Winter"],
+      hi: ["4 मौसम — शीत (दिसंबर–फरवरी), ग्रीष्म (मार्च–मई), दक्षिण-पश्चिम मानसून (जून–सितंबर), लौटता मानसून (अक्टूबर–नवंबर)","2 मौसम — गर्मी और सर्दी","6 मौसम — हिंदू पंचांग की तरह","3 मौसम — गर्मी, मानसून, सर्दी"],
+      as: ["4 ঋতু — শীতকাল (ডিচেম্বৰ–ফেব্ৰুৱাৰী), গ্ৰীষ্মকাল (মাৰ্চ–মে'), দক্ষিণ-পশ্চিম মানসুন (জুন–ছেপ্টেম্বৰ), প্ৰত্যাৱৰ্তী মানসুন (অক্টোবৰ–নৱেম্বৰ)","2 ঋতু — গ্ৰীষ্ম আৰু শীত","6 ঋতু — হিন্দু পঞ্জিকাৰ দৰে","3 ঋতু — গ্ৰীষ্ম, মানসুন, শীত"]
+    },
+    correct: 0,
+    explain: {
+      en: "India has 4 meteorological seasons: (1) Winter/Cold Weather Season (Dec–Feb), (2) Pre-Monsoon/Summer (Mar–May), (3) Southwest Monsoon/Rainy Season (Jun–Sep), (4) Retreating/Post-Monsoon (Oct–Nov).",
+      hi: "भारत में 4 मौसम विज्ञान मौसम हैं: (1) शीत ऋतु (दिसंबर–फरवरी), (2) पूर्व-मानसून/ग्रीष्म (मार्च–मई), (3) दक्षिण-पश्चिम मानसून/वर्षा ऋतु (जून–सितंबर), (4) लौटता/उत्तर-मानसून (अक्टूबर–नवंबर)।",
+      as: "ভাৰতত 4 টা আবহাওৱা ঋতু আছে: (1) শীতকাল/ঠাণ্ডা ঋতু (ডিচেম্বৰ–ফেব্ৰুৱাৰী), (2) প্ৰাক-মানসুন/গ্ৰীষ্মকাল (মাৰ্চ–মে'), (3) দক্ষিণ-পশ্চিম মানসুন/বৰষুণৰ ঋতু (জুন–ছেপ্টেম্বৰ), (4) প্ৰত্যাৱৰ্তী/উত্তৰ-মানসুন (অক্টোবৰ–নৱেম্বৰ)।"
+    }
+  },
+  {
+    en: "🌨️ Western Disturbances affect the climate of India during winter. They bring rainfall to:",
+    hi: "🌨️ पश्चिमी विक्षोभ सर्दियों में भारत की जलवायु को प्रभावित करते हैं। वे वर्षा लाते हैं:",
+    as: "🌨️ পশ্চিমী ঝঞ্ঝাই শীতকালত ভাৰতৰ জলবায়ুক প্ৰভাৱিত কৰে। এইবোৰে বৰষুণ আনে:",
+    choices: {
+      en: ["Northwestern India (Punjab, Haryana, Himachal Pradesh) and northwestern Himalayas","Northeastern India (Assam, Meghalaya)","Southern India (Tamil Nadu, Kerala)","Eastern India (West Bengal, Odisha)"],
+      hi: ["उत्तर-पश्चिमी भारत (पंजाब, हरियाणा, हिमाचल प्रदेश) और उत्तर-पश्चिमी हिमालय","उत्तर-पूर्वी भारत (असम, मेघालय)","दक्षिण भारत (तमिलनाडु, केरल)","पूर्वी भारत (पश्चिम बंगाल, ओडिशा)"],
+      as: ["উত্তৰ-পশ্চিম ভাৰত (পাঞ্জাৱ, হাৰিয়ানা, হিমাচল প্ৰদেশ) আৰু উত্তৰ-পশ্চিম হিমালয়","উত্তৰ-পূব ভাৰত (অসম, মেঘালয়)","দক্ষিণ ভাৰত (তামিলনাডু, কেৰালা)","পূব ভাৰত (পশ্চিমবংগ, ওডিশা)"]
+    },
+    correct: 0,
+    explain: {
+      en: "Western Disturbances are extra-tropical cyclones from the Mediterranean Sea that enter India from the west during winter. They bring rainfall and snowfall to Punjab, Haryana, J&K and the Himalayan foothills — vital for Rabi crops (wheat).",
+      hi: "पश्चिमी विक्षोभ भूमध्य सागर से आने वाले उष्णेतर चक्रवात हैं जो सर्दियों में पश्चिम से भारत में प्रवेश करते हैं। वे पंजाब, हरियाणा, J&K और हिमालयी क्षेत्र में वर्षा और बर्फबारी लाते हैं — रबी फसल (गेहूं) के लिए महत्वपूर्ण।",
+      as: "পশ্চিমী ঝঞ্ঝা হৈছে ভূমধ্যসাগৰৰ পৰা অহা উপ-ক্রান্তীয় ঘূৰ্ণিবতাহ যি শীতকালত পশ্চিমৰ পৰা ভাৰতত প্ৰবেশ কৰে। এইবোৰে পাঞ্জাৱ, হাৰিয়ানা, J&K আৰু হিমালয় পাদভূমিত বৰষুণ আৰু তুষাৰপাত আনে — ৰবি শস্য (ঘেঁহু)-ৰ বাবে গুৰুত্বপূৰ্ণ।"
+    }
+  },
+  {
+    en: "🌿 Tropical Evergreen Forests in India are found in areas with annual rainfall more than 200 cm. These forests are found in:",
+    hi: "🌿 भारत में उष्णकटिबंधीय सदाबहार वन उन क्षेत्रों में पाए जाते हैं जहां वार्षिक वर्षा 200 cm से अधिक है। ये वन पाए जाते हैं:",
+    as: "🌿 ভাৰতত ক্রান্তীয় চিৰসেউজ বনানী 200 cm-তকৈ বেছি বাৰ্ষিক বৰষুণৰ অঞ্চলত পোৱা যায়। এই বনানী পোৱা যায়:",
+    choices: {
+      en: ["Western Ghats, Lakshadweep, Andaman & Nicobar Islands, and parts of Northeast India","Thar Desert and Rajasthan","Punjab and Haryana plains","Himalayas above 3000 m"],
+      hi: ["पश्चिमी घाट, लक्षद्वीप, अंडमान व निकोबार द्वीप और उत्तर-पूर्व भारत के कुछ हिस्से","थार मरुस्थल और राजस्थान","पंजाब और हरियाणा के मैदान","3000 m से ऊपर हिमालय"],
+      as: ["পশ্চিমঘাট, লাক্ষাদ্বীপ, আন্দামান ও নিকোবৰ দ্বীপপুঞ্জ, আৰু উত্তৰ-পূব ভাৰতৰ কিছু অংশ","থাৰ মৰুভূমি আৰু ৰাজস্থান","পাঞ্জাৱ আৰু হাৰিয়ানাৰ সমভূমি","3000 m-ৰ ওপৰত হিমালয়"]
+    },
+    correct: 0,
+    explain: {
+      en: "Tropical Evergreen Forests: rainfall > 200 cm, no dry season, trees don't shed leaves together. Found in: Western Ghats (Kerala, Karnataka), Andaman & Nicobar Islands, Northeast India (Assam). Rich biodiversity — mahogany, ebony, rosewood.",
+      hi: "उष्णकटिबंधीय सदाबहार वन: वर्षा > 200 cm, कोई शुष्क मौसम नहीं, पेड़ एक साथ पत्ते नहीं गिराते। पश्चिमी घाट (केरल, कर्नाटक), अंडमान व निकोबार, पूर्वोत्तर भारत में। महोगनी, आबनूस, शीशम।",
+      as: "ক্রান্তীয় চিৰসেউজ বনানী: বৰষুণ > 200 cm, শুষ্ক ঋতু নাই, গছবোৰে একেলগে পাত নেঝৰায়। পশ্চিমঘাট (কেৰালা, কৰ্ণাটক), আন্দামান ও নিকোবৰ, উত্তৰ-পূব ভাৰতত। মেহগনি, আবনোছ, শিহু।"
+    }
+  },
+  {
+    en: "🌴 Tropical Deciduous Forests (Monsoon Forests) are the most widespread forests in India. Trees shed their leaves in the:",
+    hi: "🌴 उष्णकटिबंधीय पर्णपाती वन (मानसून वन) भारत में सबसे व्यापक वन हैं। पेड़ अपने पत्ते गिराते हैं:",
+    as: "🌴 ক্রান্তীয় পৰ্ণমোচী বনানী (মানসুন বনানী) ভাৰতত সৰ্বাধিক বিস্তৃত বনানী। গছবোৰে পাত ঝৰায়:",
+    choices: {
+      en: ["Dry season (6–8 weeks) to conserve water — found in areas with 70–200 cm rainfall","During monsoon season when water is abundant","Only in winter when temperature is low","They never shed leaves"],
+      hi: ["शुष्क मौसम में (6–8 सप्ताह) पानी बचाने के लिए — 70–200 cm वर्षा वाले क्षेत्रों में","मानसून मौसम में जब पानी प्रचुर हो","केवल सर्दियों में जब तापमान कम हो","ये कभी पत्ते नहीं गिराते"],
+      as: ["শুষ্ক ঋতুত (6–8 সপ্তাহ) পানী সংৰক্ষণৰ বাবে — 70–200 cm বৰষুণৰ অঞ্চলত","মানসুন ঋতুত যেতিয়া পানী প্ৰচুৰ","কেৱল শীতকালত যেতিয়া উষ্ণতা কম","এইবোৰে কেতিয়াও পাত নেঝৰায়"]
+    },
+    correct: 0,
+    explain: {
+      en: "Tropical Deciduous Forests shed leaves during dry season to conserve water. Found in 70–200 cm rainfall belt. Most widespread forest in India — teak, sal, shisham, sandalwood, khair. Found in MP, UP, Bihar, Odisha.",
+      hi: "उष्णकटिबंधीय पर्णपाती वन शुष्क मौसम में पानी बचाने के लिए पत्ते गिराते हैं। 70–200 cm वर्षा पेटी में। सागौन, साल, शीशम, चंदन, खैर। MP, UP, Bihar, Odisha में।",
+      as: "ক্রান্তীয় পৰ্ণমোচী বনানীয়ে শুষ্ক ঋতুত পানী সংৰক্ষণৰ বাবে পাত ঝৰায়। 70–200 cm বৰষুণৰ পেটিত। ভাৰতত সৰ্বাধিক বিস্তৃত — সেগুন, শাল, শিহু, চন্দন, খয়ৰ। MP, UP, Bihar, Odisha-ত।"
+    }
+  },
+  {
+    en: "🌵 Thorny Bushes and Scrubs are the natural vegetation of areas with rainfall less than 70 cm. Which region of India is covered by this vegetation?",
+    hi: "🌵 कांटेदार झाड़ियां और झाड़ 70 cm से कम वर्षा वाले क्षेत्रों की प्राकृतिक वनस्पति हैं। भारत का कौन सा क्षेत्र इस वनस्पति से ढका है?",
+    as: "🌵 কাঁইটীয়া জোপোহা আৰু ডালিম গছ 70 cm-তকৈ কম বৰষুণৰ অঞ্চলৰ প্ৰাকৃতিক উদ্ভিদ। ভাৰতৰ কোনটো অঞ্চল এই উদ্ভিদেৰে আৱৰিত?",
+    choices: {
+      en: ["Rajasthan, parts of Gujarat, Punjab, Haryana, and the leeward side of the Western Ghats","Western Ghats in Kerala and Karnataka","Sundarbans in West Bengal","Himalayan slopes above 3500 m"],
+      hi: ["राजस्थान, गुजरात के कुछ हिस्से, पंजाब, हरियाणा और पश्चिमी घाट की वृष्टि-छाया","केरल और कर्नाटक में पश्चिमी घाट","पश्चिम बंगाल में सुंदरवन","3500 m से ऊपर हिमालयी ढलानें"],
+      as: ["ৰাজস্থান, গুজৰাটৰ কিছু অংশ, পাঞ্জাৱ, হাৰিয়ানা, আৰু পশ্চিমঘাটৰ বৃষ্টিচ্ছায়া পাৰ্শ্ব","কেৰালা আৰু কৰ্ণাটকত পশ্চিমঘাট","পশ্চিমবংগত সুন্দৰবন","3500 m-ৰ ওপৰত হিমালয়ৰ ঢাল"]
+    },
+    correct: 0,
+    explain: {
+      en: "Thorny bushes/Thorn forests: rainfall < 70 cm, leaves have thorns/spines (water conservation), long roots. Found in: Rajasthan (Thar Desert), Gujarat, Haryana, Punjab, and rain-shadow areas. Plants: cactus, keekar (acacia), date palm.",
+      hi: "कांटेदार वन: वर्षा < 70 cm, पत्तियों में कांटे (पानी बचाव), लंबी जड़ें। राजस्थान (थार), गुजरात, हरियाणा, पंजाब, और वृष्टि-छाया क्षेत्रों में। पौधे: कैक्टस, कीकर (बबूल), खजूर।",
+      as: "কাঁইটীয়া বনানী: বৰষুণ < 70 cm, পাতত কাঁইট (পানী সংৰক্ষণ), দীঘল শিপা। ৰাজস্থান (থাৰ), গুজৰাট, হাৰিয়ানা, পাঞ্জাৱ, আৰু বৃষ্টিচ্ছায়া অঞ্চলত। উদ্ভিদ: ক্যাকটাছ, ধুনা (বাবলা), খেজুৰ।"
+    }
+  },
+  {
+    en: "🌊 The Sundarbans mangrove forests are located at the delta of which river? They are known for:",
+    hi: "🌊 सुंदरवन मैंग्रोव वन किस नदी के डेल्टा में स्थित हैं? वे जाने जाते हैं:",
+    as: "🌊 সুন্দৰবন মেংগ্ৰোভ বনানী কোনটো নদীৰ বদ্বীপত অৱস্থিত? এইবোৰ জনাজাত:",
+    choices: {
+      en: ["Ganga-Brahmaputra delta — world's largest mangrove forest, home to Royal Bengal Tiger","Mahanadi delta in Odisha","Krishna-Godavari delta in Andhra Pradesh","Cauvery delta in Tamil Nadu"],
+      hi: ["गंगा-ब्रह्मपुत्र डेल्टा — विश्व का सबसे बड़ा मैंग्रोव वन, रॉयल बंगाल टाइगर का घर","ओडिशा में महानदी डेल्टा","आंध्र प्रदेश में कृष्णा-गोदावरी डेल्टा","तमिलनाडु में कावेरी डेल्टा"],
+      as: ["গঙ্গা-ব্ৰহ্মপুত্ৰ বদ্বীপ — বিশ্বৰ বৃহত্তম মেংগ্ৰোভ বনানী, ৰয়েল বেংগল টাইগাৰৰ আৱাস","ওডিশাত মহানদী বদ্বীপ","অন্ধ্ৰ প্ৰদেশত কৃষ্ণা-গোদাৱৰী বদ্বীপ","তামিলনাডুত কাৱেৰী বদ্বীপ"]
+    },
+    correct: 0,
+    explain: {
+      en: "Sundarbans = Ganga-Brahmaputra-Meghna delta (West Bengal + Bangladesh). World's largest mangrove forest. UNESCO World Heritage Site. Famous for Royal Bengal Tiger. Mangroves have breathing roots (pneumatophores) to cope with tidal submergence.",
+      hi: "सुंदरवन = गंगा-ब्रह्मपुत्र-मेघना डेल्टा (पश्चिम बंगाल + बांग्लादेश)। विश्व का सबसे बड़ा मैंग्रोव वन। यूनेस्को विश्व धरोहर। रॉयल बंगाल टाइगर के लिए प्रसिद्ध। मैंग्रोव में श्वसन जड़ें (न्यूमेटोफोर) होती हैं।",
+      as: "সুন্দৰবন = গঙ্গা-ব্ৰহ্মপুত্ৰ-মেঘনা বদ্বীপ (পশ্চিমবংগ + বাংলাদেশ)। বিশ্বৰ বৃহত্তম মেংগ্ৰোভ বনানী। UNESCO বিশ্ব ঐতিহ্য স্থান। ৰয়েল বেংগল টাইগাৰৰ বাবে বিখ্যাত। মেংগ্ৰোভত শ্বাস-প্ৰশ্বাসৰ শিপা (নিউমেটোফোৰ) থাকে।"
+    }
+  },
+  {
+    en: "🐯 Project Tiger was launched in India in 1973. Its main objective was:",
+    hi: "🐯 भारत में प्रोजेक्ट टाइगर 1973 में शुरू किया गया था। इसका मुख्य उद्देश्य था:",
+    as: "🐯 ভাৰতত প্ৰজেক্ট টাইগাৰ 1973 চনত আৰম্ভ হৈছিল। ইয়াৰ মূল উদ্দেশ্য আছিল:",
+    choices: {
+      en: ["Conservation of tigers and their habitats to prevent extinction — tiger population had fallen critically","Culling of tigers to protect villagers","Training tigers for circus performance","Export of tigers to foreign zoos"],
+      hi: ["विलुप्ति रोकने के लिए बाघों और उनके आवासों का संरक्षण — बाघों की संख्या गंभीर रूप से गिर गई थी","ग्रामीणों की सुरक्षा के लिए बाघों की हत्या","सर्कस प्रदर्शन के लिए बाघ प्रशिक्षण","विदेशी चिड़ियाघरों में बाघ निर्यात"],
+      as: ["বিলুপ্তি ৰোধ কৰিবলৈ বাঘ আৰু তাৰ আৱাসস্থান সংৰক্ষণ — বাঘৰ সংখ্যা গুৰুতৰভাৱে হ্ৰাস পাইছিল","গ্ৰামবাসীৰ সুৰক্ষাৰ বাবে বাঘ হত্যা","চাৰ্কাছ প্ৰদৰ্শনৰ বাবে বাঘ প্ৰশিক্ষণ","বিদেশী চিৰিয়াখানালৈ বাঘ ৰপ্তানি"]
+    },
+    correct: 0,
+    explain: {
+      en: "Project Tiger (1973): launched by PM Indira Gandhi. By 1973, tiger population had fallen to ~1,827 from ~40,000 at the turn of 20th century. India now has ~3,167 tigers (2022 census) — the highest in the world. Jim Corbett was the first tiger reserve.",
+      hi: "प्रोजेक्ट टाइगर (1973): PM इंदिरा गांधी द्वारा शुरू। 1973 तक बाघ ~1,827 रह गए थे। भारत में अब ~3,167 बाघ (2022 जनगणना) — विश्व में सर्वाधिक। जिम कॉर्बेट पहला बाघ अभयारण्य था।",
+      as: "প্ৰজেক্ট টাইগাৰ (1973): PM ইন্দিৰা গান্ধীৰ দ্বাৰা আৰম্ভ। 1973-ত বাঘৰ সংখ্যা ~1,827 লৈ নামিছিল। ভাৰতত এতিয়া ~3,167 বাঘ (2022 জনগণনা) — বিশ্বত সৰ্বাধিক। জিম কৰ্বেট প্ৰথম বাঘ সংৰক্ষণ অঞ্চল আছিল।"
+    }
+  },
+  {
+    en: "🌿 Montane forests in India show vertical zonation based on altitude. Which type of vegetation is found at the HIGHEST altitudes (above 3600 m)?",
+    hi: "🌿 भारत में पर्वतीय वन ऊंचाई के आधार पर ऊर्ध्वाधर क्षेत्रीकरण दिखाते हैं। सबसे ऊंची ऊंचाई (3600 m से ऊपर) पर कौन सी वनस्पति पाई जाती है?",
+    as: "🌿 ভাৰতত পৰ্বতীয় বনানীয়ে উচ্চতাৰ ভিত্তিত উলম্ব অঞ্চল দেখুৱায়। সৰ্বোচ্চ উচ্চতাত (3600 m-ৰ ওপৰত) কোনটো উদ্ভিদ পোৱা যায়?",
+    choices: {
+      en: ["Alpine meadows and tundra vegetation (mosses, lichens) — used by nomadic tribes for summer grazing","Tropical evergreen forests","Temperate broadleaf forests (oak, chestnut)","Tropical deciduous forests"],
+      hi: ["अल्पाइन घास के मैदान और टुंड्रा वनस्पति (काई, लाइकेन) — घुमंतू जनजातियों द्वारा ग्रीष्म चराई के लिए","उष्णकटिबंधीय सदाबहार वन","समशीतोष्ण चौड़े पत्ते वाले वन (ओक, चेस्टनट)","उष्णकटिबंधीय पर्णपाती वन"],
+      as: ["আলপাইন তৃণভূমি আৰু টুণ্ড্ৰা উদ্ভিদ (শেলাই, লাইকেন) — যাযাবৰ উপজাতিয়ে গ্ৰীষ্মকালীন চৰণীয়া পথাৰত ব্যৱহাৰ কৰে","ক্রান্তীয় চিৰসেউজ বনানী","নাতিশীতোষ্ণ চহল পাত বনানী (বলিয়া, চেষ্টনাট)","ক্রান্তীয় পৰ্ণমোচী বনানী"]
+    },
+    correct: 0,
+    explain: {
+      en: "Montane vegetation zones (Himalayas): <1000 m = tropical forests; 1000–2000 m = subtropical pine; 1500–3000 m = temperate deciduous (oak, rhododendron); 3000–3600 m = alpine coniferous (silver fir, spruce, cedar); >3600 m = alpine meadows → tundra (mosses, lichens).",
+      hi: "पर्वतीय वनस्पति क्षेत्र (हिमालय): <1000 m = उष्णकटिबंधीय; 1000–2000 m = उपोष्णकटिबंधीय; 1500–3000 m = समशीतोष्ण; 3000–3600 m = अल्पाइन शंकुधारी; >3600 m = अल्पाइन घास + टुंड्रा।",
+      as: "পৰ্বতীয় উদ্ভিদ অঞ্চল (হিমালয়): <1000 m = ক্রান্তীয়; 1000–2000 m = উপক্রান্তীয়; 1500–3000 m = নাতিশীতোষ্ণ; 3000–3600 m = আলপাইন শঙ্কুধাৰী; >3600 m = আলপাইন তৃণভূমি → টুণ্ড্ৰা।"
+    }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l, e) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = 'Question ' + (current + 1) + ' of 10';
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+  const choicesArr = q.choices[lang] || q.choices.en;
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars, msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'Geography Champion! You know India like a forest ranger! 🌿', hi: 'भूगोल चैम्पियन! आप भारत को एक वन रक्षक की तरह जानते हैं! 🌿', as: 'ভূগোলৰ চ্যাম্পিয়ন! তুমি ভাৰতক এজন বন ৰক্ষকৰ দৰে জানা! 🌿' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Great knowledge! Explore climate chapters more! 🌧️', hi: 'शानदार ज्ञान! जलवायु अध्यायों को और अधिक देखें! 🌧️', as: 'চমৎকাৰ জ্ঞান! জলবায়ু অধ্যায়বোৰ আৰু অধিক অন্বেষণ কৰক! 🌧️' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Good effort! Revise monsoon mechanism and forest types.', hi: 'अच्छी कोशिश! मानसून तंत्र और वन प्रकार दोबारा पढ़ें।', as: 'ভাল প্ৰচেষ্টা! মানসুন প্ৰক্ৰিয়া আৰু বনানীৰ প্ৰকাৰ পুনৰায় পঢ়ক।' }; }
+  else { stars = '☆☆☆'; msg = { en: 'Keep going! India\'s geography is rich and fascinating! 🐯', hi: 'जारी रखो! भारत का भूगोल समृद्ध और रोचक है! 🐯', as: 'এগাই যাওক! ভাৰতৰ ভূগোল সমৃদ্ধ আৰু আকৰ্ষণীয়! 🐯' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

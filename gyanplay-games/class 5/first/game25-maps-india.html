@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maps & India – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,#0F0C29,#302B63);font-family:'Baloo 2',cursive;display:flex;flex-direction:column;align-items:center;padding:16px;color:#e0e0e0}
+  header{width:100%;max-width:740px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .logo{font-size:1.5rem;font-weight:800;color:#FFD54F}
+  .badge{background:#E91E63;color:#fff;font-size:0.78rem;font-weight:800;border-radius:10px;padding:3px 10px;margin-left:8px;vertical-align:middle;letter-spacing:1px}
+  .lang-btns{display:flex;gap:6px}
+  .lang-btn{border:none;background:#311B92;color:#CE93D8;font-family:'Baloo 2',cursive;font-size:0.9rem;font-weight:700;border-radius:20px;padding:5px 14px;cursor:pointer;transition:transform .15s}
+  .lang-btn.active,.lang-btn:hover{background:#7B1FA2;color:#fff;transform:scale(1.08)}
+  .progress-bar-wrap{width:100%;max-width:740px;background:#1a0a2e;border-radius:20px;height:12px;margin-bottom:10px;overflow:hidden}
+  .progress-bar{height:100%;background:linear-gradient(90deg,#CE93D8,#7B1FA2);border-radius:20px;transition:width .5s}
+  .round-label{font-size:1rem;font-weight:700;color:#CE93D8;margin-bottom:4px;text-align:center}
+  .score-label{font-size:0.95rem;font-weight:700;color:#FFD54F;text-align:center;margin-bottom:8px}
+  .card{background:#1a1230;border:1px solid #4A148C;border-radius:24px;box-shadow:0 8px 40px rgba(0,0,0,0.5);padding:22px 20px 18px;max-width:740px;width:100%;text-align:center}
+  .topic-chip{display:inline-block;background:#311B92;color:#CE93D8;font-size:0.8rem;font-weight:700;border-radius:20px;padding:3px 14px;margin-bottom:10px}
+  .q-emoji{font-size:3rem;margin:6px 0;display:block;animation:pop .4s cubic-bezier(.36,2,.6,.9)}
+  @keyframes pop{from{transform:scale(0.5)}to{transform:scale(1)}}
+  .question-text{font-size:1.55rem;font-weight:800;color:#e0e0e0;margin:8px 0 14px;line-height:1.5}
+  .ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+  .ans-btn{border:2px solid #4A148C;border-radius:14px;padding:12px 10px;font-family:'Baloo 2',cursive;font-size:1.15rem;font-weight:800;cursor:pointer;min-height:60px;background:#1a0a2e;color:#e0e0e0;box-shadow:0 4px 12px rgba(0,0,0,0.25);transition:transform .15s;line-height:1.3;text-align:center}
+  .ans-btn:hover{transform:scale(1.05);background:#311B92}
+  .ans-btn.correct{background:#1B5E20;border-color:#4CAF50;color:#A5D6A7;animation:glow .4s}
+  .ans-btn.wrong{background:#7f1d1d;border-color:#EF5350;color:#FFCDD2;animation:shake .3s}
+  @keyframes glow{0%{box-shadow:0 0 0 #4CAF50}100%{box-shadow:0 0 18px #4CAF50,0 0 4px #fff}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .explanation{margin-top:14px;background:#0d0820;border:1px solid #4A148C;border-radius:14px;padding:12px 16px;font-size:1.1rem;color:#CE93D8;font-weight:700;display:none;text-align:left;line-height:1.7}
+  .explanation b{color:#FFD54F}
+  .next-btn{margin-top:12px;border:none;background:linear-gradient(135deg,#CE93D8,#7B1FA2);color:#fff;font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;border-radius:18px;padding:10px 36px;cursor:pointer;display:none;transition:transform .15s}
+  .next-btn:hover{transform:scale(1.06)}
+  .end-screen{display:none;text-align:center}
+  .end-title{font-size:2.8rem;font-weight:900;color:#FFD54F;margin-bottom:8px}
+  .stars-row{font-size:2.5rem;margin:10px 0}
+  .end-msg{font-size:1.5rem;color:#CE93D8;margin-bottom:10px}
+  .play-again{border:none;background:linear-gradient(135deg,#CE93D8,#7B1FA2);color:#fff;font-family:'Baloo 2',cursive;font-size:1.6rem;font-weight:800;border-radius:22px;padding:12px 44px;cursor:pointer;margin-top:10px;transition:transform .15s}
+  .play-again:hover{transform:scale(1.07)}
+  canvas#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🗺️ GyanPlay <span class="badge">SOCIAL</span></div>
+  <div class="lang-btns">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</header>
+<div class="progress-bar-wrap"><div class="progress-bar" id="pbar"></div></div>
+<div class="round-label" id="roundLabel">Round 1 of 10</div>
+<div class="score-label" id="scoreLabel">Score: 0 / 10</div>
+
+<div class="card" id="gameCard">
+  <div class="topic-chip" id="topicChip">Map Reading</div>
+  <span class="q-emoji" id="qEmoji">🗺️</span>
+  <div class="question-text" id="qText"></div>
+  <div class="ans-grid" id="ansGrid"></div>
+  <div class="explanation" id="explanation"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextRound()">Next ➡️</button>
+</div>
+
+<div class="end-screen card" id="endScreen">
+  <div class="end-title">🇮🇳 India Expert!</div>
+  <div class="stars-row" id="endStars"></div>
+  <div class="end-msg" id="endMsg"></div>
+  <button class="play-again" onclick="restartGame()">🔄 Play Again</button>
+</div>
+<canvas id="confetti"></canvas>
+
+<script>
+const L={
+  en:{next:"Next ➡️",rl:(r,t)=>`Round ${r} of ${t}`,sc:(s,t)=>`Score: ${s} / ${t}`,
+      stars:["Keep Studying! 💪","Good Try! 😊","Great Work! 🌟","India Expert! 🏆"]},
+  hi:{next:"अगला ➡️",rl:(r,t)=>`चक्र ${r} / ${t}`,sc:(s,t)=>`स्कोर: ${s} / ${t}`,
+      stars:["अध्ययन करो! 💪","अच्छा प्रयास! 😊","बहुत अच्छे! 🌟","भारत विशेषज्ञ! 🏆"]},
+  as:{next:"পৰৱৰ্তী ➡️",rl:(r,t)=>`ৰাউণ্ড ${r} / ${t}`,sc:(s,t)=>`স্কোৰ: ${s} / ${t}`,
+      stars:["পঢ়া-শুনা কৰক! 💪","ভাল চেষ্টা! 😊","চমৎকাৰ! 🌟","ভাৰত বিশেষজ্ঞ! 🏆"]}
+};
+
+const rounds=[
+  {emoji:"🧭",topic:{en:"Compass Directions",hi:"दिशाएँ",as:"দিশ"},
+   q:{en:"A compass has 4 main directions. Which is OPPOSITE to North?",hi:"उत्तर के विपरीत दिशा कौन सी है?",as:"উত্তৰৰ বিপৰীত দিশ কোনটো?"},
+   correct:{en:"South",hi:"दक्षिण",as:"দক্ষিণ"},
+   opts:{en:["South","East","West","Northeast"],hi:["दक्षिण","पूर्व","पश्चिम","उत्तर-पूर्व"],as:["দক্ষিণ","পূব","পশ্চিম","উত্তৰ-পূব"]},
+   explain:{en:"<b>North ↑ South ↓ East → West ←</b> are the 4 cardinal directions. North and South are opposites, as are East and West.",
+            hi:"उत्तर (N) और दक्षिण (S) विपरीत हैं। पूर्व (E) और पश्चिम (W) भी विपरीत हैं।",
+            as:"উত্তৰ আৰু দক্ষিণ বিপৰীত, পূব আৰু পশ্চিমো বিপৰীত।"}},
+  {emoji:"🇮🇳",topic:{en:"India's Neighbours",hi:"भारत के पड़ोसी देश",as:"ভাৰতৰ চুবুৰীয়া দেশ"},
+   q:{en:"Which country shares India's western border?",hi:"भारत की पश्चिमी सीमा किस देश के साथ है?",as:"ভাৰতৰ পশ্চিম সীমা কোন দেশৰ সৈতে?"},
+   correct:{en:"Pakistan",hi:"पाकिस्तान",as:"পাকিস্তান"},
+   opts:{en:["Pakistan","Nepal","China","Bangladesh"],hi:["पाकिस्तान","नेपाल","चीन","बांग्लादेश"],as:["পাকিস্তান","নেপাল","চীন","বাংলাদেশ"]},
+   explain:{en:"India's neighbours: <b>Pakistan & Afghanistan (W), China & Nepal & Bhutan (N), Bangladesh & Myanmar (E), Sri Lanka & Maldives (S)</b>.",
+            hi:"पश्चिम में पाकिस्तान और अफ़ग़ानिस्तान, उत्तर में चीन/नेपाल/भूटान, पूर्व में बांग्लादेश/म्यांमार, दक्षिण में श्रीलंका/मालदीव।",
+            as:"পশ্চিমত পাকিস্তান, উত্তৰত চীন/নেপাল/ভুটান, পূবত বাংলাদেশ/ম্যানমাৰ, দক্ষিণত শ্ৰীলংকা/মালদ্বীপ।"}},
+  {emoji:"🏔️",topic:{en:"India's Boundaries",hi:"भारत की सीमाएँ",as:"ভাৰতৰ সীমা"},
+   q:{en:"Which mountain range forms India's northern boundary?",hi:"भारत की उत्तरी सीमा पर कौन सा पर्वत है?",as:"ভাৰতৰ উত্তৰ সীমাত কোন পৰ্বতমালা?"},
+   correct:{en:"Himalayas",hi:"हिमालय",as:"হিমালয়"},
+   opts:{en:["Himalayas","Western Ghats","Aravalli","Vindhya"],hi:["हिमालय","पश्चिमी घाट","अरावली","विंध्याचल"],as:["হিমালয়","পশ্চিমঘাট","আৰাৱলি","বিন্ধ্য"]},
+   explain:{en:"The <b>Himalayas</b> stretch across India's north, separating it from China, Nepal and Bhutan. Mt. Everest is in the Himalayas!",
+            hi:"हिमालय उत्तर में भारत को चीन, नेपाल और भूटान से अलग करता है। माउंट एवरेस्ट हिमालय में ही है!",
+            as:"হিমালয় পৰ্বতমালা উত্তৰত ভাৰতক চীন, নেপাল আৰু ভুটানৰ পৰা পৃথক কৰে।"}},
+  {emoji:"🌊",topic:{en:"India's Boundaries",hi:"भारत की सीमाएँ",as:"ভাৰতৰ সীমা"},
+   q:{en:"Which ocean lies to the south of India?",hi:"भारत के दक्षिण में कौन सा महासागर है?",as:"ভাৰতৰ দক্ষিণত কোন মহাসাগৰ?"},
+   correct:{en:"Indian Ocean",hi:"हिन्द महासागर",as:"ভাৰত মহাসাগৰ"},
+   opts:{en:["Indian Ocean","Pacific Ocean","Atlantic Ocean","Arctic Ocean"],hi:["हिन्द महासागर","प्रशांत महासागर","अटलांटिक महासागर","आर्कटिक महासागर"],as:["ভাৰত মহাসাগৰ","প্ৰশান্ত মহাসাগৰ","আটলান্টিক মহাসাগৰ","আৰ্কটিক মহাসাগৰ"]},
+   explain:{en:"India is surrounded by: <b>Bay of Bengal (east), Arabian Sea (west), Indian Ocean (south)</b>. Together called the Indian Subcontinent!",
+            hi:"भारत के पूर्व में बंगाल की खाड़ी, पश्चिम में अरब सागर, दक्षिण में हिन्द महासागर है।",
+            as:"ভাৰতৰ পূবত বঙ্গোপসাগৰ, পশ্চিমত আৰব সাগৰ, দক্ষিণত ভাৰত মহাসাগৰ।"}},
+  {emoji:"🇱🇰",topic:{en:"Neighbouring Capitals",hi:"पड़ोसी देशों की राजधानियाँ",as:"চুবুৰীয়া দেশৰ ৰাজধানী"},
+   q:{en:"What is the capital of Sri Lanka?",hi:"श्रीलंका की राजधानी क्या है?",as:"শ্ৰীলংকাৰ ৰাজধানী কি?"},
+   correct:{en:"Sri Jayawardenepura Kotte",hi:"श्री जयवर्धनेपुरा कोट्टे",as:"শ্ৰী জয়বৰ্ধনেপুৰা কোট্টে"},
+   opts:{en:["Sri Jayawardenepura Kotte","Colombo","Kandy","Galle"],hi:["श्री जयवर्धनेपुरा कोट्टे","कोलंबो","कैंडी","गाले"],as:["শ্ৰী জয়বৰ্ধনেপুৰা কোট্টে","কলম্বো","কেণ্ডি","গল"]},
+   explain:{en:"<b>Sri Jayawardenepura Kotte</b> is Sri Lanka's legislative capital. Colombo is the commercial capital. Sri Lanka is an island nation south of India!",
+            hi:"श्री जयवर्धनेपुरा कोट्टे श्रीलंका की आधिकारिक राजधानी है। कोलंबो व्यापारिक राजधानी है।",
+            as:"শ্ৰী জয়বৰ্ধনেপুৰা কোট্টে শ্ৰীলংকাৰ আইনসভা ৰাজধানী। কলম্বো বাণিজ্যিক ৰাজধানী।"}},
+  {emoji:"🇧🇩",topic:{en:"Neighbouring Capitals",hi:"पड़ोसी देशों की राजधानियाँ",as:"চুবুৰীয়া দেশৰ ৰাজধানী"},
+   q:{en:"What is the capital of Bangladesh?",hi:"बांग्लादेश की राजधानी क्या है?",as:"বাংলাদেশৰ ৰাজধানী কি?"},
+   correct:{en:"Dhaka",hi:"ढाका",as:"ঢাকা"},
+   opts:{en:["Dhaka","Chittagong","Khulna","Rajshahi"],hi:["ढाका","चटगाँव","खुलना","राजशाही"],as:["ঢাকা","চট্টগ্ৰাম","খুলনা","ৰাজশাহী"]},
+   explain:{en:"<b>Dhaka</b> is the capital of Bangladesh. Bangladesh shares its border with India on three sides (West Bengal, Assam, Meghalaya, Tripura, Mizoram).",
+            hi:"ढाका बांग्लादेश की राजधानी है। बांग्लादेश भारत के पूर्व में है — पश्चिम बंगाल, असम, त्रिपुरा से सटा हुआ।",
+            as:"ঢাকা বাংলাদেশৰ ৰাজধানী। বাংলাদেশ ভাৰতৰ পূব দিশত — পশ্চিমবঙ্গ, অসম, ত্ৰিপুৰাৰ সৈতে সীমা আছে।"}},
+  {emoji:"🗺️",topic:{en:"Indian States & Capitals",hi:"भारतीय राज्य व राजधानियाँ",as:"ভাৰতীয় ৰাজ্য আৰু ৰাজধানী"},
+   q:{en:"What is the capital of Maharashtra?",hi:"महाराष्ट्र की राजधानी क्या है?",as:"মহাৰাষ্ট্ৰৰ ৰাজধানী কি?"},
+   correct:{en:"Mumbai",hi:"मुंबई",as:"মুম্বাই"},
+   opts:{en:["Mumbai","Pune","Nagpur","Aurangabad"],hi:["मुंबई","पुणे","नागपुर","औरंगाबाद"],as:["মুম্বাই","পুণে","নাগপুৰ","ঔৰংগাবাদ"]},
+   explain:{en:"<b>Mumbai</b> is the capital of Maharashtra and India's financial capital. Other major state capitals: Delhi (NCT), Chennai (Tamil Nadu), Kolkata (West Bengal), Bengaluru (Karnataka).",
+            hi:"मुंबई महाराष्ट्र की राजधानी और भारत की वित्तीय राजधानी है।",
+            as:"মুম্বাই মহাৰাষ্ট্ৰৰ ৰাজধানী আৰু ভাৰতৰ আৰ্থিক ৰাজধানী।"}},
+  {emoji:"🧭",topic:{en:"Map Reading",hi:"मानचित्र पठन",as:"মানচিত্ৰ পঠন"},
+   q:{en:"On a map, which direction does the compass arrow usually point?",hi:"मानचित्र पर दिग्सूचक तीर सामान्यतः किस दिशा में होता है?",as:"মানচিত্ৰত দিকসূচক কাঁড় সাধাৰণতে কোন দিশত থাকে?"},
+   correct:{en:"North",hi:"उत्तर",as:"উত্তৰ"},
+   opts:{en:["North","South","East","West"],hi:["उत्तर","दक्षिण","पूर्व","पश्चिम"],as:["উত্তৰ","দক্ষিণ","পূব","পশ্চিম"]},
+   explain:{en:"Maps are drawn with <b>North at the top</b>. The compass rose on a map shows all directions. The arrow points North.",
+            hi:"मानचित्र में उत्तर सबसे ऊपर होता है। दिग्सूचक चिन्ह (Compass Rose) सभी दिशाएँ दर्शाता है।",
+            as:"মানচিত্ৰত উত্তৰ সদায় ওপৰত থাকে। কম্পাছ ৰ'জে সকলো দিশ দেখুৱায়।"}},
+  {emoji:"🇨🇳",topic:{en:"Neighbouring Capitals",hi:"पड़ोसी देशों की राजधानियाँ",as:"চুবুৰীয়া দেশৰ ৰাজধানী"},
+   q:{en:"What is the capital of China, India's largest northern neighbour?",hi:"चीन की राजधानी क्या है?",as:"চীনৰ ৰাজধানী কি?"},
+   correct:{en:"Beijing",hi:"बीजिंग",as:"বেইজিং"},
+   opts:{en:["Beijing","Shanghai","Hong Kong","Nanjing"],hi:["बीजिंग","शंघाई","हॉन्ग कॉन्ग","नानजिंग"],as:["বেইজিং","চাংহাই","হংকং","নানজিং"]},
+   explain:{en:"<b>Beijing</b> (also called Peking) is the capital of China. China shares the longest border with India — along the Himalayas in Ladakh and Arunachal Pradesh.",
+            hi:"बीजिंग चीन की राजधानी है। चीन हिमालय के पार भारत का सबसे बड़ा पड़ोसी है।",
+            as:"বেইজিং চীনৰ ৰাজধানী। চীন হিমালয়ৰ পাৰত ভাৰতৰ আটাইতকৈ ডাঙৰ চুবুৰীয়া।"}},
+  {emoji:"🌊",topic:{en:"India's Seas",hi:"भारत के समुद्र",as:"ভাৰতৰ সাগৰ"},
+   q:{en:"The Bay of Bengal lies to which side of India?",hi:"बंगाल की खाड़ी भारत के किस ओर है?",as:"বঙ্গোপসাগৰ ভাৰতৰ কোন দিশত?"},
+   correct:{en:"East",hi:"पूर्व",as:"পূব"},
+   opts:{en:["East","West","North","South"],hi:["पूर्व","पश्चिम","उत्तर","दक्षिण"],as:["পূব","পশ্চিম","উত্তৰ","দক্ষিণ"]},
+   explain:{en:"<b>Bay of Bengal</b> is east of India (with West Bengal, Odisha, Andhra Pradesh, Tamil Nadu coastlines). <b>Arabian Sea</b> is to the west (with Gujarat, Maharashtra, Goa, Kerala coastlines).",
+            hi:"बंगाल की खाड़ी पूर्व में — पश्चिम बंगाल, ओडिशा, तमिलनाडु की तट रेखा। अरब सागर पश्चिम में — गुजरात, महाराष्ट्र, गोवा, केरल।",
+            as:"বঙ্গোপসাগৰ পূবত — পশ্চিমবঙ্গ, উড়িষ্যা, তামিলনাডুৰ উপকূল। আৰব সাগৰ পশ্চিমত — গুজৰাট, মহাৰাষ্ট্ৰ, কেৰালাৰ উপকূল।"}}
+];
+
+let lang='en',cur=0,score=0,answered=false;
+
+function setLang(l){lang=l;document.querySelectorAll('.lang-btn').forEach((b,i)=>b.classList.toggle('active',['en','hi','as'][i]===l));renderRound();}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function renderRound(){
+  const Lc=L[lang];const r=rounds[cur];
+  document.getElementById('roundLabel').textContent=Lc.rl(cur+1,rounds.length);
+  document.getElementById('scoreLabel').textContent=Lc.sc(score,rounds.length);
+  document.getElementById('pbar').style.width=(cur/rounds.length*100)+'%';
+  document.getElementById('topicChip').textContent=r.topic[lang];
+  const qe=document.getElementById('qEmoji');
+  qe.textContent=r.emoji;qe.style.animation='none';qe.offsetHeight;qe.style.animation='pop .4s cubic-bezier(.36,2,.6,.9)';
+  document.getElementById('qText').textContent=r.q[lang];
+  document.getElementById('explanation').style.display='none';
+  document.getElementById('nextBtn').style.display='none';
+  const opts=shuffle([...r.opts[lang]]);
+  const ag=document.getElementById('ansGrid');ag.innerHTML='';
+  opts.forEach(opt=>{
+    const btn=document.createElement('button');btn.className='ans-btn';btn.textContent=opt;btn.dataset.val=opt;
+    btn.onclick=()=>answer(opt);ag.appendChild(btn);
+  });
+  answered=false;
+}
+
+function answer(val){
+  if(answered)return;answered=true;
+  const r=rounds[cur];const correctVal=r.correct[lang];
+  document.querySelectorAll('.ans-btn').forEach(b=>{
+    if(b.dataset.val===correctVal)b.classList.add('correct');
+    else if(b.dataset.val===val&&val!==correctVal)b.classList.add('wrong');
+    b.disabled=true;
+  });
+  if(val===correctVal){score++;launchConfetti(12);}
+  document.getElementById('scoreLabel').textContent=L[lang].sc(score,rounds.length);
+  document.getElementById('explanation').innerHTML='💡 '+r.explain[lang];
+  document.getElementById('explanation').style.display='block';
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextRound(){cur++;if(cur>=rounds.length){showEnd();return;}renderRound();}
+
+function showEnd(){
+  document.getElementById('gameCard').style.display='none';
+  document.getElementById('roundLabel').style.display='none';
+  document.getElementById('scoreLabel').style.display='none';
+  const end=document.getElementById('endScreen');end.style.display='block';
+  const pct=score/rounds.length;const stars=pct>=0.9?3:pct>=0.7?2:pct>=0.4?1:0;
+  document.getElementById('endStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('endMsg').textContent=`${score}/${rounds.length} — ${L[lang].stars[stars]}`;
+  document.getElementById('pbar').style.width='100%';launchConfetti(50);
+}
+
+function restartGame(){
+  cur=0;score=0;answered=false;
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('gameCard').style.display='block';
+  document.getElementById('roundLabel').style.display='block';
+  document.getElementById('scoreLabel').style.display='block';
+  renderRound();
+}
+
+function launchConfetti(count){
+  const canvas=document.getElementById('confetti');const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const p=Array.from({length:count},()=>({x:Math.random()*canvas.width,y:-50,r:Math.random()*9+4,color:`hsl(${Math.random()*360},90%,60%)`,vx:(Math.random()-0.5)*4,vy:Math.random()*4+2,alpha:1}));
+  let f;function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);p.forEach(i=>{i.x+=i.vx;i.y+=i.vy;i.alpha-=0.012;ctx.save();ctx.globalAlpha=Math.max(0,i.alpha);ctx.fillStyle=i.color;ctx.beginPath();ctx.arc(i.x,i.y,i.r,0,Math.PI*2);ctx.fill();ctx.restore();});if(p.some(i=>i.alpha>0))f=requestAnimationFrame(draw);else ctx.clearRect(0,0,canvas.width,canvas.height);}
+  cancelAnimationFrame(f);draw();
+}
+
+renderRound();
+</script>
+</body>
+</html>

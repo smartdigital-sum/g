@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sense Safari Demo - GyanPlay Class 2</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .demo-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #6dbf8d;
+        }
+        
+        .demo-header h1 {
+            color: #6dbf8d;
+            font-size: 2.2rem;
+        }
+        
+        .demo-header .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .sense-organs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .sense-organ {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .sense-organ:hover {
+            transform: scale(1.05);
+        }
+        
+        .sense-organ.selected {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 4px white, 0 0 0 8px #6dbf8d;
+        }
+        
+        .sense-organ.eyes { background: #4a6fa5; }
+        .sense-organ.ears { background: #9d4edd; }
+        .sense-organ.nose { background: #f72585; }
+        .sense-organ.tongue { background: #ff9a3c; }
+        .sense-organ.skin { background: #4361ee; }
+        
+        .sense-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .objects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .object-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .object-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .object-item.selected {
+            border-color: #6dbf8d;
+            background: #e7f4e7;
+        }
+        
+        .object-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .object-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .feedback {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .score-item {
+            text-align: center;
+        }
+        
+        .score-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #6dbf8d;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #6dbf8d;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5aa87a;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .instructions {
+            background: #f0f9f4;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 4px solid #6dbf8d;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #6dbf8d;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .question {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1><i class="fas fa-eye"></i> Sense Safari</h1>
+            <p class="subtitle">5 senses — eyes/ears/nose/tongue/skin</p>
+            <p>Objects appear — child matches them to the correct sense organ. Then rounds flip: "Which sense do you use to taste?"</p>
+        </div>
+        
+        <div class="game-area">
+            <div class="score-board">
+                <div class="score-item">
+                    <div class="score-label">Score</div>
+                    <div class="score-value" id="score">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Matches</div>
+                    <div class="score-value" id="matches">0/5</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Time</div>
+                    <div class="score-value" id="timer">60</div>
+                </div>
+            </div>
+            
+            <div class="question" id="question">
+                Match the object to the sense organ you use to experience it
+            </div>
+            
+            <div class="sense-organs">
+                <div class="sense-organ eyes" data-sense="sight">
+                    <div class="sense-icon"><i class="fas fa-eye"></i></div>
+                    <div>Eyes</div>
+                    <div>(Sight)</div>
+                </div>
+                <div class="sense-organ ears" data-sense="hearing">
+                    <div class="sense-icon"><i class="fas fa-ear"></i></div>
+                    <div>Ears</div>
+                    <div>(Hearing)</div>
+                </div>
+                <div class="sense-organ nose" data-sense="smell">
+                    <div class="sense-icon"><i class="fas fa-nose"></i></div>
+                    <div>Nose</div>
+                    <div>(Smell)</div>
+                </div>
+                <div class="sense-organ tongue" data-sense="taste">
+                    <div class="sense-icon"><i class="fas fa-ice-cream"></i></div>
+                    <div>Tongue</div>
+                    <div>(Taste)</div>
+                </div>
+                <div class="sense-organ skin" data-sense="touch">
+                    <div class="sense-icon"><i class="fas fa-hand"></i></div>
+                    <div>Skin</div>
+                    <div>(Touch)</div>
+                </div>
+            </div>
+            
+            <div class="objects-grid" id="objectsGrid">
+                <!-- Objects will be added by JavaScript -->
+            </div>
+            
+            <div class="feedback" id="feedback"></div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" id="checkBtn">
+                    <i class="fas fa-check"></i> Check Match
+                </button>
+                <button class="btn btn-secondary" id="nextBtn">
+                    <i class="fas fa-arrow-right"></i> Next Round
+                </button>
+                <button class="btn btn-secondary" id="hintBtn">
+                    <i class="fas fa-lightbulb"></i> Get Hint
+                </button>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> How to Play</h3>
+            <p>1. Look at the object shown (e.g., a rose, ice cream, bell)</p>
+            <p>2. Select which sense organ you would use to experience that object</p>
+            <p>3. Click on the object and then click on the sense organ</p>
+            <p>4. Click "Check Match" to see if you're correct</p>
+            <p>5. Learn about the five senses:</p>
+            <ul>
+                <li><strong>Eyes (Sight):</strong> For seeing colors, shapes, and light</li>
+                <li><strong>Ears (Hearing):</strong> For hearing sounds and music</li>
+                <li><strong>Nose (Smell):</strong> For smelling flowers, food, and scents</li>
+                <li><strong>Tongue (Taste):</strong> For tasting sweet, sour, salty, bitter</li>
+                <li><strong>Skin (Touch):</strong> For feeling textures, temperature, and pressure</li>
+            </ul>
+            <p><strong>Learning:</strong> This teaches children about the five senses and how we experience the world.</p>
+        </div>
+        
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to GyanPlay Class 2
+        </a>
+    </div>
+    
+    <script>
+        // Game data
+        const objects = [
+            { name: "Rose", icon: "fas fa-rose", sense: "smell", hint: "You smell a rose with your nose" },
+            { name: "Ice Cream", icon: "fas fa-ice-cream", sense: "taste", hint: "You taste ice cream with your tongue" },
+            { name: "Bell", icon: "fas fa-bell", sense: "hearing", hint: "You hear a bell with your ears" },
+            { name: "Rainbow", icon: "fas fa-rainbow", sense: "sight", hint: "You see a rainbow with your eyes" },
+            { name: "Teddy Bear", icon: "fas fa-teddy-bear", sense: "touch", hint: "You feel a teddy bear with your skin" },
+            { name: "Sun", icon: "fas fa-sun", sense: "sight", hint: "You see the sun with your eyes" },
+            { name: "Music", icon: "fas fa-music", sense: "hearing", hint: "You hear music with your ears" },
+            { name: "Chocolate", icon: "fas fa-candy", sense: "taste", hint: "You taste chocolate with your tongue" },
+            { name: "Feather", icon: "fas fa-feather", sense: "touch", hint: "You feel a feather with your skin" },
+            { name: "Perfume", icon: "fas fa-spray-can", sense: "smell", hint: "You smell perfume with your nose" }
+        ];
+        
+        // Game state
+        let score = 0;
+        let matches = 0;
+        let totalMatches = 5;
+        let timeLeft = 60;
+        let selectedObject = null;
+        let selectedSense = null;
+        let currentObjectIndex = 0;
+        let timerInterval = null;
+        
+        // DOM elements
+        const scoreEl = document.getElementById('score');
+        const matchesEl = document.getElementById('matches');
+        const timerEl = document.getElementById('timer');
+        const questionEl = document.getElementById('question');
+        const objectsGrid = document.getElementById('objectsGrid');
+        const feedbackEl = document.getElementById('feedback');
+        const checkBtn = document.getElementById('checkBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const hintBtn = document.getElementById('hintBtn');
+        const senseOrgans = document.querySelectorAll('.sense-organ');
+        const objectItems = [];
+        
+        // Initialize
+        function init() {
+            loadObjects();
+            updateDisplay();
+            startTimer();
+            
+            // Sense organ events
+            senseOrgans.forEach(organ => {
+                organ.addEventListener('click', () => {
+                    // Deselect all
+                    senseOrgans.forEach(o => o.classList.remove('selected'));
+                    // Select this one
+                    organ.classList.add('selected');
+                    selectedSense = organ.dataset.sense;
+                });
+            });
+            
+            // Button events
+            checkBtn.addEventListener('click', checkMatch);
+            nextBtn.addEventListener('click', nextRound);
+            hintBtn.addEventListener('click', showHint);
+        }
+        
+        // Load objects
+        function loadObjects() {
+            objectsGrid.innerHTML = '';
+            objectItems.length = 0;
+            
+            // Shuffle and take first 5
+            const shuffled = [...objects].sort(() => Math.random() - 0.5).slice(0, 5);
+            
+            shuffled.forEach((obj, index) => {
+                const objectItem = document.createElement('div');
+                objectItem.className = 'object-item';
+                objectItem.dataset.index = index;
+                objectItem.dataset.sense = obj.sense;
+                objectItem.innerHTML = `
+                    <div class="object-icon"><i class="${obj.icon}"></i></div>
+                    <div class="object-name">${obj.name}</div>
+                `;
+                
+                objectItem.addEventListener('click', () => {
+                    // Deselect all
+                    objectItems.forEach(item => item.classList.remove('selected'));
+                    // Select this one
+                    objectItem.classList.add('selected');
+                    selectedObject = obj;
+                    currentObjectIndex = index;
+                });
+                
+                objectsGrid.appendChild(objectItem);
+                objectItems.push(objectItem);
+            });
+            
+            // Reset selections
+            selectedObject = null;
+            selectedSense = null;
+            senseOrgans.forEach(o => o.classList.remove('selected'));
+        }
+        
+        // Update display
+        function updateDisplay() {
+            scoreEl.textContent = score;
+            matchesEl.textContent = `${matches}/${totalMatches}`;
+            timerEl.textContent = timeLeft;
+        }
+        
+        // Start timer
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerEl.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    feedbackEl.textContent = "⏰ Time's up! Game over.";
+                    feedbackEl.className = 'feedback incorrect';
+                    checkBtn.disabled = true;
+                }
+            }, 1000);
+        }
+        
+        // Check match
+        function checkMatch() {
+            if (!selectedObject || !selectedSense) {
+                feedbackEl.textContent = "Please select both an object and a sense organ.";
+                feedbackEl.className = 'feedback incorrect';
+                return;
+            }
+            
+            const correct = selectedObject.sense === selectedSense;
+            
+            if (correct) {
+                score += 20;
+                matches++;
+                feedbackEl.textContent = `✅ Correct! You use your ${selectedSense} sense for ${selectedObject.name}.`;
+                feedbackEl.className = 'feedback correct';
+                
+                // Mark as completed
+                objectItems[currentObjectIndex].style.opacity = '0.5';
+                objectItems[currentObjectIndex].style.pointerEvents = 'none';
+            } else {
+                feedbackEl.textContent = `❌ Not quite. ${selectedObject.hint}`;
+                feedbackEl.className = 'feedback incorrect';
+            }
+            
+            updateDisplay();
+            
+            // Check if game complete
+            if (matches >= totalMatches) {
+                feedbackEl.textContent = `🎉 Congratulations! You matched all ${totalMatches} objects! Final score: ${score}`;
+                feedbackEl.className = 'feedback correct';
+                clearInterval(timerInterval);
+            }
+        }
+        
+        // Show hint
+        function showHint() {
+            if (selectedObject) {
+                feedbackEl.textContent = `💡 Hint: ${selectedObject.hint}`;
+                feedbackEl.className = 'feedback correct';
+            } else {
+                feedbackEl.textContent = "Please select an object first to get a hint.";
+                feedbackEl.className = 'feedback incorrect';
+            }
+        }
+        
+        // Next round
+        function nextRound() {
+            loadObjects();
+            feedbackEl.className = 'feedback';
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

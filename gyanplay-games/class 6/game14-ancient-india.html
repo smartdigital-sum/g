@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ancient India — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--lime:#A8E063;--orange:#FF9F1C;--purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#071A12 0%,#040E0A 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(168,224,99,.13),rgba(168,224,99,.04));border:1px solid rgba(168,224,99,.3);border-radius:16px;padding:16px;margin-bottom:16px}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(168,224,99,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--lime);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:700}
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.45}
+
+/* Timeline explore cards */
+.timeline{display:flex;flex-direction:column;gap:0;position:relative;padding-left:30px;margin-bottom:14px}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,rgba(168,224,99,.5),rgba(168,224,99,.1))}
+.era-card{position:relative;margin-bottom:12px;cursor:pointer}
+.era-card::before{content:'';position:absolute;left:-24px;top:16px;width:12px;height:12px;border-radius:50%;border:2px solid var(--lime);background:var(--card);transition:all .3s;z-index:1}
+.era-card.opened::before{background:var(--lime);box-shadow:0 0 8px var(--lime)}
+.era-header{background:rgba(168,224,99,.07);border:1px solid rgba(168,224,99,.18);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;transition:all .2s}
+.era-card:hover .era-header{border-color:rgba(168,224,99,.4);background:rgba(168,224,99,.12)}
+.era-icon{font-size:1.8rem;flex-shrink:0}
+.era-info{flex:1}
+.era-name{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;color:var(--lime)}
+.era-period{font-size:.72rem;color:var(--dim);margin-top:2px}
+.era-arrow{font-size:.85rem;color:var(--lime);transition:transform .25s}
+.era-card.opened .era-arrow{transform:rotate(90deg)}
+.era-body{background:rgba(168,224,99,.04);border:1px solid rgba(168,224,99,.12);border-radius:0 0 14px 14px;padding:14px;margin-top:-4px;display:none;font-family:'Crimson Pro',serif;font-size:.92rem;line-height:1.65;color:var(--text)}
+.era-body.show{display:block}
+.era-body strong{color:var(--gold)}
+.era-body .wow-fact{background:rgba(255,209,102,.07);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:8px 12px;margin-top:10px;font-size:.82rem;color:var(--dim)}
+.era-body .assam-connect{background:rgba(168,224,99,.06);border-left:3px solid var(--lime);border-radius:0 10px 10px 0;padding:8px 12px;margin-top:8px;font-size:.82rem;color:var(--dim)}
+
+/* Sequence mechanic */
+.seq-pool{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.seq-card{background:rgba(168,224,99,.07);border:2px solid rgba(168,224,99,.2);border-radius:14px;padding:12px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px}
+.seq-card:hover{border-color:var(--lime);transform:translateX(4px)}
+.seq-card.selected-seq{border-color:var(--gold);background:rgba(255,209,102,.1)}
+.seq-card.locked-seq{pointer-events:none;opacity:.5}
+.seq-card.placed-seq{opacity:.3;pointer-events:none}
+.seq-num{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--lime);min-width:28px}
+.seq-card-icon{font-size:1.4rem}
+.seq-card-text{flex:1}
+.seq-card-name{font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--text)}
+.seq-card-period{font-size:.72rem;color:var(--dim)}
+
+.timeline-slots{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.t-slot{background:rgba(168,224,99,.04);border:2px dashed rgba(168,224,99,.2);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;min-height:52px;transition:all .2s;cursor:pointer}
+.t-slot:hover{border-color:rgba(168,224,99,.4);background:rgba(168,224,99,.07)}
+.t-slot.filled{border-style:solid;background:rgba(168,224,99,.08)}
+.t-slot.correct-slot{border-color:var(--teal);background:rgba(6,214,160,.08)}
+.t-slot.wrong-slot{border-color:var(--coral);background:rgba(255,107,107,.08)}
+.slot-num{font-family:'Baloo 2',cursive;font-size:.82rem;font-weight:700;color:var(--dim);min-width:26px}
+.slot-content{font-size:.85rem;color:var(--text);flex:1}
+.slot-empty{font-size:.82rem;color:var(--dim);font-style:italic}
+
+/* MCQ */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(168,224,99,.07);border:2px solid rgba(168,224,99,.2);border-radius:14px;padding:12px 8px;font-family:'Baloo 2',cursive;font-size:.93rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--lime);background:rgba(168,224,99,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.92rem;font-weight:600;min-height:26px;margin:10px 0 4px}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+.confirm-btn{background:var(--lime);color:#060A10;border:none;border-radius:100px;padding:10px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;width:100%;margin-top:8px;opacity:.4;pointer-events:none}
+.confirm-btn.ready{opacity:1;pointer-events:all}
+
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#040E0A 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--lime);color:var(--lime);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(168,224,99,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stage-transition{background:linear-gradient(135deg,rgba(168,224,99,.1),rgba(168,224,99,.03));border:1px solid rgba(168,224,99,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--lime);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">🏛️ Ancient India</div>
+      <span class="subject-tag">Social Studies · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+  <div class="wow-hook">
+    <span class="wow-emoji">🚿</span>
+    <div class="wow-text">The Indus Valley cities of 2500 BC had <strong>FLUSH TOILETS</strong> and underground sewage systems — technology that most of the world didn't rediscover until <strong>4,000 years later!</strong></div>
+  </div>
+  <div id="gameArea"></div>
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Stage 1 of 3</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+<script>
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+let stg=1,qIdx=0,score=0,answered=false,openedEras=new Set(),selectedSeq=null,seqSlots={};
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  const C=['#A8E063','#FFD166','#06D6A0','#FF9F1C','#C77DFF'];
+  for(let i=0;i<28;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+}
+function updateStars(){const lit=Math.min(5,Math.ceil(score/2));for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.toggle('lit',i<=lit)}
+function showOverlay(emoji,title,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovFact').textContent=fact;document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay');ov.classList.add('show');
+  if(!isEnd)setTimeout(()=>ov.classList.remove('show'),2700);
+}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(t){document.getElementById('progressLabel').textContent=t}
+
+/* ── Stage 1: Explore the timeline ── */
+const ERAS=[
+  {icon:'🏙️',name:'Indus Valley Civilisation',period:'c. 2500–1700 BCE',
+   body:`The <strong>Indus Valley Civilisation</strong> (also called Harappan Civilisation) was one of the world's earliest urban cultures, centred around cities like <strong>Mohenjo-daro</strong> and <strong>Harappa</strong> in modern-day Pakistan and northwest India.<br><br>
+   They had <strong>grid-planned streets</strong>, advanced drainage systems, standardised weights & measures, and even public baths. Their script has still not been fully decoded!
+   <div class="wow-fact">🚿 WOW: Mohenjo-daro had flush toilets connected to covered drains — matching 20th-century sanitation!</div>
+   <div class="assam-connect">🌿 Assam link: The region of Assam (known as Pragjyotisha in ancient texts) had its own distinct early civilisation running parallel to the Indus Valley period.</div>`},
+  {icon:'📜',name:'Vedic Age',period:'c. 1500–600 BCE',
+   body:`The <strong>Vedic Age</strong> gets its name from the <strong>Vedas</strong> — four sacred texts (Rigveda, Samaveda, Yajurveda, Atharvaveda) composed in Sanskrit. This period saw the development of early Hindu thought and society.<br><br>
+   The <strong>Mahabharata</strong> and <strong>Ramayana</strong> epics were composed during this period. The <strong>Upanishads</strong> explored deep philosophical questions about the nature of existence.
+   <div class="wow-fact">📜 WOW: The Rigveda is one of the oldest known texts in any Indo-European language — over 3,500 years old and still recited today!</div>`},
+  {icon:'🏯',name:'Maurya Empire',period:'c. 322–185 BCE',
+   body:`Founded by <strong>Chandragupta Maurya</strong>, the Maurya Empire was the first empire to unify most of the Indian subcontinent. Its most famous ruler, <strong>Ashoka the Great</strong>, converted to Buddhism after the devastating Kalinga War.<br><br>
+   Ashoka sent missionaries across Asia, erected rock edicts with laws, and built roads across the empire. <strong>Kautilya's Arthashastra</strong> — the world's first political science textbook — was written during this era.
+   <div class="wow-fact">🏯 WOW: The lion capital from Ashoka's pillar at Sarnath became India's national emblem — seen on every rupee coin!</div>`},
+  {icon:'✨',name:"Gupta Empire — India's Golden Age",period:'c. 320–550 CE',
+   body:`The Gupta Empire is called India's <strong>Golden Age</strong> because of extraordinary achievements in science, mathematics, art, and literature. <strong>Aryabhata</strong> calculated the value of Pi and proposed that the Earth rotates on its axis — 1,000 years before Europe accepted this!<br><br>
+   <strong>Kalidasa</strong> wrote Shakuntala (considered the greatest Sanskrit drama). The concept of <strong>zero</strong> and the decimal number system were refined during this period.
+   <div class="wow-fact">✨ WOW: Indian mathematicians gave the world zero, the decimal system, and algebra — concepts that run every computer on Earth today!</div>
+   <div class="assam-connect">🌿 Assam link: The Varman dynasty ruled Kamarupa (ancient Assam) parallel to the Gupta period, maintaining its independence while cultural exchanges flourished.</div>`},
+];
+
+function renderStage1(){
+  setProgress('Stage 1 of 3 — Explore the Timeline');
+  openedEras=new Set();answered=false;showNext(false);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">📜 Stage 1 — Explore Ancient India</div>
+      <div style="font-size:.8rem;color:var(--dim);text-align:center;margin-bottom:12px;background:rgba(168,224,99,.04);border-radius:10px;padding:8px">👆 Tap each era card to read its story — open all 4 to unlock the next stage!</div>
+      <div class="timeline" id="timeline">
+        ${ERAS.map((e,i)=>`
+          <div class="era-card" id="era${i}" onclick="openEra(${i})">
+            <div class="era-header">
+              <div class="era-icon">${e.icon}</div>
+              <div class="era-info"><div class="era-name">${e.name}</div><div class="era-period">${e.period}</div></div>
+              <div class="era-arrow" id="erarr${i}">›</div>
+            </div>
+            <div class="era-body" id="erabody${i}">${e.body}</div>
+          </div>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function openEra(i){
+  const body=document.getElementById('erabody'+i);
+  const arrow=document.getElementById('erarr'+i);
+  const card=document.getElementById('era'+i);
+  const isOpen=body.classList.contains('show');
+  body.classList.toggle('show',!isOpen);
+  arrow.classList.toggle('open',!isOpen);
+  card.classList.toggle('opened',!isOpen);
+  if(!isOpen){
+    openedEras.add(i);
+    if(openedEras.size===ERAS.length){
+      score++;updateStars();confetti();
+      document.getElementById('fb').textContent='🎉 All eras explored! Press Next for the sequencing challenge →';
+      document.getElementById('fb').className='feedback correct';
+      showNext(true);
+    }
+  }
+}
+
+/* ── Stage 2: Sequence events on timeline ── */
+const SEQ_EVENTS=[
+  {icon:'🏙️',name:'Indus Valley Civilisation',period:'c. 2500 BCE',order:1},
+  {icon:'📜',name:'Composition of the Vedas',period:'c. 1500 BCE',order:2},
+  {icon:'🏯',name:'Maurya Empire founded',period:'c. 322 BCE',order:3},
+  {icon:'⚔️',name:'Ashoka\'s Kalinga War',period:'c. 261 BCE',order:4},
+  {icon:'✨',name:'Gupta Empire — Golden Age',period:'c. 320 CE',order:5},
+  {icon:'🔢',name:'Aryabhata calculates Pi',period:'c. 499 CE',order:6},
+];
+
+function renderStage2(){
+  setProgress('Stage 2 of 3 — Sequence the Events');
+  answered=false;showNext(false);selectedSeq=null;seqSlots={};
+  const shuffled=[...SEQ_EVENTS].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🕰️ Stage 2 — Put Events in Order</div>
+      <div class="question-text">Tap an event card, then tap the correct numbered slot (1=earliest, 6=latest):</div>
+      <div class="seq-pool" id="seqPool">
+        ${shuffled.map((e,i)=>`
+          <div class="seq-card" id="sqc${i}" onclick="selectSeqCard(${i},'${e.name.replace(/'/g,"\\'")}',${e.order})">
+            <div class="seq-card-icon">${e.icon}</div>
+            <div class="seq-card-text"><div class="seq-card-name">${e.name}</div><div class="seq-card-period">${e.period}</div></div>
+          </div>`).join('')}
+      </div>
+      <div style="font-size:.78rem;color:var(--dim);text-align:center;margin-bottom:8px">Slots (tap to place selected event):</div>
+      <div class="timeline-slots" id="timelineSlots">
+        ${SEQ_EVENTS.map((_,i)=>`
+          <div class="t-slot" id="slot${i+1}" onclick="placeInSlot(${i+1})">
+            <div class="slot-num">${i+1}</div>
+            <div class="slot-content"><span class="slot-empty">— tap to place —</span></div>
+          </div>`).join('')}
+      </div>
+      <button class="confirm-btn" id="seqConfirm" onclick="confirmSeq()">Confirm Order →</button>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function selectSeqCard(idx,name,order){
+  if(document.getElementById('sqc'+idx)?.classList.contains('placed-seq'))return;
+  selectedSeq={idx,name,order};
+  document.querySelectorAll('.seq-card').forEach(c=>c.classList.remove('selected-seq'));
+  document.getElementById('sqc'+idx)?.classList.add('selected-seq');
+}
+function placeInSlot(slotNum){
+  if(!selectedSeq)return;
+  // Clear previous occupant if any
+  const prev=Object.entries(seqSlots).find(([k,v])=>v.cardIdx===selectedSeq.idx);
+  if(prev){
+    const [prevSlot]=prev;
+    delete seqSlots[prevSlot];
+    const prevEl=document.getElementById('slot'+prevSlot);
+    if(prevEl){prevEl.classList.remove('filled');prevEl.querySelector('.slot-content').innerHTML='<span class="slot-empty">— tap to place —</span>';}
+  }
+  seqSlots[slotNum]={name:selectedSeq.name,order:selectedSeq.order,cardIdx:selectedSeq.idx,icon:SEQ_EVENTS.find(e=>e.order===selectedSeq.order)?.icon||''};
+  const slotEl=document.getElementById('slot'+slotNum);
+  if(slotEl){slotEl.classList.add('filled');slotEl.querySelector('.slot-content').innerHTML=`${seqSlots[slotNum].icon} ${selectedSeq.name}`;}
+  document.getElementById('sqc'+selectedSeq.idx)?.classList.add('placed-seq');
+  selectedSeq=null;document.querySelectorAll('.seq-card').forEach(c=>c.classList.remove('selected-seq'));
+  if(Object.keys(seqSlots).length===SEQ_EVENTS.length)document.getElementById('seqConfirm')?.classList.add('ready');
+}
+function confirmSeq(){
+  if(answered)return;answered=true;
+  document.getElementById('seqConfirm').disabled=true;
+  let correct=0;
+  SEQ_EVENTS.forEach(e=>{
+    const slot=Object.entries(seqSlots).find(([k,v])=>v.order===e.order);
+    if(slot&&parseInt(slot[0])===e.order){
+      correct++;
+      document.getElementById('slot'+e.order)?.classList.add('correct-slot');
+    } else if(slot){
+      document.getElementById('slot'+slot[0])?.classList.add('wrong-slot');
+    }
+  });
+  score+=Math.min(2,Math.round(correct/SEQ_EVENTS.length*2));updateStars();
+  const fb=document.getElementById('fb');
+  if(correct===SEQ_EVENTS.length){
+    fb.textContent=cheer()+' Perfect sequence! You know ancient India!';fb.className='feedback correct';
+    confetti();
+    setTimeout(()=>showOverlay('🕰️',cheer(),'India has the world\'s oldest continuous civilisation — from the Indus Valley to today is over 4,500 years of unbroken history!',false),400);
+  } else {
+    fb.textContent=`${correct} of ${SEQ_EVENTS.length} in correct order. Keep exploring!`;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+/* ── Stage 3: MCQ quiz ── */
+const MCQ=[
+  {q:'Which ancient Indian city is famous for its advanced drainage and sanitation system?',correct:'Mohenjo-daro',opts:['Pataliputra','Mohenjo-daro','Nalanda','Ujjain'],fact:'Mohenjo-daro (c. 2500 BCE) had covered drains, flush toilets, and grid-planned streets — 4,000 years before most of the world!'},
+  {q:'Which Mauryan emperor converted to Buddhism after the Kalinga War?',correct:'Ashoka',opts:['Chandragupta','Bindusara','Ashoka','Samudragupta'],fact:'Ashoka was so horrified by the suffering of the Kalinga War that he gave up violence and spread Buddhism across Asia through stone edicts and missionaries.'},
+  {q:'India\'s "Golden Age" of art, science and mathematics was the:',correct:'Gupta Period',opts:['Vedic Age','Maurya Period','Gupta Period','Indus Valley'],fact:'During the Gupta period, Aryabhata calculated Pi, zero was refined, Kalidasa wrote great literature, and Indian universities attracted scholars from across Asia!'},
+  {q:'What was the ancient name for Assam mentioned in early Sanskrit texts?',correct:'Pragjyotisha / Kamarupa',opts:['Magadha','Kalinga','Pragjyotisha / Kamarupa','Taxila'],fact:'Ancient Assam was called Pragjyotisha (City of Eastern Light) and later Kamarupa. It maintained its independence even during the Gupta Empire!'},
+];
+function renderStage3(i){
+  setProgress(`Stage 3 of 3 — Quiz ${i+1} of ${MCQ.length}`);
+  answered=false;showNext(false);
+  const q=MCQ[i];const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">❓ Stage 3 — History Quiz</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkMCQ('${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}','${q.fact.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkMCQ(sel,correct,fact,btn){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct');score++;updateStars();
+    fb.textContent=cheer()+'  Correct!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🏛️',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function nextQ(){
+  if(stg===1){stg=2;showTrans('🕰️','Stage 2: Sequence the Events!','Now put 6 key events from Ancient India in chronological order — earliest first!',()=>renderStage2());}
+  else if(stg===2){stg=3;qIdx=0;showTrans('❓','Stage 3: History Quiz!','Final quiz — test what you learned about ancient India!',()=>renderStage3(0));}
+  else{qIdx++;if(qIdx<MCQ.length)renderStage3(qIdx);else endGame();}
+}
+function showTrans(emoji,title,desc,cb){
+  showNext(false);
+  document.getElementById('gameArea').innerHTML=`<div class="stage-transition"><div style="font-size:2.5rem">${emoji}</div><h3>${title}</h3><p>${desc}</p></div>`;
+  const nb=document.getElementById('nextBtn');nb.textContent='Start →';nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →';nb.onclick=nextQ;cb()};
+}
+function endGame(){
+  confetti();
+  const medals=['History Learner 🌱','Time Traveller 🔍','History Master 🏛️','Historian Champion 🏆','Ancient Legend 🌟'];
+  const medal=medals[Math.min(4,Math.floor(score/2))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--lime);margin:10px 0">${score} pts</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        India gave the world zero, flush toilets, algebra, and chess. Your ancestors built cities when Europe was still scattered tribes. History is the foundation of everything we are!
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  setProgress('Complete!');showNext(false);
+}
+function resetGame(){
+  stg=1;qIdx=0;score=0;answered=false;openedEras=new Set();selectedSeq=null;seqSlots={};
+  for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.remove('lit');
+  document.getElementById('nextBtn').textContent='Next →';document.getElementById('nextBtn').onclick=nextQ;
+  renderStage1();
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{document.getElementById('overlay').classList.remove('show');resetGame()});
+renderStage1();
+</script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindi Kshitij Bhag 1 — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--purple);color:#fff;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--sky);color:#000;border-color:var(--sky);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--purple);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--purple),var(--pink));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.chapter-tag{background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.35);border-radius:10px;padding:8px 14px;margin-bottom:14px;font-size:.86rem;color:#c4b5fd;font-weight:700;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.65;margin-bottom:18px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.96rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;line-height:1.5;}
+.choice-btn:hover:not(:disabled){background:rgba(124,58,237,.12);border-color:var(--purple);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;line-height:1.55;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--purple);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--saffron);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Hindi · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en',event)">EN</button>
+      <button class="lang-btn" onclick="setLang('hi',event)">हि</button>
+      <button class="lang-btn" onclick="setLang('as',event)">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">📖 Hindi Kshitij Bhag 1</span>
+    <span data-lang="hi" style="display:none">📖 हिंदी क्षितिज भाग 1</span>
+    <span data-lang="as" style="display:none">📖 হিন্দী ক্ষিতিজ ভাগ 1</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — Hindi Kshitij Part 1 · Stories &amp; Poems</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — हिंदी क्षितिज भाग 1 · गद्य और पद्य</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — হিন্দী ক্ষিতিজ ভাগ 1 · গদ্য আৰু পদ্য</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="chapter-tag" id="chapterTag"></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    chapter: "📗 Gadya: Do Bailon Ki Katha | दो बैलों की कथा",
+    en: "Who is the author of 'Do Bailon Ki Katha' (The Story of Two Bullocks) in Kshitij Bhag 1?",
+    hi: "क्षितिज भाग 1 में 'दो बैलों की कथा' के लेखक कौन हैं?",
+    as: "ক্ষিতিজ ভাগ 1-ত 'দো বৈলোঁ কী কথা' (দুটা বলদৰ কাহিনী)-ৰ লেখক কোন?",
+    choices: {
+      en: ["Munshi Premchand — famous Hindi and Urdu writer known as 'Upanyas Samrat'","Krishnachandra — Urdu short story writer","Mahadevi Verma — poet and prose writer","Mridula Garg — contemporary Hindi writer"],
+      hi: ["मुंशी प्रेमचंद — 'उपन्यास सम्राट' के नाम से प्रसिद्ध हिंदी-उर्दू लेखक","कृष्णचंद्र — उर्दू कहानीकार","महादेवी वर्मा — कवयित्री और गद्य लेखिका","मृदुला गर्ग — समकालीन हिंदी लेखिका"],
+      as: ["মুন্সী প্ৰেমচন্দ — 'উপন্যাস সম্ৰাট' নামেৰে বিখ্যাত হিন্দী-উৰ্দু লেখক","কৃষ্ণচন্দ্ৰ — উৰ্দু ছোটগল্প লেখক","মহাদেৱী বৰ্মা — কবি আৰু গদ্য লেখিকা","মৃদুলা গাৰ্গ — সমসাময়িক হিন্দী লেখিকা"]
+    },
+    correct: 0,
+    explain: {
+      en: "Munshi Premchand (1880–1936) is the author of 'Do Bailon Ki Katha'. He is called 'Upanyas Samrat' (Emperor of Novels). The story uses two bullocks — Hira and Moti — to symbolize friendship, freedom, and resistance to oppression.",
+      hi: "मुंशी प्रेमचंद (1880–1936) 'दो बैलों की कथा' के लेखक हैं। उन्हें 'उपन्यास सम्राट' कहा जाता है। कहानी में दो बैल — हीरा और मोती — मित्रता, स्वतंत्रता और उत्पीड़न के प्रतिरोध के प्रतीक हैं।",
+      as: "মুন্সী প্ৰেমচন্দ (1880–1936) 'দো বৈলোঁ কী কথা'-ৰ লেখক। তেওঁক 'উপন্যাস সম্ৰাট' বোলা হয়। গল্পত দুটা বলদ — হীৰা আৰু মোতি — বন্ধুত্ব, স্বাধীনতা আৰু অত্যাচাৰৰ প্ৰতিৰোধৰ প্ৰতীক।"
+    }
+  },
+  {
+    chapter: "📗 Gadya: L.H. Oo | ल्हासा की ओर",
+    en: "The story 'L.H. Oo' (Lhasa Ki Or — Towards Lhasa) in Kshitij is a travel memoir. Who is its author?",
+    hi: "'ल्हासा की ओर' (L.H. Oo) क्षितिज में एक यात्रा संस्मरण है। इसके लेखक कौन हैं?",
+    as: "ক্ষিতিজত 'L.H. Oo' (ল্হাছা কী অৰ — ল্হাছালৈ) এখন ভ্ৰমণ স্মৃতিকথা। ইয়াৰ লেখক কোন?",
+    choices: {
+      en: ["Rahul Sankrityayan — polymath traveler and writer who journeyed to Tibet","Krishnachandra — Urdu fiction writer","Hazari Prasad Dwivedi — Sanskrit scholar","Shyamanand Jalan — dramatist"],
+      hi: ["राहुल सांकृत्यायन — तिब्बत की यात्रा करने वाले बहुज्ञ यात्री और लेखक","कृष्णचंद्र — उर्दू कथा लेखक","हजारी प्रसाद द्विवेदी — संस्कृत विद्वान","श्यामानंद जालान — नाटककार"],
+      as: ["ৰাহুল সাংকৃত্যায়ন — তিব্বতলৈ যাত্ৰা কৰা বহুজ্ঞ পৰিব্ৰাজক আৰু লেখক","কৃষ্ণচন্দ্ৰ — উৰ্দু কথাসাহিত্য লেখক","হজাৰী প্ৰসাদ দ্বিবেদী — সংস্কৃত পণ্ডিত","শ্যামানন্দ জালান — নাট্যকাৰ"]
+    },
+    correct: 0,
+    explain: {
+      en: "Rahul Sankrityayan (1893–1963) wrote 'Lhasa Ki Or'. He was a great traveler and polyglot. He disguised himself as a Tibetan monk to travel to Tibet when it was forbidden for Indians. He wrote extensively in Hindi about Buddhism and his travels.",
+      hi: "राहुल सांकृत्यायन (1893–1963) ने 'ल्हासा की ओर' लिखी। वे एक महान यात्री और बहुभाषाविद् थे। भारतीयों के लिए तिब्बत जाना मना था, इसलिए वे एक तिब्बती भिक्षु के वेश में गए। उन्होंने बौद्ध धर्म पर हिंदी में विस्तार से लिखा।",
+      as: "ৰাহুল সাংকৃত্যায়ন (1893–1963)-এ 'ল্হাছা কী অৰ' লিখিছিল। তেওঁ এজন মহান পৰিব্ৰাজক আৰু বহুভাষী আছিল। ভাৰতীয়সকলৰ বাবে তিব্বতলৈ যোৱা নিষিদ্ধ আছিল, সেয়েহে তেওঁ তিব্বতীয় ভিক্ষুৰ ছদ্মবেশত গৈছিল।"
+    }
+  },
+  {
+    chapter: "📗 Gadya: Upbhoktavad Ki Sanskriti | उपभोक्तावाद की संस्कृति",
+    en: "'Upbhoktavad Ki Sanskriti' (The Culture of Consumerism) in Kshitij criticizes which social trend?",
+    hi: "'उपभोक्तावाद की संस्कृति' क्षितिज में किस सामाजिक प्रवृत्ति की आलोचना करती है?",
+    as: "ক্ষিতিজত 'উপভোক্তাবাদ কী সংস্কৃতি'-য়ে কোনটো সামাজিক প্ৰৱণতাৰ সমালোচনা কৰে?",
+    choices: {
+      en: ["Blind consumerism — excessive materialism replacing Indian cultural values","Traditional farming practices","Sanskrit education system","Joint family system"],
+      hi: ["अंधा उपभोक्तावाद — अत्यधिक भौतिकवाद जो भारतीय सांस्कृतिक मूल्यों को प्रतिस्थापित कर रहा है","पारंपरिक खेती","संस्कृत शिक्षा प्रणाली","संयुक्त परिवार प्रणाली"],
+      as: ["অন্ধ ভোগবাদ — অতিমাত্ৰা বস্তুবাদ যি ভাৰতীয় সাংস্কৃতিক মূল্যবোধ প্ৰতিস্থাপন কৰিছে","পৰম্পৰাগত কৃষি পদ্ধতি","সংস্কৃত শিক্ষা ব্যৱস্থা","যৌথ পৰিয়াল ব্যৱস্থা"]
+    },
+    correct: 0,
+    explain: {
+      en: "'Upbhoktavad Ki Sanskriti' is written by Shyamanand Jalan. It criticizes how Western consumerism is replacing Indian cultural values — people are becoming slaves to advertisements, brands, and material goods, losing their simple, value-based living.",
+      hi: "'उपभोक्तावाद की संस्कृति' श्यामानंद जालान द्वारा लिखित है। यह आलोचना करती है कि कैसे पश्चिमी उपभोक्तावाद भारतीय सांस्कृतिक मूल्यों की जगह ले रहा है — लोग विज्ञापनों, ब्रांडों और भौतिक वस्तुओं के गुलाम बन रहे हैं।",
+      as: "'উপভোক্তাবাদ কী সংস্কৃতি' শ্যামানন্দ জালানৰ দ্বাৰা লিখিত। এইখনে সমালোচনা কৰে কিদৰে পশ্চিমীয়া ভোগবাদে ভাৰতীয় সাংস্কৃতিক মূল্যবোধ প্ৰতিস্থাপন কৰিছে — মানুহ বিজ্ঞাপন, ব্ৰেণ্ড আৰু বস্তুৰ দাস হৈ পৰিছে।"
+    }
+  },
+  {
+    chapter: "📗 Gadya: Mere Bachpan Ke Din | मेरे बचपन के दिन",
+    en: "'Mere Bachpan Ke Din' (Days of My Childhood) is an autobiographical prose. Who wrote it?",
+    hi: "'मेरे बचपन के दिन' (मेरे बचपन के दिन) एक आत्मकथात्मक गद्य है। इसे किसने लिखा?",
+    as: "'মেৰে বচপন কে দিন' (মোৰ শৈশৱৰ দিনবোৰ) এখন আত্মজীৱনীমূলক গদ্য। কোনে লিখিছিল?",
+    choices: {
+      en: ["Mahadevi Verma — celebrated poet of Chhayavad school, known as 'Modern Meera'","Mridula Garg — contemporary Hindi novelist","Munshi Premchand — Hindi fiction writer","Subhadra Kumari Chauhan — nationalist poet"],
+      hi: ["महादेवी वर्मा — छायावाद की प्रसिद्ध कवयित्री, 'आधुनिक मीरा' के नाम से जानी जाती हैं","मृदुला गर्ग — समकालीन हिंदी उपन्यासकार","मुंशी प्रेमचंद — हिंदी कथा लेखक","सुभद्रा कुमारी चौहान — राष्ट्रवादी कवयित्री"],
+      as: ["মহাদেৱী বৰ্মা — ছায়াবাদ আন্দোলনৰ বিখ্যাত কবি, 'আধুনিক মীৰা' নামেৰে জনাজাত","মৃদুলা গাৰ্গ — সমসাময়িক হিন্দী ঔপন্যাসিক","মুন্সী প্ৰেমচন্দ — হিন্দী কথাসাহিত্য লেখক","সুভদ্ৰা কুমাৰী চৌহান — ৰাষ্ট্ৰীয়তাবাদী কবি"]
+    },
+    correct: 0,
+    explain: {
+      en: "Mahadevi Verma (1907–1987) wrote 'Mere Bachpan Ke Din'. She is called 'Modern Meera' for her devotional poetry. She was a major Chhayavad poet and received the Jnanpith Award. The prose recalls her school days, friendships, and teachers.",
+      hi: "महादेवी वर्मा (1907–1987) ने 'मेरे बचपन के दिन' लिखा। उन्हें भक्ति कविता के लिए 'आधुनिक मीरा' कहा जाता है। वे छायावाद की प्रमुख कवयित्री थीं और ज्ञानपीठ पुरस्कार प्राप्तकर्ता। गद्य उनके स्कूल के दिनों, मित्रताओं और शिक्षकों को याद करता है।",
+      as: "মহাদেৱী বৰ্মা (1907–1987)-এ 'মেৰে বচপন কে দিন' লিখিছিল। তেওঁক ভক্তি কবিতাৰ বাবে 'আধুনিক মীৰা' বোলা হয়। তেওঁ ছায়াবাদৰ প্ৰধান কবি আছিল আৰু জ্ঞানপীঠ বঁটা লাভ কৰিছিল।"
+    }
+  },
+  {
+    chapter: "📗 Gadya: Mere Sang Ki Auratein | मेरे संग की औरतें",
+    en: "'Mere Sang Ki Auratein' (Women in My Life) in Kshitij was written by:",
+    hi: "'मेरे संग की औरतें' (मेरे जीवन की महिलाएं) क्षितिज में किसने लिखा:",
+    as: "ক্ষিতিজত 'মেৰে ছাঙ কী অৰতেঁ' (মোৰ জীৱনৰ মহিলাসকল) লিখিছিল:",
+    choices: {
+      en: ["Mridula Garg — Hindi novelist and short story writer","Mahadevi Verma — Chhayavad poet","Subhadra Kumari Chauhan — poet","Ismat Chughtai — Urdu writer"],
+      hi: ["मृदुला गर्ग — हिंदी उपन्यासकार और कहानीकार","महादेवी वर्मा — छायावाद कवयित्री","सुभद्रा कुमारी चौहान — कवयित्री","इस्मत चुगताई — उर्दू लेखिका"],
+      as: ["মৃদুলা গাৰ্গ — হিন্দী ঔপন্যাসিক আৰু ছোটগল্প লেখিকা","মহাদেৱী বৰ্মা — ছায়াবাদ কবি","সুভদ্ৰা কুমাৰী চৌহান — কবি","ইচমত চুগতাই — উৰ্দু লেখিকা"]
+    },
+    correct: 0,
+    explain: {
+      en: "Mridula Garg wrote 'Mere Sang Ki Auratein'. It is an autobiographical piece describing influential women in her life — her grandmother, mother, and other women who shaped her personality. It celebrates strong, independent women in Indian society.",
+      hi: "मृदुला गर्ग ने 'मेरे संग की औरतें' लिखा। यह एक आत्मकथात्मक रचना है जो उनके जीवन की प्रभावशाली महिलाओं का वर्णन करती है — दादी, माँ, और अन्य महिलाएं जिन्होंने उनके व्यक्तित्व को आकार दिया।",
+      as: "মৃদুলা গাৰ্গে 'মেৰে ছাঙ কী অৰতেঁ' লিখিছিল। এইখন আত্মজীৱনীমূলক ৰচনা যি তাইৰ জীৱনৰ প্ৰভাৱশালী মহিলাসকলৰ বৰ্ণনা দিয়ে — ককাই, মাক, আৰু অন্য মহিলা যিসকলে তাইৰ ব্যক্তিত্ব গঢ়িছিল।"
+    }
+  },
+  {
+    chapter: "📙 Kavya: Saakhi | साखी — कबीर",
+    en: "The 'Saakhi' (dohas/couplets) in Kshitij Bhag 1 are written by which medieval saint-poet?",
+    hi: "क्षितिज भाग 1 में 'साखी' (दोहे) किस मध्यकालीन संत-कवि ने लिखे?",
+    as: "ক্ষিতিজ ভাগ 1-ত 'সাখী' (দোহা) কোনজন মধ্যযুগীয় সন্ত-কবিয়ে লিখিছে?",
+    choices: {
+      en: ["Kabir — 15th century Bhakti poet, weaver by profession, known for social reform through dohas","Tulsidas — wrote Ramcharitmanas","Surdas — blind poet devoted to Lord Krishna","Mirabai — Rajput princess and devotee of Krishna"],
+      hi: ["कबीर — 15वीं सदी के भक्ति कवि, जुलाहे थे, दोहों के माध्यम से सामाजिक सुधार के लिए जाने जाते हैं","तुलसीदास — रामचरितमानस लिखा","सूरदास — कृष्ण भक्त अंध कवि","मीराबाई — राजपूत राजकुमारी और कृष्ण भक्त"],
+      as: ["কবীৰ — 15শ শতিকাৰ ভক্তি কবি, তাঁতী আছিল, দোহাৰ মাধ্যমেৰে সামাজিক সংস্কাৰৰ বাবে জনাজাত","তুলসীদাস — ৰামচৰিতমানস লিখিছিল","সূৰদাস — অন্ধ কৃষ্ণভক্ত কবি","মীৰাবাই — ৰাজপুত ৰাজকুমাৰী আৰু কৃষ্ণভক্ত"]
+    },
+    correct: 0,
+    explain: {
+      en: "Kabir (1440–1518 approx.) was a weaver-saint of Varanasi who composed dohas (couplets) called Saakhis. He criticized idol worship, caste system, and religious hypocrisy. His teachings blend Hindu and Muslim ideas. His poems are in Sadhu-bhasha (mixed dialect).",
+      hi: "कबीर (लगभग 1440–1518) वाराणसी के जुलाहे-संत थे जिन्होंने साखी (दोहे) रचे। उन्होंने मूर्ति पूजा, जाति व्यवस्था और धार्मिक पाखंड की आलोचना की। उनकी शिक्षाएं हिंदू और मुस्लिम विचारों को जोड़ती हैं। उनकी कविता साधु-भाषा में है।",
+      as: "কবীৰ (প্ৰায় 1440–1518) বাৰাণসীৰ তাঁতী-সন্ত আছিল যিয়ে সাখী (দোহা) ৰচনা কৰিছিল। তেওঁ মূৰ্তিপূজা, জাতিব্যৱস্থা আৰু ধৰ্মীয় ভণ্ডামিৰ সমালোচনা কৰিছিল। তেওঁৰ শিক্ষা হিন্দু আৰু মুছলমান ভাৱধাৰা মিলায়।"
+    }
+  },
+  {
+    chapter: "📙 Kavya: Vaakh | वाख — ललद्यद (लल्लेश्वरी)",
+    en: "'Vaakh' poems in Kshitij are mystical verses written by which Kashmiri saint-poetess?",
+    hi: "क्षितिज में 'वाख' कविताएं किस कश्मीरी संत-कवयित्री की रहस्यमय रचनाएं हैं?",
+    as: "ক্ষিতিজত 'বাখ' কবিতাবোৰ কোনজন কাশ্মীৰী সন্ত-কবিৰ ৰহস্যময় ৰচনা?",
+    choices: {
+      en: ["Lal Ded (Lalleshwari) — 14th century Kashmiri Shaivite poetess who wrote mystical Vaakhs","Mirabai — Rajasthani poet","Mahadevi Verma — modern Hindi poet","Akka Mahadevi — Kannada vachana poet"],
+      hi: ["लल देद (लल्लेश्वरी) — 14वीं सदी की कश्मीरी शैव कवयित्री जिन्होंने रहस्यमय वाख लिखे","मीराबाई — राजस्थानी कवयित्री","महादेवी वर्मा — आधुनिक हिंदी कवयित्री","अक्का महादेवी — कन्नड़ वचन कवयित्री"],
+      as: ["লাল দেদ (লল্লেশ্বৰী) — 14শ শতিকাৰ কাশ্মীৰী শৈৱ কবি যিয়ে ৰহস্যময় বাখ লিখিছিল","মীৰাবাই — ৰাজস্থানী কবি","মহাদেৱী বৰ্মা — আধুনিক হিন্দী কবি","আক্কা মহাদেৱী — কন্নড় বচন কবি"]
+    },
+    correct: 0,
+    explain: {
+      en: "Lal Ded / Lalleshwari (c. 1320–1392) was a 14th century Kashmiri mystic poetess. Her verses called 'Vaakhs' (sayings) express longing for God, union with the divine, and criticism of empty rituals. She is revered by both Hindus and Muslims in Kashmir.",
+      hi: "लल देद/लल्लेश्वरी (लगभग 1320–1392) 14वीं सदी की कश्मीरी रहस्यवादी कवयित्री थीं। उनके छंद 'वाख' (वचन) ईश्वर की लालसा, दिव्य से मिलन और खाली रीति-रिवाजों की आलोचना व्यक्त करते हैं। कश्मीर में हिंदू और मुसलमान दोनों उन्हें श्रद्धा से याद करते हैं।",
+      as: "লাল দেদ/লল্লেশ্বৰী (প্ৰায় 1320–1392) 14শ শতিকাৰ কাশ্মীৰী ৰহস্যময়ী কবি আছিল। তেওঁৰ 'বাখ' (বচন) ঈশ্বৰৰ প্ৰতি আকুলতা, ঐশ্বৰিকৰ সৈতে মিলন আৰু খালি আচাৰ-অনুষ্ঠানৰ সমালোচনা প্ৰকাশ কৰে।"
+    }
+  },
+  {
+    chapter: "📙 Kavya: Savaiye | सवैये — रसखान",
+    en: "The 'Savaiye' verses in Kshitij are devoted to Lord Krishna. Their author Raskhan was:",
+    hi: "क्षितिज में 'सवैये' श्रीकृष्ण को समर्पित हैं। उनके लेखक रसखान थे:",
+    as: "ক্ষিতিজত 'ছবৈয়ে' শ্ৰীকৃষ্ণক উৎসৰ্গিত। তাৰ লেখক ৰছখান আছিল:",
+    choices: {
+      en: ["A Muslim poet who was a devoted Krishna Bhakta — example of Bhakti transcending religious boundaries","A Hindu Brahmin priest","A Mughal court poet writing about war","A Buddhist monk from Bengal"],
+      hi: ["एक मुस्लिम कवि जो कृष्ण भक्त थे — धार्मिक सीमाओं से परे भक्ति का उदाहरण","एक हिंदू ब्राह्मण पुजारी","युद्ध के बारे में लिखने वाले मुगल दरबारी कवि","बंगाल के एक बौद्ध भिक्षु"],
+      as: ["এজন মুছলমান কবি যি কৃষ্ণভক্ত আছিল — ধৰ্মীয় সীমা অতিক্ৰম কৰা ভক্তিৰ উদাহৰণ","এজন হিন্দু ব্ৰাহ্মণ পুৰোহিত","যুদ্ধৰ বিষয়ে লিখা মুঘল দৰবাৰী কবি","বাংলাৰ এজন বৌদ্ধ ভিক্ষু"]
+    },
+    correct: 0,
+    explain: {
+      en: "Raskhan (1548–1628) was a Muslim poet and ardent devotee of Lord Krishna. His Savaiye describe his love for Krishna's birthplace Vrindavan, the Yamuna, the flute, and the cows. He is an example of how Bhakti movement transcended religious boundaries.",
+      hi: "रसखान (1548–1628) एक मुस्लिम कवि और कृष्ण के परम भक्त थे। उनके सवैये वृंदावन, यमुना, बांसुरी और गायों के प्रति कृष्ण-प्रेम का वर्णन करते हैं। वे भक्ति आंदोलन के धार्मिक सीमाओं से परे होने का उदाहरण हैं।",
+      as: "ৰছখান (1548–1628) এজন মুছলমান কবি আৰু কৃষ্ণৰ পৰম ভক্ত আছিল। তেওঁৰ ছবৈয়ে বৃন্দাৱন, যমুনা, বাঁহী আৰু গৰুৰ প্ৰতি কৃষ্ণ-প্ৰেমৰ বৰ্ণনা দিয়ে। তেওঁ ভক্তি আন্দোলনৰ ধৰ্মীয় সীমা অতিক্ৰম কৰাৰ উদাহৰণ।"
+    }
+  },
+  {
+    chapter: "📙 Kavya: Kaidi Aur Kokila | कैदी और कोकिला — माखनलाल चतुर्वेदी",
+    en: "The poem 'Kaidi Aur Kokila' (The Prisoner and the Cuckoo) in Kshitij is a nationalist poem. Who wrote it?",
+    hi: "'कैदी और कोकिला' (कैदी और कोयल) क्षितिज में एक राष्ट्रवादी कविता है। इसे किसने लिखा?",
+    as: "ক্ষিতিজত 'কৈদী অৰ কোকিলা' (বন্দী আৰু কোকিল) এখন ৰাষ্ট্ৰীয়তাবাদী কবিতা। কোনে লিখিছিল?",
+    choices: {
+      en: ["Makhanlal Chaturvedi — patriot poet who wrote while imprisoned during India's independence movement","Suryakant Tripathi 'Nirala' — progressive Chhayavad poet","Jaishankar Prasad — playwright and Chhayavad poet","Sumitranandan Pant — nature poet"],
+      hi: ["माखनलाल चतुर्वेदी — देशभक्त कवि जिन्होंने स्वतंत्रता संग्राम में जेल में रहते हुए लिखा","सूर्यकांत त्रिपाठी 'निराला' — प्रगतिशील छायावादी कवि","जयशंकर प्रसाद — नाटककार और छायावादी कवि","सुमित्रानंदन पंत — प्रकृति कवि"],
+      as: ["মাখনলাল চতুৰ্বেদী — দেশভক্ত কবি যিয়ে ভাৰতৰ স্বাধীনতা আন্দোলনৰ সময়ত কাৰাবাসত থাকি লিখিছিল","সূৰ্যকান্ত ত্ৰিপাঠী 'নিৰালা' — প্ৰগতিশীল ছায়াবাদ কবি","জয়শংকৰ প্ৰসাদ — নাট্যকাৰ আৰু ছায়াবাদ কবি","সুমিত্ৰানন্দন পন্ত — প্ৰকৃতি কবি"]
+    },
+    correct: 0,
+    explain: {
+      en: "Makhanlal Chaturvedi (1889–1968) wrote 'Kaidi Aur Kokila' while in British prison during the independence movement. The poem contrasts a prisoner's agony with the free cuckoo's song. It is a powerful symbol of India's yearning for freedom.",
+      hi: "माखनलाल चतुर्वेदी (1889–1968) ने स्वतंत्रता आंदोलन के दौरान ब्रिटिश जेल में रहते हुए 'कैदी और कोकिला' लिखी। कविता कैदी की पीड़ा और मुक्त कोयल के गीत के बीच अंतर करती है। यह भारत की स्वतंत्रता की चाहत का एक शक्तिशाली प्रतीक है।",
+      as: "মাখনলাল চতুৰ্বেদী (1889–1968)-এ স্বাধীনতা আন্দোলনৰ সময়ত ব্ৰিটিছ কাৰাগাৰত থাকি 'কৈদী অৰ কোকিলা' লিখিছিল। কবিতাই বন্দীৰ যন্ত্ৰণা আৰু মুক্ত কোকিলৰ গীতৰ মাজৰ পাৰ্থক্য দৰ্শায়। ই ভাৰতৰ স্বাধীনতাৰ আকাংক্ষাৰ শক্তিশালী প্ৰতীক।"
+    }
+  },
+  {
+    chapter: "📗 Gadya: Do Bailon Ki Katha — Patra Parichay",
+    en: "In 'Do Bailon Ki Katha' by Premchand, the two bullocks are named Hira and Moti. What do they symbolize in the story?",
+    hi: "प्रेमचंद की 'दो बैलों की कथा' में दो बैलों के नाम हीरा और मोती हैं। वे कहानी में क्या प्रतीक हैं?",
+    as: "প্ৰেমচন্দৰ 'দো বৈলোঁ কী কথা'-ত দুটা বলদৰ নাম হীৰা আৰু মোতি। গল্পত সেইবোৰে কি প্ৰতীকিত কৰে?",
+    choices: {
+      en: ["Deep friendship, loyalty, and the spirit of freedom — they resist captivity and return home, symbolizing India's independence struggle","Agricultural productivity in rural India","The superiority of bullocks over horses","Religious devotion of farmers"],
+      hi: ["गहरी मित्रता, निष्ठा और स्वतंत्रता की भावना — वे कैद का विरोध करते हैं और घर लौटते हैं, भारत के स्वतंत्रता संग्राम का प्रतीक","ग्रामीण भारत में कृषि उत्पादकता","बैलों की घोड़ों पर श्रेष्ठता","किसानों की धार्मिक भक्ति"],
+      as: ["গভীৰ বন্ধুত্ব, বিশ্বস্ততা আৰু স্বাধীনতাৰ মনোভাৱ — এইবোৰে বন্দীত্বৰ বিৰোধিতা কৰে আৰু ঘৰলৈ ঘূৰি আহে, ভাৰতৰ স্বাধীনতা সংগ্ৰামৰ প্ৰতীক","গ্ৰামীণ ভাৰতত কৃষি উৎপাদনশীলতা","বলদৰ ঘোঁৰাৰ ওপৰত শ্ৰেষ্ঠত্ব","কৃষকৰ ধৰ্মীয় ভক্তি"]
+    },
+    correct: 0,
+    explain: {
+      en: "Hira and Moti represent deep friendship and the love of freedom. They resist being sold, escape from the butcher (qasai), and ultimately return to their owner Jhuri. Many critics see the story as an allegory for India's independence movement against British rule.",
+      hi: "हीरा और मोती गहरी मित्रता और स्वतंत्रता के प्रेम का प्रतिनिधित्व करते हैं। वे बिकने का विरोध करते हैं, कसाई से भागते हैं, और अंततः अपने मालिक झूरी के पास लौट आते हैं। कई आलोचक इस कहानी को ब्रिटिश शासन के खिलाफ भारत के स्वतंत्रता आंदोलन का रूपक मानते हैं।",
+      as: "হীৰা আৰু মোতিয়ে গভীৰ বন্ধুত্ব আৰু স্বাধীনতাৰ প্ৰেম প্ৰতিনিধিত্ব কৰে। এইবোৰে বিক্ৰী হোৱাৰ বিৰোধিতা কৰে, কছাইৰ পৰা পলায়, আৰু অৱশেষত তাৰ মালিক ঝুৰিৰ ওচৰলৈ ঘূৰি আহে। বহু সমালোচকে গল্পটোক ব্ৰিটিছ শাসনৰ বিৰুদ্ধে ভাৰতৰ স্বাধীনতা আন্দোলনৰ রূপকথা হিচাপে দেখে।"
+    }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l, e) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = 'Question ' + (current + 1) + ' of 10';
+  document.getElementById('chapterTag').textContent = q.chapter;
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+  const choicesArr = q.choices[lang] || q.choices.en;
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars, msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'Sahitya Samrat! You know Kshitij inside out! 📖', hi: 'साहित्य सम्राट! आप क्षितिज को अंदर-बाहर जानते हैं! 📖', as: 'সাহিত্য সম্ৰাট! তুমি ক্ষিতিজ মূলসূদ্ধ জানা! 📖' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Great literary knowledge! Keep reading the chapters! 📚', hi: 'शानदार साहित्यिक ज्ञान! अध्याय पढ़ते रहें! 📚', as: 'চমৎকাৰ সাহিত্যিক জ্ঞান! অধ্যায়বোৰ পঢ়ি থাকক! 📚' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Good effort! Revise author names and story themes.', hi: 'अच्छी कोशिश! लेखक के नाम और कहानी के विषय दोबारा पढ़ें।', as: 'ভাল প্ৰচেষ্টা! লেখকৰ নাম আৰু গল্পৰ বিষয় পুনৰায় পঢ়ক।' }; }
+  else { stars = '☆☆☆'; msg = { en: 'Keep going! Great literature awaits your exploration! 📖', hi: 'जारी रखो! महान साहित्य आपकी खोज का इंतजार कर रहा है! 📖', as: 'এগাই যাওক! মহৎ সাহিত্য তোমাৰ অন্বেষণৰ বাবে অপেক্ষা কৰি আছে! 📖' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

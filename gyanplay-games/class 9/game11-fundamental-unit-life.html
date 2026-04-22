@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamental Unit of Life — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--green);color:#000;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--sky);color:#000;border-color:var(--sky);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--sky);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--sky),var(--purple));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.55;margin-bottom:18px;}
+.q-emoji{font-size:1.5rem;margin-right:6px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;}
+.choice-btn:hover:not(:disabled){background:rgba(0,174,239,.12);border-color:var(--sky);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--sky);color:#000;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--sky);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Science · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('hi')">हि</button>
+      <button class="lang-btn" onclick="setLang('as')">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">🔬 Fundamental Unit of Life</span>
+    <span data-lang="hi" style="display:none">🔬 जीवन की मूल इकाई</span>
+    <span data-lang="as" style="display:none">🔬 জীৱনৰ মূল একক</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — Ch 5 · The Cell 🧫</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — अध्याय 5 · कोशिका 🧫</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — অধ্যায় 5 · কোষ 🧫</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    emoji: "🔬",
+    en: "🔬 Who proposed that 'all plants are made of cells'?",
+    hi: "🔬 किसने प्रस्तावित किया कि 'सभी पौधे कोशिकाओं से बने हैं'?",
+    as: "🔬 কোনে প্ৰস্তাৱ দিছিল যে 'সকলো উদ্ভিদ কোষেৰে গঠিত'?",
+    choices: { en: ["Schleiden","Schwann","Virchow","Robert Hooke"], hi: ["श्लाइडेन","श्वान","विर्चो","रॉबर्ट हुक"], as: ["শ্লেইডেন","শ্বান","ভিৰ্চো","ৰবাৰ্ট হুক"] },
+    correct: 0,
+    explain: { en: "Matthias Schleiden (1838) proposed all plants are made of cells.", hi: "मैथियास श्लाइडेन (1838) ने बताया कि सभी पौधे कोशिकाओं से बने हैं।", as: "মেথিয়াছ শ্লেইডেন (1838)এ প্ৰস্তাৱ দিছিল যে সকলো উদ্ভিদ কোষেৰে গঠিত।" }
+  },
+  {
+    emoji: "🧫",
+    en: "🧫 'All animals are made of cells' — who proposed this?",
+    hi: "🧫 'सभी जंतु कोशिकाओं से बने हैं' — यह किसने प्रस्तावित किया?",
+    as: "🧫 'সকলো প্ৰাণী কোষেৰে গঠিত' — কোনে এই প্ৰস্তাৱ দিছিল?",
+    choices: { en: ["Schwann","Schleiden","Virchow","Darwin"], hi: ["श्वान","श्लाइडेन","विर्चो","डार्विन"], as: ["শ্বান","শ্লেইডেন","ভিৰ্চো","ডাৰউইন"] },
+    correct: 0,
+    explain: { en: "Theodore Schwann (1839) extended cell theory to animals.", hi: "थियोडोर श्वान (1839) ने कोशिका सिद्धांत को जंतुओं तक बढ़ाया।", as: "থিওডোৰ শ্বান (1839)এ কোষ তত্ত্ব প্ৰাণীলৈ বিস্তাৰ কৰিলে।" }
+  },
+  {
+    emoji: "🔬",
+    en: "🔬 Virchow's contribution to cell theory was that new cells arise from:",
+    hi: "🔬 कोशिका सिद्धांत में विर्चो का योगदान था कि नई कोशिकाएं उत्पन्न होती हैं:",
+    as: "🔬 কোষ তত্ত্বত ভিৰ্চোৰ অৱদান আছিল যে নতুন কোষ উৎপন্ন হয়:",
+    choices: { en: ["Pre-existing cells","Non-living matter","Chemical reactions in air","The nucleus alone"], hi: ["पूर्व-विद्यमान कोशिकाओं से","निर्जीव पदार्थ से","हवा में रासायनिक अभिक्रियाओं से","केवल नाभिक से"], as: ["পূৰ্বৰ পৰা থকা কোষৰ পৰা","অজীৱ পদাৰ্থৰ পৰা","বায়ুত ৰাসায়নিক বিক্ৰিয়াৰ পৰা","কেৱল নিউক্লিয়াছৰ পৰা"] },
+    correct: 0,
+    explain: { en: "Rudolf Virchow (1855): 'Omnis cellula e cellula' — every cell comes from a pre-existing cell.", hi: "रुडोल्फ विर्चो (1855): 'ओम्निस सेल्युला ई सेल्युला' — हर कोशिका पहले से मौजूद कोशिका से आती है।", as: "ৰুডল্ফ ভিৰ্চো (1855): প্ৰতিটো কোষ পূৰ্বৱৰ্তী কোষৰ পৰা উৎপন্ন হয়।" }
+  },
+  {
+    emoji: "🧫",
+    en: "🧫 Which organelle is called the 'powerhouse of the cell'?",
+    hi: "🧫 किस कोशिकांग को 'कोशिका का पावरहाउस' कहा जाता है?",
+    as: "🧫 কোন অংগাণুক 'কোষৰ শক্তি কেন্দ্ৰ' বুলি কোৱা হয়?",
+    choices: { en: ["Mitochondria","Chloroplast","Nucleus","Ribosome"], hi: ["माइटोकॉन्ड्रिया","क्लोरोप्लास्ट","केंद्रक","राइबोसोम"], as: ["মাইটোকণ্ড্ৰিয়া","ক্ল'ৰ'প্লাষ্ট","নিউক্লিয়াছ","ৰাইবোজম"] },
+    correct: 0,
+    explain: { en: "Mitochondria produce energy (ATP) through cellular respiration — hence 'powerhouse of the cell'.", hi: "माइटोकॉन्ड्रिया कोशिकीय श्वसन द्वारा ऊर्जा (ATP) उत्पन्न करता है — इसीलिए 'कोशिका का पावरहाउस'।", as: "মাইটোকণ্ড্ৰিয়াই কোষীয় শ্বাসক্ৰিয়াৰ দ্বাৰা শক্তি (ATP) উৎপন্ন কৰে।" }
+  },
+  {
+    emoji: "🔬",
+    en: "🔬 Chloroplasts are found in plant cells and are responsible for:",
+    hi: "🔬 क्लोरोप्लास्ट पादप कोशिकाओं में पाए जाते हैं और इनका कार्य है:",
+    as: "🔬 ক্ল'ৰ'প্লাষ্ট উদ্ভিদ কোষত পোৱা যায় আৰু ইহঁত দায়ী:",
+    choices: { en: ["Photosynthesis","Cellular respiration","Protein synthesis","Cell division"], hi: ["प्रकाश संश्लेषण","कोशिकीय श्वसन","प्रोटीन संश्लेषण","कोशिका विभाजन"], as: ["সালোক সংশ্লেষণ","কোষীয় শ্বাসক্ৰিয়া","প্ৰ'টিন সংশ্লেষণ","কোষ বিভাজন"] },
+    correct: 0,
+    explain: { en: "Chloroplasts contain chlorophyll and carry out photosynthesis, converting sunlight into food.", hi: "क्लोरोप्लास्ट में क्लोरोफिल होता है और यह प्रकाश संश्लेषण द्वारा सूर्य के प्रकाश को भोजन में बदलता है।", as: "ক্ল'ৰ'প্লাষ্টত ক্ল'ৰ'ফিল থাকে আৰু এয়া সালোক সংশ্লেষণেৰে সূৰ্যৰ পোহৰক খাদ্যলৈ ৰূপান্তৰিত কৰে।" }
+  },
+  {
+    emoji: "🧫",
+    en: "🧫 What is a key difference between plant and animal cells?",
+    hi: "🧫 पादप और जंतु कोशिकाओं में एक मुख्य अंतर क्या है?",
+    as: "🧫 উদ্ভিদ আৰু প্ৰাণী কোষৰ মাজৰ এটা মুখ্য পাৰ্থক্য কি?",
+    choices: { en: ["Plant cells have a cell wall; animal cells do not","Animal cells have chloroplasts; plant cells do not","Plant cells have no nucleus","Animal cells have large vacuoles"], hi: ["पादप कोशिकाओं में कोशिका भित्ति होती है; जंतु कोशिकाओं में नहीं","जंतु कोशिकाओं में क्लोरोप्लास्ट; पादप में नहीं","पादप कोशिकाओं में केंद्रक नहीं","जंतु कोशिकाओं में बड़ी रसधानी"], as: ["উদ্ভিদ কোষত কোষ প্ৰাচীৰ আছে; প্ৰাণী কোষত নাই","প্ৰাণী কোষত ক্ল'ৰ'প্লাষ্ট আছে; উদ্ভিদত নাই","উদ্ভিদ কোষত নিউক্লিয়াছ নাই","প্ৰাণী কোষত ডাঙৰ গহ্বৰ আছে"] },
+    correct: 0,
+    explain: { en: "Plant cells have a rigid cell wall (cellulose) outside the cell membrane. Animal cells lack this.", hi: "पादप कोशिकाओं में कोशिका झिल्ली के बाहर कठोर कोशिका भित्ति (सेल्युलोज) होती है। जंतु कोशिकाओं में यह नहीं होती।", as: "উদ্ভিদ কোষত কোষ ঝিল্লীৰ বাহিৰত দৃঢ় কোষ প্ৰাচীৰ (চেলুলোজ) থাকে। প্ৰাণী কোষত এয়া নাই।" }
+  },
+  {
+    emoji: "🔬",
+    en: "🔬 The nucleus controls the cell's activities. It contains:",
+    hi: "🔬 केंद्रक कोशिका की गतिविधियों को नियंत्रित करता है। इसमें होता है:",
+    as: "🔬 নিউক্লিয়াছে কোষৰ কাৰ্যকলাপ নিয়ন্ত্ৰণ কৰে। ইয়াত থাকে:",
+    choices: { en: ["DNA (genetic material/chromosomes)","Chlorophyll","ATP energy molecules","Digestive enzymes"], hi: ["DNA (आनुवंशिक पदार्थ/गुणसूत्र)","क्लोरोफिल","ATP ऊर्जा अणु","पाचन एंजाइम"], as: ["DNA (বংশগত পদাৰ্থ/ক্ৰ'মজম)","ক্ল'ৰ'ফিল","ATP শক্তি অণু","পাচক এনজাইম"] },
+    correct: 0,
+    explain: { en: "The nucleus contains DNA organized into chromosomes. DNA carries genetic information and controls all cell functions.", hi: "केंद्रक में DNA गुणसूत्रों में संगठित होता है। DNA आनुवंशिक जानकारी वहन करता है।", as: "নিউক্লিয়াছত DNA ক্ৰ'মজমত সংগঠিত। DNA বংশগত তথ্য বহন কৰে আৰু সকলো কোষ কাৰ্য নিয়ন্ত্ৰণ কৰে।" }
+  },
+  {
+    emoji: "🧫",
+    en: "🧫 Prokaryotic cells differ from eukaryotic cells because they lack:",
+    hi: "🧫 प्रोकैरियोटिक कोशिकाएं यूकैरियोटिक कोशिकाओं से भिन्न होती हैं क्योंकि उनमें नहीं होता:",
+    as: "🧫 প্ৰকাৰিঅ'টিক কোষ ইউকাৰিঅ'টিক কোষতকৈ পৃথক কাৰণ সেইবোৰত নাথাকে:",
+    choices: { en: ["A membrane-bound nucleus","Cell membrane","Ribosomes","DNA"], hi: ["झिल्ली से घिरा केंद्रक","कोशिका झिल्ली","राइबोसोम","DNA"], as: ["ঝিল্লী আৱৃত নিউক্লিয়াছ","কোষ ঝিল্লী","ৰাইবোজম","DNA"] },
+    correct: 0,
+    explain: { en: "Prokaryotes (bacteria) have no membrane-bound nucleus — DNA floats free. Eukaryotes (plants, animals) have a true nucleus.", hi: "प्रोकैरियोट्स (बैक्टीरिया) में झिल्ली से घिरा केंद्रक नहीं होता — DNA मुक्त रहता है। यूकैरियोट्स में सच्चा केंद्रक होता है।", as: "প্ৰকাৰিঅ'টত (বেক্টেৰিয়া) ঝিল্লী আৱৃত নিউক্লিয়াছ নাই — DNA মুক্তভাৱে থাকে। ইউকাৰিঅ'টত প্ৰকৃত নিউক্লিয়াছ থাকে।" }
+  },
+  {
+    emoji: "🔬",
+    en: "🔬 The Golgi apparatus (Golgi body) in cells is mainly responsible for:",
+    hi: "🔬 कोशिकाओं में गॉल्जी उपकरण (गॉल्जी बॉडी) मुख्यतः किसके लिए जिम्मेदार है:",
+    as: "🔬 কোষত গলজি যন্ত্ৰপাতি (গলজি বডি) মূলত দায়ী:",
+    choices: { en: ["Packaging and secretion of materials","Photosynthesis","Energy production","DNA replication"], hi: ["पदार्थों की पैकेजिंग और स्राव","प्रकाश संश्लेषण","ऊर्जा उत्पादन","DNA प्रतिकृति"], as: ["পদাৰ্থৰ প্যাকেজিং আৰু নিঃসৰণ","সালোক সংশ্লেষণ","শক্তি উৎপাদন","DNA প্ৰতিলিপি"] },
+    correct: 0,
+    explain: { en: "The Golgi apparatus packages proteins and lipids and secretes them — it is the 'post office' of the cell.", hi: "गॉल्जी उपकरण प्रोटीन और वसा को पैक करके स्रावित करता है — यह कोशिका का 'पोस्ट ऑफिस' है।", as: "গলজি যন্ত্ৰপাতি প্ৰ'টিন আৰু লিপিড প্যাক কৰি নিঃসৰণ কৰে — এয়া কোষৰ 'ডাকঘৰ'।" }
+  },
+  {
+    emoji: "🧫",
+    en: "🧫 Lysosomes are called 'suicide bags' because they:",
+    hi: "🧫 लाइसोसोम को 'आत्मघाती थैली' क्यों कहते हैं?",
+    as: "🧫 লাইজ'জমক 'আত্মঘাতী বেগ' কিয় কোৱা হয়?",
+    choices: { en: ["Contain digestive enzymes that can destroy the cell if ruptured","Produce energy for cell death","Store waste products","Help in cell division"], hi: ["फटने पर कोशिका को नष्ट करने वाले पाचन एंजाइम होते हैं","कोशिका मृत्यु के लिए ऊर्जा उत्पन्न करते हैं","अपशिष्ट उत्पाद संग्रहीत करते हैं","कोशिका विभाजन में मदद करते हैं"], as: ["ফাটি গলে কোষ ধ্বংস কৰিব পৰা পাচক এনজাইম থাকে","কোষ মৃত্যুৰ বাবে শক্তি উৎপন্ন কৰে","আৱৰ্জনা সঞ্চয় কৰে","কোষ বিভাজনত সহায় কৰে"] },
+    correct: 0,
+    explain: { en: "Lysosomes contain powerful digestive enzymes. If they burst, they digest the cell's own contents — hence 'suicide bags'.", hi: "लाइसोसोम में शक्तिशाली पाचन एंजाइम होते हैं। फटने पर ये कोशिका को ही पचा देते हैं — इसीलिए 'आत्मघाती थैली'।", as: "লাইজ'জমত শক্তিশালী পাচক এনজাইম থাকে। ফাটিলে ই কোষকে হজম কৰে — সেয়ে 'আত্মঘাতী বেগ'।" }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = `Question ${current + 1} of 10`;
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+  const choicesArr = (q.choices[lang] || q.choices.en);
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars, msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'Cell Biology Master! Outstanding work! 🔬', hi: 'कोशिका जीवविज्ञान मास्टर! शानदार काम! 🔬', as: 'কোষ জীৱবিজ্ঞানৰ মাষ্টাৰ! অসাধাৰণ! 🔬' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Great! The cell is unlocking its secrets for you! 🧫', hi: 'बहुत अच्छा! कोशिका अपने रहस्य खोल रही है! 🧫', as: 'চমৎকাৰ! কোষে তোমাৰ বাবে ৰহস্য খুলিছে! 🧫' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Keep going! Review organelle functions. 🔬', hi: 'चलते रहो! कोशिकांगों के कार्य दोबारा पढ़ें। 🔬', as: 'এগাই যাওক! অংগাণুৰ কাৰ্য পুনৰায় পঢ়ক। 🔬' }; }
+  else { stars = '☆☆☆'; msg = { en: 'Start with cell theory basics — you can do it! 🧫', hi: 'कोशिका सिद्धांत की बुनियाद से शुरू करें! 🧫', as: 'কোষ তত্ত্বৰ মূল বিষয়ৰ পৰা আৰম্ভ কৰক! 🧫' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

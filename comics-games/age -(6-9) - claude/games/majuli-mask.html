@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Majuli Mask Maker — Rongmon's World</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --jungle: #1a5c2e;
+    --leaf: #4caf50;
+    --gold: #f5c518;
+    --bihu-red: #e63946;
+    --bihu-orange: #f4a261;
+    --sky: #48cae4;
+    --earth: #8b5e3c;
+    --dark: #1a1a2e;
+    --cream: #fef9ef;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Baloo 2', cursive;
+    background: #111;
+    color: var(--dark);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  .as { font-family: 'Hind Siliguri', sans-serif; }
+
+  /* ══ APP ══ */
+  #game-wrap {
+    width: 100%; max-width: 800px; height: 100vh; max-height: 700px;
+    background: linear-gradient(160deg, #fef9ef 0%, #f5ebe0 50%, #ffe8cc 100%);
+    position: relative; overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column;
+  }
+  @media(min-width: 820px) { #game-wrap { height: 90vh; border-radius: 24px; border: 8px solid var(--earth); } }
+
+  /* ══ HUD ══ */
+  #hud {
+    position: absolute; top: 0; left: 0; right: 0;
+    padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(139,94,60,0.92), rgba(139,94,60,0));
+  }
+  #hud.hidden { display: none; }
+  .hud-left, .hud-right { display: flex; gap: 12px; align-items: center; }
+  .hud-stat {
+    background: rgba(255,255,255,0.9); padding: 4px 14px;
+    border-radius: 20px; font-weight: 800; font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); color: var(--earth);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .lang-pill { display: flex; background: rgba(255,255,255,0.9); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+  .lang-pill button { border: none; background: none; padding: 4px 12px; font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 14px; cursor: pointer; color: #888; transition: 0.2s; }
+  .lang-pill button.active { background: var(--gold); color: var(--earth); }
+
+  /* ══ SCREENS ══ */
+  .screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; z-index: 10; }
+  .screen.hidden { display: none; }
+  .overlay-box { background: #fff; padding: 40px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); max-width: 420px; width: 90%; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+  /* ══ BUTTONS ══ */
+  .btn-primary { background: var(--gold); color: var(--earth); border: none; padding: 12px 30px; font-size: 20px; font-weight: 800; border-radius: 50px; cursor: pointer; box-shadow: 0 6px 0 #b07d00; transition: transform 0.1s, box-shadow 0.1s; font-family: 'Baloo 2', cursive; margin-top: 15px; }
+  .btn-primary:active { transform: translateY(6px); box-shadow: 0 0px 0 #b07d00; }
+  .btn-home { position: fixed; top: 20px; left: 20px; z-index: 500; width: 44px; height: 44px; border-radius: 50%; background: #fff; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .mute-btn { position: fixed; bottom: 20px; right: 20px; z-index: 500; width: 44px; height: 44px; border-radius: 50%; border: none; background: #fff; font-size: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .title-lg { font-size: 38px; font-weight: 900; color: var(--earth); line-height: 1.1; margin-bottom: 10px; }
+  .desc-txt { font-size: 17px; color: #666; font-weight: 600; margin-bottom: 15px; line-height: 1.5; }
+
+  /* ══ GAME SCREEN ══ */
+  #screen-game { justify-content: flex-start; padding: 0; }
+
+  .mask-area {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding-top: 60px; position: relative; width: 100%;
+  }
+  .mask-canvas {
+    width: 280px; height: 320px; position: relative;
+  }
+  .mask-slot {
+    position: absolute; border: 3px dashed rgba(139,94,60,0.4);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.3s; background: rgba(139,94,60,0.06);
+  }
+  .mask-slot:hover { border-color: var(--gold); background: rgba(245,197,24,0.1); }
+  .mask-slot.selected { border-color: var(--bihu-red); background: rgba(230,57,70,0.1); box-shadow: 0 0 12px rgba(230,57,70,0.3); }
+  .mask-slot.filled { border-style: solid; border-color: transparent; background: none; cursor: default; }
+  .mask-slot.filled svg { opacity: 1; }
+  .mask-slot.wrong { animation: shake 0.4s; border-color: var(--bihu-red); }
+  @keyframes shake { 20%,60%{ transform: translateX(-5px); } 40%,80%{ transform: translateX(5px); } }
+  .mask-slot .slot-label { position: absolute; bottom: -18px; font-size: 11px; font-weight: 700; color: var(--earth); opacity: 0.6; white-space: nowrap; }
+
+  .mask-title-bar {
+    position: absolute; top: 55px; left: 0; right: 0; text-align: center; z-index: 5;
+  }
+  .mask-name { font-size: 22px; font-weight: 900; color: var(--earth); }
+  .mask-hint { font-size: 14px; color: #999; font-weight: 600; }
+
+  /* ══ TRAY ══ */
+  .shape-tray {
+    width: 100%; padding: 16px 20px 24px;
+    background: linear-gradient(to top, rgba(139,94,60,0.15), transparent);
+    display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center;
+    border-top: 2px solid rgba(139,94,60,0.15);
+  }
+  .tray-label { width: 100%; text-align: center; font-size: 13px; font-weight: 800; color: var(--earth); opacity: 0.5; margin-bottom: 4px; letter-spacing: 1px; text-transform: uppercase; }
+  .shape-btn {
+    width: 70px; height: 70px; border-radius: 16px; border: 3px solid rgba(139,94,60,0.2);
+    background: #fff; cursor: pointer; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2px;
+    transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  }
+  .shape-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.12); }
+  .shape-btn.selected { border-color: var(--bihu-red); background: #fff0f0; transform: scale(1.1); box-shadow: 0 6px 20px rgba(230,57,70,0.25); }
+  .shape-btn.used { opacity: 0.3; pointer-events: none; }
+  .shape-btn svg { width: 36px; height: 36px; }
+  .shape-btn-name { font-size: 10px; font-weight: 800; color: var(--earth); }
+
+  /* ══ EFFECTS ══ */
+  .confetti-piece { position: absolute; pointer-events: none; z-index: 150; animation: fall 2s linear forwards; }
+  @keyframes fall { 0% { transform: translate(0,0) rotate(0deg); opacity: 1; } 100% { transform: translate(var(--cx), var(--cy)) rotate(var(--cr)); opacity: 0; } }
+
+  /* ══ PROG BAR ══ */
+  .prog-wrap { position: absolute; bottom: 0; left: 0; right: 0; height: 6px; background: rgba(139,94,60,0.15); z-index: 50; }
+  .prog-bar { height: 100%; background: var(--gold); width: 0%; transition: width 0.5s; border-radius: 0 3px 3px 0; }
+
+  /* ══ ONBOARDING ══ */
+  #onboarding { background: rgba(0,0,0,0.8); z-index: 200; backdrop-filter: blur(5px); }
+</style>
+</head>
+<body>
+
+<a href="../index.html#games" class="btn-home" title="Back to Home">🏠</a>
+<button class="mute-btn" id="mute-btn-game" onclick="toggleMuteGame()">🔊</button>
+
+<div id="game-wrap">
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-left">
+      <div class="hud-stat" title="Score">⭐ <span id="score-disp">0</span></div>
+      <div class="hud-stat" title="Mask">🎭 <span id="mask-disp">1/5</span></div>
+    </div>
+    <div class="hud-right">
+      <div class="lang-pill">
+        <button class="active" onclick="setLang('en')" id="lp-en">EN</button>
+        <button onclick="setLang('as')" id="lp-as">অস</button>
+      </div>
+      <div class="hud-stat" id="lives-disp">❤️❤️❤️</div>
+    </div>
+  </div>
+
+  <!-- SCREEN: INTRO -->
+  <div class="screen" id="screen-intro">
+    <div class="overlay-box" style="background:transparent;box-shadow:none;">
+      <div style="font-size:70px;margin-bottom:10px;">🎭</div>
+      <h1 class="title-lg" id="intro-title">Majuli Mask Maker!</h1>
+      <p class="desc-txt" id="intro-desc">Majuli Island is famous for its traditional masks! Tap a shape, then tap the slot on the mask where it belongs.</p>
+      <button class="btn-primary" onclick="startGame()" id="btn-start">🎨 Start Crafting!</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: GAME -->
+  <div class="screen hidden" id="screen-game">
+    <div class="mask-title-bar">
+      <div class="mask-name" id="mask-name">Ravana Mask</div>
+      <div class="mask-hint" id="mask-hint">Tap a shape, then tap where it goes!</div>
+    </div>
+    <div class="mask-area">
+      <div class="mask-canvas" id="mask-canvas"></div>
+    </div>
+    <div class="shape-tray" id="shape-tray">
+      <div class="tray-label" id="tray-label">SHAPE TRAY</div>
+    </div>
+  </div>
+
+  <!-- SCREEN: LEVEL COMPLETE -->
+  <div class="screen hidden" id="screen-levelup">
+    <div class="overlay-box">
+      <div style="font-size:60px" id="lu-icon">🎭</div>
+      <h2 class="title-lg" id="lu-title">Mask Complete!</h2>
+      <p class="desc-txt" id="lu-fact">Fun fact about this mask...</p>
+      <div id="lu-stars" style="font-size:32px;margin:8px 0;">⭐⭐⭐</div>
+      <button class="btn-primary" onclick="nextMask()" id="btn-next">Next Mask ▶</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: GAME OVER -->
+  <div class="screen hidden" id="screen-gameover">
+    <div class="overlay-box">
+      <div style="font-size:60px">💔</div>
+      <h2 class="title-lg" id="go-title" style="color:#e63946">Oh no!</h2>
+      <p class="desc-txt" id="go-desc">The mask broke! But a true artist never gives up.</p>
+      <button class="btn-primary" onclick="startGame()" id="btn-retry">🔄 Try Again</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: VICTORY -->
+  <div class="screen hidden" id="screen-victory">
+    <div class="overlay-box" style="background: linear-gradient(135deg,#fff8e8,#ffe8cc);border:4px solid var(--gold);">
+      <div style="font-size:70px">👑</div>
+      <h2 class="title-lg" id="vic-title" style="color:var(--gold)">Master Mask Maker!</h2>
+      <p class="desc-txt" id="vic-desc">You crafted all the masks! Rongmon is proud of your art!</p>
+      <div id="vic-score" style="font-size:18px;font-weight:800;color:var(--earth);">⭐ Score: 0</div>
+      <button class="btn-primary" onclick="startGame()" id="btn-replay">🎨 Play Again</button>
+      <br/><a href="../index.html#games" style="font-size:14px;color:#999;text-decoration:none;display:inline-block;margin-top:10px;" id="btn-home-v">🏠 Back to Home</a>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div id="onboarding" class="screen hidden">
+    <div class="overlay-box">
+      <h2 class="title-lg" style="font-size:30px">How to Play</h2>
+      <p class="desc-txt" style="text-align:left;font-size:15px;" id="ob-desc">
+        1. Look at the empty mask outline. 🎭<br>
+        2. Tap a shape from the tray below. 🔺<br>
+        3. Tap the matching slot on the mask! 👆<br>
+        4. Complete all 5 masks to become a Master!<br>
+        <span class="as" style="font-size:13px;">১. খালী মুখাখন চাওক। ২. তলৰ আকৃতি বাছক। ৩. মুখাত সঠিক ঠাইত ৰাখক!</span>
+      </p>
+      <button class="btn-primary" onclick="dismissOnboarding()">Got it! 👍</button>
+    </div>
+  </div>
+
+  <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
+</div>
+
+<script src="rongmon-data.js"></script>
+<script src="rongmon-audio.js"></script>
+<script>
+// ══ MASKS DATA ══
+// Each mask has slots where specific shapes go.
+// Shapes: circle, triangle, rectangle, oval, diamond, semicircle
+const MASKS = [
+  {
+    name_en: 'Ravana Mask', name_as: 'ৰাৱণ মুখা',
+    fact_en: 'Ravana masks are used in traditional Bhaona performances on Majuli Island! They are made from bamboo and clay.',
+    fact_as: 'ৰাৱণ মুখা মাজুলী দ্বীপৰ পৰম্পৰাগত ভাওনাত ব্যৱহাৰ কৰা হয়! বাঁহ আৰু মাটিৰে তৈয়াৰ কৰা হয়।',
+    bg: '#c0392b',
+    slots: [
+      { id:'face', shape:'oval', x:90, y:40, w:100, h:130, color:'#e8c0a0', label_en:'Face', label_as:'মুখ' },
+      { id:'eye-l', shape:'circle', x:100, y:80, w:30, h:30, color:'#2c3e50', label_en:'Left Eye', label_as:'বাওঁ চকু' },
+      { id:'eye-r', shape:'circle', x:150, y:80, w:30, h:30, color:'#2c3e50', label_en:'Right Eye', label_as:'সোঁ চকু' },
+      { id:'nose', shape:'triangle', x:125, y:105, w:30, h:35, color:'#d4a574', label_en:'Nose', label_as:'নাক' },
+      { id:'crown', shape:'triangle', x:100, y:5, w:80, h:45, color:'#f5c518', label_en:'Crown', label_as:'মুকুট' },
+    ]
+  },
+  {
+    name_en: 'Hanuman Mask', name_as: 'হনুমান মুখা',
+    fact_en: 'Hanuman masks represent the brave monkey god. Artists on Majuli spend weeks painting each mask by hand!',
+    fact_as: 'হনুমান মুখাই সাহসী বান্দৰ দেৱতাক প্ৰতিনিধিত্ব কৰে। শিল্পীয়ে প্ৰতিটো মুখা হাতেৰে ৰং কৰে!',
+    bg: '#e67e22',
+    slots: [
+      { id:'face', shape:'circle', x:100, y:60, w:80, h:80, color:'#f0c070', label_en:'Face', label_as:'মুখ' },
+      { id:'jaw', shape:'semicircle', x:105, y:130, w:70, h:40, color:'#d4a050', label_en:'Jaw', label_as:'থুঁতৰি' },
+      { id:'eye-l', shape:'diamond', x:108, y:80, w:24, h:24, color:'#fff', label_en:'Left Eye', label_as:'বাওঁ চকু' },
+      { id:'eye-r', shape:'diamond', x:148, y:80, w:24, h:24, color:'#fff', label_en:'Right Eye', label_as:'সোঁ চকু' },
+      { id:'crown', shape:'rectangle', x:100, y:30, w:80, h:35, color:'#f5c518', label_en:'Crown', label_as:'মুকুট' },
+    ]
+  },
+  {
+    name_en: 'Garuda Mask', name_as: 'গৰুড মুখা',
+    fact_en: 'The Garuda is a divine bird in Hindu mythology. Its mask features a sharp beak and fierce eyes!',
+    fact_as: 'গৰুড হিন্দু পৌৰাণিক কাহিনীৰ এক দৈৱিক চৰাই। ইয়াৰ মুখাত ধাৰালো ঠোঁট আৰু তীক্ষ্ণ চকু থাকে!',
+    bg: '#27ae60',
+    slots: [
+      { id:'head', shape:'oval', x:90, y:50, w:100, h:100, color:'#2ecc71', label_en:'Head', label_as:'মূৰ' },
+      { id:'beak', shape:'triangle', x:120, y:140, w:40, h:50, color:'#f39c12', label_en:'Beak', label_as:'ঠোঁট' },
+      { id:'eye-l', shape:'circle', x:105, y:80, w:26, h:26, color:'#e74c3c', label_en:'Left Eye', label_as:'বাওঁ চকু' },
+      { id:'eye-r', shape:'circle', x:149, y:80, w:26, h:26, color:'#e74c3c', label_en:'Right Eye', label_as:'সোঁ চকু' },
+      { id:'crest', shape:'semicircle', x:105, y:20, w:70, h:40, color:'#e74c3c', label_en:'Crest', label_as:'শিখা' },
+    ]
+  },
+  {
+    name_en: 'Narasimha Mask', name_as: 'নৰসিংহ মুখা',
+    fact_en: 'Narasimha, the lion-man avatar, has a fierce mane. These masks are painted with natural dyes from flowers!',
+    fact_as: 'সিংহ-মানৱ অৱতাৰ নৰসিংহৰ গৰ্জনশীল কেশৰ আছে। ফুলৰ ৰঙেৰে মুখা ৰং কৰা হয়!',
+    bg: '#8e44ad',
+    slots: [
+      { id:'face', shape:'circle', x:100, y:70, w:80, h:80, color:'#f0c070', label_en:'Face', label_as:'মুখ' },
+      { id:'mane-l', shape:'triangle', x:60, y:50, w:50, h:80, color:'#e67e22', label_en:'Left Mane', label_as:'বাওঁ কেশৰ' },
+      { id:'mane-r', shape:'triangle', x:170, y:50, w:50, h:80, color:'#e67e22', label_en:'Right Mane', label_as:'সোঁ কেশৰ' },
+      { id:'nose', shape:'diamond', x:125, y:105, w:30, h:30, color:'#d4a574', label_en:'Nose', label_as:'নাক' },
+      { id:'mouth', shape:'rectangle', x:112, y:135, w:56, h:20, color:'#c0392b', label_en:'Mouth', label_as:'মুখ' },
+    ]
+  },
+  {
+    name_en: 'Krishna Mask', name_as: 'কৃষ্ণ মুখা',
+    fact_en: 'Krishna masks are the most popular at Majuli! They show his kind smile and peacock feather crown.',
+    fact_as: 'কৃষ্ণ মুখা মাজুলীত আটাইতকৈ জনপ্ৰিয়! ময়ূৰৰ পাখিৰ মুকুট আৰু দয়ালু হাঁহি দেখুৱায়।',
+    bg: '#2980b9',
+    slots: [
+      { id:'face', shape:'oval', x:90, y:55, w:100, h:120, color:'#7fb3d4', label_en:'Face', label_as:'মুখ' },
+      { id:'eye-l', shape:'oval', x:103, y:90, w:28, h:16, color:'#1a1a2e', label_en:'Left Eye', label_as:'বাওঁ চকু' },
+      { id:'eye-r', shape:'oval', x:149, y:90, w:28, h:16, color:'#1a1a2e', label_en:'Right Eye', label_as:'সোঁ চকু' },
+      { id:'crown', shape:'semicircle', x:100, y:15, w:80, h:50, color:'#f5c518', label_en:'Crown', label_as:'মুকুট' },
+      { id:'flute', shape:'rectangle', x:155, y:140, w:60, h:14, color:'#8b5e3c', label_en:'Flute', label_as:'বাঁহী' },
+    ]
+  }
+];
+
+// ══ SVG Shape Renderers ══
+function svgShape(shape, w, h, color) {
+  switch(shape) {
+    case 'circle': return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><ellipse cx="${w/2}" cy="${h/2}" rx="${w/2-1}" ry="${h/2-1}" fill="${color}" stroke="#5a4020" stroke-width="1.5"/></svg>`;
+    case 'oval': return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><ellipse cx="${w/2}" cy="${h/2}" rx="${w/2-1}" ry="${h/2-1}" fill="${color}" stroke="#5a4020" stroke-width="1.5"/></svg>`;
+    case 'triangle': return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><polygon points="${w/2},2 ${w-2},${h-2} 2,${h-2}" fill="${color}" stroke="#5a4020" stroke-width="1.5"/></svg>`;
+    case 'rectangle': return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><rect x="1" y="1" width="${w-2}" height="${h-2}" rx="3" fill="${color}" stroke="#5a4020" stroke-width="1.5"/></svg>`;
+    case 'diamond': return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><polygon points="${w/2},2 ${w-2},${h/2} ${w/2},${h-2} 2,${h/2}" fill="${color}" stroke="#5a4020" stroke-width="1.5"/></svg>`;
+    case 'semicircle': return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><path d="M2,${h} A${w/2-1},${h-2} 0 0,1 ${w-2},${h}" fill="${color}" stroke="#5a4020" stroke-width="1.5"/></svg>`;
+    default: return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><rect x="1" y="1" width="${w-2}" height="${h-2}" fill="${color}" stroke="#5a4020" stroke-width="1.5"/></svg>`;
+  }
+}
+
+// Tray icon (standardized 36x36)
+function trayIcon(shape, color) {
+  const s = 36;
+  return svgShape(shape, s, s, color || '#ccc');
+}
+
+// ══ STATE ══
+let score = 0, lives = 3, lang = 'en';
+let currentMaskIdx = 0;
+let selectedShape = null; // index in trayShapes
+let selectedSlot = null;
+let trayShapes = []; // [{shape, slotId, color, used}]
+let filledSlots = new Set();
+
+// ══ LANG ══
+const lt = {
+  en: {
+    'intro-title':'Majuli Mask Maker!',
+    'intro-desc':'Majuli Island is famous for its traditional masks! Tap a shape, then tap the slot on the mask where it belongs.',
+    'btn-start':'🎨 Start Crafting!',
+    'mask-hint':'Tap a shape, then tap where it goes!',
+    'tray-label':'SHAPE TRAY',
+    'lu-title':'Mask Complete!',
+    'btn-next':'Next Mask ▶',
+    'go-title':'Oh no!',
+    'go-desc':"The mask broke! But a true artist never gives up.",
+    'btn-retry':'🔄 Try Again',
+    'vic-title':'Master Mask Maker!',
+    'vic-desc':"You crafted all the masks! Rongmon is proud of your art!",
+    'btn-replay':'🎨 Play Again',
+    'btn-home-v':'🏠 Back to Home',
+  },
+  as: {
+    'intro-title':'মাজুলী মুখা শিল্পী!',
+    'intro-desc':'মাজুলী দ্বীপ পৰম্পৰাগত মুখাৰ বাবে বিখ্যাত! আকৃতি বাছক, তাৰ পিছত মুখাত সঠিক ঠাইত ৰাখক।',
+    'btn-start':'🎨 আৰম্ভ কৰক!',
+    'mask-hint':'আকৃতি বাছক, তাৰ পিছত ঠাই টেপ কৰক!',
+    'tray-label':'আকৃতিৰ থালা',
+    'lu-title':'মুখা সম্পূৰ্ণ!',
+    'btn-next':'পৰৱৰ্তী মুখা ▶',
+    'go-title':'হায়!',
+    'go-desc':'মুখাখন ভাঙি গ\'ল! কিন্তু এজন সঁচা শিল্পীয়ে কেতিয়াও হাৰ নামানে।',
+    'btn-retry':'🔄 আকৌ চেষ্টা কৰক',
+    'vic-title':'মাষ্টাৰ মুখা শিল্পী!',
+    'vic-desc':'আপুনি সকলো মুখা সাজিলে! ৰংমন আপোনাৰ শিল্পৰ বাবে গৰ্বিত!',
+    'btn-replay':'🎨 আকৌ খেলক',
+    'btn-home-v':'🏠 মূল পৃষ্ঠালৈ',
+  }
+};
+
+const shapeNames = {
+  en: { circle:'Circle', oval:'Oval', triangle:'Triangle', rectangle:'Rectangle', diamond:'Diamond', semicircle:'Half Circle' },
+  as: { circle:'বৃত্ত', oval:'উপবৃত্ত', triangle:'ত্ৰিভুজ', rectangle:'আয়তক্ষেত্ৰ', diamond:'হীৰা', semicircle:'অৰ্ধ বৃত্ত' }
+};
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('lp-en').classList.toggle('active', l==='en');
+  document.getElementById('lp-as').classList.toggle('active', l==='as');
+  for (const [id,val] of Object.entries(lt[l])) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = val;
+  }
+  // Update mask name if in game
+  if (currentMaskIdx < MASKS.length) {
+    const m = MASKS[currentMaskIdx];
+    document.getElementById('mask-name').textContent = l==='en' ? m.name_en : m.name_as;
+  }
+}
+
+function showScreen(id) {
+  ['screen-intro','screen-game','screen-levelup','screen-gameover','screen-victory'].forEach(s =>
+    document.getElementById(s).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  document.getElementById('hud').classList.toggle('hidden', id==='screen-intro'||id==='screen-gameover'||id==='screen-victory');
+}
+
+function updateHUD() {
+  document.getElementById('score-disp').textContent = score;
+  document.getElementById('mask-disp').textContent = `${currentMaskIdx+1}/${MASKS.length}`;
+  document.getElementById('lives-disp').textContent = '❤️'.repeat(Math.max(0, lives));
+  document.getElementById('prog-bar').style.width = (currentMaskIdx / MASKS.length * 100) + '%';
+}
+
+function startGame() {
+  score = 0; lives = 3; currentMaskIdx = 0;
+  updateHUD();
+  loadMask(0);
+}
+
+function loadMask(idx) {
+  currentMaskIdx = idx;
+  filledSlots = new Set();
+  selectedShape = null;
+  selectedSlot = null;
+  updateHUD();
+
+  const m = MASKS[idx];
+  document.getElementById('mask-name').textContent = lang==='en' ? m.name_en : m.name_as;
+  document.getElementById('mask-hint').textContent = lt[lang]['mask-hint'];
+
+  // Build mask canvas
+  const canvas = document.getElementById('mask-canvas');
+  canvas.innerHTML = '';
+  // Background shape
+  canvas.style.background = `radial-gradient(ellipse at center, ${m.bg}33 0%, transparent 70%)`;
+
+  m.slots.forEach((slot, i) => {
+    const el = document.createElement('div');
+    el.className = 'mask-slot';
+    el.id = `slot-${slot.id}`;
+    el.style.cssText = `left:${slot.x}px;top:${slot.y}px;width:${slot.w}px;height:${slot.h}px;`;
+    // shape-specific border radius
+    if(slot.shape==='circle'||slot.shape==='oval') el.style.borderRadius = '50%';
+    else if(slot.shape==='semicircle') el.style.borderRadius = `${slot.w}px ${slot.w}px 0 0`;
+    else if(slot.shape==='diamond') el.style.borderRadius = '4px';
+    else el.style.borderRadius = '6px';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'slot-label';
+    lbl.textContent = lang==='en' ? slot.label_en : slot.label_as;
+    el.appendChild(lbl);
+
+    el.onclick = () => tapSlot(i);
+    canvas.appendChild(el);
+  });
+
+  // Build tray
+  buildTray(m);
+  showScreen('screen-game');
+}
+
+function buildTray(mask) {
+  const tray = document.getElementById('shape-tray');
+  tray.innerHTML = `<div class="tray-label" id="tray-label">${lt[lang]['tray-label']}</div>`;
+
+  // Create one shape per slot, plus 2 distractors
+  trayShapes = [];
+  mask.slots.forEach(slot => {
+    trayShapes.push({ shape: slot.shape, slotId: slot.id, color: slot.color, used: false });
+  });
+
+  // Add 2 random distractors
+  const allShapes = ['circle','triangle','rectangle','diamond','oval','semicircle'];
+  const colors = ['#95a5a6','#bdc3c7','#7f8c8d'];
+  for (let i = 0; i < 2; i++) {
+    trayShapes.push({
+      shape: allShapes[Math.floor(Math.random()*allShapes.length)],
+      slotId: null, // distractor
+      color: colors[Math.floor(Math.random()*colors.length)],
+      used: false
+    });
+  }
+
+  // Shuffle
+  trayShapes.sort(() => Math.random() - 0.5);
+
+  trayShapes.forEach((ts, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'shape-btn';
+    btn.id = `tray-${i}`;
+    btn.innerHTML = trayIcon(ts.shape, ts.color) + `<span class="shape-btn-name">${shapeNames[lang][ts.shape]}</span>`;
+    btn.onclick = () => tapTrayShape(i);
+    tray.appendChild(btn);
+  });
+}
+
+function tapTrayShape(idx) {
+  if (trayShapes[idx].used) return;
+
+  // Deselect previous
+  document.querySelectorAll('.shape-btn.selected').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.mask-slot.selected').forEach(s => s.classList.remove('selected'));
+
+  selectedShape = idx;
+  document.getElementById(`tray-${idx}`).classList.add('selected');
+
+  if(typeof RongmonAudio!=='undefined') RongmonAudio.playClick();
+}
+
+function tapSlot(slotIdx) {
+  const mask = MASKS[currentMaskIdx];
+  const slot = mask.slots[slotIdx];
+
+  if (filledSlots.has(slot.id)) return; // Already filled
+
+  if (selectedShape === null) {
+    // No shape selected — highlight slot to guide user
+    document.querySelectorAll('.mask-slot.selected').forEach(s => s.classList.remove('selected'));
+    document.getElementById(`slot-${slot.id}`).classList.add('selected');
+    selectedSlot = slotIdx;
+    return;
+  }
+
+  const ts = trayShapes[selectedShape];
+
+  // Check if this shape matches this slot
+  if (ts.slotId === slot.id) {
+    // CORRECT!
+    filledSlots.add(slot.id);
+    ts.used = true;
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playCorrect();
+    score += 10;
+    updateHUD();
+
+    // Fill the slot visually
+    const slotEl = document.getElementById(`slot-${slot.id}`);
+    slotEl.classList.add('filled');
+    slotEl.classList.remove('selected');
+    slotEl.innerHTML = svgShape(slot.shape, slot.w, slot.h, slot.color);
+    slotEl.style.border = 'none';
+
+    // Hide tray button
+    document.getElementById(`tray-${selectedShape}`).classList.add('used');
+
+    // Deselect
+    document.querySelectorAll('.shape-btn.selected').forEach(b => b.classList.remove('selected'));
+    selectedShape = null;
+
+    // Check if mask is complete
+    if (filledSlots.size === mask.slots.length) {
+      setTimeout(() => showLevelComplete(), 500);
+    }
+  } else {
+    // WRONG
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playWrong();
+    lives--;
+    updateHUD();
+
+    const slotEl = document.getElementById(`slot-${slot.id}`);
+    slotEl.classList.add('wrong');
+    setTimeout(() => slotEl.classList.remove('wrong'), 500);
+
+    if (lives <= 0) {
+      setTimeout(() => showScreen('screen-gameover'), 600);
+    }
+  }
+}
+
+function showLevelComplete() {
+  const m = MASKS[currentMaskIdx];
+  if(typeof RongmonAudio!=='undefined') RongmonAudio.playLevelUp();
+
+  document.getElementById('lu-icon').textContent = '🎭';
+  document.getElementById('lu-title').textContent = lt[lang]['lu-title'];
+  document.getElementById('lu-fact').textContent = lang==='en' ? m.fact_en : m.fact_as;
+
+  const stars = lives === 3 ? '⭐⭐⭐' : lives === 2 ? '⭐⭐' : '⭐';
+  document.getElementById('lu-stars').textContent = stars;
+  score += lives * 5; // Bonus
+  updateHUD();
+
+  const isLast = currentMaskIdx >= MASKS.length - 1;
+  document.getElementById('btn-next').textContent = isLast
+    ? (lang==='en' ? '👑 Claim Victory!' : '👑 জয় দাবী কৰক!')
+    : lt[lang]['btn-next'];
+
+  showScreen('screen-levelup');
+  spawnConfetti();
+}
+
+function nextMask() {
+  if (currentMaskIdx >= MASKS.length - 1) {
+    showVictory();
+  } else {
+    loadMask(currentMaskIdx + 1);
+  }
+}
+
+function showVictory() {
+  if(typeof RongmonAudio!=='undefined') RongmonAudio.playVictory();
+  document.getElementById('vic-score').textContent = `⭐ ${lang==='en'?'Score':'স্কোৰ'}: ${score}`;
+  document.getElementById('prog-bar').style.width = '100%';
+  showScreen('screen-victory');
+  spawnConfetti();
+  setTimeout(spawnConfetti, 600);
+}
+
+// ══ EFFECTS ══
+function spawnConfetti() {
+  const wrap = document.getElementById('game-wrap');
+  const cols = ['#e63946','#f4a261','#4caf50','#f5c518','#48cae4','#8e44ad'];
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    const cx = (Math.random()-0.5)*400, cy = 200+Math.random()*200;
+    p.style.cssText = `
+      left:${30+Math.random()*40}%;top:20%;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
+      --cx:${cx}px;--cy:${cy}px;--cr:${Math.random()*360}deg;
+      animation-duration:${0.8+Math.random()*0.8}s;
+      width:${8+Math.random()*6}px;height:${8+Math.random()*6}px;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+    `;
+    wrap.appendChild(p);
+    setTimeout(() => p.remove(), 2000);
+  }
+}
+
+// ── Shared ──
+window.addEventListener('DOMContentLoaded', () => {
+  if (typeof RongmonData !== 'undefined' && !RongmonData.hasSeenOnboarding('majuli-mask')) {
+    document.getElementById('onboarding').classList.remove('hidden');
+  }
+  if (typeof RongmonData !== 'undefined') {
+    const m = RongmonData.getSetting('muted');
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+  setLang('en');
+});
+function dismissOnboarding() {
+  document.getElementById('onboarding').classList.add('hidden');
+  if (typeof RongmonData !== 'undefined') RongmonData.markOnboardingSeen('majuli-mask');
+}
+function toggleMuteGame() {
+  if (typeof RongmonAudio !== 'undefined') {
+    const m = RongmonAudio.toggleMute();
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+}
+</script>
+</body>
+</html>

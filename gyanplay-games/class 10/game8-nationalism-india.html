@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Nationalism in India – Class 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+    --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+    --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{min-height:100vh;font-family:'Nunito',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff;}
+  .topbar{display:flex;align-items:center;gap:12px;padding:12px 20px;
+    background:rgba(0,0,0,.35);flex-wrap:wrap;}
+  .back-btn{background:rgba(255,255,255,.12);border:none;color:#fff;
+    padding:7px 16px;border-radius:20px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.9rem;transition:background .2s;}
+  .back-btn:hover{background:rgba(255,255,255,.25);}
+  .subject-badge{background:var(--pink);color:#fff;padding:5px 14px;
+    border-radius:20px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.85rem;}
+  .title-bar{flex:1;font-family:'Baloo 2',sans-serif;font-weight:700;
+    font-size:1.05rem;color:var(--gold);}
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;transition:all .2s;}
+  .lang-btn.active{background:var(--sky);border-color:var(--sky);}
+  .progress-wrap{padding:14px 20px 0;}
+  .progress-info{display:flex;justify-content:space-between;font-size:.85rem;color:#ccc;margin-bottom:6px;}
+  .progress-bar-bg{background:rgba(255,255,255,.12);border-radius:10px;height:8px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--saffron),var(--pink));
+    border-radius:10px;transition:width .5s;}
+  .game-wrap{max-width:740px;margin:18px auto;padding:0 16px 40px;}
+  .card{background:var(--card);border-radius:18px;padding:26px;
+    box-shadow:0 8px 32px rgba(0,0,0,.45);animation:fadeIn .4s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .q-number{font-family:'Baloo 2',sans-serif;font-size:.85rem;color:var(--pink);margin-bottom:8px;font-weight:600;}
+  .q-text{font-size:1.08rem;line-height:1.6;margin-bottom:6px;font-weight:600;}
+  .year-tag{
+    display:inline-block;background:rgba(255,107,0,.2);border:1px solid var(--saffron);
+    color:var(--saffron);padding:3px 12px;border-radius:12px;font-size:.8rem;
+    font-weight:700;margin-bottom:12px;
+  }
+  .context-box{
+    background:rgba(255,255,255,.06);border-left:3px solid var(--pink);
+    border-radius:0 10px 10px 0;padding:10px 14px;margin:10px 0;
+    font-size:.88rem;color:#ddd;line-height:1.5;
+  }
+  .options{display:grid;gap:10px;margin-top:16px;}
+  .opt-btn{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);
+    color:#fff;padding:13px 18px;border-radius:12px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.97rem;text-align:left;transition:all .2s;}
+  .opt-btn:hover:not(:disabled){background:rgba(255,64,129,.18);border-color:var(--pink);}
+  .opt-btn.correct{background:rgba(0,200,83,.25);border-color:var(--green);}
+  .opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);}
+  .opt-btn:disabled{cursor:default;}
+  .feedback{margin-top:14px;padding:11px 16px;border-radius:10px;
+    font-weight:700;font-size:.95rem;display:none;}
+  .feedback.show{display:block;animation:fadeIn .3s ease;}
+  .feedback.ok{background:rgba(0,200,83,.2);color:var(--green);}
+  .feedback.no{background:rgba(255,64,129,.18);color:#ff7eb3;}
+  .next-btn{margin-top:18px;background:linear-gradient(135deg,var(--saffron),var(--pink));
+    border:none;color:#fff;padding:12px 32px;border-radius:25px;
+    font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;
+    cursor:pointer;display:none;transition:transform .15s;}
+  .next-btn:hover{transform:scale(1.04);}
+  .end-screen{display:none;text-align:center;}
+  .end-screen.show{display:block;animation:fadeIn .5s ease;}
+  .score-big{font-family:'Baloo 2',sans-serif;font-size:3.5rem;font-weight:800;
+    color:var(--gold);line-height:1;margin:10px 0;}
+  .score-label{color:#ccc;font-size:.95rem;margin-bottom:18px;}
+  .stars{font-size:2.5rem;margin:10px 0;}
+  .play-again{background:linear-gradient(135deg,var(--saffron),var(--gold));
+    border:none;color:#fff;padding:14px 36px;border-radius:28px;
+    font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;
+    cursor:pointer;margin-top:16px;transition:transform .15s;}
+  .play-again:hover{transform:scale(1.05);}
+  .result-detail{margin-top:22px;text-align:left;}
+  .result-detail h3{font-family:'Baloo 2',sans-serif;color:var(--sky);margin-bottom:10px;}
+  .result-item{padding:9px 14px;border-radius:8px;margin-bottom:7px;
+    font-size:.9rem;line-height:1.4;background:rgba(255,255,255,.06);}
+  .result-item.r-ok{border-left:3px solid var(--green);}
+  .result-item.r-no{border-left:3px solid var(--pink);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">পিছলৈ</span></button>
+  <span class="subject-badge">Social Studies</span>
+  <span class="title-bar">
+    <span data-lang="en">Nationalism in India</span>
+    <span data-lang="hi" style="display:none">भारत में राष्ट्रवाद</span>
+    <span data-lang="as" style="display:none">ভাৰতত ৰাষ্ট্ৰবাদ</span>
+  </span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span><span data-lang="en">Question</span><span data-lang="hi" style="display:none">प्रश्न</span><span data-lang="as" style="display:none">প্ৰশ্ন</span> <span id="qNum">1</span>/10</span>
+    <span><span data-lang="en">Score</span><span data-lang="hi" style="display:none">स्कोर</span><span data-lang="as" style="display:none">স্কোৰ</span>: <span id="scoreDisp">0</span>/100</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progBar" style="width:0%"></div></div>
+</div>
+
+<div class="game-wrap">
+  <div class="card" id="questionCard">
+    <div class="q-number" id="qLabel">Question 1 of 10</div>
+    <div id="yearTagWrap"></div>
+    <div class="q-text" id="qText"></div>
+    <div id="contextBox" style="display:none" class="context-box"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="card end-screen" id="endScreen">
+    <div class="score-big" id="finalScore">0</div>
+    <div class="score-label">
+      <span data-lang="en">out of 100</span>
+      <span data-lang="hi" style="display:none">100 में से</span>
+      <span data-lang="as" style="display:none">100ৰ মাজৰ পৰা</span>
+    </div>
+    <div class="stars" id="stars">⭐⭐⭐</div>
+    <p id="endMsg" style="color:#ccc;font-size:1rem;"></p>
+    <button class="play-again" onclick="restartGame()">
+      <span data-lang="en">Play Again</span>
+      <span data-lang="hi" style="display:none">फिर खेलें</span>
+      <span data-lang="as" style="display:none">পুনৰ খেলক</span>
+    </button>
+    <div class="result-detail" id="resultDetail"></div>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    year:"1919",
+    context:"The British government passed a law to suppress political activity.",
+    en:{q:"The Rowlatt Act (1919) was passed to:",
+    opts:["Allow the government to detain political prisoners without trial for up to 2 years",
+          "Give voting rights to Indians","Divide Bengal into two parts",
+          "Abolish salt tax"],ans:0,
+    exp:"The Rowlatt Act (1919) gave the British government powers to arrest and imprison people without trial. It outraged Indians and triggered protests across India."},
+    hi:{q:"रॉलेट एक्ट (1919) पास करने का उद्देश्य था:",
+    opts:["बिना मुकदमे के राजनीतिक कैदियों को 2 साल तक हिरासत में रखना",
+          "भारतीयों को मतदान अधिकार देना","बंगाल को दो भागों में बाँटना",
+          "नमक कर समाप्त करना"],exp:"रॉलेट एक्ट ने ब्रिटिश सरकार को बिना मुकदमे के गिरफ्तारी की शक्ति दी। इसने पूरे भारत में विरोध भड़काया।"},
+    as:{q:"ৰাউলাট আইন (1919) পাছ কৰা হৈছিল:",
+    opts:["বিচাৰ অবিহনে ৰাজনৈতিক বন্দীক 2 বছৰলৈ আটক ৰাখিবলৈ",
+          "ভাৰতীয়সকলক ভোটাধিকাৰ দিবলৈ","বংগক দুই ভাগ কৰিবলৈ",
+          "নিমখ কৰ বাতিল কৰিবলৈ"],exp:"ৰাউলাট আইনে ব্ৰিটিছ চৰকাৰক বিচাৰ অবিহনে গ্ৰেপ্তাৰৰ ক্ষমতা দিলে। এইটোৱে সমগ্ৰ ভাৰতত প্ৰতিবাদ জ্বলাই তুলিলে।"}
+  },
+  {
+    year:"13 April 1919",
+    context:"A peaceful gathering at a public garden turned into a massacre.",
+    en:{q:"The Jallianwala Bagh massacre occurred because:",
+    opts:["General Dyer ordered troops to fire on a peaceful crowd gathered in an enclosed garden — killing hundreds",
+          "Indian soldiers revolted against British officers","A bomb was thrown at British officials",
+          "A protest march turned violent"],ans:0,
+    exp:"On 13 April 1919 (Baisakhi), a peaceful crowd gathered at Jallianwala Bagh, Amritsar. General Dyer ordered troops to fire without warning. About 400+ people died, 1200+ wounded. This horrified the nation."},
+    hi:{q:"जलियाँवाला बाग हत्याकांड का कारण था:",
+    opts:["जनरल डायर ने बंद बगीचे में शांतिपूर्ण भीड़ पर गोली चलवाई — सैकड़ों मरे",
+          "भारतीय सैनिकों ने विद्रोह किया","ब्रिटिश अधिकारियों पर बम फेंका गया",
+          "विरोध मार्च हिंसक हो गया"],exp:"13 अप्रैल 1919 को जनरल डायर ने जलियाँवाला बाग में बिना चेतावनी गोली चलवाई। 400+ लोग मारे गए। यह घटना इतिहास में काले अध्याय के रूप में दर्ज है।"},
+    as:{q:"জালিয়ানৱালাবাগ হত্যাকাণ্ডৰ কাৰণ আছিল:",
+    opts:["জেনেৰেল ডায়েৰে বন্ধ বাগানত শান্তিপূৰ্ণ জনতাৰ ওপৰত গুলি চলালে — শতাধিক নিহত",
+          "ভাৰতীয় সৈন্যই বিদ্ৰোহ কৰিলে","ব্ৰিটিছ বিষয়াৰ ওপৰত বোমা নিক্ষেপ",
+          "প্ৰতিবাদ যাত্ৰা হিংসাত্মক হ'ল"],exp:"13 এপ্ৰিল 1919 তাৰিখে জেনেৰেল ডায়েৰে জালিয়ানৱালাবাগত সতৰ্কবাণী অবিহনে গুলি চলালে। 400+ লোক নিহত হ'ল।"}
+  },
+  {
+    year:"1920",
+    context:"Gandhi launched a massive movement against British rule.",
+    en:{q:"Which of the following was NOT part of the Non-Cooperation Movement (1920)?",
+    opts:["Making salt from seawater at Dandi","Boycott of foreign goods (swadeshi)",
+          "Surrender of titles and honours given by the British",
+          "Boycott of British courts and schools"],ans:0,
+    exp:"Salt March (Dandi March) was part of the Civil Disobedience Movement (1930), NOT Non-Cooperation (1920). Non-Cooperation included: boycott of courts, schools, foreign cloth, surrender of titles."},
+    hi:{q:"निम्न में से कौन असहयोग आंदोलन (1920) का हिस्सा नहीं था?",
+    opts:["दांडी में समुद्र के पानी से नमक बनाना","विदेशी वस्तुओं का बहिष्कार (स्वदेशी)",
+          "ब्रिटिश द्वारा दी गई उपाधियाँ वापस करना",
+          "ब्रिटिश न्यायालय और विद्यालयों का बहिष्कार"],exp:"दांडी मार्च सविनय अवज्ञा आंदोलन (1930) का हिस्सा था, असहयोग (1920) का नहीं।"},
+    as:{q:"নিম্নলিখিতৰ মাজৰ কোনটো অসহযোগ আন্দোলন (1920)ৰ অংশ নাছিল?",
+    opts:["দাণ্ডীত সমুদ্ৰৰ পানীৰ পৰা নিমখ তৈয়াৰ কৰা","বিদেশী সামগ্ৰীৰ বৰ্জন (স্বদেশী)",
+          "ব্ৰিটিছে দিয়া উপাধি ঘূৰাই দিয়া",
+          "ব্ৰিটিছ আদালত আৰু বিদ্যালয় বৰ্জন"],exp:"দাণ্ডী যাত্ৰা আছিল আইন অমান্য আন্দোলন (1930)ৰ অংশ, অসহযোগ (1920)ৰ নহয়।"}
+  },
+  {
+    year:"12 March 1930",
+    context:"Gandhi began one of the most iconic acts of civil disobedience in world history.",
+    en:{q:"What was the significance of the Dandi Salt March (1930)?",
+    opts:["Gandhi walked 240 miles to Dandi to make salt from seawater, breaking the British salt tax law — beginning Civil Disobedience Movement",
+          "Gandhi marched to Delhi to meet the Viceroy","It was a protest against the partition of Bengal",
+          "It demanded dominion status for India"],ans:0,
+    exp:"On 12 March 1930, Gandhi and 78 followers marched 240 miles (384 km) from Sabarmati Ashram to Dandi. On 6 April he made salt, breaking the Salt Law. This triggered mass Civil Disobedience across India."},
+    hi:{q:"दांडी नमक यात्रा (1930) का क्या महत्व था?",
+    opts:["गाँधी 240 मील चलकर दांडी पहुँचे और समुद्र से नमक बनाकर ब्रिटिश नमक कानून तोड़ा — सविनय अवज्ञा आंदोलन शुरू",
+          "गाँधी दिल्ली में वायसराय से मिलने गए","यह बंगाल विभाजन के विरुद्ध विरोध था",
+          "इसमें भारत के लिए डोमिनियन दर्जे की माँग थी"],exp:"12 मार्च 1930 को गाँधी साबरमती से 384 किमी चले। 6 अप्रैल को नमक बनाकर कानून तोड़ा।"},
+    as:{q:"দাণ্ডী নিমখ যাত্ৰা (1930)ৰ তাৎপৰ্য কি আছিল?",
+    opts:["গান্ধীজীয়ে 240 মাইল খোজ কাঢ়ি দাণ্ডীলৈ গৈ সমুদ্ৰৰ পানীৰ পৰা নিমখ তৈয়াৰ কৰিলে — আইন অমান্য আন্দোলনৰ আৰম্ভ",
+          "গান্ধীজীয়ে দিল্লীলৈ ভাইচৰয়ক লগ কৰিবলৈ যাত্ৰা কৰিলে","এইটো বংগ বিভাজনৰ বিৰুদ্ধে আছিল",
+          "এইটোত ভাৰতৰ বাবে ডমিনিয়ন মৰ্যাদাৰ দাবী আছিল"],exp:"12 মাৰ্চ 1930 তাৰিখে গান্ধীজীয়ে ছাবৰমতীৰ পৰা 384 কিমি খোজ কাঢ়িলে। 6 এপ্ৰিলত নিমখ তৈয়াৰ কৰি আইন ভংগ কৰিলে।"}
+  },
+  {
+    year:"1927",
+    context:"A commission arrived from Britain to review the Indian constitution.",
+    en:{q:"Why did Indians boycott the Simon Commission (1927)?",
+    opts:["Because it had no Indian members — all 7 members were British",
+          "Because it proposed full independence for India","Because it wanted to partition Punjab",
+          "Because it abolished the Indian National Congress"],ans:0,
+    exp:"The Simon Commission (1927) was sent to review the Indian constitution but had NO Indian members. Indians protested with 'Simon Go Back' slogans. Lala Lajpat Rai was injured in lathi charge and later died."},
+    hi:{q:"भारतीयों ने साइमन कमीशन (1927) का बहिष्कार क्यों किया?",
+    opts:["क्योंकि इसमें कोई भारतीय सदस्य नहीं था — सातों सदस्य ब्रिटिश थे",
+          "क्योंकि इसने भारत को पूर्ण स्वतंत्रता प्रस्तावित की","क्योंकि यह पंजाब का विभाजन चाहता था",
+          "क्योंकि इसने कांग्रेस को समाप्त किया"],exp:"साइमन कमीशन में कोई भारतीय सदस्य नहीं था। 'साइमन गो बैक' के नारे लगाए गए। लाला लाजपत राय लाठीचार्ज में घायल हुए।"},
+    as:{q:"ভাৰতীয়সকলে চাইমন আয়োগ (1927) কিয় বৰ্জন কৰিলে?",
+    opts:["কাৰণ ইয়াত কোনো ভাৰতীয় সদস্য নাছিল — সাতজনেই ব্ৰিটিছ আছিল",
+          "কাৰণ ই ভাৰতৰ বাবে পূৰ্ণ স্বাধীনতা প্ৰস্তাৱ কৰিলে","কাৰণ ই পাঞ্জাব বিভাজন বিচাৰিলে",
+          "কাৰণ ই কংগ্ৰেছ বাতিল কৰিলে"],exp:"চাইমন আয়োগত কোনো ভাৰতীয় সদস্য নাছিল। 'চাইমন গো বেক' শ্লোগান দেওয়া হ'ল। লালা লাজপত ৰায় লাঠিচাৰ্জত আহত হৈ মৃত্যুবৰণ কৰিলে।"}
+  },
+  {
+    year:"1931",
+    context:"A political agreement was reached between the Indian National Congress and the British government.",
+    en:{q:"What was the Gandhi-Irwin Pact (1931)?",
+    opts:["Gandhi agreed to suspend Civil Disobedience; British agreed to release political prisoners and allow salt making near coast",
+          "Gandhi agreed to support World War I","British agreed to grant full independence to India",
+          "Gandhi and Irwin agreed to partition India"],ans:0,
+    exp:"The Gandhi-Irwin Pact (5 March 1931): Gandhi suspended the Civil Disobedience Movement. British agreed to release political prisoners (not all), allow Congress to participate in Round Table Conference, and allow making salt near coast."},
+    hi:{q:"गाँधी-इरविन समझौता (1931) क्या था?",
+    opts:["गाँधी ने सविनय अवज्ञा स्थगित करने पर सहमति जताई; ब्रिटिश ने राजनीतिक कैदियों को रिहा करने और तटीय नमक बनाने की अनुमति दी",
+          "गाँधी प्रथम विश्व युद्ध में सहयोग देने पर सहमत","ब्रिटिश ने पूर्ण स्वतंत्रता देने पर सहमति","भारत विभाजन की सहमति"],exp:"गाँधी-इरविन समझौता (5 मार्च 1931): गाँधी ने सविनय अवज्ञा स्थगित की। ब्रिटिश ने राजनीतिक कैदियों को रिहा करने पर सहमति दी।"},
+    as:{q:"গান্ধী-আৰৱিন চুক্তি (1931) কি আছিল?",
+    opts:["গান্ধীজীয়ে আইন অমান্য আন্দোলন স্থগিত ৰাখিলে; ব্ৰিটিছে ৰাজনৈতিক বন্দী মুক্ত কৰিবলৈ আৰু উপকূলৰ কাষত নিমখ তৈয়াৰৰ অনুমতি দিলে",
+          "গান্ধীজীয়ে প্ৰথম বিশ্বযুদ্ধত সহায় কৰিলে","ব্ৰিটিছে পূৰ্ণ স্বাধীনতা দিলে","ভাৰত বিভাজনৰ চুক্তি"],exp:"গান্ধী-আৰৱিন চুক্তি (5 মাৰ্চ 1931): গান্ধীজীয়ে আইন অমান্য আন্দোলন স্থগিত ৰাখিলে। ব্ৰিটিছে ৰাজনৈতিক বন্দী মুক্ত কৰিলে।"}
+  },
+  {
+    year:"1932",
+    context:"A controversial agreement was reached regarding political representation.",
+    en:{q:"What was the Poona Pact (1932) and who signed it?",
+    opts:["Gandhi and B.R. Ambedkar — Gandhi gave up separate electorates for Dalits but increased their reserved seats in provincial legislatures",
+          "Gandhi and Jinnah — to stop Hindu-Muslim riots","Gandhi and Lord Irwin — to end Civil Disobedience",
+          "Gandhi and Nehru — to demand complete independence"],ans:0,
+    exp:"The Poona Pact (24 Sep 1932): Gandhi (who fasted) and Ambedkar signed it. British PM MacDonald had announced separate electorates for Dalits (Communal Award). Gandhi opposed this as it would divide Hindus. Dalits got reserved seats instead."},
+    hi:{q:"पूना समझौता (1932) क्या था और इसे किसने हस्ताक्षरित किया?",
+    opts:["गाँधी और अंबेडकर — गाँधी ने दलितों के लिए अलग मतदाता वर्ग छोड़ा पर प्रांतीय विधानमंडल में सीटें बढ़ाईं",
+          "गाँधी और जिन्ना — हिंदू-मुस्लिम दंगे रोकने के लिए","गाँधी और इरविन — सविनय अवज्ञा समाप्त करने के लिए",
+          "गाँधी और नेहरू — पूर्ण स्वतंत्रता माँगने के लिए"],exp:"पूना समझौता (24 सितंबर 1932): गाँधी और अंबेडकर ने हस्ताक्षर किए। दलितों को अलग निर्वाचन क्षेत्र की जगह अधिक आरक्षित सीटें मिलीं।"},
+    as:{q:"পুনা চুক্তি (1932) কি আছিল আৰু কোনে স্বাক্ষৰ কৰিলে?",
+    opts:["গান্ধীজী আৰু অম্বেদকাৰ — গান্ধীজীয়ে দলিতসকলৰ পৃথক নিৰ্বাচন এৰি দিলে কিন্তু প্ৰাদেশিক বিধানমণ্ডলত আসন বৃদ্ধি কৰিলে",
+          "গান্ধীজী আৰু জিন্নাহ — হিন্দু-মুছলিম দাঙ্গা ৰোধ কৰিবলৈ","গান্ধীজী আৰু আৰৱিন — আইন অমান্য আন্দোলন শেষ কৰিবলৈ",
+          "গান্ধীজী আৰু নেহৰু — পূৰ্ণ স্বাধীনতা দাবী কৰিবলৈ"],exp:"পুনা চুক্তি (24 ছেপ্টেম্বৰ 1932): গান্ধীজী আৰু অম্বেদকাৰে স্বাক্ষৰ কৰিলে। দলিতসকলে পৃথক নিৰ্বাচনৰ পৰিৱৰ্তে অধিক সংৰক্ষিত আসন পালে।"}
+  },
+  {
+    year:"1930–1932",
+    context:"Conferences were held in London to discuss India's constitutional future.",
+    en:{q:"How many Round Table Conferences were held and what was their outcome?",
+    opts:["Three (1930, 1931, 1932) — Congress attended only the 2nd; no agreement on independence reached",
+          "Two — Congress attended both and independence was granted","One — Gandhi attended and won independence",
+          "Four — all were boycotted by Congress"],ans:0,
+    exp:"Round Table Conferences: 1st (1930) — Congress boycotted; 2nd (1931) — Gandhi attended but no settlement; 3rd (1932) — Congress boycotted again. The conferences failed to grant self-rule."},
+    hi:{q:"कितने गोलमेज सम्मेलन हुए और उनका परिणाम क्या था?",
+    opts:["तीन (1930, 1931, 1932) — कांग्रेस केवल दूसरे में शामिल; स्वतंत्रता पर कोई समझौता नहीं",
+          "दो — कांग्रेस दोनों में शामिल","एक — गाँधी शामिल और स्वतंत्रता मिली",
+          "चार — सभी कांग्रेस ने बहिष्कार किए"],exp:"गोलमेज सम्मेलन: 1930 (कांग्रेस अनुपस्थित), 1931 (गाँधी शामिल, कोई समझौता नहीं), 1932 (कांग्रेस अनुपस्थित)।"},
+    as:{q:"কিমানটা গোলটেবিল সন্মিলন অনুষ্ঠিত হৈছিল আৰু ফলাফল কি আছিল?",
+    opts:["তিনিটা (1930, 1931, 1932) — কংগ্ৰেছে কেৱল দ্বিতীয়টোত অংশ লৈছিল; স্বাধীনতাৰ কোনো চুক্তি নাহিল",
+          "দুটা — কংগ্ৰেছ দুয়োটোত উপস্থিত","এটা — গান্ধীজী উপস্থিত আৰু স্বাধীনতা পোৱা গ'ল",
+          "চাৰিটা — সকলো কংগ্ৰেছে বৰ্জন কৰিলে"],exp:"গোলটেবিল সন্মিলন: 1930 (কংগ্ৰেছ অনুপস্থিত), 1931 (গান্ধীজী উপস্থিত, কোনো চুক্তি নাহিল), 1932 (কংগ্ৰেছ অনুপস্থিত)।"}
+  },
+  {
+    year:"1920–1930",
+    context:"Different groups and classes participated in the nationalist movement in various ways.",
+    en:{q:"How did PEASANTS and WORKERS participate in the Non-Cooperation and Civil Disobedience movements?",
+    opts:["Peasants opposed landlords (zamindars) and refused to pay revenue; plantation workers in Assam refused to work and tried to return home",
+          "Peasants only prayed; workers only went on strike in factories",
+          "Peasants supported the British as they got land rights","Workers and peasants did not participate in these movements"],ans:0,
+    exp:"In UP: peasants opposed zamindars under Baba Ramchandra. In Awadh: peasants refused to pay revenue and demanded land redistribution. Assam plantation workers abandoned estates. Tribal communities (Gudem Hills, AP) turned to armed resistance under Alluri Sitarama Raju."},
+    hi:{q:"किसान और श्रमिकों ने असहयोग और सविनय अवज्ञा आंदोलन में कैसे भाग लिया?",
+    opts:["किसानों ने जमींदारों का विरोध किया और राजस्व देने से इनकार किया; असम के बागान मजदूरों ने काम छोड़ दिया",
+          "किसान केवल प्रार्थना करते थे","किसानों ने ब्रिटिश का समर्थन किया","किसान और श्रमिक इन आंदोलनों में शामिल नहीं थे"],exp:"UP में किसानों ने बाबा रामचंद्र के नेतृत्व में जमींदारों का विरोध किया। असम बागान मजदूरों ने काम छोड़ा।"},
+    as:{q:"কৃষক আৰু শ্ৰমিকসকলে কেনেকৈ অসহযোগ আৰু আইন অমান্য আন্দোলনত অংশ লৈছিল?",
+    opts:["কৃষকসকলে জমিদাৰসকলৰ বিৰোধিতা কৰিলে আৰু ৰাজহ দিবলৈ অস্বীকাৰ কৰিলে; অসমৰ বাগিচা শ্ৰমিকসকলে কাম এৰিলে",
+          "কৃষকসকলে কেৱল প্ৰাৰ্থনা কৰিলে","কৃষকসকলে ব্ৰিটিছক সমৰ্থন কৰিলে","কৃষক আৰু শ্ৰমিকসকলে এই আন্দোলনত অংশ লোৱা নাছিল"],exp:"UP ত কৃষকসকলে বাবা ৰামচন্দ্ৰৰ নেতৃত্বত জমিদাৰসকলৰ বিৰোধিতা কৰিলে। অসমৰ বাগিচা শ্ৰমিকসকলে কাম এৰিলে।"}
+  },
+  {
+    year:"1920–1930",
+    context:"Women, tribals, and all sections of society joined the freedom struggle.",
+    en:{q:"What was the role of WOMEN in the Civil Disobedience Movement?",
+    opts:["Women participated in large numbers — picketing foreign cloth shops, marching, making salt; breaking traditional gender boundaries",
+          "Women were barred from participating by Gandhi","Only upper-class women participated in a small way",
+          "Women only spun khadi at home and did not go out"],ans:0,
+    exp:"For the first time, thousands of women from all classes joined Civil Disobedience: picketing liquor/foreign cloth shops, going to jail. Gandhi deliberately included women. However, Congress leadership still mostly excluded them from leadership roles."},
+    hi:{q:"सविनय अवज्ञा आंदोलन में महिलाओं की क्या भूमिका थी?",
+    opts:["महिलाओं ने बड़ी संख्या में भाग लिया — विदेशी वस्त्र दुकानों का धरना, नमक बनाना; पारंपरिक सीमाएँ तोड़ीं",
+          "महिलाओं को गाँधी ने भाग लेने से रोका","केवल उच्च वर्ग की महिलाओं ने थोड़ा भाग लिया",
+          "महिलाओं ने केवल घर पर खादी काती"],exp:"पहली बार हजारों महिलाओं ने सविनय अवज्ञा में भाग लिया: शराब/विदेशी कपड़े की दुकानों का धरना, जेल गईं। गाँधी ने जानबूझकर महिलाओं को शामिल किया।"},
+    as:{q:"আইন অমান্য আন্দোলনত মহিলাসকলৰ ভূমিকা কি আছিল?",
+    opts:["মহিলাসকলে ব্যাপকভাৱে অংশ লৈছিল — বিদেশী কাপোৰৰ দোকান পিকেটিং, নিমখ তৈয়াৰ; পৰম্পৰাগত সীমা ভংগ কৰিলে",
+          "গান্ধীজীয়ে মহিলাসকলক অংশ লবলৈ বাধা দিলে","কেৱল উচ্চ শ্ৰেণীৰ মহিলাসকলে সামান্যভাৱে অংশ লৈছিল",
+          "মহিলাসকলে কেৱল ঘৰত খাদী কাটিছিল"],exp:"প্ৰথমবাৰৰ বাবে হাজাৰ হাজাৰ মহিলাই আইন অমান্য আন্দোলনত অংশ লৈছিল: দোকান পিকেটিং, কাৰাগাৰত গ'ল।"}
+  }
+];
+
+let current=0,score=0,answered=[],currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display=el.getAttribute('data-lang')===l?'':'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['en','hi','as'][i]===l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(current>=questions.length){showEnd();return;}
+  const q=questions[current];
+  const lang=q[currentLang]||q['en'];
+  const enQ=q['en'];
+  document.getElementById('qNum').textContent=current+1;
+  document.getElementById('scoreDisp').textContent=score;
+  document.getElementById('qLabel').textContent=`Question ${current+1} of 10`;
+  document.getElementById('progBar').style.width=((current)/10*100)+'%';
+
+  // year tag
+  document.getElementById('yearTagWrap').innerHTML=q.year?
+    `<span class="year-tag">📅 ${q.year}</span>`:'';
+
+  document.getElementById('qText').textContent=lang.q||enQ.q;
+
+  // context box
+  const ctx=document.getElementById('contextBox');
+  if(q.context){ctx.textContent=q.context;ctx.style.display='block';}
+  else{ctx.style.display='none';}
+
+  const opts=lang.opts||enQ.opts;
+  const optDiv=document.getElementById('options');
+  optDiv.innerHTML='';
+  opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';b.textContent=o;
+    b.onclick=()=>selectAnswer(i,enQ.ans,lang.exp||enQ.exp);
+    optDiv.appendChild(b);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').style.display='none';
+}
+
+function selectAnswer(chosen,correct,exp){
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[correct].classList.add('correct');
+  const fb=document.getElementById('feedback');
+  if(chosen===correct){
+    score+=10;document.getElementById('scoreDisp').textContent=score;
+    fb.textContent='✓ Correct! '+exp;fb.className='feedback ok show';
+  } else {
+    btns[chosen].classList.add('wrong');
+    fb.textContent='✗ Not quite. '+exp;fb.className='feedback no show';
+  }
+  answered.push({q:questions[current]['en'].q,correct:chosen===correct,exp});
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextQuestion(){current++;renderQuestion();}
+
+function showEnd(){
+  document.getElementById('questionCard').style.display='none';
+  document.getElementById('progBar').style.width='100%';
+  document.getElementById('finalScore').textContent=score;
+  let stars='';
+  if(score>=90)stars='⭐⭐⭐';
+  else if(score>=70)stars='⭐⭐';
+  else if(score>=40)stars='⭐';
+  document.getElementById('stars').textContent=stars||'☆☆☆';
+  const msgs={en:['Keep studying history!','Good work!','History hero! 🇮🇳'],
+    hi:['इतिहास पढ़ते रहें!','अच्छा काम!','इतिहास नायक! 🇮🇳'],
+    as:['ইতিহাস পঢ়ি থাকক!','ভাল কাম!','ইতিহাসৰ নায়ক! 🇮🇳']};
+  const mArr=msgs[currentLang]||msgs.en;
+  document.getElementById('endMsg').textContent=score>=90?mArr[2]:score>=70?mArr[1]:mArr[0];
+  let html='<h3>Review</h3>';
+  answered.forEach((a,i)=>{
+    html+=`<div class="result-item ${a.correct?'r-ok':'r-no'}">
+      <strong>Q${i+1}:</strong> ${a.correct?'✓':'✗'} ${a.q}<br/><small>${a.exp}</small></div>`;
+  });
+  document.getElementById('resultDetail').innerHTML=html;
+  const es=document.getElementById('endScreen');
+  es.style.display='block';es.classList.add('show');
+}
+
+function restartGame(){
+  current=0;score=0;answered=[];
+  document.getElementById('questionCard').style.display='block';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('endScreen').classList.remove('show');
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

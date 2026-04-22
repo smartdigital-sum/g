@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Shape Sorter 🔷</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Baloo 2',cursive;
+    background:linear-gradient(160deg,#0f2027,#203a43,#2c5364);
+    min-height:100vh;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    user-select:none;
+  }
+  .header{text-align:center;padding:18px 20px 8px;width:100%;}
+  .title{font-size:clamp(1.4rem,5vw,2.2rem);color:#FFD700;text-shadow:0 0 20px rgba(255,215,0,.4);}
+  .instruction{
+    background:rgba(255,255,255,.12);backdrop-filter:blur(8px);
+    border:2px solid rgba(255,255,255,.2);border-radius:50px;
+    padding:10px 24px;font-size:clamp(1rem,4vw,1.4rem);color:#fff;
+    margin-top:10px;display:inline-block;
+  }
+  .score-bar{display:flex;gap:16px;align-items:center;margin-top:8px;}
+  .score-box{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);border-radius:20px;padding:6px 18px;color:#fff;font-size:1rem;}
+  .score-box span{color:#FFD700;font-size:1.2rem;}
+
+  /* shape to drag */
+  .shape-container{
+    display:flex;justify-content:center;align-items:center;
+    padding:20px;flex:0 0 auto;
+  }
+  .draggable-shape{
+    width:clamp(90px,20vw,130px);height:clamp(90px,20vw,130px);
+    cursor:grab;
+    display:flex;align-items:center;justify-content:center;
+    font-size:clamp(2.5rem,8vw,4rem);
+    filter:drop-shadow(0 8px 20px rgba(0,0,0,.4));
+    transition:transform .15s;
+    animation:shapeFloat 2s ease-in-out infinite;
+    touch-action:none;
+  }
+  .draggable-shape:active{cursor:grabbing;transform:scale(1.15);}
+  @keyframes shapeFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  .draggable-shape.dragging{animation:none;transform:scale(1.2);z-index:999;opacity:.9;}
+
+  /* holes grid */
+  .holes-row{
+    display:flex;justify-content:center;
+    gap:clamp(12px,4vw,28px);
+    padding:0 20px;
+    flex-wrap:wrap;
+  }
+  .hole{
+    width:clamp(90px,18vw,120px);height:clamp(90px,18vw,120px);
+    border:4px dashed rgba(255,255,255,.4);
+    border-radius:20px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-size:clamp(2rem,7vw,3rem);
+    color:rgba(255,255,255,.3);
+    transition:all .3s;
+    position:relative;
+    background:rgba(255,255,255,.05);
+  }
+  .hole.highlight{
+    border-color:#FFD700;
+    background:rgba(255,215,0,.15);
+    transform:scale(1.05);
+    box-shadow:0 0 20px rgba(255,215,0,.4);
+  }
+  .hole.correct{
+    border-color:#2ed573;
+    background:rgba(46,213,115,.2);
+    animation:correctPulse .5s ease;
+  }
+  @keyframes correctPulse{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1);}}
+  .hole-label{
+    font-size:clamp(.6rem,2vw,.85rem);
+    color:rgba(255,255,255,.5);
+    margin-top:6px;
+    text-transform:uppercase;letter-spacing:1px;
+  }
+
+  /* shapes as SVGs */
+  .shape-svg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+
+  /* progress */
+  .progress{display:flex;gap:8px;margin-top:12px;}
+  .dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s;}
+  .dot.done{background:#FFD700;box-shadow:0 0 8px #FFD700;}
+  .dot.active{background:#fff;transform:scale(1.3);}
+
+  /* celebration */
+  .celebration{
+    position:fixed;inset:0;z-index:200;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+    animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .celeb-emoji{font-size:clamp(4rem,15vw,7rem);animation:celebBounce .5s ease infinite alternate;}
+  @keyframes celebBounce{from{transform:scale(1);}to{transform:scale(1.15);}}
+  .celebration h2{color:#FFD700;font-size:clamp(2rem,8vw,3.5rem);text-align:center;margin:16px 0 8px;}
+  .celebration p{color:#fff;font-size:clamp(1rem,4vw,1.4rem);margin-bottom:24px;}
+  .next-btn{
+    background:linear-gradient(135deg,#FF6B00,#FFB800);color:#fff;border:none;border-radius:50px;
+    padding:14px 40px;font-family:'Baloo 2',cursive;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;
+    cursor:pointer;box-shadow:0 6px 24px rgba(255,107,0,.4);transition:transform .2s;
+  }
+  .next-btn:hover{transform:scale(1.05);}
+
+  /* confetti */
+  .confetti-piece{
+    position:fixed;pointer-events:none;z-index:300;
+    width:10px;height:10px;border-radius:2px;
+    animation:confettiFall 1.2s ease-in forwards;
+  }
+  @keyframes confettiFall{0%{opacity:1;}100%{transform:translateY(300px) rotate(720deg);opacity:0;}}
+
+  /* wrong wiggle */
+  @keyframes wiggle{0%,100%{transform:translateX(0);}25%{transform:translateX(-10px);}75%{transform:translateX(10px);}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title">🔷 Shape Sorter</div>
+  <div class="instruction" id="instruction">Drag the shape to the right hole!</div>
+</div>
+<div class="score-bar">
+  <div class="score-box">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="score-box">🎯 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress" id="progress"></div>
+
+<div class="shape-container">
+  <div class="draggable-shape" id="draggable" draggable="true"></div>
+</div>
+
+<div class="holes-row" id="holesRow"></div>
+
+<script>
+const SHAPES = [
+  {id:'circle', label:'Circle', color:'#FF4757', svg:'<circle cx="50" cy="50" r="40" fill="currentColor"/>'},
+  {id:'square', label:'Square', color:'#1e90ff', svg:'<rect x="10" y="10" width="80" height="80" rx="8" fill="currentColor"/>'},
+  {id:'triangle', label:'Triangle', color:'#2ed573', svg:'<polygon points="50,8 92,90 8,90" fill="currentColor"/>'},
+  {id:'star', label:'Star', color:'#FFD700', svg:'<polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" fill="currentColor"/>'},
+  {id:'heart', label:'Heart', color:'#FF6B81', svg:'<path d="M50,85 C50,85 10,58 10,32 C10,18 22,8 35,14 C42,17 50,25 50,25 C50,25 58,17 65,14 C78,8 90,18 90,32 C90,58 50,85 50,85Z" fill="currentColor"/>'},
+  {id:'diamond', label:'Diamond', color:'#a55eea', svg:'<polygon points="50,5 90,50 50,95 10,50" fill="currentColor"/>'},
+];
+
+let score=0, round=0, currentShape=null, dragging=false;
+let dragOffX=0, dragOffY=0, dragEl=null;
+const TOTAL=10;
+
+let audioCtx;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function playDrop(correct){
+  const ctx=getAudio();
+  if(correct){
+    [523,659,784].forEach((f,i)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(.3,ctx.currentTime+i*.1);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.1+.4);
+      o.start(ctx.currentTime+i*.1);o.stop(ctx.currentTime+i*.1+.4);
+    });
+  } else {
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sawtooth';o.frequency.value=180;
+    g.gain.setValueAtTime(.2,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
+    o.start();o.stop(ctx.currentTime+.3);
+  }
+}
+
+function playCelebration(){
+  const ctx=getAudio();
+  [523,659,784,1047,1319].forEach((f,i)=>{
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.value=f;o.type='sine';
+    g.gain.setValueAtTime(.3,ctx.currentTime+i*.1);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.1+.5);
+    o.start(ctx.currentTime+i*.1);o.stop(ctx.currentTime+i*.1+.5);
+  });
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.85;u.pitch=1.3;u.volume=1;
+  window.speechSynthesis.speak(u);
+}
+
+function makeDots(){
+  const p=document.getElementById('progress');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+
+function spawnConfetti(x,y){
+  const cols=['#FF4757','#FFD700','#2ed573','#1e90ff','#a55eea'];
+  for(let i=0;i<20;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`left:${x+Math.random()*120-60}px;top:${y}px;background:${cols[i%cols.length]};animation-duration:${.8+Math.random()*.6}s;transform:rotate(${Math.random()*360}deg);`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1400);
+  }
+}
+
+function makeSVG(shape){
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="color:${shape.color};width:70%;height:70%;">${shape.svg}</svg>`;
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  // pick 3 random shapes, one is the target
+  const shuffled=[...SHAPES].sort(()=>Math.random()-.5).slice(0,3);
+  currentShape=shuffled[Math.floor(Math.random()*3)];
+
+  // set draggable
+  const d=document.getElementById('draggable');
+  d.innerHTML=makeSVG(currentShape);
+  d.dataset.shape=currentShape.id;
+
+  // build holes
+  const hr=document.getElementById('holesRow');hr.innerHTML='';
+  shuffled.forEach(sh=>{
+    const hole=document.createElement('div');
+    hole.className='hole';
+    hole.dataset.shape=sh.id;
+    hole.innerHTML=`${makeSVG({...sh,color:'rgba(255,255,255,0.15)'})}
+      <div class="hole-label">${sh.label}</div>`;
+    hr.appendChild(hole);
+  });
+
+  setTimeout(()=>speak(`Find the ${currentShape.label}! Drag it to the right hole!`),300);
+
+  setupDrag();
+}
+
+function setupDrag(){
+  const d=document.getElementById('draggable');
+  d.style.position='';d.style.left='';d.style.top='';
+
+  // Mouse
+  d.addEventListener('mousedown',startDrag,{once:true});
+  // Touch
+  d.addEventListener('touchstart',startTouchDrag,{passive:false,once:true});
+}
+
+function startDrag(e){
+  e.preventDefault();
+  dragEl=document.getElementById('draggable');
+  const rect=dragEl.getBoundingClientRect();
+  dragOffX=e.clientX-rect.left;
+  dragOffY=e.clientY-rect.top;
+  dragEl.classList.add('dragging');
+  dragEl.style.position='fixed';
+  dragEl.style.zIndex='999';
+  moveDragEl(e.clientX,e.clientY);
+  document.addEventListener('mousemove',onMouseMove);
+  document.addEventListener('mouseup',onMouseUp);
+}
+
+function startTouchDrag(e){
+  e.preventDefault();
+  const t=e.touches[0];
+  dragEl=document.getElementById('draggable');
+  const rect=dragEl.getBoundingClientRect();
+  dragOffX=t.clientX-rect.left;
+  dragOffY=t.clientY-rect.top;
+  dragEl.classList.add('dragging');
+  dragEl.style.position='fixed';
+  dragEl.style.zIndex='999';
+  moveDragEl(t.clientX,t.clientY);
+  document.addEventListener('touchmove',onTouchMove,{passive:false});
+  document.addEventListener('touchend',onTouchEnd);
+}
+
+function moveDragEl(cx,cy){
+  dragEl.style.left=(cx-dragOffX)+'px';
+  dragEl.style.top=(cy-dragOffY)+'px';
+  // highlight holes
+  document.querySelectorAll('.hole').forEach(h=>{
+    const r=h.getBoundingClientRect();
+    h.classList.toggle('highlight',cx>=r.left&&cx<=r.right&&cy>=r.top&&cy<=r.bottom);
+  });
+}
+
+function onMouseMove(e){moveDragEl(e.clientX,e.clientY);}
+function onTouchMove(e){e.preventDefault();moveDragEl(e.touches[0].clientX,e.touches[0].clientY);}
+
+function onMouseUp(e){
+  document.removeEventListener('mousemove',onMouseMove);
+  document.removeEventListener('mouseup',onMouseUp);
+  checkDrop(e.clientX,e.clientY);
+}
+function onTouchEnd(e){
+  document.removeEventListener('touchmove',onTouchMove);
+  document.removeEventListener('touchend',onTouchEnd);
+  const t=e.changedTouches[0];
+  checkDrop(t.clientX,t.clientY);
+}
+
+function checkDrop(cx,cy){
+  if(!dragEl)return;
+  dragEl.classList.remove('dragging');
+  let dropped=false;
+  document.querySelectorAll('.hole').forEach(h=>{
+    const r=h.getBoundingClientRect();
+    if(cx>=r.left&&cx<=r.right&&cy>=r.top&&cy<=r.bottom){
+      dropped=true;
+      h.classList.remove('highlight');
+      if(h.dataset.shape===currentShape.id){
+        // correct!
+        h.classList.add('correct');
+        playDrop(true);
+        spawnConfetti(cx,cy);
+        score+=10;
+        document.getElementById('scoreVal').textContent=score;
+        speak(`Great job! That is a ${currentShape.label}!`);
+        dragEl.style.display='none';
+        round++;
+        makeDots();
+        setTimeout(()=>{
+          h.classList.remove('correct');
+          dragEl.style.display='';
+          newRound();
+        },1400);
+      } else {
+        // wrong
+        playDrop(false);
+        speak(`Oops! Try again!`);
+        dragEl.style.animation='wiggle .4s ease';
+        setTimeout(()=>{
+          dragEl.style.position='';dragEl.style.left='';dragEl.style.top='';
+          dragEl.style.animation='shapeFloat 2s ease-in-out infinite';
+          setupDrag();
+        },500);
+      }
+    }
+  });
+  if(!dropped){
+    dragEl.style.position='';dragEl.style.left='';dragEl.style.top='';
+    dragEl.style.animation='shapeFloat 2s ease-in-out infinite';
+    setupDrag();
+  }
+  document.querySelectorAll('.hole').forEach(h=>h.classList.remove('highlight'));
+}
+
+function showCelebration(){
+  playCelebration();
+  speak(`You sorted all the shapes! Amazing!`);
+  const ov=document.createElement('div');
+  ov.className='celebration';
+  ov.innerHTML=`
+    <div class="celeb-emoji">🌟</div>
+    <h2>All Sorted!</h2>
+    <p>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</p>
+    <button class="next-btn" onclick="restartGame()">Play Again 🔷</button>
+  `;
+  document.body.appendChild(ov);
+}
+
+function restartGame(){
+  document.querySelector('.celebration')?.remove();
+  score=0;round=0;
+  document.getElementById('scoreVal').textContent=0;
+  document.getElementById('draggable').style.display='';
+  newRound();
+}
+
+window.addEventListener('load',()=>{
+  window.speechSynthesis.getVoices();
+  makeDots();
+  setTimeout(()=>{
+    speak('Welcome! Sort the shapes!');
+    setTimeout(newRound,1200);
+  },500);
+});
+</script>
+</body>
+</html>

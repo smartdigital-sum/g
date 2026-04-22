@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Story Lab — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A;--border-glow:rgba(199,125,255,.22);--card-glow:rgba(199,125,255,.12);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:linear-gradient(160deg,#180A28,#0F0820);min-height:100vh;color:var(--text);font-family:'Nunito',sans-serif;font-size:18px;display:flex;justify-content:center;padding-bottom:40px;}
+.shell{width:100%;max-width:480px;display:flex;flex-direction:column;}
+.header{padding:16px 20px 10px;border-bottom:2px solid var(--border-glow);background:rgba(13,20,40,.8);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px);}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold);}
+.subject-tag{font-size:.68rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+.stars{display:flex;gap:4px;margin-top:4px;}
+.star{font-size:.95rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.score-display{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--gold);}
+.wow-hook{margin:14px 14px 0;background:linear-gradient(135deg,rgba(199,125,255,.15),rgba(13,20,40,.95));border:1px solid var(--border-glow);border-radius:14px;padding:16px;box-shadow:0 4px 20px var(--card-glow);}
+.wow-hook .emoji{font-size:1.8rem;margin-bottom:6px;display:block;}
+.wow-hook p{font-size:.88rem;line-height:1.6;}
+.wow-hook strong{color:var(--gold);}
+.stage-area{padding:14px;flex:1;}
+.stage{display:none;}
+.stage.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.stage-title{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--purple);margin-bottom:8px;}
+.card{background:var(--card);border:1px solid var(--border-glow);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 2px 14px var(--card-glow);}
+.info-box{background:rgba(199,125,255,.07);border-left:3px solid var(--purple);padding:9px 12px;border-radius:0 7px 7px 0;font-size:.82rem;color:var(--dim);line-height:1.5;margin:8px 0;}
+.info-box strong{color:var(--text);}
+.result-msg{font-size:.85rem;min-height:20px;padding:3px 0;}
+.result-msg.ok{color:var(--teal);}
+.result-msg.err{color:var(--coral);}
+.bottom-bar{position:sticky;bottom:0;background:rgba(13,20,40,.92);border-top:1px solid var(--border-glow);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(8px);}
+.progress-label{font-size:.82rem;color:var(--dim);}
+.progress-label strong{color:var(--text);}
+.action-btn{background:var(--gold);color:#060A10;border:none;border-radius:22px;padding:9px 24px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;min-height:44px;}
+.action-btn:hover{transform:scale(1.04);box-shadow:0 4px 14px rgba(255,209,102,.4);}
+.action-btn:disabled{background:var(--dim);cursor:not-allowed;transform:none;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.9);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{text-align:center;padding:26px 22px;max-width:320px;}
+.overlay-emoji{font-size:2.8rem;margin-bottom:10px;}
+.overlay-msg{font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--gold);margin-bottom:7px;}
+.overlay-fact{font-size:.82rem;color:var(--dim);line-height:1.5;}
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:200;}
+.confetto{position:absolute;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.game-complete{display:none;text-align:center;padding:36px 18px;}
+.game-complete.show{display:block;animation:fadeIn .5s ease;}
+.complete-title{font-family:'Baloo 2',cursive;font-size:1.9rem;color:var(--gold);margin-bottom:10px;}
+.complete-sub{color:var(--dim);font-size:.9rem;line-height:1.6;margin-bottom:20px;}
+.replay-btn{background:transparent;border:2px solid var(--gold);color:var(--gold);border-radius:22px;padding:9px 26px;font-family:'Baloo 2',cursive;font-size:.95rem;cursor:pointer;min-height:44px;}
+/* DATA TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:.8rem;margin:10px 0;}
+.data-table th{background:rgba(199,125,255,.15);color:var(--purple);padding:6px 8px;text-align:left;border:1px solid var(--border-glow);}
+.data-table td{padding:5px 8px;border:1px solid rgba(74,106,138,.3);color:var(--text);}
+.data-table tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+/* HISTOGRAM BUILDER */
+#histCanvas{width:100%;height:220px;border-radius:10px;display:block;background:#080818;}
+.hist-controls{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.hist-btn{background:rgba(199,125,255,.1);border:1px solid var(--border-glow);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:.8rem;color:var(--text);transition:all .2s;min-height:40px;}
+.hist-btn:hover{background:rgba(199,125,255,.22);}
+.hist-btn.active{background:rgba(199,125,255,.35);border-color:var(--purple);color:var(--purple);}
+/* FREQ POLYGON */
+#freqCanvas{width:100%;height:200px;border-radius:10px;display:block;background:#080818;}
+/* MEAN MEDIAN MODE */
+.dataset-display{font-family:'Baloo 2',cursive;font-size:.9rem;color:var(--gold);background:rgba(0,0,0,.3);padding:10px;border-radius:8px;margin-bottom:10px;word-break:break-all;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0;}
+.stat-box{background:rgba(0,0,0,.25);border:1px solid var(--border-glow);border-radius:9px;padding:10px;text-align:center;}
+.stat-box .label{font-size:.72rem;color:var(--dim);margin-bottom:4px;text-transform:uppercase;}
+.stat-box .value{font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--teal);}
+.stat-box.highlight{border-color:var(--gold);background:rgba(255,209,102,.06);}
+.mmm-q{background:rgba(0,0,0,.2);border-radius:8px;padding:10px;margin-top:10px;}
+.mmm-q .q-text{font-size:.85rem;color:var(--text);margin-bottom:8px;}
+.mmm-opts{display:flex;gap:6px;flex-wrap:wrap;}
+.mmm-opt{background:rgba(199,125,255,.1);border:1px solid var(--border-glow);border-radius:7px;padding:6px 12px;cursor:pointer;font-family:'Baloo 2',cursive;font-size:.85rem;color:var(--text);transition:all .2s;min-height:38px;}
+.mmm-opt:hover{background:rgba(199,125,255,.22);}
+.mmm-opt.correct{background:rgba(6,214,160,.18);border-color:var(--teal);color:var(--teal);}
+.mmm-opt.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);}
+/* PROBABILITY */
+#probCanvas{width:100%;height:200px;border-radius:10px;display:block;background:#080818;}
+.prob-controls{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;justify-content:center;}
+.flip-btn{background:rgba(255,209,102,.15);border:2px solid var(--gold);color:var(--gold);border-radius:10px;padding:8px 16px;cursor:pointer;font-family:'Baloo 2',cursive;font-size:.9rem;min-height:44px;transition:all .2s;}
+.flip-btn:hover{background:rgba(255,209,102,.28);}
+.prob-stats{display:flex;justify-content:space-around;margin-top:8px;flex-wrap:wrap;gap:6px;}
+.prob-stat{text-align:center;}
+.prob-stat .big{font-family:'Baloo 2',cursive;font-size:1.1rem;color:var(--gold);}
+.prob-stat .small{font-size:.72rem;color:var(--dim);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="game-title">📊 Data Story Lab</div>
+        <div class="subject-tag">📐 Maths · G9-05 · Ch 13-14: Statistics & Probability</div>
+      </div>
+      <div class="score-display" id="scoreDisplay">0 pts</div>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="emoji">🌸</span>
+    <p>Florence Nightingale did not just save soldiers — she <strong>invented a new type of graph</strong> (the polar area diagram) specifically to persuade politicians. She understood that data alone does not change minds — <strong>visualisation does.</strong> The nurse who saved 10,000 lives did it with charts, not medicine. Data is an argument.</p>
+  </div>
+
+  <div class="stage-area">
+
+    <!-- STAGE 1: HISTOGRAM BUILDER (Assam flood data) -->
+    <div class="stage active" id="stage1">
+      <div class="stage-title">🌊 Stage 1: Assam Flood Data Histogram</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:8px;">30 years of Assam flood-affected area (in lakh hectares). Tap a class interval to highlight it, then press "Build" to draw the histogram.</p>
+        <table class="data-table">
+          <tr><th>Class Interval (lakh ha)</th><th>Frequency (years)</th><th>Class Width</th></tr>
+          <tr><td>0 – 5</td><td>6</td><td>5</td></tr>
+          <tr><td>5 – 10</td><td>9</td><td>5</td></tr>
+          <tr><td>10 – 15</td><td>8</td><td>5</td></tr>
+          <tr><td>15 – 20</td><td>5</td><td>5</td></tr>
+          <tr><td>20 – 30</td><td>2</td><td>10 ← varying!</td></tr>
+        </table>
+        <div class="info-box"><strong>Key rule:</strong> When class widths differ, the y-axis must show <em>frequency density</em> (freq ÷ width), NOT raw frequency — otherwise the last bar is misleadingly tall!</div>
+        <canvas id="histCanvas" width="440" height="220"></canvas>
+        <div class="hist-controls">
+          <button class="hist-btn" id="hBtn1" onclick="toggleHistMode('freq')">Show Frequency</button>
+          <button class="hist-btn active" id="hBtn2" onclick="toggleHistMode('density')">Show Freq Density ✓</button>
+        </div>
+        <div class="result-msg" id="r1"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 2: FREQUENCY POLYGON -->
+    <div class="stage" id="stage2">
+      <div class="stage-title">📈 Stage 2: Frequency Polygon</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:8px;">Connect the midpoints of each histogram bar's top to draw the frequency polygon. Watch the trend emerge!</p>
+        <canvas id="freqCanvas" width="440" height="200"></canvas>
+        <div class="hist-controls" style="margin-top:8px;">
+          <button class="hist-btn" onclick="drawFreqPoly(false)">Show Histogram Only</button>
+          <button class="hist-btn" onclick="drawFreqPoly(true)">Add Frequency Polygon</button>
+        </div>
+        <div class="info-box"><strong>Frequency polygon:</strong> Connect the midpoints of the tops of histogram bars. The shape reveals the distribution — is it skewed left, right, or symmetric?</div>
+        <p style="font-size:.85rem;color:var(--dim);margin-bottom:8px;">The Assam flood data polygon is skewed…</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="hist-btn" onclick="checkSkew(this,'right')">Right (positive) skew</button>
+          <button class="hist-btn" onclick="checkSkew(this,'left')">Left (negative) skew</button>
+          <button class="hist-btn" onclick="checkSkew(this,'sym')">Symmetric</button>
+        </div>
+        <div class="result-msg" id="r2"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 3: MEAN MEDIAN MODE -->
+    <div class="stage" id="stage3">
+      <div class="stage-title">🔢 Stage 3: Central Tendency Detective</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:8px;">A village survey of monthly incomes (₹ thousands). One outlier — the landlord. Which measure is misleading?</p>
+        <div class="dataset-display">2, 3, 3, 4, 4, 4, 5, 5, 6, 85</div>
+        <div class="stats-grid">
+          <div class="stat-box" id="meanBox">
+            <div class="label">Mean</div>
+            <div class="value" id="meanVal">—</div>
+          </div>
+          <div class="stat-box" id="medBox">
+            <div class="label">Median</div>
+            <div class="value" id="medVal">—</div>
+          </div>
+          <div class="stat-box" id="modeBox">
+            <div class="label">Mode</div>
+            <div class="value" id="modeVal">—</div>
+          </div>
+        </div>
+        <button class="action-btn" onclick="calcStats()" style="font-size:.85rem;padding:8px 18px;margin-bottom:10px;">Calculate All Three</button>
+
+        <div class="mmm-q" id="mmmQ1">
+          <div class="q-text">Which measure is most misleading for this dataset (because of the landlord's income)?</div>
+          <div class="mmm-opts">
+            <div class="mmm-opt" onclick="checkMMM(this,'mean',0)">Mean</div>
+            <div class="mmm-opt" onclick="checkMMM(this,'median',0)">Median</div>
+            <div class="mmm-opt" onclick="checkMMM(this,'mode',0)">Mode</div>
+          </div>
+          <div class="result-msg" id="mmr0"></div>
+        </div>
+
+        <div class="mmm-q" id="mmmQ2" style="margin-top:8px;">
+          <div class="q-text">For the most common salary in a factory, which measure should you use?</div>
+          <div class="mmm-opts">
+            <div class="mmm-opt" onclick="checkMMM(this,'mode',1)">Mode</div>
+            <div class="mmm-opt" onclick="checkMMM(this,'mean',1)">Mean</div>
+            <div class="mmm-opt" onclick="checkMMM(this,'median',1)">Median</div>
+          </div>
+          <div class="result-msg" id="mmr1"></div>
+        </div>
+        <div class="result-msg" id="r3" style="margin-top:6px;"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 4: HISTOGRAM vs BAR GRAPH -->
+    <div class="stage" id="stage4">
+      <div class="stage-title">📊 Stage 4: Histogram vs Bar Graph</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">These two graphs look similar but are fundamentally different. Classify each example correctly:</p>
+
+        <div style="display:flex;flex-direction:column;gap:10px;" id="classifyExamples">
+          <div style="background:rgba(0,0,0,.2);border-radius:9px;padding:12px;" id="ex0">
+            <div style="font-size:.88rem;color:var(--text);margin-bottom:6px;"><strong>Graph A:</strong> Number of students scoring in ranges 0-20, 20-40, 40-60, 60-80, 80-100. No gaps between bars.</div>
+            <div style="display:flex;gap:6px;">
+              <button class="hist-btn" onclick="classifyGraph(this,0,'hist')">Histogram</button>
+              <button class="hist-btn" onclick="classifyGraph(this,0,'bar')">Bar Graph</button>
+            </div>
+            <div class="result-msg" id="exr0"></div>
+          </div>
+          <div style="background:rgba(0,0,0,.2);border-radius:9px;padding:12px;" id="ex1">
+            <div style="font-size:.88rem;color:var(--text);margin-bottom:6px;"><strong>Graph B:</strong> Number of students playing cricket, football, basketball, chess. Bars have gaps between them.</div>
+            <div style="display:flex;gap:6px;">
+              <button class="hist-btn" onclick="classifyGraph(this,1,'hist')">Histogram</button>
+              <button class="hist-btn" onclick="classifyGraph(this,1,'bar')">Bar Graph</button>
+            </div>
+            <div class="result-msg" id="exr1"></div>
+          </div>
+          <div style="background:rgba(0,0,0,.2);border-radius:9px;padding:12px;" id="ex2">
+            <div style="font-size:.88rem;color:var(--text);margin-bottom:6px;"><strong>Graph C:</strong> Annual rainfall in Guwahati, Delhi, Mumbai, Chennai. Each city is separate.</div>
+            <div style="display:flex;gap:6px;">
+              <button class="hist-btn" onclick="classifyGraph(this,2,'hist')">Histogram</button>
+              <button class="hist-btn" onclick="classifyGraph(this,2,'bar')">Bar Graph</button>
+            </div>
+            <div class="result-msg" id="exr2"></div>
+          </div>
+        </div>
+        <div class="info-box" style="margin-top:10px;"><strong>Key distinction:</strong> Histogram = continuous data (no gaps, bars touch). Bar graph = categorical/discrete data (gaps between bars).</div>
+        <div class="result-msg" id="r4" style="margin-top:6px;"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 5: PROBABILITY CONVERGENCE -->
+    <div class="stage" id="stage5">
+      <div class="stage-title">🪙 Stage 5: Probability Convergence Lab</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:8px;">Flip the coin and watch experimental probability converge to 0.5. The more flips, the closer it gets!</p>
+        <canvas id="probCanvas" width="440" height="200"></canvas>
+        <div class="prob-controls">
+          <button class="flip-btn" onclick="flipCoins(1)">Flip 1</button>
+          <button class="flip-btn" onclick="flipCoins(10)">Flip 10</button>
+          <button class="flip-btn" onclick="flipCoins(100)">Flip 100</button>
+          <button class="flip-btn" onclick="flipCoins(1000)">Flip 1000</button>
+          <button class="flip-btn" onclick="resetProb()" style="border-color:var(--coral);color:var(--coral);">Reset</button>
+        </div>
+        <div class="prob-stats">
+          <div class="prob-stat"><div class="big" id="totalFlips">0</div><div class="small">Total flips</div></div>
+          <div class="prob-stat"><div class="big" id="headsCount">0</div><div class="small">Heads</div></div>
+          <div class="prob-stat"><div class="big" id="tailsCount">0</div><div class="small">Tails</div></div>
+          <div class="prob-stat"><div class="big" id="probVal">—</div><div class="small">P(Heads)</div></div>
+        </div>
+        <div class="result-msg" id="r5" style="margin-top:8px;text-align:center;"></div>
+      </div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="game-complete" id="gameComplete">
+      <div style="font-size:2.8rem;margin-bottom:14px;">📊</div>
+      <div class="complete-title">Data Story Lab Complete!</div>
+      <div class="complete-sub">You built an Assam flood histogram (with frequency density!), drew a frequency polygon, calculated mean/median/mode, distinguished histogram from bar graph, and watched probability converge.<br><br><strong style="color:var(--gold);">Florence Nightingale</strong> would be proud.</div>
+      <br>
+      <button class="replay-btn" onclick="resetGame()">↺ Play Again</button>
+    </div>
+
+  </div>
+
+  <div class="bottom-bar" id="bottomBar">
+    <div class="progress-label">Stage <strong id="stageNum">1</strong> of 5</div>
+    <button class="action-btn" id="mainBtn" onclick="nextStage()">Continue →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="overlay-emoji" id="ovEmoji">📊</div>
+    <div class="overlay-msg" id="ovMsg">Stage Complete!</div>
+    <div class="overlay-fact" id="ovFact"></div>
+  </div>
+</div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<script>
+let score=0,currentStage=1,stageDone=[false,false,false,false,false];
+function addScore(p){score+=p;document.getElementById('scoreDisplay').textContent=score+' pts';}
+function lightStar(n){const s=document.getElementById('s'+n);if(s&&!s.classList.contains('lit'))s.classList.add('lit');}
+
+// ===== STAGE 1: HISTOGRAM =====
+const hData=[{lo:0,hi:5,f:6},{lo:5,hi:10,f:9},{lo:10,hi:15,f:8},{lo:15,hi:20,f:5},{lo:20,hi:30,f:2}];
+let histMode='density',histInteracted=false;
+
+function toggleHistMode(mode){
+  histMode=mode;
+  document.getElementById('hBtn1').classList.toggle('active',mode==='freq');
+  document.getElementById('hBtn2').classList.toggle('active',mode==='density');
+  drawHistogram();
+  if(mode==='density'&&!histInteracted){
+    histInteracted=true;addScore(20);
+    document.getElementById('r1').textContent='Correct! Frequency density adjusts for unequal class widths. ✓';
+    document.getElementById('r1').className='result-msg ok';
+    if(!stageDone[0]){stageDone[0]=true;lightStar(1);addScore(15);}
+  }
+  if(mode==='freq'){
+    document.getElementById('r1').textContent='Notice the last bar (20-30) looks similar to others — but it covers 10 years, not 5! Switch to frequency density.';
+    document.getElementById('r1').className='result-msg err';
+  }
+}
+
+function drawHistogram(){
+  const hc=document.getElementById('histCanvas');
+  const ctx=hc.getContext('2d');
+  const w=hc.width,h=hc.height;
+  ctx.clearRect(0,0,w,h);ctx.fillStyle='#080818';ctx.fillRect(0,0,w,h);
+
+  const vals=hData.map(d=>histMode==='density'?d.f/(d.hi-d.lo):d.f);
+  const maxVal=Math.max(...vals);
+  const pad={l:46,r:14,t:16,b:34};
+  const cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+
+  // Axes
+  ctx.strokeStyle='#4A6A8A';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ch);ctx.lineTo(pad.l+cw,pad.t+ch);ctx.stroke();
+
+  // Y gridlines & labels
+  ctx.fillStyle='#4A6A8A';ctx.font='9px Courier New';ctx.textAlign='right';
+  for(let i=0;i<=4;i++){
+    const y=pad.t+ch-i*(ch/4);const v=(maxVal*i/4).toFixed(1);
+    ctx.fillText(v,pad.l-4,y+3);
+    ctx.strokeStyle='#1a1a2a';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();
+  }
+
+  // Bars
+  const totalRange=30;
+  hData.forEach((d,i)=>{
+    const x=pad.l+(d.lo/totalRange)*cw;
+    const bw=((d.hi-d.lo)/totalRange)*cw;
+    const val=histMode==='density'?d.f/(d.hi-d.lo):d.f;
+    const barH=(val/maxVal)*ch;
+    const y=pad.t+ch-barH;
+    const cols=['#C77DFF','#4CC9F0','#FFD166','#06D6A0','#FF9CC2'];
+    ctx.fillStyle=cols[i];
+    ctx.fillRect(x,y,bw-1,barH);
+    ctx.fillStyle='rgba(255,255,255,.08)';ctx.fillRect(x,y,bw-1,4);
+    // Label
+    ctx.fillStyle='#060A10';ctx.font='bold 9px Nunito';ctx.textAlign='center';
+    ctx.fillText(d.f,x+bw/2,y+barH/2+4);
+    ctx.fillStyle='#4A6A8A';ctx.font='8px Courier New';
+    ctx.fillText(`${d.lo}-${d.hi}`,x+bw/2,pad.t+ch+14);
+  });
+
+  // Y axis label
+  ctx.save();ctx.translate(12,pad.t+ch/2);ctx.rotate(-Math.PI/2);
+  ctx.fillStyle='#4A6A8A';ctx.font='9px Nunito';ctx.textAlign='center';
+  ctx.fillText(histMode==='density'?'Freq Density':'Frequency',0,0);ctx.restore();
+}
+drawHistogram();
+
+// ===== STAGE 2: FREQ POLYGON =====
+function drawFreqPoly(showPoly){
+  const fc=document.getElementById('freqCanvas');
+  const ctx=fc.getContext('2d');
+  const w=fc.width,h=fc.height;
+  ctx.clearRect(0,0,w,h);ctx.fillStyle='#080818';ctx.fillRect(0,0,w,h);
+  const pad={l:40,r:14,t:14,b:30};const cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+  const maxF=9;
+  ctx.strokeStyle='#4A6A8A';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ch);ctx.lineTo(pad.l+cw,pad.t+ch);ctx.stroke();
+  const totalRange=30;
+  hData.forEach((d,i)=>{
+    const x=pad.l+(d.lo/totalRange)*cw;const bw=((d.hi-d.lo)/totalRange)*cw;
+    const barH=(d.f/maxF)*ch;const y=pad.t+ch-barH;
+    ctx.fillStyle='rgba(199,125,255,.2)';ctx.fillRect(x,y,bw-1,barH);
+    ctx.strokeStyle='rgba(199,125,255,.4)';ctx.lineWidth=1;
+    ctx.strokeRect(x,y,bw-1,barH);
+    ctx.fillStyle='#4A6A8A';ctx.font='8px Courier New';ctx.textAlign='center';
+    ctx.fillText(`${d.lo}-${d.hi}`,x+bw/2,pad.t+ch+14);
+  });
+  if(showPoly){
+    const midPts=hData.map(d=>{
+      const x=pad.l+((d.lo+d.hi)/2/totalRange)*cw;
+      const y=pad.t+ch-(d.f/maxF)*ch;
+      return{x,y};
+    });
+    // extend to 0
+    const x0=pad.l+((-2.5)/totalRange)*cw;
+    const xEnd=pad.l+((32.5)/totalRange)*cw;
+    ctx.strokeStyle='#FFD166';ctx.lineWidth=2.5;ctx.beginPath();
+    ctx.moveTo(pad.l,pad.t+ch);
+    midPts.forEach(p=>ctx.lineTo(p.x,p.y));
+    ctx.lineTo(pad.l+cw,pad.t+ch);ctx.stroke();
+    midPts.forEach(p=>{
+      ctx.fillStyle='#FFD166';ctx.beginPath();ctx.arc(p.x,p.y,4,0,Math.PI*2);ctx.fill();
+    });
+  }
+}
+drawFreqPoly(false);
+
+function checkSkew(btn,dir){
+  const parent=btn.parentElement;
+  if(parent.querySelector('.active-correct'))return;
+  // Assam flood data: most floods are in 5-15 range, tail extends right → right skew
+  if(dir==='right'){
+    btn.style.background='rgba(6,214,160,.2)';btn.style.borderColor='var(--teal)';
+    document.getElementById('r2').textContent='Correct! More floods cluster at lower values; the tail extends right → positive skew. ✓';
+    document.getElementById('r2').className='result-msg ok';
+    addScore(20);
+    if(!stageDone[1]){stageDone[1]=true;lightStar(2);addScore(15);}
+  }else{
+    btn.style.background='rgba(255,107,107,.15)';
+    setTimeout(()=>{btn.style.background='';},700);
+    document.getElementById('r2').textContent='Not quite. Look at where the polygon peaks vs where the tail is longer.';
+    document.getElementById('r2').className='result-msg err';
+  }
+}
+
+// ===== STAGE 3: MEAN MEDIAN MODE =====
+const data=[2,3,3,4,4,4,5,5,6,85];
+let statsCalc=false,mmm0Done=false,mmm1Done=false;
+
+function calcStats(){
+  const mean=(data.reduce((a,b)=>a+b,0)/data.length).toFixed(1);
+  const sorted=[...data].sort((a,b)=>a-b);
+  const median=((sorted[4]+sorted[5])/2).toFixed(1);
+  const mode='4';
+  document.getElementById('meanVal').textContent='₹'+mean+'k';
+  document.getElementById('medVal').textContent='₹'+median+'k';
+  document.getElementById('modeVal').textContent='₹'+mode+'k';
+  document.getElementById('meanBox').classList.add('highlight');
+  if(!statsCalc){statsCalc=true;addScore(10);}
+}
+
+const mmmAnswers=['mean','mode'];
+const mmmExplain=[
+  'Correct! Mean = ₹12.1k is pulled heavily by the landlord\'s ₹85k. Median (₹4.5k) or Mode (₹4k) better represent most villagers. ✓',
+  'Correct! Mode gives the most common salary — exactly what "most common" means. ✓'
+];
+let mmmDone=0;
+function checkMMM(el,choice,idx){
+  const parent=el.parentElement;
+  if(parent.querySelector('.correct'))return;
+  if(choice===mmmAnswers[idx]){
+    el.classList.add('correct');
+    document.getElementById('mmr'+idx).textContent=mmmExplain[idx];
+    document.getElementById('mmr'+idx).className='result-msg ok';
+    addScore(18);mmmDone++;
+    if(mmmDone>=2&&!stageDone[2]){
+      stageDone[2]=true;lightStar(3);addScore(20);
+      document.getElementById('r3').textContent='Central tendency analysis complete. That reasoning demonstrates understanding. ⚖️';
+      document.getElementById('r3').className='result-msg ok';
+    }
+  }else{
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),700);
+  }
+}
+
+// ===== STAGE 4: HISTOGRAM vs BAR =====
+const exAnswers=['hist','bar','bar'];
+const exExplain=[
+  'Histogram ✓ — continuous data (score ranges), bars touch, no gaps.',
+  'Bar graph ✓ — categorical data (separate sports), bars have gaps.',
+  'Bar graph ✓ — cities are discrete categories, not continuous ranges.'
+];
+let classifyDone=0;
+function classifyGraph(btn,idx,choice){
+  const parent=btn.parentElement;
+  if(parent.querySelector('[style*="teal"]'))return;
+  if(choice===exAnswers[idx]){
+    btn.style.background='rgba(6,214,160,.2)';btn.style.borderColor='var(--teal)';btn.style.color='var(--teal)';
+    document.getElementById('exr'+idx).textContent=exExplain[idx];
+    document.getElementById('exr'+idx).className='result-msg ok';
+    addScore(15);classifyDone++;
+    if(classifyDone>=3&&!stageDone[3]){
+      stageDone[3]=true;lightStar(4);addScore(20);
+      document.getElementById('r4').textContent='All 3 classified correctly. Precise identification. ✓';
+      document.getElementById('r4').className='result-msg ok';
+    }
+  }else{
+    btn.style.background='rgba(255,107,107,.15)';
+    setTimeout(()=>{btn.style.background='';},700);
+    document.getElementById('exr'+idx).textContent='Incorrect. Think: is the x-axis continuous ranges or separate categories?';
+    document.getElementById('exr'+idx).className='result-msg err';
+  }
+}
+
+// ===== STAGE 5: PROBABILITY CONVERGENCE =====
+let heads=0,tails=0,total=0,probHistory=[],animFrame=null;
+let probStageUnlocked=false;
+
+function flipCoins(n){
+  for(let i=0;i<n;i++){
+    if(Math.random()<0.5)heads++;else tails++;
+    total++;
+    if(probHistory.length<500||(n>10&&probHistory.length<1000)){
+      probHistory.push(heads/total);
+    }
+  }
+  updateProbDisplay();
+  if(total>=10&&!probStageUnlocked){
+    probStageUnlocked=true;addScore(15);
+    document.getElementById('r5').textContent='Convergence beginning. Keep flipping to see it approach 0.5!';
+    document.getElementById('r5').className='result-msg ok';
+  }
+  if(total>=100&&!stageDone[4]){
+    stageDone[4]=true;lightStar(5);addScore(30);
+    document.getElementById('r5').textContent=`After ${total} flips: P(Heads) ≈ ${(heads/total).toFixed(3)} → converges to 0.5. Law of Large Numbers confirmed! ✓`;
+    document.getElementById('r5').className='result-msg ok';
+  }
+}
+
+function updateProbDisplay(){
+  document.getElementById('totalFlips').textContent=total;
+  document.getElementById('headsCount').textContent=heads;
+  document.getElementById('tailsCount').textContent=tails;
+  document.getElementById('probVal').textContent=total>0?(heads/total).toFixed(3):'—';
+  drawProbGraph();
+}
+
+function drawProbGraph(){
+  const pc=document.getElementById('probCanvas');
+  const ctx=pc.getContext('2d');
+  const w=pc.width,h=pc.height;
+  ctx.clearRect(0,0,w,h);ctx.fillStyle='#080818';ctx.fillRect(0,0,w,h);
+  const pad={l:44,r:12,t:14,b:28};const cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+
+  // Grid
+  ctx.strokeStyle='#1a1a2a';ctx.lineWidth=1;
+  [0,.25,.5,.75,1].forEach(v=>{
+    const y=pad.t+ch-(v*ch);
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();
+    ctx.fillStyle='#4A6A8A';ctx.font='9px Courier New';ctx.textAlign='right';
+    ctx.fillText(v.toFixed(2),pad.l-4,y+3);
+  });
+  // 0.5 line (target)
+  const y05=pad.t+ch*.5;
+  ctx.strokeStyle='rgba(255,209,102,.5)';ctx.lineWidth=1.5;ctx.setLineDash([5,5]);
+  ctx.beginPath();ctx.moveTo(pad.l,y05);ctx.lineTo(pad.l+cw,y05);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#FFD166';ctx.font='9px Nunito';ctx.textAlign='left';ctx.fillText('0.5',pad.l+cw+2,y05+3);
+
+  // Convergence line
+  if(probHistory.length>1){
+    ctx.strokeStyle='#C77DFF';ctx.lineWidth=2;ctx.beginPath();
+    probHistory.forEach((p,i)=>{
+      const x=pad.l+(i/Math.max(probHistory.length-1,1))*cw;
+      const y=pad.t+ch-(p*ch);
+      if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle='#4A6A8A';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ch);ctx.lineTo(pad.l+cw,pad.t+ch);ctx.stroke();
+  ctx.fillStyle='#4A6A8A';ctx.font='9px Nunito';ctx.textAlign='center';
+  ctx.fillText(`Flips (n = ${total})`,pad.l+cw/2,h-4);
+}
+drawProbGraph();
+
+function resetProb(){
+  heads=0;tails=0;total=0;probHistory=[];probStageUnlocked=false;
+  updateProbDisplay();
+}
+
+// ===== NAVIGATION =====
+const ovData=[
+  {emoji:'🌊',msg:'Histogram Built!',fact:'Florence Nightingale used a similar polar area chart to show British soldiers were dying more from preventable diseases than from battle wounds. The visualization saved thousands of lives.'},
+  {emoji:'📈',msg:'Frequency Polygon Done!',fact:'The shape of a frequency polygon reveals everything: symmetric = normal distribution; right-skewed = most values are low, a few are very high; left-skewed = the opposite.'},
+  {emoji:'🔢',msg:'Central Tendency Mastered!',fact:'Mean, median, and mode each answer a different question: average value? central value? most common value? No single measure is always best — context decides.'},
+  {emoji:'📊',msg:'Classification Complete!',fact:'Florence Nightingale was the first person to use statistical graphics to influence public policy. Today, data visualisation is a core skill in medicine, economics, and every data-driven field.'},
+];
+function nextStage(){
+  if(currentStage===5&&stageDone[4]){showComplete();return;}
+  if(currentStage>=5)return;
+  const d=ovData[currentStage-1];
+  document.getElementById('ovEmoji').textContent=d.emoji;
+  document.getElementById('ovMsg').textContent=d.msg;
+  document.getElementById('ovFact').textContent=d.fact;
+  document.getElementById('overlay').classList.add('show');
+  setTimeout(()=>{
+    document.getElementById('stage'+currentStage).classList.remove('active');
+    currentStage++;
+    document.getElementById('stage'+currentStage).classList.add('active');
+    document.getElementById('stageNum').textContent=currentStage;
+    document.getElementById('overlay').classList.remove('show');
+    if(currentStage===5)document.getElementById('mainBtn').textContent='Finish →';
+  },2500);
+}
+function showComplete(){
+  document.getElementById('bottomBar').style.display='none';
+  document.getElementById('stage5').classList.remove('active');
+  document.getElementById('gameComplete').classList.add('show');
+  fireConfetti();
+}
+function fireConfetti(){
+  const wrap=document.getElementById('confettiWrap');wrap.innerHTML='';
+  const colors=['#FFD166','#06D6A0','#4CC9F0','#C77DFF','#FF6B6B'];
+  for(let i=0;i<28;i++){
+    const c=document.createElement('div');c.className='confetto';
+    c.style.left=(Math.random()*100)+'%';c.style.background=colors[~~(Math.random()*colors.length)];
+    c.style.animationDuration=(1.5+Math.random()*2)+'s';c.style.animationDelay=(Math.random()*.8)+'s';
+    wrap.appendChild(c);setTimeout(()=>c.remove(),4000);
+  }
+}
+function resetGame(){
+  score=0;currentStage=1;stageDone=[false,false,false,false,false];
+  histInteracted=false;statsCalc=false;mmmDone=0;classifyDone=0;
+  heads=0;tails=0;total=0;probHistory=[];probStageUnlocked=false;
+  document.getElementById('scoreDisplay').textContent='0 pts';
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('gameComplete').classList.remove('show');
+  document.getElementById('bottomBar').style.display='flex';
+  document.getElementById('stageNum').textContent='1';document.getElementById('mainBtn').textContent='Continue →';
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
+  document.getElementById('stage1').classList.add('active');
+  ['meanVal','medVal','modeVal'].forEach(id=>{document.getElementById(id).textContent='—';});
+  document.getElementById('meanBox').classList.remove('highlight');
+  document.querySelectorAll('.mmm-opt').forEach(el=>el.classList.remove('correct','wrong'));
+  document.querySelectorAll('.result-msg').forEach(el=>{el.textContent='';el.className='result-msg';});
+  histMode='density';toggleHistMode('density');drawFreqPoly(false);drawProbGraph();
+}
+</script>
+</body>
+</html>

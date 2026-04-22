@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Symmetry Art — Class 7 Maths | GyanPlay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg1:#0F0C29;--bg2:#302B63;
+      --card:#1a1740;
+      --gold:#FFB800;--saffron:#FF6B00;--sky:#00AEEF;
+      --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Nunito',sans-serif;
+      background:linear-gradient(135deg,var(--bg1),var(--bg2));
+      color:#fff;min-height:100vh;
+      display:flex;flex-direction:column;align-items:center;
+      padding:1rem;animation:fadeIn .45s ease;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+    @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+    /* TOP BAR */
+    .topbar{
+      width:100%;max-width:700px;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:.75rem 0;margin-bottom:.4rem;flex-wrap:wrap;gap:8px;
+    }
+    .back-btn{
+      background:rgba(255,255,255,.1);border:none;color:#fff;
+      font-size:.85rem;font-weight:700;padding:6px 16px;
+      border-radius:20px;cursor:pointer;transition:background .2s;
+    }
+    .back-btn:hover{background:rgba(255,255,255,.2)}
+    .subject-tag{
+      background:var(--saffron);color:#fff;
+      font-size:.75rem;font-weight:800;padding:4px 14px;
+      border-radius:20px;letter-spacing:.5px;
+    }
+    .topbar-right{display:flex;align-items:center;gap:8px}
+    .stars{display:flex;gap:3px;font-size:1.2rem}
+    .star{opacity:.25;transition:all .3s}
+    .star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+
+    /* LANG */
+    .lang-row{display:flex;gap:6px;margin-bottom:.8rem}
+    .lang-btn{
+      background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);
+      font-weight:700;font-size:.75rem;padding:4px 10px;
+      border-radius:16px;cursor:pointer;transition:all .2s;
+    }
+    .lang-btn.active{background:var(--gold);color:#111}
+
+    /* CARD */
+    .game-card{
+      width:100%;max-width:680px;background:var(--card);
+      border:1px solid rgba(255,255,255,.1);border-radius:24px;
+      padding:1.75rem 1.5rem;text-align:center;
+    }
+
+    /* PROGRESS */
+    .prog-wrap{background:rgba(255,255,255,.07);border-radius:20px;height:7px;margin-bottom:.35rem;overflow:hidden}
+    .prog-fill{height:100%;background:linear-gradient(90deg,var(--saffron),var(--gold));border-radius:20px;transition:width .4s}
+    .prog-text{font-size:.75rem;color:rgba(255,255,255,.4);text-align:right;margin-bottom:1rem}
+
+    /* SCORE */
+    .score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem}
+    .score-label{font-size:.8rem;font-weight:700;color:rgba(255,255,255,.5)}
+    .score-val{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+
+    /* QUESTION */
+    .q-num{font-size:.72rem;font-weight:800;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:.8rem}
+
+    /* SHAPE DISPLAY */
+    .shape-display{
+      display:flex;flex-direction:column;align-items:center;gap:.6rem;
+      background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+      border-radius:20px;padding:1.5rem;margin-bottom:1.4rem;
+      position:relative;
+    }
+    .shape-visual{
+      font-size:5.5rem;line-height:1;
+      animation:pulse 2.5s ease infinite;
+      filter:drop-shadow(0 0 18px rgba(255,184,0,.3));
+    }
+    .shape-name{
+      font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;
+      color:var(--gold);letter-spacing:.5px;
+    }
+    .shape-hint{font-size:.78rem;color:rgba(255,255,255,.5);font-style:italic;line-height:1.4}
+
+    /* SVG shapes */
+    .shape-svg{width:120px;height:120px;animation:pulse 2.5s ease infinite}
+
+    /* Q TEXT */
+    .q-text{
+      font-family:'Baloo 2',cursive;font-weight:700;font-size:1.1rem;
+      line-height:1.45;margin-bottom:1.3rem;color:#fff;
+    }
+
+    /* CHOICES — 2×2 grid */
+    .choices{
+      display:grid;grid-template-columns:1fr 1fr;
+      gap:.65rem;margin-bottom:.8rem;
+    }
+    .choice-btn{
+      background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);
+      border-radius:14px;padding:1rem .5rem;
+      font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;
+      color:#fff;cursor:pointer;text-align:center;transition:all .2s;
+    }
+    .choice-btn span.sub{display:block;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.55);margin-top:.15rem}
+    .choice-btn:hover:not(:disabled){background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.3);transform:scale(1.04)}
+    .choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green)}
+    .choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink)}
+    .choice-btn:disabled{cursor:default}
+
+    /* FEEDBACK */
+    .feedback{font-size:.88rem;font-weight:700;min-height:1.3rem;margin-bottom:.4rem}
+    .feedback.correct{color:var(--green)}
+    .feedback.wrong{color:var(--pink)}
+    .explanation{
+      font-size:.8rem;color:rgba(255,255,255,.65);line-height:1.5;
+      background:rgba(255,255,255,.05);border-radius:12px;
+      padding:.65rem 1rem;margin-bottom:.8rem;display:none;text-align:left;
+    }
+    .explanation.show{display:block}
+
+    /* NEXT BTN */
+    .next-btn{
+      background:var(--saffron);color:#fff;
+      font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;
+      padding:.65rem 2rem;border:none;border-radius:50px;
+      cursor:pointer;display:none;transition:transform .15s;
+    }
+    .next-btn:hover{transform:scale(1.05)}
+
+    /* OVERLAY */
+    .overlay{
+      display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,.78);backdrop-filter:blur(10px);
+      align-items:center;justify-content:center;z-index:100;padding:1.5rem;
+    }
+    .overlay.show{display:flex}
+    .result-box{
+      background:linear-gradient(135deg,#1a0d30,var(--bg2));
+      border:1px solid rgba(255,255,255,.13);border-radius:28px;
+      padding:2.5rem 2rem;text-align:center;max-width:400px;width:100%;
+      animation:popIn .35s ease;
+    }
+    .result-emoji{font-size:3.5rem;margin-bottom:.6rem}
+    .result-title{font-family:'Baloo 2',cursive;font-size:1.9rem;font-weight:800;margin-bottom:.4rem}
+    .result-score{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1rem}
+    .result-stars{font-size:2.5rem;margin-bottom:1.2rem;letter-spacing:4px}
+    .play-again-btn{
+      background:var(--saffron);color:#fff;
+      font-family:'Baloo 2',cursive;font-weight:800;font-size:1.1rem;
+      padding:.75rem 2.2rem;border:none;border-radius:50px;
+      cursor:pointer;transition:transform .15s;
+    }
+    .play-again-btn:hover{transform:scale(1.06)}
+
+    [data-lang]{display:none}
+    [data-lang="en"]{display:inline}
+
+    @media(max-width:480px){
+      .choices{grid-template-columns:1fr 1fr}
+      .choice-btn{font-size:1.3rem;padding:.8rem .4rem}
+      .shape-visual{font-size:4rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi">वापस</span><span data-lang="as">পাছে</span></button>
+  <span class="subject-tag"><span data-lang="en">Maths</span><span data-lang="hi">गणित</span><span data-lang="as">গণিত</span></span>
+  <div class="topbar-right">
+    <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span></div>
+  </div>
+</div>
+
+<!-- LANG TOGGLE -->
+<div class="lang-row">
+  <button class="lang-btn active" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" onclick="setLang('hi')">हि</button>
+  <button class="lang-btn" onclick="setLang('as')">অ</button>
+</div>
+
+<!-- GAME CARD -->
+<div class="game-card">
+  <div class="score-row">
+    <span class="score-label"><span data-lang="en">Score</span><span data-lang="hi">स्कोर</span><span data-lang="as">স্কোৰ</span></span>
+    <span class="score-val" id="score-display">0 / 100</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="prog-text" id="prog-text">0 / 10</div>
+
+  <div class="q-num" id="q-num">ROUND 1 OF 10</div>
+  <div class="shape-display" id="shape-display">
+    <!-- filled by JS -->
+  </div>
+  <div class="q-text" id="q-text"></div>
+  <div class="choices" id="choices"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="explanation" id="explanation"></div>
+  <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+    <span data-lang="en">Next →</span><span data-lang="hi">आगे →</span><span data-lang="as">আগলৈ →</span>
+  </button>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="result-box">
+    <div class="result-emoji" id="res-emoji">🎉</div>
+    <div class="result-title" id="res-title">Well Done!</div>
+    <div class="result-score" id="res-score"></div>
+    <div class="result-stars" id="res-stars"></div>
+    <button class="play-again-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span><span data-lang="hi">🔄 फिर खेलें</span><span data-lang="as">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+let currentLang = 'en';
+function setLang(l){
+  currentLang = l;
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display = el.dataset.lang===l?'inline':'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((btn,i)=>{
+    btn.classList.toggle('active',['en','hi','as'][i]===l);
+  });
+}
+
+// SVG shapes rendered inline
+const SHAPES = {
+  letter_A: {
+    visual:'A',
+    isEmoji:true,
+    name:{ en:'Letter A', hi:'अक्षर A', as:'আখৰ A' },
+    hint:{ en:'Look at the vertical middle axis', hi:'ऊर्ध्वाधर मध्य अक्ष देखें', as:'উলম্ব মধ্য অক্ষ চাওক' },
+    answer:1,
+    explain:{ en:"The letter A has exactly 1 line of symmetry — a vertical line through its centre.",
+              hi:"अक्षर A में ठीक 1 सममिति रेखा है — एक ऊर्ध्वाधर रेखा जो इसके केंद्र से गुजरती है।",
+              as:"A আখৰত মাত্ৰ ১ টা প্ৰতিসাম্য ৰেখা আছে — কেন্দ্ৰৰ মাজেৰে এটা উলম্ব ৰেখা।" }
+  },
+  letter_B: {
+    visual:'B',
+    isEmoji:true,
+    name:{ en:'Letter B', hi:'अक्षर B', as:'আখৰ B' },
+    hint:{ en:'Think about a horizontal fold', hi:'क्षैतिज मोड़ के बारे में सोचें', as:'অনুভূমিক ভাঁজৰ কথা চিন্তা কৰক' },
+    answer:1,
+    explain:{ en:"B has 1 line of symmetry — a horizontal line through its middle. The top and bottom halves mirror each other.",
+              hi:"B में 1 सममिति रेखा है — बीच से एक क्षैतिज रेखा। ऊपरी और निचला भाग एक-दूसरे को प्रतिबिंबित करते हैं।",
+              as:"B-ত ১ টা প্ৰতিসাম্য ৰেখা আছে — মাজেৰে এটা অনুভূমিক ৰেখা।" }
+  },
+  letter_H: {
+    visual:'H',
+    isEmoji:true,
+    name:{ en:'Letter H', hi:'अक्षर H', as:'আখৰ H' },
+    hint:{ en:'Can you fold it both ways?', hi:'क्या आप इसे दोनों तरफ मोड़ सकते हैं?', as:'আপুনি ইয়াক দুয়োটা দিশে ভাঁজ কৰিব পাৰিবনে?' },
+    answer:2,
+    explain:{ en:"H has 2 lines of symmetry — one vertical (left-right) and one horizontal (top-bottom).",
+              hi:"H में 2 सममिति रेखाएँ हैं — एक ऊर्ध्वाधर (बाएँ-दाएँ) और एक क्षैतिज (ऊपर-नीचे)।",
+              as:"H-ত ২ টা প্ৰতিসাম্য ৰেখা আছে — এটা উলম্ব আৰু এটা অনুভূমিক।" }
+  },
+  letter_S: {
+    visual:'S',
+    isEmoji:true,
+    name:{ en:'Letter S', hi:'अक्षर S', as:'আখৰ S' },
+    hint:{ en:'Does folding or reflecting it work?', hi:'क्या इसे मोड़ने पर यह मेल खाता है?', as:'ভাঁজ কৰিলে ইয়াক মিলাব পাৰিনে?' },
+    answer:0,
+    explain:{ en:"S has 0 lines of symmetry. It has rotational symmetry (180°) but no line of symmetry — no fold makes both halves match.",
+              hi:"S में 0 सममिति रेखाएँ हैं। इसमें घूर्णी सममिति (180°) है, लेकिन कोई रेखा सममिति नहीं।",
+              as:"S-ত ০ টা প্ৰতিসাম্য ৰেখা আছে। ঘূৰ্ণন প্ৰতিসাম্য (১৮০°) আছে কিন্তু ৰেখা প্ৰতিসাম্য নাই।" }
+  },
+  letter_X: {
+    visual:'X',
+    isEmoji:true,
+    name:{ en:'Letter X', hi:'अक्षर X', as:'আখৰ X' },
+    hint:{ en:'How many ways can you fold X to match?', hi:'X को कितने तरीकों से मोड़ सकते हैं?', as:'X কিমানটা উপায়ত ভাঁজ কৰিব পাৰি?' },
+    answer:4,
+    explain:{ en:"X has 4 lines of symmetry — vertical, horizontal, and 2 diagonal lines. All 4 folds produce matching halves!",
+              hi:"X में 4 सममिति रेखाएँ हैं — ऊर्ध्वाधर, क्षैतिज, और 2 विकर्ण।",
+              as:"X-ত ৪ টা প্ৰতিসাম্য ৰেখা আছে — উলম্ব, অনুভূমিক, আৰু ২ টা কৰ্ণ।" }
+  },
+  equilateral_triangle: {
+    visual:'🔺',
+    isEmoji:true,
+    name:{ en:'Equilateral Triangle', hi:'समबाहु त्रिभुज', as:'সমবাহু ত্ৰিভুজ' },
+    hint:{ en:'All 3 sides are equal', hi:'तीनों भुजाएँ बराबर हैं', as:'তিনোটা বাহু সমান' },
+    answer:3,
+    explain:{ en:"An equilateral triangle has 3 lines of symmetry — one from each vertex to the midpoint of the opposite side.",
+              hi:"समबाहु त्रिभुज में 3 सममिति रेखाएँ हैं — हर शीर्ष से विपरीत भुजा के मध्यबिंदु तक।",
+              as:"সমবাহু ত্ৰিভুজত ৩ টা প্ৰতিসাম্য ৰেখা আছে — প্ৰতিটো শীৰ্ষৰ পৰা বিপৰীত বাহুৰ মধ্যবিন্দুলৈ।" }
+  },
+  square: {
+    visual:'⬛',
+    isEmoji:true,
+    name:{ en:'Square', hi:'वर्ग', as:'বৰ্গক্ষেত্ৰ' },
+    hint:{ en:'Fold along sides and diagonals', hi:'भुजाओं और विकर्णों के साथ मोड़ें', as:'বাহু আৰু কৰ্ণৰ সৈতে ভাঁজ কৰক' },
+    answer:4,
+    explain:{ en:"A square has 4 lines of symmetry — 2 through midpoints of opposite sides, and 2 diagonals.",
+              hi:"वर्ग में 4 सममिति रेखाएँ हैं — 2 विपरीत भुजाओं के मध्यबिंदुओं से, और 2 विकर्ण।",
+              as:"বৰ্গক্ষেত্ৰত ৪ টা প্ৰতিসাম্য ৰেখা আছে — ২ টা বিপৰীত বাহুৰ মাজেৰে আৰু ২ টা কৰ্ণ।" }
+  },
+  rectangle: {
+    visual:'▬',
+    isEmoji:true,
+    name:{ en:'Rectangle', hi:'आयत', as:'আয়তক্ষেত্ৰ' },
+    hint:{ en:'Think: do its diagonals create symmetry?', hi:'क्या इसके विकर्ण सममिति बनाते हैं?', as:"এৰ কৰ্ণে প্ৰতিসাম্য সৃষ্টি কৰেনে?" },
+    answer:2,
+    explain:{ en:"A rectangle has only 2 lines of symmetry — one vertical and one horizontal through midpoints. Its diagonals are NOT lines of symmetry.",
+              hi:"आयत में केवल 2 सममिति रेखाएँ हैं। विकर्ण सममिति रेखाएँ नहीं हैं।",
+              as:"আয়তক্ষেত্ৰত মাত্ৰ ২ টা প্ৰতিসাম্য ৰেখা আছে। কৰ্ণ প্ৰতিসাম্য ৰেখা নহয়।" }
+  },
+  circle: {
+    visual:'⭕',
+    isEmoji:true,
+    name:{ en:'Circle', hi:'वृत्त', as:'বৃত্ত' },
+    hint:{ en:'A special shape with infinite symmetry...', hi:'एक विशेष आकृति जिसमें अनंत सममिति है...', as:'এটা বিশেষ আকৃতি যাৰ অসীম প্ৰতিসাম্য আছে...' },
+    answer:'∞',
+    explain:{ en:"A circle has infinite lines of symmetry! Every diameter is a line of symmetry. We say it has unlimited symmetry.",
+              hi:"वृत्त में अनंत सममिति रेखाएँ हैं! हर व्यास एक सममिति रेखा है।",
+              as:"বৃত্তত অসীম প্ৰতিসাম্য ৰেখা আছে! প্ৰতিটো ব্যাস এটা প্ৰতিসাম্য ৰেখা।" }
+  },
+  hexagon: {
+    visual:'⬡',
+    isEmoji:true,
+    name:{ en:'Regular Hexagon', hi:'सम षट्भुज', as:'সম ষড়ভুজ' },
+    hint:{ en:'6 equal sides — count lines from vertices and midpoints', hi:'6 बराबर भुजाएँ — शीर्षों और मध्यबिंदुओं से रेखाएँ गिनें', as:'৬ সমান বাহু — শীৰ্ষ আৰু মধ্যবিন্দুৰ পৰা ৰেখা গণনা কৰক' },
+    answer:6,
+    explain:{ en:"A regular hexagon has 6 lines of symmetry — 3 through opposite vertices and 3 through midpoints of opposite sides.",
+              hi:"सम षट्भुज में 6 सममिति रेखाएँ हैं — 3 विपरीत शीर्षों से, और 3 विपरीत भुजाओं के मध्यबिंदुओं से।",
+              as:"সম ষড়ভুজত ৬ টা প্ৰতিসাম্য ৰেখা আছে — ৩ টা বিপৰীত শীৰ্ষৰ মাজেৰে আৰু ৩ টা বিপৰীত বাহুৰ মধ্যবিন্দুৰ মাজেৰে।" }
+  }
+};
+
+// All 10 rounds in fixed order
+const ROUND_KEYS = [
+  'letter_A','letter_B','letter_H','letter_S','letter_X',
+  'equilateral_triangle','square','rectangle','circle','hexagon'
+];
+
+// Multiple-choice options per round (always include correct answer)
+const CHOICES_MAP = {
+  letter_A:         [0,1,2,4],
+  letter_B:         [0,1,2,4],
+  letter_H:         [0,1,2,4],
+  letter_S:         [0,1,2,4],
+  letter_X:         [0,1,2,4],
+  equilateral_triangle:[0,1,2,3],
+  square:           [1,2,3,4],
+  rectangle:        [0,1,2,4],
+  circle:           [0,1,4,'∞'],
+  hexagon:          [2,4,6,8]
+};
+
+let order=[], qi=0, score=0, answered=false;
+
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+
+function startGame(){
+  order = shuffle([...Array(ROUND_KEYS.length).keys()]);
+  qi=0; score=0;
+  document.getElementById('overlay').classList.remove('show');
+  loadQ();
+}
+
+function loadQ(){
+  const key = ROUND_KEYS[order[qi]];
+  const shape = SHAPES[key];
+  answered = false;
+
+  const pct = (qi/ROUND_KEYS.length)*100;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-text').textContent=qi+' / '+ROUND_KEYS.length;
+  document.getElementById('q-num').textContent='ROUND '+(qi+1)+' OF '+ROUND_KEYS.length;
+  document.getElementById('score-display').textContent=score+' / 100';
+
+  // shape display
+  const disp = document.getElementById('shape-display');
+  disp.innerHTML = `
+    <div class="shape-visual">${shape.visual}</div>
+    <div class="shape-name">${shape.name[currentLang]||shape.name['en']}</div>
+    <div class="shape-hint">${shape.hint[currentLang]||shape.hint['en']}</div>
+  `;
+
+  // question text (multilingual)
+  const qStrings = {
+    en:`How many lines of symmetry does ${shape.name.en} have?`,
+    hi:`${shape.name.hi} में कितनी सममिति रेखाएँ हैं?`,
+    as:`${shape.name.as}ৰ কিমানটা প্ৰতিসাম্য ৰেখা আছে?`
+  };
+  document.getElementById('q-text').textContent = qStrings[currentLang]||qStrings['en'];
+
+  // choices
+  const rawChoices = CHOICES_MAP[key];
+  // if correct not in choices, replace first entry
+  const options = [...rawChoices];
+  if(!options.includes(shape.answer)){options[0]=shape.answer;}
+  const shuffled = shuffle(options);
+
+  const container = document.getElementById('choices');
+  container.innerHTML='';
+  shuffled.forEach(val=>{
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    const label = val==='∞'?'∞':val;
+    const subLabel = val==='∞'?{en:'Infinite',hi:'अनंत',as:'অসীম'}[currentLang]:
+                     val===0?{en:'No symmetry',hi:'कोई सममिति नहीं',as:'কোনো প্ৰতিসাম্য নাই'}[currentLang]:
+                     val===1?{en:'1 line',hi:'1 रेखा',as:'১ ৰেখা'}[currentLang]:
+                     {en:`${val} lines`,hi:`${val} रेखाएँ`,as:`${val} ৰেখা`}[currentLang];
+    btn.innerHTML = `${label}<span class="sub">${subLabel}</span>`;
+    btn.dataset.val = val;
+    btn.onclick = ()=>handleAnswer(btn, val, shape.answer, shape.explain);
+    container.appendChild(btn);
+  });
+
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('explanation').classList.remove('show');
+  document.getElementById('explanation').textContent='';
+  document.getElementById('next-btn').style.display='none';
+  updateStars();
+}
+
+function handleAnswer(btn, chosen, correct, explain){
+  if(answered) return;
+  answered = true;
+
+  const allBtns = document.querySelectorAll('.choice-btn');
+  allBtns.forEach(b=>{
+    b.disabled=true;
+    if(String(b.dataset.val)===String(correct)) b.classList.add('correct');
+  });
+
+  const fb = document.getElementById('feedback');
+  const expBox = document.getElementById('explanation');
+
+  if(String(chosen)===String(correct)){
+    btn.classList.add('correct');
+    score = Math.min(100, score+10);
+    fb.textContent='✓ Correct!';
+    fb.className='feedback correct';
+  } else {
+    btn.classList.add('wrong');
+    fb.textContent='✗ Not quite!';
+    fb.className='feedback wrong';
+  }
+
+  expBox.textContent='💡 '+(explain[currentLang]||explain['en']);
+  expBox.classList.add('show');
+  document.getElementById('score-display').textContent=score+' / 100';
+  document.getElementById('next-btn').style.display='inline-block';
+  updateStars();
+}
+
+function nextQuestion(){
+  qi++;
+  if(qi>=ROUND_KEYS.length){showResult();return;}
+  loadQ();
+}
+
+function updateStars(){
+  document.getElementById('s1').classList.toggle('lit',score>=40);
+  document.getElementById('s2').classList.toggle('lit',score>=70);
+  document.getElementById('s3').classList.toggle('lit',score>=90);
+}
+
+function showResult(){
+  document.getElementById('prog-fill').style.width='100%';
+  document.getElementById('prog-text').textContent=ROUND_KEYS.length+' / '+ROUND_KEYS.length;
+
+  const pct=score;
+  let emoji='😔',title='Keep Trying!';
+  if(pct>=90){emoji='🏆';title='Symmetry Master!';}
+  else if(pct>=70){emoji='🎉';title='Well Done!';}
+  else if(pct>=40){emoji='👍';title='Good Effort!';}
+
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'';
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-title').textContent=title;
+  document.getElementById('res-score').textContent='Score: '+score+' / 100';
+  document.getElementById('res-stars').textContent=stars;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function restartGame(){startGame();}
+
+startGame();
+</script>
+</body>
+</html>

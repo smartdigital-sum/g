@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GyanPlay — Class 3 · Batch 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#060C06;--card:#0D180D;--gold:#FFD166;--text:#F0FFF0;--dim:#4A7A4A}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.top{padding:28px 24px 20px;text-align:center}
+.brand{font-family:'Baloo 2',sans-serif;font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,#FFD166,#06D6A0,#4CC9F0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.tagline{font-size:.9rem;color:var(--dim)}
+.batch-badge{display:inline-block;background:rgba(6,214,160,.12);border:1px solid rgba(6,214,160,.3);border-radius:50px;padding:6px 18px;font-size:.8rem;color:#06D6A0;margin-top:10px}
+.section{padding:0 16px 8px}
+.section-header{display:flex;align-items:center;gap:10px;padding:12px 4px 10px}
+.section-icon{font-size:1.4rem}
+.section-title{font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px}
+.section-line{flex:1;height:1px;background:rgba(255,255,255,.08)}
+.cards-row{display:flex;flex-direction:column;gap:10px}
+.game-card{display:flex;align-items:center;gap:14px;background:var(--card);border-radius:16px;padding:16px 18px;border:2px solid transparent;cursor:pointer;text-decoration:none;color:inherit;transition:transform .18s,border-color .2s,box-shadow .2s}
+.game-card:hover{transform:translateY(-2px)}
+.card-emoji{font-size:2.4rem;flex-shrink:0;width:52px;text-align:center}
+.card-info{flex:1;min-width:0}
+.card-name{font-family:'Baloo 2',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:3px}
+.card-desc{font-size:.8rem;color:var(--dim);line-height:1.4}
+.card-concept{font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;margin-top:4px;font-weight:700;opacity:.7}
+.arrow{font-size:1.2rem;color:var(--dim);flex-shrink:0}
+/* Subject themes */
+.eng .game-card{border-color:rgba(255,159,28,.15)}
+.eng .game-card:hover{border-color:rgba(255,159,28,.5);box-shadow:0 4px 20px rgba(255,159,28,.15);background:#1A1208}
+.eng .card-concept{color:#FF9F1C}
+.sci .game-card{border-color:rgba(6,214,160,.15)}
+.sci .game-card:hover{border-color:rgba(6,214,160,.5);box-shadow:0 4px 20px rgba(6,214,160,.12);background:#081A10}
+.sci .card-concept{color:#06D6A0}
+.sst .game-card{border-color:rgba(168,224,99,.15)}
+.sst .game-card:hover{border-color:rgba(168,224,99,.5);box-shadow:0 4px 20px rgba(168,224,99,.12);background:#0A1A08}
+.sst .card-concept{color:#A8E063}
+/* Progress */
+.progress-section{padding:20px 16px 0}
+.progress-card{background:var(--card);border-radius:14px;padding:16px 20px;border:1px solid rgba(255,255,255,.08)}
+.progress-title{font-size:.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:10px}
+.progress-row{display:flex;align-items:center;gap:10px}
+.prog-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#06D6A0,#4CC9F0);border-radius:4px;width:0%;transition:width .8s ease}
+.prog-text{font-size:.82rem;color:var(--gold);font-weight:700;min-width:40px;text-align:right}
+.batch-info{padding:20px 16px 32px;text-align:center}
+.batch-text{font-size:.82rem;color:var(--dim);line-height:1.6}
+.batch-text strong{color:var(--gold)}
+.also-link{display:inline-block;margin-top:10px;padding:8px 20px;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.3);border-radius:50px;font-size:.8rem;color:var(--gold);text-decoration:none;transition:background .2s}
+.also-link:hover{background:rgba(255,209,102,.2)}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand">🎓 GyanPlay</div>
+  <div class="tagline">Class 3 · Learning through curiosity</div>
+  <div class="batch-badge">📦 Batch 2 of 3 · 7 Games</div>
+</div>
+
+<div class="progress-section">
+  <div class="progress-card">
+    <div class="progress-title">Batch 2 Progress</div>
+    <div class="progress-row">
+      <div class="prog-bar-wrap"><div class="prog-bar" id="progBar"></div></div>
+      <div class="prog-text" id="progText">0/7</div>
+    </div>
+  </div>
+</div>
+
+<!-- English -->
+<div class="section eng">
+  <div class="section-header">
+    <span class="section-icon">📝</span>
+    <span class="section-title">English</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="cards-row">
+    <a class="game-card" href="game8-cat-prepositions.html">
+      <div class="card-emoji">🐱</div>
+      <div class="card-info">
+        <div class="card-name">Cat & Prepositions</div>
+        <div class="card-desc">Place a mischievous cat in, on, under, beside and behind objects — one word changes everything!</div>
+        <div class="card-concept">Prepositions · Position Words</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="game-card" href="game9-story-detectives.html">
+      <div class="card-emoji">🔍</div>
+      <div class="card-info">
+        <div class="card-name">Story Detectives</div>
+        <div class="card-desc">Read Assam-themed mysteries, answer what happened AND what it means — real reading!</div>
+        <div class="card-concept">Reading Comprehension · Inference</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<!-- Science -->
+<div class="section sci">
+  <div class="section-header">
+    <span class="section-icon">🔬</span>
+    <span class="section-title">Science / EVS</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="cards-row">
+    <a class="game-card" href="game10-photosynthesis-factory.html">
+      <div class="card-emoji">🌿</div>
+      <div class="card-info">
+        <div class="card-name">Photosynthesis Factory</div>
+        <div class="card-desc">Add sunlight, water and CO₂ to power the plant — then remove one and watch what happens!</div>
+        <div class="card-concept">Plants · How They Make Food</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="game-card" href="game11-animal-architects.html">
+      <div class="card-emoji">🏗️</div>
+      <div class="card-info">
+        <div class="card-name">Animal Architects</div>
+        <div class="card-desc">Match animals to their homes — then answer WHY. Bees use hexagons for a reason!</div>
+        <div class="card-concept">Animal Homes · Adaptation</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="game-card" href="game12-water-journey.html">
+      <div class="card-emoji">💧</div>
+      <div class="card-info">
+        <div class="card-name">Water Journey</div>
+        <div class="card-desc">Explore the 4 stages of the water cycle, then solve a pollution mystery upstream!</div>
+        <div class="card-concept">Water Cycle · Evaporation to Rain</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="game-card" href="game13-body-fuel.html">
+      <div class="card-emoji">⚡</div>
+      <div class="card-info">
+        <div class="card-name">Fuel for the Body</div>
+        <div class="card-desc">Build a balanced plate, fill all three body meters — energy, growth and protection!</div>
+        <div class="card-concept">Nutrition · Food & Nutrients</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<!-- Social Studies -->
+<div class="section sst">
+  <div class="section-header">
+    <span class="section-icon">🌏</span>
+    <span class="section-title">Social Studies</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="cards-row">
+    <a class="game-card" href="game14-assam-explorer.html">
+      <div class="card-emoji">🗺️</div>
+      <div class="card-info">
+        <div class="card-name">Assam Explorer</div>
+        <div class="card-desc">Tap regions on a map of Assam, discover surprising facts, answer quizzes and earn badges!</div>
+        <div class="card-concept">Assam · Geography, Wildlife, Culture</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<div class="batch-info">
+  <div class="batch-text">
+    <strong>Batch 2 complete!</strong> Batch 3 finishes Social Studies, Hindi and Computer.<br>
+    Say <strong>"go class 3 batch 3"</strong> when ready.
+  </div>
+  <a href="index.html" class="also-link">← Back to Batch 1</a>
+</div>
+
+<script>
+const GAMES=['game8-cat-prepositions.html','game9-story-detectives.html','game10-photosynthesis-factory.html','game11-animal-architects.html','game12-water-journey.html','game13-body-fuel.html','game14-assam-explorer.html'];
+let visited=0;
+try{GAMES.forEach(g=>{if(localStorage.getItem('visited_'+g))visited++;});}catch(e){}
+const pct=Math.round((visited/GAMES.length)*100);
+document.getElementById('progBar').style.width=pct+'%';
+document.getElementById('progText').textContent=`${visited}/${GAMES.length}`;
+document.querySelectorAll('.game-card').forEach(c=>{c.onclick=()=>{try{localStorage.setItem('visited_'+c.getAttribute('href'),1);}catch(e){}};});
+</script>
+</body>
+</html>

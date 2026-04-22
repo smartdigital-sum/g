@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Market - GyanPlay Class 2</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 50%, #feca57 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #feca57;
+            font-size: 2rem;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .score {
+            background: #e94560;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .target-number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 3rem;
+            display: inline-block;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .market-stall {
+            background: linear-gradient(135deg, #8B4513, #A0522D);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 5px solid #654321;
+        }
+        
+        .stall-title {
+            color: #ffd700;
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .items-rack {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .item-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: grab;
+            transition: transform 0.3s;
+            user-select: none;
+        }
+        
+        .item-box:hover {
+            transform: scale(1.1);
+        }
+        
+        .item-box:active {
+            cursor: grabbing;
+        }
+        
+        .item-icon {
+            font-size: 3rem;
+            display: block;
+        }
+        
+        .item-label {
+            color: white;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .counter-area {
+            background: linear-gradient(135deg, #dfe6e9, #b2bec3);
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 300px;
+        }
+        
+        .counter-title {
+            color: #2d3436;
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .place-value-columns {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .column {
+            width: 150px;
+            min-height: 200px;
+            background: white;
+            border-radius: 15px;
+            border: 3px solid #2d3436;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+        }
+        
+        .column-header {
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding: 10px;
+            border-radius: 10px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .hundreds-col .column-header { background: #e17055; color: white; }
+        .tens-col .column-header { background: #00b894; color: white; }
+        .ones-col .column-header { background: #0984e3; color: white; }
+        
+        .drop-zone {
+            flex: 1;
+            width: 100%;
+            min-height: 120px;
+            border: 2px dashed #b2bec3;
+            border-radius: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: flex-start;
+            gap: 5px;
+            padding: 10px;
+            transition: background 0.3s;
+        }
+        
+        .drop-zone.drag-over {
+            background: #dfe6e9;
+            border-color: #e94560;
+        }
+        
+        .placed-item {
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .placed-item:hover {
+            transform: scale(1.2);
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #00b894, #55efc4);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 184, 148, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .feedback-content.correct {
+            border: 5px solid #00b894;
+        }
+        
+        .feedback-content.wrong {
+            border: 5px solid #e94560;
+        }
+        
+        .feedback-icon {
+            font-size: 5rem;
+        }
+        
+        .feedback-text {
+            font-size: 2rem;
+            margin: 20px 0;
+        }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch1-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🏪 Number Market</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Level: <span id="level">1</span></div>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <p style="color: white; font-size: 1.2rem;">Build this number on the counter:</p>
+            <div class="target-number" id="targetNumber">247</div>
+        </div>
+        
+        <div class="market-stall">
+            <div class="stall-title">🏪 Shop Items - Drag to Counter</div>
+            <div class="items-rack">
+                <div class="item-box" draggable="true" data-type="hundred" data-value="100">
+                    <span class="item-icon">📦</span>
+                    <span class="item-label">100 Bundle</span>
+                </div>
+                <div class="item-box" draggable="true" data-type="ten" data-value="10">
+                    <span class="item-icon">📚</span>
+                    <span class="item-label">10 Bundle</span>
+                </div>
+                <div class="item-box" draggable="true" data-type="one" data-value="1">
+                    <span class="item-icon">🍎</span>
+                    <span class="item-label">1 Item</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="counter-area">
+            <div class="counter-title">🧮 Shop Counter - Drop Items Here</div>
+            <div class="place-value-columns">
+                <div class="column hundreds-col">
+                    <div class="column-header">Hundreds</div>
+                    <div class="drop-zone" id="hundredsZone" data-column="hundreds"></div>
+                </div>
+                <div class="column tens-col">
+                    <div class="column-header">Tens</div>
+                    <div class="drop-zone" id="tensZone" data-column="tens"></div>
+                </div>
+                <div class="column ones-col">
+                    <div class="column-header">Ones</div>
+                    <div class="drop-zone" id="onesZone" data-column="ones"></div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="check-btn" onclick="checkAnswer()">✓ Check Answer</button>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextLevel()">Next Number →</button>
+        </div>
+    </div>
+    
+    <script>
+        let currentNumber = 247;
+        let score = 0;
+        let level = 1;
+        let placedItems = { hundreds: 0, tens: 0, ones: 0 };
+        
+        const itemIcons = {
+            hundred: '📦',
+            ten: '📚',
+            one: '🍎'
+        };
+        
+        function generateNumber() {
+            if (level <= 2) {
+                return Math.floor(Math.random() * 100) + 10;
+            } else if (level <= 4) {
+                return Math.floor(Math.random() * 500) + 100;
+            } else {
+                return Math.floor(Math.random() * 900) + 100;
+            }
+        }
+        
+        function initGame() {
+            currentNumber = generateNumber();
+            document.getElementById('targetNumber').textContent = currentNumber;
+            document.getElementById('level').textContent = level;
+            
+            placedItems = { hundreds: 0, tens: 0, ones: 0 };
+            document.getElementById('hundredsZone').innerHTML = '';
+            document.getElementById('tensZone').innerHTML = '';
+            document.getElementById('onesZone').innerHTML = '';
+            
+            setupDragAndDrop();
+        }
+        
+        function setupDragAndDrop() {
+            const itemBoxes = document.querySelectorAll('.item-box');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            
+            itemBoxes.forEach(box => {
+                box.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('type', box.dataset.type);
+                    e.dataTransfer.setData('value', box.dataset.value);
+                });
+            });
+            
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+                
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+                
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    
+                    const type = e.dataTransfer.getData('type');
+                    const value = parseInt(e.dataTransfer.getData('value'));
+                    const column = zone.dataset.column;
+                    
+                    if ((type === 'hundred' && column === 'hundreds') ||
+                        (type === 'ten' && column === 'tens') ||
+                        (type === 'one' && column === 'ones')) {
+                        addItemToZone(zone, type, column);
+                    }
+                });
+            });
+        }
+        
+        function addItemToZone(zone, type, column) {
+            const span = document.createElement('span');
+            span.className = 'placed-item';
+            span.textContent = itemIcons[type];
+            span.onclick = function() {
+                zone.removeChild(span);
+                placedItems[column]--;
+            };
+            zone.appendChild(span);
+            placedItems[column]++;
+        }
+        
+        function checkAnswer() {
+            const userNumber = (placedItems.hundreds * 100) + (placedItems.tens * 10) + placedItems.ones;
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            if (userNumber === currentNumber) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Correct! Great job!';
+                score += 10;
+                document.getElementById('score').textContent = score;
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = `Not quite! You made ${userNumber}, but we need ${currentNumber}`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextLevel() {
+            document.getElementById('feedback').classList.remove('show');
+            level++;
+            initGame();
+        }
+        
+        initGame();
+    </script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Apple Tree Addition 🍎 — Class 1 Maths</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--green:#2E7D32;--red:#E53935;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#e8f5e9,#c8f4a2,#a5d6a7);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* BG */
+.sun{position:fixed;top:30px;right:40px;font-size:clamp(3rem,9vw,5rem);z-index:1;animation:sunSpin 20s linear infinite;}
+@keyframes sunSpin{to{transform:rotate(360deg);}}
+.grass-strip{position:fixed;bottom:0;left:0;right:0;height:70px;background:linear-gradient(180deg,#66BB6A,#388E3C);z-index:1;}
+.grass-strip::before{content:'';position:absolute;top:-16px;left:0;right:0;height:22px;background:radial-gradient(ellipse 35px 22px,#81C784 50%,transparent 50%) repeat-x;background-size:50px 22px;}
+
+/* HEADER */
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#1B5E20;text-shadow:1px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#1B5E20;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#1B5E20;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* EQUATION BANNER */
+.eq-banner{position:relative;z-index:20;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.95);border-radius:24px;padding:12px 24px;margin:8px 16px;text-align:center;max-width:640px;width:calc(100% - 32px);box-shadow:0 6px 20px rgba(0,0,0,.08);}
+.eq-text{font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,6vw,2.8rem);color:#1B5E20;line-height:1.1;}
+.eq-sub{font-size:clamp(.85rem,3vw,1.05rem);color:#388E3C;font-weight:700;margin-top:4px;}
+
+/* TREES */
+.trees-row{position:relative;z-index:15;display:flex;align-items:flex-end;justify-content:center;gap:clamp(20px,8vw,60px);padding:0 20px;margin-top:8px;flex:1;}
+.tree-group{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.tree-label{font-family:'Fredoka One',cursive;font-size:clamp(1rem,4vw,1.5rem);color:#1B5E20;background:rgba(255,255,255,.7);border-radius:50px;padding:4px 16px;}
+
+.tree-svg-wrap{position:relative;width:clamp(110px,28vw,180px);height:clamp(130px,32vw,200px);}
+.tree-trunk{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:clamp(18px,4vw,26px);height:clamp(50px,12vw,70px);background:linear-gradient(180deg,#8D6E63,#5D4037);border-radius:4px;}
+.tree-canopy{position:absolute;bottom:clamp(40px,10vw,58px);left:50%;transform:translateX(-50%);width:clamp(100px,25vw,160px);height:clamp(90px,22vw,140px);background:radial-gradient(circle at 50% 60%,#4CAF50,#2E7D32);border-radius:50% 50% 45% 45%;box-shadow:0 6px 20px rgba(0,0,0,.2);}
+.tree-canopy::before{content:'';position:absolute;top:-20%;left:10%;width:80%;height:70%;background:radial-gradient(circle at 50% 50%,#81C784,transparent);border-radius:50%;}
+
+/* APPLE on tree */
+.apple-on-tree{
+  position:absolute;
+  font-size:clamp(1.2rem,3.5vw,1.8rem);
+  animation:appleHang 2s ease-in-out infinite;
+  cursor:pointer;
+  transition:transform .15s;
+  z-index:5;
+}
+@keyframes appleHang{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
+.apple-on-tree:hover{transform:scale(1.2)!important;}
+
+/* PLUS SIGN */
+.plus-sign{font-family:'Fredoka One',cursive;font-size:clamp(2.5rem,8vw,4rem);color:#1B5E20;align-self:center;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+
+/* EQUALS BOX */
+.equals-box{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2rem);color:#1B5E20;text-align:center;align-self:center;}
+
+/* ANSWER CHOICES */
+.choices-area{position:relative;z-index:20;background:rgba(255,255,255,.75);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.92);border-radius:22px;padding:12px 14px;margin:8px 14px;max-width:680px;width:calc(100% - 28px);box-shadow:0 6px 20px rgba(0,0,0,.08);margin-bottom:80px;}
+.choices-lbl{font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(0,0,0,.3);margin-bottom:8px;text-align:center;}
+.ans-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+.ans-btn{
+  width:clamp(58px,13vw,76px);height:clamp(58px,13vw,76px);
+  border-radius:16px;border:none;cursor:pointer;
+  font-family:'Fredoka One',cursive;font-size:clamp(1.4rem,5vw,2rem);color:#fff;
+  box-shadow:0 4px 0 rgba(0,0,0,.25),0 6px 14px rgba(0,0,0,.12);
+  transition:all .15s;position:relative;top:0;
+}
+.ans-btn:hover{top:-3px;box-shadow:0 7px 0 rgba(0,0,0,.2);}
+.ans-btn:active{top:3px;box-shadow:0 1px 0 rgba(0,0,0,.2);}
+.ans-btn.wrong{animation:btnShake .35s ease;opacity:.35;pointer-events:none;}
+@keyframes btnShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.95rem,3.5vw,1.25rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:1.7;}
+.ov-btn{background:linear-gradient(135deg,#43A047,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(67,160,71,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+.explain{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(27,94,32,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:360px;width:90%;text-align:center;animation:exIn .3s ease both,exOut .3s 2.8s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes exIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes exOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="sun">☀️</div>
+<div class="grass-strip"></div>
+
+<div class="header">
+  <div class="title">🍎 Apple Tree Addition</div>
+  <div class="lvchip" id="lvChip">Level 1 · Adding within 10</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">📚 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="eq-banner">
+  <div class="eq-text" id="eqText">3 + 4 = ?</div>
+  <div class="eq-sub" id="eqSub">Count the apples on both trees then add them together!</div>
+</div>
+
+<div class="trees-row" id="treesRow"></div>
+
+<div class="choices-area">
+  <div class="choices-lbl">👆 What is the total?</div>
+  <div class="ans-row" id="ansRow"></div>
+</div>
+
+<script>
+const LEVELS=[
+  {name:'Adding within 10', maxA:5,maxB:5,maxSum:10},
+  {name:'Adding within 15', maxA:8,maxB:7,maxSum:15},
+  {name:'Adding within 20', maxA:10,maxB:10,maxSum:20},
+];
+const ANS_COLORS=['#E53935','#1E88E5','#FB8C00','#8E24AA','#00897B','#F4511E'];
+const TOTAL=10;
+let score=0,round=0,numA=0,numB=0,answered=false;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playCorrect(){
+  const c=ac();
+  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';
+    g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);
+    o.start();o.stop(c.currentTime+.4);
+  },i*100));
+}
+function playWrong(){
+  const c=ac(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;
+  g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);
+  o.start();o.stop(c.currentTime+.3);
+}
+function playChime(){
+  const c=ac();
+  [523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';
+    g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);
+    o.start();o.stop(c.currentTime+.45);
+  },i*90));
+}
+function speak(t){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;
+  window.speechSynthesis.speak(u);
+}
+
+function makeDots(){
+  const p=document.getElementById('progRow');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='pdot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+function spawnConf(){
+  const cols=['#E53935','#FFD700','#43A047','#1E88E5','#FB8C00'];
+  for(let i=0;i<24;i++){
+    const c=document.createElement('div');c.className='conf';
+    c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;
+    document.body.appendChild(c);setTimeout(()=>c.remove(),1600);
+  }
+}
+function showExplain(txt){
+  document.querySelector('.explain')?.remove();
+  const el=document.createElement('div');el.className='explain';el.textContent=txt;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),3200);
+}
+
+// apple positions on tree canopy
+const APPLE_POSITIONS=[
+  [{top:'30%',left:'30%'},{top:'20%',left:'55%'},{top:'35%',left:'70%'},{top:'50%',left:'20%'},{top:'55%',left:'60%'}],
+  [{top:'25%',left:'25%'},{top:'18%',left:'50%'},{top:'30%',left:'72%'},{top:'48%',left:'15%'},{top:'52%',left:'55%'},
+   {top:'28%',left:'42%'},{top:'42%',left:'35%'},{top:'45%',left:'75%'},{top:'58%',left:'38%'},{top:'55%',left:'80%'}],
+];
+
+function buildTree(containerEl,count,treeColor,label){
+  const group=document.createElement('div');group.className='tree-group';
+  const lbl=document.createElement('div');lbl.className='tree-label';lbl.textContent=label;
+  const wrap=document.createElement('div');wrap.className='tree-svg-wrap';
+  wrap.innerHTML=`<div class="tree-canopy" style="background:radial-gradient(circle at 50% 60%,${treeColor[0]},${treeColor[1]});"></div><div class="tree-trunk"></div>`;
+  const canopy=wrap.querySelector('.tree-canopy');
+  const positions=APPLE_POSITIONS[count<=5?0:1];
+  for(let i=0;i<count;i++){
+    const apple=document.createElement('div');
+    apple.className='apple-on-tree';
+    apple.textContent='🍎';
+    const pos=positions[i%positions.length];
+    apple.style.top=pos.top;apple.style.left=pos.left;
+    apple.style.animationDelay=(i*.18)+'s';
+    canopy.appendChild(apple);
+  }
+  // count badge
+  const badge=document.createElement('div');
+  badge.style.cssText=`font-family:'Fredoka One',cursive;font-size:clamp(1.2rem,4.5vw,1.8rem);color:${treeColor[1]};background:rgba(255,255,255,.8);border-radius:50%;width:clamp(38px,9vw,52px);height:clamp(38px,9vw,52px);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.15);margin-top:4px;`;
+  badge.textContent=count;
+  group.appendChild(lbl);group.appendChild(wrap);group.appendChild(badge);
+  containerEl.appendChild(group);
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  const lvIdx=round<4?0:round<7?1:2;
+  const lv=LEVELS[lvIdx];
+  document.getElementById('lvChip').textContent=`Level ${lvIdx+1} · ${lv.name}`;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  numA=Math.floor(Math.random()*lv.maxA)+1;
+  let maxB=Math.min(lv.maxB,lv.maxSum-numA);
+  numB=Math.floor(Math.random()*maxB)+1;
+  const sum=numA+numB;
+
+  document.getElementById('eqText').textContent=`${numA} + ${numB} = ?`;
+  document.getElementById('eqSub').textContent=`Count the apples on both trees, then add!`;
+
+  const tr=document.getElementById('treesRow');tr.innerHTML='';
+  buildTree(tr,numA,['#66BB6A','#2E7D32'],`Tree A (${numA})`);
+  const plus=document.createElement('div');plus.className='plus-sign';plus.textContent='+';tr.appendChild(plus);
+  buildTree(tr,numB,['#EF9A9A','#C62828'],`Tree B (${numB})`);
+
+  // choices
+  const ar=document.getElementById('ansRow');ar.innerHTML='';
+  const wrongs=new Set();
+  while(wrongs.size<4){
+    const w=sum+Math.floor(Math.random()*7)-3;
+    if(w>0&&w!==sum&&w<=lv.maxSum+2)wrongs.add(w);
+  }
+  [...wrongs,sum].sort(()=>Math.random()-.5).forEach((n,i)=>{
+    const btn=document.createElement('button');
+    btn.className='ans-btn';btn.textContent=n;
+    btn.style.background=`linear-gradient(135deg,${ANS_COLORS[i%ANS_COLORS.length]},${ANS_COLORS[(i+2)%ANS_COLORS.length]})`;
+    btn.onclick=()=>checkAns(btn,n,sum,numA,numB);
+    ar.appendChild(btn);
+  });
+
+  setTimeout(()=>speak(`${numA} apples plus ${numB} apples. How many apples altogether?`),400);
+}
+
+function checkAns(btn,chosen,sum,a,b){
+  if(answered)return;
+  if(chosen===sum){
+    answered=true;
+    playCorrect();spawnConf();
+    document.getElementById('eqText').textContent=`${a} + ${b} = ${sum} ✓`;
+    score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(`${a} plus ${b} equals ${sum}! Wonderful!`);
+    round++;makeDots();setTimeout(newRound,1800);
+  } else {
+    playWrong();btn.classList.add('wrong');
+    showExplain(`💡 Count tree A (${a} apples) + tree B (${b} apples).\nStart from ${a}, count ${b} more: ${a+1}, ${a+2}... = ${sum}`);
+    speak(`Count again! ${a} apples and ${b} more apples...`);
+  }
+}
+
+function showCelebration(){
+  playChime();spawnConf();
+  speak(`Amazing! You can add numbers! ${numA} plus ${numB} equals ${numA+numB}! You are a maths star!`);
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🍎</div>
+    <div class="ov-title">Addition Champion!</div>
+    <div class="ov-sub">You learned: <strong style="color:#FFD700;">Parts + Parts = Whole</strong><br/>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</div>
+    <button class="ov-btn" onclick="restart()">Play Again 🌳</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Count the apples and add them!');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

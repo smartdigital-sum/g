@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Food Web Forest — Class 7 Science</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--dark:#1A1A2E}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#0a2010,#1a2e1a);
+         color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;
+         padding:1rem;animation:fadeIn .4s ease}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    .topbar{width:100%;max-width:700px;display:flex;align-items:center;
+            justify-content:space-between;padding:.75rem 0;margin-bottom:.5rem}
+    .back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:.85rem;
+              font-weight:700;padding:6px 14px;border-radius:20px;cursor:pointer;
+              text-decoration:none;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.18)}
+    .subject-tag{background:#065F46;color:#fff;font-size:.75rem;font-weight:800;
+                 padding:4px 12px;border-radius:20px}
+    .stars{display:flex;gap:4px;font-size:1.3rem}
+    .star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #86EFAC)}
+
+    .lang-row{display:flex;gap:6px;margin-bottom:1rem}
+    .lang-btn{background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);
+              font-weight:700;font-size:.75rem;padding:4px 10px;border-radius:16px;cursor:pointer;transition:all .2s}
+    .lang-btn.active{background:var(--gold);color:var(--dark)}
+
+    .game-card{width:100%;max-width:680px;background:rgba(255,255,255,.05);
+               border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:2rem 1.5rem}
+
+    /* FOOD CHAIN VISUAL */
+    .chain-display{display:flex;align-items:center;justify-content:center;
+                   gap:.5rem;flex-wrap:wrap;min-height:80px;margin-bottom:1.5rem;
+                   background:rgba(0,0,0,.2);border-radius:16px;padding:1rem}
+    .chain-slot{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:70px}
+    .slot-box{width:68px;height:68px;border-radius:14px;border:2px dashed rgba(255,255,255,.3);
+              display:flex;flex-direction:column;align-items:center;justify-content:center;
+              font-size:1.8rem;background:rgba(255,255,255,.05);transition:all .3s;
+              position:relative}
+    .slot-box.filled{border-style:solid;border-color:var(--green);background:rgba(0,200,83,.12)}
+    .slot-box.correct-slot{border-color:var(--green);background:rgba(0,200,83,.25);
+                           animation:bounce .4s ease}
+    .slot-box.wrong-slot{border-color:var(--pink);background:rgba(255,64,129,.2);
+                         animation:shake .3s ease}
+    @keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
+    .slot-label{font-size:.68rem;color:rgba(255,255,255,.5);font-weight:700;text-align:center}
+    .slot-label.filled{color:var(--green)}
+    .arrow{font-size:1.5rem;color:rgba(255,255,255,.4);margin-top:-8px}
+
+    /* INSTRUCTIONS */
+    .inst{text-align:center;font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1rem}
+    .inst strong{color:var(--gold)}
+
+    /* ORGANISM OPTIONS */
+    .org-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:.75rem}
+    .org-card{background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.12);
+              border-radius:14px;padding:.6rem .4rem;text-align:center;cursor:pointer;
+              transition:all .2s;user-select:none}
+    .org-card:hover{background:rgba(255,255,255,.15);transform:scale(1.05)}
+    .org-card.selected{border-color:var(--sky);background:rgba(0,174,239,.2)}
+    .org-card.used{opacity:.3;cursor:default;pointer-events:none}
+    .org-emoji{font-size:2rem;display:block;margin-bottom:3px}
+    .org-name{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.7)}
+
+    /* PROGRESS */
+    .progress-bar{width:100%;background:rgba(255,255,255,.08);border-radius:20px;
+                  height:7px;margin-bottom:.4rem;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,#065F46,var(--green));
+                   border-radius:20px;transition:width .4s}
+    .progress-text{font-size:.78rem;color:rgba(255,255,255,.4);text-align:right}
+
+    .check-btn{width:100%;background:var(--green);color:#fff;font-family:'Baloo 2',cursive;
+               font-weight:800;font-size:1rem;padding:.7rem;border:none;border-radius:14px;
+               cursor:pointer;transition:all .2s;margin-top:.5rem}
+    .check-btn:hover{filter:brightness(1.1)}
+    .check-btn:disabled{opacity:.4;cursor:not-allowed}
+
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);
+             backdrop-filter:blur(8px);align-items:center;justify-content:center;z-index:100;padding:1.5rem}
+    .overlay.show{display:flex}
+    .result-box{background:linear-gradient(135deg,#0a2010,#1a2e1a);border:1px solid rgba(255,255,255,.12);
+                border-radius:28px;padding:2.5rem 2rem;text-align:center;max-width:420px;width:100%;
+                animation:popIn .35s ease}
+    @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+    .result-emoji{font-size:3.5rem;margin-bottom:.75rem}
+    .result-title{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.8rem;color:#fff;margin-bottom:.5rem}
+    .result-score{font-size:1rem;color:rgba(255,255,255,.6);margin-bottom:.75rem}
+    .result-fact{background:rgba(0,200,83,.1);border:1px solid rgba(0,200,83,.25);
+                 border-radius:14px;padding:.75rem 1rem;font-size:.85rem;color:rgba(255,255,255,.8);
+                 line-height:1.5;margin-bottom:1.5rem;text-align:left}
+    .btn-play-again{background:var(--gold);color:var(--dark);font-family:'Baloo 2',cursive;
+                    font-weight:800;font-size:1rem;padding:.8rem 2rem;border:none;
+                    border-radius:50px;cursor:pointer;width:100%;transition:transform .15s}
+    .btn-play-again:hover{transform:scale(1.03)}
+    .confetti-piece{position:fixed;width:8px;height:8px;pointer-events:none;
+                    animation:fall var(--dur,1.8s) ease-in forwards}
+    @keyframes fall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(100vh) rotate(720deg) translateX(var(--dx));opacity:0}}
+
+    @media(max-width:480px){.org-grid{grid-template-columns:repeat(4,1fr)}.org-emoji{font-size:1.5rem}}
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="../../classroom.html?class=class-7" class="back-btn">← Back</a>
+    <span class="subject-tag">🔬 Science · Class 7</span>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span>
+      <span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span>
+    </div>
+  </div>
+
+  <div class="lang-row">
+    <button class="lang-btn active" onclick="setLang('en')" id="lbEn">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')" id="lbHi">हि</button>
+    <button class="lang-btn" onclick="setLang('as')" id="lbAs">অ</button>
+  </div>
+
+  <div class="game-card">
+    <div class="progress-bar"><div class="progress-fill" id="pFill" style="width:0%"></div></div>
+    <div class="progress-text" id="pText">1 / 5</div>
+
+    <div class="inst" id="instText"><strong>Tap</strong> organisms in the correct food chain order!</div>
+
+    <!-- CHAIN DISPLAY -->
+    <div class="chain-display" id="chainDisplay"></div>
+
+    <!-- ORGANISM OPTIONS -->
+    <div class="org-grid" id="orgGrid"></div>
+
+    <button class="check-btn" id="checkBtn" onclick="checkChain()" disabled id="checkBtn">Check ✓</button>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="result-box">
+      <div class="result-emoji" id="rEmoji">🌿</div>
+      <div class="result-title" id="rTitle"></div>
+      <div class="result-score" id="rScore"></div>
+      <div class="result-fact" id="rFact"></div>
+      <button class="btn-play-again" onclick="restartGame()" id="rBtn">Play Again</button>
+    </div>
+  </div>
+
+<script>
+const T = {
+  en:{
+    inst:'<strong>Tap</strong> organisms in the correct food chain order!',
+    check:'Check ✓',playAgain:'Play Again',
+    title:['Forest Genius! 🌿','Excellent! 🎉','Well Done! 👏','Keep Learning! 💪'],
+    score:(c,t)=>`${c} out of ${t} chains correct!`,
+    fact:'🦏 Fun Fact: In Kaziranga, the food chain goes: Grass → Indian One-horned Rhino → Bengal Tiger. The Sun provides energy to all! Energy flows from producers (plants) → consumers (animals).',
+    labels:['Producer','1st Consumer','2nd Consumer','Top Predator'],
+  },
+  hi:{
+    inst:'<strong>टैप करें</strong> सही खाद्य श्रृंखला क्रम में!',
+    check:'जांचें ✓',playAgain:'दोबारा खेलें',
+    title:['वन प्रतिभा! 🌿','शानदार! 🎉','शाबाश! 👏','सीखते रहें! 💪'],
+    score:(c,t)=>`${t} में से ${c} खाद्य श्रृंखला सही!`,
+    fact:'🦏 मज़ेदार तथ्य: काजीरंगा में खाद्य श्रृंखला: घास → एक सींग वाला गैंडा → बाघ। सूर्य सभी को ऊर्जा देता है!',
+    labels:['उत्पादक','प्राथमिक उपभोक्ता','द्वितीयक उपभोक्ता','शीर्ष शिकारी'],
+  },
+  as:{
+    inst:'<strong>টেপ কৰক</strong> শুদ্ধ খাদ্য শিকলিৰ ক্ৰমত!',
+    check:'পৰীক্ষা কৰক ✓',playAgain:'পুনৰ খেলক',
+    title:['অৰণ্য প্ৰতিভা! 🌿','অসাধাৰণ! 🎉','শাবাশ! 👏','শিকি থাকক! 💪'],
+    score:(c,t)=>`${t}ৰ মাজত ${c}টা খাদ্য শিকলি শুদ্ধ!`,
+    fact:'🦏 মজাৰ তথ্য: কাজিৰঙাত খাদ্য শিকলি: ঘাঁহ → এক শিঙীয়া গঁড় → বাঘ। সূৰ্যই সকলোকে শক্তি দিয়ে!',
+    labels:['উৎপাদক','প্ৰথম উপভোক্তা','দ্বিতীয় উপভোক্তা','শীৰ্ষ শিকাৰী'],
+  }
+};
+
+// Each chain: array of {emoji, name} in correct order (producer → top predator)
+const CHAINS = [
+  {
+    correct: [
+      {emoji:'🌾',name:'Grass'},
+      {emoji:'🦌',name:'Deer'},
+      {emoji:'🐯',name:'Tiger'},
+    ],
+    extra: [{emoji:'🦅',name:'Eagle'},{emoji:'🐸',name:'Frog'}]
+  },
+  {
+    correct: [
+      {emoji:'🌿',name:'Algae'},
+      {emoji:'🐟',name:'Small Fish'},
+      {emoji:'🦅',name:'Eagle'},
+    ],
+    extra: [{emoji:'🐊',name:'Crocodile'},{emoji:'🌾',name:'Grass'}]
+  },
+  {
+    correct: [
+      {emoji:'🌱',name:'Grass'},
+      {emoji:'🐇',name:'Rabbit'},
+      {emoji:'🦊',name:'Fox'},
+      {emoji:'🦁',name:'Lion'},
+    ],
+    extra: [{emoji:'🐦',name:'Bird'}]
+  },
+  {
+    correct: [
+      {emoji:'🌺',name:'Flower'},
+      {emoji:'🐝',name:'Bee'},
+      {emoji:'🦎',name:'Lizard'},
+      {emoji:'🦅',name:'Eagle'},
+    ],
+    extra: [{emoji:'🐭',name:'Mouse'}]
+  },
+  {
+    correct: [
+      {emoji:'🌾',name:'Paddy'},
+      {emoji:'🦗',name:'Grasshopper'},
+      {emoji:'🐸',name:'Frog'},
+      {emoji:'🐍',name:'Snake'},
+    ],
+    extra: [{emoji:'🐇',name:'Rabbit'}]
+  },
+];
+
+let lang='en', current=0, correct=0, stars=0;
+let userChain=[], selectedOrgs=[];
+
+function renderQ(){
+  userChain=[];
+  const chain=CHAINS[current];
+  const t=T[lang];
+  document.getElementById('instText').innerHTML=t.inst;
+  document.getElementById('checkBtn').textContent=t.check;
+  document.getElementById('pFill').style.width=(current/CHAINS.length*100)+'%';
+  document.getElementById('pText').textContent=`${current+1} / ${CHAINS.length}`;
+
+  // Chain display
+  renderChainDisplay();
+
+  // Shuffle all organisms
+  const all=[...chain.correct,...chain.extra].sort(()=>Math.random()-.5);
+  const grid=document.getElementById('orgGrid');
+  grid.innerHTML=all.map((o,i)=>
+    `<div class="org-card" id="org${i}" onclick="selectOrg(${i},'${o.emoji}','${o.name}')">
+       <span class="org-emoji">${o.emoji}</span>
+       <span class="org-name">${o.name}</span>
+     </div>`
+  ).join('');
+  selectedOrgs=all;
+  document.getElementById('checkBtn').disabled=true;
+}
+
+function renderChainDisplay(){
+  const chain=CHAINS[current], t=T[lang];
+  const chainLen=chain.correct.length;
+  const display=document.getElementById('chainDisplay');
+  let html='';
+  for(let i=0;i<chainLen;i++){
+    if(i>0) html+=`<div class="arrow">→</div>`;
+    const filled=userChain[i];
+    html+=`<div class="chain-slot">
+      <div class="slot-box${filled?' filled':''}" id="slot${i}">
+        ${filled?filled.emoji:''}
+      </div>
+      <div class="slot-label${filled?' filled':''}">${t.labels[i]||('Level '+(i+1))}</div>
+    </div>`;
+  }
+  display.innerHTML=html;
+}
+
+function selectOrg(idx,emoji,name){
+  const chain=CHAINS[current];
+  if(userChain.length>=chain.correct.length) return;
+  userChain.push({emoji,name});
+  document.getElementById('org'+idx).classList.add('used');
+  renderChainDisplay();
+  if(userChain.length===chain.correct.length){
+    document.getElementById('checkBtn').disabled=false;
+  }
+}
+
+function checkChain(){
+  const chain=CHAINS[current];
+  let allCorrect=true;
+  for(let i=0;i<chain.correct.length;i++){
+    const slot=document.getElementById('slot'+i);
+    if(userChain[i]&&userChain[i].emoji===chain.correct[i].emoji){
+      slot.classList.add('correct-slot');
+    } else {
+      slot.classList.add('wrong-slot');
+      allCorrect=false;
+    }
+  }
+  if(allCorrect){
+    correct++;
+    if(correct>=2&&stars<1){stars=1;litStar(1);}
+    if(correct>=4&&stars<2){stars=2;litStar(2);}
+    if(correct>=5&&stars<3){stars=3;litStar(3);}
+    playTone(660,'sine',.2,.3);playTone(880,'sine',.25,.25,.1);
+  } else {
+    playTone(280,'sawtooth',.15,.2);
+  }
+  document.getElementById('checkBtn').disabled=true;
+  setTimeout(()=>{current++;current<CHAINS.length?renderQ():showResult();},1200);
+}
+
+function litStar(n){
+  const el=document.getElementById('s'+n);
+  el.classList.add('lit');
+  el.animate([{transform:'scale(1.5)'},{transform:'scale(1)'}],{duration:400});
+}
+
+function showResult(){
+  const t=T[lang], pct=correct/CHAINS.length;
+  const idx=pct>=.8?0:pct>=.6?1:pct>=.4?2:3;
+  document.getElementById('rEmoji').textContent=['🌿','🎉','👏','💪'][idx];
+  document.getElementById('rTitle').textContent=t.title[idx];
+  document.getElementById('rScore').textContent=t.score(correct,CHAINS.length);
+  document.getElementById('rFact').textContent=t.fact;
+  document.getElementById('rBtn').textContent=t.playAgain;
+  document.getElementById('overlay').classList.add('show');
+  if(pct>=.6) launchConfetti();
+}
+
+function restartGame(){
+  current=correct=stars=0;userChain=[];
+  ['s1','s2','s3'].forEach(id=>document.getElementById(id).classList.remove('lit'));
+  document.getElementById('overlay').classList.remove('show');
+  renderQ();
+}
+
+function setLang(l){
+  lang=l;localStorage.setItem('gyanplay_lang',l);
+  ['en','hi','as'].forEach(x=>document.getElementById(`lb${x.charAt(0).toUpperCase()+x.slice(1)}`).classList.toggle('active',x===l));
+  if(current<CHAINS.length)renderQ();
+}
+
+let _ctx;
+function getCtx(){return _ctx||(_ctx=new(window.AudioContext||window.webkitAudioContext)());}
+function playTone(f,t,d,g,dl){
+  try{const c=getCtx(),dly=dl||0,o=c.createOscillator(),gn=c.createGain();
+  o.type=t;o.frequency.setValueAtTime(f,c.currentTime+dly);
+  gn.gain.setValueAtTime(0,c.currentTime+dly);
+  gn.gain.linearRampToValueAtTime(g||.2,c.currentTime+dly+.01);
+  gn.gain.exponentialRampToValueAtTime(.001,c.currentTime+dly+d);
+  o.connect(gn);gn.connect(c.destination);
+  o.start(c.currentTime+dly);o.stop(c.currentTime+dly+d+.05);}catch(e){}
+}
+document.addEventListener('click',()=>{try{getCtx().resume();}catch(e){}},{once:true});
+function launchConfetti(){
+  const cols=['#FFB800','#00AEEF','#FF4081','#00C853','#7C3AED'];
+  for(let i=0;i<30;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%cols.length]};--dur:${1.4+Math.random()*1.2}s;--dx:${(Math.random()-.5)*160}px;border-radius:${Math.random()>.5?'50%':'3px'}`;
+    document.body.appendChild(el);el.addEventListener('animationend',()=>el.remove());
+  }
+}
+
+setLang(lang);
+renderQ();
+</script>
+</body>
+</html>

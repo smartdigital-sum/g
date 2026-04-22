@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hero Finder 🦸 — Class 1 Social Studies</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--red:#C62828;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#E8EAF6,#C5CAE9,#9FA8DA,#E8EAF6);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* CITY BG */
+.city-bg{position:fixed;bottom:0;left:0;right:0;height:100px;z-index:1;background:linear-gradient(180deg,#37474F,#263238);overflow:hidden;}
+.city-bg::before{content:'🏢🏪🏥🏫🚒';position:absolute;bottom:8px;left:10%;font-size:clamp(1.8rem,5vw,2.5rem);letter-spacing:12px;opacity:.6;}
+.road{position:fixed;bottom:0;left:0;right:0;height:18px;background:#616161;z-index:2;}
+.road::after{content:'';position:absolute;top:50%;left:0;right:0;height:3px;background:repeating-linear-gradient(90deg,#FFD700 0 30px,transparent 30px 60px);transform:translateY(-50%);}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#1A237E;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#1A237E;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#1A237E;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* SCENARIO CARD */
+.scenario-card{
+  position:relative;z-index:20;
+  background:rgba(255,255,255,.85);backdrop-filter:blur(10px);
+  border:3px solid rgba(255,255,255,.95);border-radius:28px;
+  padding:clamp(12px,3vw,20px) clamp(16px,4vw,28px);
+  margin:8px 16px;text-align:center;
+  max-width:660px;width:calc(100% - 32px);
+  box-shadow:0 8px 28px rgba(0,0,0,.1);
+}
+.scenario-icon{font-size:clamp(3rem,12vw,5.5rem);animation:sceneFloat 2s ease-in-out infinite;}
+@keyframes sceneFloat{0%,100%{transform:scale(1) rotate(-3deg);}50%{transform:scale(1.1) rotate(3deg);}}
+.scenario-title{font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4.5vw,1.7rem);color:#1A237E;margin-top:6px;}
+.scenario-problem{font-size:clamp(.88rem,3.2vw,1.15rem);color:#333;font-weight:700;margin-top:4px;line-height:1.5;}
+.scenario-question{font-family:'Fredoka One',cursive;font-size:clamp(1rem,4vw,1.5rem);color:#C62828;margin-top:8px;}
+
+/* HERO CHOICES GRID */
+.heroes-grid{
+  position:relative;z-index:20;
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:clamp(8px,2.5vw,16px);
+  padding:0 14px;max-width:700px;width:100%;
+  margin:8px 0;
+}
+.hero-card{
+  background:rgba(255,255,255,.78);backdrop-filter:blur(8px);
+  border:3px solid rgba(255,255,255,.9);border-radius:20px;
+  padding:clamp(10px,2.5vw,18px) clamp(8px,2vw,14px);
+  text-align:center;cursor:pointer;
+  transition:all .2s;
+  box-shadow:0 5px 0 rgba(0,0,0,.1);
+  position:relative;top:0;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.hero-card:hover{top:-4px;box-shadow:0 9px 0 rgba(0,0,0,.08);border-color:rgba(26,35,126,.4);}
+.hero-card.correct{border-color:#43A047;background:rgba(67,160,71,.2);animation:heroPop .5s ease;}
+@keyframes heroPop{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1);}}
+.hero-card.wrong{border-color:#E53935;background:rgba(229,57,53,.15);animation:heroShake .35s ease;opacity:.35;pointer-events:none;}
+@keyframes heroShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+.hero-emoji{font-size:clamp(2.2rem,9vw,3.5rem);}
+.hero-name{font-family:'Fredoka One',cursive;font-size:clamp(.75rem,3vw,1rem);color:#1A237E;}
+.hero-job{font-size:clamp(.58rem,2vw,.75rem);color:#3949AB;font-weight:700;}
+
+/* HERO ARRIVE animation */
+.hero-arrive{position:fixed;z-index:200;pointer-events:none;font-size:clamp(3rem,12vw,5rem);animation:heroDrive .8s ease-out forwards;}
+@keyframes heroDrive{0%{transform:translateX(-200px);opacity:1;}80%{transform:translateX(0);opacity:1;}100%{transform:translateX(20px);opacity:0;}}
+
+/* FACT */
+.fact-box{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(26,35,126,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:420px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3.5s ease forwards;border:2px solid rgba(255,215,0,.3);line-height:1.5;}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.88rem,3vw,1.1rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:2;}
+.ov-btn{background:linear-gradient(135deg,#1A237E,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(26,35,126,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="city-bg"></div>
+<div class="road"></div>
+
+<div class="header">
+  <div class="title">🦸 Hero Finder</div>
+  <div class="lvchip" id="lvChip">Community Helpers</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">🦸 Round: <span id="roundVal">1</span>/12</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="scenario-card">
+  <div class="scenario-icon" id="scenIcon">🔥</div>
+  <div class="scenario-title" id="scenTitle">Emergency!</div>
+  <div class="scenario-problem" id="scenProblem">A house in the neighbourhood is on fire!</div>
+  <div class="scenario-question" id="scenQuestion">Who do you call? 🦸</div>
+</div>
+
+<div class="heroes-grid" id="heroesGrid"></div>
+
+<script>
+const SCENARIOS=[
+  {icon:'🔥', title:'Emergency!',        problem:'A house is on fire! Smoke everywhere!',           correct:'firefighter'},
+  {icon:'🤒', title:'Someone is sick!',  problem:'Grandmother has high fever and needs help.',       correct:'doctor'},
+  {icon:'🦷', title:'Toothache!',        problem:'Your tooth is hurting very much.',                correct:'dentist'},
+  {icon:'📚', title:'Time to learn!',    problem:'You want to learn Maths and English.',            correct:'teacher'},
+  {icon:'🌱', title:'Village fields!',   problem:'Farmers in Assam need help growing rice.',         correct:'farmer'},
+  {icon:'✉️', title:'Letter arrived!',  problem:'A parcel has come for your family.',              correct:'postman'},
+  {icon:'🔧', title:'Pipe burst!',       problem:'Water is leaking from the kitchen pipe!',         correct:'plumber'},
+  {icon:'💈', title:'Long hair!',         problem:'Your hair has grown very long and needs cutting.',correct:'barber'},
+  {icon:'⚡', title:'No electricity!',   problem:'The lights in your house have gone out.',         correct:'electrician'},
+  {icon:'🦁', title:'Wild animal!',      problem:'A wild elephant has come near the village road!', correct:'forestofficer'},
+  {icon:'👮', title:'Someone is lost!',  problem:'A child is lost and crying on the road.',        correct:'police'},
+  {icon:'🚌', title:'Going to school!',  problem:'You need to travel to school in the morning.',   correct:'busdriver'},
+];
+
+const HEROES=[
+  {id:'firefighter', emoji:'👨‍🚒',  name:'Fire Fighter', job:'Puts out fires',          fact:'👨‍🚒 Firefighters are BRAVE heroes! They use water hoses to put out fires! Call 101!'},
+  {id:'doctor',      emoji:'👨‍⚕️',  name:'Doctor',        job:'Treats sick people',      fact:'👨‍⚕️ Doctors help us when we are sick! They give medicine and take care of our health!'},
+  {id:'dentist',     emoji:'🦷',    name:'Dentist',        job:'Heals teeth',             fact:'🦷 Dentists keep our teeth healthy! Brush twice a day to keep the dentist away!'},
+  {id:'teacher',     emoji:'👩‍🏫',  name:'Teacher',        job:'Helps us learn',          fact:'👩‍🏫 Teachers are our GUIDES! They help us read, write and understand the world!'},
+  {id:'farmer',      emoji:'👨‍🌾',  name:'Farmer',         job:'Grows our food',          fact:'👨‍🌾 Farmers grow rice, vegetables and fruits for us! Assam is famous for its rice fields!'},
+  {id:'postman',     emoji:'📮',    name:'Postman',        job:'Delivers letters',        fact:'📮 Postmen deliver letters and parcels to our homes every day!'},
+  {id:'plumber',     emoji:'🔧',    name:'Plumber',        job:'Fixes water pipes',       fact:'🔧 Plumbers fix water pipes and taps so we have clean water at home!'},
+  {id:'barber',      emoji:'💈',    name:'Barber',         job:'Cuts hair',               fact:'💈 Barbers cut our hair and keep us looking neat and tidy!'},
+  {id:'electrician', emoji:'⚡',    name:'Electrician',    job:'Fixes electricity',       fact:'⚡ Electricians fix lights and wires! Never touch electrical wires — it is DANGEROUS!'},
+  {id:'forestofficer',emoji:'🌿',  name:'Forest Officer', job:'Protects animals',        fact:'🌿 Forest Officers protect wild animals! In Assam, they protect the one-horned rhino!'},
+  {id:'police',      emoji:'👮',    name:'Police Officer', job:'Keeps us safe',           fact:'👮 Police Officers keep our community safe! They help people in trouble. Call 100!'},
+  {id:'busdriver',   emoji:'🚌',    name:'Bus Driver',     job:'Drives bus to school',    fact:'🚌 Bus Drivers take us safely to school and back home! Always sit properly in the bus!'},
+];
+
+const TOTAL=12;
+let score=0,round=0,answered=false,current=null;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playSiren(){const c=ac();[800,1000,800,1000].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.12,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.25);o.start();o.stop(c.currentTime+.25);},i*250));}
+function playCorrect(){const c=ac();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*100));}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;window.speechSynthesis.speak(u);}
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#1A237E','#FFD700','#E53935','#43A047','#FB8C00'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showFact(txt){document.querySelector('.fact-box')?.remove();const el=document.createElement('div');el.className='fact-box';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}
+
+function heroArrive(emoji){
+  const el=document.createElement('div');el.className='hero-arrive';
+  el.textContent=emoji;el.style.cssText='bottom:100px;left:0;';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  const lvIdx=round<4?0:round<8?1:2;
+  document.getElementById('lvChip').textContent=`Level ${lvIdx+1} · ${['Emergency Heroes','Everyday Helpers','Assam Community'][lvIdx]}`;
+  makeDots();
+  current=SCENARIOS[round%SCENARIOS.length];
+  document.getElementById('scenIcon').textContent=current.icon;
+  document.getElementById('scenTitle').textContent=current.title;
+  document.getElementById('scenProblem').textContent=current.problem;
+  playSiren();
+
+  // 6 hero choices: correct + 5 random distractors
+  const correctHero=HEROES.find(h=>h.id===current.correct);
+  const others=HEROES.filter(h=>h.id!==current.correct).sort(()=>Math.random()-.5).slice(0,5);
+  const all=[correctHero,...others].sort(()=>Math.random()-.5);
+
+  const grid=document.getElementById('heroesGrid');grid.innerHTML='';
+  all.forEach(hero=>{
+    const card=document.createElement('div');card.className='hero-card';
+    card.innerHTML=`<span class="hero-emoji">${hero.emoji}</span><span class="hero-name">${hero.name}</span><span class="hero-job">${hero.job}</span>`;
+    card.onclick=()=>checkHero(card,hero,correctHero);
+    grid.appendChild(card);
+  });
+
+  setTimeout(()=>speak(`${current.problem} Who do you call for help?`),400);
+}
+
+function checkHero(card,hero,correct){
+  if(answered)return;
+  if(hero.id===current.correct){
+    answered=true;card.classList.add('correct');
+    playCorrect();spawnConf();heroArrive(hero.emoji);
+    showFact(hero.fact);score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(`${hero.name}! ${hero.fact.replace(/^[^ ]+ /,'')}`);
+    round++;makeDots();setTimeout(newRound,3800);
+  } else {
+    card.classList.add('wrong');playWrong();
+    speak(`${hero.name} cannot help here! We need a ${correct.name}!`);
+  }
+}
+
+function showCelebration(){
+  playChime();spawnConf();speak('Amazing! You know all the community heroes! They make our life better every day!');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🦸</div>
+    <div class="ov-title">Community Champion!</div>
+    <div class="ov-sub">
+      👨‍🚒 Fire → Firefighter &nbsp; 👨‍⚕️ Sick → Doctor<br/>
+      👩‍🏫 Learn → Teacher &nbsp; 👨‍🌾 Food → Farmer<br/>
+      👮 Safety → Police &nbsp; 🌿 Animals → Forest Officer<br/>
+      🔧 Pipes → Plumber &nbsp; ⚡ Lights → Electrician<br/><br/>
+      Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!
+    </div>
+    <button class="ov-btn" onclick="restart()">Play Again 🦸</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Find the right community helper for each situation!');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

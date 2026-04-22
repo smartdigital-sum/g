@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fractions Advanced – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,#0F0C29,#302B63);font-family:'Baloo 2',cursive;display:flex;flex-direction:column;align-items:center;padding:16px;color:#e0e0e0}
+  header{width:100%;max-width:740px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .logo{font-size:1.5rem;font-weight:800;color:#FFD54F}
+  .badge{background:#FF6F00;color:#fff;font-size:0.78rem;font-weight:800;border-radius:10px;padding:3px 10px;margin-left:8px;vertical-align:middle;letter-spacing:1px}
+  .lang-btns{display:flex;gap:6px}
+  .lang-btn{border:none;background:#312E81;color:#a5b4fc;font-family:'Baloo 2',cursive;font-size:0.9rem;font-weight:700;border-radius:20px;padding:5px 14px;cursor:pointer;transition:transform .15s}
+  .lang-btn.active,.lang-btn:hover{background:#4F46E5;color:#fff;transform:scale(1.08)}
+  .progress-bar-wrap{width:100%;max-width:740px;background:#1e1b4b;border-radius:20px;height:12px;margin-bottom:10px;overflow:hidden}
+  .progress-bar{height:100%;background:linear-gradient(90deg,#818CF8,#4F46E5);border-radius:20px;transition:width .5s}
+  .round-label{font-size:1rem;font-weight:700;color:#a5b4fc;margin-bottom:4px;text-align:center}
+  .score-label{font-size:0.95rem;font-weight:700;color:#FFD54F;text-align:center;margin-bottom:8px}
+  .card{background:#1a1740;border:1px solid #312E81;border-radius:24px;box-shadow:0 8px 40px rgba(0,0,0,0.5);padding:22px 20px 18px;max-width:740px;width:100%;text-align:center}
+  .topic-chip{display:inline-block;background:#312E81;color:#a5b4fc;font-size:0.8rem;font-weight:700;border-radius:20px;padding:3px 14px;margin-bottom:10px}
+  .question-text{font-size:1.6rem;font-weight:800;color:#e0e0e0;margin:8px 0 14px;line-height:1.4}
+  /* Fraction rendering */
+  .frac{display:inline-flex;flex-direction:column;align-items:center;margin:0 4px;vertical-align:middle}
+  .frac .num{border-bottom:2px solid #a5b4fc;padding:0 4px;font-size:1.5rem;font-weight:900;color:#FFD54F;line-height:1}
+  .frac .den{padding:0 4px;font-size:1.5rem;font-weight:900;color:#a5b4fc;line-height:1}
+  /* fraction bar visual */
+  .frac-bar-wrap{display:flex;justify-content:center;gap:10px;margin:10px 0;flex-wrap:wrap}
+  .frac-bar{height:22px;border-radius:6px;overflow:hidden;display:flex;min-width:80px}
+  .frac-filled{background:#4F46E5;transition:width .4s}
+  .frac-empty{background:#312E81;flex:1}
+  .visual-label{font-size:0.9rem;color:#a5b4fc;margin-top:4px;margin-bottom:10px}
+  .ans-grid{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+  .ans-btn{border:2px solid #4F46E5;border-radius:14px;padding:12px 18px;font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;cursor:pointer;min-height:60px;min-width:80px;background:#1e1b4b;color:#e0e0e0;box-shadow:0 4px 12px rgba(0,0,0,0.25);transition:transform .15s;display:flex;align-items:center;justify-content:center}
+  .ans-btn:hover{transform:scale(1.07);background:#312E81}
+  .ans-btn.correct{background:#1B5E20;border-color:#4CAF50;color:#A5D6A7;animation:glow .4s}
+  .ans-btn.wrong{background:#7f1d1d;border-color:#EF5350;color:#FFCDD2;animation:shake .3s}
+  @keyframes glow{0%{box-shadow:0 0 0 #4CAF50}100%{box-shadow:0 0 20px #4CAF50}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .explanation{margin-top:14px;background:#0d0b2a;border:1px solid #312E81;border-radius:14px;padding:12px 16px;font-size:1.1rem;color:#a5b4fc;font-weight:700;display:none;text-align:left;line-height:1.7}
+  .explanation b{color:#FFD54F}
+  .next-btn{margin-top:12px;border:none;background:linear-gradient(135deg,#818CF8,#4F46E5);color:#fff;font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;border-radius:18px;padding:10px 36px;cursor:pointer;display:none;transition:transform .15s}
+  .next-btn:hover{transform:scale(1.06)}
+  .end-screen{display:none;text-align:center}
+  .end-title{font-size:2.8rem;font-weight:900;color:#FFD54F;margin-bottom:8px}
+  .stars-row{font-size:2.5rem;margin:10px 0}
+  .end-msg{font-size:1.5rem;color:#a5b4fc;margin-bottom:10px}
+  .play-again{border:none;background:linear-gradient(135deg,#818CF8,#4F46E5);color:#fff;font-family:'Baloo 2',cursive;font-size:1.6rem;font-weight:800;border-radius:22px;padding:12px 44px;cursor:pointer;margin-top:10px;transition:transform .15s}
+  .play-again:hover{transform:scale(1.07)}
+  canvas#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🔢 GyanPlay <span class="badge">MATHS</span></div>
+  <div class="lang-btns">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</header>
+<div class="progress-bar-wrap"><div class="progress-bar" id="pbar"></div></div>
+<div class="round-label" id="roundLabel">Round 1 of 10</div>
+<div class="score-label" id="scoreLabel">Score: 0 / 10</div>
+
+<div class="card" id="gameCard">
+  <div class="topic-chip" id="topicChip">Equivalent Fractions</div>
+  <div class="question-text" id="qText"></div>
+  <div class="frac-bar-wrap" id="fracBarWrap"></div>
+  <div class="visual-label" id="visualLabel"></div>
+  <div class="ans-grid" id="ansGrid"></div>
+  <div class="explanation" id="explanation"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextRound()">Next ➡️</button>
+</div>
+
+<div class="end-screen card" id="endScreen">
+  <div class="end-title">🏆 Fractions Champion!</div>
+  <div class="stars-row" id="endStars"></div>
+  <div class="end-msg" id="endMsg"></div>
+  <button class="play-again" onclick="restartGame()">🔄 Play Again</button>
+</div>
+<canvas id="confetti"></canvas>
+
+<script>
+function fracHTML(n,d){return `<span class="frac"><span class="num">${n}</span><span class="den">${d}</span></span>`;}
+function fracBar(n,d,color='#4F46E5'){
+  const pct=Math.round(n/d*100);
+  return `<div style="display:inline-flex;flex-direction:column;align-items:center;margin:0 6px">
+    <div class="frac-bar" style="width:${Math.max(80,d*20)}px">
+      <div class="frac-filled" style="width:${pct}%;background:${color}"></div>
+      <div class="frac-empty"></div>
+    </div>
+    <div style="font-size:0.85rem;color:#a5b4fc;margin-top:3px">${n}/${d}</div>
+  </div>`;
+}
+
+const L={
+  en:{next:"Next ➡️",rl:(r,t)=>`Round ${r} of ${t}`,sc:(s,t)=>`Score: ${s} / ${t}`,
+      stars:["Keep Practising! 💪","Good Try! 😊","Great Work! 🌟","Fractions Champion! 🏆"]},
+  hi:{next:"अगला ➡️",rl:(r,t)=>`चक्र ${r} / ${t}`,sc:(s,t)=>`स्कोर: ${s} / ${t}`,
+      stars:["अभ्यास करो! 💪","अच्छा प्रयास! 😊","बहुत अच्छे! 🌟","भिन्न विशेषज्ञ! 🏆"]},
+  as:{next:"পৰৱৰ্তী ➡️",rl:(r,t)=>`ৰাউণ্ড ${r} / ${t}`,sc:(s,t)=>`স্কোৰ: ${s} / ${t}`,
+      stars:["অনুশীলন কৰক! 💪","ভাল চেষ্টা! 😊","চমৎকাৰ! 🌟","ভগ্নাংশ চেম্পিয়ন! 🏆"]}
+};
+
+const rounds=[
+  {topic:{en:"Equivalent Fractions",hi:"समतुल्य भिन्न",as:"সমতুল্য ভগ্নাংশ"},
+   q:{en:()=>`Which fraction is equivalent to ${fracHTML(1,2)}?`,hi:()=>`${fracHTML(1,2)} के समतुल्य भिन्न कौन सा है?`,as:()=>`${fracHTML(1,2)} ৰ সমতুল্য ভগ্নাংশ কি?`},
+   correctLabel:"2/4",opts:["2/4","2/5","3/5"],
+   visual:()=>fracBar(1,2,'#818CF8')+fracBar(2,4,'#4F46E5'),
+   visLabel:{en:"1/2 = 2/4 (same shaded area!)",hi:"1/2 = 2/4 (समान भाग!)",as:"1/2 = 2/4 (একেই অংশ!)"},
+   explain:{en:`${fracHTML(1,2)} = ${fracHTML(2,4)} because multiplying top and bottom by 2 gives the same value. <b>Equivalent fractions have equal value!</b>`,
+            hi:`ऊपर और नीचे दोनों को 2 से गुणा करने पर ${fracHTML(1,2)} = ${fracHTML(2,4)} मिलता है।`,
+            as:`ওপৰ আৰু তলৰ সংখ্যা 2 ৰে গুণ কৰিলে ${fracHTML(1,2)} = ${fracHTML(2,4)} পোৱা যায়।`}},
+  {topic:{en:"Equivalent Fractions",hi:"समतुल्य भिन्न",as:"সমতুল্য ভগ্নাংশ"},
+   q:{en:()=>`Which fraction is equivalent to ${fracHTML(2,3)}?`,hi:()=>`${fracHTML(2,3)} के समतुल्य भिन्न कौन सा है?`,as:()=>`${fracHTML(2,3)} ৰ সমতুল্য ভগ্নাংশ কি?`},
+   correctLabel:"4/6",opts:["4/6","3/5","5/8"],
+   visual:()=>fracBar(2,3,'#818CF8')+fracBar(4,6,'#4F46E5'),
+   visLabel:{en:"2/3 = 4/6",hi:"2/3 = 4/6",as:"2/3 = 4/6"},
+   explain:{en:`${fracHTML(2,3)} = ${fracHTML(4,6)} — multiply both numerator and denominator by 2. <b>2×2=4, 3×2=6</b>`,
+            hi:`ऊपर-नीचे दोनों को 2 से गुणा: 2×2=4, 3×2=6 → ${fracHTML(4,6)}`,
+            as:`ওপৰ-তলক 2 ৰে গুণ: 2×2=4, 3×2=6 → ${fracHTML(4,6)}`}},
+  {topic:{en:"Comparing Fractions",hi:"भिन्नों की तुलना",as:"ভগ্নাংশৰ তুলনা"},
+   q:{en:()=>`Which is greater: ${fracHTML(3,4)} or ${fracHTML(2,3)}?`,hi:()=>`कौन बड़ा है: ${fracHTML(3,4)} या ${fracHTML(2,3)}?`,as:()=>`কোনটো ডাঙৰ: ${fracHTML(3,4)} নে ${fracHTML(2,3)}?`},
+   correctLabel:"3/4",opts:["3/4","2/3","Equal"],
+   visual:()=>fracBar(3,4,'#818CF8')+fracBar(2,3,'#F97316'),
+   visLabel:{en:"Compare the bars — 3/4 is longer!",hi:"3/4 की पट्टी ज्यादा लंबी है!",as:"3/4 ৰ দণ্ড দীঘল!"},
+   explain:{en:`Common denominator of 4,3 = 12. ${fracHTML(3,4)}=${fracHTML(9,12)}, ${fracHTML(2,3)}=${fracHTML(8,12)}. So <b>3/4 > 2/3</b>.`,
+            hi:`LCM(4,3)=12. ${fracHTML(3,4)}=${fracHTML(9,12)}, ${fracHTML(2,3)}=${fracHTML(8,12)}. अतः <b>3/4 > 2/3</b>।`,
+            as:`LCM(4,3)=12. ${fracHTML(3,4)}=${fracHTML(9,12)}, ${fracHTML(2,3)}=${fracHTML(8,12)}। গতিকে <b>3/4 > 2/3</b>।`}},
+  {topic:{en:"Adding Fractions",hi:"भिन्नों का जोड़",as:"ভগ্নাংশৰ যোগ"},
+   q:{en:()=>`${fracHTML(1,5)} + ${fracHTML(2,5)} = ?`,hi:()=>`${fracHTML(1,5)} + ${fracHTML(2,5)} = ?`,as:()=>`${fracHTML(1,5)} + ${fracHTML(2,5)} = ?`},
+   correctLabel:"3/5",opts:["3/5","3/10","2/5"],
+   visual:()=>fracBar(1,5,'#818CF8')+`<span style="color:#FFD54F;font-size:1.5rem;align-self:center;margin:0 6px">+</span>`+fracBar(2,5,'#4F46E5'),
+   visLabel:{en:"Same denominator → add numerators",hi:"समान हर → अंश जोड़ें",as:"একে হৰ → লব যোগ কৰক"},
+   explain:{en:`Same denominator (5), so add numerators: 1+2=3. Answer: ${fracHTML(3,5)}. <b>Keep denominator same!</b>`,
+            hi:`समान हर 5, अंश जोड़ें: 1+2=3. उत्तर: ${fracHTML(3,5)}`,
+            as:`একে হৰ 5, লব যোগ: 1+2=3। উত্তৰ: ${fracHTML(3,5)}`}},
+  {topic:{en:"Subtracting Fractions",hi:"भिन्नों का घटाव",as:"ভগ্নাংশৰ বিয়োগ"},
+   q:{en:()=>`${fracHTML(4,7)} − ${fracHTML(2,7)} = ?`,hi:()=>`${fracHTML(4,7)} − ${fracHTML(2,7)} = ?`,as:()=>`${fracHTML(4,7)} − ${fracHTML(2,7)} = ?`},
+   correctLabel:"2/7",opts:["2/7","2/14","6/7"],
+   visual:()=>fracBar(4,7,'#818CF8')+`<span style="color:#FFD54F;font-size:1.5rem;align-self:center;margin:0 6px">−</span>`+fracBar(2,7,'#EF5350'),
+   visLabel:{en:"Same denominator → subtract numerators",hi:"समान हर → अंश घटाएँ",as:"একে হৰ → লব বিয়োগ"},
+   explain:{en:`Same denominator (7): 4−2=2. Answer: ${fracHTML(2,7)}. <b>Denominator stays the same!</b>`,
+            hi:`समान हर 7: 4−2=2. उत्तर: ${fracHTML(2,7)}`,
+            as:`একে হৰ 7: 4−2=2। উত্তৰ: ${fracHTML(2,7)}`}},
+  {topic:{en:"Fraction of a Quantity",hi:"संख्या का भिन्न",as:"পৰিমাণৰ ভগ্নাংশ"},
+   q:{en:()=>`What is ${fracHTML(1,4)} of 20?`,hi:()=>`20 का ${fracHTML(1,4)} कितना है?`,as:()=>`20 ৰ ${fracHTML(1,4)} কিমান?`},
+   correctLabel:"5",opts:["5","4","8"],
+   visual:()=>`<div style="font-size:3rem;margin:6px 0">🍎🍎🍎🍎🍎 | 🍎🍎🍎🍎🍎 | 🍎🍎🍎🍎🍎 | 🍎🍎🍎🍎🍎</div>`,
+   visLabel:{en:"20 apples ÷ 4 groups = 5 each",hi:"20 सेब ÷ 4 समूह = 5 प्रत्येक",as:"20 আপেল ÷ 4 গোট = প্ৰতিটোত 5"},
+   explain:{en:`${fracHTML(1,4)} of 20 = 20 ÷ 4 = <b>5</b>. Divide by denominator, multiply by numerator!`,
+            hi:`20 का ${fracHTML(1,4)} = 20 ÷ 4 = <b>5</b>। हर से भाग, अंश से गुणा!`,
+            as:`20 ৰ ${fracHTML(1,4)} = 20 ÷ 4 = <b>5</b>। হৰেৰে ভাগ, লবেৰে গুণ!`}},
+  {topic:{en:"Fraction of a Quantity",hi:"संख्या का भिन्न",as:"পৰিমাণৰ ভগ্নাংশ"},
+   q:{en:()=>`What is ${fracHTML(3,4)} of 16?`,hi:()=>`16 का ${fracHTML(3,4)} कितना है?`,as:()=>`16 ৰ ${fracHTML(3,4)} কিমান?`},
+   correctLabel:"12",opts:["12","4","9"],
+   visual:()=>`<div style="font-size:2.2rem;margin:6px 0">⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐</div>`,
+   visLabel:{en:"16 ÷ 4 = 4, × 3 = 12",hi:"16 ÷ 4 = 4, × 3 = 12",as:"16 ÷ 4 = 4, × 3 = 12"},
+   explain:{en:`${fracHTML(3,4)} of 16: first 16÷4=4, then 4×3=<b>12</b>.`,
+            hi:`16 ÷ 4 = 4, 4 × 3 = <b>12</b>।`,
+            as:`16 ÷ 4 = 4, 4 × 3 = <b>12</b>।`}},
+  {topic:{en:"Improper to Mixed Number",hi:"विषम भिन्न से मिश्र",as:"অনুচিত ভগ্নাংশৰপৰা মিশ্ৰ সংখ্যা"},
+   q:{en:()=>`Convert ${fracHTML(7,3)} to a mixed number:`,hi:()=>`${fracHTML(7,3)} को मिश्र संख्या में बदलें:`,as:()=>`${fracHTML(7,3)} মিশ্ৰ সংখ্যালৈ পৰিৱৰ্তন:`},
+   correctLabel:"2⅓",opts:["2⅓","3⅓","1⅔"],
+   visual:()=>fracBar(3,3,'#4F46E5')+fracBar(3,3,'#4F46E5')+fracBar(1,3,'#818CF8'),
+   visLabel:{en:"7 thirds = 2 wholes + 1 third",hi:"7 तिहाई = 2 पूर्ण + 1 तिहाई",as:"7 তৃতীয়াংশ = 2 সম্পূৰ্ণ + 1 তৃতীয়াংশ"},
+   explain:{en:`7 ÷ 3 = <b>2</b> remainder <b>1</b>. So ${fracHTML(7,3)} = <b>2${fracHTML(1,3)}</b>. Quotient is whole number, remainder is new numerator!`,
+            hi:`7 ÷ 3 = <b>2</b> शेष <b>1</b>। अतः ${fracHTML(7,3)} = <b>2${fracHTML(1,3)}</b>।`,
+            as:`7 ÷ 3 = <b>2</b> ভাগশেষ <b>1</b>। গতিকে ${fracHTML(7,3)} = <b>2${fracHTML(1,3)}</b>।`}},
+  {topic:{en:"Comparing Unlike Fractions",hi:"असमान हर वाली भिन्नें",as:"অসম হৰৰ ভগ্নাংশ তুলনা"},
+   q:{en:()=>`Which is smaller: ${fracHTML(1,3)} or ${fracHTML(2,5)}?`,hi:()=>`कौन छोटा है: ${fracHTML(1,3)} या ${fracHTML(2,5)}?`,as:()=>`কোনটো সৰু: ${fracHTML(1,3)} নে ${fracHTML(2,5)}?`},
+   correctLabel:"1/3",opts:["1/3","2/5","Equal"],
+   visual:()=>fracBar(1,3,'#818CF8')+fracBar(2,5,'#F97316'),
+   visLabel:{en:"LCM of 3 and 5 = 15",hi:"3 और 5 का LCM = 15",as:"3 আৰু 5 ৰ LCM = 15"},
+   explain:{en:`LCM(3,5)=15. ${fracHTML(1,3)}=${fracHTML(5,15)}, ${fracHTML(2,5)}=${fracHTML(6,15)}. So <b>1/3 < 2/5</b>. 1/3 is smaller.`,
+            hi:`LCM(3,5)=15. ${fracHTML(5,15)} vs ${fracHTML(6,15)}। अतः <b>1/3 < 2/5</b>।`,
+            as:`LCM(3,5)=15। ${fracHTML(5,15)} vs ${fracHTML(6,15)}। গতিকে <b>1/3 < 2/5</b>।`}},
+  {topic:{en:"Mixed Numbers",hi:"मिश्र संख्याएँ",as:"মিশ্ৰ সংখ্যা"},
+   q:{en:()=>`What is 1${fracHTML(2,4)} as an improper fraction?`,hi:()=>`1${fracHTML(2,4)} को विषम भिन्न में बदलें:`,as:()=>`1${fracHTML(2,4)} ক অনুচিত ভগ্নাংশলৈ পৰিৱৰ্তন:`},
+   correctLabel:"6/4",opts:["6/4","3/4","5/4"],
+   visual:()=>fracBar(4,4,'#4F46E5')+fracBar(2,4,'#818CF8'),
+   visLabel:{en:"1 whole (4/4) + 2/4 = 6/4",hi:"4/4 + 2/4 = 6/4",as:"4/4 + 2/4 = 6/4"},
+   explain:{en:`1${fracHTML(2,4)}: multiply 1×4=4, add 2 → numerator=6. Answer: ${fracHTML(6,4)}. <b>Whole × denominator + numerator!</b>`,
+            hi:`1×4=4, 4+2=6 → ${fracHTML(6,4)}।`,
+            as:`1×4=4, 4+2=6 → ${fracHTML(6,4)}।`}}
+];
+
+let lang='en',cur=0,score=0,answered=false;
+
+function setLang(l){lang=l;document.querySelectorAll('.lang-btn').forEach((b,i)=>b.classList.toggle('active',['en','hi','as'][i]===l));renderRound();}
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function renderRound(){
+  const Lc=L[lang];const r=rounds[cur];
+  document.getElementById('roundLabel').textContent=Lc.rl(cur+1,rounds.length);
+  document.getElementById('scoreLabel').textContent=Lc.sc(score,rounds.length);
+  document.getElementById('pbar').style.width=(cur/rounds.length*100)+'%';
+  document.getElementById('topicChip').textContent=r.topic[lang];
+  document.getElementById('qText').innerHTML=r.q[lang]();
+  document.getElementById('fracBarWrap').innerHTML=r.visual();
+  document.getElementById('visualLabel').textContent=r.visLabel[lang];
+  document.getElementById('explanation').style.display='none';
+  document.getElementById('nextBtn').style.display='none';
+  const ag=document.getElementById('ansGrid');ag.innerHTML='';
+  const opts=shuffle([...r.opts]);
+  opts.forEach(opt=>{
+    const btn=document.createElement('button');btn.className='ans-btn';
+    // render fraction-like opts
+    if(opt.includes('/')){const[n,d]=opt.split('/');btn.innerHTML=fracHTML(n,d);}
+    else if(opt.includes('⅓')||opt.includes('⅔')){btn.innerHTML=opt;}
+    else btn.textContent=opt;
+    btn.dataset.val=opt;
+    btn.onclick=()=>answer(opt);
+    ag.appendChild(btn);
+  });
+  answered=false;
+}
+
+function answer(val){
+  if(answered)return;answered=true;
+  const r=rounds[cur];
+  document.querySelectorAll('.ans-btn').forEach(b=>{
+    if(b.dataset.val===r.correctLabel)b.classList.add('correct');
+    else if(b.dataset.val===val&&val!==r.correctLabel)b.classList.add('wrong');
+    b.disabled=true;
+  });
+  if(val===r.correctLabel){score++;launchConfetti(12);}
+  document.getElementById('scoreLabel').textContent=L[lang].sc(score,rounds.length);
+  document.getElementById('explanation').innerHTML='💡 '+r.explain[lang];
+  document.getElementById('explanation').style.display='block';
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextRound(){cur++;if(cur>=rounds.length){showEnd();return;}renderRound();}
+
+function showEnd(){
+  document.getElementById('gameCard').style.display='none';
+  document.getElementById('roundLabel').style.display='none';
+  document.getElementById('scoreLabel').style.display='none';
+  const end=document.getElementById('endScreen');end.style.display='block';
+  const pct=score/rounds.length;const stars=pct>=0.9?3:pct>=0.7?2:pct>=0.4?1:0;
+  document.getElementById('endStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('endMsg').textContent=`${score}/${rounds.length} — ${L[lang].stars[stars]}`;
+  document.getElementById('pbar').style.width='100%';launchConfetti(50);
+}
+
+function restartGame(){
+  cur=0;score=0;answered=false;
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('gameCard').style.display='block';
+  document.getElementById('roundLabel').style.display='block';
+  document.getElementById('scoreLabel').style.display='block';
+  renderRound();
+}
+
+function launchConfetti(count){
+  const canvas=document.getElementById('confetti');const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const p=Array.from({length:count},()=>({x:Math.random()*canvas.width,y:-50,r:Math.random()*9+4,color:`hsl(${Math.random()*360},90%,60%)`,vx:(Math.random()-0.5)*4,vy:Math.random()*4+2,alpha:1}));
+  let f;function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);p.forEach(i=>{i.x+=i.vx;i.y+=i.vy;i.alpha-=0.012;ctx.save();ctx.globalAlpha=Math.max(0,i.alpha);ctx.fillStyle=i.color;ctx.beginPath();ctx.arc(i.x,i.y,i.r,0,Math.PI*2);ctx.fill();ctx.restore();});if(p.some(i=>i.alpha>0))f=requestAnimationFrame(draw);else ctx.clearRect(0,0,canvas.width,canvas.height);}
+  cancelAnimationFrame(f);draw();
+}
+
+renderRound();
+</script>
+</body>
+</html>

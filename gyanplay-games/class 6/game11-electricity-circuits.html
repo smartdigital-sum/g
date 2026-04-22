@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electricity &amp; Circuits — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#071A07 0%,#040E04 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(6,214,160,.13),rgba(6,214,160,.04));border:1px solid rgba(6,214,160,.3);border-radius:16px;padding:16px;margin-bottom:16px}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(6,214,160,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--teal);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:700}
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.45}
+
+/* Circuit board canvas */
+.circuit-board{background:#050f08;border:1.5px solid rgba(6,214,160,.2);border-radius:16px;margin-bottom:14px;position:relative;overflow:hidden}
+.circuit-board canvas{display:block;width:100%;touch-action:none}
+
+/* Component tray */
+.comp-tray{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;justify-content:center}
+.comp-btn{background:rgba(6,214,160,.07);border:2px solid rgba(6,214,160,.2);border-radius:12px;padding:10px 14px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:64px}
+.comp-btn:hover{border-color:var(--teal);background:rgba(6,214,160,.15);transform:translateY(-2px)}
+.comp-btn.selected{border-color:var(--gold);background:rgba(255,209,102,.1)}
+.comp-btn.used{opacity:.35;pointer-events:none}
+.comp-icon{font-size:1.4rem}
+.comp-name{font-size:.68rem;color:var(--dim);font-weight:700;text-transform:uppercase}
+
+/* Circuit status */
+.circuit-status{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;margin-bottom:12px;transition:all .3s}
+.circuit-status.open{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2)}
+.circuit-status.closed{background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.3)}
+.status-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;transition:all .3s}
+.status-dot.open{background:var(--coral);box-shadow:0 0 6px var(--coral)}
+.status-dot.closed{background:var(--teal);box-shadow:0 0 8px var(--teal)}
+.status-text{font-family:'Baloo 2',cursive;font-size:.9rem;font-weight:700}
+
+/* Conductor/insulator tester */
+.material-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.material-row{display:flex;align-items:center;justify-content:space-between;background:rgba(6,214,160,.05);border:1px solid rgba(6,214,160,.12);border-radius:12px;padding:10px 14px}
+.mat-name{font-size:.9rem;color:var(--text)}
+.mat-tags{display:flex;gap:6px}
+.mat-tag{padding:5px 12px;border-radius:100px;font-size:.75rem;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.mat-tag.conductor-tag{background:rgba(76,201,240,.08);color:#4CC9F0;border-color:rgba(76,201,240,.2)}
+.mat-tag.insulator-tag{background:rgba(255,107,107,.08);color:var(--coral);border-color:rgba(255,107,107,.2)}
+.mat-tag:hover{transform:scale(1.05)}
+.mat-tag.selected-con{background:rgba(76,201,240,.25);border-color:#4CC9F0}
+.mat-tag.selected-ins{background:rgba(255,107,107,.2);border-color:var(--coral)}
+.mat-tag.correct-tag{background:rgba(6,214,160,.2);border-color:var(--teal)!important;color:var(--teal)!important}
+.mat-tag.wrong-tag{background:rgba(255,107,107,.15);border-color:var(--coral)!important;color:var(--coral)!important}
+.mat-tag:disabled,.mat-tag.locked{pointer-events:none}
+
+/* Series vs Parallel */
+.circuit-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.circuit-type-card{background:rgba(6,214,160,.05);border:1px solid rgba(6,214,160,.15);border-radius:14px;padding:12px;text-align:center}
+.ct-title{font-family:'Baloo 2',cursive;font-size:.9rem;font-weight:700;color:var(--teal);margin-bottom:8px}
+.ct-svg{margin:0 auto 8px;display:block}
+.ct-desc{font-size:.75rem;color:var(--dim);line-height:1.4}
+
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(6,214,160,.07);border:2px solid rgba(6,214,160,.2);border-radius:14px;padding:12px 8px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--teal);background:rgba(6,214,160,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.92rem;font-weight:600;min-height:26px;margin:10px 0 4px}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+.confirm-btn{background:var(--teal);color:#060A10;border:none;border-radius:100px;padding:10px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;width:100%;margin-top:8px;opacity:.4;pointer-events:none}
+.confirm-btn.ready{opacity:1;pointer-events:all}
+.tip-box{background:rgba(6,214,160,.06);border-left:3px solid var(--teal);border-radius:0 10px 10px 0;padding:10px 12px;font-size:.8rem;line-height:1.5;color:var(--dim);margin-bottom:12px}
+.tip-box strong{color:var(--teal)}
+
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#040E04 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--teal);color:var(--teal);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(6,214,160,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stage-transition{background:linear-gradient(135deg,rgba(6,214,160,.1),rgba(6,214,160,.03));border:1px solid rgba(6,214,160,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--teal);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">⚡ Electricity &amp; Circuits</div>
+      <span class="subject-tag">Science · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+  <div class="wow-hook">
+    <span class="wow-emoji">⚡</span>
+    <div class="wow-text">Lightning carries <strong>300 million volts</strong>. A phone charger uses <strong>5 volts</strong>. The gap between natural electricity and controlled electricity is <strong>ALL of human technology!</strong></div>
+  </div>
+  <div id="gameArea"></div>
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Stage 1 of 3</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+<script>
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+let stg=1,qIdx=0,score=0,answered=false,matAnswers={};
+
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  const C=['#FFD166','#06D6A0','#4CC9F0','#C77DFF','#FF9F1C'];
+  for(let i=0;i<28;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+}
+function updateStars(){const lit=Math.min(5,Math.ceil(score/2));for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.toggle('lit',i<=lit)}
+function showOverlay(emoji,title,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovFact').textContent=fact;document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay');ov.classList.add('show');
+  if(!isEnd)setTimeout(()=>ov.classList.remove('show'),2700);
+}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(t){document.getElementById('progressLabel').textContent=t}
+
+/* ── Stage 1: Interactive circuit SVG puzzles ── */
+const CIRCUIT_TASKS=[
+  {task:'Connect the battery to the bulb to make it light up!',hint:'A complete circuit needs a path from + to − with no gaps.',components:['Battery','Wire','Bulb'],requiredCount:3},
+  {task:'Add a switch to the circuit so you can turn the bulb on and off.',hint:'A switch opens or closes the circuit — open = no current, closed = current flows.',components:['Battery','Wire','Bulb','Switch'],requiredCount:4},
+];
+let circuitPlaced=[];
+let currentTask=0;
+
+function renderStage1(taskIdx){
+  setProgress('Stage 1 of 3 — Build the Circuit');
+  circuitPlaced=[];answered=false;showNext(false);currentTask=taskIdx;
+  const task=CIRCUIT_TASKS[taskIdx];
+  const placed=task.components.map(c=>({name:c,placed:false}));
+  circuitPlaced=placed;
+
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">⚡ Stage 1 — Build the Circuit (${taskIdx+1}/${CIRCUIT_TASKS.length})</div>
+      <div class="question-text">${task.task}</div>
+      <div class="tip-box"><strong>Tip:</strong> ${task.hint}</div>
+      <div class="circuit-board" id="circuitBoard" style="height:200px">
+        <canvas id="circuitCanvas" width="440" height="200"></canvas>
+      </div>
+      <div class="circuit-status open" id="circuitStatus">
+        <div class="status-dot open" id="statusDot"></div>
+        <div class="status-text" id="statusText" style="color:var(--coral)">Circuit open — bulb is off</div>
+      </div>
+      <div style="font-size:.78rem;color:var(--dim);text-align:center;margin-bottom:10px">Tap a component to add it to the circuit:</div>
+      <div class="comp-tray" id="compTray">
+        ${task.components.map((c,i)=>`
+          <div class="comp-btn" id="cb${i}" onclick="addComponent(${i},'${c}',${taskIdx})">
+            <div class="comp-icon">${{Battery:'🔋',Wire:'〰️',Bulb:'💡',Switch:'🔘'}[c]}</div>
+            <div class="comp-name">${c}</div>
+          </div>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+  drawCircuit(taskIdx, circuitPlaced);
+}
+
+function drawCircuit(taskIdx, placed){
+  const canvas=document.getElementById('circuitCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=440,H=200;
+  ctx.clearRect(0,0,W,H);
+  // Grid dots
+  ctx.fillStyle='rgba(6,214,160,.08)';
+  for(let x=20;x<W;x+=20)for(let y=20;y<H;y+=20)ctx.fillRect(x-1,y-1,2,2);
+
+  const allPlaced=placed.every(p=>p.placed);
+  const hasSwitch=placed.some(p=>p.name==='Switch'&&p.placed);
+  const wireColor=allPlaced?'#06D6A0':'rgba(6,214,160,.3)';
+  const glow=allPlaced;
+
+  if(glow){ctx.shadowBlur=12;ctx.shadowColor='#06D6A0';}
+
+  // Draw circuit path
+  ctx.strokeStyle=wireColor;ctx.lineWidth=3;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(60,100);ctx.lineTo(60,50);ctx.lineTo(380,50);ctx.lineTo(380,150);ctx.lineTo(60,150);ctx.lineTo(60,100);ctx.stroke();
+
+  ctx.shadowBlur=0;
+
+  // Battery (always shown)
+  ctx.fillStyle=placed.find(p=>p.name==='Battery')?.placed?'#FFD166':'rgba(255,209,102,.3)';
+  ctx.fillRect(48,80,24,40);
+  ctx.fillStyle='#060A10';ctx.font='bold 11px Nunito';ctx.textAlign='center';
+  ctx.fillText('+ -',60,104);
+  ctx.fillStyle='rgba(232,240,255,.5)';ctx.font='10px Nunito';ctx.fillText('Bat',60,120);
+
+  // Wire lines label
+  if(placed.find(p=>p.name==='Wire')?.placed){
+    ctx.fillStyle='rgba(6,214,160,.6)';ctx.font='10px Nunito';ctx.textAlign='center';
+    ctx.fillText('wire',220,40);
+  }
+
+  // Bulb
+  const bulbLit=placed.find(p=>p.name==='Bulb')?.placed && allPlaced;
+  ctx.fillStyle=bulbLit?'rgba(255,209,102,.4)':'rgba(255,209,102,.08)';
+  ctx.beginPath();ctx.arc(380,100,22,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle=bulbLit?'#FFD166':'rgba(255,209,102,.3)';ctx.lineWidth=2;ctx.stroke();
+  if(bulbLit){ctx.shadowBlur=20;ctx.shadowColor='#FFD166';ctx.stroke();ctx.shadowBlur=0;}
+  ctx.fillStyle=bulbLit?'#FFD166':'rgba(232,240,255,.3)';ctx.font='16px Nunito';ctx.textAlign='center';
+  ctx.fillText('💡',380,106);
+  ctx.fillStyle='rgba(232,240,255,.4)';ctx.font='10px Nunito';ctx.fillText('Bulb',380,132);
+
+  // Switch
+  if(placed.find(p=>p.name==='Switch')?.placed){
+    ctx.fillStyle=allPlaced?'var(--teal)':'rgba(6,214,160,.4)';
+    ctx.fillRect(200,42,40,16);
+    ctx.fillStyle='#060A10';ctx.font='bold 9px Nunito';ctx.textAlign='center';
+    ctx.fillText(allPlaced?'ON':'OFF',220,53);
+  }
+}
+
+let placedCount=0;
+function addComponent(idx,name,taskIdx){
+  const task=CIRCUIT_TASKS[taskIdx];
+  circuitPlaced[idx].placed=true;
+  document.getElementById('cb'+idx)?.classList.add('used');
+  placedCount=circuitPlaced.filter(p=>p.placed).length;
+  drawCircuit(taskIdx,circuitPlaced);
+  const fb=document.getElementById('fb');
+  if(placedCount===task.requiredCount){
+    // Circuit complete!
+    const status=document.getElementById('circuitStatus');
+    const dot=document.getElementById('statusDot');
+    const txt=document.getElementById('statusText');
+    if(status){status.className='circuit-status closed';dot.className='status-dot closed';txt.style.color='var(--teal)';txt.textContent='Circuit closed — bulb is ON! ⚡';}
+    score++;updateStars();
+    fb.textContent=cheer()+' Circuit complete! The bulb lights up!';fb.className='feedback correct';
+    confetti();
+    setTimeout(()=>showOverlay('💡',cheer(),'A closed circuit has an unbroken path for current to flow. Break ANY part and the bulb goes out!',false),400);
+    showNext(true);
+  } else {
+    fb.textContent=`Added ${name}! ${task.requiredCount-placedCount} more component(s) needed.`;fb.className='feedback correct';
+  }
+}
+
+/* Stage 2: Conductor / Insulator sort */
+const MATERIALS=[
+  {name:'Copper wire',correct:'Conductor',icon:'🪛'},
+  {name:'Rubber eraser',correct:'Insulator',icon:'🧽'},
+  {name:'Aluminium foil',correct:'Conductor',icon:'🫙'},
+  {name:'Plastic spoon',correct:'Insulator',icon:'🥄'},
+  {name:'Iron nail',correct:'Conductor',icon:'🔩'},
+  {name:'Wooden stick',correct:'Insulator',icon:'🪵'},
+];
+function renderStage2(){
+  setProgress('Stage 2 of 3 — Conductors & Insulators');
+  matAnswers={};answered=false;showNext(false);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🧪 Stage 2 — Conductor or Insulator?</div>
+      <div class="tip-box"><strong>Conductor:</strong> allows electricity to flow through. <strong>Insulator:</strong> blocks electricity.</div>
+      <div class="material-list">
+        ${MATERIALS.map((m,i)=>`
+          <div class="material-row">
+            <div class="mat-name">${m.icon} ${m.name}</div>
+            <div class="mat-tags">
+              <div class="mat-tag conductor-tag" id="ct${i}" onclick="tagMat(${i},'Conductor','${m.correct}')">Conductor</div>
+              <div class="mat-tag insulator-tag" id="it${i}" onclick="tagMat(${i},'Insulator','${m.correct}')">Insulator</div>
+            </div>
+          </div>`).join('')}
+      </div>
+      <button class="confirm-btn" id="matConfirm" onclick="confirmMats()">Confirm →</button>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function tagMat(i,tag,correct){
+  matAnswers[i]=tag;
+  document.getElementById('ct'+i).classList.remove('selected-con');
+  document.getElementById('it'+i).classList.remove('selected-ins');
+  if(tag==='Conductor')document.getElementById('ct'+i).classList.add('selected-con');
+  else document.getElementById('it'+i).classList.add('selected-ins');
+  if(Object.keys(matAnswers).length===MATERIALS.length){
+    const btn=document.getElementById('matConfirm');if(btn){btn.classList.add('ready');}
+  }
+}
+function confirmMats(){
+  if(answered)return;answered=true;
+  document.getElementById('matConfirm').classList.remove('ready');document.getElementById('matConfirm').disabled=true;
+  document.querySelectorAll('.mat-tag').forEach(t=>t.classList.add('locked'));
+  let correct=0;
+  MATERIALS.forEach((m,i)=>{
+    const given=matAnswers[i];
+    if(given===m.correct){correct++;score++;updateStars();}
+    const ctag=document.getElementById('ct'+i);const itag=document.getElementById('it'+i);
+    if(ctag)ctag.classList.add(m.correct==='Conductor'?'correct-tag':'wrong-tag');
+    if(itag)itag.classList.add(m.correct==='Insulator'?'correct-tag':'wrong-tag');
+  });
+  const fb=document.getElementById('fb');
+  if(correct===MATERIALS.length){
+    fb.textContent=cheer()+` All ${MATERIALS.length} correct!`;fb.className='feedback correct';
+    confetti();
+    setTimeout(()=>showOverlay('⚡',cheer(),'Metals are mostly conductors (copper, iron, aluminium). Non-metals like plastic, rubber, wood are insulators — that\'s why wires are coated in plastic!',false),400);
+  } else {
+    fb.textContent=`${correct} of ${MATERIALS.length} correct. Metals conduct; non-metals insulate!`;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+/* Stage 3: Series vs Parallel MCQ */
+const SP_Q=[
+  {q:'In a SERIES circuit, one bulb blows. What happens to the other bulbs?',correct:'They all go out',opts:['They all go out','They glow brighter','They stay the same','They flash'],fact:'Series = one path for current. Break it anywhere and ALL bulbs go out — like old Christmas tree lights!'},
+  {q:'In a PARALLEL circuit, one bulb blows. What happens to the other bulbs?',correct:'They stay on',opts:['They all go out','They glow dimmer','They stay on','They flash'],fact:'Parallel = separate paths. Each bulb has its own branch, so others stay lit when one fails. Houses use parallel circuits!'},
+  {q:'Which type of circuit is used for lights in your home?',correct:'Parallel',opts:['Series','Parallel','Both equally','Neither'],fact:'Parallel circuits mean each switch independently controls one light — turning off one light doesn\'t turn off others!'},
+  {q:'What happens to bulb brightness when you add a second bulb in SERIES?',correct:'Both get dimmer',opts:['Both get brighter','Both get dimmer','No change','One gets brighter'],fact:'In series, adding bulbs divides the voltage — each gets less, so all get dimmer. In parallel, each still gets full voltage!'},
+];
+function renderStage3(i){
+  setProgress(`Stage 3 of 3 — Question ${i+1} of ${SP_Q.length}`);
+  answered=false;showNext(false);
+  const q=SP_Q[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🔌 Stage 3 — Series vs Parallel</div>
+      <div class="circuit-compare">
+        <div class="circuit-type-card">
+          <div class="ct-title">Series</div>
+          <svg class="ct-svg" width="100" height="60" viewBox="0 0 100 60">
+            <line x1="5" y1="30" x2="95" y2="30" stroke="rgba(6,214,160,.4)" stroke-width="2"/>
+            <rect x="5" y="20" width="15" height="20" rx="2" fill="rgba(255,209,102,.2)" stroke="#FFD166" stroke-width="1"/>
+            <circle cx="50" cy="30" r="8" fill="rgba(76,201,240,.15)" stroke="#4CC9F0" stroke-width="1"/>
+            <circle cx="75" cy="30" r="8" fill="rgba(76,201,240,.15)" stroke="#4CC9F0" stroke-width="1"/>
+            <text x="8" y="34" font-size="7" fill="#FFD166" font-family="Nunito">+−</text>
+            <text x="46" y="33" font-size="8" fill="#4CC9F0">💡</text>
+            <text x="71" y="33" font-size="8" fill="#4CC9F0">💡</text>
+          </svg>
+          <div class="ct-desc">One path · All or nothing</div>
+        </div>
+        <div class="circuit-type-card">
+          <div class="ct-title">Parallel</div>
+          <svg class="ct-svg" width="100" height="60" viewBox="0 0 100 60">
+            <line x1="5" y1="30" x2="25" y2="30" stroke="rgba(6,214,160,.4)" stroke-width="2"/>
+            <line x1="25" y1="15" x2="25" y2="45" stroke="rgba(6,214,160,.4)" stroke-width="2"/>
+            <line x1="25" y1="15" x2="75" y2="15" stroke="rgba(6,214,160,.4)" stroke-width="2"/>
+            <line x1="25" y1="45" x2="75" y2="45" stroke="rgba(6,214,160,.4)" stroke-width="2"/>
+            <line x1="75" y1="15" x2="75" y2="45" stroke="rgba(6,214,160,.4)" stroke-width="2"/>
+            <line x1="75" y1="30" x2="95" y2="30" stroke="rgba(6,214,160,.4)" stroke-width="2"/>
+            <rect x="5" y="20" width="12" height="20" rx="2" fill="rgba(255,209,102,.2)" stroke="#FFD166" stroke-width="1"/>
+            <circle cx="50" cy="15" r="7" fill="rgba(76,201,240,.15)" stroke="#4CC9F0" stroke-width="1"/>
+            <circle cx="50" cy="45" r="7" fill="rgba(76,201,240,.15)" stroke="#4CC9F0" stroke-width="1"/>
+            <text x="7" y="33" font-size="6" fill="#FFD166" font-family="Nunito">+−</text>
+            <text x="47" y="18" font-size="8" fill="#4CC9F0">💡</text>
+            <text x="47" y="48" font-size="8" fill="#4CC9F0">💡</text>
+          </svg>
+          <div class="ct-desc">Multiple paths · Independent</div>
+        </div>
+      </div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkSP('${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}','${q.fact.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkSP(sel,correct,fact,btn){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct');score++;updateStars();
+    fb.textContent=cheer()+'  Correct!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🔌',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function nextQ(){
+  if(stg===1){
+    currentTask++;
+    if(currentTask<CIRCUIT_TASKS.length){placedCount=0;renderStage1(currentTask);}
+    else{stg=2;showTrans('🧪','Stage 2: Conductors & Insulators!','Some materials let electricity through — others block it. Can you tell which is which?',()=>renderStage2())}
+  } else if(stg===2){
+    stg=3;qIdx=0;showTrans('🔌','Stage 3: Series vs Parallel!','Two ways to wire a circuit — with very different results!',()=>renderStage3(0));
+  } else {
+    qIdx++;if(qIdx<SP_Q.length)renderStage3(qIdx);else endGame();
+  }
+}
+function showTrans(emoji,title,desc,cb){
+  showNext(false);
+  document.getElementById('gameArea').innerHTML=`<div class="stage-transition"><div style="font-size:2.5rem">${emoji}</div><h3>${title}</h3><p>${desc}</p></div>`;
+  const nb=document.getElementById('nextBtn');nb.textContent='Start →';nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →';nb.onclick=nextQ;cb()};
+}
+function endGame(){
+  confetti();
+  const total=2+1+SP_Q.length;
+  const medals=['Spark Learner 🌱','Circuit Builder 🔍','Electrician ⚡','Science Champion 🏆','Electricity Legend 🌟'];
+  const medal=medals[Math.min(4,Math.floor(score*5/total))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--teal);margin:10px 0">${score} pts</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        Every switch you flip, every phone you charge, every light in your home uses the circuit principles you just learned. From lightning to LED — you now understand the journey!
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  setProgress('Complete!');showNext(false);
+}
+function resetGame(){
+  stg=1;qIdx=0;score=0;answered=false;currentTask=0;placedCount=0;matAnswers={};circuitPlaced=[];
+  for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.remove('lit');
+  document.getElementById('nextBtn').textContent='Next →';document.getElementById('nextBtn').onclick=nextQ;
+  renderStage1(0);
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{document.getElementById('overlay').classList.remove('show');resetGame()});
+renderStage1(0);
+</script>
+</body>
+</html>

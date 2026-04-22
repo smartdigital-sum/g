@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>फल — Fruits in Hindi 🍎</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Noto+Sans+Devanagari:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Noto Sans Devanagari','Baloo 2',cursive;
+    background:linear-gradient(160deg,#11998e,#38ef7d,#a8ff78);
+    min-height:100vh;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    user-select:none;
+  }
+  .leaf-bg{position:fixed;pointer-events:none;z-index:1;}
+  .leaf-bg span{position:absolute;font-size:2rem;opacity:.15;animation:leafSway 4s ease-in-out infinite;}
+  @keyframes leafSway{0%,100%{transform:rotate(-15deg);}50%{transform:rotate(15deg);}}
+
+  .header{position:relative;z-index:10;text-align:center;padding:18px 20px 8px;width:100%;}
+  .title{font-size:clamp(1.4rem,5vw,2.2rem);color:#fff;text-shadow:0 2px 8px rgba(0,60,30,.3);}
+
+  .score-bar{position:relative;z-index:10;display:flex;gap:16px;align-items:center;margin-top:8px;}
+  .score-box{background:rgba(255,255,255,.3);border:2px solid rgba(255,255,255,.5);border-radius:20px;padding:6px 18px;color:#fff;font-size:1rem;font-weight:700;}
+  .score-box span{color:#FFD700;font-size:1.2rem;}
+
+  .progress{position:relative;z-index:10;display:flex;gap:8px;margin-top:8px;}
+  .dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.3);transition:all .3s;}
+  .dot.done{background:#FFD700;box-shadow:0 0 8px #FFD700;}
+  .dot.active{background:#fff;transform:scale(1.3);}
+
+  /* big fruit display */
+  .fruit-display{
+    position:relative;z-index:10;
+    background:rgba(255,255,255,.3);backdrop-filter:blur(10px);
+    border:3px solid rgba(255,255,255,.5);border-radius:28px;
+    padding:clamp(16px,4vw,28px) clamp(24px,6vw,48px);
+    margin:12px 20px;text-align:center;
+    box-shadow:0 8px 32px rgba(0,0,0,.15);
+    width:90%;max-width:500px;
+  }
+  .big-fruit{font-size:clamp(4rem,18vw,8rem);line-height:1;animation:fruitBob 2s ease-in-out infinite;display:block;}
+  @keyframes fruitBob{0%,100%{transform:scale(1) rotate(-3deg);}50%{transform:scale(1.1) rotate(3deg);}}
+  .fruit-hindi{color:#014421;font-size:clamp(1.8rem,7vw,3rem);font-weight:800;margin-top:8px;}
+  .fruit-english{color:rgba(1,68,33,.6);font-size:clamp(.9rem,3.5vw,1.3rem);font-weight:700;font-family:'Baloo 2',cursive;}
+
+  /* question */
+  .question-text{
+    position:relative;z-index:10;
+    background:rgba(255,255,255,.4);backdrop-filter:blur(8px);
+    border:2px solid rgba(255,255,255,.6);border-radius:20px;
+    padding:10px 24px;margin:8px 20px;
+    color:#014421;font-size:clamp(1rem,4vw,1.4rem);font-weight:700;
+    text-align:center;
+  }
+
+  /* answer choices */
+  .choices{
+    position:relative;z-index:10;
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:clamp(10px,3vw,16px);
+    padding:0 20px;width:100%;max-width:560px;
+  }
+  .choice-btn{
+    background:rgba(255,255,255,.4);backdrop-filter:blur(8px);
+    border:3px solid rgba(255,255,255,.5);border-radius:20px;
+    padding:clamp(10px,3vw,18px);
+    text-align:center;cursor:pointer;transition:all .2s;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+  }
+  .choice-btn:hover{transform:scale(1.06) translateY(-3px);border-color:rgba(1,68,33,.5);box-shadow:0 8px 24px rgba(0,0,0,.15);}
+  .choice-fruit-emoji{font-size:clamp(2rem,8vw,3.5rem);}
+  .choice-hindi{color:#014421;font-size:clamp(.85rem,3vw,1.2rem);font-weight:800;}
+  .choice-english{color:rgba(1,68,33,.6);font-size:clamp(.65rem,2vw,.85rem);font-weight:700;font-family:'Baloo 2',cursive;}
+  .choice-btn.correct{border-color:#00b894;background:rgba(0,184,148,.35);animation:correctPop .5s ease;}
+  .choice-btn.wrong{border-color:#d63031;background:rgba(214,48,49,.2);animation:wrongShake .4s ease;}
+  @keyframes correctPop{0%{transform:scale(1);}50%{transform:scale(1.12);}100%{transform:scale(1);}}
+  @keyframes wrongShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-10px);}75%{transform:translateX(10px);}}
+
+  .celebration{
+    position:fixed;inset:0;z-index:200;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(0,60,0,.75);backdrop-filter:blur(10px);animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .celeb-emoji{font-size:clamp(4rem,15vw,7rem);animation:celebBounce .5s ease infinite alternate;}
+  @keyframes celebBounce{from{transform:scale(1);}to{transform:scale(1.15);}}
+  .celebration h2{color:#FFD700;font-size:clamp(2rem,8vw,3.5rem);text-align:center;margin:16px 0 8px;}
+  .celebration p{color:#fff;font-size:clamp(1rem,4vw,1.4rem);margin-bottom:24px;text-align:center;}
+  .next-btn{
+    background:linear-gradient(135deg,#FF6B00,#FFB800);color:#fff;border:none;border-radius:50px;
+    padding:14px 40px;font-family:'Baloo 2',cursive;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;
+    cursor:pointer;box-shadow:0 6px 24px rgba(255,107,0,.4);transition:transform .2s;
+  }
+  .next-btn:hover{transform:scale(1.05);}
+  .confetti-piece{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.2s ease-in forwards;}
+  @keyframes confettiFall{0%{opacity:1;}100%{transform:translateY(300px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="leaf-bg" id="leafBg"></div>
+
+<div class="header">
+  <div class="title">🍎 फल — Fruits in Hindi</div>
+</div>
+<div class="score-bar">
+  <div class="score-box">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="score-box">🎯 Round: <span id="roundVal">1</span>/12</div>
+</div>
+<div class="progress" id="progress"></div>
+
+<div class="fruit-display">
+  <span class="big-fruit" id="bigFruit">🍎</span>
+  <div class="fruit-hindi" id="fruitHindi">सेब</div>
+  <div class="fruit-english" id="fruitEnglish">Apple</div>
+</div>
+
+<div class="question-text">इसे क्या कहते हैं? / What is this fruit?</div>
+
+<div class="choices" id="choices"></div>
+
+<script>
+const FRUITS=[
+  {emoji:'🍎',hindi:'सेब',english:'Apple',speak:'सेब — Apple'},
+  {emoji:'🍌',hindi:'केला',english:'Banana',speak:'केला — Banana'},
+  {emoji:'🍊',hindi:'संतरा',english:'Orange',speak:'संतरा — Orange'},
+  {emoji:'🍇',hindi:'अंगूर',english:'Grapes',speak:'अंगूर — Grapes'},
+  {emoji:'🍉',hindi:'तरबूज',english:'Watermelon',speak:'तरबूज — Watermelon'},
+  {emoji:'🥭',hindi:'आम',english:'Mango',speak:'आम — Mango'},
+  {emoji:'🍓',hindi:'स्ट्रॉबेरी',english:'Strawberry',speak:'स्ट्रॉबेरी — Strawberry'},
+  {emoji:'🍍',hindi:'अनानास',english:'Pineapple',speak:'अनानास — Pineapple'},
+  {emoji:'🍑',hindi:'आड़ू',english:'Peach',speak:'आड़ू — Peach'},
+  {emoji:'🍋',hindi:'नींबू',english:'Lemon',speak:'नींबू — Lemon'},
+  {emoji:'🍒',hindi:'चेरी',english:'Cherry',speak:'चेरी — Cherry'},
+  {emoji:'🥝',hindi:'कीवी',english:'Kiwi',speak:'कीवी — Kiwi'},
+];
+
+let score=0,round=0,current=null,answered=false,used=[];
+const TOTAL=12;
+let audioCtx;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function playCorrect(){
+  const ctx=getAudio();
+  [523,659,784,1047].forEach((f,i)=>{
+    setTimeout(()=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.4);
+      o.start();o.stop(ctx.currentTime+.4);
+    },i*100);
+  });
+}
+function playWrong(){
+  const ctx=getAudio();
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);
+  o.frequency.value=220;o.type='sine';
+  g.gain.setValueAtTime(.2,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.25);
+  o.start();o.stop(ctx.currentTime+.25);
+}
+
+function speak(text,lang='hi-IN'){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.8;u.pitch=1.3;u.lang=lang;
+  window.speechSynthesis.speak(u);
+}
+
+function makeDots(){
+  const p=document.getElementById('progress');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+
+function spawnConfetti(){
+  const cols=['#FF4757','#FFD700','#2ed573','#00b894','#a55eea'];
+  for(let i=0;i<20;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`left:${Math.random()*100}%;top:20%;background:${cols[i%cols.length]};animation-duration:${.8+Math.random()*.6}s;`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1400);
+  }
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  const remaining=FRUITS.filter(f=>!used.some(u=>u.hindi===f.hindi));
+  if(remaining.length===0){used=[];newRound();return;}
+  current=remaining[Math.floor(Math.random()*remaining.length)];
+  used.push(current);
+
+  document.getElementById('bigFruit').textContent=current.emoji;
+  document.getElementById('fruitHindi').textContent=current.hindi;
+  document.getElementById('fruitEnglish').textContent=current.english;
+
+  // 4 choices
+  const others=FRUITS.filter(f=>f.hindi!==current.hindi).sort(()=>Math.random()-.5).slice(0,3);
+  const allChoices=[current,...others].sort(()=>Math.random()-.5);
+
+  const choicesEl=document.getElementById('choices');
+  choicesEl.innerHTML='';
+  allChoices.forEach(f=>{
+    const btn=document.createElement('div');
+    btn.className='choice-btn';
+    btn.innerHTML=`
+      <span class="choice-fruit-emoji">${f.emoji}</span>
+      <span class="choice-hindi">${f.hindi}</span>
+      <span class="choice-english">${f.english}</span>
+    `;
+    btn.onclick=()=>checkAnswer(btn,f);
+    choicesEl.appendChild(btn);
+  });
+
+  setTimeout(()=>speak(`यह ${current.hindi} है! ${current.hindi} को ढूंढो!`,'hi-IN'),300);
+}
+
+function checkAnswer(btn,fruit){
+  if(answered)return;
+  answered=true;
+  if(fruit.hindi===current.hindi){
+    btn.classList.add('correct');
+    playCorrect();
+    spawnConfetti();
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    speak(`शाबाश! यह ${current.hindi} है! ${current.english}!`,'hi-IN');
+    round++;
+    makeDots();
+    setTimeout(newRound,1800);
+  } else {
+    btn.classList.add('wrong');
+    playWrong();
+    speak(`नहीं! ${current.hindi} ढूंढो!`,'hi-IN');
+    setTimeout(()=>{btn.classList.remove('wrong');answered=false;},800);
+  }
+}
+
+function showCelebration(){
+  speak(`शाबाश! सभी फल सीख लिए!`,'hi-IN');
+  const ov=document.createElement('div');
+  ov.className='celebration';
+  ov.innerHTML=`
+    <div class="celeb-emoji">🍎</div>
+    <h2>फल विशेषज्ञ!</h2>
+    <p>You learned all the fruits in Hindi!<br/>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span></p>
+    <button class="next-btn" onclick="restartGame()">Play Again 🍌</button>
+  `;
+  document.body.appendChild(ov);
+}
+
+function restartGame(){
+  document.querySelector('.celebration')?.remove();
+  score=0;round=0;used=[];
+  document.getElementById('scoreVal').textContent=0;
+  newRound();
+}
+
+function makeLeaves(){
+  const el=document.getElementById('leafBg');
+  const leaves=['🍃','🌿','🍀','🌱'];
+  for(let i=0;i<12;i++){
+    const s=document.createElement('span');
+    s.textContent=leaves[i%leaves.length];
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${3+Math.random()*2}s;`;
+    el.appendChild(s);
+  }
+}
+
+window.addEventListener('load',()=>{
+  makeLeaves();
+  window.speechSynthesis.getVoices();
+  makeDots();
+  setTimeout(()=>{
+    speak('फल सीखो! Learn fruits in Hindi!','hi-IN');
+    setTimeout(newRound,1300);
+  },500);
+});
+</script>
+</body>
+</html>

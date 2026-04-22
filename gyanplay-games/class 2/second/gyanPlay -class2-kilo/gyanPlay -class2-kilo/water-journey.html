@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Water Journey - GyanPlay Class 2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74b9ff, #0984e3, #00cec9);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 { color: #74b9ff; font-size: 2rem; }
+        
+        .score-board { display: flex; justify-content: center; gap: 30px; margin-top: 10px; }
+        
+        .score { background: #e94560; color: white; padding: 10px 20px; border-radius: 10px; font-size: 1.2rem; }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text { color: white; font-size: 1.3rem; }
+        
+        .water-cycle {
+            background: linear-gradient(180deg, #87CEEB 0%, #48C9B0 30%, #1ABC9C 70%, #2980B9 100%);
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 400px;
+            position: relative;
+        }
+        
+        .cycle-title {
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .stages-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        
+        .stage {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+            border: 3px solid transparent;
+        }
+        
+        .stage:hover { transform: scale(1.1); }
+        
+        .stage.active {
+            border-color: #0984e3;
+            background: #74b9ff;
+        }
+        
+        .stage.completed {
+            border-color: #00b894;
+            background: #55efc4;
+        }
+        
+        .stage-icon { font-size: 3rem; display: block; }
+        
+        .stage-name {
+            color: #2d3436;
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+        
+        .arrow { font-size: 2rem; color: white; }
+        
+        .explanation-box {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .explanation-title {
+            color: #2d3436;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .explanation-text {
+            color: #636e72;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .fill-blanks {
+            background: #ffeaa7;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .fill-title { color: #2d3436; font-size: 1.2rem; margin-bottom: 15px; }
+        
+        .sentence { font-size: 1.2rem; color: #2d3436; padding: 10px; }
+        
+        .blank {
+            display: inline-block;
+            min-width: 80px;
+            border-bottom: 2px solid #2d3436;
+            text-align: center;
+            padding: 5px;
+            color: #e94560;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .options { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+        
+        .option-btn {
+            background: white;
+            border: 2px solid #dfe6e9;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option-btn:hover { border-color: #0984e3; }
+        
+        .option-btn.selected { background: #74b9ff; color: white; border-color: #74b9ff; }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #00b894, #55efc4);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 184, 148, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover { transform: scale(1.05); }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        
+        .feedback-content.correct { border: 5px solid #00b894; }
+        .feedback-content.wrong { border: 5px solid #e94560; }
+        
+        .feedback-icon { font-size: 5rem; }
+        .feedback-text { font-size: 1.8rem; margin: 20px 0; color: #2d3436; }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-title { color: white; font-size: 1.1rem; margin-bottom: 10px; }
+        .info-text { color: #dfe6e9; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch3-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>💧 Water Journey</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Stage: <span id="stageNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Learn about the water cycle! Tap each stage to learn.</p>
+        </div>
+        
+        <div class="water-cycle">
+            <div class="cycle-title">🌊 Water Cycle Journey</div>
+            <div class="stages-container" id="stagesContainer">
+                <!-- Stages will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="explanation-box">
+            <div class="explanation-title">📖 About this stage:</div>
+            <div class="explanation-text" id="explanationText">
+                The sun heats up water in the ocean and rivers. The water turns into water vapour and goes up into the sky. This is called evaporation.
+            </div>
+        </div>
+        
+        <div class="fill-blanks">
+            <div class="fill-title">✏️ Fill in the blank:</div>
+            <div class="sentence" id="sentence">
+                The sun heats the water and it turns into <span class="blank" id="blank" onclick="selectBlank()">vapour</span>.
+            </div>
+            <div class="options" id="options">
+                <button class="option-btn" onclick="selectOption(this, 'vapour')">vapour</button>
+                <button class="option-btn" onclick="selectOption(this, 'rain')">rain</button>
+                <button class="option-btn" onclick="selectOption(this, 'cloud')">cloud</button>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <div class="info-title">💧 Water Cycle Steps:</div>
+            <div class="info-text">☀️ Evaporation - Water turns to vapour</div>
+            <div class="info-text">☁️ Condensation - Vapour forms clouds</div>
+            <div class="info-text">🌧️ Precipitation - Rain falls</div>
+            <div class="info-text">🌊 Collection - Water gathers in rivers/sea</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextStage()">Next Stage →</button>
+        </div>
+    </div>
+    
+    <script>
+        const stages = [
+            { 
+                icon: '☀️', 
+                name: 'Evaporation', 
+                explanation: 'The sun heats up water in oceans, lakes and rivers. The water turns into invisible water vapour and rises up into the sky.',
+                correct: 'vapour'
+            },
+            { 
+                icon: '☁️', 
+                name: 'Condensation', 
+                explanation: 'As water vapour goes higher, it cools down and turns back into tiny water droplets. These join together to form clouds.',
+                correct: 'cloud'
+            },
+            { 
+                icon: '🌧️', 
+                name: 'Precipitation', 
+                explanation: 'When clouds become too heavy with water droplets, the water falls back to earth as rain, snow or hail.',
+                correct: 'rain'
+            },
+            { 
+                icon: '🌊', 
+                name: 'Collection', 
+                explanation: 'Water collects in rivers, lakes and oceans. Then the cycle starts all over again!',
+                correct: 'ocean'
+            }
+        ];
+        
+        let currentStage = 0;
+        let score = 0;
+        let selectedAnswer = null;
+        
+        function loadStage() {
+            const stage = stages[currentStage];
+            document.getElementById('explanationText').textContent = stage.explanation;
+            document.getElementById('stageNum').textContent = currentStage + 1;
+            
+            // Update sentence
+            const sentenceEl = document.getElementById('sentence');
+            if (currentStage === 0) {
+                sentenceEl.innerHTML = `The sun heats the water and it turns into <span class="blank" id="blank" onclick="selectBlank()">vapour</span>.`;
+            } else if (currentStage === 1) {
+                sentenceEl.innerHTML = `Water vapour cools and forms <span class="blank" id="blank" onclick="selectBlank()">clouds</span>.`;
+            } else if (currentStage === 2) {
+                sentenceEl.innerHTML = `Heavy clouds bring <span class="blank" id="blank" onclick="selectBlank()">rain</span>.`;
+            } else {
+                sentenceEl.innerHTML = `Water collects in the <span class="blank" id="blank" onclick="selectBlank()">ocean</span> and rivers.`;
+            }
+            
+            // Update options
+            const optionsContainer = document.getElementById('options');
+            const allOptions = ['vapour', 'rain', 'cloud', 'ocean'];
+            const currentOptions = allOptions.filter(o => o !== stage.correct);
+            currentOptions.push(stage.correct);
+            currentOptions.sort(() => Math.random() - 0.5);
+            
+            optionsContainer.innerHTML = currentOptions.map(opt => 
+                `<button class="option-btn" onclick="selectOption(this, '${opt}')">${opt}</button>`
+            ).join('');
+            
+            // Show stages
+            const container = document.getElementById('stagesContainer');
+            container.innerHTML = '';
+            
+            stages.forEach((s, index) => {
+                const div = document.createElement('div');
+                div.className = 'stage';
+                if (index === currentStage) div.classList.add('active');
+                if (index < currentStage) div.classList.add('completed');
+                div.innerHTML = `
+                    <span class="stage-icon">${s.icon}</span>
+                    <span class="stage-name">${s.name}</span>
+                `;
+                div.onclick = () => goToStage(index);
+                container.appendChild(div);
+                
+                if (index < stages.length - 1) {
+                    const arrow = document.createElement('span');
+                    arrow.className = 'arrow';
+                    arrow.textContent = '→';
+                    container.appendChild(arrow);
+                }
+            });
+            
+            selectedAnswer = null;
+        }
+        
+        function goToStage(index) {
+            currentStage = index;
+            loadStage();
+        }
+        
+        function selectOption(btn, answer) {
+            selectedAnswer = answer;
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            document.getElementById('blank').textContent = answer;
+        }
+        
+        function selectBlank() {
+            // Already selects when option is tapped
+        }
+        
+        function checkAnswer() {
+            const stage = stages[currentStage];
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            if (selectedAnswer === stage.correct) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Correct! Great job!';
+                score += 10;
+                document.getElementById('score').textContent = score;
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = `The answer is "${stage.correct}"`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextStage() {
+            document.getElementById('feedback').classList.remove('show');
+            currentStage = (currentStage + 1) % stages.length;
+            loadStage();
+        }
+        
+        loadStage();
+        
+        // Add check button
+        setTimeout(() => {
+            const btn = document.querySelector('.check-btn');
+            if (btn) btn.onclick = checkAnswer;
+        }, 100);
+    </script>
+</body>
+</html>

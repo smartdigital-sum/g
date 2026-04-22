@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Honeycomb Quiz – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#0F0C29;--dark:#1A1A2E;--gold:#FFB800;--sky:#00AEEF;
+    --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg);color:#fff;font-family:'Nunito',sans-serif;
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    padding:20px;animation:fadeIn .6s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  .topbar{width:100%;max-width:680px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
+  .back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.85rem;}
+  .back-btn:hover{background:rgba(255,255,255,.2);}
+  .badge{background:var(--gold);color:#000;padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:800;letter-spacing:1px;}
+  .lang-bar{display:flex;gap:6px;}
+  .lang-btn{background:rgba(255,255,255,.1);border:none;color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;}
+  .lang-btn.active{background:var(--gold);color:#000;}
+
+  h1{font-family:'Baloo 2',cursive;font-size:2.2rem;color:var(--gold);text-align:center;line-height:1.2;}
+  .subtitle{font-size:.9rem;color:#aaa;margin-top:4px;text-align:center;}
+
+  .stars{display:flex;justify-content:center;gap:10px;margin:14px 0;}
+  .star{font-size:2rem;color:#444;transition:color .4s;}
+  .star.lit{color:var(--gold);}
+
+  .score-bar{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:680px;background:var(--dark);border-radius:12px;padding:10px 20px;margin-bottom:18px;}
+  .score-label{font-size:.85rem;color:#aaa;}
+  .score-val{font-family:'Baloo 2',cursive;font-size:1.6rem;color:var(--gold);}
+  .round-info{font-size:.85rem;color:#aaa;}
+
+  .progress-wrap{width:100%;max-width:680px;background:rgba(255,255,255,.1);border-radius:10px;height:8px;margin-bottom:18px;}
+  .progress-fill{height:8px;border-radius:10px;background:linear-gradient(90deg,var(--gold),var(--pink));transition:width .4s;}
+
+  .card{background:var(--dark);border-radius:20px;padding:30px 24px;width:100%;max-width:680px;text-align:center;}
+
+  /* hexagon honeycomb decorative accent */
+  .hc-icon{font-size:3.5rem;margin-bottom:6px;}
+
+  /* story tag */
+  .story-tag{display:inline-block;background:rgba(255,184,0,.15);border:1.5px solid rgba(255,184,0,.4);color:var(--gold);padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;margin-bottom:16px;}
+
+  /* question text */
+  .q-text{
+    font-size:1.2rem;font-weight:700;color:#fff;margin:0 auto 24px;
+    max-width:500px;line-height:1.55;
+  }
+  .blank{color:var(--gold);font-style:italic;}
+
+  /* choices grid */
+  .choices{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;}
+  @media(max-width:480px){.choices{grid-template-columns:1fr 1fr;}}
+  .choice-btn{
+    background:linear-gradient(135deg,rgba(255,184,0,.12),rgba(255,64,129,.08));
+    border:2px solid rgba(255,184,0,.4);color:#fff;border-radius:14px;
+    padding:14px 8px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;
+    transition:transform .15s,border-color .15s;word-break:break-word;
+  }
+  .choice-btn:hover{transform:scale(1.05);border-color:var(--gold);}
+  .choice-btn:disabled{cursor:not-allowed;transform:none;}
+  .choice-btn.correct{border-color:var(--green);background:rgba(0,200,83,.2);color:#00ff88;}
+  .choice-btn.wrong{border-color:var(--pink);background:rgba(255,64,129,.2);color:var(--pink);}
+
+  .feedback{min-height:36px;font-size:1.1rem;font-weight:800;margin-bottom:10px;}
+  .feedback.correct{color:var(--green);}
+  .feedback.wrong{color:var(--pink);}
+  .fun-fact{font-size:.83rem;color:#aaa;margin-bottom:12px;min-height:18px;line-height:1.4;}
+
+  .next-btn{background:linear-gradient(135deg,var(--gold),var(--pink));border:none;color:#000;padding:12px 36px;border-radius:24px;font-family:'Baloo 2',cursive;font-size:1.1rem;cursor:pointer;display:none;font-weight:800;}
+  .next-btn:hover{opacity:.9;}
+
+  .end-screen{display:none;text-align:center;}
+  .end-screen h2{font-family:'Baloo 2',cursive;font-size:2rem;color:var(--gold);margin-bottom:10px;}
+  .end-screen p{font-size:1.1rem;margin-bottom:20px;color:#ddd;}
+  .restart-btn{background:linear-gradient(135deg,var(--gold),var(--pink));border:none;color:#000;padding:12px 36px;border-radius:24px;font-family:'Baloo 2',cursive;font-size:1.1rem;cursor:pointer;font-weight:800;}
+
+  [data-lang]{display:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="badge">ENGLISH</span>
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<h1>🍯 <span data-lang="en">Honeycomb Quiz</span><span data-lang="hi">हनीकॉम्ब प्रश्नोत्तरी</span><span data-lang="as">হানিকম্ব কুইজ</span></h1>
+<p class="subtitle">NCERT Class 7 · Honeycomb Textbook Stories &amp; Poems</p>
+
+<div class="stars">
+  <span class="star" id="s1">★</span>
+  <span class="star" id="s2">★</span>
+  <span class="star" id="s3">★</span>
+</div>
+
+<div class="score-bar">
+  <div>
+    <div class="score-label"><span data-lang="en">Score</span><span data-lang="hi">अंक</span><span data-lang="as">নম্বৰ</span></div>
+    <div class="score-val" id="scoreVal">0</div>
+  </div>
+  <div class="round-info" id="roundInfo">Q 1 / 10</div>
+</div>
+
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+<div class="card" id="gameArea">
+  <div class="hc-icon" id="qIcon">🐜</div>
+  <div class="story-tag" id="storyTag"></div>
+  <div class="q-text" id="qText"></div>
+
+  <div class="choices" id="choicesDiv"></div>
+
+  <div class="feedback" id="feedback"></div>
+  <div class="fun-fact" id="funFact"></div>
+
+  <button class="next-btn" id="nextBtn" onclick="nextRound()">
+    <span data-lang="en">Next →</span><span data-lang="hi">अगला →</span><span data-lang="as">পৰৱৰ্তী →</span>
+  </button>
+</div>
+
+<div class="card end-screen" id="endScreen">
+  <div style="font-size:3rem;margin-bottom:12px;">🍯</div>
+  <h2 id="endTitle"></h2>
+  <p id="endMsg"></p>
+  <div class="stars">
+    <span class="star" id="es1">★</span>
+    <span class="star" id="es2">★</span>
+    <span class="star" id="es3">★</span>
+  </div>
+  <p style="font-size:1.3rem;color:var(--gold);font-weight:800;margin-bottom:18px;" id="finalScore"></p>
+  <button class="restart-btn" onclick="restart()">
+    <span data-lang="en">Play Again</span><span data-lang="hi">फिर खेलो</span><span data-lang="as">আকৌ খেলক</span>
+  </button>
+</div>
+
+<script>
+const questions=[
+  {
+    icon:'🐜',
+    tag:'The Tiny Teacher',
+    en:'In "The Tiny Teacher", the tiny teacher is a ___',
+    hi:'"द टाइनी टीचर" में, छोटा शिक्षक एक ___ है',
+    as:'"The Tiny Teacher"-ত সৰু শিক্ষকজন এটা ___',
+    ans:'Ant',choices:['Bee','Ant','Spider'],
+    fact:'Ants are nature\'s best teachers — they follow rules, work together, and protect their colony!'
+  },
+  {
+    icon:'👑',
+    tag:'Three Questions',
+    en:'Who wrote the story "Three Questions"?',
+    hi:'"तीन प्रश्न" कहानी किसने लिखी?',
+    as:'"Three Questions" কাহিনীটো কোনে লিখিছে?',
+    ans:'Leo Tolstoy',choices:['R.K. Narayan','Leo Tolstoy','Ruskin Bond'],
+    fact:'Leo Tolstoy was a great Russian author. His story teaches us about the most important time, person, and action!'
+  },
+  {
+    icon:'🐕',
+    tag:'The Ashes That Made Trees Bloom',
+    en:'In "The Ashes That Made Trees Bloom", Gozo is a ___',
+    hi:'"द ऐशेज़ दैट मेड ट्रीज़ ब्लूम" में Gozo एक ___ है',
+    as:'"The Ashes That Made Trees Bloom"-ত Gozo এটা ___',
+    ans:'Dog',choices:['Cat','Dog','Fox'],
+    fact:'Gozo is the kind dog in this Japanese folk tale who helps his kind master discover the magic of ashes!'
+  },
+  {
+    icon:'📜',
+    tag:'Chivvy',
+    en:'"Chivvy" is a ___',
+    hi:'"चिव्वी" एक ___ है',
+    as:'"Chivvy" এটা ___',
+    ans:'Poem',choices:['Story','Poem','Play'],
+    fact:'"Chivvy" by Michael Rosen is a funny poem about all the things adults keep telling children to do!'
+  },
+  {
+    icon:'👞',
+    tag:'Quality',
+    en:'In "Quality", Mr Gessler was a ___',
+    hi:'"क्वालिटी" में Mr. Gessler एक ___ था',
+    as:'"Quality"-ত Mr. Gessler এজন ___',
+    ans:'Shoemaker',choices:['Baker','Shoemaker','Blacksmith'],
+    fact:'Mr. Gessler made the finest boots by hand. "Quality" by John Galsworthy is about craft, pride, and dedication!'
+  },
+  {
+    icon:'🔍',
+    tag:'Expert Detectives',
+    en:'In "Expert Detectives", Maya and Nishad investigate ___',
+    hi:'"एक्सपर्ट डिटेक्टिव्स" में माया और निशाद ___ की जाँच करते हैं',
+    as:'"Expert Detectives"-ত Maya আৰু Nishad ___ তদন্ত কৰে',
+    ans:'Mr Nath',choices:['a theft','Mr Nath','a ghost'],
+    fact:'Maya and Nishad are curious young detectives who try to unravel the mystery of the silent Mr. Nath!'
+  },
+  {
+    icon:'🧪',
+    tag:'Invention of Vita-Wonk',
+    en:'The Invention of Vita-Wonk made people ___',
+    hi:'विटा-वॉन्क का आविष्कार लोगों को ___ बनाता था',
+    as:'Vita-Wonk আৱিষ্কাৰে মানুহক ___ কৰিছিল',
+    ans:'Older',choices:['Younger','Older','Taller'],
+    fact:'In Roald Dahl\'s story, Willy Wonka invents Vita-Wonk to make people older — the opposite of Wonka-Vite!'
+  },
+  {
+    icon:'🔥',
+    tag:'Fire: Friend and Foe',
+    en:'In "Fire: Friend and Foe", fire gives us ___',
+    hi:'"अग्नि: मित्र और शत्रु" में आग हमें ___ देती है',
+    as:'"Fire: Friend and Foe"-ত জুইয়ে আমাক ___ দিয়ে',
+    ans:'Heat and light',choices:['Rain','Heat and light','Water'],
+    fact:'Fire is one of humanity\'s greatest discoveries — it gives heat and light but must be used carefully!'
+  },
+  {
+    icon:'🌿',
+    tag:'Meadow Surprises',
+    en:'"Meadow Surprises" is a ___',
+    hi:'"मीडो सरप्राइजेज़" एक ___ है',
+    as:'"Meadow Surprises" এটা ___',
+    ans:'Poem',choices:['Story','Poem','Play'],
+    fact:'"Meadow Surprises" by Lois Brandt Phillips is a beautiful poem about the small wonders found in meadows!'
+  },
+  {
+    icon:'🥿',
+    tag:'A Gift of Chappals',
+    en:'In "A Gift of Chappals", the children gifted chappals to a ___',
+    hi:'"चप्पलों का उपहार" में बच्चों ने एक ___ को चप्पल दीं',
+    as:'"A Gift of Chappals"-ত ল\'ৰা-ছোৱালীয়ে এজন ___ক চেপেল দিছিল',
+    ans:'Beggar',choices:['Teacher','Beggar','Musician'],
+    fact:'In this story, kind-hearted children secretly give away their uncle\'s chappals to a needy beggar!'
+  }
+];
+
+const msgs={
+  en:{correct:'✅ Correct! Well done!',wrong:'❌ Incorrect!',endWin:'🎉 Bookworm Champion!',endLose:'Read more & try again!',score:'Your score:'},
+  hi:{correct:'✅ सही! शाबाश!',wrong:'❌ गलत!',endWin:'🎉 पुस्तक प्रेमी!',endLose:'और पढ़ो और दोबारा खेलो!',score:'तुम्हारा स्कोर:'},
+  as:{correct:'✅ শুদ্ধ! বাহ!',wrong:'❌ ভুল!',endWin:'🎉 পুথিপ্ৰেমী!',endLose:'আৰু পঢ়ক আৰু আকৌ খেলক!',score:'তোমাৰ নম্বৰ:'}
+};
+
+let cur=0,score=0,lang='en',answered=false;
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>el.style.display='none');
+  document.querySelectorAll(`[data-lang="${l}"]`).forEach(el=>el.style.display='inline');
+  document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.remove('active');if(b.textContent.trim()===(l==='en'?'EN':l==='hi'?'हि':'অ'))b.classList.add('active');});
+  if(!answered) loadQuestionText();
+}
+
+function loadQuestionText(){
+  const q=questions[cur];
+  document.getElementById('qText').innerHTML=q[lang];
+}
+
+function loadQuestion(){
+  const q=questions[cur];
+  document.getElementById('qIcon').textContent=q.icon;
+  document.getElementById('storyTag').textContent='📖 '+q.tag;
+  loadQuestionText();
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('funFact').textContent='';
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('roundInfo').textContent=`Q ${cur+1} / 10`;
+  document.getElementById('progress').style.width=`${cur*10}%`;
+  answered=false;
+
+  const div=document.getElementById('choicesDiv');
+  div.innerHTML='';
+  q.choices.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='choice-btn';
+    b.textContent=c;
+    b.onclick=()=>answer(c,b);
+    div.appendChild(b);
+  });
+}
+
+function answer(val,btn){
+  if(answered)return;
+  answered=true;
+  const q=questions[cur];
+  const fb=document.getElementById('feedback');
+  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+
+  if(val===q.ans){
+    score+=10;
+    fb.textContent=msgs[lang].correct;
+    fb.className='feedback correct';
+    btn.classList.add('correct');
+  } else {
+    fb.textContent=msgs[lang].wrong;
+    fb.className='feedback wrong';
+    btn.classList.add('wrong');
+    document.querySelectorAll('.choice-btn').forEach(b=>{if(b.textContent===q.ans)b.classList.add('correct');});
+  }
+  document.getElementById('funFact').textContent='💡 '+q.fact;
+  document.getElementById('scoreVal').textContent=score;
+  updateStars(score);
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextRound(){
+  cur++;
+  if(cur>=questions.length){showEnd();return;}
+  loadQuestion();
+}
+
+function updateStars(s){
+  const pct=s;
+  document.getElementById('s1').className='star'+(pct>=40?' lit':'');
+  document.getElementById('s2').className='star'+(pct>=70?' lit':'');
+  document.getElementById('s3').className='star'+(pct>=90?' lit':'');
+}
+
+function showEnd(){
+  document.getElementById('gameArea').style.display='none';
+  const pct=score;
+  document.getElementById('endScreen').style.display='block';
+  document.getElementById('endTitle').textContent=pct>=70?msgs[lang].endWin:msgs[lang].endLose;
+  document.getElementById('endMsg').textContent=msgs[lang].score+' '+score+' / 100';
+  document.getElementById('finalScore').textContent=score+' pts';
+  document.getElementById('progress').style.width='100%';
+  ['es1','es2','es3'].forEach((id,i)=>{
+    document.getElementById(id).className='star'+([40,70,90][i]<=pct?' lit':'');
+  });
+  setLang(lang);
+}
+
+function restart(){
+  cur=0;score=0;
+  document.getElementById('gameArea').style.display='block';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('scoreVal').textContent='0';
+  updateStars(0);
+  loadQuestion();
+  setLang(lang);
+}
+
+setLang('en');
+loadQuestion();
+</script>
+</body>
+</html>

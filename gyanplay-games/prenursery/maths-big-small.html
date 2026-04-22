@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Big vs Small 🐘🐭</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Baloo 2',cursive;
+    background:linear-gradient(160deg,#2b0033,#5c0099,#1a0044);
+    min-height:100vh;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    user-select:none;
+  }
+  /* sparkle bg */
+  .sparkle{position:fixed;pointer-events:none;animation:sparkleAnim 3s ease-in-out infinite;}
+  @keyframes sparkleAnim{0%,100%{opacity:0;transform:scale(0);}50%{opacity:1;transform:scale(1);}}
+
+  .header{position:relative;z-index:10;text-align:center;padding:18px 20px 8px;width:100%;}
+  .title{font-size:clamp(1.4rem,5vw,2.2rem);color:#FFD700;text-shadow:0 0 20px rgba(255,215,0,.4);}
+  .instruction{
+    background:rgba(255,255,255,.12);backdrop-filter:blur(8px);
+    border:2px solid rgba(255,255,255,.2);border-radius:50px;
+    padding:12px 32px;font-size:clamp(1.2rem,5vw,1.8rem);color:#fff;
+    margin-top:12px;display:inline-block;
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.03);}}
+
+  .score-bar{position:relative;z-index:10;display:flex;gap:16px;align-items:center;margin-top:8px;}
+  .score-box{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);border-radius:20px;padding:6px 18px;color:#fff;font-size:1rem;}
+  .score-box span{color:#FFD700;font-size:1.2rem;}
+
+  .progress{position:relative;z-index:10;display:flex;gap:8px;margin-top:8px;}
+  .dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s;}
+  .dot.done{background:#FFD700;box-shadow:0 0 8px #FFD700;}
+  .dot.active{background:#fff;transform:scale(1.3);}
+
+  /* stage */
+  .stage{
+    position:relative;z-index:5;
+    flex:1;width:100%;max-width:700px;
+    display:flex;align-items:center;justify-content:center;
+    gap:clamp(20px,8vw,60px);
+    padding:20px;
+  }
+  .object-card{
+    display:flex;flex-direction:column;align-items:center;gap:12px;
+    cursor:pointer;
+    transition:transform .2s;
+    padding:20px;
+    border-radius:24px;
+    border:4px solid rgba(255,255,255,.15);
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(6px);
+  }
+  .object-card:hover{transform:scale(1.05);border-color:rgba(255,215,0,.5);background:rgba(255,215,0,.1);}
+  .object-card.correct{
+    border-color:#2ed573;background:rgba(46,213,115,.2);
+    animation:correctPop .5s ease;
+  }
+  .object-card.wrong{
+    border-color:#FF4757;background:rgba(255,71,87,.2);
+    animation:wrongShake .4s ease;
+  }
+  @keyframes correctPop{0%{transform:scale(1);}40%{transform:scale(1.2);}100%{transform:scale(1);}}
+  @keyframes wrongShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-12px);}75%{transform:translateX(12px);}}
+
+  .object-emoji{display:block;line-height:1;}
+  .object-label{color:rgba(255,255,255,.7);font-size:.9rem;letter-spacing:1px;text-transform:uppercase;}
+
+  /* vs divider */
+  .vs{
+    font-size:clamp(1.8rem,7vw,3rem);color:rgba(255,255,255,.4);
+    font-weight:800;flex-shrink:0;
+  }
+
+  /* tap label */
+  .tap-hint{
+    position:relative;z-index:10;
+    color:rgba(255,255,255,.4);font-size:.85rem;
+    margin-bottom:8px;
+  }
+
+  /* celebration */
+  .celebration{
+    position:fixed;inset:0;z-index:200;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.75);backdrop-filter:blur(8px);animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .celeb-emoji{font-size:clamp(4rem,15vw,7rem);animation:celebBounce .5s ease infinite alternate;}
+  @keyframes celebBounce{from{transform:scale(1);}to{transform:scale(1.15);}}
+  .celebration h2{color:#FFD700;font-size:clamp(2rem,8vw,3.5rem);text-align:center;margin:16px 0 8px;}
+  .celebration p{color:#fff;font-size:clamp(1rem,4vw,1.4rem);margin-bottom:24px;}
+  .next-btn{
+    background:linear-gradient(135deg,#FF6B00,#FFB800);color:#fff;border:none;border-radius:50px;
+    padding:14px 40px;font-family:'Baloo 2',cursive;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;
+    cursor:pointer;box-shadow:0 6px 24px rgba(255,107,0,.4);transition:transform .2s;
+  }
+  .next-btn:hover{transform:scale(1.05);}
+  .confetti-piece{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.2s ease-in forwards;}
+  @keyframes confettiFall{0%{opacity:1;}100%{transform:translateY(300px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title">🐘 Big vs Small 🐭</div>
+  <div class="instruction" id="instruction">Tap the <span id="task" style="color:#FFD700;">BIGGER</span> one!</div>
+</div>
+<div class="score-bar">
+  <div class="score-box">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="score-box">🎯 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress" id="progress"></div>
+
+<div class="stage">
+  <div class="object-card" id="cardA" onclick="checkAnswer('A')">
+    <span class="object-emoji" id="emojiA">🐘</span>
+    <span class="object-label" id="labelA">Elephant</span>
+  </div>
+  <div class="vs">VS</div>
+  <div class="object-card" id="cardB" onclick="checkAnswer('B')">
+    <span class="object-emoji" id="emojiB">🐭</span>
+    <span class="object-label" id="labelB">Mouse</span>
+  </div>
+</div>
+<div class="tap-hint">👆 Tap your answer!</div>
+
+<script>
+const PAIRS=[
+  [{e:'🐘',n:'Elephant',s:5},{e:'🐭',n:'Mouse',s:1}],
+  [{e:'🦁',n:'Lion',s:4},{e:'🐝',n:'Bee',s:1}],
+  [{e:'🦒',n:'Giraffe',s:5},{e:'🐞',n:'Ladybug',s:1}],
+  [{e:'🌳',n:'Tree',s:5},{e:'🌷',n:'Flower',s:2}],
+  [{e:'🚌',n:'Bus',s:5},{e:'🚗',n:'Car',s:3}],
+  [{e:'🏠',n:'House',s:5},{e:'⛺',n:'Tent',s:2}],
+  [{e:'🌊',n:'Ocean',s:5},{e:'💧',n:'Drop',s:1}],
+  [{e:'🦋',n:'Butterfly',s:3},{e:'🐜',n:'Ant',s:1}],
+  [{e:'🍉',n:'Watermelon',s:4},{e:'🍇',n:'Grapes',s:2}],
+  [{e:'🦈',n:'Shark',s:5},{e:'🐟',n:'Fish',s:1}],
+  [{e:'🌍',n:'Earth',s:5},{e:'⚽',n:'Ball',s:2}],
+  [{e:'🚀',n:'Rocket',s:4},{e:'✈️',n:'Plane',s:3}],
+];
+
+let score=0,round=0,answered=false;
+let biggerIsA=true,taskIsBigger=true;
+const TOTAL=10;
+
+let audioCtx;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function playCorrect(){
+  const ctx=getAudio();
+  [523,659,784].forEach((f,i)=>{
+    setTimeout(()=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.4);
+      o.start();o.stop(ctx.currentTime+.4);
+    },i*100);
+  });
+}
+
+function playWrong(){
+  const ctx=getAudio();
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);
+  o.frequency.value=200;o.type='sine';
+  g.gain.setValueAtTime(.2,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
+  o.start();o.stop(ctx.currentTime+.3);
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.85;u.pitch=1.3;
+  window.speechSynthesis.speak(u);
+}
+
+function makeDots(){
+  const p=document.getElementById('progress');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+
+function spawnConfetti(){
+  const cols=['#FF4757','#FFD700','#2ed573','#1e90ff','#a55eea'];
+  for(let i=0;i<20;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`left:${Math.random()*100}%;top:20%;background:${cols[i%cols.length]};animation-duration:${.8+Math.random()*.6}s;`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1400);
+  }
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+  document.getElementById('cardA').className='object-card';
+  document.getElementById('cardB').className='object-card';
+
+  const pair=PAIRS[Math.floor(Math.random()*PAIRS.length)];
+  // randomise which is A/B
+  const shuffled=Math.random()>.5?[pair[0],pair[1]]:[pair[1],pair[0]];
+  biggerIsA=shuffled[0].s>shuffled[1].s;
+  taskIsBigger=Math.random()>.4;// mostly ask for bigger
+
+  const bigSize=clamp(2.5,9,5.5);
+  const smallSize=clamp(1.2,4,2);
+
+  document.getElementById('emojiA').textContent=shuffled[0].e;
+  document.getElementById('emojiA').style.fontSize=`clamp(${(shuffled[0].s/5)*bigSize}rem,${(shuffled[0].s/5)*14}vw,${(shuffled[0].s/5)*bigSize*1.2}rem)`;
+  document.getElementById('labelA').textContent=shuffled[0].n;
+  document.getElementById('emojiB').textContent=shuffled[1].e;
+  document.getElementById('emojiB').style.fontSize=`clamp(${(shuffled[1].s/5)*bigSize}rem,${(shuffled[1].s/5)*14}vw,${(shuffled[1].s/5)*bigSize*1.2}rem)`;
+  document.getElementById('labelB').textContent=shuffled[1].n;
+
+  const taskWord=taskIsBigger?'BIGGER':'SMALLER';
+  document.getElementById('task').textContent=taskWord;
+
+  const bigName=biggerIsA?shuffled[0].n:shuffled[1].n;
+  const smallName=biggerIsA?shuffled[1].n:shuffled[0].n;
+  const targetName=taskIsBigger?bigName:smallName;
+  setTimeout(()=>speak(`Tap the ${taskWord.toLowerCase()} one! Which is ${taskWord.toLowerCase()}?`),300);
+}
+
+function clamp(a,b,c){return a;}// simplified
+
+function checkAnswer(side){
+  if(answered)return;
+  answered=true;
+  const correctSide=(taskIsBigger===biggerIsA)?'A':'B';
+  // taskIsBigger: tap bigger → correct is bigger side
+  // biggerIsA: A is bigger
+  const isCorrect=side===correctSide;
+
+  const card=document.getElementById(`card${side}`);
+  if(isCorrect){
+    card.classList.add('correct');
+    playCorrect();
+    spawnConfetti();
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    speak(`Yes! That is the ${taskIsBigger?'bigger':'smaller'} one! Well done!`);
+    round++;
+    makeDots();
+    setTimeout(newRound,1600);
+  } else {
+    card.classList.add('wrong');
+    playWrong();
+    speak(`Oops! Look again! Which one is ${taskIsBigger?'bigger':'smaller'}?`);
+    setTimeout(()=>{
+      card.classList.remove('wrong');
+      answered=false;
+    },800);
+  }
+}
+
+function showCelebration(){
+  speak(`You know all about big and small! Superstar!`);
+  const ov=document.createElement('div');
+  ov.className='celebration';
+  ov.innerHTML=`
+    <div class="celeb-emoji">🌟</div>
+    <h2>Smart Thinker!</h2>
+    <p>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</p>
+    <button class="next-btn" onclick="restartGame()">Play Again 🐘</button>
+  `;
+  document.body.appendChild(ov);
+}
+
+function restartGame(){
+  document.querySelector('.celebration')?.remove();
+  score=0;round=0;
+  document.getElementById('scoreVal').textContent=0;
+  newRound();
+}
+
+// Sparkles
+function makeSparkles(){
+  const sparkles=['✨','⭐','💫','🌟'];
+  for(let i=0;i<15;i++){
+    const s=document.createElement('div');
+    s.className='sparkle';
+    s.textContent=sparkles[i%sparkles.length];
+    s.style.cssText=`position:fixed;left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${.8+Math.random()*1.5}rem;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*2}s;z-index:1;pointer-events:none;`;
+    document.body.appendChild(s);
+  }
+}
+
+window.addEventListener('load',()=>{
+  makeSparkles();
+  window.speechSynthesis.getVoices();
+  makeDots();
+  setTimeout(()=>{
+    speak('Which is bigger? Tap to answer!');
+    setTimeout(newRound,1200);
+  },500);
+});
+</script>
+</body>
+</html>

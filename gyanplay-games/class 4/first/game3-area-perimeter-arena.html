@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Area & Perimeter Arena — GyanPlay Class 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#180A28,#0F0820);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 40px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.h-left{display:flex;flex-direction:column;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.game-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--dim);}
+.subject-tag{font-size:0.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:1.3rem;opacity:.25;transition:opacity .3s,filter .3s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.wow{background:linear-gradient(135deg,rgba(199,125,255,.15),rgba(199,125,255,.04));
+  border:1px solid rgba(199,125,255,.3);border-radius:16px;padding:16px;margin-bottom:18px;}
+.wow-emoji{font-size:2rem;margin-bottom:6px;}
+.wow p{font-size:0.88rem;line-height:1.55;}
+.wow p span{color:var(--gold);font-weight:700;}
+.wow-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--dim);margin-top:6px;}
+.game-area{background:var(--card);border-radius:20px;padding:20px;margin-bottom:16px;
+  border:1px solid rgba(199,125,255,.15);}
+.challenge-row{display:flex;gap:10px;margin-bottom:14px;}
+.chal-card{flex:1;background:rgba(199,125,255,.08);border:1px solid rgba(199,125,255,.2);
+  border-radius:12px;padding:12px;text-align:center;}
+.chal-label{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.chal-label .as{font-family:'Noto Sans Devanagari',sans-serif;display:block;font-size:.62rem;}
+.chal-val{font-family:'Baloo 2',sans-serif;font-size:1.5rem;font-weight:800;color:var(--gold);}
+.chal-unit{font-size:.7rem;color:var(--dim);}
+/* Grid canvas */
+.grid-wrap{position:relative;margin:0 auto 16px;touch-action:none;}
+.grid-canvas{display:grid;gap:2px;background:rgba(199,125,255,.1);border-radius:10px;padding:4px;}
+.grid-cell{width:28px;height:28px;border-radius:4px;background:rgba(255,255,255,.03);
+  border:1px solid rgba(199,125,255,.08);transition:background .2s;}
+.grid-cell.filled{background:rgba(199,125,255,.25);border-color:rgba(199,125,255,.4);}
+/* Dimension sliders */
+.sliders{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+.slider-row{display:flex;align-items:center;gap:10px;}
+.slider-label{font-size:.78rem;color:var(--dim);min-width:70px;}
+.slider-label .as{font-family:'Noto Sans Devanagari',sans-serif;display:block;font-size:.68rem;}
+input[type=range]{flex:1;-webkit-appearance:none;height:6px;border-radius:99px;
+  background:rgba(199,125,255,.2);outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;
+  border-radius:50%;background:var(--purple);cursor:pointer;box-shadow:0 0 8px rgba(199,125,255,.5);}
+.slider-val{font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;color:var(--purple);min-width:28px;text-align:right;}
+/* Live meters */
+.meters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.meter-card{background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center;
+  border:1px solid rgba(255,255,255,.06);}
+.meter-label{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.meter-label .as{font-family:'Noto Sans Devanagari',sans-serif;display:block;font-size:.6rem;}
+.meter-val{font-family:'Baloo 2',sans-serif;font-size:1.6rem;font-weight:800;color:var(--teal);}
+.meter-unit{font-size:.68rem;color:var(--dim);}
+.meter-card.match{border-color:var(--teal);background:rgba(6,214,160,.08);}
+.meter-card.match .meter-val{color:var(--teal);}
+.check-btn{width:100%;padding:14px;background:var(--gold);color:#0F0820;border:none;border-radius:14px;
+  font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;transition:transform .1s;}
+.check-btn:active{transform:scale(.97);}
+.feedback{text-align:center;font-size:.88rem;min-height:1.2em;margin-top:8px;font-weight:600;}
+.feedback.ok{color:var(--teal);}
+.feedback.err{color:var(--coral);}
+.progress-wrap{margin-bottom:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);margin-bottom:5px;}
+.prog-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--purple);border-radius:99px;transition:width .4s;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;
+  justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-card{background:var(--card);border:1px solid rgba(199,125,255,.3);border-radius:22px;
+  padding:28px 24px;text-align:center;max-width:320px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);}to{transform:scale(1) translateY(0);}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px;}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.ov-fact{font-size:.83rem;line-height:1.5;margin-bottom:12px;}
+.ov-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+.ov-btn{padding:12px 28px;background:var(--gold);color:#0F0820;border:none;border-radius:12px;
+  font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:200;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen"><div style="font-size:2.5rem">📐</div><p>Loading… / লোড হৈছে…</p></div>
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="h-left">
+      <div class="game-title">Area & Perimeter Arena</div>
+      <div class="game-title-as">কালি আৰু পৰিসীমাৰ মঞ্চ</div>
+      <div class="subject-tag">Maths · শ্ৰেণী ৪</div>
+    </div>
+    <div class="stars" id="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+      <span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+  <div class="wow">
+    <div class="wow-emoji">🏟️</div>
+    <p>Olympic fields are <span>exactly measured</span>. A 1-metre mistake in a 100m hurdle race would disqualify the whole event. <span>Measurement saves the race!</span></p>
+    <div class="wow-as">অলিম্পিকৰ মাঠ একেবাৰে সঠিকভাৱে জোখা হয়। ১ মিটাৰ ভুল হ'লে পুৰো প্ৰতিযোগিতা বাতিল হয়!</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-label"><span>Challenge <span id="qNum">1</span>/5</span><span style="font-family:'Noto Sans Devanagari',sans-serif;">প্ৰত্যাহ্বান <span id="qNumAs">১</span>/৫</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="game-area">
+    <div class="challenge-row">
+      <div class="chal-card">
+        <div class="chal-label">Target Area<span class="as">লক্ষ্য কালি</span></div>
+        <div class="chal-val" id="targetArea">—</div>
+        <div class="chal-unit">sq units / বর্গ একক</div>
+      </div>
+      <div class="chal-card">
+        <div class="chal-label">Target Perimeter<span class="as">লক্ষ্য পৰিসীমা</span></div>
+        <div class="chal-val" id="targetPerim">—</div>
+        <div class="chal-unit">units / একক</div>
+      </div>
+    </div>
+    <!-- Grid -->
+    <div class="grid-wrap">
+      <div class="grid-canvas" id="gridCanvas"></div>
+    </div>
+    <!-- Sliders -->
+    <div class="sliders">
+      <div class="slider-row">
+        <div class="slider-label">Length (L)<span class="as">দীঘল (L)</span></div>
+        <input type="range" id="sliderL" min="1" max="10" value="3" oninput="updateGrid()">
+        <div class="slider-val" id="valL">3</div>
+      </div>
+      <div class="slider-row">
+        <div class="slider-label">Width (W)<span class="as">বহল (W)</span></div>
+        <input type="range" id="sliderW" min="1" max="10" value="3" oninput="updateGrid()">
+        <div class="slider-val" id="valW">3</div>
+      </div>
+    </div>
+    <!-- Live meters -->
+    <div class="meters">
+      <div class="meter-card" id="mArea">
+        <div class="meter-label">Your Area<span class="as">তোমাৰ কালি</span></div>
+        <div class="meter-val" id="liveArea">9</div>
+        <div class="meter-unit">sq units</div>
+      </div>
+      <div class="meter-card" id="mPerim">
+        <div class="meter-label">Your Perimeter<span class="as">তোমাৰ পৰিসীমা</span></div>
+        <div class="meter-val" id="livePerim">12</div>
+        <div class="meter-unit">units</div>
+      </div>
+    </div>
+    <button class="check-btn" id="checkBtn" onclick="checkAnswer()">Check ✓ / পৰীক্ষা কৰক</button>
+    <div class="feedback" id="feedback"></div>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <div class="ov-as" id="ovAs"></div>
+    <button class="ov-btn" id="ovBtn" onclick="nextRound()">Next →</button>
+  </div>
+</div>
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",
+  projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",
+  messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let currentUser=null;
+auth.onAuthStateChanged(u=>{
+  if(!u){window.location.href='/login.html';return;}
+  currentUser=u;
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initGame();
+});
+
+// Challenges: {areaTarget, perimTarget, hint text}
+const CHALLENGES=[
+  {l:4,w:6,fact:"4×6 = 24 sq units! The Nehru Stadium in Guwahati has an area of about 24,000 sq metres!",factAs:"৪×৬ = ২৪ বর্গ একক! গুৱাহাটীৰ নেহৰু ষ্টেডিয়ামৰ কালি প্ৰায় ২৪,০০০ বর্গ মিটাৰ!"},
+  {l:3,w:7,fact:"3×7 = 21 sq units, perimeter = 20. A rectangle's perimeter is always 2×(L+W)!",factAs:"৩×৭ = ২১ বর্গ একক। পৰিসীমা সদায় ২×(L+W)!"},
+  {l:5,w:5,fact:"5×5 = 25 sq units — a perfect square! Equal sides make calculation easiest!",factAs:"৫×৫ = ২৫ বর্গ একক — নিখুঁত বর্গ! সমান বাহুত গণনা সহজ!"},
+  {l:2,w:8,fact:"2×8 = 16 sq units, same area as 4×4! Different shapes, same area — fascinating!",factAs:"২×৮ = ১৬ বর্গ একক। ৪×৪ৰ সমান কালি — বিভিন্ন আকাৰ, একে কালি!"},
+  {l:6,w:9,fact:"6×9 = 54 sq units! Kaziranga National Park covers 430 sq km — can you imagine that on a grid?",factAs:"৬×৯ = ৫৪ বর্গ একক! কাজিৰঙা ৪৩০ বর্গ কিমি — এটা বিশাল গ্ৰীডৰ কল্পনা কৰা!"}
+];
+const MSG=["Excellent!","Brilliant!","Amazing!","Spot on!","Perfect!"];
+
+let round=0,score=0;
+
+function initGame(){round=0;score=0;updateStars(0);loadChallenge();}
+
+function loadChallenge(){
+  const c=CHALLENGES[round];
+  document.getElementById('targetArea').textContent=c.l*c.w;
+  document.getElementById('targetPerim').textContent=2*(c.l+c.w);
+  document.getElementById('qNum').textContent=round+1;
+  document.getElementById('qNumAs').textContent=['১','২','৩','৪','৫'][round];
+  document.getElementById('progFill').style.width=(round/5*100)+'%';
+  document.getElementById('feedback').textContent='';
+  document.getElementById('sliderL').value=3;
+  document.getElementById('sliderW').value=3;
+  updateGrid();
+}
+
+function updateGrid(){
+  const L=parseInt(document.getElementById('sliderL').value);
+  const W=parseInt(document.getElementById('sliderW').value);
+  document.getElementById('valL').textContent=L;
+  document.getElementById('valW').textContent=W;
+  const area=L*W,perim=2*(L+W);
+  document.getElementById('liveArea').textContent=area;
+  document.getElementById('livePerim').textContent=perim;
+  const c=CHALLENGES[round];
+  document.getElementById('mArea').classList.toggle('match',area===c.l*c.w);
+  document.getElementById('mPerim').classList.toggle('match',perim===2*(c.l+c.w));
+  // Rebuild grid
+  const canvas=document.getElementById('gridCanvas');
+  canvas.style.gridTemplateColumns=`repeat(${L}, 28px)`;
+  canvas.innerHTML='';
+  for(let r=0;r<W;r++){
+    for(let col=0;col<L;col++){
+      const cell=document.createElement('div');
+      cell.className='grid-cell filled';
+      canvas.appendChild(cell);
+    }
+  }
+}
+
+function checkAnswer(){
+  const L=parseInt(document.getElementById('sliderL').value);
+  const W=parseInt(document.getElementById('sliderW').value);
+  const c=CHALLENGES[round];
+  const fb=document.getElementById('feedback');
+  if(L===c.l&&W===c.w){
+    score++;updateStars(score);confetti();
+    const msg=MSG[Math.floor(Math.random()*MSG.length)];
+    document.getElementById('ovEmoji').textContent='📐';
+    document.getElementById('ovTitle').textContent=msg;
+    document.getElementById('ovFact').textContent=c.fact;
+    document.getElementById('ovAs').textContent=c.factAs;
+    document.getElementById('ovBtn').textContent=round<4?'Next → / পৰৱৰ্তী':'Finish! / শেষ!';
+    showOverlay(true);
+  } else {
+    fb.className='feedback err';
+    fb.textContent=`❌ Area=${L*W}, Perimeter=${2*(L+W)} — keep adjusting! / চলাই যাওক!`;
+    setTimeout(()=>{fb.textContent='';},2000);
+  }
+}
+
+function nextRound(){showOverlay(false);round++;if(round>=5){endGame();}else{loadChallenge();}}
+
+function endGame(){
+  trackProgress();
+  document.getElementById('ovEmoji').textContent='🏆';
+  document.getElementById('ovTitle').textContent='Area Architect! / কালিৰ স্থপতি!';
+  document.getElementById('ovFact').textContent=`You scored ${score}/5! You can now design any room or field with perfect measurements!`;
+  document.getElementById('ovAs').textContent=`তুমি ${score}/৫ পালে! তুমি এতিয়া যিকোনো কোঠা বা মাঠৰ জোখ ঠিক কৰিব পাৰা!`;
+  document.getElementById('ovBtn').textContent='🔄 Play Again / আকৌ খেলক';
+  document.getElementById('ovBtn').onclick=()=>{showOverlay(false);initGame();};
+  showOverlay(true);
+}
+async function trackProgress(){
+  if(!currentUser)return;
+  try{await db.collection('users').doc(currentUser.uid).collection('progress').doc('class4-game3').set(
+    {score,total:5,gameId:'class4-game3',gameName:'Area & Perimeter Arena',class:4,subject:'Maths',
+     completedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+}
+function updateStars(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function showOverlay(s){document.getElementById('overlay').classList.toggle('show',s);}
+function confetti(){
+  const cols=['#FFD166','#C77DFF','#06D6A0','#FF6B6B','#4CC9F0'];
+  for(let i=0;i<28;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%5]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);
+  }
+}
+</script>
+</body>
+</html>

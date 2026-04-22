@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Good Habits 👍 | GyanPlay Nursery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--green:#00C853;--pink:#FF4081;--gold:#FFB800;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    body{
+      font-family:'Nunito',sans-serif;
+      min-height:100vh;
+      background:linear-gradient(135deg,#E8EAF6,#C5CAE9);
+      color:#1A237E;
+      display:flex;flex-direction:column;align-items:center;
+      padding:16px;animation:fadeIn .4s ease;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes floatUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+    @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.2)}100%{transform:scale(1)}}
+    @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+    @keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+    @keyframes starBurst{0%{transform:scale(0) rotate(0deg);opacity:0}50%{transform:scale(1.3) rotate(180deg);opacity:1}100%{transform:scale(1) rotate(360deg);opacity:1}}
+    @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+    .top-bar{
+      width:100%;max-width:680px;
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:14px;flex-wrap:wrap;gap:8px;
+    }
+    .back-btn{
+      background:rgba(255,255,255,.55);border:none;
+      padding:9px 22px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
+      cursor:pointer;transition:background .2s;color:#1A237E;
+    }
+    .back-btn:hover{background:rgba(255,255,255,.8)}
+    .subject-badge{
+      background:rgba(255,255,255,.55);padding:7px 20px;
+      border-radius:999px;font-size:.9rem;font-weight:800;
+      font-family:'Baloo 2',sans-serif;color:#1A237E;
+    }
+    .lang-toggle{display:flex;gap:6px}
+    .lang-btn{
+      background:rgba(255,255,255,.35);border:none;
+      padding:7px 14px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;
+      cursor:pointer;transition:all .2s;color:#1A237E;
+    }
+    .lang-btn.active{background:#fff;color:#283593}
+    .lang-btn:hover:not(.active){background:rgba(255,255,255,.6)}
+
+    .game-card{
+      background:rgba(255,255,255,.52);
+      backdrop-filter:blur(14px);
+      border:2.5px solid rgba(255,255,255,.7);
+      border-radius:28px;padding:22px 20px;
+      width:100%;max-width:680px;
+      box-shadow:0 12px 50px rgba(26,35,126,.1);
+    }
+    .game-title{
+      font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;
+      text-align:center;margin-bottom:6px;color:#1A237E;
+    }
+    .score-bar{display:flex;justify-content:space-between;margin:6px 0;font-size:1rem;font-weight:800;color:#1A237E;}
+    .prog-wrap{background:rgba(255,255,255,.4);border-radius:999px;height:12px;margin-bottom:16px}
+    .prog-fill{
+      height:12px;border-radius:999px;
+      background:linear-gradient(90deg,#9FA8DA,#3949AB);
+      transition:width .4s ease;
+    }
+
+    .instruction{
+      font-size:1.2rem;font-weight:800;text-align:center;
+      margin-bottom:14px;color:#283593;
+    }
+
+    /* HABIT CARD */
+    .habit-box{
+      background:rgba(255,255,255,.45);
+      border:2.5px solid rgba(255,255,255,.65);
+      border-radius:24px;padding:26px 18px;
+      margin-bottom:18px;text-align:center;
+    }
+    .habit-emoji{
+      font-size:7rem;line-height:1;
+      display:block;margin-bottom:14px;
+      animation:floatUp 2.2s ease infinite;
+      filter:drop-shadow(0 4px 20px rgba(26,35,126,.18));
+    }
+    .habit-text{
+      font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;
+      color:#1A237E;line-height:1.25;
+    }
+
+    /* GOOD / BAD BUTTONS */
+    .choices-row{
+      display:flex;gap:16px;margin-bottom:12px;
+    }
+    .habit-btn{
+      flex:1;
+      background:rgba(255,255,255,.5);
+      border:3px solid rgba(255,255,255,.68);
+      border-radius:24px;
+      min-height:90px;
+      font-family:'Baloo 2',sans-serif;font-size:1.65rem;font-weight:800;
+      cursor:pointer;transition:all .2s;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      color:#1A237E;padding:14px 10px;
+    }
+    .habit-btn:hover:not(:disabled){background:rgba(255,255,255,.8);transform:scale(1.05)}
+    .habit-btn.correct{background:rgba(0,200,83,.3);border-color:#00C853;color:#1B5E20;animation:pop .4s ease}
+    .habit-btn.wrong{background:rgba(255,64,129,.22);border-color:#FF4081;animation:shake .4s ease}
+    .habit-btn:disabled{cursor:default}
+
+    /* Good button hover tint */
+    #btn-good:hover:not(:disabled){background:rgba(0,200,83,.15);}
+    /* Bad button hover tint */
+    #btn-bad:hover:not(:disabled){background:rgba(255,64,129,.12);}
+
+    .feedback{
+      font-family:'Baloo 2',sans-serif;font-size:1.45rem;font-weight:800;
+      text-align:center;min-height:1.8rem;margin:6px 0 4px;
+    }
+    .feedback.correct{color:#2E7D32}
+    .feedback.wrong{color:#C62828}
+
+    .next-btn{
+      color:#fff;background:#3949AB;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.8rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;display:none;transition:transform .15s;
+      width:100%;margin-top:6px;
+    }
+    .next-btn:hover{transform:scale(1.04)}
+
+    .overlay{
+      display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,.55);backdrop-filter:blur(10px);
+      align-items:center;justify-content:center;z-index:100;padding:1.5rem;
+    }
+    .overlay.show{display:flex}
+    .result-box{
+      background:linear-gradient(135deg,#E8EAF6,#C5CAE9);
+      border:3px solid rgba(57,73,171,.3);
+      border-radius:28px;padding:2.5rem 2rem;text-align:center;
+      max-width:400px;width:100%;animation:popIn .35s ease;
+    }
+    .res-emoji{font-size:4rem;margin-bottom:.5rem}
+    .res-title{font-family:'Baloo 2',sans-serif;font-size:2.2rem;font-weight:800;margin-bottom:.4rem;color:#1A237E;}
+    .res-score{font-size:1.1rem;margin-bottom:.8rem;font-weight:700;color:#283593;}
+    .res-stars{font-size:3rem;margin-bottom:1.2rem;letter-spacing:6px}
+    .play-again-btn{
+      color:#fff;background:#3949AB;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.85rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;transition:transform .15s;
+    }
+    .play-again-btn:hover{transform:scale(1.05)}
+
+    [data-lang]{display:none}
+    [data-lang="en"]{display:inline}
+
+    @media(max-width:480px){
+      .habit-emoji{font-size:5.5rem}
+      .habit-text{font-size:1.6rem}
+      .habit-btn{font-size:1.35rem;min-height:75px}
+      .game-title{font-size:1.65rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi">वापस</span><span data-lang="as">পাছে</span></button>
+  <div class="subject-badge">🌟 <span data-lang="en">Life Skills</span><span data-lang="hi">जीवन कौशल</span><span data-lang="as">জীৱন দক্ষতা</span></div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<!-- GAME CARD -->
+<div class="game-card">
+  <div class="game-title">
+    <span data-lang="en">Good or Bad Habit? 👍👎</span>
+    <span data-lang="hi">अच्छी या बुरी आदत? 👍👎</span>
+    <span data-lang="as">ভাল নে বেয়া অভ্যাস? 👍👎</span>
+  </div>
+  <div class="score-bar">
+    <span><span data-lang="en">Score</span><span data-lang="hi">स्कोर</span><span data-lang="as">স্কোৰ</span>: <b id="score-val">0</b> / 80</span>
+    <span><span data-lang="en">Round</span><span data-lang="hi">दौर</span><span data-lang="as">ৰাউণ্ড</span> <b id="round-num">1</b> / 8</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+
+  <div class="instruction">
+    <span data-lang="en">👇 Is this a Good or Bad habit?</span>
+    <span data-lang="hi">👇 यह अच्छी आदत है या बुरी?</span>
+    <span data-lang="as">👇 এইটো ভাল নে বেয়া অভ্যাস?</span>
+  </div>
+
+  <div class="habit-box">
+    <span class="habit-emoji" id="habit-emoji"></span>
+    <div class="habit-text" id="habit-text"></div>
+  </div>
+
+  <div class="choices-row">
+    <button class="habit-btn" id="btn-good" onclick="handleAnswer('good')">
+      <span data-lang="en">👍 Good</span><span data-lang="hi">👍 अच्छा</span><span data-lang="as">👍 ভাল</span>
+    </button>
+    <button class="habit-btn" id="btn-bad" onclick="handleAnswer('bad')">
+      <span data-lang="en">👎 Bad</span><span data-lang="hi">👎 बुरा</span><span data-lang="as">👎 বেয়া</span>
+    </button>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="next-btn" onclick="nextRound()">
+    <span data-lang="en">Next →</span>
+    <span data-lang="hi">अगला →</span>
+    <span data-lang="as">পৰৱৰ্তী →</span>
+  </button>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="result-box">
+    <div class="res-emoji" id="res-emoji"></div>
+    <div class="res-title" id="res-title"></div>
+    <div class="res-score" id="res-score"></div>
+    <div class="res-stars" id="res-stars"></div>
+    <button class="play-again-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again!</span>
+      <span data-lang="hi">🔄 फिर खेलें!</span>
+      <span data-lang="as">🔄 আকৌ খেলক!</span>
+    </button>
+  </div>
+</div>
+
+<script>
+let currentLang = 'en';
+
+function setLang(l) {
+  currentLang = l;
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? 'inline' : 'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', ['en','hi','as'][i] === l);
+  });
+  // Re-render habit text if mid-game
+  if (rounds.length > 0 && ri < rounds.length) {
+    const r = rounds[ri];
+    document.getElementById('habit-text').textContent = r.text[l] || r.text['en'];
+  }
+}
+
+// 4 GOOD habits + 4 BAD habits
+const baseRounds = [
+  // GOOD
+  {
+    emoji: '🪥',
+    text: { en: 'Brush your teeth', hi: 'दाँत साफ करना', as: 'দাঁত পৰিষ্কাৰ কৰা' },
+    answer: 'good',
+    correctMsgs: {
+      en: ['Great! Brushing keeps teeth healthy! 🌟 ✓', 'Yes! Clean teeth = big smile! 😁 ✓'],
+      hi: ['बहुत अच्छा! दाँत साफ रखना जरूरी है! 🌟 ✓', 'सही! साफ दाँत = बड़ी मुस्कान! 😁 ✓'],
+      as: ['চমৎকাৰ! দাঁত পৰিষ্কাৰ ৰখাটো দৰকাৰী! 🌟 ✓', 'হয়! পৰিষ্কাৰ দাঁত = ডাঙৰ হাঁহি! 😁 ✓']
+    }
+  },
+  {
+    emoji: '🛌',
+    text: { en: 'Sleep on time', hi: 'समय पर सोना', as: 'সময়মতে শোৱা' },
+    answer: 'good',
+    correctMsgs: {
+      en: ['Yes! Good sleep = healthy body! 💤 ✓', 'Correct! Sleep makes you grow strong! ✓'],
+      hi: ['हाँ! अच्छी नींद = स्वस्थ शरीर! 💤 ✓', 'सही! नींद से ताकत मिलती है! ✓'],
+      as: ['হয়! ভাল টোপনি = সুস্থ শৰীৰ! 💤 ✓', 'শুদ্ধ! টোপনিয়ে শক্তি দিয়ে! ✓']
+    }
+  },
+  {
+    emoji: '🫧',
+    text: { en: 'Wash your hands', hi: 'हाथ धोना', as: 'হাত ধোৱা' },
+    answer: 'good',
+    correctMsgs: {
+      en: ['Superstar! Clean hands stop germs! 🦠 ✓', 'Amazing! Washing hands keeps you safe! ✓'],
+      hi: ['सुपरस्टार! साफ हाथ कीटाणु रोकते हैं! 🦠 ✓', 'शानदार! हाथ धोने से सुरक्षित रहते हो! ✓'],
+      as: ['ছুপাৰষ্টাৰ! পৰিষ্কাৰ হাতে জীৱাণু ৰোকে! 🦠 ✓', 'অসাধাৰণ! হাত ধোলে সুৰক্ষিত থাকে! ✓']
+    }
+  },
+  {
+    emoji: '🥗',
+    text: { en: 'Eat vegetables', hi: 'सब्ज़ियाँ खाना', as: 'পাচলি খোৱা' },
+    answer: 'good',
+    correctMsgs: {
+      en: ['Yes! Veggies make you strong! 💪 ✓', 'Brilliant! Eat your greens! 🥦 ✓'],
+      hi: ['हाँ! सब्ज़ियाँ ताकत देती हैं! 💪 ✓', 'शानदार! हरी सब्ज़ियाँ खाओ! 🥦 ✓'],
+      as: ['হয়! পাচলিয়ে শক্তি দিয়ে! 💪 ✓', 'অসাধাৰণ! সেউজীয়া পাচলি খাওক! 🥦 ✓']
+    }
+  },
+  // BAD
+  {
+    emoji: '🗑️',
+    text: { en: 'Throw trash on the floor', hi: 'फर्श पर कूड़ा फेंकना', as: 'মজিয়াত আৱৰ্জনা পেলোৱা' },
+    answer: 'bad',
+    correctMsgs: {
+      en: ['Right! Trash goes in the bin! 🗑️ ✓', 'Correct! Keep our home clean! ✓'],
+      hi: ['सही! कूड़ा डस्टबिन में डालो! 🗑️ ✓', 'बिल्कुल! घर को साफ रखो! ✓'],
+      as: ['শুদ্ধ! আৱৰ্জনা বিনত পেলোৱা! 🗑️ ✓', 'শুদ্ধ! ঘৰ পৰিষ্কাৰ ৰাখা! ✓']
+    }
+  },
+  {
+    emoji: '📺',
+    text: { en: 'Watch TV all day', hi: 'पूरे दिन TV देखना', as: 'গোটেই দিন টিভি চোৱা' },
+    answer: 'bad',
+    correctMsgs: {
+      en: ['Correct! Too much TV is not good! 📺 ✓', 'Right! Go play outside! 🌳 ✓'],
+      hi: ['सही! ज़्यादा TV नुकसानदेह है! 📺 ✓', 'बिल्कुल! बाहर खेलने जाओ! 🌳 ✓'],
+      as: ['শুদ্ধ! বেছি টিভি ভাল নহয়! 📺 ✓', 'শুদ্ধ! বাহিৰ গৈ খেলা! 🌳 ✓']
+    }
+  },
+  {
+    emoji: '🍬',
+    text: { en: 'Eat sweets all day', hi: 'पूरे दिन मिठाई खाना', as: 'গোটেই দিন মিঠাই খোৱা' },
+    answer: 'bad',
+    correctMsgs: {
+      en: ['Yes, too many sweets hurt teeth! 🦷 ✓', 'Correct! Sweets in moderation only! ✓'],
+      hi: ['हाँ, ज़्यादा मिठाई दाँत खराब करती है! 🦷 ✓', 'सही! मिठाई कम खाओ! ✓'],
+      as: ['হয়, বেছি মিঠাই দাঁত নষ্ট কৰে! 🦷 ✓', 'শুদ্ধ! কম মিঠাই খোৱা! ✓']
+    }
+  },
+  {
+    emoji: '🤧',
+    text: { en: 'Sneeze without covering mouth', hi: 'मुँह ढके बिना छींकना', as: 'মুখ নঢাকি হাঁচিয়া মৰা' },
+    answer: 'bad',
+    correctMsgs: {
+      en: ['Right! Always cover your mouth! 🤧 ✓', 'Correct! Use a tissue or elbow! ✓'],
+      hi: ['सही! छींकते समय मुँह ढको! 🤧 ✓', 'बिल्कुल! रूमाल या कोहनी इस्तेमाल करो! ✓'],
+      as: ['শুদ্ধ! সদায় মুখ ঢাকি হাঁচিয়া মৰা! 🤧 ✓', 'শুদ্ধ! ৰুমাল বা কিলাকুটি ব্যৱহাৰ কৰা! ✓']
+    }
+  },
+];
+
+let rounds = [], ri = 0, score = 0, answered = false;
+
+function shuffle(a) { return [...a].sort(() => Math.random() - .5); }
+
+function startGame() {
+  rounds = shuffle([...baseRounds]);
+  ri = 0; score = 0;
+  document.getElementById('overlay').classList.remove('show');
+  loadRound();
+}
+
+function loadRound() {
+  const r = rounds[ri];
+  answered = false;
+
+  document.getElementById('prog-fill').style.width = (ri / rounds.length * 100) + '%';
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('round-num').textContent = ri + 1;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').style.display = 'none';
+
+  document.getElementById('habit-emoji').textContent = r.emoji;
+  document.getElementById('habit-text').textContent = r.text[currentLang] || r.text['en'];
+
+  // Re-enable buttons and clear states
+  ['btn-good', 'btn-bad'].forEach(id => {
+    const btn = document.getElementById(id);
+    btn.disabled = false;
+    btn.classList.remove('correct', 'wrong');
+  });
+}
+
+function handleAnswer(choice) {
+  if (answered) return;
+  answered = true;
+
+  const r = rounds[ri];
+  const isCorrect = choice === r.answer;
+
+  document.getElementById('btn-good').disabled = true;
+  document.getElementById('btn-bad').disabled = true;
+
+  const clickedId = choice === 'good' ? 'btn-good' : 'btn-bad';
+  const correctId = r.answer === 'good' ? 'btn-good' : 'btn-bad';
+
+  if (isCorrect) {
+    document.getElementById(clickedId).classList.add('correct');
+    score += 10;
+  } else {
+    document.getElementById(clickedId).classList.add('wrong');
+    document.getElementById(correctId).classList.add('correct');
+  }
+
+  const fb = document.getElementById('feedback');
+  if (isCorrect) {
+    const pool = r.correctMsgs[currentLang] || r.correctMsgs['en'];
+    fb.textContent = pool[Math.floor(Math.random() * pool.length)];
+    fb.className = 'feedback correct';
+  } else {
+    const isGoodHabit = r.answer === 'good';
+    const wrongMsgs = {
+      good: {
+        en: [`That is actually a GOOD habit! 👍 ✗`],
+        hi: [`यह असल में एक अच्छी आदत है! 👍 ✗`],
+        as: [`এইটো আচলতে এটা ভাল অভ্যাস! 👍 ✗`]
+      },
+      bad: {
+        en: [`That is actually a BAD habit! 👎 ✗`],
+        hi: [`यह असल में एक बुरी आदत है! 👎 ✗`],
+        as: [`এইটো আচলতে এটা বেয়া অভ্যাস! 👎 ✗`]
+      }
+    };
+    const pool = wrongMsgs[r.answer][currentLang] || wrongMsgs[r.answer]['en'];
+    fb.textContent = pool[0];
+    fb.className = 'feedback wrong';
+  }
+
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextRound() {
+  ri++;
+  if (ri >= rounds.length) { showResult(); return; }
+  loadRound();
+}
+
+function showResult() {
+  document.getElementById('prog-fill').style.width = '100%';
+  const pct = (score / (rounds.length * 10)) * 100;
+  let emoji = '😊', title = { en: 'Good Try!', hi: 'अच्छी कोशिश!', as: 'ভাল চেষ্টা!' };
+  if (pct >= 90) { emoji = '🏆'; title = { en: 'Habits Hero!', hi: 'आदत हीरो!', as: 'অভ্যাস হিৰো!' }; }
+  else if (pct >= 70) { emoji = '🌟'; title = { en: 'Well Done!', hi: 'बहुत अच्छा!', as: 'বহুত ভাল!' }; }
+  else if (pct >= 40) { emoji = '👍'; title = { en: 'Good Job!', hi: 'शाबाश!', as: 'ভাল কাম!' }; }
+
+  const stars = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : pct >= 40 ? '⭐' : '';
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-title').textContent = title[currentLang] || title['en'];
+  document.getElementById('res-score').textContent = 'Score: ' + score + ' / ' + (rounds.length * 10);
+  document.getElementById('res-stars').textContent = stars;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function restartGame() { startGame(); }
+startGame();
+</script>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punctuation Fixer - GyanPlay Class 2</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #a29bfe;
+            font-size: 2rem;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .score {
+            background: #e94560;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text {
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        .sentence-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .sentence {
+            font-size: 2rem;
+            color: #2d3436;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .punctuation-spot {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            border-radius: 10px;
+            vertical-align: middle;
+            margin: 0 10px;
+            text-align: center;
+            line-height: 50px;
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .choices-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .punctuation-choice {
+            background: white;
+            border: 4px solid #dfe6e9;
+            border-radius: 15px;
+            padding: 15px 30px;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .punctuation-choice:hover {
+            border-color: #a29bfe;
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(162, 155, 254, 0.3);
+        }
+        
+        .punctuation-choice.selected {
+            border-color: #6c5ce7;
+            background: #a29bfe;
+        }
+        
+        .context-hint {
+            background: linear-gradient(135deg, #00b894, #55efc4);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .hint-title {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .hint-content {
+            color: #2d3436;
+            font-size: 1.1rem;
+        }
+        
+        .sentence-type {
+            display: inline-block;
+            background: #e94560;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #e17055, #fab1a0);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(225, 112, 85, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+            max-width: 400px;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .feedback-content.correct {
+            border: 5px solid #00b894;
+        }
+        
+        .feedback-content.wrong {
+            border: 5px solid #e94560;
+        }
+        
+        .feedback-icon {
+            font-size: 5rem;
+        }
+        
+        .feedback-text {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            color: #2d3436;
+        }
+        
+        .explanation {
+            color: #636e72;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .rules-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .rules-title {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .rule {
+            color: #dfe6e9;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch1-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>✏️ Punctuation Fixer</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Sentence: <span id="sentenceNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Look at the sentence and tap the correct punctuation mark at the end!</p>
+        </div>
+        
+        <div class="sentence-card">
+            <span class="sentence-type" id="sentenceType">Statement</span>
+            <div class="sentence" id="sentenceText">
+                The cat is sleeping<span class="punctuation-spot" id="punctuationSpot">?</span>
+            </div>
+            
+            <div class="choices-container">
+                <div class="punctuation-choice" onclick="selectPunctuation('.')" id="choice-period">.</div>
+                <div class="punctuation-choice" onclick="selectPunctuation('?')" id="choice-question">?</div>
+                <div class="punctuation-choice" onclick="selectPunctuation('!')" id="choice-exclaim">!</div>
+            </div>
+            
+            <div class="context-hint" id="hintBox">
+                <div class="hint-title">💡 Hint</div>
+                <div class="hint-content" id="hintText">This is a statement - it tells us something</div>
+            </div>
+        </div>
+        
+        <div class="rules-box">
+            <div class="rules-title">📖 Punctuation Rules:</div>
+            <div class="rule">. (Full Stop) - For statements or telling something</div>
+            <div class="rule">? (Question Mark) - For asking questions</div>
+            <div class="rule">! (Exclamation) - For strong feelings or excitement</div>
+        </div>
+        
+        <button class="check-btn" onclick="checkAnswer()">✓ Check Answer</button>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <div class="explanation" id="explanation"></div>
+            <button class="next-btn" onclick="nextSentence()">Next Sentence →</button>
+        </div>
+    </div>
+    
+    <script>
+        const sentences = [
+            { text: "The sun is shining", correct: ".", type: "Statement", hint: "This tells us something - it's a statement" },
+            { text: "What is your name", correct: "?", type: "Question", hint: "This asks something - it's a question" },
+            { text: "Look at the rainbow", correct: "!", type: "Exclamation", hint: "This shows excitement or surprise!" },
+            { text: "I like to read books", correct: ".", type: "Statement", hint: "This is telling us something" },
+            { text: "Can you help me", correct: "?", type: "Question", hint: "This is asking for help" },
+            { text: "The dog is running fast", correct: "!", type: "Exclamation", hint: "This shows action and excitement!" },
+            { text: "Today is Monday", correct: ".", type: "Statement", hint: "This gives us information" },
+            { text: "Where is the park", correct: "?", type: "Question", hint: "This asks about a place" },
+            { text: "What a beautiful flower", correct: "!", type: "Exclamation", hint: "This expresses admiration!" },
+            { text: "The bird is singing", correct: ".", type: "Statement", hint: "This describes what the bird is doing" },
+            { text: "Do you like ice cream", correct: "?", type: "Question", hint: "This asks about a preference" },
+            { text: "We won the game", correct: "!", type: "Exclamation", hint: "This shows happiness and excitement!" },
+            { text: "My mother cooks delicious food", correct: ".", type: "Statement", hint: "This tells us about someone's mother" },
+            { text: "Why are you crying", correct: "?", type: "Question", hint: "This asks for a reason" },
+            { text: "The fireworks are amazing", correct: "!", type: "Exclamation", hint: "This shows wonder and excitement!" }
+        ];
+        
+        let currentIndex = 0;
+        let selectedPunctuation = null;
+        let score = 0;
+        
+        function loadSentence() {
+            const sentence = sentences[currentIndex];
+            document.getElementById('sentenceText').innerHTML = 
+                sentence.text + '<span class="punctuation-spot" id="punctuationSpot">?</span>';
+            document.getElementById('sentenceType').textContent = sentence.type;
+            document.getElementById('hintText').textContent = sentence.hint;
+            document.getElementById('sentenceNum').textContent = currentIndex + 1;
+            
+            document.querySelectorAll('.punctuation-choice').forEach(choice => {
+                choice.classList.remove('selected');
+            });
+            selectedPunctuation = null;
+        }
+        
+        function selectPunctuation(punct) {
+            selectedPunctuation = punct;
+            document.querySelectorAll('.punctuation-choice').forEach(choice => {
+                choice.classList.remove('selected');
+            });
+            
+            if (punct === '.') document.getElementById('choice-period').classList.add('selected');
+            if (punct === '?') document.getElementById('choice-question').classList.add('selected');
+            if (punct === '!') document.getElementById('choice-exclaim').classList.add('selected');
+        }
+        
+        function checkAnswer() {
+            if (!selectedPunctuation) {
+                alert('Please tap a punctuation mark first!');
+                return;
+            }
+            
+            const sentence = sentences[currentIndex];
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            const explanation = document.getElementById('explanation');
+            
+            if (selectedPunctuation === sentence.correct) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Correct!';
+                score += 10;
+                document.getElementById('score').textContent = score;
+                explanation.textContent = '';
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = 'Not quite!';
+                explanation.textContent = `The correct answer is "${sentence.correct}" - ${sentence.type}`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextSentence() {
+            document.getElementById('feedback').classList.remove('show');
+            currentIndex = (currentIndex + 1) % sentences.length;
+            loadSentence();
+        }
+        
+        loadSentence();
+    </script>
+</body>
+</html>

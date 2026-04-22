@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Industries & Human Resources — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:#fff;padding-bottom:40px}
+  h1,h2,h3{font-family:'Baloo 2',sans-serif}
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);position:sticky;top:0;z-index:99}
+  .back-btn{background:rgba(255,255,255,0.12);border:none;color:#fff;padding:7px 16px;border-radius:20px;cursor:pointer;font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;transition:background .2s}
+  .back-btn:hover{background:rgba(255,255,255,0.22)}
+  .badge{background:var(--pink);color:#fff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;font-family:'Baloo 2',sans-serif}
+  .lang-toggle{margin-left:auto;display:flex;gap:6px}
+  .lang-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s}
+  .lang-btn.active{background:var(--pink);border-color:var(--pink)}
+  .progress-wrap{padding:16px 20px 0}
+  .progress-info{display:flex;justify-content:space-between;font-size:13px;opacity:.8;margin-bottom:6px}
+  .progress-bar{height:8px;background:rgba(255,255,255,0.12);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--saffron));border-radius:4px;transition:width .5s ease}
+  .card{background:var(--card);border-radius:20px;padding:28px 24px;margin:20px auto;max-width:680px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:fadeIn .4s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .q-meta{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;opacity:.7}
+  .q-num{background:var(--pink);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;font-family:'Baloo 2',sans-serif;flex-shrink:0}
+  .scene-emoji{font-size:40px;text-align:center;margin-bottom:10px}
+  .question{font-size:18px;font-weight:700;line-height:1.5;margin-bottom:20px;font-family:'Baloo 2',sans-serif}
+  .options{display:grid;gap:12px}
+  .opt-btn{background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);color:#fff;padding:14px 18px;border-radius:14px;cursor:pointer;text-align:left;font-size:15px;font-family:'Nunito',sans-serif;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:10px}
+  .opt-btn:hover:not(:disabled){background:rgba(255,64,129,0.15);border-color:var(--pink)}
+  .opt-btn.correct{background:rgba(0,200,83,0.2);border-color:var(--green)}
+  .opt-btn.wrong{background:rgba(255,64,129,0.18);border-color:var(--pink)}
+  .opt-btn:disabled{cursor:default}
+  .opt-label{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:14px;line-height:1.6;display:none;animation:fadeIn .3s ease}
+  .feedback.show{display:block}
+  .feedback.correct-fb{background:rgba(0,200,83,0.15);border:1px solid var(--green)}
+  .feedback.wrong-fb{background:rgba(255,64,129,0.12);border:1px solid var(--pink)}
+  .score-live{background:rgba(255,64,129,0.18);border:1px solid var(--pink);padding:4px 12px;border-radius:12px;font-size:13px;font-weight:700;color:var(--pink)}
+  .next-btn{display:none;margin:20px auto 0;background:linear-gradient(135deg,var(--pink),#c73663);border:none;color:#fff;padding:13px 36px;border-radius:24px;font-size:16px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 18px rgba(255,64,129,0.4)}
+  .next-btn:hover{transform:translateY(-2px)}
+  .next-btn.show{display:block}
+  .end-screen{display:none;text-align:center;padding:30px 20px;max-width:520px;margin:40px auto}
+  .end-screen.show{display:block;animation:fadeIn .5s ease}
+  .stars{font-size:44px;letter-spacing:4px;margin:10px 0}
+  .final-score{font-size:54px;font-weight:800;color:var(--gold);line-height:1;font-family:'Baloo 2',sans-serif}
+  .score-label{font-size:15px;opacity:.7;margin-bottom:20px}
+  .play-again{background:linear-gradient(135deg,var(--pink),var(--saffron));border:none;color:#fff;padding:14px 40px;border-radius:28px;font-size:17px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s;box-shadow:0 4px 20px rgba(255,64,129,0.4)}
+  .play-again:hover{transform:scale(1.05)}
+  .end-title{font-size:26px;font-weight:800;margin-bottom:8px;font-family:'Baloo 2',sans-serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">উভতি যাওক</span></button>
+  <span class="badge">Geography</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-info">
+    <span data-lang="en">Question <span id="qNum">1</span>/10</span>
+    <span data-lang="hi" style="display:none">प्रश्न <span id="qNumHi">1</span>/10</span>
+    <span data-lang="as" style="display:none">প্ৰশ্ন <span id="qNumAs">1</span>/10</span>
+    <span class="score-live">Score: <span id="scoreLive">0</span>/100</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+</div>
+
+<div id="quizArea"></div>
+
+<div class="end-screen" id="endScreen">
+  <div class="scene-emoji">🏭</div>
+  <div class="end-title" data-lang="en">Quiz Complete!</div>
+  <div class="end-title" data-lang="hi" style="display:none">क्विज़ पूरा हुआ!</div>
+  <div class="end-title" data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</div>
+  <div class="stars" id="starsDisplay">⭐⭐⭐</div>
+  <div class="final-score" id="finalScore">0</div>
+  <div class="score-label" data-lang="en">out of 100</div>
+  <div class="score-label" data-lang="hi" style="display:none">100 में से</div>
+  <div class="score-label" data-lang="as" style="display:none">100ৰ মাজত</div>
+  <br>
+  <button class="play-again" onclick="restartQuiz()">
+    <span data-lang="en">Play Again</span>
+    <span data-lang="hi" style="display:none">फिर खेलें</span>
+    <span data-lang="as" style="display:none">আকৌ খেলক</span>
+  </button>
+</div>
+
+<script>
+const questions = [
+  {
+    emoji: "🏭",
+    en: { q: "Which type of industry directly uses natural resources as raw materials?", opts: ["Secondary industry", "Tertiary industry", "Primary industry", "Quaternary industry"], ans: 2, exp: "Primary industries directly extract and use natural resources. Examples: farming, fishing, mining, forestry. They produce raw materials for other industries." },
+    hi: { q: "कौन-सा उद्योग प्राकृतिक संसाधनों का सीधे कच्चे माल के रूप में उपयोग करता है?", opts: ["द्वितीयक उद्योग", "तृतीयक उद्योग", "प्राथमिक उद्योग", "चतुर्थक उद्योग"], ans: 2, exp: "प्राथमिक उद्योग प्राकृतिक संसाधनों का सीधे उपयोग करते हैं। उदाहरण: कृषि, मछली पकड़ना, खनन।" },
+    as: { q: "কোন উদ্যোগে প্ৰাকৃতিক সম্পদ পোনপটীয়াকৈ কেঁচামাল হিচাপে ব্যৱহাৰ কৰা হয়?", opts: ["দ্বিতীয় খণ্ডৰ উদ্যোগ", "তৃতীয় খণ্ডৰ উদ্যোগ", "প্ৰাথমিক উদ্যোগ", "চতুৰ্থ খণ্ডৰ উদ্যোগ"], ans: 2, exp: "প্ৰাথমিক উদ্যোগত প্ৰাকৃতিক সম্পদ পোনপটীয়াকৈ ব্যৱহাৰ কৰা হয়। উদাহৰণ: কৃষি, মীনপালন, খনন।" }
+  },
+  {
+    emoji: "⚙️",
+    en: { q: "Industries that convert raw materials into finished products are called:", opts: ["Primary industries", "Secondary industries", "Tertiary industries", "Agro-based industries"], ans: 1, exp: "Secondary industries process raw materials and manufacture finished goods. Examples include steel plants, textile mills, and sugar factories. They transform primary sector output into products." },
+    hi: { q: "जो उद्योग कच्चे माल को तैयार उत्पादों में बदलते हैं, उन्हें क्या कहते हैं?", opts: ["प्राथमिक उद्योग", "द्वितीयक उद्योग", "तृतीयक उद्योग", "कृषि आधारित उद्योग"], ans: 1, exp: "द्वितीयक उद्योग कच्चे माल को तैयार उत्पादों में बदलते हैं। जैसे इस्पात, वस्त्र और चीनी उद्योग।" },
+    as: { q: "কেঁচামালক সামগ্ৰীলৈ ৰূপান্তৰিত কৰা উদ্যোগক কি বোলা হয়?", opts: ["প্ৰাথমিক উদ্যোগ", "দ্বিতীয় খণ্ডৰ উদ্যোগ", "তৃতীয় খণ্ডৰ উদ্যোগ", "কৃষি-ভিত্তিক উদ্যোগ"], ans: 1, exp: "দ্বিতীয় খণ্ডৰ উদ্যোগত কেঁচামালক সামগ্ৰীলৈ ৰূপান্তৰিত কৰা হয়। যেনে: ইস্পাত, কাপোৰ আৰু চেনি উদ্যোগ।" }
+  },
+  {
+    emoji: "🔩",
+    en: { q: "Which of the following is an agro-based industry?", opts: ["Iron and steel industry", "Sugar industry", "Cement industry", "Aluminium industry"], ans: 1, exp: "The sugar industry is an agro-based industry because it uses sugarcane — an agricultural product — as its raw material. Other agro-based industries include cotton textiles, jute, and vegetable oil." },
+    hi: { q: "निम्न में से कौन-सा कृषि-आधारित उद्योग है?", opts: ["लोहा और इस्पात उद्योग", "चीनी उद्योग", "सीमेंट उद्योग", "एल्युमीनियम उद्योग"], ans: 1, exp: "चीनी उद्योग कृषि-आधारित उद्योग है क्योंकि इसका कच्चा माल गन्ना (कृषि उत्पाद) है।" },
+    as: { q: "তলৰ কোনটো কৃষি-ভিত্তিক উদ্যোগ?", opts: ["লো আৰু ইস্পাত উদ্যোগ", "চেনি উদ্যোগ", "চিমেণ্ট উদ্যোগ", "এলুমিনিয়াম উদ্যোগ"], ans: 1, exp: "চেনি উদ্যোগ কৃষি-ভিত্তিক উদ্যোগ, কাৰণ ইয়াৰ কেঁচামাল হ'ল কুঁহিয়াৰ।" }
+  },
+  {
+    emoji: "🏭",
+    en: { q: "Jamshedpur in Jharkhand is famous for which major industry?", opts: ["Textile industry", "Iron and steel industry", "IT industry", "Sugar industry"], ans: 1, exp: "Jamshedpur (TISCO/Tata Steel) is India's oldest and largest steel plant, set up in 1907. It is located near iron ore (Jharkhand), coal (Dhanbad), and water supply — ideal location factors for steel." },
+    hi: { q: "झारखंड का जमशेदपुर किस प्रमुख उद्योग के लिए प्रसिद्ध है?", opts: ["वस्त्र उद्योग", "लोहा और इस्पात उद्योग", "आईटी उद्योग", "चीनी उद्योग"], ans: 1, exp: "जमशेदपुर में TISCO (टाटा स्टील) है, जो भारत का सबसे पुराना और बड़ा इस्पात कारखाना है।" },
+    as: { q: "ঝাৰখণ্ডৰ জামশেদপুৰ কোন প্ৰধান উদ্যোগৰ বাবে বিখ্যাত?", opts: ["বস্ত্ৰ উদ্যোগ", "লো আৰু ইস্পাত উদ্যোগ", "আইটি উদ্যোগ", "চেনি উদ্যোগ"], ans: 1, exp: "জামশেদপুৰত TISCO (টাটা ষ্টীল) আছে, যি ভাৰতৰ আটাইতকৈ পুৰণি আৰু ডাঙৰ ইস্পাত কাৰখানা।" }
+  },
+  {
+    emoji: "⚙️",
+    en: { q: "Which city is known as the 'Silicon Valley of India' due to its IT industry?", opts: ["Mumbai", "Hyderabad", "Bengaluru", "Chennai"], ans: 2, exp: "Bengaluru (Bangalore) is called the Silicon Valley of India. It is India's leading IT hub with major companies like Infosys, Wipro, and many MNC offices. It has skilled workforce and good infrastructure." },
+    hi: { q: "IT उद्योग के कारण किस शहर को 'भारत की सिलिकॉन वैली' कहा जाता है?", opts: ["मुम्बई", "हैदराबाद", "बेंगलुरु", "चेन्नई"], ans: 2, exp: "बेंगलुरु को भारत की सिलिकॉन वैली कहा जाता है। यहाँ इन्फोसिस, विप्रो जैसी बड़ी IT कंपनियाँ हैं।" },
+    as: { q: "IT উদ্যোগৰ বাবে কোন চহৰক 'ভাৰতৰ ছিলিকন ভেলি' বোলা হয়?", opts: ["মুম্বাই", "হায়দৰাবাদ", "বেংগালুৰু", "চেন্নাই"], ans: 2, exp: "বেংগালুৰুক ভাৰতৰ ছিলিকন ভেলি বোলা হয়। ইয়াত ইনফ'চিছ, উইপ্ৰ' আদি বৃহৎ IT কোম্পানি আছে।" }
+  },
+  {
+    emoji: "🔩",
+    en: { q: "What are industries that are run by a small number of workers, often at home or in a small workshop, called?", opts: ["Large-scale industries", "Public sector industries", "Cottage industries", "Mineral-based industries"], ans: 2, exp: "Cottage industries (also called household industries) are small-scale industries run by family members at home or in small workshops with simple tools. Examples: handloom weaving, pottery, basket making." },
+    hi: { q: "घर पर या छोटी कार्यशाला में कम कामगारों द्वारा चलाए जाने वाले उद्योग को क्या कहते हैं?", opts: ["वृहत् उद्योग", "सार्वजनिक क्षेत्र उद्योग", "कुटीर उद्योग", "खनिज आधारित उद्योग"], ans: 2, exp: "कुटीर उद्योग घर या छोटी कार्यशाला में सरल उपकरणों से चलाए जाते हैं। जैसे हथकरघा, मिट्टी के बर्तन।" },
+    as: { q: "ঘৰত বা সৰু কৰ্মশালাত কম কৰ্মীৰে পৰিচালিত উদ্যোগক কি বোলা হয়?", opts: ["বৃহৎ উদ্যোগ", "ৰাজহুৱা খণ্ডৰ উদ্যোগ", "কুটীৰ শিল্প", "খনিজ-ভিত্তিক উদ্যোগ"], ans: 2, exp: "কুটীৰ শিল্প ঘৰত বা সৰু কৰ্মশালাত সৰল সঁজুলিৰে পৰিচালিত হয়। যেনে: হস্তশিল্প, মৃৎশিল্প।" }
+  },
+  {
+    emoji: "🏭",
+    en: { q: "Which factor is most important for the location of cotton textile industry?", opts: ["Proximity to coal mines", "Humid climate and cotton growing regions", "Cold climate", "Proximity to iron ore"], ans: 1, exp: "Cotton textile industries are located near cotton-producing areas and humid climate regions because humidity prevents yarn from breaking during spinning. Mumbai is a major cotton textile centre due to humid climate from the sea." },
+    hi: { q: "सूती वस्त्र उद्योग के स्थानीयकरण के लिए कौन-सा कारक सबसे महत्वपूर्ण है?", opts: ["कोयला खदानों से निकटता", "आर्द्र जलवायु और कपास उत्पादक क्षेत्र", "ठंडी जलवायु", "लौह अयस्क से निकटता"], ans: 1, exp: "सूती वस्त्र उद्योग आर्द्र जलवायु में स्थित होते हैं क्योंकि नमी धागे को टूटने से बचाती है।" },
+    as: { q: "কপাহ বস্ত্ৰ উদ্যোগৰ অৱস্থানৰ বাবে কোন কাৰক আটাইতকৈ গুৰুত্বপূৰ্ণ?", opts: ["কয়লা খনিৰ ওচৰত", "আৰ্দ্ৰ জলবায়ু আৰু কপাহ উৎপাদক অঞ্চল", "ঠাণ্ডা জলবায়ু", "লো আকৰিৰ ওচৰত"], ans: 1, exp: "কপাহ বস্ত্ৰ উদ্যোগ আৰ্দ্ৰ জলবায়ুত থাকে কাৰণ আৰ্দ্ৰতাই সূতা ছিঙা ৰোধ কৰে।" }
+  },
+  {
+    emoji: "⚙️",
+    en: { q: "What does 'dependency ratio' mean in the context of human resources?", opts: ["Ratio of literate to illiterate people", "Ratio of non-working population to working population", "Ratio of urban to rural population", "Ratio of men to women"], ans: 1, exp: "The dependency ratio is the ratio of the dependent (non-working) population — children and elderly — to the working population. A high dependency ratio means more burden on working people." },
+    hi: { q: "मानव संसाधन के संदर्भ में 'निर्भरता अनुपात' का क्या अर्थ है?", opts: ["साक्षर और निरक्षर का अनुपात", "गैर-कामकाजी और कामकाजी आबादी का अनुपात", "शहरी और ग्रामीण का अनुपात", "पुरुष और महिला का अनुपात"], ans: 1, exp: "निर्भरता अनुपात = आश्रित (गैर-कामकाजी) आबादी / कार्यरत आबादी। यह अधिक होने पर कामगारों पर भार बढ़ता है।" },
+    as: { q: "মানৱ সম্পদৰ প্ৰসংগত 'নিৰ্ভৰশীলতা অনুপাত'ৰ অৰ্থ কি?", opts: ["সাক্ষৰ আৰু নিৰক্ষৰৰ অনুপাত", "অকৰ্মী আৰু কৰ্মী জনসংখ্যাৰ অনুপাত", "চহৰীয়া আৰু গ্ৰামাঞ্চলৰ অনুপাত", "পুৰুষ আৰু মহিলাৰ অনুপাত"], ans: 1, exp: "নিৰ্ভৰশীলতা অনুপাত = অকৰ্মী জনসংখ্যা / কৰ্মী জনসংখ্যা। এই অনুপাত বেছি হ'লে কৰ্মীসকলৰ ওপৰত ভাৰ বাঢ়ে।" }
+  },
+  {
+    emoji: "🔩",
+    en: { q: "Tertiary sector industries include which of the following?", opts: ["Mining and quarrying", "Manufacturing and construction", "Trade, transport, and services", "Agriculture and forestry"], ans: 2, exp: "Tertiary industries provide services rather than producing goods. They include trade, transport, communication, banking, tourism, IT services, health, and education. They are also called the 'service sector'." },
+    hi: { q: "तृतीयक क्षेत्र के उद्योगों में क्या शामिल है?", opts: ["खनन और उत्खनन", "विनिर्माण और निर्माण", "व्यापार, परिवहन और सेवाएँ", "कृषि और वानिकी"], ans: 2, exp: "तृतीयक उद्योग सेवाएँ प्रदान करते हैं — व्यापार, परिवहन, बैंकिंग, पर्यटन, शिक्षा आदि।" },
+    as: { q: "তৃতীয় খণ্ডৰ উদ্যোগত কি অন্তৰ্ভুক্ত?", opts: ["খনন আৰু উৎখনন", "উৎপাদন আৰু নিৰ্মাণ", "ব্যৱসায়, পৰিবহন আৰু সেৱা", "কৃষি আৰু বনপালন"], ans: 2, exp: "তৃতীয় খণ্ডৰ উদ্যোগত ব্যৱসায়, পৰিবহন, বেংকিং, পৰ্যটন, শিক্ষা আদি অন্তৰ্ভুক্ত।" }
+  },
+  {
+    emoji: "🏭",
+    en: { q: "Which of the following best defines 'human resources'?", opts: ["Only the workforce in factories", "The people of a country with their education, skills, and productivity", "Only literate adults in a country", "Population of working-age men only"], ans: 1, exp: "Human resources refer to the entire population of a country considered as economic assets — their education, skills, health, and work capacity. Skilled and educated people are the most valuable human resource." },
+    hi: { q: "निम्न में से 'मानव संसाधन' को सबसे अच्छी तरह कौन परिभाषित करता है?", opts: ["केवल कारखानों में कार्यरत लोग", "देश के लोग अपनी शिक्षा, कौशल और उत्पादकता के साथ", "केवल एक देश में साक्षर वयस्क", "केवल कामकाजी उम्र के पुरुष"], ans: 1, exp: "मानव संसाधन किसी देश की पूरी जनसंख्या को संदर्भित करता है — उनकी शिक्षा, कौशल, स्वास्थ्य और कार्य क्षमता।" },
+    as: { q: "তলৰ কোনটোৱে 'মানৱ সম্পদ'ক সৰ্বোত্তমভাৱে সংজ্ঞায়িত কৰে?", opts: ["কেৱল কাৰখানাত কৰ্মৰত লোক", "দেশৰ জনসংখ্যা তেওঁলোকৰ শিক্ষা, দক্ষতা আৰু উৎপাদনশীলতাসহ", "কেৱল সাক্ষৰ প্ৰাপ্তবয়স্ক", "কেৱল কৰ্মক্ষম বয়সৰ পুৰুষ"], ans: 1, exp: "মানৱ সম্পদ বুলিলে দেশৰ সমগ্ৰ জনসংখ্যাক বুজায় — তেওঁলোকৰ শিক্ষা, দক্ষতা, স্বাস্থ্য আৰু কৰ্মক্ষমতাসহ।" }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.trim() === (l==='en'?'EN':l==='hi'?'हि':'অ'));
+  });
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (current >= questions.length) { showEnd(); return; }
+  const q = questions[current];
+  const d = q[lang];
+  const pct = ((current + 1) / questions.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('qNum').textContent = current + 1;
+  document.getElementById('qNumHi').textContent = current + 1;
+  document.getElementById('qNumAs').textContent = current + 1;
+
+  const labels = ['A','B','C','D'];
+  let optsHTML = d.opts.map((o, i) => `
+    <button class="opt-btn" onclick="selectAnswer(${i})" id="opt${i}">
+      <span class="opt-label">${labels[i]}</span>${o}
+    </button>`).join('');
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="card">
+      <div class="q-meta"><span class="q-num">${current+1}</span><span>Question ${current+1} of 10</span></div>
+      <div class="scene-emoji">${q.emoji}</div>
+      <div class="question">${d.q}</div>
+      <div class="options">${optsHTML}</div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+        ${lang==='en'?'Next →':lang==='hi'?'आगे →':'পৰৱৰ্তী →'}
+      </button>
+    </div>`;
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const d = q[lang];
+  const correct = d.ans;
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === correct) {
+    btns[idx].classList.add('correct');
+    score += 10;
+    document.getElementById('scoreLive').textContent = score;
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = `<span class="fb-icon">✅</span>${d.exp}`;
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[correct].classList.add('correct');
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = `<span class="fb-icon">❌</span>${d.exp}`;
+  }
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQuestion() {
+  current++;
+  renderQuestion();
+}
+
+function showEnd() {
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'none';
+  const end = document.getElementById('endScreen');
+  end.classList.add('show');
+  document.getElementById('finalScore').textContent = score;
+  const pct = score;
+  let stars = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : pct >= 40 ? '⭐' : '☆☆☆';
+  document.getElementById('starsDisplay').textContent = stars;
+}
+
+function restartQuiz() {
+  current = 0; score = 0;
+  document.getElementById('scoreLive').textContent = 0;
+  document.getElementById('progressWrap').style.display = '';
+  document.getElementById('quizArea').style.display = '';
+  document.getElementById('endScreen').classList.remove('show');
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media Literacy Lab — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#1A0F00 0%,#0F0800 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(255,159,28,.13),rgba(255,159,28,.04));border:1px solid rgba(255,159,28,.3);border-radius:16px;padding:16px;margin-bottom:16px}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(255,159,28,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--orange);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:700}
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.45}
+
+/* Newspaper-style text blocks */
+.media-card{border-radius:14px;padding:14px;margin-bottom:12px;font-family:'Crimson Pro',serif;font-size:.95rem;line-height:1.65;color:var(--text)}
+.media-card .media-type-tag{font-family:'Baloo 2',cursive;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;display:inline-block;padding:3px 10px;border-radius:100px}
+.media-card .headline{font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:800;margin-bottom:8px;line-height:1.3}
+.media-card .body-text{font-size:.88rem;line-height:1.6}
+.news-card{background:rgba(76,201,240,.06);border:1px solid rgba(76,201,240,.2)}
+.news-card .media-type-tag{background:rgba(76,201,240,.15);color:#4CC9F0}
+.opinion-card{background:rgba(255,159,28,.06);border:1px solid rgba(255,159,28,.2)}
+.opinion-card .media-type-tag{background:rgba(255,159,28,.15);color:var(--orange)}
+.ad-card{background:rgba(255,209,102,.05);border:1px solid rgba(255,209,102,.2)}
+.ad-card .media-type-tag{background:rgba(255,209,102,.15);color:var(--gold)}
+.social-card{background:rgba(199,125,255,.06);border:1px solid rgba(199,125,255,.2)}
+.social-card .media-type-tag{background:rgba(199,125,255,.15);color:var(--purple)}
+
+/* Highlighted persuasive technique */
+.highlight-technique{background:rgba(255,209,102,.2);border-radius:4px;padding:1px 4px;cursor:pointer;border-bottom:2px solid var(--gold);transition:all .2s}
+.highlight-technique:hover{background:rgba(255,209,102,.35)}
+.highlight-technique.tagged{background:rgba(6,214,160,.2);border-color:var(--teal)}
+
+/* Technique chips */
+.technique-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.tech-chip{background:rgba(255,159,28,.08);border:2px solid rgba(255,159,28,.2);border-radius:100px;padding:7px 13px;font-size:.8rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s}
+.tech-chip:hover{border-color:var(--orange);background:rgba(255,159,28,.15)}
+.tech-chip.selected{border-color:var(--gold);background:rgba(255,209,102,.15);color:var(--gold)}
+.tech-chip.correct-tech{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal)}
+.tech-chip.wrong-tech{border-color:var(--coral);background:rgba(255,107,107,.12);color:var(--coral)}
+
+/* Reliability meter */
+.reliability-meter{margin-bottom:12px}
+.meter-label{font-size:.75rem;color:var(--dim);margin-bottom:6px;display:flex;justify-content:space-between}
+.meter-bar{height:10px;background:rgba(255,159,28,.1);border-radius:100px;overflow:hidden}
+.meter-fill{height:100%;border-radius:100px;transition:width .6s ease}
+
+/* Options */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(255,159,28,.07);border:2px solid rgba(255,159,28,.2);border-radius:14px;padding:12px 8px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--orange);background:rgba(255,159,28,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+.opt-btn-full{grid-column:1/-1;font-size:.88rem;padding:12px}
+
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.92rem;font-weight:600;min-height:26px;margin:10px 0 4px}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+
+.fact-opinion-tag{display:inline-flex;align-items:center;gap:5px;border-radius:100px;padding:5px 12px;font-size:.75rem;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.tag-fact{background:rgba(76,201,240,.1);color:#4CC9F0;border-color:rgba(76,201,240,.2)}
+.tag-opinion{background:rgba(255,159,28,.1);color:var(--orange);border-color:rgba(255,159,28,.2)}
+.tag-fact:hover{border-color:#4CC9F0}
+.tag-opinion:hover{border-color:var(--orange)}
+.tag-fact.active-tag{background:rgba(76,201,240,.25);border-color:#4CC9F0;font-weight:800}
+.tag-opinion.active-tag{background:rgba(255,159,28,.25);border-color:var(--orange);font-weight:800}
+.statement-row{background:rgba(255,159,28,.04);border:1px solid rgba(255,159,28,.1);border-radius:12px;padding:12px;margin-bottom:8px}
+.statement-text{font-size:.88rem;margin-bottom:8px;color:var(--text);line-height:1.5;font-style:italic}
+.tag-row{display:flex;gap:8px}
+
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#0F0800 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--orange);color:var(--orange);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.play-again-btn:hover{background:rgba(255,159,28,.1)}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(255,159,28,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stage-transition{background:linear-gradient(135deg,rgba(255,159,28,.1),rgba(255,159,28,.03));border:1px solid rgba(255,159,28,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--orange);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">📰 Media Literacy Lab</div>
+      <span class="subject-tag">English · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="wow-emoji">🚨</span>
+    <div class="wow-text">In 2016, a fake news story was shared <strong>1 MILLION times</strong> before it was debunked. One convincing lie can spread further than a thousand truths. <strong>Reading critically is a survival skill!</strong></div>
+  </div>
+
+  <div id="gameArea"></div>
+
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Question 1 of 11</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+/* Stage 1: Identify author's purpose / text type (4 Qs) */
+const S1 = [
+  {
+    cardClass:'news-card', type:'NEWS REPORT',
+    headline:'Flood Waters Rise in Majuli; 200 Families Displaced',
+    body:'Heavy rains in Assam caused the Brahmaputra to overflow on Tuesday. District officials confirmed that 200 families were moved to relief camps. The flood alert remains at level 3.',
+    q:'What is the author\'s PRIMARY purpose in this text?',
+    correct:'To inform with facts',
+    opts:['To entertain readers','To sell something','To share an opinion','To inform with facts'],
+    fact:'News reports aim to INFORM. They stick to facts: who, what, when, where, why. Notice no emotional language or personal opinion!'
+  },
+  {
+    cardClass:'opinion-card', type:'EDITORIAL / OPINION',
+    headline:'Our Schools Need Better Flood Preparedness — Now.',
+    body:'Every year, thousands of Assam\'s students miss weeks of school due to flooding. This is unacceptable. The government must invest in elevated school infrastructure immediately. Our children deserve better.',
+    q:'What technique does this editorial use to persuade you?',
+    correct:'Emotional language',
+    opts:['Statistics and data','Emotional language','A famous quote','A scientific study'],
+    fact:'"Unacceptable", "deserve better" — these are emotional words designed to make you feel something. Emotional language is a key persuasion technique!'
+  },
+  {
+    cardClass:'ad-card', type:'ADVERTISEMENT',
+    headline:'SuperMind Study Tablets — Proven to Boost Grades by 40%!',
+    body:'"My son went from average to top of class in just 3 months!" — Parent review. Order now and get 50% off. Limited offer! Join 1 million happy students today.',
+    q:'Which persuasive technique is used here?',
+    correct:'False urgency + testimonial',
+    opts:['Scientific evidence','False urgency + testimonial','Expert opinion','Statistical facts'],
+    fact:'"Limited offer!", a parent quote (testimonial), and unverified "40%" claim — advertisements use false urgency and testimonials without real proof!'
+  },
+  {
+    cardClass:'social-card', type:'SOCIAL MEDIA POST',
+    headline:'SHARE THIS! Government hiding water crisis from public!',
+    body:'My friend\'s uncle works in the water department and says the real numbers are 10x worse. They\'re not telling us the truth. RT if you care about your health!',
+    q:'Why is this post LEAST reliable as a news source?',
+    correct:'Anonymous source, no evidence',
+    opts:['It is too short','It mentions the government','Anonymous source, no evidence','It asks you to share'],
+    fact:'Reliable sources name their sources and provide verifiable evidence. "My friend\'s uncle" is anonymous hearsay — impossible to check!'
+  },
+];
+
+/* Stage 2: Fact vs Opinion tagging (4 Qs — one question has 2 statements) */
+const S2 = [
+  {
+    statements:[
+      {text:'The Brahmaputra river flows through Assam.', correct:'FACT', fact:'This can be verified on any map — it\'s a fact!'},
+      {text:'The Brahmaputra is the most beautiful river in India.', correct:'OPINION', fact:'"Most beautiful" is a judgment — different people may disagree. Opinion!'},
+    ]
+  },
+  {
+    statements:[
+      {text:'India\'s Constitution was adopted on 26 January 1950.', correct:'FACT', fact:'Historical records confirm this date — it\'s a verifiable fact!'},
+      {text:'India\'s Constitution is the most inspiring document ever written.', correct:'OPINION', fact:'"Most inspiring" depends on personal views — that\'s an opinion!'},
+    ]
+  },
+  {
+    statements:[
+      {text:'Kaziranga National Park has the world\'s largest population of one-horned rhinos.', correct:'FACT', fact:'This is verified by wildlife organisations — a fact!'},
+      {text:'Everyone should visit Kaziranga at least once in their life.', correct:'OPINION', fact:'"Everyone should" is a personal recommendation — an opinion!'},
+    ]
+  },
+  {
+    statements:[
+      {text:'Screens emit blue light that can affect sleep patterns.', correct:'FACT', fact:'This is scientifically documented — a fact!'},
+      {text:'Using phones at night is the worst habit a student can have.', correct:'OPINION', fact:'"Worst habit" is a value judgement — opinions can vary!'},
+    ]
+  },
+];
+
+/* Stage 3: Pick the most reliable source (3 Qs) */
+const S3 = [
+  {
+    q:'You want to find out the CORRECT procedure for voting in India. Which source is most reliable?',
+    correct:'Election Commission of India official website',
+    opts:['A WhatsApp forward','A political party\'s social media','Election Commission of India official website','An anonymous blog'],
+    fact:'Government official websites (.gov.in) are primary sources — they publish verified, legally accurate information!'
+  },
+  {
+    q:'You want to know if a medicine is safe. Which source is most reliable?',
+    correct:'A doctor or the WHO website',
+    opts:['YouTube health channel','A friend\'s advice','A doctor or the WHO website','An online shopping review'],
+    fact:'Medical information should come from qualified professionals or international health bodies — not unverified online sources!'
+  },
+  {
+    q:'A news story says "Scientists PROVE chocolate cures all disease." What should you do FIRST?',
+    correct:'Check the original scientific study',
+    opts:['Share it immediately','Believe it — science said so','Check the original scientific study','Ask your friends if it\'s true'],
+    fact:'Good critical readers ALWAYS check the primary source. Headlines often exaggerate or distort what scientists actually found!'
+  },
+];
+
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+const TOTAL=11; let qIdx=0,stg=1,score=0,answered=false,foAnswers={};
+
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  const C=['#FFD166','#FF9F1C','#06D6A0','#C77DFF','#4CC9F0'];
+  for(let i=0;i<28;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+}
+function updateStars(){const lit=Math.min(5,Math.ceil(score*5/TOTAL));for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.toggle('lit',i<=lit)}
+function showOverlay(emoji,title,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovFact').textContent=fact;document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay');ov.classList.add('show');
+  if(!isEnd)setTimeout(()=>ov.classList.remove('show'),2700);
+}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(q){document.getElementById('progressLabel').textContent=`Question ${q} of ${TOTAL}`}
+
+function renderS1(i){
+  setProgress(i+1);answered=false;showNext(false);
+  const q=S1[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🔍 Stage 1 — Read & Analyse</div>
+      <div class="media-card ${q.cardClass}">
+        <div class="media-type-tag">${q.type}</div>
+        <div class="headline">${q.headline}</div>
+        <div class="body-text">${q.body}</div>
+      </div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS1('${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}','${q.fact.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS1(sel,correct,fact,btn){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct');score++;updateStars();
+    fb.textContent=cheer()+'  Correct!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('📰',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function renderS2(i){
+  setProgress(S1.length+i+1);answered=false;showNext(false);foAnswers={};
+  const q=S2[i];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🏷️ Stage 2 — Fact or Opinion?</div>
+      <div class="question-text">Tag each statement as FACT or OPINION, then confirm:</div>
+      ${q.statements.map((s,si)=>`
+        <div class="statement-row" id="srow${si}">
+          <div class="statement-text">"${s.text}"</div>
+          <div class="tag-row">
+            <div class="fact-opinion-tag tag-fact" onclick="tagFO(${si},'FACT','${s.correct}',this,${i})">✅ FACT</div>
+            <div class="fact-opinion-tag tag-opinion" onclick="tagFO(${si},'OPINION','${s.correct}',this,${i})">💭 OPINION</div>
+          </div>
+        </div>`).join('')}
+      <button class="confirm-btn" id="foConfirm" onclick="confirmFO(${i})" style="background:var(--orange);color:#060A10;border:none;border-radius:100px;padding:10px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;width:100%;margin-top:8px;opacity:.4;pointer-events:none">Confirm Tags →</button>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function tagFO(si,tag,correct,el,qi){
+  foAnswers[si]=tag;
+  const row=document.getElementById('srow'+si);
+  row.querySelectorAll('.fact-opinion-tag').forEach(t=>t.classList.remove('active-tag'));
+  el.classList.add('active-tag');
+  const q=S2[qi];
+  if(Object.keys(foAnswers).length===q.statements.length){
+    const btn=document.getElementById('foConfirm');
+    if(btn){btn.style.opacity='1';btn.style.pointerEvents='auto'}
+  }
+}
+function confirmFO(qi){
+  if(answered)return;answered=true;
+  const q=S2[qi];
+  document.getElementById('foConfirm').style.pointerEvents='none';
+  document.querySelectorAll('.fact-opinion-tag').forEach(t=>t.style.pointerEvents='none');
+  let correct=0;
+  q.statements.forEach((s,si)=>{
+    const row=document.getElementById('srow'+si);
+    const given=foAnswers[si];
+    if(given===s.correct){correct++;score++;updateStars();}
+    row.querySelectorAll('.fact-opinion-tag').forEach(t=>{
+      if(t.classList.contains('active-tag')){
+        t.style.borderColor=given===s.correct?'var(--teal)':'var(--coral)';
+        t.style.background=given===s.correct?'rgba(6,214,160,.2)':'rgba(255,107,107,.12)';
+        t.style.color=given===s.correct?'var(--teal)':'var(--coral)';
+      }
+      if(t.textContent.includes(s.correct)&&!t.classList.contains('active-tag')){
+        t.style.borderColor='var(--teal)';t.style.background='rgba(6,214,160,.15)';t.style.color='var(--teal)';
+      }
+    });
+  });
+  const fb=document.getElementById('fb');
+  if(correct===q.statements.length){
+    fb.textContent=cheer()+' Both correct!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🏷️',cheer(),'A FACT can be proven true or false. An OPINION is a belief or judgment that can vary.',false),300);
+  } else {
+    fb.textContent=correct+' of '+q.statements.length+' correct. A FACT can be verified; an OPINION is a judgment.';fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function renderS3(i){
+  setProgress(S1.length+S2.length+i+1);answered=false;showNext(false);
+  const q=S3[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🛡️ Stage 3 — Source Reliability</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid" style="grid-template-columns:1fr">
+        ${opts.map(o=>`<button class="opt-btn opt-btn-full" onclick="checkS3('${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}','${q.fact.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS3(sel,correct,fact,btn){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct');score++;updateStars();
+    fb.textContent=cheer()+'  Excellent critical thinking!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🛡️',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Best: '+correct+'. '+fact;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function nextQ(){
+  qIdx++;
+  if(stg===1){
+    if(qIdx<S1.length)renderS1(qIdx);
+    else{stg=2;qIdx=0;showTrans('🏷️','Stage 2: Fact or Opinion?','Can you tell what\'s proven from what\'s just someone\'s view? Tag each statement.',()=>renderS2(0))}
+  } else if(stg===2){
+    if(qIdx<S2.length)renderS2(qIdx);
+    else{stg=3;qIdx=0;showTrans('🛡️','Stage 3: Source Reliability!','Not all sources are equal. Who can you actually trust for accurate information?',()=>renderS3(0))}
+  } else {
+    if(qIdx<S3.length)renderS3(qIdx);
+    else endGame();
+  }
+}
+function showTrans(emoji,title,desc,cb){
+  showNext(false);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="stage-transition">
+      <div style="font-size:2.5rem">${emoji}</div>
+      <h3>${title}</h3><p>${desc}</p>
+    </div>`;
+  const nb=document.getElementById('nextBtn');
+  nb.textContent='Start →';nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →';nb.onclick=nextQ;cb()};
+}
+function endGame(){
+  confetti();
+  const medals=['Media Learner 🌱','Critical Reader 🔍','Media Detective 📰','Fact Checker 🏆','Media Legend 🌟'];
+  const medal=medals[Math.min(4,Math.floor(score*5/TOTAL))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--orange);margin:10px 0">${score} / ${TOTAL}</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        In a world of 500 million pieces of content published every day, critical reading is your superpower. Pause. Question. Verify. You now know how.
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  document.getElementById('progressLabel').textContent=`Final Score: ${score}/${TOTAL}`;
+  showNext(false);
+}
+function resetGame(){
+  qIdx=0;stg=1;score=0;answered=false;foAnswers={};
+  for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.remove('lit');
+  const nb=document.getElementById('nextBtn');nb.textContent='Next →';nb.onclick=nextQ;
+  renderS1(0);
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{document.getElementById('overlay').classList.remove('show');resetGame()});
+renderS1(0);
+</script>
+</body>
+</html>

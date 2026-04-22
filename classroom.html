@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GyanPlay — Classroom</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --saffron: #FF6B00;
+      --gold:    #FFB800;
+      --sky:     #00AEEF;
+      --green:   #00C853;
+      --pink:    #FF4081;
+      --purple:  #7C3AED;
+      --dark:    #1A1A2E;
+      --dark2:   #16213E;
+      --bg:      #F4F6FB;
+      --card:    #ffffff;
+      --muted:   #7a7a9a;
+      --shadow:  0 4px 24px rgba(26,26,46,0.10);
+      --radius:  16px;
+      --class-color: #00AEEF;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      min-height: 100vh;
+      animation: pageIn 0.35s ease;
+    }
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--dark);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 1rem; }
+    .logo {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800; font-size: 1.4rem;
+      color: var(--gold); text-decoration: none;
+    }
+    .logo span { color: var(--sky); }
+    .class-badge {
+      background: rgba(255,184,0,0.15);
+      border: 1px solid rgba(255,184,0,0.3);
+      color: var(--gold);
+      font-weight: 700; font-size: 0.8rem;
+      padding: 3px 12px; border-radius: 20px;
+    }
+    .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+    .lang-toggle {
+      display: flex; gap: 3px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 30px; padding: 3px;
+    }
+    .lang-toggle button {
+      border: none; background: transparent;
+      color: rgba(255,255,255,0.4);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700; font-size: 0.72rem;
+      padding: 3px 9px; border-radius: 20px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .lang-toggle button.active { background: var(--gold); color: var(--dark); }
+    .back-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.7);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700; font-size: 0.82rem;
+      padding: 6px 14px; border-radius: 30px;
+      text-decoration: none; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; font-weight: 600;
+      color: rgba(255,255,255,0.4);
+    }
+    .breadcrumb a {
+      color: rgba(255,255,255,0.4); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .breadcrumb a:hover { color: rgba(255,255,255,0.85); }
+    .breadcrumb-sep { font-size: 0.7rem; opacity: 0.4; }
+    .breadcrumb-current { color: rgba(255,255,255,0.85); }
+
+    /* ── CLASS HERO ── */
+    .class-hero {
+      background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 100%);
+      padding: 2rem 1.5rem 0;
+      position: relative; overflow: hidden;
+    }
+    .class-hero::before {
+      content: '';
+      position: absolute;
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(255,107,0,0.18), transparent 70%);
+      top: -100px; right: -80px; border-radius: 50%;
+    }
+    .hero-inner {
+      max-width: 1000px; margin: 0 auto;
+      display: flex; align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+      position: relative; z-index: 1;
+    }
+    .hero-text h1 {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800; font-size: clamp(1.6rem, 4vw, 2.2rem);
+      color: #fff; margin-bottom: 0.3rem;
+    }
+    .hero-text p { color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .hero-emoji {
+      font-size: 5rem; line-height: 1;
+      animation: bob 3s ease-in-out infinite;
+    }
+    @keyframes bob {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+
+    /* ── AI TEACHER HERO BUTTON ── */
+    .ai-hero-btn {
+      display: none; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, #7C3AED, #9333EA);
+      border: none; cursor: pointer; color: #fff;
+      font-family: 'Baloo 2', cursive; font-weight: 700;
+      font-size: 1rem; padding: 12px 26px; border-radius: 50px;
+      box-shadow: 0 8px 30px rgba(124,58,237,0.55);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative; margin-top: 1rem;
+      white-space: nowrap; letter-spacing: 0.2px;
+    }
+    .ai-hero-btn.visible { display: flex; animation: fabPop 0.45s cubic-bezier(.34,1.56,.64,1); }
+    .ai-hero-btn:hover { transform: scale(1.05); box-shadow: 0 14px 40px rgba(124,58,237,0.7); }
+    .ai-fab-dot {
+      position: absolute; top: 6px; right: 8px;
+      width: 10px; height: 10px;
+      background: var(--gold); border-radius: 50%;
+      border: 2px solid #7C3AED;
+      animation: fabDotPulse 2s infinite;
+    }
+    @keyframes fabPop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes fabDotPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+
+    /* ── SUBJECT TABS ── */
+    .tabs-bar {
+      background: var(--dark2);
+      border-bottom: 2px solid rgba(255,255,255,0.06);
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .tabs-bar::-webkit-scrollbar { display: none; }
+    .tabs-inner {
+      max-width: 1000px; margin: 0 auto;
+      display: flex; gap: 0; padding: 0 1.5rem;
+    }
+    .tab {
+      display: flex; align-items: center; gap: 6px;
+      padding: 14px 18px;
+      font-weight: 700; font-size: 0.88rem;
+      color: rgba(255,255,255,0.45);
+      cursor: pointer; white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      background: none; border-top: none;
+      border-left: none; border-right: none;
+      font-family: 'Nunito', sans-serif;
+    }
+    .tab:hover { color: rgba(255,255,255,0.75); }
+    .tab.active { color: #fff; border-bottom-color: var(--gold); }
+    .tab-count {
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 1px 7px;
+      font-size: 0.7rem; font-weight: 800;
+    }
+    .tab.active .tab-count { background: var(--gold); color: var(--dark); }
+    .tab[data-subject="maths"].active      { border-bottom-color: #FF6B00; color: #FF6B00; }
+    .tab[data-subject="english"].active    { border-bottom-color: #00AEEF; color: #00AEEF; }
+    .tab[data-subject="science"].active    { border-bottom-color: #00C853; color: #00C853; }
+    .tab[data-subject="social"].active     { border-bottom-color: #FF4081; color: #FF4081; }
+    .tab[data-subject="hindi"].active      { border-bottom-color: #7C3AED; color: #7C3AED; }
+    .tab[data-subject="computer"].active   { border-bottom-color: #2196F3; color: #2196F3; }
+    .tab[data-subject="all"].active        { border-bottom-color: var(--gold); color: var(--gold); }
+
+    /* ── PAGE ── */
+    .page {
+      max-width: 1000px; margin: 0 auto;
+      padding: 2rem 1.5rem 6rem;
+    }
+
+    /* ── EXPIRY NOTICE ── */
+    .expiry-notice {
+      background: rgba(255,107,0,0.08);
+      border: 1.5px solid rgba(255,107,0,0.2);
+      border-radius: 14px; padding: 12px 18px;
+      font-size: 0.88rem; color: var(--saffron);
+      font-weight: 600; margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-section {
+      background: var(--card); border-radius: 20px;
+      padding: 1.25rem 1.5rem; box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+    }
+    .progress-label { font-weight: 700; font-size: 0.88rem; color: var(--muted); white-space: nowrap; }
+    .progress-bar-wrap {
+      flex: 1; min-width: 120px;
+      height: 10px; background: #eef; border-radius: 10px; overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%; border-radius: 10px;
+      background: linear-gradient(90deg, var(--saffron), var(--gold));
+      transition: width 0.6s ease;
+    }
+    .progress-count {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700; font-size: 1rem;
+      color: var(--saffron); white-space: nowrap;
+    }
+
+    /* ── SEARCH BAR ── */
+    .search-bar-wrap {
+      position: relative; margin-bottom: 1rem;
+    }
+    .search-icon {
+      position: absolute; left: 16px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem; pointer-events: none; opacity: 0.4;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--card);
+      border: 2px solid #e8e8f0;
+      border-radius: 40px;
+      padding: 11px 48px 11px 46px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.93rem; font-weight: 600;
+      color: var(--dark); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: var(--shadow);
+    }
+    .search-input:focus { border-color: var(--class-color); box-shadow: 0 0 0 3px rgba(0,174,239,0.12); }
+    .search-input::placeholder { color: var(--muted); font-weight: 500; }
+    .clear-search {
+      display: none; position: absolute;
+      right: 14px; top: 50%; transform: translateY(-50%);
+      background: rgba(0,0,0,0.08); border: none; border-radius: 50%;
+      width: 26px; height: 26px; cursor: pointer;
+      font-size: 0.8rem; color: var(--muted); transition: background 0.2s;
+    }
+    .clear-search.show { display: flex; align-items: center; justify-content: center; }
+    .clear-search:hover { background: rgba(0,0,0,0.14); }
+    .search-results-info {
+      font-size: 0.82rem; color: var(--muted);
+      font-weight: 600; margin-bottom: 0.75rem;
+      padding-left: 4px; display: none;
+    }
+    .search-results-info.show { display: block; }
+
+    /* ── GAMES GRID ── */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* ── GAME CARD ── */
+    .game-card {
+      background: var(--card);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 2px solid transparent;
+      position: relative;
+      opacity: 0; transform: translateY(16px);
+      animation: cardFadeIn 0.35s ease forwards;
+    }
+    @keyframes cardFadeIn { to { opacity: 1; transform: translateY(0); } }
+    .game-card:nth-child(1)  { animation-delay: 0.02s; }
+    .game-card:nth-child(2)  { animation-delay: 0.05s; }
+    .game-card:nth-child(3)  { animation-delay: 0.08s; }
+    .game-card:nth-child(4)  { animation-delay: 0.11s; }
+    .game-card:nth-child(5)  { animation-delay: 0.14s; }
+    .game-card:nth-child(6)  { animation-delay: 0.17s; }
+    .game-card:nth-child(n+7){ animation-delay: 0.20s; }
+    .game-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.14);
+      border-color: var(--gold);
+    }
+    .game-card.played { border-color: var(--green); }
+    .game-card.locked { cursor: default; }
+    .game-card.locked:hover { transform: none; box-shadow: var(--shadow); border-color: transparent; }
+
+    .game-thumb {
+      height: 120px; display: flex; align-items: center;
+      justify-content: center; font-size: 3.5rem;
+      position: relative; overflow: hidden;
+    }
+    .thumb-maths    { background: linear-gradient(135deg, #FFF0E6, #FFD5B8); }
+    .thumb-english  { background: linear-gradient(135deg, #E6F6FF, #B8E2FF); }
+    .thumb-science  { background: linear-gradient(135deg, #E6FFF0, #B8FFD5); }
+    .thumb-social   { background: linear-gradient(135deg, #FFE6F0, #FFB8D5); }
+    .thumb-hindi    { background: linear-gradient(135deg, #F0E6FF, #D5B8FF); }
+    .thumb-computer { background: linear-gradient(135deg, #E8F4FF, #B8D9FF); }
+
+    .played-check {
+      position: absolute; top: 8px; right: 10px;
+      background: var(--green); color: #fff;
+      font-size: 0.7rem; font-weight: 800;
+      padding: 3px 8px; border-radius: 20px;
+    }
+    .demo-tag, .new-tag {
+      position: absolute;
+      font-size: 0.62rem; font-weight: 800;
+      padding: 3px 8px; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 0.5px; color: #fff;
+    }
+    .demo-tag { top: 8px; left: 10px; background: var(--green); }
+    .new-tag  { top: 8px; right: 10px; background: var(--sky); }
+
+    .lock-overlay {
+      position: absolute; inset: 0;
+      background: rgba(26,26,46,0.6);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 5px; backdrop-filter: blur(3px);
+    }
+    .lock-icon  { font-size: 1.8rem; }
+    .lock-label {
+      font-size: 0.68rem; font-weight: 800;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+
+    .game-info { padding: 1rem; }
+    .game-title {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700; font-size: 1rem;
+      color: var(--dark); margin-bottom: 0.3rem;
+    }
+    .game-desc {
+      font-size: 0.8rem; color: var(--muted);
+      line-height: 1.5; margin-bottom: 0.75rem;
+    }
+    .play-btn {
+      display: flex; align-items: center; justify-content: center;
+      gap: 6px;
+      background: var(--saffron); color: #fff;
+      font-weight: 700; font-size: 0.82rem;
+      padding: 8px 0; border-radius: 10px;
+      border: none; cursor: pointer; width: 100%;
+      transition: background 0.2s;
+    }
+    .play-btn:hover { background: #e55a00; }
+
+    /* ── EMPTY SLOTS ── */
+    .game-card.empty {
+      border: 2px dashed #dde; box-shadow: none;
+      cursor: default; opacity: 0.6 !important;
+      transform: none !important;
+    }
+    .game-card.empty:hover { border-color: #dde; }
+    .empty-slot-inner {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 200px; gap: 8px;
+      color: #aab; font-size: 0.85rem; font-weight: 600;
+    }
+    .empty-slot-inner span { font-size: 2rem; }
+
+    /* ── LOAD MORE ── */
+    .load-more-wrap { text-align: center; margin-top: 1.5rem; }
+    .load-more-btn {
+      background: var(--dark); color: #fff;
+      border: none; border-radius: 40px;
+      padding: 12px 36px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700; font-size: 0.9rem;
+      cursor: pointer; transition: background 0.2s, transform 0.15s;
+      display: none;
+    }
+    .load-more-btn.show { display: inline-block; }
+    .load-more-btn:hover { background: var(--dark2); transform: scale(1.03); }
+
+    /* ── NO RESULTS ── */
+    .no-results-msg {
+      text-align: center; padding: 3rem 1rem;
+      color: var(--muted); font-size: 1rem; font-weight: 600; display: none;
+    }
+    .no-results-msg.show { display: block; }
+    .no-results-msg .msg-icon { display: block; font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+    /* ── EMPTY STATE (no games for subject) ── */
+    .empty-state {
+      text-align: center; padding: 3rem 1rem;
+      color: var(--muted); display: none;
+    }
+    .empty-state.show { display: block; }
+    .empty-state .es-icon { font-size: 3rem; margin-bottom: 1rem; }
+
+    /* ── SKELETON LOADER ── */
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position:  400px 0; }
+    }
+    .skeleton-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+    .skeleton-card {
+      background: var(--card); border-radius: 20px;
+      overflow: hidden; box-shadow: var(--shadow);
+    }
+    .skeleton-thumb {
+      height: 120px;
+      background: linear-gradient(90deg, #e8e8f0 25%, #f4f4fa 50%, #e8e8f0 75%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s infinite linear;
+    }
+    .skeleton-body { padding: 1rem; }
+    .skeleton-line {
+      height: 12px; border-radius: 6px; margin-bottom: 10px;
+      background: linear-gradient(90deg, #e8e8f0 25%, #f4f4fa 50%, #e8e8f0 75%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s infinite linear;
+    }
+    .skeleton-line.short { width: 60%; }
+    .skeleton-btn {
+      height: 34px; border-radius: 10px; margin-top: 4px;
+      background: linear-gradient(90deg, #e8e8f0 25%, #f4f4fa 50%, #e8e8f0 75%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s infinite linear;
+    }
+
+    /* ── BUY BANNER (sticky bottom, shown for unpaid classes) ── */
+    .buy-banner {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 200;
+      background: linear-gradient(135deg, var(--dark2), var(--dark));
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 1rem 1.5rem;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.3);
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .buy-banner.visible { transform: translateY(0); }
+    .banner-text { flex: 1; min-width: 180px; }
+    .banner-text strong { display: block; color: #fff; font-size: 1rem; font-weight: 800; }
+    .banner-text span { color: rgba(255,255,255,0.55); font-size: 0.82rem; }
+    .banner-btn {
+      background: var(--gold); color: var(--dark);
+      font-family: 'Baloo 2', cursive; font-weight: 800;
+      font-size: 1rem; padding: 0.7rem 2rem;
+      border: none; border-radius: 50px; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(255,184,0,0.4);
+      transition: transform 0.15s; white-space: nowrap;
+    }
+    .banner-btn:hover { transform: scale(1.04); }
+
+    /* ── BACK TO TOP ── */
+    .back-to-top {
+      position: fixed; bottom: 5.5rem; right: 1.5rem;
+      z-index: 300; width: 44px; height: 44px;
+      border-radius: 50%; background: var(--dark);
+      color: #fff; font-size: 1.2rem;
+      border: none; cursor: pointer;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+    }
+    .back-to-top.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .back-to-top:hover { background: var(--dark2); }
+
+    /* ── GAME MODAL (iframe) ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(10,10,20,0.85);
+      z-index: 500; display: none;
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--dark); border-radius: 24px;
+      width: 100%; max-width: 900px; max-height: 90vh;
+      display: flex; flex-direction: column; overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    }
+    .modal-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .modal-title {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700; font-size: 1.1rem; color: #fff;
+    }
+    .modal-close {
+      background: rgba(255,255,255,0.1); border: none;
+      color: #fff; cursor: pointer;
+      width: 34px; height: 34px; border-radius: 50%;
+      font-size: 1.1rem; display: flex; align-items: center;
+      justify-content: center; transition: background 0.2s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.2); }
+    .modal-iframe {
+      flex: 1; border: none; min-height: 500px; background: #fff;
+    }
+    .modal-loading {
+      position: absolute;
+      display: flex; align-items: center; justify-content: center;
+      inset: 0; color: rgba(255,255,255,0.4);
+      font-size: 0.9rem; pointer-events: none;
+    }
+
+    /* ── PAYWALL MODAL ── */
+    .paywall-overlay {
+      position: fixed; inset: 0;
+      background: rgba(10,10,20,0.88);
+      z-index: 600; display: none;
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .paywall-overlay.open { display: flex; }
+    .paywall-box {
+      background: var(--dark); border-radius: 28px;
+      padding: 2.5rem 2rem; width: 100%; max-width: 420px;
+      text-align: center;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .paywall-emoji    { font-size: 3rem; margin-bottom: 0.75rem; }
+    .paywall-title    {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800; font-size: 1.5rem; color: #fff; margin-bottom: 0.4rem;
+    }
+    .paywall-sub      { font-size: 0.88rem; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem; line-height: 1.6; }
+    .paywall-price    { font-family: 'Baloo 2', cursive; font-size: 2.8rem; font-weight: 800; color: var(--gold); margin-bottom: 0.2rem; }
+    .paywall-price-note { font-size: 0.78rem; color: rgba(255,255,255,0.35); margin-bottom: 1.75rem; }
+    .paywall-buy-btn  {
+      width: 100%; padding: 14px;
+      background: var(--saffron); color: #fff;
+      font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 1.05rem;
+      border: none; border-radius: 14px; cursor: pointer;
+      transition: background 0.2s; margin-bottom: 0.75rem;
+    }
+    .paywall-buy-btn:hover { background: #e55a00; }
+    .paywall-cancel   {
+      font-size: 0.85rem; color: rgba(255,255,255,0.35);
+      cursor: pointer; background: none; border: none;
+      transition: color 0.2s; display: block; width: 100%; padding: 4px 0;
+    }
+    .paywall-cancel:hover  { color: rgba(255,255,255,0.7); }
+    .paywall-demos-note {
+      font-size: 0.75rem; color: rgba(255,255,255,0.28);
+      margin-top: 1.25rem; padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ── AI CHAT MODAL ── */
+    .chat-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(8,8,20,0.72);
+      backdrop-filter: blur(6px);
+      z-index: 450; display: flex;
+      align-items: center; justify-content: center; padding: 1.25rem;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .chat-modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .ai-chat-panel {
+      width: 100%; max-width: 740px;
+      height: 82vh; max-height: 720px;
+      background: var(--dark); border-radius: 24px;
+      box-shadow: 0 32px 90px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.08);
+      display: flex; flex-direction: column; overflow: hidden;
+      transform: scale(0.9) translateY(24px);
+      transition: transform 0.4s cubic-bezier(.34,1.2,.64,1);
+    }
+    .chat-modal-overlay.open .ai-chat-panel { transform: scale(1) translateY(0); }
+    .chat-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 1rem 1.25rem;
+      background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(147,51,234,0.1));
+      border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0;
+    }
+    .chat-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #7C3AED, #9333EA);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(124,58,237,0.4);
+    }
+    .chat-header-info { flex: 1; }
+    .chat-header-name { font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 1rem; color: #fff; line-height: 1.2; }
+    .chat-header-status { font-size: 0.72rem; color: var(--green); font-weight: 600; }
+    .chat-close-btn {
+      background: rgba(255,255,255,0.08); border: none;
+      color: rgba(255,255,255,0.6); width: 30px; height: 30px; border-radius: 50%;
+      cursor: pointer; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+    }
+    .chat-close-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    .chat-subjects {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      flex-shrink: 0; overflow-x: auto; scrollbar-width: none;
+    }
+    .chat-subjects::-webkit-scrollbar { display: none; }
+    .subject-pill {
+      padding: 4px 10px; border-radius: 20px;
+      font-size: 0.68rem; font-weight: 700; white-space: nowrap;
+      cursor: pointer; border: 1px solid rgba(255,255,255,0.15);
+      background: transparent; color: rgba(255,255,255,0.5);
+      transition: all 0.15s; font-family: 'Nunito', sans-serif;
+    }
+    .subject-pill:hover, .subject-pill.active {
+      background: rgba(124,58,237,0.25);
+      border-color: rgba(124,58,237,0.5); color: #fff;
+    }
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 1rem;
+      display: flex; flex-direction: column; gap: 0.75rem;
+      scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+    }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    .msg { display: flex; gap: 8px; animation: msgIn 0.25s ease; }
+    @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .msg.user { flex-direction: row-reverse; }
+    .msg-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(135deg, #7C3AED, #9333EA);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; flex-shrink: 0; align-self: flex-end;
+    }
+    .msg.user .msg-avatar { background: var(--saffron); }
+    .msg-bubble {
+      max-width: 78%; padding: 10px 14px; border-radius: 18px;
+      font-size: 0.875rem; line-height: 1.55; word-break: break-word;
+    }
+    .msg.bot .msg-bubble {
+      background: rgba(124,58,237,0.18);
+      border: 1px solid rgba(124,58,237,0.25);
+      color: rgba(255,255,255,0.92); border-bottom-left-radius: 4px;
+    }
+    .msg.user .msg-bubble { background: var(--saffron); color: #fff; border-bottom-right-radius: 4px; }
+    .typing-indicator {
+      display: flex; align-items: center; gap: 4px; padding: 10px 14px;
+      background: rgba(124,58,237,0.18); border: 1px solid rgba(124,58,237,0.25);
+      border-radius: 18px; border-bottom-left-radius: 4px; width: fit-content;
+    }
+    .typing-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,0.5); animation: typingBounce 1.2s infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+    .quick-questions { display: flex; gap: 6px; flex-wrap: wrap; padding: 0.5rem 1rem 0.25rem; }
+    .quick-q {
+      padding: 5px 12px; border-radius: 20px;
+      font-size: 0.7rem; font-weight: 600; cursor: pointer;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.6); transition: all 0.15s; font-family: 'Nunito', sans-serif;
+    }
+    .quick-q:hover { background: rgba(124,58,237,0.2); border-color: rgba(124,58,237,0.4); color: #fff; }
+    .chat-input-area {
+      display: flex; gap: 8px; padding: 0.875rem 1rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      flex-shrink: 0; align-items: flex-end;
+    }
+    .chat-input {
+      flex: 1; background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px; padding: 10px 16px;
+      color: #fff; font-family: 'Nunito', sans-serif;
+      font-size: 0.875rem; outline: none; resize: none;
+      min-height: 42px; max-height: 100px; line-height: 1.4;
+      transition: border-color 0.2s;
+    }
+    .chat-input::placeholder { color: rgba(255,255,255,0.3); }
+    .chat-input:focus { border-color: rgba(124,58,237,0.6); }
+    .chat-send-btn {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: linear-gradient(135deg, #7C3AED, #9333EA);
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 12px rgba(124,58,237,0.4);
+    }
+    .chat-send-btn:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(124,58,237,0.55); }
+    .chat-send-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .topbar { padding: 0 1rem; }
+      .breadcrumb { display: none; }
+      .class-hero { padding: 1.5rem 1rem 0; }
+      .hero-emoji { font-size: 3.5rem; }
+      .page { padding: 1.5rem 0.75rem 7rem; }
+      .games-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+      .game-thumb { height: 90px; font-size: 2.5rem; }
+      .game-info { padding: 0.75rem; }
+      .game-title { font-size: 0.9rem; }
+      .buy-banner { flex-direction: column; gap: 0.6rem; padding: 1rem; }
+      .back-to-top { bottom: 7.5rem; right: 1rem; }
+      .chat-modal-overlay { padding: 0; align-items: flex-end; }
+      .ai-chat-panel {
+        max-width: 100%; width: 100%;
+        height: 93vh; max-height: 93vh;
+        border-radius: 22px 22px 0 0;
+        transform: translateY(100%);
+      }
+      .chat-modal-overlay.open .ai-chat-panel { transform: translateY(0); }
+    }
+    @media (max-width: 380px) {
+      .games-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <nav class="topbar">
+    <div class="topbar-left">
+      <a class="back-btn" href="dashboard.html"
+         onclick="event.preventDefault();fadeOut(()=>location.href='dashboard.html')">
+        ← <span data-lang="en">Back</span>
+        <span data-lang="as" style="display:none">পিছলৈ</span>
+        <span data-lang="hi" style="display:none">वापस</span>
+      </a>
+      <a class="logo" href="index.html">Gyan<span>Play</span></a>
+      <span class="class-badge" id="topbarBadge">Class 1</span>
+    </div>
+    <div class="topbar-right">
+      <div class="lang-toggle">
+        <button class="active" onclick="setLang('en')">EN</button>
+        <button onclick="setLang('as')">অস</button>
+        <button onclick="setLang('hi')">हि</button>
+      </div>
+      <nav class="breadcrumb" aria-label="breadcrumb">
+        <a href="index.html">
+          <span data-lang="en">Home</span>
+          <span data-lang="as" style="display:none">হোম</span>
+          <span data-lang="hi" style="display:none">Home</span>
+        </a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="dashboard.html">
+          <span data-lang="en">Dashboard</span>
+          <span data-lang="as" style="display:none">ড্যাশব'ৰ্ড</span>
+          <span data-lang="hi" style="display:none">Dashboard</span>
+        </a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current" id="breadcrumbClass">Class 1</span>
+      </nav>
+    </div>
+  </nav>
+
+  <!-- CLASS HERO -->
+  <div class="class-hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <h1 id="heroTitle">Class 1</h1>
+        <p id="heroTagline">
+          <span data-lang="en">Games that teach core concepts</span>
+          <span data-lang="as" style="display:none">মূল ধাৰণা শিকোৱা গেম</span>
+          <span data-lang="hi" style="display:none">Core concepts सिखाने वाले Games</span>
+        </p>
+        <button class="ai-hero-btn" id="aiChatFab" onclick="toggleChat()" title="Ask your AI Teacher">
+          🤖
+          <span>
+            <span data-lang="en">Ask AI Teacher</span>
+            <span data-lang="as" style="display:none">AI শিক্ষকক সোধক</span>
+            <span data-lang="hi" style="display:none">AI Teacher से पूछें</span>
+          </span>
+          <span class="ai-fab-dot"></span>
+        </button>
+      </div>
+      <div class="hero-emoji" id="heroEmoji">🎒</div>
+    </div>
+
+    <!-- SUBJECT TABS — filled dynamically by JS -->
+    <div class="tabs-bar">
+      <div class="tabs-inner" id="tabsInner">
+        <!-- injected after games load -->
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE -->
+  <main class="page">
+
+    <!-- EXPIRY NOTICE -->
+    <div class="expiry-notice" id="expiryNotice" style="display:none">
+      ⚠️ <span id="expiryText"></span>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress-section">
+      <span class="progress-label">
+        <span data-lang="en">Games Played</span>
+        <span data-lang="as" style="display:none">খেলা গেম</span>
+        <span data-lang="hi" style="display:none">खेले गए Games</span>
+      </span>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <span class="progress-count" id="progressCount">0 / 0</span>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-bar-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="gameSearch"
+             placeholder="Search games..."
+             oninput="handleSearch()"/>
+      <button class="clear-search" id="clearSearchBtn" onclick="clearSearch()">✕</button>
+    </div>
+    <div class="search-results-info" id="searchInfo"></div>
+
+    <!-- SKELETON -->
+    <div class="skeleton-grid" id="skeletonGrid">
+      <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-btn"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-btn"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-btn"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-btn"></div></div></div>
+    </div>
+
+    <!-- GAMES GRID -->
+    <div class="games-grid" id="gamesGrid" style="display:none"></div>
+    <div class="no-results-msg" id="noResults"><span class="msg-icon">😕</span>No games found.</div>
+    <div class="empty-state" id="emptyState"><div class="es-icon">🎮</div><div>No games in this subject yet.</div></div>
+
+    <!-- LOAD MORE -->
+    <div class="load-more-wrap">
+      <button class="load-more-btn" id="loadMoreBtn" onclick="loadMore()">Show More Games</button>
+    </div>
+
+  </main>
+
+  <!-- BUY BANNER -->
+  <div class="buy-banner" id="buyBanner">
+    <div class="banner-text">
+      <strong id="bannerTitle">Unlock all games</strong>
+      <span id="bannerSub">Try 3 free demos. Buy once for full year access.</span>
+    </div>
+    <button class="banner-btn" id="bannerBtn" onclick="openPaywall()"></button>
+  </div>
+
+  <!-- PAYWALL MODAL -->
+  <div class="paywall-overlay" id="paywallModal">
+    <div class="paywall-box">
+      <div class="paywall-emoji">🔓</div>
+      <div class="paywall-title" data-lang="en">Unlock Full Access</div>
+      <div class="paywall-title" data-lang="as" style="display:none">সম্পূৰ্ণ প্ৰৱেশ খুলক</div>
+      <div class="paywall-title" data-lang="hi" style="display:none">Full Access Unlock करें</div>
+      <div class="paywall-sub" data-lang="en">Get unlimited access to all games in this class for a full year.</div>
+      <div class="paywall-sub" data-lang="as" style="display:none">এই শ্ৰেণীৰ সকলো গেমত এক বছৰৰ বাবে সীমাহীন প্ৰৱেশ পাওক।</div>
+      <div class="paywall-sub" data-lang="hi" style="display:none">इस class के सभी games में पूरे एक साल के लिए unlimited access पाएं।</div>
+      <div class="paywall-price" id="paywallPrice">₹—</div>
+      <div class="paywall-price-note" data-lang="en">One-time payment · 1 year access · All games included</div>
+      <div class="paywall-price-note" data-lang="as" style="display:none">এককালীন পেমেন্ট · ১ বছৰৰ প্ৰৱেশ</div>
+      <div class="paywall-price-note" data-lang="hi" style="display:none">एक बार payment · 1 साल access · सभी games शामिल</div>
+      <button class="paywall-buy-btn" onclick="goToPayment()">
+        <span data-lang="en">Buy Now — Unlock All Games</span>
+        <span data-lang="as" style="display:none">এতিয়া কিনক — সকলো গেম খুলক</span>
+        <span data-lang="hi" style="display:none">अभी खरीदें — सभी Games Unlock करें</span>
+      </button>
+      <button class="paywall-cancel" onclick="closePaywall()">
+        <span data-lang="en">Continue with free preview</span>
+        <span data-lang="as" style="display:none">বিনামূলীয়া প্ৰিভিউ জাৰি ৰাখক</span>
+        <span data-lang="hi" style="display:none">Free preview के साथ जारी रखें</span>
+      </button>
+      <div class="paywall-demos-note" data-lang="en">You can try 3 free demo games without buying.</div>
+      <div class="paywall-demos-note" data-lang="as" style="display:none">আপুনি কিনা নোহোৱাকৈ ৩টা বিনামূলীয়া গেম চেষ্টা কৰিব পাৰে।</div>
+      <div class="paywall-demos-note" data-lang="hi" style="display:none">बिना खरीदे 3 free demo games try कर सकते हैं।</div>
+    </div>
+  </div>
+
+  <!-- AI CHAT MODAL -->
+  <div class="chat-modal-overlay" id="chatOverlay" onclick="handleOverlayClick(event)">
+    <div class="ai-chat-panel" id="aiChatPanel">
+      <div class="chat-header">
+        <div class="chat-avatar">🤖</div>
+        <div class="chat-header-info">
+          <div class="chat-header-name" id="chatTeacherName">AI Teacher</div>
+          <div class="chat-header-status">● Online · Ready to help</div>
+        </div>
+        <button class="chat-close-btn" onclick="toggleChat()">✕</button>
+      </div>
+      <div class="chat-subjects" id="chatSubjects"></div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="quick-questions" id="quickQuestions"></div>
+      <div class="chat-input-area">
+        <textarea class="chat-input" id="chatInput"
+          placeholder="Ask your teacher anything..."
+          rows="1"
+          onkeydown="handleChatKey(event)"></textarea>
+        <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME MODAL (iframe) -->
+  <div class="modal-overlay" id="gameModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title" id="modalTitle">Game</span>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div style="position:relative; flex:1; display:flex;">
+        <div class="modal-loading" id="modalLoading">
+          <span data-lang="en">Loading game...</span>
+          <span data-lang="as" style="display:none">গেম লোড হৈছে...</span>
+          <span data-lang="hi" style="display:none">Game load हो रहा है...</span>
+        </div>
+        <iframe class="modal-iframe" id="gameFrame"
+          onload="document.getElementById('modalLoading').style.display='none'"
+          allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms">
+        </iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACK TO TOP -->
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+  <!-- ── FIREBASE + GAME LOGIC ── -->
+  <script type="module">
+    import { requireAuth } from "./src/auth.js";
+    import { db }          from "./src/firebase.js";
+    import {
+      doc, getDoc, collection, getDocs,
+      setDoc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // ── CLASS META ──
+    const CLASS_META = {
+      "pre-nursery": { name: "Pre-Nursery", emoji: "🌱" },
+      "nursery":     { name: "Nursery",     emoji: "🌼" },
+      "class-1":     { name: "Class 1",     emoji: "🎒" },
+      "class-2":     { name: "Class 2",     emoji: "✏️" },
+      "class-3":     { name: "Class 3",     emoji: "📐" },
+      "class-4":     { name: "Class 4",     emoji: "🔬" },
+      "class-5":     { name: "Class 5",     emoji: "🌍" },
+      "class-6":     { name: "Class 6",     emoji: "📖" },
+      "class-7":     { name: "Class 7",     emoji: "🧪" },
+      "class-8":     { name: "Class 8",     emoji: "📊" },
+      "class-9":     { name: "Class 9",     emoji: "⚡" },
+      "class-10":    { name: "Class 10",    emoji: "🏆" },
+    };
+
+    const SUBJECT_EMOJIS = {
+      maths: "🔢", english: "📝", science: "🔬",
+      social: "🌏", hindi: "🙏", computer: "💻"
+    };
+    const DEMO_COUNT  = 3;   // first N games (sorted by title) are free previews
+    const LAZY_BATCH  = 9;   // games loaded per "Show More" batch
+
+    const params  = new URLSearchParams(window.location.search);
+    const classId = params.get("class") || params.get("id") || "class-1";
+    const meta    = CLASS_META[classId] || CLASS_META["class-1"];
+    const isFree  = (classId === "pre-nursery");
+
+    let currentUser    = null;
+    let isPurchased    = isFree;
+    let allGames       = [];       // full flat list from games.json
+    let visibleGames   = [];       // filtered list for current tab + search
+    let shownCount     = 0;
+    let activeSubject  = "all";
+    let demoGameIds    = new Set();
+    let classGameIds   = new Set();
+    let playedGames    = {};
+    let totalGames     = 0;
+    let classPrice     = 0;
+    let searchTimeout  = null;
+
+    // ── POPULATE STATIC HERO ──
+    document.getElementById("heroTitle").textContent        = meta.name;
+    document.getElementById("heroEmoji").textContent        = meta.emoji;
+    document.getElementById("topbarBadge").textContent      = meta.name;
+    document.getElementById("breadcrumbClass").textContent  = meta.name;
+    document.title = `GyanPlay — ${meta.name}`;
+
+    // ── AUTH + BOOT ──
+    requireAuth(async (user) => {
+      currentUser = user;
+      localStorage.setItem("gyanplay_uid", user.uid);
+
+      // Admin gets full access
+      try {
+        const adminSnap = await getDoc(doc(db, "admins", user.uid));
+        if (adminSnap.exists()) { isPurchased = true; }
+      } catch(e) { /* ignore */ }
+
+      if (!isFree && !isPurchased) {
+        await checkFirestorePurchase(user.uid);
+      }
+
+      await loadPlayedGames(user.uid);
+      await loadGames();
+
+      if (isPurchased) window.showAITeacher(classId, meta.name);
+    });
+
+    // ── CHECK PURCHASE IN FIRESTORE ──
+    async function checkFirestorePurchase(uid) {
+      try {
+        const snap = await getDoc(doc(db, "users", uid, "purchases", classId));
+        if (snap.exists()) {
+          const data   = snap.data();
+          const expiry = data.expiresOn?.toDate ? data.expiresOn.toDate() : new Date(data.expiresOn);
+          if (expiry >= new Date()) {
+            isPurchased = true;
+            const daysLeft = Math.ceil((expiry - new Date()) / (1000 * 60 * 60 * 24));
+            if (daysLeft <= 30) {
+              const lang = localStorage.getItem("gyanplay_lang") || "en";
+              const msgs = {
+                en: `Your access to ${meta.name} expires in ${daysLeft} days. Renew soon!`,
+                as: `${meta.name} ৰ প্ৰৱেশ ${daysLeft} দিনত শেষ হ'ব।`,
+                hi: `${meta.name} की access ${daysLeft} दिनों में expire होगी।`
+              };
+              document.getElementById("expiryNotice").style.display = "flex";
+              document.getElementById("expiryText").textContent = msgs[lang];
+            }
+            return;
+          }
+        }
+      } catch(e) { console.warn("[Access] Firestore check failed:", e); }
+
+      // Fallback: localStorage (set by payment.html on successful payment)
+      const lsKey    = `gyanplay_access_${classId}`;
+      const lsExpKey = `gyanplay_expiry_${classId}`;
+      if (localStorage.getItem(lsKey) === "true") {
+        const expStr = localStorage.getItem(lsExpKey);
+        const expiry = expStr ? new Date(expStr) : null;
+        if (!expiry || expiry >= new Date()) { isPurchased = true; }
+      }
+    }
+
+    // ── LOAD PLAYED GAMES FROM FIRESTORE ──
+    async function loadPlayedGames(uid) {
+      try {
+        const snap = await getDocs(collection(db, "users", uid, "played"));
+        snap.forEach(d => { playedGames[d.id] = true; });
+      } catch(e) { /* ignore */ }
+    }
+
+    // ── MARK GAME AS PLAYED ──
+    async function markPlayed(uid, gameId) {
+      if (playedGames[gameId]) return;
+      playedGames[gameId] = true;
+      try {
+        await setDoc(
+          doc(db, "users", uid, "played", gameId),
+          { playedAt: serverTimestamp(), classId }
+        );
+      } catch(e) { /* non-critical */ }
+      updateProgress();
+    }
+
+    // ── LOAD GAMES FROM games.json ──
+    async function loadGames() {
+      try {
+        const res  = await fetch("data/games.json");
+        const data = await res.json();
+
+        classPrice = data.pricing[classId] || 0;
+        document.getElementById("paywallPrice").textContent = `₹${classPrice}`;
+        document.getElementById("bannerBtn").textContent    = `Buy Now ₹${classPrice}`;
+
+        const classData = data.classes.find(c => c.id === classId);
+        if (!classData) {
+          showError("Class not found in games.json");
+          return;
+        }
+
+        allGames   = classData.games || [];
+        totalGames = allGames.length;
+        allGames.forEach(g => classGameIds.add(g.id));
+
+        // First DEMO_COUNT games (sorted alphabetically) are free previews
+        if (!isPurchased) {
+          const sorted = [...allGames].sort((a, b) => a.title.en.localeCompare(b.title.en));
+          sorted.slice(0, DEMO_COUNT).forEach(g => demoGameIds.add(g.id));
+        }
+
+        renderTabs();
+        renderGrid();
+        updateProgress();
+
+        document.getElementById("skeletonGrid").style.display = "none";
+        document.getElementById("gamesGrid").style.display    = "";
+
+        // Show buy banner after 800ms for unpaid classes
+        if (!isPurchased && !isFree) {
+          setTimeout(() => {
+            document.getElementById("buyBanner").classList.add("visible");
+            document.getElementById("bannerTitle").textContent = `Unlock all games in ${meta.name}`;
+            document.getElementById("bannerSub").textContent   = `Play ${DEMO_COUNT} free demos. Buy once for full year access.`;
+          }, 800);
+        }
+
+      } catch(err) {
+        showError("Couldn't load games. Please refresh.");
+        console.error("[loadGames]", err);
+      }
+    }
+
+    // ── RENDER DYNAMIC TABS ──
+    function renderTabs() {
+      const counts   = {};
+      const subjects = ["maths","english","science","social","hindi","computer"];
+      subjects.forEach(s => { counts[s] = allGames.filter(g => g.subject === s).length; });
+
+      const lang = localStorage.getItem("gyanplay_lang") || "en";
+      const subjectNames = {
+        en: { all:"All", maths:"Maths", english:"English", science:"Science", social:"Social", hindi:"Hindi", computer:"Computer" },
+        hi: { all:"सभी", maths:"गणित", english:"अंग्रेजी", science:"विज्ञान", social:"सामाजिक", hindi:"हिन्दी", computer:"कंप्यूटर" },
+        as: { all:"সকলো", maths:"গণিত", english:"ইংৰাজী", science:"বিজ্ঞান", social:"সমাজ", hindi:"হিন্দী", computer:"কম্পিউটাৰ" }
+      };
+      const names = subjectNames[lang] || subjectNames.en;
+
+      let html = `<button class="tab${activeSubject==="all"?" active":""}" data-subject="all" onclick="switchTab('all')">
+        ${names.all} <span class="tab-count">${allGames.length}</span></button>`;
+      subjects.forEach(s => {
+        if (counts[s] > 0) {
+          html += `<button class="tab${activeSubject===s?" active":""}" data-subject="${s}" onclick="switchTab('${s}')">
+            ${SUBJECT_EMOJIS[s]} ${names[s]||s} <span class="tab-count">${counts[s]}</span></button>`;
+        }
+      });
+      document.getElementById("tabsInner").innerHTML = html;
+    }
+
+    // ── RENDER GRID (filter by tab + search, with lazy load) ──
+    window.renderGrid = function() {
+      const lang      = localStorage.getItem("gyanplay_lang") || "en";
+      const searchVal = (document.getElementById("gameSearch")?.value || "").trim().toLowerCase();
+
+      let filtered = activeSubject === "all"
+        ? [...allGames]
+        : allGames.filter(g => g.subject === activeSubject);
+
+      if (searchVal) {
+        filtered = filtered.filter(g => {
+          const title = (g.title[lang] || g.title.en).toLowerCase();
+          return title.includes(searchVal) || (g.subject||"").includes(searchVal);
+        });
+      }
+
+      // Shuffle seeded by user id (so same user sees consistent order)
+      filtered = seededShuffle(filtered, (localStorage.getItem("gyanplay_uid") || "") + classId + activeSubject);
+
+      visibleGames = filtered;
+      shownCount   = Math.min(LAZY_BATCH, visibleGames.length);
+
+      const noResults = document.getElementById("noResults");
+      const emptyState = document.getElementById("emptyState");
+      const loadMoreBtn = document.getElementById("loadMoreBtn");
+      const searchInfo  = document.getElementById("searchInfo");
+      const clearBtn    = document.getElementById("clearSearchBtn");
+
+      noResults.classList.remove("show");
+      emptyState.classList.remove("show");
+
+      if (visibleGames.length === 0) {
+        document.getElementById("gamesGrid").innerHTML = "";
+        if (searchVal) {
+          noResults.classList.add("show");
+        } else {
+          emptyState.classList.add("show");
+        }
+        loadMoreBtn.classList.remove("show");
+        searchInfo.classList.remove("show");
+        clearBtn.classList.remove("show");
+        return;
+      }
+
+      renderBatch(lang);
+
+      // Load More button
+      if (shownCount < visibleGames.length) {
+        const remaining = visibleGames.length - shownCount;
+        loadMoreBtn.textContent = `Show ${remaining} More Game${remaining > 1 ? "s" : ""}`;
+        loadMoreBtn.classList.add("show");
+      } else {
+        loadMoreBtn.classList.remove("show");
+      }
+
+      // Search info
+      if (searchVal) {
+        searchInfo.textContent = `Showing ${visibleGames.length} result${visibleGames.length > 1 ? "s" : ""} for "${searchVal}"`;
+        searchInfo.classList.add("show");
+        clearBtn.classList.add("show");
+      } else {
+        searchInfo.classList.remove("show");
+        clearBtn.classList.remove("show");
+      }
+    };
+
+    // ── RENDER ONE BATCH OF CARDS ──
+    function renderBatch(lang) {
+      lang = lang || localStorage.getItem("gyanplay_lang") || "en";
+      const grid  = document.getElementById("gamesGrid");
+      const batch = visibleGames.slice(0, shownCount);
+      const NOW_MS   = Date.now();
+      const NEW_DAYS = 14;
+
+      const playLabels = { en: "▶ Play Now", as: "▶ এতিয়া খেলক", hi: "▶ अभी खेलें" };
+
+      grid.innerHTML = batch.map(game => {
+        const played  = !!playedGames[game.id];
+        const isDemo  = demoGameIds.has(game.id);
+        const locked  = !isPurchased && !isDemo;
+        const title   = game.title[lang] || game.title.en;
+        const isNew   = game.addedOn
+          ? (NOW_MS - new Date(game.addedOn).getTime()) < NEW_DAYS * 86400000
+          : false;
+        const subj    = game.subject || "maths";
+        const emoji   = SUBJECT_EMOJIS[subj] || "🎮";
+
+        return `
+          <div class="game-card${played ? " played" : ""}${locked ? " locked" : ""}"
+               data-gameid="${game.id}" data-file="${game.file}" data-title="${title}">
+            <div class="game-thumb thumb-${subj}">
+              ${emoji}
+              ${played ? '<span class="played-check">✓ Played</span>' : ""}
+              ${!isPurchased && isDemo ? '<span class="demo-tag">FREE</span>' : ""}
+              ${isNew && !locked ? '<span class="new-tag">NEW</span>' : ""}
+              ${locked ? `<div class="lock-overlay"><span class="lock-icon">🔒</span><span class="lock-label">Buy to unlock</span></div>` : ""}
+            </div>
+            <div class="game-info">
+              <div class="game-title">${title}</div>
+              <div class="game-desc">${locked ? "Unlock all games for 1 year" : "Tap to play!"}</div>
+              <button class="play-btn">${locked ? "🔒 Unlock" : playLabels[lang] || playLabels.en}</button>
+            </div>
+          </div>`;
+      }).join("");
+
+      // Attach click handlers
+      grid.querySelectorAll(".game-card").forEach(card => {
+        const gameId = card.dataset.gameid;
+        const file   = card.dataset.file;
+        const title  = card.dataset.title;
+        const locked = card.classList.contains("locked");
+        card.addEventListener("click", () => {
+          if (locked) { openPaywall(); return; }
+          const encodedPath = file.split("/").map(encodeURIComponent).join("/");
+          openGame(gameId, encodedPath, title);
+        });
+        card.querySelector(".play-btn").addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (locked) { openPaywall(); return; }
+          const encodedPath = file.split("/").map(encodeURIComponent).join("/");
+          openGame(gameId, encodedPath, title);
+        });
+      });
+    }
+
+    // ── LOAD MORE ──
+    window.loadMore = function() {
+      shownCount = Math.min(shownCount + LAZY_BATCH, visibleGames.length);
+      const lang = localStorage.getItem("gyanplay_lang") || "en";
+      renderBatch(lang);
+      const remaining = visibleGames.length - shownCount;
+      const btn = document.getElementById("loadMoreBtn");
+      if (remaining > 0) {
+        btn.textContent = `Show ${remaining} More Game${remaining > 1 ? "s" : ""}`;
+      } else {
+        btn.classList.remove("show");
+      }
+    };
+
+    // ── TAB SWITCH (called from tab buttons) ──
+    window.switchTab = function(subject) {
+      activeSubject = subject;
+      document.querySelectorAll("#tabsInner .tab").forEach(t =>
+        t.classList.toggle("active", t.dataset.subject === subject)
+      );
+      document.getElementById("gameSearch").value = "";
+      document.getElementById("searchInfo").classList.remove("show");
+      document.getElementById("clearSearchBtn").classList.remove("show");
+      renderGrid();
+    };
+
+    // ── SEARCH ──
+    window.handleSearch = function() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => renderGrid(), 200);
+    };
+    window.clearSearch = function() {
+      document.getElementById("gameSearch").value = "";
+      renderGrid();
+    };
+
+    // ── PROGRESS BAR ──
+    function updateProgress() {
+      const playedCount = Object.keys(playedGames).filter(id => classGameIds.has(id)).length;
+      const pct = totalGames > 0 ? Math.round((playedCount / totalGames) * 100) : 0;
+      document.getElementById("progressFill").style.width  = `${pct}%`;
+      document.getElementById("progressCount").textContent = `${playedCount} / ${totalGames}`;
+    }
+
+    // ── OPEN GAME IN MODAL ──
+    window.openGame = async (gameId, url, title) => {
+      if (!url) return;
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("gameFrame").src = url;
+      document.getElementById("modalLoading").style.display = "flex";
+      document.getElementById("gameModal").classList.add("open");
+      document.body.style.overflow = "hidden";
+      if (currentUser) await markPlayed(currentUser.uid, gameId);
+    };
+    window.closeModal = () => {
+      document.getElementById("gameModal").classList.remove("open");
+      document.getElementById("gameFrame").src = "";
+      document.body.style.overflow = "";
+    };
+
+    // ── PAYWALL ──
+    window.openPaywall  = () => document.getElementById("paywallModal").classList.add("open");
+    window.closePaywall = () => document.getElementById("paywallModal").classList.remove("open");
+    window.goToPayment  = () => { location.href = `payment.html?class=${classId}`; };
+
+    // ── HELPERS ──
+    function seededShuffle(arr, seed) {
+      const a = [...arr];
+      let s = hashStr(seed) & 0xFFFF;
+      for (let i = a.length - 1; i > 0; i--) {
+        s = (s * 1664525 + 1013904223) & 0xFFFFFFFF;
+        const j = (s >>> 0) % (i + 1);
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+    function hashStr(str) {
+      let h = 0;
+      for (let i = 0; i < str.length; i++) {
+        h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+      }
+      return h;
+    }
+    function showError(msg) {
+      document.getElementById("skeletonGrid").innerHTML =
+        `<p style="color:var(--muted);padding:2rem;grid-column:1/-1;">${msg}</p>`;
+    }
+  </script>
+
+  <!-- ── UI HELPERS (non-module) ── -->
+  <script>
+    // ── LANGUAGE TOGGLE ──
+    function setLang(lang) {
+      ["en","as","hi"].forEach((l, i) => {
+        document.querySelectorAll(".lang-toggle button")[i].classList.toggle("active", l === lang);
+      });
+      document.querySelectorAll("[data-lang]").forEach(el => {
+        el.style.display = el.getAttribute("data-lang") === lang ? "" : "none";
+      });
+      localStorage.setItem("gyanplay_lang", lang);
+      // Re-render tabs and grid in new language
+      if (window.renderGrid) window.renderGrid();
+    }
+
+    // ── PAGE FADE TRANSITION ──
+    function fadeOut(cb) {
+      document.body.style.transition = "opacity 0.2s";
+      document.body.style.opacity    = "0";
+      setTimeout(cb, 210);
+    }
+
+    // ── BACK TO TOP ──
+    window.addEventListener("scroll", () => {
+      document.getElementById("backToTop").classList.toggle("show", window.scrollY > 400);
+    }, { passive: true });
+
+    // ── CLOSE GAME MODAL ON OVERLAY CLICK ──
+    document.getElementById("gameModal").addEventListener("click", function(e) {
+      if (e.target === this) window.closeModal();
+    });
+
+    // ── CLOSE PAYWALL ON OVERLAY CLICK ──
+    document.getElementById("paywallModal").addEventListener("click", function(e) {
+      if (e.target === this) window.closePaywall();
+    });
+
+    // ── ESC KEY ──
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        window.closeModal && window.closeModal();
+        window.closePaywall && window.closePaywall();
+      }
+    });
+
+    // ── APPLY LANGUAGE ON LOAD ──
+    window.addEventListener("DOMContentLoaded", () => {
+      const lang = localStorage.getItem("gyanplay_lang") || "en";
+      setLang(lang);
+    });
+  </script>
+
+  <!-- ── AI TEACHER CHAT LOGIC ── -->
+  <script>
+    // Chat requests go to a Cloud Function that holds the Groq key server-side.
+    // See functions/index.js (exports.aiTeacherChat). Override this constant if
+    // you're testing against a different backend (emulator, staging, etc.).
+    const AI_TEACHER_ENDPOINT =
+      "https://asia-south1-gyanplay-prod.cloudfunctions.net/aiTeacherChat";
+
+    let chatHistory   = [];
+    let chatClassId   = "";
+    let chatClassName = "";
+    let chatLang      = "en";
+    let chatSubject   = "general";
+    let isBotTyping   = false;
+
+    const CLASS_GRADE = {
+      "pre-nursery": 0, "nursery": 1,
+      "class-1": 1,  "class-2": 2,  "class-3": 3,  "class-4": 4,  "class-5": 5,
+      "class-6": 6,  "class-7": 7,  "class-8": 8,  "class-9": 9,  "class-10": 10
+    };
+
+    const SUBJECT_NAMES = {
+      en: { general:"General", maths:"Maths", english:"English", science:"Science", social:"Social Studies", hindi:"Hindi", computer:"Computer" },
+      hi: { general:"सामान्य", maths:"गणित", english:"अंग्रेजी", science:"विज्ञान", social:"सामाजिक अध्ययन", hindi:"हिन्दी", computer:"कंप्यूटर" },
+      as: { general:"সাধাৰণ", maths:"গণিত", english:"ইংৰাজী", science:"বিজ্ঞান", social:"সমাজ অধ্যয়ন", hindi:"হিন্দী", computer:"কম্পিউটাৰ" }
+    };
+
+    const QUICK_QUESTIONS = {
+      en: ["Explain this simply 📖", "Give me an example 💡", "Quiz me! 🎯", "Why is this important? 🤔", "I'm confused, help! 🙋"],
+      hi: ["आसान भाषा में बताओ 📖", "Example दो 💡", "Quiz लो! 🎯", "यह ज़रूरी क्यों है? 🤔", "मैं समझा नहीं 🙋"],
+      as: ["সহজকৈ বুজাও 📖", "উদাহৰণ দিয়া 💡", "Quiz লোৱা! 🎯", "এটা কিয় দৰকাৰী? 🤔", "মই বুজা নাই 🙋"]
+    };
+
+    function buildSystemPrompt() {
+      const grade   = CLASS_GRADE[chatClassId] ?? 5;
+      const isYoung = grade <= 3;
+      const langInstruction = {
+        en: "Always respond in simple, clear English.",
+        hi: "हमेशा हिंदी में जवाब दो। ज़रूरी English शब्द brackets में लिख सकते हो।",
+        as: "CRITICAL: You MUST respond ONLY in pure Assamese language (অসমীয়া). Assamese and Bengali use the same script but are DIFFERENT languages with different vocabulary and grammar. Do NOT mix Bengali words into your Assamese response — this is a strict rule. Use authentic Assamese words (e.g., 'কি' not 'কী', 'নহয়' not 'না', 'আছে' not 'আছো', 'কৰা' not 'করো', 'হ'ব' not 'হবে', 'বুলি' not 'বলে', 'কিন্তু' is fine in both). If you are unsure of an Assamese word, use simple Assamese or English rather than substituting a Bengali word. You may put technical/English terms in brackets."
+      }[chatLang] || "Always respond in simple, clear English.";
+
+      const toneGuide = isYoung
+        ? "Use very simple words, very short sentences, and lots of encouragement. Add fun emojis. Be like a kind, playful older sibling."
+        : "Be clear, encouraging, and explain step-by-step with examples from everyday Indian life. Be like a friendly, knowledgeable teacher.";
+
+      const subjectCtx = chatSubject !== "general"
+        ? `The student is currently studying ${(SUBJECT_NAMES.en)[chatSubject] || chatSubject} — prioritise questions from this subject.`
+        : `The student may ask about any subject in ${chatClassName} (Maths, English, Science, Social Studies, Hindi, Computer).`;
+
+      return `You are an AI teacher assistant for GyanPlay, an educational game platform for Indian school students (CBSE/NCERT syllabus).
+
+YOUR ROLE: Dedicated teacher for ${chatClassName} students.
+- ${toneGuide}
+- ${subjectCtx}
+
+STRICT SCOPE:
+- ONLY answer questions related to ${chatClassName} school curriculum (CBSE/NCERT).
+- If asked anything outside school education, reply: "I'm your ${chatClassName} teacher — let's focus on your studies! What topic would you like to learn? 😊"
+- Do NOT do homework FOR the student. Instead, TEACH the concept so they understand it themselves.
+
+TEACHING APPROACH:
+- Break complex topics into simple numbered steps.
+- Use examples from everyday Indian life (food, festivals, cricket, etc.) when possible.
+- After explaining, ask one follow-up question to check understanding.
+- Gently correct mistakes and explain why.
+- Keep responses concise — max 4-5 short paragraphs.
+- Use **bold** for key terms.
+
+LANGUAGE: ${langInstruction}`;
+    }
+
+    window.showAITeacher = function(classId, className) {
+      chatClassId   = classId;
+      chatClassName = className;
+      chatLang      = localStorage.getItem("gyanplay_lang") || "en";
+
+      document.getElementById("aiChatFab").classList.add("visible");
+
+      const names = { en: `${className} AI Teacher`, hi: `${className} AI शिक्षक`, as: `${className} AI শিক্ষক` };
+      document.getElementById("chatTeacherName").textContent = names[chatLang] || names.en;
+
+      const subjects = ["general","maths","english","science","social","hindi","computer"];
+      const emojis   = { general:"🌟", maths:"🔢", english:"📝", science:"🔬", social:"🌏", hindi:"🙏", computer:"💻" };
+      document.getElementById("chatSubjects").innerHTML = subjects.map(s =>
+        `<button class="subject-pill${s==="general"?" active":""}" onclick="setChatSubject('${s}')" id="pill-${s}">
+          ${emojis[s]} ${(SUBJECT_NAMES[chatLang]||SUBJECT_NAMES.en)[s]}
+        </button>`
+      ).join("");
+
+      const welcomes = {
+        en: `Hi there! 👋 I'm your **${className} AI Teacher**. Ask me anything about your class — Maths, English, Science, Social Studies, Hindi, or Computer!\n\nWhat would you like to learn today? 😊`,
+        hi: `नमस्ते! 👋 मैं आपका **${className} AI शिक्षक** हूं। अपनी class के किसी भी topic के बारे में पूछो!\n\nआज क्या सीखना है? 😊`,
+        as: `নমস্কাৰ! 👋 মই আপোনাৰ **${className} AI শিক্ষক**। আপোনাৰ class ৰ যিকোনো বিষয়ত প্ৰশ্ন কৰক!\n\nআজি কি শিকিব বিচাৰে? 😊`
+      };
+      addChatMessage("bot", welcomes[chatLang] || welcomes.en);
+      renderQuickQuestions();
+    };
+
+    window.setChatSubject = function(subject) {
+      chatSubject = subject;
+      chatHistory = [];
+      document.querySelectorAll(".subject-pill").forEach(p =>
+        p.classList.toggle("active", p.id === `pill-${subject}`)
+      );
+      const sn = (SUBJECT_NAMES[chatLang]||SUBJECT_NAMES.en)[subject];
+      const msgs = {
+        en: `Switching to **${sn}** for ${chatClassName}. What do you want to know? 📚`,
+        hi: `**${sn}** पर switch कर रहा हूं। क्या जानना है? 📚`,
+        as: `**${sn}** ত switch কৰিছো। কি জানিব বিচাৰে? 📚`
+      };
+      addChatMessage("bot", msgs[chatLang] || msgs.en);
+    };
+
+    function renderQuickQuestions() {
+      const qs = QUICK_QUESTIONS[chatLang] || QUICK_QUESTIONS.en;
+      const el = document.getElementById("quickQuestions");
+      el.style.display = "";
+      el.innerHTML = qs.map(q => `<button class="quick-q" onclick="useQuickQ(this)">${q}</button>`).join("");
+    }
+
+    window.useQuickQ = function(btn) {
+      document.getElementById("chatInput").value = btn.textContent.replace(/[📖💡🎯🤔🙋]/g,"").trim();
+      sendChatMessage();
+    };
+
+    window.toggleChat = function() {
+      const overlay = document.getElementById("chatOverlay");
+      const opening = !overlay.classList.contains("open");
+      overlay.classList.toggle("open");
+      document.body.style.overflow = opening ? "hidden" : "";
+      if (opening) setTimeout(() => document.getElementById("chatInput").focus(), 350);
+    };
+
+    window.handleOverlayClick = function(e) {
+      if (e.target === document.getElementById("chatOverlay")) toggleChat();
+    };
+
+    function addChatMessage(role, text) {
+      const container = document.getElementById("chatMessages");
+      const div = document.createElement("div");
+      div.className = `msg ${role}`;
+      const initial = role === "user"
+        ? (localStorage.getItem("gyanplay_user_name") || "S").charAt(0).toUpperCase()
+        : "🤖";
+      const formatted = text
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\n/g, "<br>");
+      div.innerHTML = `<div class="msg-avatar">${initial}</div><div class="msg-bubble">${formatted}</div>`;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function showTyping() {
+      const container = document.getElementById("chatMessages");
+      const div = document.createElement("div");
+      div.className = "msg bot"; div.id = "chatTypingIndicator";
+      div.innerHTML = `<div class="msg-avatar">🤖</div>
+        <div class="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>`;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+    function removeTyping() {
+      const el = document.getElementById("chatTypingIndicator");
+      if (el) el.remove();
+    }
+
+    window.handleChatKey = function(e) {
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChatMessage(); return; }
+      const ta = e.target;
+      ta.style.height = "auto";
+      ta.style.height = Math.min(ta.scrollHeight, 100) + "px";
+    };
+
+    window.sendChatMessage = async function() {
+      const input   = document.getElementById("chatInput");
+      const sendBtn = document.getElementById("chatSendBtn");
+      const text    = input.value.trim();
+      if (!text || isBotTyping) return;
+
+      input.value = ""; input.style.height = "auto";
+      document.getElementById("quickQuestions").style.display = "none";
+      addChatMessage("user", text);
+      chatHistory.push({ role: "user", content: text });
+      isBotTyping = true; sendBtn.disabled = true;
+      showTyping();
+
+      try {
+        const { auth } = await import("./src/firebase.js");
+        const user = auth.currentUser;
+        if (!user) throw new Error("Please sign in to chat with the AI Teacher.");
+        const idToken = await user.getIdToken();
+
+        const res = await fetch(AI_TEACHER_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${idToken}`
+          },
+          body: JSON.stringify({
+            classId: chatClassId,
+            systemPrompt: buildSystemPrompt(),
+            messages: chatHistory.slice(-10)
+          })
+        });
+        if (!res.ok) {
+          const e = await res.json().catch(() => ({}));
+          throw new Error(e.error || `HTTP ${res.status}`);
+        }
+        const data  = await res.json();
+        const reply = data.reply?.trim();
+        if (!reply) throw new Error("Empty response from AI");
+        chatHistory.push({ role: "assistant", content: reply });
+        removeTyping();
+        addChatMessage("bot", reply);
+      } catch (err) {
+        removeTyping();
+        const errMsgs = {
+          en: "Oops! I couldn't connect right now. Please try again in a moment. 🙏",
+          hi: "ओह! अभी connect नहीं हो पाया। थोड़ी देर बाद try करें। 🙏",
+          as: "অ'! এতিয়া সংযোগ নহ'ল। অলপ পিছত চেষ্টা কৰক। 🙏"
+        };
+        addChatMessage("bot", errMsgs[chatLang] || errMsgs.en);
+        console.error("[AI Teacher]", err);
+      } finally {
+        isBotTyping = false; sendBtn.disabled = false;
+        document.getElementById("chatInput").focus();
+      }
+    };
+  </script>
+
+</body>
+</html>

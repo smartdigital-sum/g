@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Plant Doctor 🌿 — Class 1 Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--green:#2E7D32;--soil:#5D4037;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#E8F5E9,#C8E6C9,#A5D6A7,#81C784);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* BG */
+.sun{position:fixed;top:30px;right:40px;font-size:clamp(2.5rem,8vw,4.5rem);z-index:1;animation:sunPulse 3s ease-in-out infinite;}
+@keyframes sunPulse{0%,100%{transform:scale(1) rotate(0deg);}50%{transform:scale(1.1) rotate(10deg);}}
+.soil-ground{position:fixed;bottom:0;left:0;right:0;height:80px;background:linear-gradient(180deg,#8D6E63,#5D4037);z-index:1;}
+.soil-ground::before{content:'';position:absolute;top:0;left:0;right:0;height:16px;background:linear-gradient(180deg,#A1887F,#8D6E63);}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#1B5E20;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#1B5E20;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#1B5E20;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* QUESTION */
+.question-card{position:relative;z-index:20;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.95);border-radius:22px;padding:10px 22px;margin:6px 16px;text-align:center;max-width:620px;width:calc(100% - 32px);}
+.q-main{font-family:'Fredoka One',cursive;font-size:clamp(1.2rem,5vw,1.8rem);color:#1B5E20;}
+.q-sub{font-size:clamp(.8rem,3vw,1rem);color:#388E3C;font-weight:700;margin-top:3px;}
+
+/* MAIN GAME AREA */
+.game-row{position:relative;z-index:15;display:flex;align-items:center;justify-content:center;gap:clamp(10px,4vw,30px);padding:0 16px;flex:1;flex-wrap:wrap;}
+
+/* PLANT SVG AREA */
+.plant-area{position:relative;width:clamp(160px,38vw,240px);height:clamp(260px,55vw,360px);flex-shrink:0;}
+
+/* hotspot labels */
+.hotspot{
+  position:absolute;cursor:pointer;
+  border-radius:50%;
+  width:clamp(28px,7vw,38px);height:clamp(28px,7vw,38px);
+  border:3px solid rgba(255,255,255,.7);
+  background:rgba(255,255,255,.35);
+  backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;
+  transition:all .2s;
+  animation:hotspotPulse 1.5s ease-in-out infinite;
+  z-index:10;
+}
+.hotspot:hover{transform:scale(1.2);background:rgba(255,215,0,.4);border-color:#FFD700;}
+.hotspot.correct{border-color:#43A047;background:rgba(67,160,71,.4);animation:correctFlash .5s ease;}
+@keyframes correctFlash{0%{transform:scale(1);}50%{transform:scale(1.4);}100%{transform:scale(1);}}
+.hotspot.error{animation:errShake .35s ease;}
+@keyframes errShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+@keyframes hotspotPulse{0%,100%{box-shadow:0 0 0 rgba(255,255,255,.4);}50%{box-shadow:0 0 10px rgba(255,255,255,.6);}}
+.hotspot.target{border-color:#FFD700;background:rgba(255,215,0,.3);box-shadow:0 0 15px rgba(255,215,0,.5);animation:targetGlow 1s ease-in-out infinite;}
+@keyframes targetGlow{0%,100%{box-shadow:0 0 8px rgba(255,215,0,.4);}50%{box-shadow:0 0 20px rgba(255,215,0,.8);}}
+
+/* LABELS on the right */
+.labels-col{display:flex;flex-direction:column;gap:clamp(8px,2vw,14px);flex-shrink:0;}
+.part-label{
+  background:rgba(255,255,255,.78);backdrop-filter:blur(6px);
+  border:3px solid rgba(255,255,255,.8);border-radius:16px;
+  padding:clamp(8px,2vw,12px) clamp(14px,4vw,22px);
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(.9rem,3.5vw,1.2rem);color:#1B5E20;
+  cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:0 4px 0 rgba(0,0,0,.1);
+  position:relative;top:0;
+}
+.part-label:hover{top:-3px;box-shadow:0 7px 0 rgba(0,0,0,.08);}
+.part-label.selected{background:rgba(255,215,0,.3);border-color:#FFD700;}
+.part-label.correct-lbl{background:rgba(67,160,71,.2);border-color:#43A047;}
+.part-label.wrong-lbl{animation:lblShake .35s ease;background:rgba(229,57,53,.15);border-color:#E53935;}
+@keyframes lblShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+.label-emoji{font-size:1.2rem;}
+.label-txt{font-size:clamp(.85rem,3vw,1.1rem);}
+.label-desc{font-size:clamp(.65rem,2vw,.8rem);color:#388E3C;font-weight:700;}
+
+/* FACT BOX */
+.fact-box{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(27,94,32,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:380px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.95rem,3.5vw,1.25rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:1.8;}
+.ov-btn{background:linear-gradient(135deg,#2E7D32,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(46,125,50,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="sun">☀️</div>
+<div class="soil-ground"></div>
+
+<div class="header">
+  <div class="title">🌿 Plant Doctor</div>
+  <div class="lvchip">Label the Parts of a Plant</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">🌿 Part: <span id="roundVal">1</span>/5</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="question-card">
+  <div class="q-main">Tap the <span id="targetPartName" style="color:#E53935;">FLOWER</span> 🌸 on the plant!</div>
+  <div class="q-sub" id="qSub">Each part of a plant has a special job!</div>
+</div>
+
+<div class="game-row">
+  <!-- PLANT SVG -->
+  <div class="plant-area" id="plantArea">
+    <!-- SVG Plant drawn with CSS + HTML -->
+    <svg viewBox="0 0 200 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;position:absolute;top:0;left:0;">
+      <!-- SOIL LINE -->
+      <rect x="0" y="265" width="200" height="75" fill="#8D6E63" rx="8"/>
+      <!-- ROOTS -->
+      <line x1="100" y1="275" x2="60" y2="310" stroke="#6D4C41" stroke-width="5" stroke-linecap="round"/>
+      <line x1="100" y1="275" x2="90" y2="315" stroke="#6D4C41" stroke-width="4" stroke-linecap="round"/>
+      <line x1="100" y1="275" x2="130" y2="308" stroke="#6D4C41" stroke-width="5" stroke-linecap="round"/>
+      <line x1="100" y1="275" x2="118" y2="316" stroke="#6D4C41" stroke-width="3" stroke-linecap="round"/>
+      <line x1="60" y1="310" x2="40" y2="330" stroke="#6D4C41" stroke-width="3" stroke-linecap="round"/>
+      <line x1="130" y1="308" x2="155" y2="328" stroke="#6D4C41" stroke-width="3" stroke-linecap="round"/>
+      <!-- STEM -->
+      <path d="M100 265 Q98 200 100 160 Q102 140 100 110" stroke="#4CAF50" stroke-width="8" fill="none" stroke-linecap="round"/>
+      <!-- BRANCH LEFT -->
+      <path d="M100 190 Q70 175 55 160" stroke="#4CAF50" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <!-- BRANCH RIGHT -->
+      <path d="M100 210 Q130 195 148 182" stroke="#4CAF50" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <!-- LEFT LEAF -->
+      <ellipse cx="50" cy="152" rx="30" ry="16" fill="#66BB6A" transform="rotate(-30 50 152)"/>
+      <line x1="50" y1="155" x2="75" y2="158" stroke="#2E7D32" stroke-width="1.5"/>
+      <!-- RIGHT LEAF -->
+      <ellipse cx="153" cy="174" rx="30" ry="16" fill="#4CAF50" transform="rotate(25 153 174)"/>
+      <line x1="153" y1="177" x2="127" y2="182" stroke="#2E7D32" stroke-width="1.5"/>
+      <!-- FLOWER CENTER -->
+      <circle cx="100" cy="90" r="18" fill="#FFD700"/>
+      <!-- PETALS -->
+      <ellipse cx="100" cy="64" rx="12" ry="18" fill="#FF80AB"/>
+      <ellipse cx="100" cy="116" rx="12" ry="18" fill="#FF80AB"/>
+      <ellipse cx="74" cy="90" rx="18" ry="12" fill="#FF80AB"/>
+      <ellipse cx="126" cy="90" rx="18" ry="12" fill="#FF80AB"/>
+      <ellipse cx="81" cy="71" rx="11" ry="17" fill="#FF4081" transform="rotate(-45 81 71)"/>
+      <ellipse cx="119" cy="71" rx="11" ry="17" fill="#FF4081" transform="rotate(45 119 71)"/>
+      <ellipse cx="81" cy="109" rx="11" ry="17" fill="#FF4081" transform="rotate(45 81 109)"/>
+      <ellipse cx="119" cy="109" rx="11" ry="17" fill="#FF4081" transform="rotate(-45 119 109)"/>
+      <!-- Flower dot -->
+      <circle cx="100" cy="90" r="12" fill="#FF8F00"/>
+      <circle cx="100" cy="90" r="5" fill="#E65100"/>
+    </svg>
+    <!-- HOTSPOTS (positioned over SVG) -->
+    <div class="hotspot" id="hs_flower"  style="top:12%;left:38%;" data-part="flower">🌸</div>
+    <div class="hotspot" id="hs_leaf"    style="top:43%;left:5%;"  data-part="leaf">🍃</div>
+    <div class="hotspot" id="hs_stem"    style="top:60%;left:42%;" data-part="stem">🌿</div>
+    <div class="hotspot" id="hs_root"    style="top:82%;left:38%;" data-part="root">🌱</div>
+    <div class="hotspot" id="hs_branch"  style="top:52%;left:65%;" data-part="branch">🪵</div>
+  </div>
+
+  <!-- LABELS -->
+  <div class="labels-col" id="labelsCol">
+    <div class="part-label" data-part="flower" onclick="selectLabel('flower')"><span class="label-emoji">🌸</span><div><div class="label-txt">Flower</div><div class="label-desc">Makes seeds</div></div></div>
+    <div class="part-label" data-part="leaf"   onclick="selectLabel('leaf')"  ><span class="label-emoji">🍃</span><div><div class="label-txt">Leaf</div><div class="label-desc">Makes food</div></div></div>
+    <div class="part-label" data-part="stem"   onclick="selectLabel('stem')"  ><span class="label-emoji">🌿</span><div><div class="label-txt">Stem</div><div class="label-desc">Holds plant up</div></div></div>
+    <div class="part-label" data-part="root"   onclick="selectLabel('root')"  ><span class="label-emoji">🌱</span><div><div class="label-txt">Root</div><div class="label-desc">Drinks water</div></div></div>
+    <div class="part-label" data-part="branch" onclick="selectLabel('branch')"><span class="label-emoji">🪵</span><div><div class="label-txt">Branch</div><div class="label-desc">Holds leaves</div></div></div>
+  </div>
+</div>
+
+<script>
+const PARTS=[
+  {id:'flower', name:'FLOWER', emoji:'🌸', fact:'🌸 The flower makes seeds so new plants can grow! Bees love flowers!', speak:'Tap the flower at the top of the plant!'},
+  {id:'leaf',   name:'LEAF',   emoji:'🍃', fact:'🍃 Leaves use sunlight to make food for the plant! This is called photosynthesis!', speak:'Find the leaf on the side of the stem!'},
+  {id:'stem',   name:'STEM',   emoji:'🌿', fact:'🌿 The stem holds the plant upright and carries water from roots to leaves!', speak:'Tap the stem — the long green part in the middle!'},
+  {id:'root',   name:'ROOT',   emoji:'🌱', fact:'🌱 Roots are underground! They drink water from the soil and hold the plant firm!', speak:'Find the roots underground, at the bottom!'},
+  {id:'branch', name:'BRANCH', emoji:'🪵', fact:'🪵 Branches grow from the stem and hold the leaves and flowers!', speak:'Tap the branch on the side!'},
+];
+
+const TOTAL=5;
+let score=0,round=0,current=null,selectedLabel=null,mode='label-first',answered=false;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playCorrect(){
+  const c=ac();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';
+    g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);
+    o.start();o.stop(c.currentTime+.4);
+  },i*100));
+}
+function playWrong(){
+  const c=ac(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;
+  g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);
+  o.start();o.stop(c.currentTime+.3);
+}
+function playChime(){
+  const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';
+    g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);
+    o.start();o.stop(c.currentTime+.45);
+  },i*90));
+}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;window.speechSynthesis.speak(u);}
+
+function makeDots(){
+  const p=document.getElementById('progRow');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}
+}
+function spawnConf(){
+  const cols=['#2E7D32','#FFD700','#E53935','#1E88E5','#FF8F00'];
+  for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}
+}
+function showFact(txt){
+  document.querySelector('.fact-box')?.remove();
+  const el=document.createElement('div');el.className='fact-box';el.textContent=txt;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;selectedLabel=null;
+  current=PARTS[round];
+  document.getElementById('targetPartName').textContent=current.name;
+  document.getElementById('qSub').textContent=`Where is the ${current.name.toLowerCase()} on this plant?`;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  // reset hotspots
+  document.querySelectorAll('.hotspot').forEach(h=>{
+    h.classList.remove('correct','error','target');
+    h.style.display='flex';
+    if(h.dataset.part===current.id){h.classList.add('target');}
+  });
+  // reset labels
+  document.querySelectorAll('.part-label').forEach(l=>l.classList.remove('selected','correct-lbl','wrong-lbl'));
+
+  setTimeout(()=>speak(current.speak),400);
+}
+
+function selectLabel(partId){
+  // In label mode: player taps label then taps hotspot
+  document.querySelectorAll('.part-label').forEach(l=>l.classList.remove('selected'));
+  const lbl=document.querySelector(`.part-label[data-part="${partId}"]`);
+  if(lbl)lbl.classList.add('selected');
+  selectedLabel=partId;
+  speak(`You selected ${partId}! Now tap it on the plant!`);
+}
+window.selectLabel=selectLabel;
+
+// hotspot click — primary interaction
+document.querySelectorAll('.hotspot').forEach(hs=>{
+  hs.onclick=function(){
+    const tappedPart=this.dataset.part;
+    if(answered)return;
+
+    if(tappedPart===current.id){
+      answered=true;
+      this.classList.add('correct');this.classList.remove('target');
+      playCorrect();spawnConf();showFact(current.fact);
+      // mark label correct
+      const lbl=document.querySelector(`.part-label[data-part="${tappedPart}"]`);
+      if(lbl)lbl.classList.add('correct-lbl');
+      score+=10;document.getElementById('scoreVal').textContent=score;
+      speak(`Correct! That is the ${current.name.toLowerCase()}! ${current.fact.replace(/^[^ ]+ /,'')}`);
+      round++;makeDots();setTimeout(newRound,2800);
+    } else {
+      this.classList.add('error');
+      playWrong();
+      speak(`That is the ${tappedPart}! Find the ${current.name.toLowerCase()}!`);
+      setTimeout(()=>this.classList.remove('error'),500);
+    }
+  };
+});
+
+function showCelebration(){
+  playChime();spawnConf();
+  speak(`Amazing! You know all parts of a plant! Flower, leaf, stem, roots and branches!`);
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🌸</div>
+    <div class="ov-title">Plant Expert!</div>
+    <div class="ov-sub">
+      🌸 Flower — makes seeds<br/>
+      🍃 Leaf — makes food from sunlight<br/>
+      🌿 Stem — holds plant up<br/>
+      🌱 Roots — drinks water<br/>
+      🪵 Branch — holds leaves<br/><br/>
+      Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!
+    </div>
+    <button class="ov-btn" onclick="restart()">Play Again 🌿</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Welcome, Plant Doctor! Label the parts of the plant!');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

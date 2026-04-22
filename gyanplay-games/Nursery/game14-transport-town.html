@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transport Town – GyanPlay Nursery</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--blue1:#E3F2FD;--blue2:#90CAF9;--correct:#43A047;--wrong:#E53935;--text:#0D47A1}
+  body{min-height:100vh;background:linear-gradient(135deg,#E3F2FD,#90CAF9);font-family:'Nunito',sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;color:var(--text)}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .fadeIn{animation:fadeIn .5s ease forwards}
+
+  .topbar{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .back-btn{background:#fff;border:none;border-radius:50px;padding:8px 18px;font-size:1.1rem;font-weight:800;cursor:pointer;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+  .lang-toggle{display:flex;gap:6px}
+  .lang-btn{background:#fff;border:none;border-radius:50px;padding:7px 14px;font-size:1rem;font-weight:800;cursor:pointer;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.12);transition:background .2s}
+  .lang-btn.active{background:#1565C0;color:#fff}
+
+  .score-bar{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:1.2rem;font-weight:800}
+  .progress-wrap{width:100%;max-width:520px;background:#BBDEFB;border-radius:50px;height:14px;margin-bottom:18px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,#1565C0,#42A5F5);border-radius:50px;transition:width .4s}
+
+  .card{background:rgba(255,255,255,.75);border-radius:28px;padding:24px 20px;max-width:520px;width:100%;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.12);margin-bottom:16px}
+  .emoji-display{font-size:7rem;line-height:1;margin-bottom:10px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.15))}
+  .question-label{font-size:1.5rem;font-weight:900;margin-bottom:4px}
+  .group-badge{display:inline-block;background:#1565C0;color:#fff;border-radius:50px;padding:5px 18px;font-size:1.05rem;font-weight:800;margin-top:8px}
+  .fun-fact{font-size:1.05rem;font-weight:700;color:#0D47A1;margin-top:8px;min-height:28px}
+
+  .options{display:flex;flex-direction:column;gap:12px;max-width:520px;width:100%;margin-bottom:16px}
+  .opt-btn{background:#fff;border:3px solid #90CAF9;border-radius:20px;padding:18px 10px;font-size:1.6rem;font-weight:900;cursor:pointer;color:var(--text);min-height:70px;transition:transform .15s,background .2s;box-shadow:0 3px 10px rgba(0,0,0,.1)}
+  .opt-btn:active{transform:scale(.96)}
+  .opt-btn.correct{background:#C8E6C9;border-color:var(--correct);color:var(--correct)}
+  .opt-btn.wrong{background:#FFCDD2;border-color:var(--wrong);color:var(--wrong)}
+  .opt-btn:disabled{cursor:default}
+
+  .star-row{font-size:3rem;margin:10px 0}
+  .result-card{background:rgba(255,255,255,.85);border-radius:28px;padding:30px 20px;max-width:520px;width:100%;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.15)}
+  .result-title{font-size:2.2rem;font-weight:900;margin-bottom:8px}
+  .result-score{font-size:1.6rem;font-weight:800;margin-bottom:16px;color:#0D47A1}
+  .play-again-btn{background:linear-gradient(135deg,#1565C0,#42A5F5);border:none;border-radius:50px;padding:18px 40px;font-size:1.5rem;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.2);transition:transform .15s}
+  .play-again-btn:active{transform:scale(.96)}
+  [data-lang]{display:none}[data-lang].active{display:inline}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="score-bar">
+  <span>⭐ <span id="scoreDisplay">0</span></span>
+  <span id="roundDisplay">1 / 8</span>
+</div>
+<div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+<div id="gameArea" class="fadeIn"></div>
+<div id="endScreen" style="display:none"></div>
+
+<script>
+const rounds = [
+  {emoji:"🚗", answer:{en:"Car",hi:"कार",as:"গাড়ী"}, group:{en:"🛣️ Goes on Road",hi:"🛣️ सड़क पर",as:"🛣️ পথত যায়"}, opts:[{en:"Car",hi:"कार",as:"গাড়ী"},{en:"Aeroplane",hi:"हवाई जहाज़",as:"বিমান"},{en:"Boat",hi:"नाव",as:"নাও"}], fact:{en:"Cars run on roads!",hi:"कार सड़क पर चलती है!",as:"গাড়ী পথত চলে!"}},
+  {emoji:"🚌", answer:{en:"Bus",hi:"बस",as:"বাছ"}, group:{en:"🛣️ Goes on Road",hi:"🛣️ सड़क पर",as:"🛣️ পথত যায়"}, opts:[{en:"Train",hi:"ट्रेन",as:"ৰেলগাড়ী"},{en:"Bus",hi:"बस",as:"বাছ"},{en:"Ship",hi:"जहाज़",as:"জাহাজ"}], fact:{en:"A bus carries many people!",hi:"बस बहुत लोगों को ले जाती है!",as:"বাছে বহু মানুহ নিয়ে যায়!"}},
+  {emoji:"✈️", answer:{en:"Aeroplane",hi:"हवाई जहाज़",as:"বিমান"}, group:{en:"☁️ Goes in Sky",hi:"☁️ आकाश में",as:"☁️ আকাশত যায়"}, opts:[{en:"Aeroplane",hi:"हवाई जहाज़",as:"বিমান"},{en:"Car",hi:"कार",as:"গাড়ী"},{en:"Boat",hi:"नाव",as:"নাও"}], fact:{en:"Aeroplanes fly in the sky!",hi:"हवाई जहाज़ आकाश में उड़ता है!",as:"বিমান আকাশত উৰে!"}},
+  {emoji:"🚢", answer:{en:"Ship",hi:"जहाज़",as:"জাহাজ"}, group:{en:"🌊 Goes on Water",hi:"🌊 पानी पर",as:"🌊 পানীত যায়"}, opts:[{en:"Bus",hi:"बस",as:"বাছ"},{en:"Ship",hi:"जहाज़",as:"জাহাজ"},{en:"Helicopter",hi:"हेलिकॉप्टर",as:"হেলিকপ্তাৰ"}], fact:{en:"Ships sail on the sea!",hi:"जहाज़ समुद्र में चलता है!",as:"জাহাজ সমুদ্ৰত চলে!"}},
+  {emoji:"🚲", answer:{en:"Bicycle",hi:"साइकिल",as:"চাইকেল"}, group:{en:"🛣️ Goes on Road",hi:"🛣️ सड़क पर",as:"🛣️ পথত যায়"}, opts:[{en:"Bicycle",hi:"साइकिल",as:"চাইকেল"},{en:"Ship",hi:"जहाज़",as:"জাহাজ"},{en:"Aeroplane",hi:"हवाई जहाज़",as:"বিমান"}], fact:{en:"A bicycle has two wheels!",hi:"साइकिल में दो पहिए होते हैं!",as:"চাইকেলত দুটা চকা থাকে!"}},
+  {emoji:"🚂", answer:{en:"Train",hi:"ट्रेन",as:"ৰেলগাড়ী"}, group:{en:"🛤️ Goes on Tracks",hi:"🛤️ पटरी पर",as:"🛤️ ৰেলপথত যায়"}, opts:[{en:"Helicopter",hi:"हेलिकॉप्टर",as:"হেলিকপ্তাৰ"},{en:"Car",hi:"कार",as:"গাড়ী"},{en:"Train",hi:"ट्रेन",as:"ৰেলগাড়ী"}], fact:{en:"A train runs on railway tracks!",hi:"ट्रेन पटरी पर चलती है!",as:"ৰেলগাড়ী ৰেলপথত চলে!"}},
+  {emoji:"🚁", answer:{en:"Helicopter",hi:"हेलिकॉप्टर",as:"হেলিকপ্তাৰ"}, group:{en:"☁️ Goes in Sky",hi:"☁️ आकाश में",as:"☁️ আকাশত যায়"}, opts:[{en:"Bicycle",hi:"साइकिल",as:"চাইকেল"},{en:"Helicopter",hi:"हेलिकॉप्टर",as:"হেলিকপ্তাৰ"},{en:"Ship",hi:"जहाज़",as:"জাহাজ"}], fact:{en:"A helicopter can hover in the air!",hi:"हेलिकॉप्टर हवा में रुक सकता है!",as:"হেলিকপ্তাৰ বায়ুত ওলমি থাকে!"}},
+  {emoji:"🛺", answer:{en:"Auto Rickshaw",hi:"ऑटो रिक्शा",as:"অটো ৰিক্সা"}, group:{en:"🛣️ Goes on Road",hi:"🛣️ सड़क पर",as:"🛣️ পথত যায়"}, opts:[{en:"Auto Rickshaw",hi:"ऑटो रिक्शा",as:"অটো ৰিক্সা"},{en:"Train",hi:"ट्रेन",as:"ৰেলগাড়ী"},{en:"Aeroplane",hi:"हवाई जहाज़",as:"বিমান"}], fact:{en:"Auto rickshaws have three wheels!",hi:"ऑटो रिक्शा में तीन पहिए होते हैं!",as:"অটোত তিনিটা চকা থাকে!"}}
+];
+
+let lang='en', currentRound=0, score=0;
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{b.classList.toggle('active',['en','hi','as'][i]===l)});
+  renderRound();
+}
+function shuffle(a){return a.sort(()=>Math.random()-.5)}
+
+function renderRound(){
+  if(currentRound>=rounds.length){showEnd();return;}
+  const r=rounds[currentRound];
+  document.getElementById('roundDisplay').textContent=`${currentRound+1} / 8`;
+  document.getElementById('progressFill').style.width=`${(currentRound/8)*100}%`;
+  const shuffled=shuffle([...r.opts]);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="card fadeIn">
+      <div class="emoji-display">${r.emoji}</div>
+      <div class="question-label">
+        <span data-lang="en" class="${lang==='en'?'active':''}">What vehicle is this?</span>
+        <span data-lang="hi" class="${lang==='hi'?'active':''}">यह कौन सा वाहन है?</span>
+        <span data-lang="as" class="${lang==='as'?'active':''}">এইটো কোনটো বাহন?</span>
+      </div>
+      <div><span class="group-badge">${r.group[lang]}</span></div>
+      <div class="fun-fact" id="funFact"></div>
+    </div>
+    <div class="options">
+      ${shuffled.map(o=>`<button class="opt-btn" onclick="checkAnswer(this,'${o.en}','${r.answer.en}')">${o[lang]}</button>`).join('')}
+    </div>`;
+}
+
+function checkAnswer(btn,chosen,correct){
+  document.querySelectorAll('.opt-btn').forEach(b=>{b.disabled=true;if(b.getAttribute('onclick').includes(`'${correct}'`))b.classList.add('correct');});
+  if(chosen===correct){btn.classList.remove('correct');btn.classList.add('correct');score+=10;document.getElementById('scoreDisplay').textContent=score;}
+  else btn.classList.add('wrong');
+  document.getElementById('funFact').textContent=rounds[currentRound].fact[lang];
+  setTimeout(()=>{currentRound++;renderRound();},1600);
+}
+
+function showEnd(){
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('gameArea').style.display='none';
+  const pct=score/80*100;
+  const stars=pct>=90?3:pct>=70?2:pct>=40?1:0;
+  const starStr='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  const msg={en:["Keep trying!","Good try!","Great job!","Amazing!"][stars],hi:["कोशिश करो!","अच्छी कोशिश!","शाबाश!","अद्भुत!"][stars],as:["চেষ্টা কৰা!","ভাল চেষ্টা!","দুৰ্দান্ত!","অসাধাৰণ!"][stars]};
+  const es=document.getElementById('endScreen');
+  es.style.display='block';
+  es.innerHTML=`<div class="result-card fadeIn">
+    <div style="font-size:5rem">🚀</div>
+    <div class="result-title">${{en:"Game Over!",hi:"खेल समाप्त!",as:"খেল শেষ!"}[lang]}</div>
+    <div class="star-row">${starStr}</div>
+    <div class="result-score">${{en:"Score",hi:"स्कोर",as:"স্কোৰ"}[lang]}: ${score} / 80</div>
+    <p style="font-size:1.3rem;font-weight:800;margin-bottom:20px">${msg[lang]}</p>
+    <button class="play-again-btn" onclick="restartGame()">${{en:"Play Again!",hi:"फिर खेलो!",as:"আকৌ খেলা!"}[lang]}</button>
+  </div>`;
+}
+
+function restartGame(){currentRound=0;score=0;document.getElementById('scoreDisplay').textContent=0;document.getElementById('endScreen').style.display='none';document.getElementById('gameArea').style.display='block';renderRound();}
+renderRound();
+</script>
+</body>
+</html>

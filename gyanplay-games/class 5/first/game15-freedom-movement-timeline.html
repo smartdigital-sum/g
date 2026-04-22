@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>G5-15 · Freedom Movement Timeline · GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--lime:#A8E063;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;
+  --grad-from:#071A12;--grad-to:#040E0A;--accent:var(--orange);
+  --border:rgba(255,159,28,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(145deg,var(--grad-from),var(--grad-to));min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;padding:0 0 48px;}
+.header{width:100%;max-width:480px;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;}
+.subject-tag{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold);}
+.stars{display:flex;gap:3px;}
+.star{font-size:1rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+
+.wow-card{width:calc(100% - 32px);max-width:448px;background:linear-gradient(135deg,rgba(255,159,28,.18),rgba(255,209,102,.08));border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin:8px 16px 16px;text-align:center;}
+.wow-label{font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.wow-card p{font-size:.95rem;line-height:1.6;}
+.wow-card strong{color:var(--gold);}
+
+.stage-tabs{width:calc(100% - 32px);max-width:448px;margin:0 16px 14px;display:flex;gap:6px;}
+.tab-btn{flex:1;padding:8px 4px;border-radius:10px;border:2px solid transparent;font-family:'Baloo 2',cursive;font-weight:700;font-size:.72rem;background:var(--card);color:var(--dim);cursor:pointer;transition:all .2s;text-align:center;}
+.tab-btn.active{border-color:var(--orange);color:var(--orange);background:rgba(255,159,28,.1);}
+
+.section{width:calc(100% - 32px);max-width:448px;margin:0 16px;}
+
+/* EVENT CARDS (shuffled) */
+.event-pool{
+  display:flex;flex-direction:column;gap:8px;margin-bottom:14px;
+}
+.event-card{
+  background:var(--card);border:2px solid var(--border);
+  border-radius:14px;padding:12px 16px;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;transition:all .2s;user-select:none;
+}
+.event-card:hover{border-color:var(--orange);}
+.event-card.selected{border-color:var(--gold);background:rgba(255,209,102,.08);}
+.event-card.placed{opacity:.3;pointer-events:none;}
+.event-emoji{font-size:1.8rem;flex-shrink:0;}
+.event-name{font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:800;color:#fff;}
+.event-brief{font-size:.78rem;color:var(--dim);line-height:1.4;}
+
+/* TIMELINE SLOTS */
+.timeline-line{
+  position:relative;
+  margin-bottom:14px;
+}
+.timeline-track{
+  position:absolute;left:20px;top:0;bottom:0;
+  width:2px;background:linear-gradient(180deg,rgba(255,159,28,.5),rgba(255,209,102,.3));
+}
+.timeline-slots{display:flex;flex-direction:column;gap:8px;}
+.tl-slot{
+  display:flex;align-items:center;gap:12px;padding-left:40px;position:relative;
+}
+.tl-dot{
+  position:absolute;left:14px;width:14px;height:14px;
+  border-radius:50%;border:2px solid var(--orange);
+  background:var(--card);z-index:1;transition:all .3s;
+  flex-shrink:0;
+}
+.tl-slot.filled .tl-dot{background:var(--orange);border-color:var(--orange);}
+.tl-slot.correct-slot .tl-dot{background:var(--teal);border-color:var(--teal);}
+.tl-slot.wrong-slot .tl-dot{background:var(--coral);border-color:var(--coral);}
+.tl-year{
+  font-family:'Baloo 2',cursive;font-size:.8rem;font-weight:800;
+  color:var(--orange);min-width:36px;
+}
+.tl-drop{
+  flex:1;background:rgba(255,159,28,.06);
+  border:2px dashed rgba(255,159,28,.25);border-radius:10px;
+  padding:10px 12px;min-height:44px;transition:all .2s;cursor:pointer;
+}
+.tl-drop:hover,.tl-drop.drag-over{border-color:var(--orange);background:rgba(255,159,28,.14);}
+.tl-drop.filled{border-style:solid;border-color:rgba(255,159,28,.4);background:rgba(255,159,28,.1);}
+.tl-drop .drop-content{font-size:.82rem;font-weight:700;color:var(--orange);}
+.tl-drop.empty-label{color:var(--dim);font-size:.75rem;}
+
+/* FACT PANEL */
+.fact-panel{
+  background:rgba(255,159,28,.08);border:1px solid var(--border);
+  border-radius:12px;padding:12px 16px;margin-bottom:14px;
+  display:none;
+}
+.fact-panel.show{display:block;}
+.fp-title{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--orange);margin-bottom:5px;}
+.fp-body{font-size:.88rem;line-height:1.6;color:var(--text);}
+.fp-body strong{color:var(--gold);}
+
+/* QUIZ */
+.quiz-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:12px;}
+.quiz-q{font-size:.92rem;font-weight:700;line-height:1.6;color:var(--text);margin-bottom:10px;}
+.quiz-q strong{color:var(--gold);}
+.quiz-opts{display:flex;flex-direction:column;gap:7px;}
+.q-opt{background:rgba(255,159,28,.08);border:2px solid rgba(255,159,28,.2);color:var(--text);font-weight:600;font-size:.88rem;padding:10px 14px;border-radius:10px;cursor:pointer;transition:all .2s;}
+.q-opt:hover{border-color:var(--orange);}
+.q-opt.chosen{border-color:var(--orange);background:rgba(255,159,28,.18);color:var(--orange);}
+.q-opt.correct-a{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal);}
+.q-opt.wrong-a{border-color:var(--coral);background:rgba(255,107,107,.1);color:var(--coral);}
+
+.check-btn{width:100%;padding:14px;border-radius:14px;border:none;font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--orange),#e67e00);color:#fff;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(255,159,28,.35);}
+.check-btn:hover{opacity:.9;}
+.check-btn:disabled{opacity:.4;cursor:not-allowed;}
+.feedback{margin-top:12px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.9rem;text-align:center;display:none;}
+.feedback.correct{background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.4);color:var(--teal);}
+.feedback.wrong{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:var(--coral);}
+
+.progress-row{width:calc(100% - 32px);max-width:448px;margin:16px 16px 0;display:flex;align-items:center;justify-content:space-between;}
+.progress-text{font-size:.8rem;font-weight:700;color:var(--dim);}
+.next-btn{background:var(--gold);color:#1A0F00;font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;border:none;border-radius:50px;padding:8px 22px;cursor:pointer;display:none;}
+
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:28px;max-width:360px;width:90%;text-align:center;}
+.overlay-box .o-emoji{font-size:3rem;margin-bottom:10px;}
+.overlay-box h3{font-family:'Baloo 2',cursive;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.overlay-box p{font-size:.88rem;color:var(--text);line-height:1.6;}
+.overlay-box strong{color:var(--teal);}
+
+.complete-screen{width:calc(100% - 32px);max-width:448px;margin:20px 16px;background:var(--card);border:2px solid rgba(6,214,160,.3);border-radius:22px;padding:32px 24px;text-align:center;display:none;}
+.complete-screen .big{font-size:4rem;margin-bottom:12px;}
+.complete-screen h2{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--gold);margin-bottom:8px;}
+.complete-screen p{color:var(--text);font-size:.95rem;line-height:1.6;margin-bottom:20px;}
+.play-again{background:var(--teal);color:#040E04;font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;border:none;border-radius:50px;padding:12px 28px;cursor:pointer;}
+
+.confetti-piece{position:fixed;width:10px;height:10px;opacity:0;animation:confFall 1.8s ease-in forwards;pointer-events:none;z-index:200;}
+@keyframes confFall{0%{opacity:1;transform:translateY(0) rotate(0deg);}100%{opacity:0;transform:translateY(80vh) rotate(720deg);}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="subject-tag">SST</div>
+  <div class="game-title">⚔️ Freedom Movement Timeline</div>
+  <div class="stars">
+    <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+    <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+  </div>
+</div>
+
+<div class="wow-card">
+  <div class="wow-label">🤯 Did You Know?</div>
+  <p>Gandhi's Salt March was <strong>241 miles</strong> — walked deliberately to break a law. It was seen live by millions and covered by international press. <strong>A walk changed the course of history!</strong></p>
+</div>
+
+<div class="stage-tabs">
+  <div class="tab-btn active" id="tab1">1. Sequence Events</div>
+  <div class="tab-btn" id="tab2">2. Identify Events</div>
+</div>
+
+<!-- STAGE 1: SEQUENCE -->
+<div class="section" id="stage1">
+  <div style="background:rgba(255,159,28,.08);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:.88rem;line-height:1.6;">
+    <strong style="color:var(--orange);">📅 Tap an event card, then tap the correct timeline slot.</strong> Arrange all 6 events in chronological order!
+  </div>
+
+  <!-- Card pool (shuffled) -->
+  <div class="event-pool" id="eventPool"></div>
+
+  <!-- Timeline slots -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:14px;">
+    <div style="font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:12px;text-align:center;">🗓️ Timeline — Tap to place</div>
+    <div class="timeline-line">
+      <div class="timeline-track"></div>
+      <div class="timeline-slots" id="timelineSlots"></div>
+    </div>
+  </div>
+
+  <div class="fact-panel" id="factPanel">
+    <div class="fp-title">📜 WOW Story</div>
+    <div class="fp-body" id="factBody"></div>
+  </div>
+
+  <button class="check-btn" id="s1Btn" onclick="checkSequence()">Check My Timeline ✓</button>
+  <div class="feedback" id="s1FB"></div>
+</div>
+
+<!-- STAGE 2: IDENTIFY -->
+<div class="section" id="stage2" style="display:none;">
+  <div id="identifyQuestions"></div>
+  <button class="check-btn" id="s2Btn" onclick="checkIdentify()">Check Answers ✓</button>
+  <div class="feedback" id="s2FB"></div>
+</div>
+
+<div class="progress-row">
+  <span class="progress-text" id="progressText">Stage 1 of 2</span>
+  <button class="next-btn" id="nextBtn" onclick="nextStage()">Identify Stage →</button>
+</div>
+
+<div class="complete-screen" id="completeScreen">
+  <div class="big">🇮🇳</div>
+  <h2>Freedom Fighter!</h2>
+  <p>You've sequenced 90 years of India's freedom movement — from the 1857 Mutiny to Independence in 1947. Remember: a walk, a march, and a protest can change the world!</p>
+  <button class="play-again" onclick="restartGame()">Play Again 🔄</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="o-emoji" id="oEmoji">🇮🇳</div>
+    <h3 id="oTitle">History Made!</h3>
+    <p id="oFact"></p>
+  </div>
+</div>
+
+<script>
+const EVENTS=[
+  {year:1857,emoji:'⚔️',name:'First War of Independence',brief:'Sepoy Mutiny — soldiers revolt against the British East India Company',
+   wow:'The <strong>1857 Mutiny</strong> started over rifle cartridges! Soldiers believed the grease on bullets contained pig and cow fat — sacrilege for both Muslims and Hindus. A single rumour sparked a national uprising!'},
+  {year:1885,emoji:'🏛️',name:'Indian National Congress Founded',brief:'INC formed — Indians begin organised political resistance',
+   wow:'The <strong>INC</strong> was originally founded by a British civil servant (A.O. Hume)! It took decades to become the vehicle of independence under leaders like Gandhi and Nehru.'},
+  {year:1919,emoji:'💔',name:'Jallianwala Bagh Massacre',brief:'British troops fire on unarmed crowd — 379+ killed in Amritsar',
+   wow:'<strong>Jallianwala Bagh</strong> walls still have bullet marks. General Dyer ordered firing without warning on a crowd including children at a festival. The massacre made millions join the freedom movement!'},
+  {year:1920,emoji:'🤝',name:'Non-Cooperation Movement',brief:'Gandhi launches first mass movement — boycott of British goods and institutions',
+   wow:'Gandhi asked millions to <strong>return their British medals</strong>, leave British schools, and wear only khadi. Over 30,000 people were arrested. The British Empire was stunned — no one had used non-violence as a weapon before!'},
+  {year:1930,emoji:'🧂',name:'Salt March (Dandi March)',brief:'Gandhi walks 241 miles to make salt — breaking British salt tax law',
+   wow:'Gandhi picked up a handful of salt from the Dandi beach and said: <strong>"With this, I am shaking the foundations of the British Empire."</strong> The next day, 100,000 people were breaking the salt law across India!'},
+  {year:1947,emoji:'🇮🇳',name:'Independence — 15 August 1947',brief:'India becomes independent after 200 years of British rule',
+   wow:'At the stroke of midnight on <strong>15 August 1947</strong>, Nehru gave his famous "Tryst with Destiny" speech. After 90 years of organised resistance, India was free — home to 350 million people and the world\'s largest democracy!'},
+];
+
+const SORTED_YEARS=[1857,1885,1919,1920,1930,1947];
+
+const IDENTIFY_QS=[
+  {q:'Gandhi\'s 241-mile walk to protest the salt tax is called:',opts:['Non-Cooperation Movement','Dandi March','Quit India Movement','Champaran Satyagraha'],answer:1},
+  {q:'The massacre at Jallianwala Bagh in 1919 happened in which city?',opts:['Delhi','Calcutta','Amritsar','Bombay'],answer:2},
+  {q:'In which year did India become independent?',opts:['1945','1946','1947','1948'],answer:2},
+  {q:'Which movement asked Indians to return British awards and leave British schools?',opts:['Salt March','Dandi March','Non-Cooperation Movement','Khilafat Movement'],answer:2},
+];
+
+let stage=1, score=0;
+let selectedCard=null, slotPlacements={}, identifySels={};
+
+function buildEventPool(){
+  const shuffled=[...EVENTS].sort(()=>Math.random()-.5);
+  const pool=document.getElementById('eventPool');
+  pool.innerHTML='';
+  shuffled.forEach(e=>{
+    const card=document.createElement('div');
+    card.className='event-card';
+    card.id=`ec_${e.year}`;
+    card.innerHTML=`<span class="event-emoji">${e.emoji}</span><div><div class="event-name">${e.name}</div><div class="event-brief">${e.brief}</div></div>`;
+    card.onclick=()=>selectCard(e.year,card);
+    pool.appendChild(card);
+  });
+}
+
+function buildTimelineSlots(){
+  const slots=document.getElementById('timelineSlots');
+  slots.innerHTML='';
+  SORTED_YEARS.forEach((year,i)=>{
+    const slot=document.createElement('div');
+    slot.className='tl-slot';
+    slot.id=`slot_${year}`;
+    slot.innerHTML=`
+      <div class="tl-dot"></div>
+      <div class="tl-year">${year}</div>
+      <div class="tl-drop" id="drop_${year}" onclick="placeCard(${year})">
+        <span style="font-size:.75rem;color:var(--dim);font-weight:700;">Tap to place event here</span>
+      </div>`;
+    slots.appendChild(slot);
+  });
+}
+
+function selectCard(year,el){
+  selectedCard=year;
+  document.querySelectorAll('.event-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function placeCard(slotYear){
+  if(!selectedCard) return;
+  // If slot already filled, swap back
+  const prev=slotPlacements[slotYear];
+  if(prev){
+    const prevCard=document.getElementById(`ec_${prev}`);
+    if(prevCard) prevCard.classList.remove('placed');
+  }
+  // Place current card
+  slotPlacements[slotYear]=selectedCard;
+  const drop=document.getElementById(`drop_${slotYear}`);
+  const event=EVENTS.find(e=>e.year===selectedCard);
+  drop.innerHTML=`<span class="drop-content">${event.emoji} ${event.name}</span>`;
+  drop.classList.add('filled');
+  document.getElementById(`slot_${slotYear}`).classList.add('filled');
+  document.getElementById(`ec_${selectedCard}`).classList.add('placed');
+  // Show WOW fact
+  document.getElementById('factPanel').className='fact-panel show';
+  document.getElementById('factBody').innerHTML=event.wow;
+  showOverlay(event.emoji,'Historical Event!',event.wow.substring(0,200)+'...');
+  selectedCard=null;
+  document.querySelectorAll('.event-card').forEach(c=>c.classList.remove('selected'));
+}
+
+function checkSequence(){
+  const allFilled=Object.keys(slotPlacements).length===6;
+  if(!allFilled){showFB('s1FB','wrong','⚠️ Fill all 6 timeline slots first!');return;}
+  let correct=0;
+  SORTED_YEARS.forEach(year=>{
+    const placed=slotPlacements[year];
+    const slot=document.getElementById(`slot_${year}`);
+    if(placed===year){
+      correct++;
+      if(slot) slot.classList.add('correct-slot');
+    } else {
+      if(slot) slot.classList.add('wrong-slot');
+    }
+  });
+  score+=correct; updateStars();
+  document.getElementById('s1Btn').disabled=true;
+  showFB('s1FB',correct>=5?'correct':'wrong',correct===6?'✅ Perfect chronological order!':` ${correct}/6 correct — check which years don't match!`);
+  if(correct>=5) spawnConfetti();
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function buildIdentify(){
+  const c=document.getElementById('identifyQuestions');
+  c.innerHTML='';
+  IDENTIFY_QS.forEach((q,i)=>{
+    const card=document.createElement('div');
+    card.className='quiz-card';
+    card.innerHTML=`
+      <div class="quiz-q">${i+1}. ${q.q}</div>
+      <div class="quiz-opts">
+        ${q.opts.map((o,j)=>`<button class="q-opt" id="idopt_${i}_${j}" onclick="pickId(${i},${j},this)">${o}</button>`).join('')}
+      </div>`;
+    c.appendChild(card);
+  });
+}
+
+window.pickId=function(qi,oi,el){identifySels[qi]=oi;document.querySelectorAll(`[id^="idopt_${qi}_"]`).forEach(b=>b.classList.toggle('chosen',b===el));}
+
+function checkIdentify(){
+  if(Object.keys(identifySels).length<IDENTIFY_QS.length){showFB('s2FB','wrong','⚠️ Answer all 4!');return;}
+  let correct=0;
+  IDENTIFY_QS.forEach((q,i)=>{
+    const isRight=identifySels[i]===q.answer;
+    if(isRight) correct++;
+    document.getElementById(`idopt_${i}_${q.answer}`).classList.add('correct-a');
+    if(!isRight) document.getElementById(`idopt_${i}_${identifySels[i]}`)?.classList.add('wrong-a');
+  });
+  score+=correct; updateStars();
+  document.getElementById('s2Btn').disabled=true;
+  showFB('s2FB',correct>=3?'correct':'wrong',correct===4?'✅ All 4 correct! Freedom Fighter badge earned!':` ${correct}/4 correct!`);
+  if(correct>=3) spawnConfetti();
+  showOverlay('🇮🇳','Independence!','India won freedom on <strong>15 August 1947</strong> after 90 years of organised resistance. The Salt March showed the world that non-violence is the most powerful weapon!');
+  setTimeout(()=>{
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+    document.querySelector('.stage-tabs').style.display='none';
+    document.querySelector('.progress-row').style.display='none';
+    document.getElementById('completeScreen').style.display='block';
+    if(correct>=3) spawnConfetti();
+  },2200);
+}
+
+function setStage(n){
+  stage=n;
+  [1,2].forEach(i=>{document.getElementById('stage'+i).style.display=i===n?'block':'none';document.getElementById('tab'+i).classList.toggle('active',i===n);});
+  document.getElementById('progressText').textContent=`Stage ${n} of 2`;
+  document.getElementById('nextBtn').style.display='none';
+  if(n===2) buildIdentify();
+}
+function nextStage(){if(stage<2) setStage(stage+1);}
+function showFB(id,type,msg){const el=document.getElementById(id);el.textContent=msg;el.className=`feedback ${type}`;el.style.display='block';}
+function updateStars(){const c=Math.min(5,Math.ceil(score/2));for(let i=1;i<=c;i++) document.getElementById('s'+i).classList.add('lit');}
+function showOverlay(emoji,title,fact){
+  document.getElementById('oEmoji').textContent=emoji;document.getElementById('oTitle').textContent=title;document.getElementById('oFact').innerHTML=fact;
+  const ov=document.getElementById('overlay');ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),2600);
+}
+function spawnConfetti(){
+  const colors=['#FFD166','#FF6B6B','#06D6A0','#FF9F1C','#A8E063'];
+  for(let i=0;i<28;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[i%5]};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()*2}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),3500);}
+}
+function restartGame(){
+  stage=1;score=0;selectedCard=null;slotPlacements={};identifySels={};
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('completeScreen').style.display='none';
+  document.querySelectorAll('.section').forEach(s=>s.style.display='block');
+  document.querySelector('.stage-tabs').style.display='flex';
+  document.querySelector('.progress-row').style.display='flex';
+  buildEventPool(); buildTimelineSlots();
+  document.getElementById('factPanel').className='fact-panel';
+  document.getElementById('s1Btn').disabled=false;
+  setStage(1);
+}
+buildEventPool(); buildTimelineSlots();
+</script>
+</body>
+</html>

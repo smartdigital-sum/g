@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Computer Science — HTML, Internet &amp; Cyber Safety — GyanPlay Class 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+  --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+  --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));min-height:100vh;color:#fff;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fadeIn{animation:fadeIn .45s ease both;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:99;}
+.back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:.95rem;padding:7px 16px;border-radius:20px;cursor:pointer;transition:.2s;}
+.back-btn:hover{background:rgba(255,255,255,.22);}
+.badge{background:var(--sky);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.82rem;padding:5px 14px;border-radius:20px;letter-spacing:.5px;}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:.8rem;padding:5px 11px;border-radius:14px;cursor:pointer;transition:.2s;}
+.lang-btn.active,.lang-btn:hover{background:var(--purple);}
+.container{max-width:780px;margin:0 auto;padding:24px 16px 60px;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.65rem;font-weight:800;text-align:center;margin-bottom:4px;background:linear-gradient(90deg,var(--sky),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.game-sub{text-align:center;font-size:.88rem;color:#bbb;margin-bottom:22px;}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.prog-bar{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--purple));border-radius:4px;transition:width .4s ease;}
+.prog-label{font-size:.82rem;color:#aaa;white-space:nowrap;}
+.score-display{text-align:right;font-family:'Baloo 2',sans-serif;font-size:1rem;color:var(--gold);margin-bottom:14px;}
+.q-card{background:var(--card);border-radius:18px;padding:26px 24px;border:1px solid rgba(255,255,255,.09);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.q-num{font-size:.78rem;color:var(--sky);font-weight:700;letter-spacing:1px;margin-bottom:8px;}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.08rem;font-weight:600;line-height:1.55;margin-bottom:14px;}
+.code-box{background:#0d0d1a;border:1px solid rgba(0,174,239,.4);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-family:'Courier New',monospace;font-size:.92rem;color:#7dd3fc;line-height:1.6;white-space:pre;overflow-x:auto;}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.options{grid-template-columns:1fr;}}
+.opt-btn{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);color:#e8e8e8;font-family:'Nunito',sans-serif;font-size:.93rem;padding:13px 16px;border-radius:12px;cursor:pointer;text-align:left;transition:.22s;line-height:1.4;}
+.opt-btn:hover:not(:disabled){background:rgba(0,174,239,.2);border-color:var(--sky);}
+.opt-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);color:#fff;}
+.opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);color:#fff;}
+.opt-btn:disabled{cursor:not-allowed;}
+.feedback{margin-top:16px;padding:12px 16px;border-radius:12px;font-size:.92rem;line-height:1.5;display:none;}
+.feedback.show{display:block;}
+.feedback.correct{background:rgba(0,200,83,.15);border:1px solid var(--green);color:#b9f6ca;}
+.feedback.wrong{background:rgba(255,64,129,.15);border:1px solid var(--pink);color:#ffd0dd;}
+.next-btn{display:block;margin:20px auto 0;background:linear-gradient(135deg,var(--sky),#005588);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:13px 36px;border-radius:24px;cursor:pointer;transition:.2s;opacity:0;pointer-events:none;}
+.next-btn.visible{opacity:1;pointer-events:all;}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,174,239,.4);}
+.end-screen{background:var(--card);border-radius:20px;padding:36px 28px;text-align:center;border:1px solid rgba(255,255,255,.09);}
+.stars{font-size:2.8rem;margin-bottom:10px;letter-spacing:4px;}
+.final-score{font-family:'Baloo 2',sans-serif;font-size:2.4rem;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.final-msg{color:#ccc;font-size:1rem;margin-bottom:24px;}
+.play-again{background:linear-gradient(135deg,var(--purple),#5b21b6);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:14px 38px;border-radius:24px;cursor:pointer;transition:.2s;}
+.play-again:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(124,58,237,.5);}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">&#8592; Back</button>
+  <span class="badge">Computer Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="game-title">
+    <span data-lang="en">Computer Science — HTML, Internet &amp; Cyber Safety</span>
+    <span data-lang="hi" class="hidden">कंप्यूटर विज्ञान — HTML, इंटरनेट एवं साइबर सुरक्षा</span>
+    <span data-lang="as" class="hidden">কম্পিউটাৰ বিজ্ঞান — HTML, ইন্টাৰনেট আৰু চাইবাৰ সুৰক্ষা</span>
+  </div>
+  <div class="game-sub">Class 10 Computer Science &nbsp;|&nbsp; HTML · CSS · Internet · Networking · Cyber Safety &nbsp;|&nbsp; 10 Questions</div>
+
+  <div class="prog-row">
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-label" id="progLabel">0 / 10</div>
+  </div>
+  <div class="score-display">Score: <span id="scoreVal">0</span> / 100</div>
+
+  <div class="q-card fadeIn" id="qCard">
+    <div class="q-num" id="qNum">QUESTION 1 OF 10</div>
+    <div class="q-text" id="qText"></div>
+    <div class="code-box hidden" id="codeBox"></div>
+    <div class="options" id="optionsGrid"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next &#8594;</button>
+  </div>
+
+  <div class="end-screen fadeIn hidden" id="endScreen">
+    <div class="stars" id="starsDisplay"></div>
+    <div class="final-score" id="finalScore"></div>
+    <div class="final-msg" id="finalMsg"></div>
+    <button class="play-again" onclick="restartGame()">&#9654; Play Again</button>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    en:"What does the HTML tag <b> do to the text inside it?",
+    hi:"HTML टैग &lt;b&gt; उसके अंदर के टेक्स्ट को क्या करता है?",
+    as:"HTML টেগ &lt;b&gt;-এ ভিতৰৰ টেক্সটলৈ কি কৰে?",
+    code:'<b>Hello World</b>',
+    opts:{
+      en:["Makes text italic","Makes text bold","Creates a line break","Creates a hyperlink"],
+      hi:["टेक्स्ट को इटैलिक बनाता है","टेक्स्ट को बोल्ड बनाता है","लाइन ब्रेक बनाता है","हाइपरलिंक बनाता है"],
+      as:["টেক্সট ইটালিক কৰে","টেক্সট বোল্ড কৰে","লাইন ব্ৰেক কৰে","হাইপাৰলিংক বনায়"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ The <b> tag makes text BOLD. Key HTML formatting tags: <b> = bold, <i> = italic, <u> = underline, <br> = line break, <p> = paragraph, <h1> to <h6> = headings (h1 is largest, h6 is smallest). The <strong> tag also makes text bold but carries semantic meaning (importance). Always close tags: <b>text</b>.",
+      hi:"✓ &lt;b&gt; टैग टेक्स्ट को बोल्ड बनाता है। मुख्य HTML फॉर्मेटिंग: &lt;b&gt;=बोल्ड, &lt;i&gt;=इटैलिक, &lt;u&gt;=अंडरलाइन, &lt;br&gt;=लाइन ब्रेक, &lt;h1&gt;-&lt;h6&gt;=शीर्षक।",
+      as:"✓ &lt;b&gt; টেগে টেক্সট বোল্ড কৰে। মুখ্য HTML: &lt;b&gt;=বোল্ড, &lt;i&gt;=ইটালিক, &lt;u&gt;=আণ্ডাৰলাইন, &lt;br&gt;=লাইন ব্ৰেক।"
+    }
+  },
+  {
+    en:"Which HTML tag is used to create a hyperlink to another webpage?",
+    hi:"किसी अन्य वेबपेज से हाइपरलिंक बनाने के लिए कौन-सा HTML टैग उपयोग होता है?",
+    as:"আন এটা ৱেবপেজলৈ হাইপাৰলিংক বনাবলৈ কোন HTML টেগ ব্যৱহাৰ হয়?",
+    code:'<a href="https://www.example.com">Click Here</a>',
+    opts:{
+      en:["<link>","<a href>","<url>","<src>"],
+      hi:["&lt;link&gt;","&lt;a href&gt;","&lt;url&gt;","&lt;src&gt;"],
+      as:["&lt;link&gt;","&lt;a href&gt;","&lt;url&gt;","&lt;src&gt;"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ The <a href='URL'> tag creates a hyperlink (anchor tag). 'href' = Hypertext Reference — the URL the link points to. Example: <a href='https://google.com'>Go to Google</a>. To open in a new tab: add target='_blank'. Images can also be made clickable by placing <img> inside <a>. The <link> tag is used in <head> to link CSS files, not to create clickable links.",
+      hi:"✓ &lt;a href='URL'&gt; हाइपरलिंक बनाता है। href = Hypertext Reference। नए टैब में खोलने के लिए: target='_blank'। &lt;link&gt; CSS जोड़ने के लिए &lt;head&gt; में प्रयोग होता है।",
+      as:"✓ &lt;a href='URL'&gt; হাইপাৰলিংক বনায়। href = Hypertext Reference। নতুন টেবত খোলিবলৈ: target='_blank'।"
+    }
+  },
+  {
+    en:"What is the correct HTML tag to insert an image on a webpage?",
+    hi:"वेबपेज पर इमेज डालने के लिए सही HTML टैग कौन-सा है?",
+    as:"ৱেবপেজত ছবি সুমুৱাবলৈ সঠিক HTML টেগ কোনটো?",
+    code:'<img src="photo.jpg" alt="My Photo" width="300">',
+    opts:{
+      en:["<image src='photo.jpg'>","<img src='photo.jpg'>","<picture href='photo.jpg'>","<photo src='photo.jpg'>"],
+      hi:["&lt;image src='photo.jpg'&gt;","&lt;img src='photo.jpg'&gt;","&lt;picture href='photo.jpg'&gt;","&lt;photo src='photo.jpg'&gt;"],
+      as:["&lt;image src='photo.jpg'&gt;","&lt;img src='photo.jpg'&gt;","&lt;picture href='photo.jpg'&gt;","&lt;photo src='photo.jpg'&gt;"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ The <img> tag embeds an image. Key attributes: src='filename.jpg' (source/path of image), alt='description' (alternative text for accessibility), width and height (size). <img> is a self-closing/void tag — it does NOT need a closing </img> tag. The alt attribute is important for screen readers and when the image fails to load.",
+      hi:"✓ &lt;img&gt; टैग इमेज डालता है। मुख्य attributes: src=इमेज का पाथ, alt=वैकल्पिक टेक्स्ट, width/height=साइज़। &lt;img&gt; self-closing टैग है — &lt;/img&gt; की जरूरत नहीं।",
+      as:"✓ &lt;img&gt; টেগে ছবি সুমুৱায়। মুখ্য attributes: src=ছবিৰ পাথ, alt=বিকল্প টেক্সট, width/height=আকাৰ। &lt;img&gt; self-closing টেগ।"
+    }
+  },
+  {
+    en:"In CSS, which of the following is an example of INLINE style applied directly in an HTML tag?",
+    hi:"CSS में, निम्नलिखित में से कौन-सा HTML टैग में सीधे लगाया गया इनलाइन स्टाइल का उदाहरण है?",
+    as:"CSS ত, তলৰ কোনটো HTML টেগত পোনপটীয়াকৈ প্ৰয়োগ কৰা ইনলাইন ষ্টাইলৰ উদাহৰণ?",
+    code:'<p style="color:red; font-size:18px;">Hello!</p>',
+    opts:{
+      en:["Linking a separate .css file using <link> in <head>","Writing CSS inside <style> tags in <head>","Using style='...' attribute directly inside an HTML tag","Using @import in a CSS file"],
+      hi:["&lt;head&gt; में &lt;link&gt; से .css फाइल जोड़ना","&lt;head&gt; में &lt;style&gt; टैग के अंदर CSS लिखना","HTML टैग के अंदर style='...' attribute का उपयोग","CSS फाइल में @import का उपयोग"],
+      as:["&lt;head&gt;ত &lt;link&gt;ৰে .css ফাইল সংযোগ","&lt;head&gt;ত &lt;style&gt; টেগত CSS লিখা","HTML টেগৰ ভিতৰত style='...' attribute ব্যৱহাৰ","CSS ফাইলত @import ব্যৱহাৰ"]
+    },
+    ans:2,
+    exp:{
+      en:"✓ Three types of CSS: (1) Inline CSS: style attribute directly inside an HTML tag — e.g. <p style='color:red'>. (2) Internal CSS: <style> block inside the HTML <head> tag. (3) External CSS: a separate .css file linked via <link rel='stylesheet' href='style.css'> in <head>. External CSS is best for large websites as it separates content from presentation.",
+      hi:"✓ CSS के तीन प्रकार: (1) इनलाइन: style attribute — &lt;p style='color:red'&gt;। (2) आंतरिक: &lt;head&gt; में &lt;style&gt; ब्लॉक। (3) बाहरी: .css फाइल &lt;link&gt; से जोड़ें। बड़ी वेबसाइटों के लिए बाहरी CSS सर्वोत्तम।",
+      as:"✓ CSS ৰ তিনি প্ৰকাৰ: (1) ইনলাইন: style attribute। (2) আভ্যন্তৰীণ: &lt;head&gt;ত &lt;style&gt; ব্লক। (3) বাহ্যিক: .css ফাইল &lt;link&gt;ৰে সংযোগ।"
+    }
+  },
+  {
+    en:"What does 'DNS' stand for and what is its function on the Internet?",
+    hi:"'DNS' का पूर्ण रूप क्या है और इंटरनेट पर इसका क्या कार्य है?",
+    as:"'DNS'ৰ পূৰ্ণৰূপ কি আৰু ইন্টাৰনেটত ইয়াৰ কাৰ্য কি?",
+    opts:{
+      en:["Data Network System — stores website files","Domain Name System — translates domain names (like google.com) into IP addresses","Digital Network Security — protects against hackers","Direct Node Server — connects LANs together"],
+      hi:["डेटा नेटवर्क सिस्टम — वेबसाइट फाइलें संग्रहीत करता है","डोमेन नेम सिस्टम — डोमेन नाम (जैसे google.com) को IP एड्रेस में बदलता है","डिजिटल नेटवर्क सिक्योरिटी — हैकर्स से सुरक्षा","डायरेक्ट नोड सर्वर — LAN को जोड़ता है"],
+      as:["ডেটা নেটৱৰ্ক চিষ্টেম — ৱেবছাইট ফাইল সংৰক্ষণ","ডমেইন নেম চিষ্টেম — ডমেইন নাম (যেনে google.com) IP ঠিকানালৈ ৰূপান্তৰ","ডিজিটেল নেটৱৰ্ক চিকিউৰিটি — হেকাৰৰ পৰা সুৰক্ষা","ডাইৰেক্ট নড চাৰ্ভাৰ — LAN সংযোগ"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ DNS = Domain Name System. It acts like the 'phonebook of the Internet' — translating human-readable domain names (like www.google.com) into machine-readable IP addresses (like 142.250.180.14). Without DNS, users would have to type numeric IP addresses to visit websites. DNS servers are maintained worldwide and the process is called 'DNS resolution'.",
+      hi:"✓ DNS = Domain Name System — इंटरनेट की 'फोनबुक'। यह डोमेन नाम (google.com) को IP एड्रेस (जैसे 142.250.180.14) में बदलता है। DNS के बिना हमें IP एड्रेस टाइप करना पड़ता। इस प्रक्रिया को DNS Resolution कहते हैं।",
+      as:"✓ DNS = Domain Name System — ইন্টাৰনেটৰ 'ফোনবুক'। ডমেইন নাম (google.com) কে IP ঠিকানালৈ (142.250.180.14) ৰূপান্তৰ কৰে। এই প্ৰক্ৰিয়াক DNS Resolution বোলে।"
+    }
+  },
+  {
+    en:"What is the difference between HTTP and HTTPS?",
+    hi:"HTTP और HTTPS में क्या अंतर है?",
+    as:"HTTP আৰু HTTPS ৰ মাজত পাৰ্থক্য কি?",
+    opts:{
+      en:["HTTP is faster; HTTPS is slower","HTTPS is the secure version of HTTP — it encrypts data using SSL/TLS, making it safe for sensitive data like passwords","HTTP supports images; HTTPS does not","HTTPS works only on mobile devices"],
+      hi:["HTTP तेज है; HTTPS धीमा है","HTTPS, HTTP का सुरक्षित संस्करण है — SSL/TLS से डेटा एन्क्रिप्ट करता है, पासवर्ड जैसे संवेदनशील डेटा के लिए सुरक्षित","HTTP इमेज सपोर्ट करता है; HTTPS नहीं","HTTPS केवल मोबाइल पर काम करता है"],
+      as:["HTTP দ্ৰুত; HTTPS লেহেম","HTTPS হৈছে HTTP ৰ সুৰক্ষিত সংস্কৰণ — SSL/TLS এনক্ৰিপচনৰে পাছৱৰ্ডৰ দৰে সংবেদনশীল তথ্য সুৰক্ষিত","HTTP ছবি সমৰ্থন কৰে; HTTPS নহয়","HTTPS কেৱল মোবাইলত কাম কৰে"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ HTTP (HyperText Transfer Protocol) transmits data as plain text — not secure. HTTPS (HTTP Secure) encrypts the data using SSL (Secure Sockets Layer) / TLS (Transport Layer Security), protecting it from eavesdroppers. HTTPS URLs show a padlock icon in browsers. Always use HTTPS for online banking, shopping, and login pages. HTTPS uses port 443; HTTP uses port 80.",
+      hi:"✓ HTTP डेटा plain text में भेजता है — असुरक्षित। HTTPS डेटा SSL/TLS से एन्क्रिप्ट करता है। HTTPS ब्राउज़र में पैडलॉक दिखाता है। HTTPS: पोर्ट 443; HTTP: पोर्ट 80।",
+      as:"✓ HTTP তথ্য plain text ত পঠায় — অসুৰক্ষিত। HTTPS SSL/TLS ৰে এনক্ৰিপ্ট কৰে। HTTPS ব্ৰাউজাৰত পেডলক দেখুৱায়। HTTPS: পোৰ্ট 443; HTTP: পোৰ্ট 80।"
+    }
+  },
+  {
+    en:"A network that connects computers within a small area like a school or office building is called a:",
+    hi:"एक स्कूल या कार्यालय भवन जैसे छोटे क्षेत्र में कंप्यूटरों को जोड़ने वाले नेटवर्क को कहते हैं:",
+    as:"স্কুল বা অফিচ ভৱনৰ দৰে সৰু অঞ্চলত কম্পিউটাৰ সংযোগ কৰা নেটৱৰ্কক বোলে:",
+    opts:{
+      en:["WAN (Wide Area Network)","MAN (Metropolitan Area Network)","LAN (Local Area Network)","PAN (Personal Area Network)"],
+      hi:["WAN (वाइड एरिया नेटवर्क)","MAN (मेट्रोपोलिटन एरिया नेटवर्क)","LAN (लोकल एरिया नेटवर्क)","PAN (पर्सनल एरिया नेटवर्क)"],
+      as:["WAN (ৱাইড এৰিয়া নেটৱৰ্ক)","MAN (মেট্ৰোপলিটান এৰিয়া নেটৱৰ্ক)","LAN (লোকেল এৰিয়া নেটৱৰ্ক)","PAN (পাৰছনেল এৰিয়া নেটৱৰ্ক)"]
+    },
+    ans:2,
+    exp:{
+      en:"✓ LAN (Local Area Network) connects computers in a limited area like a school, office, or home — typically within 1 km. MAN (Metropolitan Area Network) covers a city or campus. WAN (Wide Area Network) covers large distances — the Internet is the world's largest WAN. PAN (Personal Area Network) = Bluetooth range (few metres). Key devices: Router (connects networks), Modem (converts digital to analogue), Switch (connects devices within LAN).",
+      hi:"✓ LAN = Local Area Network — स्कूल, ऑफिस या घर के अंदर (1 किमी तक)। MAN = शहर/कैंपस स्तर। WAN = बड़े भौगोलिक क्षेत्र (इंटरनेट = सबसे बड़ा WAN)। PAN = Bluetooth (कुछ मीटर)।",
+      as:"✓ LAN = স্কুল, অফিচ বা ঘৰৰ ভিতৰত (1 কিমি পৰ্যন্ত)। MAN = চহৰ স্তৰ। WAN = বৃহৎ ভৌগোলিক অঞ্চল (ইন্টাৰনেট = সৰ্ববৃহৎ WAN)। PAN = Bluetooth।"
+    }
+  },
+  {
+    en:"What is 'phishing' in the context of cyber safety?",
+    hi:"साइबर सुरक्षा के संदर्भ में 'फिशिंग' क्या है?",
+    as:"চাইবাৰ সুৰক্ষাৰ প্ৰসংগত 'ফিচিং' কি?",
+    opts:{
+      en:["A method of catching fish using electronic devices","A cyber attack where criminals use fake emails/websites to trick users into revealing passwords or personal data","Software that speeds up internet browsing","A type of firewall that blocks viruses"],
+      hi:["इलेक्ट्रॉनिक उपकरणों से मछली पकड़ने की विधि","एक साइबर हमला जहाँ अपराधी नकली ईमेल/वेबसाइट से पासवर्ड या व्यक्तिगत डेटा चुराते हैं","इंटरनेट ब्राउज़िंग तेज करने वाला सॉफ्टवेयर","एक प्रकार का फायरवॉल जो वायरस रोकता है"],
+      as:["ইলেক্ট্ৰনিক সঁজুলিৰে মাছ ধৰাৰ পদ্ধতি","এক চাইবাৰ আক্ৰমণ য'ত অপৰাধীয়ে নকল ইমেইল/ৱেবছাইটৰে পাছৱৰ্ড বা ব্যক্তিগত তথ্য চুৰি কৰে","ইন্টাৰনেট ব্ৰাউজিং দ্ৰুত কৰা ছফটৱেৰ","ভাইৰাছ ৰোধ কৰা ফায়াৰৱল"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ Phishing is a social engineering cyber attack where attackers send fake emails, messages, or create fake websites impersonating legitimate organisations (banks, govt) to steal passwords, credit card numbers, and personal data. Signs of phishing: urgent language, suspicious links, spelling errors, requests for personal info. Protection: check URL carefully, never click suspicious links, use 2FA.",
+      hi:"✓ फिशिंग = नकली ईमेल/वेबसाइट से पासवर्ड/निजी जानकारी चुराना। पहचान: अत्यावश्यक भाषा, संदिग्ध लिंक, वर्तनी गलतियाँ। सुरक्षा: URL ध्यान से जाँचें, संदिग्ध लिंक क्लिक न करें, 2FA उपयोग करें।",
+      as:"✓ ফিচিং = নকল ইমেইল/ৱেবছাইটৰে পাছৱৰ্ড/ব্যক্তিগত তথ্য চুৰি। চিনাক্তকৰণ: অত্যৰিক্ত জৰুৰী ভাষা, সন্দেহজনক লিংক। সুৰক্ষা: URL পৰীক্ষা কৰক, 2FA ব্যৱহাৰ কৰক।"
+    }
+  },
+  {
+    en:"What does a FIREWALL do in computer security?",
+    hi:"कंप्यूटर सुरक्षा में फायरवॉल क्या करता है?",
+    as:"কম্পিউটাৰ সুৰক্ষাত ফায়াৰৱলে কি কৰে?",
+    opts:{
+      en:["Speeds up the internet connection","Monitors and filters incoming and outgoing network traffic to block unauthorised access","Automatically updates the operating system","Stores backup copies of all files"],
+      hi:["इंटरनेट कनेक्शन की गति बढ़ाता है","अनधिकृत पहुँच रोकने के लिए आने-जाने वाले नेटवर्क ट्रैफिक की निगरानी और फिल्टरिंग करता है","ऑपरेटिंग सिस्टम को स्वतः अपडेट करता है","सभी फाइलों की बैकअप प्रतियाँ संग्रहीत करता है"],
+      as:["ইন্টাৰনেট সংযোগ দ্ৰুত কৰে","অননুমোদিত প্ৰৱেশ ৰোধ কৰিবলৈ আহা-যোৱা নেটৱৰ্ক ট্ৰেফিক পৰীক্ষা আৰু ফিল্টাৰ কৰে","অপাৰেটিং চিষ্টেম স্বয়ংক্ৰিয়ভাৱে আপডেট কৰে","সকলো ফাইলৰ বেকআপ সংৰক্ষণ কৰে"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ A Firewall is a network security system that monitors and controls incoming and outgoing network traffic based on pre-set security rules. It acts as a barrier between a trusted internal network and untrusted external networks (like the Internet). Firewalls can be hardware-based, software-based, or both. They block unauthorised access, malware, and hackers while allowing legitimate traffic.",
+      hi:"✓ फायरवॉल = नेटवर्क सुरक्षा प्रणाली जो आने-जाने वाले ट्रैफिक को नियमों के अनुसार मॉनिटर/नियंत्रित करती है। यह विश्वसनीय (आंतरिक) और अविश्वसनीय (बाहरी) नेटवर्क के बीच सुरक्षा दीवार है।",
+      as:"✓ ফায়াৰৱল = নেটৱৰ্ক সুৰক্ষা প্ৰণালী যি নিয়মৰ ভিত্তিত আহা-যোৱা ট্ৰেফিক পৰীক্ষা কৰে। বিশ্বাসযোগ্য আৰু অবিশ্বাসযোগ্য নেটৱৰ্কৰ মাজত সুৰক্ষা বেৰিয়াৰ।"
+    }
+  },
+  {
+    en:"Which of the following is the CORRECT HTML structure for a table with one row and two cells?",
+    hi:"एक पंक्ति और दो सेल वाली टेबल के लिए सही HTML संरचना कौन-सी है?",
+    as:"এটা শাৰী আৰু দুটা কোষৰ টেবুলৰ বাবে সঠিক HTML গঠন কোনটো?",
+    code:'<table>\n  <tr>\n    <td>Cell 1</td>\n    <td>Cell 2</td>\n  </tr>\n</table>',
+    opts:{
+      en:["<table><row><cell>1</cell><cell>2</cell></row></table>","<table><tr><td>1</td><td>2</td></tr></table>","<table><th><td>1</td><td>2</td></th></table>","<tab><tr><col>1</col><col>2</col></tr></tab>"],
+      hi:["&lt;table&gt;&lt;row&gt;&lt;cell&gt;1&lt;/cell&gt;...","&lt;table&gt;&lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;2&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;","&lt;table&gt;&lt;th&gt;&lt;td&gt;1&lt;/td&gt;...","&lt;tab&gt;&lt;tr&gt;&lt;col&gt;1&lt;/col&gt;..."],
+      as:["&lt;table&gt;&lt;row&gt;&lt;cell&gt;1&lt;/cell&gt;...","&lt;table&gt;&lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;2&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;","&lt;table&gt;&lt;th&gt;&lt;td&gt;1&lt;/td&gt;...","&lt;tab&gt;&lt;tr&gt;&lt;col&gt;1&lt;/col&gt;..."]
+    },
+    ans:1,
+    exp:{
+      en:"✓ HTML Table structure: <table> wraps the whole table. <tr> = Table Row. <td> = Table Data (cell). <th> = Table Header (bold, centred). Structure: <table> → <tr> → <td>. Example of header row: <tr><th>Name</th><th>Age</th></tr>. Use border='1' attribute on <table> to show borders. colspan and rowspan attributes let cells span multiple columns/rows.",
+      hi:"✓ HTML टेबल: &lt;table&gt; पूरी टेबल। &lt;tr&gt; = टेबल पंक्ति। &lt;td&gt; = टेबल डेटा (सेल)। &lt;th&gt; = टेबल हेडर (बोल्ड)। बॉर्डर के लिए: &lt;table border='1'&gt;।",
+      as:"✓ HTML টেবুল: &lt;table&gt; সমগ্ৰ টেবুল। &lt;tr&gt; = শাৰী। &lt;td&gt; = ডেটা কোষ। &lt;th&gt; = হেডাৰ (বোল্ড)। বৰ্ডাৰৰ বাবে: &lt;table border='1'&gt;।"
+    }
+  }
+];
+
+let currentQ=0,score=0,answered=false,currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(b=>{if(b.textContent.trim()===(l==='en'?'EN':l==='hi'?'हि':'অ'))b.classList.add('active');});
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.classList.toggle('hidden',el.dataset.lang!==l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(currentQ>=questions.length){showEnd();return;}
+  const q=questions[currentQ];
+  const l=currentLang;
+  document.getElementById('qNum').textContent=`QUESTION ${currentQ+1} OF ${questions.length}`;
+  document.getElementById('qText').innerHTML=q[l]||q.en;
+
+  const cb=document.getElementById('codeBox');
+  if(q.code){
+    cb.textContent=q.code;
+    cb.classList.remove('hidden');
+  } else {
+    cb.classList.add('hidden');
+  }
+
+  const grid=document.getElementById('optionsGrid');
+  grid.innerHTML='';
+  const opts=q.opts[l]||q.opts.en;
+  opts.forEach((o,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.innerHTML=o;
+    btn.onclick=()=>selectAnswer(i);
+    grid.appendChild(btn);
+  });
+  const fd=document.getElementById('feedback');
+  fd.className='feedback';
+  fd.textContent='';
+  document.getElementById('nextBtn').classList.remove('visible');
+  document.getElementById('progFill').style.width=(currentQ/questions.length*100)+'%';
+  document.getElementById('progLabel').textContent=`${currentQ} / ${questions.length}`;
+  answered=false;
+}
+
+function selectAnswer(idx){
+  if(answered)return;
+  answered=true;
+  const q=questions[currentQ];
+  const l=currentLang;
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  const correct=idx===q.ans;
+  btns[idx].classList.add(correct?'correct':'wrong');
+  if(!correct)btns[q.ans].classList.add('correct');
+  const fd=document.getElementById('feedback');
+  fd.className='feedback show '+(correct?'correct':'wrong');
+  fd.textContent=(correct?'✓ Correct! ':'✗ Wrong! ')+(q.exp[l]||q.exp.en);
+  if(correct)score+=10;
+  document.getElementById('scoreVal').textContent=score;
+  document.getElementById('nextBtn').classList.add('visible');
+}
+
+function nextQuestion(){
+  currentQ++;
+  const card=document.getElementById('qCard');
+  card.classList.remove('fadeIn');
+  void card.offsetWidth;
+  card.classList.add('fadeIn');
+  renderQuestion();
+}
+
+function showEnd(){
+  document.getElementById('qCard').classList.add('hidden');
+  const end=document.getElementById('endScreen');
+  end.classList.remove('hidden');
+  document.getElementById('finalScore').textContent=`${score} / 100`;
+  const pct=score;
+  let stars='',msg='';
+  if(pct>=90){stars='★★★';msg='Outstanding! You are a Computer Science star!';}
+  else if(pct>=70){stars='★★☆';msg='Good work! Review networking types and cyber safety.';}
+  else if(pct>=40){stars='★☆☆';msg='Keep going! Revise HTML tags and Internet concepts.';}
+  else{stars='☆☆☆';msg='Keep studying! Start with basic HTML tags and Internet terms.';}
+  document.getElementById('starsDisplay').textContent=stars;
+  document.getElementById('finalMsg').textContent=msg;
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('progLabel').textContent=`${questions.length} / ${questions.length}`;
+}
+
+function restartGame(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('scoreVal').textContent=0;
+  document.getElementById('endScreen').classList.add('hidden');
+  document.getElementById('qCard').classList.remove('hidden');
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

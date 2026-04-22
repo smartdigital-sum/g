@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Body Systems – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;
+  --pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;
+  --card:#1a1740;--text:#EEE;--muted:#aaa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  font-family:'Nunito',sans-serif;color:var(--text);padding-bottom:40px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeIn .45s ease both}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;
+  background:rgba(255,255,255,.04);backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.back-btn{background:none;border:1px solid rgba(255,255,255,.2);color:#fff;
+  padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;
+  font-size:.85rem;transition:all .2s}
+.back-btn:hover{background:rgba(255,255,255,.1)}
+.badge{background:var(--green);color:#fff;padding:4px 14px;border-radius:20px;
+  font-size:.8rem;font-weight:700;font-family:'Baloo 2',sans-serif;letter-spacing:.5px}
+.title-bar{font-family:'Baloo 2',sans-serif;font-size:1.15rem;font-weight:700;flex:1;text-align:center}
+.lang-toggle{display:flex;gap:4px;margin-left:auto}
+.lang-btn{background:rgba(255,255,255,.08);border:none;color:#ccc;
+  padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;
+  font-family:'Nunito',sans-serif;transition:all .2s}
+.lang-btn.active{background:var(--green);color:#fff;font-weight:700}
+.score-wrap{max-width:700px;margin:18px auto 0;padding:0 16px}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.score-label{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;color:var(--gold)}
+.score-val{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--saffron)}
+.prog-bar{height:8px;background:rgba(255,255,255,.1);border-radius:8px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--saffron),var(--green));border-radius:8px;transition:width .4s ease}
+.q-wrap{max-width:700px;margin:22px auto 0;padding:0 16px}
+.q-card{background:var(--card);border-radius:18px;padding:28px 26px;
+  border:1px solid rgba(0,200,83,.2);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.q-num{font-size:.8rem;color:var(--muted);margin-bottom:6px;font-weight:600}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.13rem;font-weight:700;line-height:1.55;margin-bottom:22px}
+.options{display:grid;gap:10px}
+.opt-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  color:var(--text);padding:13px 18px;border-radius:12px;cursor:pointer;
+  font-family:'Nunito',sans-serif;font-size:.97rem;font-weight:600;
+  text-align:left;transition:all .22s;display:flex;align-items:center;gap:10px}
+.opt-btn:hover:not(:disabled){background:rgba(0,200,83,.15);border-color:var(--green);transform:translateX(4px)}
+.opt-btn:disabled{cursor:default}
+.opt-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:#fff}
+.opt-btn.wrong{background:rgba(255,64,129,.18);border-color:var(--pink);color:#fff}
+.opt-icon{font-size:1.1rem;min-width:22px}
+.explanation{margin-top:16px;padding:14px 18px;background:rgba(255,255,255,.06);
+  border-radius:12px;border-left:3px solid var(--saffron);font-size:.92rem;line-height:1.6;display:none}
+.explanation.show{display:block}
+.explanation strong{color:var(--gold)}
+.next-btn{margin-top:18px;width:100%;padding:14px;background:linear-gradient(90deg,var(--saffron),var(--green));
+  border:none;color:#fff;border-radius:12px;font-family:'Baloo 2',sans-serif;
+  font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s;display:none}
+.next-btn:hover{opacity:.88}
+.next-btn.show{display:block}
+.result-card{max-width:700px;margin:40px auto;padding:0 16px;text-align:center}
+.result-inner{background:var(--card);border-radius:20px;padding:40px 30px;border:1px solid rgba(0,200,83,.3)}
+.stars{font-size:2.5rem;letter-spacing:4px;margin-bottom:16px}
+.result-score{font-family:'Baloo 2',sans-serif;font-size:3rem;font-weight:800;color:var(--saffron)}
+.result-msg{font-size:1.1rem;color:var(--muted);margin:8px 0 28px}
+.play-again{padding:14px 40px;background:linear-gradient(90deg,var(--saffron),var(--green));
+  border:none;color:#fff;border-radius:12px;font-family:'Baloo 2',sans-serif;
+  font-size:1.1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.play-again:hover{opacity:.85}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="badge">Science</span>
+  <span class="title-bar" data-lang>
+    <span class="en">🫀🍎 Human Body Systems</span>
+    <span class="hi" style="display:none">🫀🍎 मानव शरीर के तंत्र</span>
+    <span class="bn" style="display:none">🫀🍎 মানব দেহ তন্ত্র</span>
+  </span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+    <button class="lang-btn" onclick="setLang('hi',this)">हि</button>
+    <button class="lang-btn" onclick="setLang('bn',this)">অ</button>
+  </div>
+</div>
+<div class="score-wrap">
+  <div class="score-row">
+    <span class="score-label" id="scoreLabel">Score</span>
+    <span class="score-val"><span id="scoreNum">0</span>/100</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+<div class="q-wrap" id="gameArea"></div>
+<div class="result-card fade" id="resultCard" style="display:none"></div>
+<script>
+const questions=[
+  {
+    q:"🫀 What is the correct order of the digestive system?",
+    opts:[
+      "Mouth → Stomach → Oesophagus → Small Intestine → Large Intestine",
+      "Mouth → Oesophagus → Stomach → Small Intestine → Large Intestine",
+      "Mouth → Small Intestine → Stomach → Large Intestine → Oesophagus",
+      "Mouth → Liver → Stomach → Small Intestine → Large Intestine"
+    ],
+    ans:1,
+    exp:"The correct order is: <strong>Mouth → Oesophagus → Stomach → Small Intestine → Large Intestine</strong>. Food is swallowed and travels through the oesophagus to the stomach, then the intestines."
+  },
+  {
+    q:"🍎 Which vitamin deficiency causes SCURVY (bleeding gums, weak immunity)?",
+    opts:["Vitamin A","Vitamin B12","Vitamin C","Vitamin D"],
+    ans:2,
+    exp:"<strong>Vitamin C</strong> deficiency causes Scurvy. Symptoms include bleeding gums, weakness, and slow wound healing. Citrus fruits (oranges, lemons) are rich in Vitamin C."
+  },
+  {
+    q:"🫀 Which type of teeth are used for tearing and ripping food? They are the sharp, pointed teeth.",
+    opts:["Incisors","Canines","Premolars","Molars"],
+    ans:1,
+    exp:"<strong>Canines</strong> are the sharp, pointed teeth used for tearing and ripping food. Incisors cut, premolars crush, and molars grind food. Humans have 4 canine teeth."
+  },
+  {
+    q:"🍎 Deficiency of Vitamin D causes which disease, mainly in children?",
+    opts:["Scurvy","Anaemia","Night Blindness","Rickets"],
+    ans:3,
+    exp:"<strong>Rickets</strong> is caused by Vitamin D deficiency. It leads to soft, weak bones that may bend (bow legs). Sunlight is the best natural source of Vitamin D."
+  },
+  {
+    q:"🫀 Where does most digestion and absorption of nutrients happen in the human body?",
+    opts:["Stomach","Large Intestine","Small Intestine","Mouth"],
+    ans:2,
+    exp:"The <strong>Small Intestine</strong> is where most digestion is completed and nutrients are absorbed into the blood. It is about 6–7 metres long and has finger-like projections called villi."
+  },
+  {
+    q:"🍎 Night blindness (difficulty seeing in dim light) is caused by deficiency of:",
+    opts:["Vitamin C","Vitamin B","Vitamin A","Iron"],
+    ans:2,
+    exp:"<strong>Vitamin A</strong> deficiency causes Night Blindness. Vitamin A is needed for the formation of visual pigment (rhodopsin) in the eyes. Carrots, milk, and eggs are rich sources."
+  },
+  {
+    q:"🫀 What does the large intestine primarily do?",
+    opts:[
+      "Break down proteins into amino acids",
+      "Absorb water and form solid waste (faeces)",
+      "Produce digestive enzymes",
+      "Store bile for digestion of fats"
+    ],
+    ans:1,
+    exp:"The <strong>Large Intestine</strong> absorbs water from undigested food, forming solid waste (faeces). The remaining material is expelled from the body through the rectum and anus."
+  },
+  {
+    q:"🍎 Which nutrient provides the most energy and is the primary fuel for our body?",
+    opts:["Proteins","Vitamins","Minerals","Carbohydrates"],
+    ans:3,
+    exp:"<strong>Carbohydrates</strong> are the main source of energy for the body. Rice, wheat, bread, potatoes, and sugar are rich in carbohydrates. They are broken down into glucose."
+  },
+  {
+    q:"🫀 Anaemia is caused by deficiency of which mineral?",
+    opts:["Calcium","Iron","Iodine","Zinc"],
+    ans:1,
+    exp:"<strong>Iron</strong> deficiency causes Anaemia. Iron is needed to make haemoglobin in red blood cells which carries oxygen. Symptoms: fatigue, pale skin, weakness. Spinach, beans, and meat are iron-rich."
+  },
+  {
+    q:"🍎 Which teeth are flat, broad, and used for grinding and chewing food?",
+    opts:["Incisors","Canines","Molars","None of these"],
+    ans:2,
+    exp:"<strong>Molars</strong> are the large, flat teeth at the back of the mouth used for grinding food into smaller pieces. Humans have 12 molars. Premolars (8 in adults) also help in crushing food."
+  }
+];
+let currentQ=0,score=0,answered=false;
+function setLang(l,btn){
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[data-lang] .en').forEach(e=>e.style.display=l==='en'?'':'none');
+  document.querySelectorAll('[data-lang] .hi').forEach(e=>e.style.display=l==='hi'?'':'none');
+  document.querySelectorAll('[data-lang] .bn').forEach(e=>e.style.display=l==='bn'?'':'none');
+  document.getElementById('scoreLabel').textContent=l==='hi'?'स्कोर':l==='bn'?'স্কোর':'Score';
+}
+function renderQ(){
+  answered=false;
+  const q=questions[currentQ];
+  document.getElementById('progFill').style.width=Math.round((currentQ/questions.length)*100)+'%';
+  document.getElementById('gameArea').innerHTML=`
+    <div class="q-card fade">
+      <div class="q-num">Question ${currentQ+1} of ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o,i)=>`<button class="opt-btn" onclick="pick(${i})" id="opt${i}">
+          <span class="opt-icon">◦</span>${o}</button>`).join('')}
+      </div>
+      <div class="explanation" id="exp">${q.exp}</div>
+      <button class="next-btn" id="nextBtn" onclick="nextQ()">${currentQ===questions.length-1?'See Result →':'Next Question →'}</button>
+    </div>`;
+}
+function pick(i){
+  if(answered)return;answered=true;
+  const q=questions[currentQ];const pts=Math.round(100/questions.length);
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  if(i===q.ans){
+    document.getElementById('opt'+i).classList.add('correct');
+    document.getElementById('opt'+i).querySelector('.opt-icon').textContent='✓';
+    score+=pts;document.getElementById('scoreNum').textContent=score;
+  } else {
+    document.getElementById('opt'+i).classList.add('wrong');
+    document.getElementById('opt'+i).querySelector('.opt-icon').textContent='✗';
+    document.getElementById('opt'+q.ans).classList.add('correct');
+    document.getElementById('opt'+q.ans).querySelector('.opt-icon').textContent='✓';
+  }
+  document.getElementById('exp').classList.add('show');
+  document.getElementById('nextBtn').classList.add('show');
+}
+function nextQ(){currentQ++;if(currentQ>=questions.length){showResult();return;}renderQ();}
+function showResult(){
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('gameArea').style.display='none';
+  const pct=score;
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'';
+  const msg=pct>=90?'🫀 Future Doctor! Outstanding!':pct>=70?'Excellent! Great health knowledge!':pct>=40?'Good effort! Keep learning!':'Keep practicing! Stay healthy!';
+  document.getElementById('resultCard').style.display='block';
+  document.getElementById('resultCard').innerHTML=`
+    <div class="result-inner fade">
+      <div class="stars">${stars||'🍎'}</div>
+      <div class="result-score">${score}/100</div>
+      <div class="result-msg">${msg}</div>
+      <button class="play-again" onclick="restart()">🔄 Play Again</button>
+    </div>`;
+}
+function restart(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('scoreNum').textContent=0;
+  document.getElementById('progFill').style.width='0%';
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  renderQ();
+}
+renderQ();
+</script>
+</body>
+</html>

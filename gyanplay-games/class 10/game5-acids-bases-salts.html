@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Acids, Bases and Salts – Class 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+    --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+    --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{min-height:100vh;font-family:'Nunito',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff;}
+  .topbar{display:flex;align-items:center;gap:12px;padding:12px 20px;
+    background:rgba(0,0,0,.35);flex-wrap:wrap;}
+  .back-btn{background:rgba(255,255,255,.12);border:none;color:#fff;
+    padding:7px 16px;border-radius:20px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.9rem;transition:background .2s;}
+  .back-btn:hover{background:rgba(255,255,255,.25);}
+  .subject-badge{background:var(--green);color:#fff;padding:5px 14px;
+    border-radius:20px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.85rem;}
+  .title-bar{flex:1;font-family:'Baloo 2',sans-serif;font-weight:700;
+    font-size:1.05rem;color:var(--gold);}
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;transition:all .2s;}
+  .lang-btn.active{background:var(--sky);border-color:var(--sky);}
+  .progress-wrap{padding:14px 20px 0;}
+  .progress-info{display:flex;justify-content:space-between;font-size:.85rem;color:#ccc;margin-bottom:6px;}
+  .progress-bar-bg{background:rgba(255,255,255,.12);border-radius:10px;height:8px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--purple));
+    border-radius:10px;transition:width .5s;}
+  .game-wrap{max-width:740px;margin:18px auto;padding:0 16px 40px;}
+  .card{background:var(--card);border-radius:18px;padding:26px;
+    box-shadow:0 8px 32px rgba(0,0,0,.45);animation:fadeIn .4s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .q-number{font-family:'Baloo 2',sans-serif;font-size:.85rem;color:var(--sky);margin-bottom:8px;font-weight:600;}
+  .q-text{font-size:1.08rem;line-height:1.6;margin-bottom:6px;font-weight:600;}
+
+  /* pH STRIP */
+  .ph-strip{
+    display:flex;border-radius:10px;overflow:hidden;margin:14px 0;height:34px;
+    box-shadow:0 2px 10px rgba(0,0,0,.4);
+  }
+  .ph-seg{flex:1;display:flex;align-items:center;justify-content:center;
+    font-size:.65rem;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6);}
+
+  .options{display:grid;gap:10px;margin-top:16px;}
+  .opt-btn{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);
+    color:#fff;padding:13px 18px;border-radius:12px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.97rem;text-align:left;transition:all .2s;}
+  .opt-btn:hover:not(:disabled){background:rgba(0,174,239,.18);border-color:var(--sky);}
+  .opt-btn.correct{background:rgba(0,200,83,.25);border-color:var(--green);}
+  .opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);}
+  .opt-btn:disabled{cursor:default;}
+  .feedback{margin-top:14px;padding:11px 16px;border-radius:10px;
+    font-weight:700;font-size:.95rem;display:none;}
+  .feedback.show{display:block;animation:fadeIn .3s ease;}
+  .feedback.ok{background:rgba(0,200,83,.2);color:var(--green);}
+  .feedback.no{background:rgba(255,64,129,.18);color:#ff7eb3;}
+  .next-btn{margin-top:18px;background:linear-gradient(135deg,var(--sky),var(--purple));
+    border:none;color:#fff;padding:12px 32px;border-radius:25px;
+    font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;
+    cursor:pointer;display:none;transition:transform .15s;}
+  .next-btn:hover{transform:scale(1.04);}
+  .end-screen{display:none;text-align:center;}
+  .end-screen.show{display:block;animation:fadeIn .5s ease;}
+  .score-big{font-family:'Baloo 2',sans-serif;font-size:3.5rem;font-weight:800;
+    color:var(--gold);line-height:1;margin:10px 0;}
+  .score-label{color:#ccc;font-size:.95rem;margin-bottom:18px;}
+  .stars{font-size:2.5rem;margin:10px 0;}
+  .play-again{background:linear-gradient(135deg,var(--saffron),var(--gold));
+    border:none;color:#fff;padding:14px 36px;border-radius:28px;
+    font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;
+    cursor:pointer;margin-top:16px;transition:transform .15s;}
+  .play-again:hover{transform:scale(1.05);}
+  .result-detail{margin-top:22px;text-align:left;}
+  .result-detail h3{font-family:'Baloo 2',sans-serif;color:var(--sky);margin-bottom:10px;}
+  .result-item{padding:9px 14px;border-radius:8px;margin-bottom:7px;
+    font-size:.9rem;line-height:1.4;background:rgba(255,255,255,.06);}
+  .result-item.r-ok{border-left:3px solid var(--green);}
+  .result-item.r-no{border-left:3px solid var(--pink);}
+  .highlight-word{color:var(--gold);font-weight:700;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">পিছলৈ</span></button>
+  <span class="subject-badge">Science</span>
+  <span class="title-bar">
+    <span data-lang="en">Acids, Bases &amp; Salts</span>
+    <span data-lang="hi" style="display:none">अम्ल, क्षार और लवण</span>
+    <span data-lang="as" style="display:none">এছিড, ক্ষাৰ আৰু লৱণ</span>
+  </span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span><span data-lang="en">Question</span><span data-lang="hi" style="display:none">प्रश्न</span><span data-lang="as" style="display:none">প্ৰশ্ন</span> <span id="qNum">1</span>/10</span>
+    <span><span data-lang="en">Score</span><span data-lang="hi" style="display:none">स्कोर</span><span data-lang="as" style="display:none">স্কোৰ</span>: <span id="scoreDisp">0</span>/100</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progBar" style="width:0%"></div></div>
+</div>
+
+<div class="game-wrap">
+  <div class="card" id="questionCard">
+    <div class="q-number" id="qLabel">Question 1 of 10</div>
+    <div class="q-text" id="qText"></div>
+    <!-- pH strip visual -->
+    <div id="phStripWrap" style="display:none">
+      <div class="ph-strip">
+        <div class="ph-seg" style="background:#b30000;">1</div>
+        <div class="ph-seg" style="background:#e60000;">2</div>
+        <div class="ph-seg" style="background:#ff4500;">3</div>
+        <div class="ph-seg" style="background:#ff8c00;">4</div>
+        <div class="ph-seg" style="background:#ffd700;">5</div>
+        <div class="ph-seg" style="background:#adff2f;color:#000;">6</div>
+        <div class="ph-seg" style="background:#00e676;color:#000;">7</div>
+        <div class="ph-seg" style="background:#00c853;color:#000;">8</div>
+        <div class="ph-seg" style="background:#00bfa5;">9</div>
+        <div class="ph-seg" style="background:#0288d1;">10</div>
+        <div class="ph-seg" style="background:#1565c0;">11</div>
+        <div class="ph-seg" style="background:#283593;">12</div>
+        <div class="ph-seg" style="background:#311b92;">13</div>
+        <div class="ph-seg" style="background:#1a0033;">14</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.7rem;color:#aaa;margin-top:3px;">
+        <span>← Strong Acid</span><span>Neutral (7)</span><span>Strong Base →</span>
+      </div>
+    </div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="card end-screen" id="endScreen">
+    <div class="score-big" id="finalScore">0</div>
+    <div class="score-label">
+      <span data-lang="en">out of 100</span>
+      <span data-lang="hi" style="display:none">100 में से</span>
+      <span data-lang="as" style="display:none">100ৰ মাজৰ পৰা</span>
+    </div>
+    <div class="stars" id="stars">⭐⭐⭐</div>
+    <p id="endMsg" style="color:#ccc;font-size:1rem;"></p>
+    <button class="play-again" onclick="restartGame()">
+      <span data-lang="en">Play Again</span>
+      <span data-lang="hi" style="display:none">फिर खेलें</span>
+      <span data-lang="as" style="display:none">পুনৰ খেলক</span>
+    </button>
+    <div class="result-detail" id="resultDetail"></div>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    showStrip:true,
+    en:{q:"On the pH scale, which pH value represents a NEUTRAL solution?",
+    opts:["pH = 7","pH = 0","pH = 14","pH = 3"],ans:0,
+    exp:"pH 7 is neutral (pure water). Below 7 = acidic; above 7 = basic/alkaline."},
+    hi:{q:"pH पैमाने पर, कौन सा pH मान उदासीन विलयन दर्शाता है?",
+    opts:["pH = 7","pH = 0","pH = 14","pH = 3"],exp:"pH 7 उदासीन है (शुद्ध जल)। 7 से कम = अम्लीय; 7 से अधिक = क्षारीय।"},
+    as:{q:"pH মানদণ্ডত, কোনটো pH মান নিৰপেক্ষ দ্ৰৱ নিৰ্দেশ কৰে?",
+    opts:["pH = 7","pH = 0","pH = 14","pH = 3"],exp:"pH 7 নিৰপেক্ষ (বিশুদ্ধ পানী)। 7ৰ তলত = এছিডিক; 7ৰ ওপৰত = ক্ষাৰীয়।"}
+  },
+  {
+    showStrip:false,
+    en:{q:"Which acid is present in the human stomach that helps in digestion?",
+    opts:["Hydrochloric acid (HCl)","Sulphuric acid (H₂SO₄)","Nitric acid (HNO₃)","Acetic acid (CH₃COOH)"],ans:0,
+    exp:"The stomach produces dilute HCl which helps enzymes work and kills harmful bacteria."},
+    hi:{q:"मानव पेट में कौन सा अम्ल होता है जो पाचन में मदद करता है?",
+    opts:["हाइड्रोक्लोरिक अम्ल (HCl)","सल्फ्यूरिक अम्ल (H₂SO₄)","नाइट्रिक अम्ल (HNO₃)","ऐसीटिक अम्ल (CH₃COOH)"],exp:"पेट तनु HCl बनाता है जो एंजाइमों की मदद करता है और हानिकारक बैक्टीरिया को नष्ट करता है।"},
+    as:{q:"মানুহৰ পেটত কোন এছিড থাকে যি হজমত সহায় কৰে?",
+    opts:["হাইড্ৰক্লোৰিক এছিড (HCl)","চালফিউৰিক এছিড (H₂SO₄)","নাইট্ৰিক এছিড (HNO₃)","এচিটিক এছিড (CH₃COOH)"],exp:"পেটে তনু HCl উৎপন্ন কৰে যি এনজাইমৰ কাম কৰাত সহায় কৰে আৰু ক্ষতিকৰ বেক্টেৰিয়া ধ্বংস কৰে।"}
+  },
+  {
+    showStrip:false,
+    en:{q:"Litmus is a natural indicator. Which colour does red litmus turn in a BASE?",
+    opts:["Blue","Red stays red","Yellow","Green"],ans:0,
+    exp:"Red litmus turns blue in a base/alkali. Blue litmus turns red in an acid. Remember: B for Blue = Base."},
+    hi:{q:"लिटमस एक प्राकृतिक सूचक है। क्षार में लाल लिटमस किस रंग में बदलता है?",
+    opts:["नीला","लाल रहता है","पीला","हरा"],exp:"लाल लिटमस क्षार में नीला हो जाता है। नीला लिटमस अम्ल में लाल हो जाता है।"},
+    as:{q:"লিটমাছ এটা প্ৰাকৃতিক সূচক। ক্ষাৰত ৰঙা লিটমাছ কোন ৰঙলৈ পৰিবৰ্তিত হয়?",
+    opts:["নীলা","ৰঙাই থাকে","হালধীয়া","সেউজীয়া"],exp:"ৰঙা লিটমাছ ক্ষাৰত নীলা হয়। নীলা লিটমাছ এছিডত ৰঙা হয়।"}
+  },
+  {
+    showStrip:true,
+    en:{q:"Phenolphthalein indicator is used to test a solution. It turns PINK/RED in which type of solution?",
+    opts:["Basic (alkaline) solution","Acidic solution","Neutral solution","Salty solution"],ans:0,
+    exp:"Phenolphthalein is colourless in acid/neutral and pink/red in alkaline (basic) solutions."},
+    hi:{q:"फेनोल्फ्थेलिन सूचक का उपयोग विलयन परीक्षण में होता है। यह किस विलयन में गुलाबी/लाल होता है?",
+    opts:["क्षारीय विलयन","अम्लीय विलयन","उदासीन विलयन","नमकीन विलयन"],exp:"फेनोल्फ्थेलिन अम्ल/उदासीन में रंगहीन और क्षारीय विलयन में गुलाबी/लाल होता है।"},
+    as:{q:"ফেনলফথেলিন সূচক ব্যৱহাৰ কৰা হয়। এইটো কোন ধৰণৰ দ্ৰৱত গোলাপী/ৰঙা হয়?",
+    opts:["ক্ষাৰীয় দ্ৰৱ","এছিডিক দ্ৰৱ","নিৰপেক্ষ দ্ৰৱ","নিমখীয়া দ্ৰৱ"],exp:"ফেনলফথেলিন এছিড/নিৰপেক্ষত বৰ্ণহীন আৰু ক্ষাৰীয় দ্ৰৱত গোলাপী/ৰঙা হয়।"}
+  },
+  {
+    showStrip:false,
+    en:{q:"What is the chemical name and formula of BAKING SODA?",
+    opts:["Sodium hydrogen carbonate – NaHCO₃","Sodium carbonate – Na₂CO₃","Sodium chloride – NaCl","Sodium hydroxide – NaOH"],ans:0,
+    exp:"Baking soda = Sodium hydrogen carbonate (NaHCO₃). Washing soda = Na₂CO₃. Do not confuse them!"},
+    hi:{q:"बेकिंग सोडा का रासायनिक नाम और सूत्र क्या है?",
+    opts:["सोडियम हाइड्रोजन कार्बोनेट – NaHCO₃","सोडियम कार्बोनेट – Na₂CO₃","सोडियम क्लोराइड – NaCl","सोडियम हाइड्रोक्साइड – NaOH"],exp:"बेकिंग सोडा = NaHCO₃। वाशिंग सोडा = Na₂CO₃। इन्हें भ्रमित न करें!"},
+    as:{q:"বেকিং ছোডাৰ ৰাসায়নিক নাম আৰু সূত্ৰ কি?",
+    opts:["ছডিয়াম হাইড্ৰজেন কাৰ্বনেট – NaHCO₃","ছডিয়াম কাৰ্বনেট – Na₂CO₃","ছডিয়াম ক্লৰাইড – NaCl","ছডিয়াম হাইড্ৰক্সাইড – NaOH"],exp:"বেকিং ছোডা = NaHCO₃। ৱাশিং ছোডা = Na₂CO₃।"}
+  },
+  {
+    showStrip:false,
+    en:{q:"Which acid is present in ant stings (formic acid)?",
+    opts:["Methanoic acid (HCOOH)","Ethanoic acid (CH₃COOH)","Citric acid","Lactic acid"],ans:0,
+    exp:"Formic acid = Methanoic acid (HCOOH). It is found in ant stings and causes the burning sensation."},
+    hi:{q:"चींटी के डंक में कौन सा अम्ल होता है?",
+    opts:["मेथेनोइक अम्ल (HCOOH)","एथेनोइक अम्ल (CH₃COOH)","साइट्रिक अम्ल","लैक्टिक अम्ल"],exp:"फॉर्मिक अम्ल = मेथेनोइक अम्ल (HCOOH)। यह चींटी के डंक में होता है।"},
+    as:{q:"পিঁপৰাৰ কামোৰত কোন এছিড থাকে?",
+    opts:["মেথানোয়িক এছিড (HCOOH)","ইথানোয়িক এছিড (CH₃COOH)","চিট্ৰিক এছিড","লেক্টিক এছিড"],exp:"ফৰ্মিক এছিড = মেথানোয়িক এছিড (HCOOH)। ই পিঁপৰাৰ কামোৰত থাকে।"}
+  },
+  {
+    showStrip:false,
+    en:{q:"What is the product when a strong acid reacts with a strong base? (Neutralisation reaction)",
+    opts:["Salt + Water","Salt only","Water only","Gas + Water"],ans:0,
+    exp:"Acid + Base → Salt + Water. Example: HCl + NaOH → NaCl + H₂O. This is neutralisation."},
+    hi:{q:"प्रबल अम्ल और प्रबल क्षार की प्रतिक्रिया का उत्पाद क्या होता है?",
+    opts:["लवण + जल","केवल लवण","केवल जल","गैस + जल"],exp:"अम्ल + क्षार → लवण + जल। उदाहरण: HCl + NaOH → NaCl + H₂O। यह उदासीनीकरण है।"},
+    as:{q:"শক্তিশালী এছিড আৰু শক্তিশালী ক্ষাৰৰ বিক্ৰিয়াৰ উৎপাদ কি?",
+    opts:["লৱণ + পানী","কেৱল লৱণ","কেৱল পানী","গেছ + পানী"],exp:"এছিড + ক্ষাৰ → লৱণ + পানী। উদাহৰণ: HCl + NaOH → NaCl + H₂O।"}
+  },
+  {
+    showStrip:false,
+    en:{q:"What is the chemical formula of BLEACHING POWDER?",
+    opts:["Ca(OCl)Cl","CaCl₂","Ca(OH)₂","CaO"],ans:0,
+    exp:"Bleaching powder is calcium oxychloride Ca(OCl)Cl. It is made by passing Cl₂ gas over slaked lime Ca(OH)₂."},
+    hi:{q:"विरंजक चूर्ण (ब्लीचिंग पाउडर) का रासायनिक सूत्र क्या है?",
+    opts:["Ca(OCl)Cl","CaCl₂","Ca(OH)₂","CaO"],exp:"ब्लीचिंग पाउडर = Ca(OCl)Cl। यह बुझे चूने पर Cl₂ गैस प्रवाहित करने से बनता है।"},
+    as:{q:"ব্লিচিং পাউডাৰৰ ৰাসায়নিক সূত্ৰ কি?",
+    opts:["Ca(OCl)Cl","CaCl₂","Ca(OH)₂","CaO"],exp:"ব্লিচিং পাউডাৰ = Ca(OCl)Cl। ই Ca(OH)₂ ৰ ওপৰেৰে Cl₂ গেছ পাছ কৰাত তৈয়াৰ হয়।"}
+  },
+  {
+    showStrip:true,
+    en:{q:"Using a universal indicator, a solution shows ORANGE colour. What is the approximate pH?",
+    opts:["pH 4-5 (weak acid)","pH 7 (neutral)","pH 9-10 (weak base)","pH 1 (strong acid)"],ans:0,
+    exp:"Universal indicator colours: pH 1-3 = red, pH 4-5 = orange/yellow, pH 7 = green, pH 9-10 = blue, pH 11-14 = purple/violet."},
+    hi:{q:"सार्वत्रिक सूचक से विलयन नारंगी दिखता है। pH लगभग क्या होगा?",
+    opts:["pH 4-5 (दुर्बल अम्ल)","pH 7 (उदासीन)","pH 9-10 (दुर्बल क्षार)","pH 1 (प्रबल अम्ल)"],exp:"सार्वत्रिक सूचक: pH 1-3=लाल, pH 4-5=नारंगी, pH 7=हरा, pH 9-10=नीला, pH 11-14=बैंगनी।"},
+    as:{q:"সাৰ্বজনীন সূচকত দ্ৰৱ কমলা দেখা গ'ল। pH প্ৰায় কিমান?",
+    opts:["pH 4-5 (দুৰ্বল এছিড)","pH 7 (নিৰপেক্ষ)","pH 9-10 (দুৰ্বল ক্ষাৰ)","pH 1 (শক্তিশালী এছিড)"],exp:"সাৰ্বজনীন সূচক: pH 1-3=ৰঙা, pH 4-5=কমলা, pH 7=সেউজীয়া, pH 9-10=নীলা, pH 11-14=বেঙুনীয়া।"}
+  },
+  {
+    showStrip:false,
+    en:{q:"What is WASHING SODA and what is it used for?",
+    opts:["Na₂CO₃·10H₂O — used in glass, soap, paper making and removing water hardness",
+          "NaHCO₃ — used in baking","NaCl — used as table salt","NaOH — used in drain cleaners"],ans:0,
+    exp:"Washing soda = Na₂CO₃·10H₂O (sodium carbonate decahydrate). It softens hard water and is used in glass, soap, and paper industries."},
+    hi:{q:"धोने का सोडा क्या है और इसका उपयोग क्या है?",
+    opts:["Na₂CO₃·10H₂O — कांच, साबुन, कागज उद्योग और पानी की कठोरता दूर करने में",
+          "NaHCO₃ — बेकिंग में","NaCl — खाने में नमक","NaOH — ड्रेन क्लीनर में"],exp:"धोने का सोडा = Na₂CO₃·10H₂O। यह कठोर जल को मृदु बनाता है।"},
+    as:{q:"ৱাশিং ছোডা কি আৰু ইয়াৰ ব্যৱহাৰ কি?",
+    opts:["Na₂CO₃·10H₂O — কাঁচ, চাবোন, কাগজ উদ্যোগত আৰু পানীৰ কঠিনতা আঁতৰাবলৈ",
+          "NaHCO₃ — বেকিংত","NaCl — খাদ্য লৱণ হিচাপে","NaOH — ড্ৰেইন ক্লিনাৰত"],exp:"ৱাশিং ছোডা = Na₂CO₃·10H₂O। ই কঠিন পানী মৃদু কৰে।"}
+  }
+];
+
+let current=0,score=0,answered=[],currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display=el.getAttribute('data-lang')===l?'':'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['en','hi','as'][i]===l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(current>=questions.length){showEnd();return;}
+  const q=questions[current];
+  const lang=q[currentLang]||q['en'];
+  const enQ=q['en'];
+  document.getElementById('qNum').textContent=current+1;
+  document.getElementById('scoreDisp').textContent=score;
+  document.getElementById('qLabel').textContent=`Question ${current+1} of 10`;
+  document.getElementById('qText').textContent=lang.q||enQ.q;
+  document.getElementById('progBar').style.width=((current)/10*100)+'%';
+  document.getElementById('phStripWrap').style.display=q.showStrip?'block':'none';
+
+  const opts=lang.opts||enQ.opts;
+  const optDiv=document.getElementById('options');
+  optDiv.innerHTML='';
+  opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';b.textContent=o;
+    b.onclick=()=>selectAnswer(i,enQ.ans,lang.exp||enQ.exp);
+    optDiv.appendChild(b);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('feedback').textContent='';
+  document.getElementById('nextBtn').style.display='none';
+}
+
+function selectAnswer(chosen,correct,exp){
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[correct].classList.add('correct');
+  const fb=document.getElementById('feedback');
+  if(chosen===correct){
+    btns[chosen].classList.add('correct');
+    score+=10;
+    document.getElementById('scoreDisp').textContent=score;
+    fb.textContent='✓ Correct! '+exp;
+    fb.className='feedback ok show';
+  } else {
+    btns[chosen].classList.add('wrong');
+    fb.textContent='✗ Not quite. '+exp;
+    fb.className='feedback no show';
+  }
+  answered.push({q:questions[current]['en'].q,correct:chosen===correct,exp});
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextQuestion(){current++;renderQuestion();}
+
+function showEnd(){
+  document.getElementById('questionCard').style.display='none';
+  document.getElementById('progBar').style.width='100%';
+  document.getElementById('finalScore').textContent=score;
+  let stars='';
+  if(score>=90)stars='⭐⭐⭐';
+  else if(score>=70)stars='⭐⭐';
+  else if(score>=40)stars='⭐';
+  document.getElementById('stars').textContent=stars||'☆☆☆';
+  const msgs={en:['Keep practising!','Well done!','Chemistry wizard! '],
+    hi:['अभ्यास जारी रखें!','शाबाश!','रसायन विज्ञान विशेषज्ञ!'],
+    as:['অনুশীলন কৰি যাওক!','শাবাশ!','ৰসায়ন বিশেষজ্ঞ!']};
+  const mArr=msgs[currentLang]||msgs.en;
+  document.getElementById('endMsg').textContent=score>=90?mArr[2]:score>=70?mArr[1]:mArr[0];
+  let html='<h3>Review</h3>';
+  answered.forEach((a,i)=>{
+    html+=`<div class="result-item ${a.correct?'r-ok':'r-no'}">
+      <strong>Q${i+1}:</strong> ${a.correct?'✓':'✗'} ${a.q}<br/><small>${a.exp}</small></div>`;
+  });
+  document.getElementById('resultDetail').innerHTML=html;
+  const es=document.getElementById('endScreen');
+  es.style.display='block';es.classList.add('show');
+}
+
+function restartGame(){
+  current=0;score=0;answered=[];
+  document.getElementById('questionCard').style.display='block';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('endScreen').classList.remove('show');
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

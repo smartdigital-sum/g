@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GyanPlay — Class 3 · Complete Collection</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#040810;--card:#090F1E;--gold:#FFD166;--text:#E8F0FF;--dim:#3A5A7A}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+/* Hero */
+.hero{padding:32px 24px 20px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(76,201,240,.08),transparent 60%)}
+.brand{font-family:'Baloo 2',sans-serif;font-size:2.6rem;font-weight:800;background:linear-gradient(135deg,#FFD166,#4CC9F0,#C77DFF,#06D6A0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.tagline{font-size:.92rem;color:var(--dim);margin-bottom:10px}
+.subtitle{font-size:.82rem;color:rgba(255,255,255,.3)}
+.badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.badge{display:inline-block;padding:5px 14px;border-radius:50px;font-size:.75rem;font-weight:700}
+.badge-blue{background:rgba(76,201,240,.12);border:1px solid rgba(76,201,240,.3);color:#4CC9F0}
+.badge-green{background:rgba(6,214,160,.12);border:1px solid rgba(6,214,160,.3);color:#06D6A0}
+.badge-gold{background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);color:#FFD166}
+/* Overall progress */
+.progress-section{padding:16px}
+.progress-card{background:var(--card);border-radius:16px;padding:18px 20px;border:1px solid rgba(255,255,255,.07)}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.progress-title{font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;color:var(--gold)}
+.progress-count{font-size:.9rem;color:#06D6A0;font-weight:700}
+.big-bar-wrap{height:10px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden;margin-bottom:12px}
+.big-bar{height:100%;background:linear-gradient(90deg,#FFD166,#4CC9F0,#C77DFF,#06D6A0);border-radius:5px;width:0%;transition:width 1s ease}
+.subject-bars{display:flex;flex-direction:column;gap:7px}
+.subj-row{display:flex;align-items:center;gap:10px}
+.subj-label{font-size:.72rem;color:var(--dim);min-width:80px}
+.subj-bar-wrap{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.subj-bar{height:100%;border-radius:3px;width:0%;transition:width 1s ease}
+/* Batch sections */
+.batch-section{padding:0 16px 12px}
+.batch-header{display:flex;align-items:center;gap:10px;padding:14px 0 10px}
+.batch-num{font-family:'Baloo 2',sans-serif;font-size:.85rem;font-weight:700;padding:4px 12px;border-radius:50px;flex-shrink:0}
+.batch-1 .batch-num{background:rgba(199,125,255,.15);color:#C77DFF;border:1px solid rgba(199,125,255,.3)}
+.batch-2 .batch-num{background:rgba(6,214,160,.12);color:#06D6A0;border:1px solid rgba(6,214,160,.25)}
+.batch-3 .batch-num{background:rgba(76,201,240,.12);color:#4CC9F0;border:1px solid rgba(76,201,240,.25)}
+.batch-divider{flex:1;height:1px;background:rgba(255,255,255,.06)}
+/* Game cards */
+.cards-col{display:flex;flex-direction:column;gap:8px}
+.game-card{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:13px 16px;border:1px solid rgba(255,255,255,.06);cursor:pointer;text-decoration:none;color:inherit;transition:transform .18s,border-color .2s,background .2s}
+.game-card:hover{transform:translateY(-2px);background:#0D1525}
+/* Subject colour left border */
+.game-card.maths{border-left:3px solid #C77DFF}
+.game-card.maths:hover{border-color:#C77DFF;box-shadow:0 3px 14px rgba(199,125,255,.12)}
+.game-card.english{border-left:3px solid #FF9F1C}
+.game-card.english:hover{border-color:#FF9F1C;box-shadow:0 3px 14px rgba(255,159,28,.12)}
+.game-card.science{border-left:3px solid #06D6A0}
+.game-card.science:hover{border-color:#06D6A0;box-shadow:0 3px 14px rgba(6,214,160,.12)}
+.game-card.sst{border-left:3px solid #A8E063}
+.game-card.sst:hover{border-color:#A8E063;box-shadow:0 3px 14px rgba(168,224,99,.12)}
+.game-card.hindi{border-left:3px solid #C77DFF;border-left-color:#FF9CC2}
+.game-card.hindi:hover{border-color:#FF9CC2;box-shadow:0 3px 14px rgba(255,156,194,.12)}
+.game-card.computer{border-left:3px solid #4CC9F0}
+.game-card.computer:hover{border-color:#4CC9F0;box-shadow:0 3px 14px rgba(76,201,240,.12)}
+.card-num{font-family:'Baloo 2',sans-serif;font-size:.78rem;font-weight:700;color:var(--dim);width:22px;flex-shrink:0;text-align:right}
+.card-emoji{font-size:1.9rem;flex-shrink:0;width:40px;text-align:center}
+.card-info{flex:1;min-width:0}
+.card-name{font-family:'Baloo 2',sans-serif;font-size:.97rem;font-weight:700;margin-bottom:2px}
+.card-concept{font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;opacity:.55;font-weight:700}
+.card-subj{font-size:.65rem;color:var(--dim)}
+.card-arrow{font-size:.95rem;color:var(--dim);flex-shrink:0}
+.card-done{font-size:1rem;flex-shrink:0;display:none}
+.game-card.visited .card-done{display:block}
+.game-card.visited .card-arrow{display:none}
+/* Footer */
+.footer{padding:24px 16px 40px;text-align:center}
+.footer-text{font-size:.82rem;color:var(--dim);line-height:1.8}
+.footer-text strong{color:var(--gold)}
+.price-tag{display:inline-block;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.25);border-radius:50px;padding:8px 22px;font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;color:var(--gold);margin-top:12px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="brand">🎓 GyanPlay</div>
+  <div class="tagline">Class 3 · Complete Collection · All 23 Games</div>
+  <div class="subtitle">Ages 8–9 · NCERT + Assam Board · Curiosity First</div>
+  <div class="badge-row">
+    <span class="badge badge-blue">📐 Maths · 5 games</span>
+    <span class="badge badge-gold">📝 English · 4 games</span>
+    <span class="badge badge-green">🔬 Science · 4 games</span>
+    <span class="badge badge-blue">🌏 SST · 4 games</span>
+    <span class="badge badge-gold">🙏 Hindi · 3 games</span>
+    <span class="badge badge-green">💻 Computer · 3 games</span>
+  </div>
+</div>
+
+<div class="progress-section">
+  <div class="progress-card">
+    <div class="progress-header">
+      <div class="progress-title">📊 Overall Progress</div>
+      <div class="progress-count" id="totalCount">0 / 23 played</div>
+    </div>
+    <div class="big-bar-wrap"><div class="big-bar" id="bigBar"></div></div>
+    <div class="subject-bars">
+      <div class="subj-row"><div class="subj-label" style="color:#C77DFF">📐 Maths</div><div class="subj-bar-wrap"><div class="subj-bar" id="bar-maths" style="background:#C77DFF"></div></div></div>
+      <div class="subj-row"><div class="subj-label" style="color:#FF9F1C">📝 English</div><div class="subj-bar-wrap"><div class="subj-bar" id="bar-english" style="background:#FF9F1C"></div></div></div>
+      <div class="subj-row"><div class="subj-label" style="color:#06D6A0">🔬 Science</div><div class="subj-bar-wrap"><div class="subj-bar" id="bar-science" style="background:#06D6A0"></div></div></div>
+      <div class="subj-row"><div class="subj-label" style="color:#A8E063">🌏 SST</div><div class="subj-bar-wrap"><div class="subj-bar" id="bar-sst" style="background:#A8E063"></div></div></div>
+      <div class="subj-row"><div class="subj-label" style="color:#FF9CC2">🙏 Hindi</div><div class="subj-bar-wrap"><div class="subj-bar" id="bar-hindi" style="background:#FF9CC2"></div></div></div>
+      <div class="subj-row"><div class="subj-label" style="color:#4CC9F0">💻 Computer</div><div class="subj-bar-wrap"><div class="subj-bar" id="bar-computer" style="background:#4CC9F0"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- BATCH 1 -->
+<div class="batch-section batch-1">
+  <div class="batch-header"><span class="batch-num">📦 Batch 1</span><div class="batch-divider"></div></div>
+  <div class="cards-col">
+    <a class="game-card maths" href="game1-number-city.html" data-subj="maths"><div class="card-num">01</div><div class="card-emoji">🏙️</div><div class="card-info"><div class="card-name">Number City</div><div class="card-concept">Place Value · Maths</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card maths" href="game2-division-diner.html" data-subj="maths"><div class="card-num">02</div><div class="card-emoji">🍽️</div><div class="card-info"><div class="card-name">Division Diner</div><div class="card-concept">Division · Maths</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card maths" href="game3-fraction-street.html" data-subj="maths"><div class="card-num">03</div><div class="card-emoji">🍕</div><div class="card-info"><div class="card-name">Fraction Street</div><div class="card-concept">Fractions · Maths</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card maths" href="game4-spider-multiplication.html" data-subj="maths"><div class="card-num">04</div><div class="card-emoji">🕷️</div><div class="card-info"><div class="card-name">Spider Multiplication</div><div class="card-concept">Times Tables · Maths</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card maths" href="game5-railway-clock.html" data-subj="maths"><div class="card-num">05</div><div class="card-emoji">🚂</div><div class="card-info"><div class="card-name">Railway Clock</div><div class="card-concept">Telling Time · Maths</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card english" href="game6-adjective-artist.html" data-subj="english"><div class="card-num">06</div><div class="card-emoji">🎨</div><div class="card-info"><div class="card-name">Adjective Artist</div><div class="card-concept">Adjectives · English</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card english" href="game7-time-machine-tense.html" data-subj="english"><div class="card-num">07</div><div class="card-emoji">⏰</div><div class="card-info"><div class="card-name">Time Machine Tense</div><div class="card-concept">Tenses · English</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+  </div>
+</div>
+
+<!-- BATCH 2 -->
+<div class="batch-section batch-2">
+  <div class="batch-header"><span class="batch-num">📦 Batch 2</span><div class="batch-divider"></div></div>
+  <div class="cards-col">
+    <a class="game-card english" href="game8-cat-prepositions.html" data-subj="english"><div class="card-num">08</div><div class="card-emoji">🐱</div><div class="card-info"><div class="card-name">Cat & Prepositions</div><div class="card-concept">Prepositions · English</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card english" href="game9-story-detectives.html" data-subj="english"><div class="card-num">09</div><div class="card-emoji">🔍</div><div class="card-info"><div class="card-name">Story Detectives</div><div class="card-concept">Comprehension · English</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card science" href="game10-photosynthesis-factory.html" data-subj="science"><div class="card-num">10</div><div class="card-emoji">🌿</div><div class="card-info"><div class="card-name">Photosynthesis Factory</div><div class="card-concept">Plants · Science</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card science" href="game11-animal-architects.html" data-subj="science"><div class="card-num">11</div><div class="card-emoji">🏗️</div><div class="card-info"><div class="card-name">Animal Architects</div><div class="card-concept">Animal Homes · Science</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card science" href="game12-water-journey.html" data-subj="science"><div class="card-num">12</div><div class="card-emoji">💧</div><div class="card-info"><div class="card-name">Water Journey</div><div class="card-concept">Water Cycle · Science</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card science" href="game13-body-fuel.html" data-subj="science"><div class="card-num">13</div><div class="card-emoji">⚡</div><div class="card-info"><div class="card-name">Fuel for the Body</div><div class="card-concept">Nutrition · Science</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card sst" href="game14-assam-explorer.html" data-subj="sst"><div class="card-num">14</div><div class="card-emoji">🗺️</div><div class="card-info"><div class="card-name">Assam Explorer</div><div class="card-concept">Our State · Social Studies</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+  </div>
+</div>
+
+<!-- BATCH 3 -->
+<div class="batch-section batch-3">
+  <div class="batch-header"><span class="batch-num">📦 Batch 3</span><div class="batch-divider"></div></div>
+  <div class="cards-col">
+    <a class="game-card sst" href="game15-brahmaputra-story.html" data-subj="sst"><div class="card-num">15</div><div class="card-emoji">🌊</div><div class="card-info"><div class="card-name">Brahmaputra Story</div><div class="card-concept">Rivers · Social Studies</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card sst" href="game16-object-chain.html" data-subj="sst"><div class="card-num">16</div><div class="card-emoji">🔗</div><div class="card-info"><div class="card-name">Object Chain</div><div class="card-concept">Occupations · Social Studies</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card sst" href="game17-monument-mission.html" data-subj="sst"><div class="card-num">17</div><div class="card-emoji">🏛️</div><div class="card-info"><div class="card-name">Monument Mission</div><div class="card-concept">Monuments · Social Studies</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card hindi" href="game18-hindi-adjective-gallery.html" data-subj="hindi"><div class="card-num">18</div><div class="card-emoji">🎨</div><div class="card-info"><div class="card-name">विशेषण चित्रशाला</div><div class="card-concept">Adjectives · Hindi</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card hindi" href="game19-hindi-three-doors.html" data-subj="hindi"><div class="card-num">19</div><div class="card-emoji">🚪</div><div class="card-info"><div class="card-name">काल के तीन दरवाज़े</div><div class="card-concept">Tenses (Kaal) · Hindi</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card hindi" href="game20-hindi-story-clues.html" data-subj="hindi"><div class="card-num">20</div><div class="card-emoji">🔍</div><div class="card-info"><div class="card-name">कहानी के गुप्त सुराग</div><div class="card-concept">Comprehension · Hindi</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card computer" href="game21-algorithm-kitchen.html" data-subj="computer"><div class="card-num">21</div><div class="card-emoji">👨‍🍳</div><div class="card-info"><div class="card-name">Algorithm Kitchen</div><div class="card-concept">Algorithms · Computer</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card computer" href="game22-file-city.html" data-subj="computer"><div class="card-num">22</div><div class="card-emoji">🗂️</div><div class="card-info"><div class="card-name">File City</div><div class="card-concept">Files & Folders · Computer</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+    <a class="game-card computer" href="game23-safe-surfer.html" data-subj="computer"><div class="card-num">23</div><div class="card-emoji">🛡️</div><div class="card-info"><div class="card-name">Safe Surfer</div><div class="card-concept">Internet Safety · Computer</div></div><div class="card-done">✅</div><div class="card-arrow">→</div></a>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-text">
+    <strong>23 games · 6 subjects · 1 goal</strong><br>
+    Every game starts with a WOW, ends with a question the child carries home.<br>
+    Curiosity is the product. Learning is the result.
+  </div>
+  <div class="price-tag">₹750 · Class 3 · GyanPlay</div>
+</div>
+
+<script>
+const ALL_GAMES=[
+  {file:'game1-number-city.html',subj:'maths'},{file:'game2-division-diner.html',subj:'maths'},
+  {file:'game3-fraction-street.html',subj:'maths'},{file:'game4-spider-multiplication.html',subj:'maths'},
+  {file:'game5-railway-clock.html',subj:'maths'},{file:'game6-adjective-artist.html',subj:'english'},
+  {file:'game7-time-machine-tense.html',subj:'english'},{file:'game8-cat-prepositions.html',subj:'english'},
+  {file:'game9-story-detectives.html',subj:'english'},{file:'game10-photosynthesis-factory.html',subj:'science'},
+  {file:'game11-animal-architects.html',subj:'science'},{file:'game12-water-journey.html',subj:'science'},
+  {file:'game13-body-fuel.html',subj:'science'},{file:'game14-assam-explorer.html',subj:'sst'},
+  {file:'game15-brahmaputra-story.html',subj:'sst'},{file:'game16-object-chain.html',subj:'sst'},
+  {file:'game17-monument-mission.html',subj:'sst'},{file:'game18-hindi-adjective-gallery.html',subj:'hindi'},
+  {file:'game19-hindi-three-doors.html',subj:'hindi'},{file:'game20-hindi-story-clues.html',subj:'hindi'},
+  {file:'game21-algorithm-kitchen.html',subj:'computer'},{file:'game22-file-city.html',subj:'computer'},
+  {file:'game23-safe-surfer.html',subj:'computer'},
+];
+const SUBJ_TOTAL={maths:5,english:4,science:4,sst:4,hindi:3,computer:3};
+try{
+  let total=0;const subjCount={maths:0,english:0,science:0,sst:0,hindi:0,computer:0};
+  ALL_GAMES.forEach(g=>{
+    if(localStorage.getItem('visited_'+g.file)){total++;subjCount[g.subj]++;document.querySelector(`[href="${g.file}"]`)?.classList.add('visited');}
+  });
+  document.getElementById('totalCount').textContent=`${total} / 23 played`;
+  document.getElementById('bigBar').style.width=Math.round((total/23)*100)+'%';
+  Object.entries(subjCount).forEach(([k,v])=>{
+    const bar=document.getElementById(`bar-${k}`);
+    if(bar)bar.style.width=Math.round((v/SUBJ_TOTAL[k])*100)+'%';
+  });
+}catch(e){}
+document.querySelectorAll('.game-card').forEach(c=>{
+  c.onclick=()=>{try{localStorage.setItem('visited_'+c.getAttribute('href'),1);}catch(e){}};
+});
+</script>
+</body>
+</html>

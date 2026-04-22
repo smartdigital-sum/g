@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bihu Feast Cook-Off 🍲</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Hind+Siliguri:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --fire1:#ff6b00;--fire2:#ff9800;--fire3:#ffcc02;
+  --bg-warm:#1a0a00;--bg-mid:#2a1200;--bg-top:#3d1a00;
+  --saffron:#ff8c00;--crimson:#c0392b;--turmeric:#e6a817;
+  --leaf:#388e3c;--sky:#1976d2;
+  --cream:#fef9ef;--white:#fff;
+  --gold:#f5c518;--gold2:#ffd740;
+  --pot-dark:#2d2d2d;--pot-mid:#4a4a4a;
+  --gamosa-red:#c0392b;--gamosa-white:#fafafa;
+  --text-dim:rgba(255,255,255,0.55);
+  --card:rgba(255,255,255,0.07);
+  --card-border:rgba(255,255,255,0.13);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{
+  font-family:'Baloo 2',cursive;
+  background:var(--bg-warm);
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;
+}
+
+/* ══ WRAPPER ══ */
+#game-wrap{
+  width:min(520px,100vw);
+  height:min(700px,100vh);
+  position:relative;overflow:hidden;
+  border-radius:28px;
+  box-shadow:0 30px 80px rgba(0,0,0,0.85);
+}
+
+/* ══ KITCHEN BG ══ */
+.kitchen-bg{
+  position:absolute;inset:0;z-index:0;
+  background:linear-gradient(180deg,
+    #1a0800 0%,
+    #2d1200 20%,
+    #3d1800 45%,
+    #4a2000 65%,
+    #2d1000 85%,
+    #1a0800 100%
+  );
+}
+/* Warm glow from fire */
+.fire-glow{
+  position:absolute;
+  bottom:0;left:50%;transform:translateX(-50%);
+  width:300px;height:260px;
+  background:radial-gradient(ellipse at 50% 100%,
+    rgba(255,107,0,0.55) 0%,
+    rgba(255,152,0,0.3) 30%,
+    rgba(255,200,0,0.12) 60%,
+    transparent 80%
+  );
+  z-index:1;
+  animation:glowPulse 2s ease-in-out infinite;
+}
+@keyframes glowPulse{
+  0%,100%{opacity:0.8;transform:translateX(-50%) scaleX(1);}
+  50%{opacity:1;transform:translateX(-50%) scaleX(1.08);}
+}
+
+/* Gamosa border pattern at top */
+.gamosa-border{
+  position:absolute;top:0;left:0;right:0;height:22px;z-index:15;
+  background:repeating-linear-gradient(
+    90deg,
+    var(--gamosa-red) 0px, var(--gamosa-red) 18px,
+    var(--gamosa-white) 18px, var(--gamosa-white) 26px,
+    var(--gamosa-red) 26px, var(--gamosa-red) 30px,
+    var(--gamosa-white) 30px, var(--gamosa-white) 38px
+  );
+  opacity:0.85;
+}
+.gamosa-border-bot{
+  position:absolute;bottom:0;left:0;right:0;height:14px;z-index:15;
+  background:repeating-linear-gradient(
+    90deg,
+    var(--gamosa-red) 0px, var(--gamosa-red) 14px,
+    var(--gamosa-white) 14px, var(--gamosa-white) 20px,
+    var(--gamosa-red) 20px, var(--gamosa-red) 24px,
+    var(--gamosa-white) 24px, var(--gamosa-white) 30px
+  );
+  opacity:0.7;
+}
+
+/* Floating petals */
+.petal{
+  position:absolute;font-size:16px;
+  animation:petalFloat linear infinite;
+  pointer-events:none;z-index:2;opacity:0.55;
+}
+@keyframes petalFloat{
+  0%{transform:translateY(-30px) rotate(0deg) translateX(0);opacity:0;}
+  10%{opacity:0.6;}
+  90%{opacity:0.4;}
+  100%{transform:translateY(730px) rotate(360deg) translateX(var(--pdx));opacity:0;}
+}
+
+/* Steam particles */
+.steam{
+  position:absolute;
+  width:8px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.5),transparent);
+  animation:steamRise linear infinite;
+  pointer-events:none;z-index:8;
+}
+@keyframes steamRise{
+  0%{transform:translateY(0) scaleX(1);opacity:0.7;}
+  50%{transform:translateY(-40px) scaleX(1.6) translateX(var(--sdx));opacity:0.4;}
+  100%{transform:translateY(-80px) scaleX(2.2) translateX(var(--sdx2));opacity:0;}
+}
+
+/* ══ SCREENS ══ */
+.screen{
+  position:absolute;inset:0;z-index:10;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px 18px;
+  transition:opacity 0.35s,transform 0.35s;
+}
+.screen.hidden{opacity:0;pointer-events:none;transform:scale(0.97);}
+
+/* ══ INTRO ══ */
+#screen-intro{gap:12px;text-align:center;}
+.intro-badge{
+  background:linear-gradient(135deg,var(--gamosa-red),var(--crimson));
+  color:#fff;font-size:12px;font-weight:800;
+  padding:5px 20px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;
+  box-shadow:0 4px 16px rgba(192,57,43,0.5);
+}
+.intro-title{
+  font-size:26px;font-weight:900;
+  color:var(--gold);line-height:1.15;
+  text-shadow:0 3px 16px rgba(0,0,0,0.7);
+}
+.intro-title .as{
+  font-family:'Hind Siliguri',sans-serif;
+  display:block;font-size:18px;color:#ffc77a;margin-top:4px;
+}
+/* Big cook-pot SVG on intro */
+.intro-pot{width:160px;filter:drop-shadow(0 10px 30px rgba(255,107,0,0.5));animation:potBob 2.5s ease-in-out infinite;}
+@keyframes potBob{
+  0%,100%{transform:translateY(0) rotate(-1.5deg);}
+  50%{transform:translateY(-12px) rotate(1.5deg);}
+}
+.speech-bubble{
+  background:var(--white);border-radius:18px;padding:13px 18px;
+  font-size:13px;color:#2d1200;font-weight:600;
+  max-width:316px;line-height:1.55;
+  box-shadow:0 8px 24px rgba(0,0,0,0.35);position:relative;
+}
+.speech-bubble::after{
+  content:'';position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+  border:7px solid transparent;border-bottom-color:var(--white);
+}
+.speech-bubble .as{font-family:'Hind Siliguri',sans-serif;color:var(--gamosa-red);display:block;font-size:12px;margin-top:3px;}
+.btn-start{
+  font-family:'Baloo 2',cursive;font-size:20px;font-weight:900;
+  padding:14px 44px;border-radius:50px;border:none;
+  background:linear-gradient(135deg,var(--fire1),var(--fire2));
+  color:#fff;cursor:pointer;
+  box-shadow:0 6px 24px rgba(255,107,0,0.5);
+  transition:all 0.2s;animation:pulseFire 2s ease-in-out infinite;
+}
+.btn-start:hover{transform:scale(1.06);}
+@keyframes pulseFire{
+  0%,100%{box-shadow:0 6px 24px rgba(255,107,0,0.5);}
+  50%{box-shadow:0 6px 40px rgba(255,180,0,0.7);}
+}
+
+/* ══ HUD ══ */
+#hud{
+  position:absolute;top:22px;left:0;right:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px 6px;
+  background:linear-gradient(180deg,rgba(0,0,0,0.6) 0%,transparent 100%);
+}
+.hud-score{font-size:16px;font-weight:800;color:var(--gold);display:flex;align-items:center;gap:5px;}
+.hud-level{font-size:13px;font-weight:700;color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.14);padding:3px 12px;border-radius:20px;}
+.hud-lives{font-size:18px;letter-spacing:3px;}
+#prog-wrap{
+  position:absolute;top:66px;left:16px;right:16px;height:5px;
+  background:rgba(255,255,255,0.12);border-radius:3px;z-index:20;overflow:hidden;
+}
+#prog-bar{height:100%;background:linear-gradient(90deg,var(--fire1),var(--gold));border-radius:3px;transition:width 0.5s ease;width:0%;}
+
+/* ══ GAME SCREEN ══ */
+#screen-game{gap:10px;padding-top:78px;padding-bottom:18px;justify-content:flex-start;}
+
+/* Ingredient display */
+.ingredient-card{
+  background:rgba(0,0,0,0.45);
+  border:2px solid rgba(255,200,50,0.25);
+  border-radius:22px;padding:14px 20px;
+  text-align:center;max-width:400px;width:100%;
+  backdrop-filter:blur(12px);
+  box-shadow:0 6px 24px rgba(0,0,0,0.4);
+}
+.ing-label{
+  font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--saffron);margin-bottom:6px;
+}
+.ing-emoji{font-size:60px;line-height:1;display:block;margin-bottom:6px;
+  filter:drop-shadow(0 4px 12px rgba(255,107,0,0.4));
+  animation:ingPop 0.5s cubic-bezier(0.34,1.8,0.64,1);
+}
+@keyframes ingPop{
+  0%{transform:scale(0.3) rotate(-15deg);opacity:0;}
+  100%{transform:scale(1) rotate(0deg);opacity:1;}
+}
+.ing-name-en{font-size:19px;font-weight:800;color:var(--white);}
+.ing-desc{font-size:12px;color:var(--text-dim);font-weight:600;margin-top:2px;}
+.ing-desc .as{font-family:'Hind Siliguri',sans-serif;color:#ffc87a;}
+
+/* Word build area */
+.word-build-area{
+  display:flex;align-items:center;justify-content:center;
+  gap:8px;min-height:56px;
+  background:rgba(0,0,0,0.35);
+  border:2px dashed rgba(255,200,50,0.3);
+  border-radius:16px;
+  padding:8px 16px;max-width:400px;width:100%;
+  flex-wrap:wrap;
+}
+.word-slot{
+  min-width:44px;height:44px;
+  background:rgba(255,255,255,0.08);
+  border:2px dashed rgba(255,200,50,0.4);
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Hind Siliguri',sans-serif;
+  font-size:22px;font-weight:700;color:var(--gold);
+  transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  padding:0 6px;
+}
+.word-slot.filled{
+  background:rgba(255,200,50,0.15);
+  border-style:solid;border-color:rgba(255,200,50,0.6);
+  transform:scale(1.08);
+}
+.word-slot.correct-flash{
+  background:rgba(67,160,71,0.35);
+  border-color:var(--leaf);
+  animation:slotPop 0.4s ease;
+}
+@keyframes slotPop{
+  0%{transform:scale(1.08);}50%{transform:scale(1.3);}100%{transform:scale(1.08);}
+}
+.build-hint{
+  font-size:12px;color:rgba(255,255,255,0.35);
+  font-weight:600;text-align:center;
+  font-style:italic;
+}
+
+/* Syllable tiles */
+.tiles-area{
+  display:flex;flex-wrap:wrap;justify-content:center;
+  gap:10px;max-width:400px;width:100%;
+}
+.syl-tile{
+  font-family:'Hind Siliguri',sans-serif;
+  font-size:26px;font-weight:800;
+  padding:12px 14px;min-width:54px;
+  border-radius:16px;
+  border:3px solid rgba(255,200,50,0.35);
+  background:linear-gradient(135deg,rgba(255,107,0,0.18),rgba(255,152,0,0.1));
+  color:var(--white);cursor:pointer;
+  transition:all 0.15s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 4px 14px rgba(0,0,0,0.4);
+  text-align:center;
+  position:relative;
+  backdrop-filter:blur(6px);
+}
+.syl-tile:hover:not(.used):not(.disabled){
+  transform:scale(1.14) translateY(-4px);
+  background:linear-gradient(135deg,rgba(255,140,0,0.35),rgba(255,200,0,0.2));
+  border-color:var(--gold);
+  box-shadow:0 8px 24px rgba(255,152,0,0.4);
+}
+.syl-tile.used{
+  opacity:0.25;cursor:default;transform:none;
+  border-color:rgba(255,255,255,0.1);
+}
+.syl-tile.disabled{pointer-events:none;}
+.syl-tile.wrong-shake{animation:wrongShake 0.5s ease;}
+@keyframes wrongShake{
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-8px);}40%{transform:translateX(8px);}
+  60%{transform:translateX(-5px);}80%{transform:translateX(5px);}
+}
+
+/* Clear btn */
+.clear-btn{
+  font-family:'Baloo 2',cursive;font-size:12px;font-weight:700;
+  padding:5px 16px;border-radius:20px;
+  border:1.5px solid rgba(255,255,255,0.2);
+  background:transparent;color:rgba(255,255,255,0.55);cursor:pointer;
+  transition:all 0.2s;
+}
+.clear-btn:hover{background:rgba(255,255,255,0.08);color:#fff;}
+
+/* Cooking pot (bottom of game screen) */
+.pot-area{
+  display:flex;flex-direction:column;align-items:center;
+  position:relative;
+}
+.pot-svg-wrap{
+  width:100px;
+  filter:drop-shadow(0 6px 20px rgba(255,107,0,0.6));
+}
+.fire-row{font-size:22px;letter-spacing:4px;margin-top:-4px;animation:fireDance 0.8s ease-in-out infinite alternate;}
+@keyframes fireDance{
+  0%{letter-spacing:4px;transform:scaleY(1);}
+  100%{letter-spacing:8px;transform:scaleY(1.1);}
+}
+
+/* Ingredient fly-in animation */
+.fly-ingredient{
+  position:absolute;font-size:40px;z-index:30;
+  animation:flyIntoPot 0.7s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+  pointer-events:none;
+}
+@keyframes flyIntoPot{
+  0%{transform:translate(0,0) scale(1.2) rotate(-10deg);opacity:1;}
+  60%{transform:translate(var(--fx),var(--fy)) scale(0.9) rotate(20deg);opacity:1;}
+  100%{transform:translate(var(--fx2),var(--fy2)) scale(0.2) rotate(40deg);opacity:0;}
+}
+
+/* Progress dots */
+.progress-dots{
+  display:flex;gap:6px;align-items:center;
+}
+.pdot{
+  width:10px;height:10px;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.2);
+  background:transparent;transition:all 0.3s;
+}
+.pdot.done{background:var(--leaf);border-color:var(--leaf);}
+.pdot.current{background:var(--gold);border-color:var(--gold);transform:scale(1.3);}
+
+/* ══ LEVEL COMPLETE ══ */
+#screen-levelup{gap:11px;text-align:center;}
+.lu-title{font-size:26px;font-weight:900;color:var(--gold);text-shadow:0 3px 12px rgba(0,0,0,0.6);}
+.lu-visual{font-size:72px;animation:bigPop 0.5s cubic-bezier(0.34,1.8,0.64,1);}
+@keyframes bigPop{0%{transform:scale(0.2) rotate(-20deg);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.lu-word-card{
+  background:rgba(0,0,0,0.4);border:2px solid rgba(255,200,50,0.3);
+  border-radius:18px;padding:14px 20px;max-width:320px;width:100%;
+  backdrop-filter:blur(12px);
+}
+.lu-assamese{font-family:'Hind Siliguri',sans-serif;font-size:34px;font-weight:800;color:var(--gold);margin-bottom:2px;}
+.lu-english{font-size:16px;font-weight:700;color:rgba(255,255,255,0.8);}
+.lu-culture{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.55;margin-top:6px;font-weight:600;}
+.lu-stars{font-size:34px;letter-spacing:8px;}
+.btn-next{
+  font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;
+  padding:12px 40px;border-radius:50px;border:none;
+  background:linear-gradient(135deg,var(--fire1),var(--fire2));
+  color:#fff;cursor:pointer;
+  box-shadow:0 5px 20px rgba(255,107,0,0.45);transition:all 0.2s;
+}
+.btn-next:hover{transform:translateY(-3px) scale(1.05);}
+
+/* ══ GAME OVER ══ */
+#screen-gameover{text-align:center;gap:14px;}
+.go-emoji{font-size:64px;}
+.go-title{font-size:28px;font-weight:900;color:var(--crimson);text-shadow:0 3px 12px rgba(0,0,0,0.6);}
+.go-sub{font-size:14px;color:rgba(255,255,255,0.75);font-weight:600;line-height:1.55;}
+.btn-retry{
+  font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;
+  padding:12px 36px;border-radius:50px;border:none;
+  background:var(--crimson);color:#fff;cursor:pointer;
+  box-shadow:0 5px 20px rgba(192,57,43,0.5);transition:all 0.2s;
+}
+.btn-retry:hover{transform:scale(1.05);}
+
+/* ══ VICTORY ══ */
+#screen-victory{text-align:center;gap:12px;}
+.vic-title{font-size:30px;font-weight:900;color:var(--gold);line-height:1.15;text-shadow:0 3px 16px rgba(0,0,0,0.6);}
+.vic-feast{font-size:32px;letter-spacing:3px;animation:feastPop 0.6s cubic-bezier(0.34,1.8,0.64,1);}
+@keyframes feastPop{0%{transform:scale(0);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.vic-score{font-size:22px;font-weight:800;color:#ffc87a;}
+.vic-culture-card{
+  background:rgba(0,0,0,0.45);border:2px solid rgba(255,200,50,0.25);
+  border-radius:16px;padding:14px 18px;max-width:310px;
+  font-size:13px;color:rgba(255,255,255,0.8);font-weight:600;line-height:1.6;
+  backdrop-filter:blur(10px);
+}
+.vic-culture-card .as{font-family:'Hind Siliguri',sans-serif;color:var(--gold);display:block;margin-top:4px;font-size:12px;}
+.btn-replay{
+  font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;
+  padding:12px 36px;border-radius:50px;border:none;
+  background:linear-gradient(135deg,var(--fire1),var(--fire2));
+  color:#fff;cursor:pointer;
+  box-shadow:0 5px 20px rgba(255,107,0,0.4);transition:all 0.2s;
+}
+.btn-replay:hover{transform:scale(1.05);}
+.btn-home{
+  font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;
+  padding:9px 28px;border-radius:50px;
+  border:2px solid rgba(255,255,255,0.3);background:transparent;color:#fff;
+  cursor:pointer;transition:all 0.2s;
+}
+.btn-home:hover{background:rgba(255,255,255,0.1);}
+
+/* ══ LANG PILL ══ */
+.lang-pill{position:absolute;top:11px;left:50%;transform:translateX(-50%);z-index:30;display:flex;gap:4px;}
+.lpill{font-family:'Baloo 2',cursive;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1.5px solid transparent;cursor:pointer;background:transparent;color:rgba(255,255,255,0.4);}
+.lpill.active{background:var(--gold);color:var(--bg-warm);border-color:var(--gold);}
+.lpill:hover:not(.active){color:#fff;border-color:rgba(255,255,255,0.3);}
+
+/* ══ CONFETTI ══ */
+.confetti-piece{
+  position:absolute;z-index:50;border-radius:2px;
+  animation:confettiFall linear forwards;pointer-events:none;
+}
+@keyframes confettiFall{
+  0%{transform:translate(0,0) rotate(0deg);opacity:1;}
+  100%{transform:translate(var(--cx),var(--cy)) rotate(720deg);opacity:0;}
+}
+</style>
+<style>.hidden { display: none !important; }</style>
+</head>
+<body>
+<div id="game-wrap">
+
+  <!-- BG -->
+  <div class="kitchen-bg"></div>
+  <div class="fire-glow"></div>
+  <div class="gamosa-border"></div>
+  <div class="gamosa-border-bot"></div>
+
+  <!-- Petals & steam added by JS -->
+  <div id="petals-layer"></div>
+  <div id="steam-layer"></div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-score">🍲 <span id="score-disp">0</span></div>
+    <div class="hud-level" id="level-disp">Recipe 1/8</div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="lang-pill" style="position:static; transform:none; display:flex; gap:4px; z-index:100;">
+        <button class="lpill active" id="lp-en" onclick="setLang('en')">EN</button>
+        <button class="lpill" id="lp-as" onclick="setLang('as')">অস</button>
+      </div>
+      <div class="hud-lives" id="lives-disp">❤️❤️❤️</div>
+    </div>
+  </div>
+  <div id="prog-wrap" class="hidden">
+    <div id="prog-bar"></div>
+  </div>
+
+  <!-- ══ INTRO ══ -->
+  <div class="screen" id="screen-intro">
+    <div class="intro-badge" id="ib-txt">🥁 BIHU FEAST COOK-OFF</div>
+    <div class="intro-title">
+      Bihu Feast Cook-Off!
+      <span class="as">বিহু ভোজ ৰন্ধা প্ৰতিযোগিতা</span>
+    </div>
+
+    <!-- Pot SVG -->
+    <svg class="intro-pot" viewBox="0 0 160 140" xmlns="http://www.w3.org/2000/svg">
+      <!-- flames -->
+      <path d="M55 125 Q50 105 58 100 Q52 115 65 108 Q55 120 68 118 Q58 128 72 122 Q62 132 75 128 Q65 138 55 125 Z" fill="#ff6b00" opacity="0.9"/>
+      <path d="M75 128 Q68 108 77 102 Q70 118 83 110 Q74 122 86 118 Q76 128 90 123 Q80 133 75 128 Z" fill="#ff9800" opacity="0.9"/>
+      <path d="M95 126 Q90 106 98 100 Q92 116 105 108 Q96 120 108 116 Q98 126 112 121 Q102 131 95 126 Z" fill="#ff6b00" opacity="0.9"/>
+      <!-- pot legs -->
+      <rect x="52" y="120" width="10" height="18" rx="5" fill="#3a3a3a"/>
+      <rect x="98" y="120" width="10" height="18" rx="5" fill="#3a3a3a"/>
+      <!-- pot body -->
+      <ellipse cx="80" cy="108" rx="52" ry="14" fill="#2d2d2d"/>
+      <path d="M28 90 Q28 130 80 130 Q132 130 132 90 Z" fill="#3a3a3a"/>
+      <path d="M28 90 Q28 70 80 70 Q132 70 132 90 Z" fill="#4a4a4a"/>
+      <!-- pot shine -->
+      <ellipse cx="55" cy="80" rx="12" ry="5" fill="rgba(255,255,255,0.12)" transform="rotate(-20 55 80)"/>
+      <!-- handles -->
+      <path d="M28 90 Q14 90 14 82 Q14 74 28 78" fill="none" stroke="#3a3a3a" stroke-width="8" stroke-linecap="round"/>
+      <path d="M132 90 Q146 90 146 82 Q146 74 132 78" fill="none" stroke="#3a3a3a" stroke-width="8" stroke-linecap="round"/>
+      <!-- bubbling soup -->
+      <ellipse cx="80" cy="72" rx="46" ry="12" fill="#c0392b"/>
+      <ellipse cx="80" cy="70" rx="44" ry="10" fill="#e74c3c"/>
+      <!-- bubbles -->
+      <circle cx="60" cy="68" r="5" fill="#ff6b6b" opacity="0.8"/>
+      <circle cx="80" cy="65" r="7" fill="#ff8888" opacity="0.7"/>
+      <circle cx="100" cy="69" r="4" fill="#ff6b6b" opacity="0.8"/>
+      <!-- lid partially open -->
+      <ellipse cx="80" cy="58" rx="50" ry="12" fill="#555" transform="rotate(-5 80 58)"/>
+      <ellipse cx="80" cy="56" rx="48" ry="10" fill="#666" transform="rotate(-5 80 56)"/>
+      <ellipse cx="80" cy="46" rx="12" ry="6" fill="#888" transform="rotate(-5 80 46)"/>
+      <!-- steam from lid -->
+      <path d="M70 50 Q66 38 72 28" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M80 46 Q77 33 83 22" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M90 48 Q88 36 94 26" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+
+    <div class="speech-bubble">
+      <span id="intro-msg">Rongmon is cooking a Bihu feast! 🥁 Spell the Assamese ingredient names correctly to add them to the pot. Let's cook!</span>
+      <span class="as" id="intro-msg-as">ৰংমনে বিহু ভোজ ৰান্ধিছে! উপাদানবোৰৰ অসমীয়া নাম সঠিককৈ বানান কৰক!</span>
+    </div>
+    <button class="btn-start" onclick="startGame()" id="btn-start-txt">🍲 Start Cooking!</button>
+  </div>
+
+  <!-- ══ GAME ══ -->
+  <div class="screen hidden" id="screen-game">
+
+    <!-- Ingredient -->
+    <div class="ingredient-card">
+      <div class="ing-label" id="ing-label">ADD TO THE POT</div>
+      <span class="ing-emoji" id="ing-emoji">🍚</span>
+      <div class="ing-name-en" id="ing-name-en">Rice</div>
+      <div class="ing-desc"><span class="as" id="ing-desc-as">What is this called in Assamese? Tap the syllables in order!</span></div>
+    </div>
+
+    <!-- Word build slots -->
+    <div class="word-build-area" id="word-build-area">
+      <span class="build-hint" id="build-hint">Tap syllables below to spell the word ↓</span>
+    </div>
+
+    <!-- Syllable tiles -->
+    <div class="tiles-area" id="tiles-area"></div>
+
+    <!-- Clear + progress -->
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;max-width:400px;">
+      <button class="clear-btn" onclick="clearWord()" id="clear-btn-txt">↩ Clear</button>
+      <div class="progress-dots" id="progress-dots"></div>
+    </div>
+
+    <!-- Mini pot indicator -->
+    <div class="pot-area">
+      <svg class="pot-svg-wrap" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M35 72 Q32 56 50 56 Q68 56 65 72 Z" fill="#3a3a3a"/>
+        <ellipse cx="50" cy="56" rx="22" ry="6" fill="#2d2d2d"/>
+        <path d="M28 46 Q28 62 50 62 Q72 62 72 46 Z" fill="#3a3a3a"/>
+        <path d="M28 46 Q28 36 50 36 Q72 36 72 46 Z" fill="#4a4a4a"/>
+        <ellipse cx="50" cy="37" rx="20" ry="5" fill="#e74c3c" id="soup-surface"/>
+        <path d="M28 46 Q14 46 14 40 Q14 34 28 38" fill="none" stroke="#3a3a3a" stroke-width="5" stroke-linecap="round"/>
+        <path d="M72 46 Q86 46 86 40 Q86 34 72 38" fill="none" stroke="#3a3a3a" stroke-width="5" stroke-linecap="round"/>
+        <!-- Ingredients already added (updated by JS) -->
+        <text x="50" y="42" text-anchor="middle" font-size="12" id="pot-contents"></text>
+      </svg>
+      <div class="fire-row" id="fire-row">🔥🔥🔥</div>
+    </div>
+  </div>
+
+  <!-- ══ LEVEL COMPLETE ══ -->
+  <div class="screen hidden" id="screen-levelup">
+    <div class="lu-title" id="lu-title">🎉 Into the pot!</div>
+    <div class="lu-visual" id="lu-visual">🍚</div>
+    <div class="lu-word-card">
+      <div class="lu-assamese" id="lu-assamese">চাউল</div>
+      <div class="lu-english" id="lu-english">চাউল = Rice</div>
+      <div class="lu-culture" id="lu-culture">Rice is the heart of every Assamese meal — especially during Bihu! 🌾</div>
+    </div>
+    <div class="lu-stars" id="lu-stars">⭐⭐⭐</div>
+    <button class="btn-next" id="btn-next" onclick="nextLevel()">Next Ingredient ▶</button>
+  </div>
+
+  <!-- ══ GAME OVER ══ -->
+  <div class="screen hidden" id="screen-gameover">
+    <div class="go-emoji">🍲💨</div>
+    <div class="go-title" id="go-title">The feast burned!</div>
+    <div class="go-sub" id="go-sub">Don't worry — even great cooks make mistakes!<br/>Try spelling the ingredients again! 🦏</div>
+    <div style="font-family:'Hind Siliguri',sans-serif;font-size:14px;color:rgba(255,255,255,0.45);margin-top:-6px;" id="go-sub-as">চিন্তা নকৰিব! আকৌ চেষ্টা কৰক!</div>
+    <button class="btn-retry" onclick="startGame()" id="btn-retry-txt">🔄 Cook Again!</button>
+  </div>
+
+  <!-- ══ VICTORY ══ -->
+  <div class="screen hidden" id="screen-victory">
+    <div style="font-size:72px;animation:potBob 2s ease-in-out infinite">🍲</div>
+    <div class="vic-title" id="vic-title">🎉 The Bihu Feast is Ready!<br/>Rongmon is so proud!</div>
+    <div class="vic-feast" id="vic-feast">🍚🐟🥬🧅🌶️🫚🧂🌾</div>
+    <div class="vic-score" id="vic-score">⭐ Score: 0</div>
+    <div class="vic-culture-card" id="vic-culture">
+      Bihu is Assam's biggest festival! Families come together to cook, dance the Bihu dance, and celebrate the new year. 🎊
+      <span class="as">বিহু অসমৰ সৰ্ববৃহৎ উৎসৱ! পৰিয়ালবোৰ একত্ৰিত হৈ ৰন্ধা-বঢ়া কৰে আৰু বিহু নৃত্য কৰে।</span>
+    </div>
+    <button class="btn-replay" onclick="startGame()" id="btn-replay-txt">🔄 Cook Again!</button>
+    <button class="btn-home" onclick="shareScore()" style="background:rgba(37,211,102,0.15);border-color:rgba(37,211,102,0.4);color:#25d366;">📤 Share on WhatsApp</button>
+    <button class="btn-home" onclick="window.location.href='../index.html'" id="btn-home-v">🏠 Back to Home</button>
+  </div>
+
+</div><!-- /game-wrap -->
+
+<!-- Onboarding Overlay -->
+<div id="onboarding" class="hidden" style="position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:linear-gradient(135deg,#2c1010,#3a1a08);border-radius:24px;padding:32px 24px;max-width:320px;width:100%;text-align:center;border:2px solid rgba(255,152,0,0.4);">
+    <div style="font-size:60px;margin-bottom:8px;">🍲</div>
+    <div style="font-size:22px;font-weight:900;color:#ff9800;margin-bottom:8px;">How to Play</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.8;margin-bottom:20px;">
+      🧑‍🍳 <strong>Help Rongmon cook the Bihu feast!</strong><br/>
+      🦵 An ingredient appears with its Assamese name.<br/>
+      ✒️ <strong>Tap the syllable tiles in the right order</strong> to spell it!<br/>
+      🌏 Add all 8 ingredients to complete the feast!
+    </div>
+    <button onclick="dismissOnboarding()" style="font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;padding:12px 36px;border-radius:50px;border:none;background:#ff9800;color:#2c1010;cursor:pointer;width:100%;">
+      Got it! Let's Cook ▶
+    </button>
+  </div>
+</div>
+
+<!-- Mute Toggle -->
+<button id="mute-btn-game" onclick="toggleMuteGame()" style="position:fixed;bottom:20px;right:20px;z-index:500;width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);background:rgba(44,16,16,0.9);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🔊</button>
+
+<script>
+// ══ INGREDIENT DATA ══
+// syllables: ordered array of parts; displayed scrambled; kid taps in order
+const ingredients = [
+  {
+    emoji:'🍚', name_as:'চাউল', name_en:'Rice',
+    syllables:['চা','উল'],
+    desc_en:'The most important ingredient in Assamese cooking!',
+    desc_as:'অসমীয়া ৰন্ধনৰ আটাইতকৈ গুৰুত্বপূৰ্ণ উপাদান!',
+    culture_en:'Rice is eaten at every Assamese meal. During Bihu, special rice dishes like Jolpan are made! 🌾',
+    culture_as:'প্ৰতিটো অসমীয়া খাদ্যত ভাত খোৱা হয়। বিহুত জলপান বনোৱা হয়!',
+  },
+  {
+    emoji:'🐟', name_as:'মাছ', name_en:'Fish',
+    syllables:['মা','ছ'],
+    desc_en:'Assam is a land of rivers — fish is loved by everyone!',
+    desc_as:'অসম নদীৰ দেশ — মাছ সকলোৰে প্ৰিয়!',
+    culture_en:"Fish from the Brahmaputra river is a Bihu feast favourite! 🏞️",
+    culture_as:'ব্ৰহ্মপুত্ৰৰ মাছ বিহু ভোজত বিশেষ!',
+  },
+  {
+    emoji:'🍠', name_as:'আলু', name_en:'Potato',
+    syllables:['আ','লু'],
+    desc_en:'A favourite vegetable in Assam — goes in almost everything!',
+    desc_as:'অসমৰ প্ৰিয় পাচলি — প্ৰায় সকলো ব্যঞ্জনত ব্যৱহাৰ হয়!',
+    culture_en:'Aloo pitika — mashed potato with mustard oil and onion — is a classic Assamese dish! 🥔',
+    culture_as:'আলু পিটিকা — অসমৰ এক বিশেষ ৰেচিপি!',
+  },
+  {
+    emoji:'🫙', name_as:'তেল', name_en:'Mustard Oil',
+    syllables:['তে','ল'],
+    desc_en:'Golden mustard oil gives Assamese food its special flavour!',
+    desc_as:'সোণালী সৰিয়হৰ তেলে অসমীয়া খাদ্যত বিশেষ সোৱাদ দিয়ে!',
+    culture_en:'Mustard oil (সৰিয়হৰ তেল) is used in almost every Assamese dish — it makes everything delicious! ✨',
+    culture_as:'সৰিয়হৰ তেল প্ৰায় প্ৰতিটো অসমীয়া ব্যঞ্জনত ব্যৱহাৰ হয়!',
+  },
+  {
+    emoji:'🌿', name_as:'পাচলি', name_en:'Vegetables',
+    syllables:['পা','চ','লি'],
+    desc_en:'Fresh vegetables from Assam\'s fertile valleys!',
+    desc_as:'অসমৰ উৰ্বৰ উপত্যকাৰ তাজা পাচলি!',
+    culture_en:'Assam grows vegetables like laau (bottle gourd), lentils, and greens — all part of the Bihu feast! 🥬',
+    culture_as:'অসমত লাউ, মচুৰ দাইল আদি পাচলি খেতি হয়!',
+  },
+  {
+    emoji:'🧅', name_as:'পিঁয়াজ', name_en:'Onion',
+    syllables:['পিঁ','য়া','জ'],
+    desc_en:'Onions add delicious flavour to every Assamese curry!',
+    desc_as:'পিঁয়াজে প্ৰতিটো অসমীয়া তৰকাৰীত সোৱাদ যোগায়!',
+    culture_en:'Onions are used in tenga (sour fish curry) — one of Assam\'s most famous dishes! 🍋',
+    culture_as:'পিঁয়াজ টেঙা মাছত ব্যৱহাৰ হয় — অসমৰ বিখ্যাত ৰেচিপি!',
+  },
+  {
+    emoji:'🌶️', name_as:'জলকীয়া', name_en:'Chilli',
+    syllables:['জল','কী','য়া'],
+    desc_en:'Assamese food has a lovely kick of spice from fresh chillies!',
+    desc_as:'অসমীয়া খাদ্যত জলকীয়াৰ জলা-মছলা!',
+    culture_en:'Bhut jolokia (ভূত জলকীয়া) — the ghost pepper — is one of the world\'s hottest chillies and it grows in Assam! 🌶️🔥',
+    culture_as:'ভূত জলকীয়া — পৃথিৱীৰ আটাইতকৈ জলা জলকীয়াবোৰৰ ভিতৰত এটা অসমতে জন্মে!',
+  },
+  {
+    emoji:'🫚', name_as:'নিমখ', name_en:'Salt',
+    syllables:['নি','মখ'],
+    desc_en:'Every feast needs the right amount of salt!',
+    desc_as:'প্ৰতিটো ভোজত নিমখ থাকিবই লাগিব!',
+    culture_en:"Without salt, no dish is complete — it's the ingredient that ties the whole Bihu feast together! 🍽️",
+    culture_as:'নিমখ নহ\'লে কোনো ব্যঞ্জনেই সম্পূৰ্ণ নহয়!',
+  },
+];
+
+// ══ STATE ══
+let currentLevel=0, lives=3, score=0, lang='en';
+let currentWord=[], correctOrder=[], locked=false;
+let potIngredients=[];
+
+// ══ LANG TEXT ══
+const lt={
+  en:{
+    'ib-txt':'🥁 BIHU FEAST COOK-OFF',
+    'intro-msg':"Rongmon is cooking a Bihu feast! 🥁 Spell the Assamese ingredient names correctly to add them to the pot. Let's cook!",
+    'btn-start-txt':'🍲 Start Cooking!',
+    'ing-label':'ADD TO THE POT',
+    'build-hint':'Tap syllables below to spell the word ↓',
+    'clear-btn-txt':'↩ Clear',
+    'lu-title':'🎉 Into the pot!',
+    'btn-next':'Next Ingredient ▶',
+    'go-title':'The feast burned!',
+    'go-sub':"Don't worry — even great cooks make mistakes!<br/>Try spelling the ingredients again! 🦏",
+    'btn-retry-txt':'🔄 Cook Again!',
+    'vic-title':'🎉 The Bihu Feast is Ready!<br/>Rongmon is so proud!',
+    'btn-replay-txt':'🔄 Cook Again!',
+    'btn-home-v':'🏠 Back to Home',
+  },
+  as:{
+    'ib-txt':'🥁 বিহু ভোজ ৰন্ধা প্ৰতিযোগিতা',
+    'intro-msg':'ৰংমনে বিহু ভোজ ৰান্ধিছে! 🥁 উপাদানবোৰৰ অসমীয়া নাম সঠিককৈ বানান কৰক!',
+    'btn-start-txt':'🍲 ৰান্ধিবলৈ আৰম্ভ কৰক!',
+    'ing-label':'পাত্ৰত দিয়ক',
+    'build-hint':'শব্দটো লিখিবলৈ তলৰ অক্ষৰবোৰ ক্লিক কৰক ↓',
+    'clear-btn-txt':'↩ মচক',
+    'lu-title':'🎉 পাত্ৰত পৰিল!',
+    'btn-next':'পৰৱৰ্তী উপাদান ▶',
+    'go-title':'ভোজ পুৰি গ\'ল!',
+    'go-sub':'চিন্তা নকৰিব — ভুল হয়!<br/>আকৌ উপাদানবোৰৰ বানান কৰক! 🦏',
+    'btn-retry-txt':'🔄 আকৌ ৰান্ধক!',
+    'vic-title':'🎉 বিহু ভোজ প্ৰস্তুত!<br/>ৰংমন বহুত খুশী!',
+    'btn-replay-txt':'🔄 আকৌ ৰান্ধক!',
+    'btn-home-v':'🏠 মূল পৃষ্ঠালৈ',
+  }
+};
+
+function setLang(l){
+  lang=l;
+  document.getElementById('lp-en').classList.toggle('active',l==='en');
+  document.getElementById('lp-as').classList.toggle('active',l==='as');
+  const t=lt[l];
+  for(const[id,val] of Object.entries(t)){
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=val;
+  }
+  if(!document.getElementById('screen-game').classList.contains('hidden'))
+    renderLevel(currentLevel);
+}
+
+function showScreen(id){
+  ['screen-intro','screen-game','screen-levelup','screen-gameover','screen-victory'].forEach(s=>
+    document.getElementById(s).classList.add('hidden')
+  );
+  document.getElementById(id).classList.remove('hidden');
+  const isGame=id==='screen-game';
+  document.getElementById('hud').classList.toggle('hidden',!isGame);
+  document.getElementById('prog-wrap').classList.toggle('hidden',!isGame);
+}
+function updateHUD(){
+  document.getElementById('score-disp').textContent=score;
+  document.getElementById('level-disp').textContent=`${lang==='en'?'Recipe':'ৰেচিপি'} ${currentLevel+1}/8`;
+  const h=['','❤️','❤️❤️','❤️❤️❤️'];
+  document.getElementById('lives-disp').textContent=h[Math.max(0,lives)]||'';
+  document.getElementById('prog-bar').style.width=(currentLevel/8*100)+'%';
+}
+function startGame(){
+  currentLevel=0;lives=3;score=0;potIngredients=[];
+  showScreen('screen-game');
+  renderLevel(0);
+  updateHUD();
+}
+
+function renderLevel(i){
+  locked=false;currentWord=[];
+  const ing=ingredients[i];
+  correctOrder=[...ing.syllables];
+  updateHUD();
+
+  // Ingredient card
+  const emojiEl=document.getElementById('ing-emoji');
+  emojiEl.textContent=ing.emoji;
+  emojiEl.style.animation='none';
+  void emojiEl.offsetWidth;
+  emojiEl.style.animation='ingPop 0.5s cubic-bezier(0.34,1.8,0.64,1)';
+  document.getElementById('ing-name-en').textContent=ing.name_en;
+  document.getElementById('ing-desc-as').textContent=lang==='en'?ing.desc_en:ing.desc_as;
+  document.getElementById('ing-label').textContent=lang==='en'?'ADD TO THE POT':'পাত্ৰত দিয়ক';
+
+  // Build slots
+  renderSlots();
+
+  // Shuffle syllable tiles (add 1-2 distractors)
+  const distractors=getDistractors(ing.syllables,i);
+  const allTiles=[...ing.syllables,...distractors].sort(()=>Math.random()-0.5);
+  const tilesArea=document.getElementById('tiles-area');
+  tilesArea.innerHTML='';
+  allTiles.forEach((syl,idx)=>{
+    const btn=document.createElement('button');
+    btn.className='syl-tile';
+    btn.textContent=syl;
+    btn.dataset.syl=syl;
+    btn.dataset.idx=idx;
+    btn.onclick=()=>tapTile(btn,syl);
+    tilesArea.appendChild(btn);
+  });
+
+  // Progress dots
+  const dots=document.getElementById('progress-dots');
+  dots.innerHTML='';
+  ingredients.forEach((_,j)=>{
+    const d=document.createElement('div');
+    d.className='pdot'+(j<i?' done':j===i?' current':'');
+    dots.appendChild(d);
+  });
+
+  // Update mini pot
+  document.getElementById('pot-contents').textContent=
+    potIngredients.slice(-3).join('');
+}
+
+function getDistractors(syllables,levelIdx){
+  const pool=['কা','লা','তা','নি','ৰি','বা','ঘা','খা','ধি','মি','ছি','পু','ভু'];
+  const filtered=pool.filter(s=>!syllables.includes(s));
+  const count=syllables.length<=2?2:1;
+  const out=[];
+  while(out.length<count){
+    const r=filtered[Math.floor(Math.random()*filtered.length)];
+    if(!out.includes(r)) out.push(r);
+  }
+  return out;
+}
+
+function renderSlots(){
+  const area=document.getElementById('word-build-area');
+  area.innerHTML='';
+  const ing=ingredients[currentLevel];
+  const numSlots=ing.syllables.length;
+  if(currentWord.length===0){
+    const hint=document.createElement('span');
+    hint.className='build-hint';
+    hint.id='build-hint';
+    hint.textContent=lang==='en'?'Tap syllables below to spell the word ↓':'শব্দটো লিখিবলৈ তলৰ অক্ষৰবোৰ ক্লিক কৰক ↓';
+    area.appendChild(hint);
+    return;
+  }
+  for(let i=0;i<numSlots;i++){
+    const slot=document.createElement('div');
+    slot.className='word-slot'+(i<currentWord.length?' filled':'');
+    if(i<currentWord.length){
+      slot.textContent=currentWord[i];
+      slot.onclick=()=>removeLastTile();
+    }
+    area.appendChild(slot);
+  }
+}
+
+function tapTile(btn,syl){
+  if(locked) return;
+  const ing=ingredients[currentLevel];
+  const expectedIdx=currentWord.length;
+  if(expectedIdx>=ing.syllables.length) return;
+
+  // Check if this syllable is the right NEXT one
+  if(syl===ing.syllables[expectedIdx]){
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playCorrect();
+    currentWord.push(syl);
+    btn.classList.add('used');
+    renderSlots();
+
+    // Flash slot green
+    const slots=document.querySelectorAll('.word-slot');
+    if(slots[expectedIdx]){
+      slots[expectedIdx].classList.add('correct-flash');
+      setTimeout(()=>slots[expectedIdx].classList.remove('correct-flash'),400);
+    }
+
+    // Check if complete
+    if(currentWord.length===ing.syllables.length){
+      locked=true;
+      score+=10+(lives*5);
+      updateHUD();
+      potIngredients.push(ing.emoji);
+      setTimeout(()=>{
+        if(typeof RongmonAudio!=='undefined') RongmonAudio.playLevelUp();
+        flyIngredientIntoPot(ing.emoji);
+      },300);
+      setTimeout(()=>showLevelComplete(ing),1100);
+    }
+  } else {
+    // Wrong order!
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playWrong();
+    btn.classList.add('wrong-shake');
+    setTimeout(()=>btn.classList.remove('wrong-shake'),500);
+    lives=Math.max(0,lives-1);
+    updateHUD();
+    // Flash red
+    const area=document.getElementById('word-build-area');
+    area.style.borderColor='rgba(229,57,53,0.7)';
+    setTimeout(()=>area.style.borderColor='rgba(255,200,50,0.3)',400);
+    if(lives===0) setTimeout(()=>showScreen('screen-gameover'),600);
+  }
+}
+
+function removeLastTile(){
+  if(locked||currentWord.length===0) return;
+  currentWord.pop();
+  // Re-enable the last used tile
+  const usedTiles=document.querySelectorAll('.syl-tile.used');
+  if(usedTiles.length>0) usedTiles[usedTiles.length-1].classList.remove('used');
+  renderSlots();
+}
+function clearWord(){
+  if(locked) return;
+  currentWord=[];
+  document.querySelectorAll('.syl-tile').forEach(t=>t.classList.remove('used'));
+  renderSlots();
+}
+
+function flyIngredientIntoPot(emoji){
+  const ingCard=document.getElementById('ing-emoji');
+  const rect=ingCard.getBoundingClientRect();
+  const wrap=document.getElementById('game-wrap').getBoundingClientRect();
+  const startX=rect.left-wrap.left+rect.width/2;
+  const startY=rect.top-wrap.top+rect.height/2;
+  const targetX=wrap.width/2;
+  const targetY=wrap.height*0.82;
+
+  const fly=document.createElement('div');
+  fly.className='fly-ingredient';
+  fly.textContent=emoji;
+  fly.style.cssText=`left:${startX}px;top:${startY}px;
+    --fx:${(targetX-startX)*0.7}px;--fy:${(targetY-startY)*0.5}px;
+    --fx2:${targetX-startX}px;--fy2:${targetY-startY}px;`;
+  document.getElementById('game-wrap').appendChild(fly);
+  spawnConfetti();
+  setTimeout(()=>fly.remove(),900);
+}
+
+function showLevelComplete(ing){
+  document.getElementById('lu-visual').textContent=ing.emoji;
+  document.getElementById('lu-assamese').textContent=ing.name_as;
+  document.getElementById('lu-english').textContent=`${ing.name_as} = ${ing.name_en}`;
+  document.getElementById('lu-culture').textContent=lang==='en'?ing.culture_en:ing.culture_as;
+  document.getElementById('lu-title').textContent=lang==='en'?`🎉 ${ing.name_en} is in the pot!`:`🎉 ${ing.name_as} পাত্ৰত পৰিল!`;
+  const st=lives===3?'⭐⭐⭐':lives===2?'⭐⭐':'⭐';
+  document.getElementById('lu-stars').textContent=st;
+  document.getElementById('btn-next').textContent=
+    lang==='en'
+      ?(currentLevel>=ingredients.length-1?'🏆 Feast Ready!':'Next Ingredient ▶')
+      :(currentLevel>=ingredients.length-1?'🏆 ভোজ প্ৰস্তুত!':'পৰৱৰ্তী উপাদান ▶');
+  showScreen('screen-levelup');
+}
+
+function nextLevel(){
+  currentLevel++;
+  if(currentLevel>=ingredients.length){
+    showVictory();
+  } else {
+    renderLevel(currentLevel);
+    showScreen('screen-game');
+    updateHUD();
+  }
+}
+
+function showVictory(){
+  document.getElementById('vic-score').textContent=`⭐ Score: ${score}`;
+  document.getElementById('prog-bar').style.width='100%';
+  document.getElementById('vic-title').innerHTML=
+    lang==='en'
+      ?'🎉 The Bihu Feast is Ready!<br/>Rongmon is so proud!'
+      :'🎉 বিহু ভোজ প্ৰস্তুত!<br/>ৰংমন বহুত খুশী!';
+  document.getElementById('vic-culture').innerHTML=
+    lang==='en'
+      ?`Bihu is Assam's biggest festival! Families come together to cook, dance the Bihu dance, and celebrate the new year. 🎊 <span class="as">বিহু অসমৰ সৰ্ববৃহৎ উৎসৱ! পৰিয়ালবোৰ একত্ৰিত হৈ ৰন্ধা-বঢ়া কৰে!</span>`
+      :`বিহু অসমৰ সৰ্ববৃহৎ উৎসৱ! পৰিয়ালবোৰ একত্ৰিত হৈ ৰন্ধা-বঢ়া কৰে আৰু বিহু নৃত্য কৰে। 🎊`;
+  if(typeof RongmonAudio!=='undefined') RongmonAudio.playVictory();
+  showScreen('screen-victory');
+  setTimeout(spawnConfetti,200);
+  setTimeout(spawnConfetti,600);
+  setTimeout(spawnConfetti,1000);
+}
+
+// ══ CONFETTI ══
+function spawnConfetti(){
+  const cols=['#f5c518','#ff6b00','#c0392b','#43a047','#42a5f5','#fff','#ff9800'];
+  const wrap=document.getElementById('game-wrap');
+  for(let i=0;i<24;i++){
+    const p=document.createElement('div');p.className='confetti-piece';
+    const cx=(Math.random()-0.5)*360;const cy=180+Math.random()*260;
+    p.style.cssText=`left:${Math.random()*100}%;top:${10+Math.random()*35}%;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
+      --cx:${cx}px;--cy:${cy}px;
+      animation-duration:${0.9+Math.random()*0.8}s;
+      animation-delay:${Math.random()*0.2}s;
+      border-radius:${Math.random()>0.5?'50%':'3px'};
+      width:${6+Math.random()*7}px;height:${6+Math.random()*7}px;`;
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(),2000);
+  }
+}
+
+// ══ PETALS ══
+function spawnPetals(){
+  const layer=document.getElementById('petals-layer');
+  const petals=['🌸','🌺','🌼','🪷','✿'];
+  for(let i=0;i<14;i++){
+    const p=document.createElement('div');p.className='petal';
+    const dx=(Math.random()-0.5)*120;
+    p.style.cssText=`
+      left:${Math.random()*100}%;top:-20px;
+      --pdx:${dx}px;
+      animation-duration:${10+Math.random()*12}s;
+      animation-delay:${Math.random()*14}s;
+      font-size:${12+Math.random()*10}px;
+    `;
+    p.textContent=petals[Math.floor(Math.random()*petals.length)];
+    layer.appendChild(p);
+  }
+}
+spawnPetals();
+
+// ── Shared modules ──
+window.addEventListener('load', () => {
+  if (typeof RongmonData !== 'undefined' && !RongmonData.hasSeenOnboarding('bihu-cookoff')) {
+    document.getElementById('onboarding').classList.remove('hidden');
+  }
+  if (typeof RongmonData !== 'undefined') {
+    const m = RongmonData.getSetting('muted');
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+});
+function dismissOnboarding() {
+  document.getElementById('onboarding').classList.add('hidden');
+  if (typeof RongmonData !== 'undefined') RongmonData.markOnboardingSeen('bihu-cookoff');
+}
+function toggleMuteGame() {
+  if (typeof RongmonAudio !== 'undefined') {
+    const m = RongmonAudio.toggleMute();
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+}
+function shareScore() {
+  const msg = `I scored ${score} pts in Bihu Feast Cook-Off! 🍲 Help Rongmon cook the feast! #AssamKids`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ══ STEAM ══
+function spawnSteam(){
+  const layer=document.getElementById('steam-layer');
+  for(let i=0;i<8;i++){
+    const s=document.createElement('div');s.className='steam';
+    const dx1=(Math.random()-0.5)*30;const dx2=(Math.random()-0.5)*50;
+    s.style.cssText=`
+      left:${38+Math.random()*24}%;
+      bottom:${15+Math.random()*8}%;
+      width:${6+Math.random()*5}px;height:${6+Math.random()*5}px;
+      --sdx:${dx1}px;--sdx2:${dx2}px;
+      animation-duration:${2+Math.random()*2}s;
+      animation-delay:${Math.random()*3}s;
+    `;
+    layer.appendChild(s);
+  }
+}
+spawnSteam();
+</script>
+<script src="rongmon-data.js"></script>
+<script src="rongmon-audio.js"></script>
+</body>
+</html>
+

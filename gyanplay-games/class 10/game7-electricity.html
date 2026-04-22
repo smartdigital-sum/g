@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Electricity – Class 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+    --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+    --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{min-height:100vh;font-family:'Nunito',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff;}
+  .topbar{display:flex;align-items:center;gap:12px;padding:12px 20px;
+    background:rgba(0,0,0,.35);flex-wrap:wrap;}
+  .back-btn{background:rgba(255,255,255,.12);border:none;color:#fff;
+    padding:7px 16px;border-radius:20px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.9rem;transition:background .2s;}
+  .back-btn:hover{background:rgba(255,255,255,.25);}
+  .subject-badge{background:var(--green);color:#fff;padding:5px 14px;
+    border-radius:20px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.85rem;}
+  .title-bar{flex:1;font-family:'Baloo 2',sans-serif;font-weight:700;
+    font-size:1.05rem;color:var(--gold);}
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;transition:all .2s;}
+  .lang-btn.active{background:var(--sky);border-color:var(--sky);}
+  .progress-wrap{padding:14px 20px 0;}
+  .progress-info{display:flex;justify-content:space-between;font-size:.85rem;color:#ccc;margin-bottom:6px;}
+  .progress-bar-bg{background:rgba(255,255,255,.12);border-radius:10px;height:8px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--sky));
+    border-radius:10px;transition:width .5s;}
+  .game-wrap{max-width:740px;margin:18px auto;padding:0 16px 40px;}
+  .card{background:var(--card);border-radius:18px;padding:26px;
+    box-shadow:0 8px 32px rgba(0,0,0,.45);animation:fadeIn .4s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .q-number{font-family:'Baloo 2',sans-serif;font-size:.85rem;color:var(--sky);margin-bottom:8px;font-weight:600;}
+  .q-type-badge{display:inline-block;padding:3px 12px;border-radius:12px;
+    font-size:.75rem;font-weight:700;margin-bottom:10px;letter-spacing:.5px;}
+  .badge-concept{background:rgba(0,174,239,.2);color:var(--sky);border:1px solid var(--sky);}
+  .badge-calc{background:rgba(255,184,0,.2);color:var(--gold);border:1px solid var(--gold);}
+  .q-text{font-size:1.08rem;line-height:1.6;margin-bottom:6px;font-weight:600;}
+
+  /* Formula highlight box */
+  .formula-box{
+    background:#0d0b22;border:2px solid var(--gold);border-radius:12px;
+    padding:14px 20px;margin:14px 0;text-align:center;
+  }
+  .formula-box .formula-main{
+    font-family:'Courier New',monospace;font-size:1.4rem;
+    color:var(--gold);font-weight:700;letter-spacing:1px;
+  }
+  .formula-box .formula-sub{
+    font-size:.8rem;color:#aaa;margin-top:5px;
+  }
+  .given-vals{
+    background:rgba(255,255,255,.07);border-radius:10px;
+    padding:10px 16px;margin:10px 0;font-size:.95rem;
+    border-left:3px solid var(--sky);
+  }
+  .given-vals span{color:var(--sky);font-weight:700;}
+
+  .options{display:grid;gap:10px;margin-top:16px;}
+  .opt-btn{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);
+    color:#fff;padding:13px 18px;border-radius:12px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.97rem;text-align:left;transition:all .2s;}
+  .opt-btn:hover:not(:disabled){background:rgba(255,184,0,.18);border-color:var(--gold);}
+  .opt-btn.correct{background:rgba(0,200,83,.25);border-color:var(--green);}
+  .opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);}
+  .opt-btn:disabled{cursor:default;}
+  .feedback{margin-top:14px;padding:11px 16px;border-radius:10px;
+    font-weight:700;font-size:.95rem;display:none;}
+  .feedback.show{display:block;animation:fadeIn .3s ease;}
+  .feedback.ok{background:rgba(0,200,83,.2);color:var(--green);}
+  .feedback.no{background:rgba(255,64,129,.18);color:#ff7eb3;}
+  .next-btn{margin-top:18px;background:linear-gradient(135deg,var(--gold),var(--saffron));
+    border:none;color:#fff;padding:12px 32px;border-radius:25px;
+    font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;
+    cursor:pointer;display:none;transition:transform .15s;}
+  .next-btn:hover{transform:scale(1.04);}
+  .end-screen{display:none;text-align:center;}
+  .end-screen.show{display:block;animation:fadeIn .5s ease;}
+  .score-big{font-family:'Baloo 2',sans-serif;font-size:3.5rem;font-weight:800;
+    color:var(--gold);line-height:1;margin:10px 0;}
+  .score-label{color:#ccc;font-size:.95rem;margin-bottom:18px;}
+  .stars{font-size:2.5rem;margin:10px 0;}
+  .play-again{background:linear-gradient(135deg,var(--purple),var(--sky));
+    border:none;color:#fff;padding:14px 36px;border-radius:28px;
+    font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;
+    cursor:pointer;margin-top:16px;transition:transform .15s;}
+  .play-again:hover{transform:scale(1.05);}
+  .result-detail{margin-top:22px;text-align:left;}
+  .result-detail h3{font-family:'Baloo 2',sans-serif;color:var(--sky);margin-bottom:10px;}
+  .result-item{padding:9px 14px;border-radius:8px;margin-bottom:7px;
+    font-size:.9rem;line-height:1.4;background:rgba(255,255,255,.06);}
+  .result-item.r-ok{border-left:3px solid var(--green);}
+  .result-item.r-no{border-left:3px solid var(--pink);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">পিছলৈ</span></button>
+  <span class="subject-badge">Science</span>
+  <span class="title-bar">
+    <span data-lang="en">Electricity</span>
+    <span data-lang="hi" style="display:none">विद्युत</span>
+    <span data-lang="as" style="display:none">বিদ্যুৎ</span>
+  </span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span><span data-lang="en">Question</span><span data-lang="hi" style="display:none">प्रश्न</span><span data-lang="as" style="display:none">প্ৰশ্ন</span> <span id="qNum">1</span>/10</span>
+    <span><span data-lang="en">Score</span><span data-lang="hi" style="display:none">स्कोर</span><span data-lang="as" style="display:none">স্কোৰ</span>: <span id="scoreDisp">0</span>/100</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progBar" style="width:0%"></div></div>
+</div>
+
+<div class="game-wrap">
+  <div class="card" id="questionCard">
+    <div class="q-number" id="qLabel">Question 1 of 10</div>
+    <div id="qTypeBadge"></div>
+    <div class="q-text" id="qText"></div>
+    <div id="formulaWrap" style="display:none">
+      <div class="formula-box">
+        <div class="formula-main" id="formulaMain"></div>
+        <div class="formula-sub" id="formulaSub"></div>
+      </div>
+      <div class="given-vals" id="givenVals"></div>
+    </div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="card end-screen" id="endScreen">
+    <div class="score-big" id="finalScore">0</div>
+    <div class="score-label">
+      <span data-lang="en">out of 100</span>
+      <span data-lang="hi" style="display:none">100 में से</span>
+      <span data-lang="as" style="display:none">100ৰ মাজৰ পৰা</span>
+    </div>
+    <div class="stars" id="stars">⭐⭐⭐</div>
+    <p id="endMsg" style="color:#ccc;font-size:1rem;"></p>
+    <button class="play-again" onclick="restartGame()">
+      <span data-lang="en">Play Again</span>
+      <span data-lang="hi" style="display:none">फिर खेलें</span>
+      <span data-lang="as" style="display:none">পুনৰ খেলক</span>
+    </button>
+    <div class="result-detail" id="resultDetail"></div>
+  </div>
+</div>
+
+<script>
+// type: 'concept' | 'calc'
+const questions=[
+  {
+    type:'concept',
+    formula:null,given:null,
+    en:{q:"State Ohm's Law. Which formula correctly expresses it?",
+    opts:["V = I × R  (Voltage = Current × Resistance)","I = V × R","R = V × I","V = I / R"],ans:0,
+    exp:"Ohm's Law: V = IR. Voltage (V, volts) = Current (I, amperes) × Resistance (R, ohms). Applies at constant temperature."},
+    hi:{q:"ओम का नियम क्या है? इसका सही सूत्र कौन सा है?",
+    opts:["V = I × R (वोल्टेज = धारा × प्रतिरोध)","I = V × R","R = V × I","V = I / R"],exp:"ओम का नियम: V = IR। स्थिर तापमान पर लागू होता है।"},
+    as:{q:"ওহমৰ সূত্ৰ কি? ইয়াৰ সঠিক সূত্ৰ কোনটো?",
+    opts:["V = I × R (ভোল্টেজ = প্ৰবাহ × প্ৰতিৰোধ)","I = V × R","R = V × I","V = I / R"],exp:"ওহমৰ সূত্ৰ: V = IR। স্থিৰ তাপমাত্ৰাত প্ৰযোজ্য।"}
+  },
+  {
+    type:'calc',
+    formula:"V = I × R",formulaSub:"Voltage = Current × Resistance",
+    given:{en:"V = 12 V, R = 4 Ω, Find: I = ?",hi:"V = 12 V, R = 4 Ω, I = ?",as:"V = 12 V, R = 4 Ω, I = ?"},
+    en:{q:"Using Ohm's Law, calculate the current flowing through the circuit:",
+    opts:["I = 3 A (amperes)","I = 48 A","I = 8 A","I = 0.33 A"],ans:0,
+    exp:"I = V ÷ R = 12 ÷ 4 = 3 A. Always use I = V/R to find current."},
+    hi:{q:"ओम के नियम से विद्युत धारा की गणना करें:",
+    opts:["I = 3 A (एम्पियर)","I = 48 A","I = 8 A","I = 0.33 A"],exp:"I = V ÷ R = 12 ÷ 4 = 3 A"},
+    as:{q:"ওহমৰ সূত্ৰ ব্যৱহাৰ কৰি বৈদ্যুতিক প্ৰবাহ নিৰ্ণয় কৰক:",
+    opts:["I = 3 A (এম্পিয়াৰ)","I = 48 A","I = 8 A","I = 0.33 A"],exp:"I = V ÷ R = 12 ÷ 4 = 3 A"}
+  },
+  {
+    type:'concept',
+    formula:null,given:null,
+    en:{q:"In a SERIES circuit, how does total resistance compare to individual resistances?",
+    opts:["Total resistance = R₁ + R₂ + R₃ (increases — more than any single resistor)",
+          "Total resistance = R₁ × R₂","1/R = 1/R₁ + 1/R₂ (decreases)",
+          "Total resistance stays the same"],ans:0,
+    exp:"Series: R_total = R₁ + R₂ + R₃. Resistance adds up. Current is same throughout. Voltage divides. Parallel: 1/R = 1/R₁ + 1/R₂ (resistance decreases)."},
+    hi:{q:"श्रेणी परिपथ में कुल प्रतिरोध अलग-अलग प्रतिरोधों से कैसे होता है?",
+    opts:["कुल प्रतिरोध = R₁ + R₂ + R₃ (बढ़ता है)","कुल = R₁ × R₂","1/R = 1/R₁ + 1/R₂ (घटता है)","एक समान रहता है"],exp:"श्रेणी: R_total = R₁ + R₂ + R₃। समानान्तर: 1/R = 1/R₁ + 1/R₂।"},
+    as:{q:"শ্ৰেণী বৰ্তনীত মুঠ প্ৰতিৰোধ পৃথক প্ৰতিৰোধৰ তুলনাত কেনেকুৱা?",
+    opts:["মুঠ প্ৰতিৰোধ = R₁ + R₂ + R₃ (বাঢ়ে)","মুঠ = R₁ × R₂","1/R = 1/R₁ + 1/R₂ (কমে)","একেই থাকে"],exp:"শ্ৰেণী: R_total = R₁ + R₂ + R₃। সমান্তৰাল: 1/R = 1/R₁ + 1/R₂।"}
+  },
+  {
+    type:'calc',
+    formula:"H = I² × R × t",formulaSub:"Heat = Current² × Resistance × Time (Joule's Law)",
+    given:{en:"I = 2 A, R = 5 Ω, t = 10 s, Find: H = ?",hi:"I = 2 A, R = 5 Ω, t = 10 s, H = ?",as:"I = 2 A, R = 5 Ω, t = 10 s, H = ?"},
+    en:{q:"Using Joule's Law of heating, find the heat produced:",
+    opts:["H = 200 J (joules)","H = 100 J","H = 400 J","H = 20 J"],ans:0,
+    exp:"H = I²Rt = (2)² × 5 × 10 = 4 × 5 × 10 = 200 J. Joule's Law: more current → much more heat (squared relationship)."},
+    hi:{q:"जूल के तापन नियम से उत्पन्न ऊष्मा की गणना करें:",
+    opts:["H = 200 J","H = 100 J","H = 400 J","H = 20 J"],exp:"H = I²Rt = 4 × 5 × 10 = 200 J"},
+    as:{q:"জুলৰ তাপন সূত্ৰ ব্যৱহাৰ কৰি উৎপন্ন তাপ নিৰ্ণয় কৰক:",
+    opts:["H = 200 J (জুল)","H = 100 J","H = 400 J","H = 20 J"],exp:"H = I²Rt = 4 × 5 × 10 = 200 J"}
+  },
+  {
+    type:'calc',
+    formula:"P = V × I",formulaSub:"Power = Voltage × Current",
+    given:{en:"V = 220 V, I = 5 A, Find: P = ?",hi:"V = 220 V, I = 5 A, P = ?",as:"V = 220 V, I = 5 A, P = ?"},
+    en:{q:"Calculate the electrical power consumed:",
+    opts:["P = 1100 W (watts)","P = 44 W","P = 215 W","P = 225 W"],ans:0,
+    exp:"P = V × I = 220 × 5 = 1100 W = 1.1 kW. Also P = I²R = V²/R."},
+    hi:{q:"विद्युत शक्ति की गणना करें:",
+    opts:["P = 1100 W (वाट)","P = 44 W","P = 215 W","P = 225 W"],exp:"P = V × I = 220 × 5 = 1100 W = 1.1 kW"},
+    as:{q:"বৈদ্যুতিক শক্তি নিৰ্ণয় কৰক:",
+    opts:["P = 1100 W (ৱাট)","P = 44 W","P = 215 W","P = 225 W"],exp:"P = V × I = 220 × 5 = 1100 W = 1.1 kW"}
+  },
+  {
+    type:'concept',
+    formula:null,given:null,
+    en:{q:"What is an ELECTRIC FUSE and why is it used in circuits?",
+    opts:["A safety device with a low melting-point wire that melts and breaks the circuit when excess current flows",
+          "A device that stores electrical energy","A device to measure voltage",
+          "A device to increase current in a circuit"],ans:0,
+    exp:"Fuse wire has low melting point (tin-lead alloy). When current exceeds safe limit, fuse wire heats up, melts, breaks circuit and protects appliances from damage."},
+    hi:{q:"विद्युत फ्यूज क्या है और इसका उपयोग क्यों होता है?",
+    opts:["कम गलनांक तार वाला सुरक्षा उपकरण जो अतिरिक्त धारा से पिघलकर परिपथ तोड़ता है",
+          "विद्युत ऊर्जा संग्रह उपकरण","वोल्टता मापक","परिपथ में धारा बढ़ाने वाला"],exp:"फ्यूज तार का गलनांक कम होता है। अधिक धारा से पिघलकर परिपथ तोड़ता है।"},
+    as:{q:"বৈদ্যুতিক ফিউজ কি আৰু ইয়াক কিয় ব্যৱহাৰ কৰা হয়?",
+    opts:["কম গলনাংকৰ তাৰযুক্ত সুৰক্ষা যন্ত্ৰ যি অতিৰিক্ত প্ৰবাহত গলি বৰ্তনী ভাঙে",
+          "বৈদ্যুতিক শক্তি সঞ্চয় যন্ত্ৰ","ভোল্টেজ জোখা যন্ত্ৰ","প্ৰবাহ বৃদ্ধি কৰা যন্ত্ৰ"],exp:"ফিউজ তাৰৰ গলনাংক কম। অতিৰিক্ত প্ৰবাহত গলি বৰ্তনী ভাঙে।"}
+  },
+  {
+    type:'concept',
+    formula:null,given:null,
+    en:{q:"In a PARALLEL circuit, what happens to the total resistance compared to the smallest individual resistance?",
+    opts:["Total resistance is LESS than the smallest individual resistance",
+          "Total resistance equals the smallest resistance",
+          "Total resistance is greater than all individual resistances",
+          "Total resistance equals the sum of all resistances"],ans:0,
+    exp:"In parallel: 1/R = 1/R₁ + 1/R₂. Total R is always less than the smallest individual R. More paths = less total resistance. Current divides, voltage stays same."},
+    hi:{q:"समानान्तर परिपथ में कुल प्रतिरोध सबसे छोटे प्रतिरोध से कैसे होता है?",
+    opts:["कुल प्रतिरोध सबसे छोटे प्रतिरोध से कम होता है",
+          "कुल प्रतिरोध सबसे छोटे के बराबर","सभी प्रतिरोधों से बड़ा","सभी का योग"],exp:"समानान्तर: 1/R = 1/R₁ + 1/R₂। कुल R हमेशा सबसे छोटे से कम होता है।"},
+    as:{q:"সমান্তৰাল বৰ্তনীত মুঠ প্ৰতিৰোধ সৰ্বতকৈ সৰু প্ৰতিৰোধৰ তুলনাত কেনেকুৱা?",
+    opts:["মুঠ প্ৰতিৰোধ সৰ্বতকৈ সৰু প্ৰতিৰোধতকৈ কম",
+          "মুঠ প্ৰতিৰোধ সৰ্বতকৈ সৰুৰ সমান","সকলোতকৈ বেছি","সকলোৰ যোগফল"],exp:"সমান্তৰাল: 1/R = 1/R₁ + 1/R₂। মুঠ R সৰ্বদা সৰ্বতকৈ সৰু R তকৈ কম।"}
+  },
+  {
+    type:'calc',
+    formula:"R_total = R₁ + R₂",formulaSub:"Series Circuit — Resistances Add Up",
+    given:{en:"R₁ = 3 Ω, R₂ = 7 Ω (series), Find: R_total = ?",hi:"R₁ = 3 Ω, R₂ = 7 Ω (श्रेणी), R_total = ?",as:"R₁ = 3 Ω, R₂ = 7 Ω (শ্ৰেণী), R_total = ?"},
+    en:{q:"Two resistors are connected in SERIES. Find the total resistance:",
+    opts:["R_total = 10 Ω","R_total = 2.1 Ω","R_total = 21 Ω","R_total = 4 Ω"],ans:0,
+    exp:"Series: R_total = R₁ + R₂ = 3 + 7 = 10 Ω. Simple addition! In parallel it would be 1/R = 1/3 + 1/7 = 2.1 Ω."},
+    hi:{q:"दो प्रतिरोधक श्रेणी में जुड़े हैं। कुल प्रतिरोध ज्ञात करें:",
+    opts:["R_total = 10 Ω","R_total = 2.1 Ω","R_total = 21 Ω","R_total = 4 Ω"],exp:"श्रेणी: R_total = 3 + 7 = 10 Ω"},
+    as:{q:"দুটা প্ৰতিৰোধক শ্ৰেণীত সংযুক্ত। মুঠ প্ৰতিৰোধ নিৰ্ণয় কৰক:",
+    opts:["R_total = 10 Ω","R_total = 2.1 Ω","R_total = 21 Ω","R_total = 4 Ω"],exp:"শ্ৰেণী: R_total = 3 + 7 = 10 Ω"}
+  },
+  {
+    type:'concept',
+    formula:null,given:null,
+    en:{q:"The SI unit of ELECTRIC CHARGE is:",
+    opts:["Coulomb (C)","Ampere (A)","Volt (V)","Watt (W)"],ans:0,
+    exp:"1 Coulomb = charge on 6.25 × 10¹⁸ electrons. Current (Ampere) = charge flowing per second. 1 A = 1 C/s."},
+    hi:{q:"विद्युत आवेश का SI मात्रक क्या है?",
+    opts:["कूलॉम (C)","एम्पियर (A)","वोल्ट (V)","वाट (W)"],exp:"1 कूलॉम = 6.25 × 10¹⁸ इलेक्ट्रॉनों का आवेश। 1 A = 1 C/s।"},
+    as:{q:"বৈদ্যুতিক আধানৰ SI একক কি?",
+    opts:["কুলম্ব (C)","এম্পিয়াৰ (A)","ভোল্ট (V)","ৱাট (W)"],exp:"1 কুলম্ব = 6.25 × 10¹⁸ ইলেক্ট্ৰনৰ আধান। 1 A = 1 C/s।"}
+  },
+  {
+    type:'concept',
+    formula:null,given:null,
+    en:{q:"In a domestic electric circuit, which of the following is TRUE about the three wires?",
+    opts:["Live wire (red/brown, 220V), Neutral wire (black/blue, 0V), Earth wire (green/yellow, safety)",
+          "All three carry 220V","Live and neutral carry same voltage",
+          "Earth wire carries main current"],ans:0,
+    exp:"Domestic circuit: Live (220V, danger) → Neutral (0V, return path) → Earth (0V, safety — prevents electric shock). Fuse/MCB is always on the live wire side."},
+    hi:{q:"घरेलू विद्युत परिपथ में तीन तारों के बारे में कौन सा कथन सत्य है?",
+    opts:["जीवित तार (लाल/भूरा, 220V), उदासीन तार (काला/नीला, 0V), भूसंपर्क तार (हरा/पीला, सुरक्षा)",
+          "तीनों 220V पर","जीवित और उदासीन एक ही वोल्टेज",
+          "भूसंपर्क तार मुख्य धारा वहन करता है"],exp:"घरेलू परिपथ: जीवित तार (220V) → उदासीन (0V) → भूसंपर्क (0V, बिजली के झटके से सुरक्षा)।"},
+    as:{q:"ঘৰুৱা বৈদ্যুতিক বৰ্তনীত তিনিটা তাৰ সম্পৰ্কে কোনটো সত্য?",
+    opts:["লাইভ তাৰ (ৰঙা/বাদামী, 220V), নিউট্ৰেল তাৰ (ক'লা/নীলা, 0V), আৰ্থ তাৰ (সেউজীয়া/হালধীয়া, সুৰক্ষা)",
+          "তিনিওটা 220V","লাইভ আৰু নিউট্ৰেল একেই ভোল্টেজ",
+          "আৰ্থ তাৰে মুখ্য প্ৰবাহ বহন কৰে"],exp:"ঘৰুৱা বৰ্তনী: লাইভ (220V) → নিউট্ৰেল (0V) → আৰ্থ (0V, বিদ্যুৎস্পৃষ্ট হোৱাৰ পৰা সুৰক্ষা)।"}
+  }
+];
+
+let current=0,score=0,answered=[],currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display=el.getAttribute('data-lang')===l?'':'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['en','hi','as'][i]===l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(current>=questions.length){showEnd();return;}
+  const q=questions[current];
+  const lang=q[currentLang]||q['en'];
+  const enQ=q['en'];
+  document.getElementById('qNum').textContent=current+1;
+  document.getElementById('scoreDisp').textContent=score;
+  document.getElementById('qLabel').textContent=`Question ${current+1} of 10`;
+  document.getElementById('progBar').style.width=((current)/10*100)+'%';
+
+  // type badge
+  const badge=document.getElementById('qTypeBadge');
+  if(q.type==='calc'){
+    badge.innerHTML='<span class="q-type-badge badge-calc">⚡ Calculation</span>';
+  } else {
+    badge.innerHTML='<span class="q-type-badge badge-concept">💡 Concept</span>';
+  }
+
+  document.getElementById('qText').textContent=lang.q||enQ.q;
+
+  // formula section
+  const fw=document.getElementById('formulaWrap');
+  if(q.formula){
+    document.getElementById('formulaMain').textContent=q.formula;
+    document.getElementById('formulaSub').textContent=q.formulaSub;
+    const gv=q.given[currentLang]||q.given['en'];
+    document.getElementById('givenVals').innerHTML='<span>Given:</span> '+gv;
+    fw.style.display='block';
+  } else {
+    fw.style.display='none';
+  }
+
+  const opts=lang.opts||enQ.opts;
+  const optDiv=document.getElementById('options');
+  optDiv.innerHTML='';
+  opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';b.textContent=o;
+    b.onclick=()=>selectAnswer(i,enQ.ans,lang.exp||enQ.exp);
+    optDiv.appendChild(b);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').style.display='none';
+}
+
+function selectAnswer(chosen,correct,exp){
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[correct].classList.add('correct');
+  const fb=document.getElementById('feedback');
+  if(chosen===correct){
+    score+=10;document.getElementById('scoreDisp').textContent=score;
+    fb.textContent='✓ Correct! '+exp;fb.className='feedback ok show';
+  } else {
+    btns[chosen].classList.add('wrong');
+    fb.textContent='✗ Not quite. '+exp;fb.className='feedback no show';
+  }
+  answered.push({q:questions[current]['en'].q,correct:chosen===correct,exp});
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextQuestion(){current++;renderQuestion();}
+
+function showEnd(){
+  document.getElementById('questionCard').style.display='none';
+  document.getElementById('progBar').style.width='100%';
+  document.getElementById('finalScore').textContent=score;
+  let stars='';
+  if(score>=90)stars='⭐⭐⭐';
+  else if(score>=70)stars='⭐⭐';
+  else if(score>=40)stars='⭐';
+  document.getElementById('stars').textContent=stars||'☆☆☆';
+  const msgs={en:['Keep practising!','Good work!','Electricity expert! ⚡'],
+    hi:['अभ्यास जारी रखें!','अच्छा काम!','विद्युत विशेषज्ञ! ⚡'],
+    as:['অনুশীলন কৰি যাওক!','ভাল কাম!','বিদ্যুৎ বিশেষজ্ঞ! ⚡']};
+  const mArr=msgs[currentLang]||msgs.en;
+  document.getElementById('endMsg').textContent=score>=90?mArr[2]:score>=70?mArr[1]:mArr[0];
+  let html='<h3>Review</h3>';
+  answered.forEach((a,i)=>{
+    html+=`<div class="result-item ${a.correct?'r-ok':'r-no'}">
+      <strong>Q${i+1}:</strong> ${a.correct?'✓':'✗'} ${a.q}<br/><small>${a.exp}</small></div>`;
+  });
+  document.getElementById('resultDetail').innerHTML=html;
+  const es=document.getElementById('endScreen');
+  es.style.display='block';es.classList.add('show');
+}
+
+function restartGame(){
+  current=0;score=0;answered=[];
+  document.getElementById('questionCard').style.display='block';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('endScreen').classList.remove('show');
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

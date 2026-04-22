@@ -1,0 +1,52 @@
+// ============================================================
+//  GyanPlay — Firestore Security Rules
+//  Paste these into Firebase Console →
+//    Firestore Database → Rules
+// ============================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── USER PROFILES ──
+    // A user can only read and write their OWN profile
+    match /users/{userId} {
+      allow read:   if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.data.keys().hasAll(['email','studentName','phone','createdAt']);
+      allow update: if request.auth != null && request.auth.uid == userId;
+
+      // ── PURCHASES (subcollection) ──
+      // A user can read and write their own purchases
+      // TODO: restrict write to server/Cloud Function after Razorpay integration
+      match /purchases/{classId} {
+        allow read, write: if request.auth != null
+                           && request.auth.uid == userId;
+      }
+
+      // ── PLAYED GAMES (subcollection) ──
+      // A user can read and write their own played-game records
+      match /played/{gameId} {
+        allow read, write: if request.auth != null
+                           && request.auth.uid == userId;
+      }
+    }
+
+    // ── CLASS CONTENT (games list) ──
+    // Any logged-in user can READ class metadata
+    // Only admin can WRITE
+    match /classes/{classId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // ── ADMIN CHECK HELPER ──
+    // Add your UID to the admins collection in Firestore
+    function isAdmin() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+  }
+}

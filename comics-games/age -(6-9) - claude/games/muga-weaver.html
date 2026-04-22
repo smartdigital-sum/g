@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Muga Silk Weaver — Rongmon's World</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --muga-gold: #d4af37;
+    --muga-light: #f4e8c1;
+    --gamosa-red: #d32f2f;
+    --gamosa-white: #fdfbf7;
+    --jungle-green: #2e7d32;
+    --loom-wood: #5d4037;
+    --loom-dark: #3e2723;
+    --dark: #1a1a2e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Baloo 2', cursive;
+    background: #111; color: var(--dark);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; overflow: hidden; touch-action: manipulation;
+  }
+  .as { font-family: 'Hind Siliguri', sans-serif; }
+
+  /* ══ APP ══ */
+  #game-wrap {
+    width: 100%; max-width: 800px; height: 100vh; max-height: 700px;
+    background: radial-gradient(circle at center, #fff3e0 0%, #ffe0b2 100%);
+    position: relative; overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column;
+  }
+  @media(min-width: 820px) { #game-wrap { height: 90vh; border-radius: 24px; border: 8px solid var(--loom-dark); } }
+
+  /* ══ BACKGROUND LOOM ══ */
+  .loom-bg {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    opacity: 0.1;
+    background: repeating-linear-gradient(
+      90deg, transparent, transparent 20px, rgba(93,64,55,0.5) 20px, rgba(93,64,55,0.5) 22px
+    );
+  }
+
+  /* ══ HUD ══ */
+  #hud { position: absolute; top: 0; left: 0; right: 0; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: linear-gradient(to bottom, rgba(93,64,55,0.8), transparent); }
+  #hud.hidden { display: none; }
+  .hud-left, .hud-right { display: flex; gap: 12px; align-items: center; }
+  .hud-stat { background: rgba(255,255,255,0.95); padding: 4px 14px; border-radius: 20px; font-weight: 800; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); color: var(--loom-wood); display: flex; align-items: center; gap: 6px; }
+  .lang-pill { display: flex; background: rgba(255,255,255,0.95); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+  .lang-pill button { border: none; background: none; padding: 4px 12px; font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 14px; cursor: pointer; color: #888; transition: 0.2s; }
+  .lang-pill button.active { background: var(--muga-gold); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+
+  /* ══ SCREENS ══ */
+  .screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; z-index: 50; }
+  .screen.hidden { display: none; }
+  .overlay-box { background: #fff; padding: 40px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); max-width: 420px; width: 90%; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); position: relative; z-index: 60; border: 4px solid var(--muga-light); }
+  @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+  /* BUTTONS */
+  .btn-primary { background: var(--muga-gold); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.3); border: none; padding: 12px 30px; font-size: 20px; font-weight: 800; border-radius: 50px; cursor: pointer; box-shadow: 0 6px 0 #b08d17; transition: transform 0.1s, box-shadow 0.1s; font-family: 'Baloo 2', cursive; margin-top: 15px; }
+  .btn-primary:active { transform: translateY(6px); box-shadow: 0 0px 0 #b08d17; }
+  .btn-home { position: fixed; top: 20px; left: 20px; z-index: 500; width: 44px; height: 44px; border-radius: 50%; background: #fff; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .mute-btn { position: fixed; bottom: 20px; right: 20px; z-index: 500; width: 44px; height: 44px; border-radius: 50%; border: none; background: #fff; font-size: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .title-lg { font-size: 38px; font-weight: 900; color: var(--loom-dark); line-height: 1.1; margin-bottom: 10px; }
+  .desc-txt { font-size: 17px; color: #666; font-weight: 600; margin-bottom: 15px; line-height: 1.5; }
+
+  /* ══ GAME SCREEN ══ */
+  #screen-game { justify-content: space-between; padding: 80px 0 20px 0; z-index: 10; }
+
+  .game-header { z-index: 20; position: relative; text-align: center; }
+  .seq-hint { font-size: 24px; font-weight: 800; color: var(--loom-dark); background: rgba(255,255,255,0.8); padding: 4px 20px; border-radius: 20px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+
+  /* ══ LOOM WORK AREA ══ */
+  .loom-area {
+    flex: 1; width: 100%; display: flex; align-items: center; justify-content: center;
+    position: relative; z-index: 10;
+  }
+  
+  .woven-cloth {
+    background: #fff; padding: 20px; border-radius: 8px; border: 6px solid var(--loom-wood);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex; gap: 8px; align-items: center; justify-content: center;
+    position: relative;
+  }
+  /* Wooden beams */
+  .woven-cloth::before, .woven-cloth::after {
+    content: ''; position: absolute; left: -20px; right: -20px; height: 16px;
+    background: var(--loom-dark); border-radius: 8px; z-index: -1;
+  }
+  .woven-cloth::before { top: -10px; }
+  .woven-cloth::after { bottom: -10px; }
+
+  .thread-block {
+    width: 45px; height: 80px; border-radius: 6px; position: relative;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.1);
+    background-image: repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px);
+    transition: transform 0.3s;
+  }
+  
+  .thread-block.missing { background: #eee !important; box-shadow: inset 0 4px 8px rgba(0,0,0,0.1); border: 3px dashed #ccc; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #aaa; font-weight: 900; }
+  .thread-block.wrong-shake { animation: shake 0.4s; border-color: var(--gamosa-red); }
+
+  /* ══ TRAY ══ */
+  .tray-area {
+    width: 100%; padding: 20px;
+    background: linear-gradient(to top, rgba(93,64,55,0.15), transparent);
+    display: flex; flex-direction: column; align-items: center; z-index: 20;
+  }
+  .options-container { display: flex; gap: 30px; justify-content: center; }
+  
+  .spool-wrap { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.2s; }
+  .spool-wrap:hover { transform: translateY(-5px); }
+  .spool-wrap:active { transform: translateY(2px); }
+  
+  .spool {
+    width: 60px; height: 80px; position: relative;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  /* Spool wooden ends */
+  .spool::before, .spool::after {
+    content:''; position:absolute; left:-5px; right:-5px; height:8px;
+    background:var(--loom-wood); border-radius:4px;
+  }
+  .spool::before { top:-5px; }
+  .spool::after { bottom:-5px; }
+  
+  /* Thread texture on spool */
+  .spool-thread {
+    position: absolute; inset: 0; border-radius: 4px;
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.1) 3px, rgba(0,0,0,0.1) 6px);
+  }
+  .spool-label { margin-top: 15px; font-weight: 800; font-size: 14px; color: var(--loom-dark); text-transform: uppercase; background: rgba(255,255,255,0.7); padding: 2px 10px; border-radius: 10px; }
+
+  /* ══ EFFECTS ══ */
+  @keyframes shake { 20%,60%{ transform: translateX(-5px); } 40%,80%{ transform: translateX(5px); } }
+  .confetti-piece { position: absolute; pointer-events: none; z-index: 150; animation: fall 2s linear forwards; }
+  @keyframes fall { 0% { transform: translate(0,0) rotate(0deg); opacity: 1; } 100% { transform: translate(var(--cx), var(--cy)) rotate(var(--cr)); opacity: 0; } }
+  .weave-anim { animation: weave 0.5s ease; }
+  @keyframes weave { 0% { transform: translateY(-20px); opacity: 0; } 50% { transform: translateY(5px); } 100% { transform: translateY(0); opacity: 1; } }
+
+  /* ══ ONBOARDING ══ */
+  #onboarding { background: rgba(0,0,0,0.8); z-index: 200; backdrop-filter: blur(5px); }
+</style>
+</head>
+<body>
+
+<a href="../index.html#games" class="btn-home" title="Back to Home">🏠</a>
+<button class="mute-btn" id="mute-btn-game" onclick="toggleMuteGame()">🔊</button>
+
+<div id="game-wrap">
+
+  <div class="loom-bg"></div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-left">
+      <div class="hud-stat" title="Score">⭐ <span id="score-disp">0</span></div>
+      <div class="hud-stat" title="Level">🧣 <span id="level-disp">1</span></div>
+    </div>
+    <div class="hud-right">
+      <div class="lang-pill">
+        <button class="active" onclick="setLang('en')" id="lp-en">EN</button>
+        <button onclick="setLang('as')" id="lp-as">অস</button>
+      </div>
+      <div class="hud-stat" id="lives-disp">❤️❤️❤️</div>
+    </div>
+  </div>
+
+  <!-- SCREEN: INTRO -->
+  <div class="screen" id="screen-intro">
+    <div class="overlay-box" style="background:transparent;box-shadow:none;border:none;">
+      <div style="font-size:70px;margin-bottom:10px;">🧣</div>
+      <h1 class="title-lg" id="intro-title">Muga Silk Weaver!</h1>
+      <p class="desc-txt" id="intro-desc">Help Rongmon weave beautiful traditional Gamosas! Select the right colored thread spool to complete the pattern.</p>
+      <button class="btn-primary" onclick="startGame()" id="btn-start">✂️ Start Weaving!</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: GAME -->
+  <div class="screen hidden" id="screen-game">
+    <div class="game-header">
+      <div class="seq-hint" id="seq-hint">Match the Pattern!</div>
+    </div>
+
+    <div class="loom-area">
+      <div class="woven-cloth" id="woven-cloth">
+        <!-- Thread blocks injected via JS -->
+      </div>
+    </div>
+
+    <div class="tray-area">
+      <div class="options-container" id="options-container">
+        <!-- Spools injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: ROUND CLEAR -->
+  <div class="screen hidden" id="screen-roundup">
+    <div class="overlay-box" style="background:transparent;box-shadow:none;border:none;">
+      <h2 class="title-lg" id="ru-title" style="color:var(--muga-gold);text-shadow:0 2px 4px rgba(0,0,0,0.2);">Perfect Weave! ✨</h2>
+    </div>
+  </div>
+
+  <!-- SCREEN: GAME OVER -->
+  <div class="screen hidden" id="screen-gameover">
+    <div class="overlay-box">
+      <div style="font-size:60px">🧶</div>
+      <h2 class="title-lg" id="go-title" style="color:var(--gamosa-red)">Tangled Threads!</h2>
+      <p class="desc-txt" id="go-desc">The pattern got mixed up. But every weaver learns from mistakes!</p>
+      <div id="go-score" style="font-size:18px;font-weight:800;color:var(--dark);margin-bottom:10px;">⭐ Final Score: 0</div>
+      <button class="btn-primary" onclick="startGame()" id="btn-retry">🔄 Try Again</button>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div id="onboarding" class="screen hidden">
+    <div class="overlay-box">
+      <h2 class="title-lg" style="font-size:30px">How to Play</h2>
+      <p class="desc-txt" style="text-align:left;font-size:16px;" id="ob-desc">
+        1. Look at the colored blocks on the loom. 🧣<br>
+        2. Figure out the repeating color pattern! 🧠<br>
+        3. Tap the spool below that matches the missing color! 👆<br>
+        <span class="as" style="font-size:14px;">১. তাঁতশালৰ ৰঙীন খণ্ডবোৰ চাওক। ২. ক্ৰমটো বুজি লওক! ৩. খালী ঠাইৰ বাবে সঠিক ৰঙৰ সূতা বাছক!</span>
+      </p>
+      <button class="btn-primary" onclick="dismissOnboarding()">Got it! 👍</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="rongmon-data.js"></script>
+<script src="rongmon-audio.js"></script>
+<script>
+// ══ COLORS ══
+const THREADS = {
+  red:   { hex: '#d32f2f', name_en: 'Red', name_as: 'ৰঙা' },
+  white: { hex: '#fdfbf7', name_en: 'White', name_as: 'বগা' },
+  green: { hex: '#2e7d32', name_en: 'Green', name_as: 'সেউজীয়া' },
+  gold:  { hex: '#d4af37', name_en: 'Gold', name_as: 'সোণালী' }
+};
+const ALL_COLORS = ['red', 'white', 'green', 'gold'];
+
+// ══ STATE ══
+let score = 0, lives = 3, level = 1, lang = 'en';
+let currentPattern = [], missingIndices = [], correctColors = [];
+
+// ══ LANG ══
+const lt = {
+  en: {
+    'intro-title':'Muga Silk Weaver!',
+    'intro-desc':"Help Rongmon weave beautiful traditional Gamosas! Select the right colored thread spool to complete the pattern.",
+    'btn-start':'✂️ Start Weaving!',
+    'seq-hint':'Match the Pattern!',
+    'ru-title':'Perfect Weave! ✨',
+    'go-title':'Tangled Threads!',
+    'go-desc':"The pattern got mixed up. But every weaver learns from mistakes!",
+    'btn-retry':'🔄 Try Again'
+  },
+  as: {
+    'intro-title':'মুগা শিপিনী!',
+    'intro-desc':'ৰংমনক ধুনীয়া পৰম্পৰাগত গামোচা বৈবলৈ সহায় কৰক! ক্ৰমটো সম্পূৰ্ণ কৰিবলৈ সঠিক ৰঙৰ সূতা বাছক।',
+    'btn-start':'✂️ আৰম্ভ কৰক!',
+    'seq-hint':'ক্ৰমটো মিলাওক!',
+    'ru-title':'নিখুঁত বোৱা! ✨',
+    'go-title':'পকনীয়া সূতা!',
+    'go-desc':"ক্ৰমটো খেলিমেলি হ'ল। কিন্তু প্ৰতিজন শিপিনীয়ে ভুলৰ পৰা শিকে!",
+    'btn-retry':'🔄 আকৌ চেষ্টা কৰক'
+  }
+};
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('lp-en').classList.toggle('active', l==='en');
+  document.getElementById('lp-as').classList.toggle('active', l==='as');
+  for (const [id,val] of Object.entries(lt[l])) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = val;
+  }
+  // Refresh spools to update translated names
+  if(!document.getElementById('screen-game').classList.contains('hidden')) {
+    renderSpools();
+  }
+}
+
+function showScreen(id) {
+  ['screen-intro','screen-game','screen-roundup','screen-gameover'].forEach(s =>
+    document.getElementById(s).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  document.getElementById('hud').classList.toggle('hidden', id==='screen-intro'||id==='screen-gameover');
+}
+
+function updateHUD() {
+  document.getElementById('score-disp').textContent = score;
+  document.getElementById('level-disp').textContent = level;
+  document.getElementById('lives-disp').textContent = '❤️'.repeat(Math.max(0, lives));
+}
+
+// ══ LOGIC ══
+function startGame() {
+  score = 0; lives = 3; level = 1;
+  updateHUD();
+  generateRound();
+  showScreen('screen-game');
+}
+
+function generateRound() {
+  // Pattern complexity based on level
+  let basePat = [];
+  let colsToUse = [...ALL_COLORS].sort(()=>Math.random()-0.5).slice(0, 3); // pick 2 or 3 colors
+  let c1 = colsToUse[0], c2 = colsToUse[1], c3 = colsToUse[2];
+
+  if (level <= 2) {
+    // ABABAB
+    basePat = [c1, c2];
+  } else if (level <= 4) {
+    // AABBAA or AABAAB
+    basePat = Math.random()>0.5 ? [c1, c1, c2, c2] : [c1, c1, c2];
+  } else if (level <= 6) {
+    // ABCABC
+    basePat = [c1, c2, c3];
+  } else {
+    // ABAC ABAC
+    basePat = [c1, c2, c1, c3];
+  }
+
+  // Create full sequence (7-8 blocks)
+  let len = Math.random() > 0.5 ? 7 : 8;
+  currentPattern = [];
+  for(let i=0; i<len; i++) {
+    currentPattern.push(basePat[i % basePat.length]);
+  }
+
+  // Pick missing indices (1 for early levels, 2 for later)
+  let missingCount = level > 3 ? 2 : 1;
+  missingIndices = [];
+  correctColors = [];
+  while(missingIndices.length < missingCount) {
+    let r = Math.floor(Math.random() * currentPattern.length);
+    if(!missingIndices.includes(r)) {
+      missingIndices.push(r);
+      correctColors.push(currentPattern[r]);
+    }
+  }
+  // Sort missing indices so player fills them left-to-right
+  missingIndices.sort((a,b)=>a-b);
+
+  renderCloth();
+  renderSpools();
+}
+
+function renderCloth() {
+  const cloth = document.getElementById('woven-cloth');
+  cloth.innerHTML = '';
+  cloth.classList.remove('weave-anim');
+  void cloth.offsetWidth; // trigger reflow
+  cloth.classList.add('weave-anim');
+
+  currentPattern.forEach((colKey, i) => {
+    const blk = document.createElement('div');
+    blk.className = 'thread-block';
+    blk.id = `block-${i}`;
+    
+    if (missingIndices.includes(i)) {
+      blk.classList.add('missing');
+      blk.textContent = '?';
+      // Highlight the active missing one
+      if (i === missingIndices[0]) blk.style.borderColor = 'var(--muga-gold)';
+    } else {
+      blk.style.background = THREADS[colKey].hex;
+    }
+    cloth.appendChild(blk);
+  });
+}
+
+function renderSpools() {
+  const tray = document.getElementById('options-container');
+  tray.innerHTML = '';
+  
+  // We provide the 4 standard colors, shuffled
+  const opts = [...ALL_COLORS].sort(() => Math.random() - 0.5);
+
+  opts.forEach(colKey => {
+    const wrap = document.createElement('div');
+    wrap.className = 'spool-wrap';
+    wrap.onclick = () => selectSpool(colKey);
+    
+    const spool = document.createElement('div');
+    spool.className = 'spool';
+    spool.style.background = THREADS[colKey].hex;
+    
+    const thr = document.createElement('div');
+    thr.className = 'spool-thread';
+    spool.appendChild(thr);
+    
+    const lbl = document.createElement('div');
+    lbl.className = 'spool-label';
+    lbl.textContent = lang==='en' ? THREADS[colKey].name_en : THREADS[colKey].name_as;
+    
+    wrap.appendChild(spool);
+    wrap.appendChild(lbl);
+    tray.appendChild(wrap);
+  });
+}
+
+function selectSpool(colKey) {
+  if (missingIndices.length === 0) return;
+
+  const targetIdx = missingIndices[0];
+  const targetCol = currentPattern[targetIdx];
+
+  if (colKey === targetCol) {
+    // Correct
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playCorrect();
+    const blk = document.getElementById(`block-${targetIdx}`);
+    blk.classList.remove('missing');
+    blk.textContent = '';
+    blk.style.background = THREADS[colKey].hex;
+    blk.style.borderColor = 'transparent';
+    blk.style.transform = 'scale(1.1)';
+    setTimeout(()=> blk.style.transform='scale(1)', 200);
+
+    missingIndices.shift(); // remove fulfilled target
+
+    if (missingIndices.length > 0) {
+      // Highlight next missing
+      document.getElementById(`block-${missingIndices[0]}`).style.borderColor = 'var(--muga-gold)';
+    } else {
+      // Round cleared
+      score += 20;
+      level++;
+      updateHUD();
+      setTimeout(() => {
+        if(typeof RongmonAudio!=='undefined') RongmonAudio.playLevelUp();
+        showScreen('screen-roundup');
+        spawnConfetti();
+        setTimeout(() => {
+          showScreen('screen-game');
+          generateRound();
+        }, 1500);
+      }, 500);
+    }
+  } else {
+    // Wrong
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playWrong();
+    
+    const blk = document.getElementById(`block-${targetIdx}`);
+    blk.classList.add('wrong-shake');
+    setTimeout(()=>blk.classList.remove('wrong-shake'),400);
+
+    lives--;
+    updateHUD();
+
+    if(lives <= 0) {
+      setTimeout(() => {
+        document.getElementById('go-score').textContent = `⭐ ${lang==='en'?'Final Score':'সৰ্বমুঠ স্কোৰ'}: ${score}`;
+        showScreen('screen-gameover');
+      }, 500);
+    }
+  }
+}
+
+// ══ EFFECTS ══
+function spawnConfetti(){
+  const wrap=document.getElementById('game-wrap');
+  const cols=[THREADS.red.hex, THREADS.white.hex, THREADS.green.hex, THREADS.gold.hex];
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    const cx=(Math.random()-0.5)*400; const cy=200+Math.random()*200;
+    p.style.cssText=`
+      left:${50+(Math.random()-0.5)*20}%; top:30%;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
+      --cx:${cx}px; --cy:${cy}px; --cr:${Math.random()*360}deg;
+      animation-duration:${0.8+Math.random()*0.8}s;
+      width:${10+Math.random()*4}px; height:${10+Math.random()*4}px;
+    `;
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(),2000);
+  }
+}
+
+// ── Shared ──
+window.addEventListener('DOMContentLoaded', () => {
+  if (typeof RongmonData !== 'undefined' && !RongmonData.hasSeenOnboarding('muga-weaver')) {
+    document.getElementById('onboarding').classList.remove('hidden');
+  }
+  if (typeof RongmonData !== 'undefined') {
+    const m = RongmonData.getSetting('muted');
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+  setLang('en');
+});
+function dismissOnboarding() {
+  document.getElementById('onboarding').classList.add('hidden');
+  if (typeof RongmonData !== 'undefined') RongmonData.markOnboardingSeen('muga-weaver');
+}
+function toggleMuteGame() {
+  if (typeof RongmonAudio !== 'undefined') {
+    const m = RongmonAudio.toggleMute();
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+}
+</script>
+</body>
+</html>

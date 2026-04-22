@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Integer Adventurer — Class 7 Maths</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold:#FFB800; --sky:#00AEEF; --green:#00C853; --pink:#FF4081;
+      --dark:#1A1A2E; --purple:#7C3AED; --bg:#0F0C29;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Nunito',sans-serif;background:var(--bg);color:#fff;min-height:100vh;
+         display:flex;flex-direction:column;align-items:center;padding:1rem;
+         animation:fadeIn .4s ease}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    /* TOPBAR */
+    .topbar{width:100%;max-width:700px;display:flex;align-items:center;
+            justify-content:space-between;padding:.75rem 0;margin-bottom:.5rem}
+    .back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;
+              font-size:.85rem;font-weight:700;padding:6px 14px;border-radius:20px;
+              cursor:pointer;transition:background .2s;text-decoration:none}
+    .back-btn:hover{background:rgba(255,255,255,.18)}
+    .subject-tag{background:var(--purple);color:#fff;font-size:.75rem;font-weight:800;
+                 padding:4px 12px;border-radius:20px;letter-spacing:.5px}
+    .stars{display:flex;gap:4px;font-size:1.3rem}
+    .star{opacity:.3;transition:all .3s}
+    .star.lit{opacity:1;filter:drop-shadow(0 0 6px gold)}
+
+    /* LANG TOGGLE */
+    .lang-row{display:flex;gap:6px;margin-bottom:1rem}
+    .lang-btn{background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);
+              font-weight:700;font-size:.75rem;padding:4px 10px;border-radius:16px;
+              cursor:pointer;transition:all .2s}
+    .lang-btn.active{background:var(--gold);color:var(--dark)}
+
+    /* GAME CARD */
+    .game-card{width:100%;max-width:680px;background:rgba(255,255,255,.05);
+               border:1px solid rgba(255,255,255,.1);border-radius:24px;
+               padding:2rem 1.5rem;text-align:center}
+
+    /* NUMBER LINE */
+    .numline-wrap{position:relative;height:70px;margin:1.5rem 0}
+    .numline{position:absolute;top:50%;left:0;right:0;height:3px;
+             background:rgba(255,255,255,.2);transform:translateY(-50%)}
+    .numline-marks{display:flex;justify-content:space-between;
+                   position:absolute;top:0;left:0;right:0;height:100%;
+                   align-items:center}
+    .mark{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+    .mark-line{width:2px;height:14px;background:rgba(255,255,255,.35)}
+    .mark-line.zero{background:var(--gold);height:20px}
+    .mark-label{font-size:.7rem;color:rgba(255,255,255,.5);font-weight:700}
+    .mark-label.zero{color:var(--gold)}
+    .player{position:absolute;top:50%;transform:translate(-50%,-50%);
+            font-size:1.6rem;transition:left .5s cubic-bezier(.34,1.56,.64,1);
+            filter:drop-shadow(0 0 8px var(--sky))}
+
+    /* QUESTION */
+    .question-box{background:rgba(255,255,255,.08);border-radius:16px;
+                  padding:1.25rem;margin-bottom:1.5rem}
+    .q-label{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.4);
+             letter-spacing:1px;text-transform:uppercase;margin-bottom:.5rem}
+    .q-text{font-family:'Baloo 2',cursive;font-size:clamp(1.3rem,5vw,1.8rem);
+            font-weight:800;color:#fff}
+    .q-hint{font-size:.8rem;color:rgba(255,255,255,.4);margin-top:.4rem}
+
+    /* OPTIONS */
+    .options{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem}
+    .opt-btn{background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.12);
+             color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1.1rem;
+             padding:.9rem;border-radius:14px;cursor:pointer;
+             transition:all .2s;letter-spacing:.5px}
+    .opt-btn:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);
+                   transform:scale(1.03)}
+    .opt-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);
+                     color:var(--green);animation:pulse .4s ease}
+    .opt-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink)}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+    /* PROGRESS */
+    .progress-bar{width:100%;background:rgba(255,255,255,.08);border-radius:20px;
+                  height:8px;margin-bottom:.5rem;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--sky));
+                   border-radius:20px;transition:width .4s ease}
+    .progress-text{font-size:.8rem;color:rgba(255,255,255,.4);text-align:right}
+
+    /* RESULT OVERLAY */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);
+             backdrop-filter:blur(8px);align-items:center;justify-content:center;
+             z-index:100;padding:1.5rem}
+    .overlay.show{display:flex}
+    .result-box{background:linear-gradient(135deg,#16213e,#1a1a2e);
+                border:1px solid rgba(255,255,255,.1);border-radius:28px;
+                padding:2.5rem 2rem;text-align:center;max-width:420px;width:100%;
+                animation:popIn .35s ease}
+    @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+    .result-emoji{font-size:3.5rem;margin-bottom:.75rem}
+    .result-title{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.8rem;
+                  color:#fff;margin-bottom:.5rem}
+    .result-score{font-size:1rem;color:rgba(255,255,255,.6);margin-bottom:.75rem}
+    .result-fact{background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.25);
+                 border-radius:14px;padding:.75rem 1rem;font-size:.85rem;
+                 color:rgba(255,255,255,.8);line-height:1.5;margin-bottom:1.5rem;
+                 text-align:left}
+    .btn-play-again{background:var(--gold);color:var(--dark);
+                    font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;
+                    padding:.8rem 2rem;border:none;border-radius:50px;cursor:pointer;
+                    transition:transform .15s;width:100%}
+    .btn-play-again:hover{transform:scale(1.03)}
+
+    /* CONFETTI */
+    .confetti-piece{position:fixed;width:8px;height:8px;pointer-events:none;
+                    animation:fall var(--dur,1.8s) ease-in forwards}
+    @keyframes fall{
+      0%  {transform:translateY(0) rotate(0deg) translateX(0)}
+      100%{transform:translateY(100vh) rotate(720deg) translateX(var(--dx,40px));opacity:0}
+    }
+
+    @media(max-width:480px){
+      .options{grid-template-columns:1fr 1fr}
+      .opt-btn{font-size:.95rem;padding:.75rem}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="../../classroom.html?class=class-7" class="back-btn">← Back</a>
+    <span class="subject-tag">🔢 Maths · Class 7</span>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span>
+      <span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span>
+    </div>
+  </div>
+
+  <div class="lang-row">
+    <button class="lang-btn active" onclick="setLang('en')" id="lbEn">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')" id="lbHi">हि</button>
+    <button class="lang-btn" onclick="setLang('as')" id="lbAs">অ</button>
+  </div>
+
+  <div class="game-card">
+    <div class="progress-bar"><div class="progress-fill" id="pFill" style="width:0%"></div></div>
+    <div class="progress-text" id="pText">1 / 10</div>
+
+    <!-- NUMBER LINE -->
+    <div class="numline-wrap" id="numlineWrap">
+      <div class="numline"></div>
+      <div class="numline-marks" id="numlineMarks"></div>
+      <div class="player" id="player" style="left:50%">🚀</div>
+    </div>
+
+    <div class="question-box">
+      <div class="q-label" id="qLabel">Solve</div>
+      <div class="q-text" id="qText">—</div>
+      <div class="q-hint" id="qHint"></div>
+    </div>
+
+    <div class="options" id="options"></div>
+  </div>
+
+  <!-- RESULT OVERLAY -->
+  <div class="overlay" id="overlay">
+    <div class="result-box">
+      <div class="result-emoji" id="rEmoji">🎉</div>
+      <div class="result-title" id="rTitle">Excellent!</div>
+      <div class="result-score" id="rScore"></div>
+      <div class="result-fact" id="rFact"></div>
+      <button class="btn-play-again" onclick="restartGame()" id="rBtn">Play Again</button>
+    </div>
+  </div>
+
+<script>
+// ── TRANSLATIONS ──────────────────────────────────────────────
+const T = {
+  en: {
+    solve: 'Solve', hint: 'Use the number line!', playAgain: 'Play Again',
+    title: ['Brilliant! 🌟','Great Job! 🎉','Well Done! 👏','Nice Try! 💪'],
+    score: (c,t) => `You got ${c} out of ${t} correct!`,
+    fact: 'Did you know? Negative integers are used in real life — like temperatures below 0°C in Shillong in winter, or a submarine going -200m below sea level!',
+    subject: '🔢 Maths · Class 7',
+  },
+  hi: {
+    solve: 'हल करें', hint: 'संख्या रेखा का उपयोग करें!', playAgain: 'दोबारा खेलें',
+    title: ['शानदार! 🌟','बहुत अच्छा! 🎉','शाबाश! 👏','अच्छी कोशिश! 💪'],
+    score: (c,t) => `${t} में से ${c} सही!`,
+    fact: 'क्या आप जानते हैं? ऋणात्मक पूर्णांक असल जिंदगी में काम आते हैं — जैसे शिमला में सर्दियों में तापमान 0°C से नीचे होता है!',
+    subject: '🔢 गणित · कक्षा 7',
+  },
+  as: {
+    solve: 'সমাধান কৰক', hint: 'সংখ্যা ৰেখা ব্যৱহাৰ কৰক!', playAgain: 'পুনৰ খেলক',
+    title: ['অসাধাৰণ! 🌟','বহুত ভাল! 🎉','শাবাশ! 👏','ভাল প্ৰচেষ্টা! 💪'],
+    score: (c,t) => `${t} ৰ মাজত ${c}টা শুদ্ধ!`,
+    fact: 'জানানে? ঋণাত্মক পূৰ্ণসংখ্যা বাস্তৱ জীৱনত ব্যৱহাৰ হয় — যেনে শীতকালত শিলং-ত তাপমাত্ৰা 0°C তকৈ কম থাকে!',
+    subject: '🔢 গণিত · শ্ৰেণী ৭',
+  }
+};
+
+// ── QUESTIONS ─────────────────────────────────────────────────
+const QUESTIONS = [
+  { q:'(-5) + 3 = ?',       a:-2, opts:[-8,-2,2,8],   pos:-2 },
+  { q:'(-3) + (-4) = ?',    a:-7, opts:[-7,-1,1,7],    pos:-7 },
+  { q:'7 + (-10) = ?',      a:-3, opts:[-3,3,-17,17],  pos:-3 },
+  { q:'(-6) - (-2) = ?',    a:-4, opts:[-4,-8,4,8],    pos:-4 },
+  { q:'(-8) + 5 = ?',       a:-3, opts:[-13,-3,3,13],  pos:-3 },
+  { q:'4 + (-9) = ?',       a:-5, opts:[-5,5,-13,13],  pos:-5 },
+  { q:'(-2) × 4 = ?',       a:-8, opts:[-8,8,-6,6],    pos:-8 },
+  { q:'(-15) ÷ 3 = ?',      a:-5, opts:[-45,-5,5,45],  pos:-5 },
+  { q:'10 - 14 = ?',        a:-4, opts:[-4,4,-24,24],  pos:-4 },
+  { q:'(-7) + (-3) + 5 = ?',a:-5, opts:[-15,-5,5,15],  pos:-5 },
+];
+
+// ── STATE ─────────────────────────────────────────────────────
+let lang    = localStorage.getItem('gyanplay_lang') || 'en';
+let current = 0;
+let correct = 0;
+let stars   = 0;
+let answered= false;
+
+// ── NUMBER LINE ────────────────────────────────────────────────
+function buildNumline() {
+  const marks = document.getElementById('numlineMarks');
+  const vals  = [-10,-8,-6,-4,-2,0,2,4,6,8,10];
+  marks.innerHTML = vals.map(v => `
+    <div class="mark">
+      <div class="mark-line${v===0?' zero':''}"></div>
+      <div class="mark-label${v===0?' zero':''}">${v}</div>
+    </div>`).join('');
+}
+
+function movePlayer(val) {
+  const clamped = Math.max(-10, Math.min(10, val));
+  const pct     = ((clamped + 10) / 20) * 100;
+  document.getElementById('player').style.left = pct + '%';
+}
+
+// ── RENDER QUESTION ────────────────────────────────────────────
+function renderQ() {
+  const t   = T[lang];
+  const q   = QUESTIONS[current];
+  answered  = false;
+
+  document.getElementById('qLabel').textContent = t.solve;
+  document.getElementById('qHint').textContent  = t.hint;
+  document.getElementById('qText').textContent  = q.q;
+  document.getElementById('pFill').style.width  = (current/QUESTIONS.length*100)+'%';
+  document.getElementById('pText').textContent  = `${current+1} / ${QUESTIONS.length}`;
+  document.getElementById('subject-tag-text')?.textContent; // noop
+
+  // shuffle options
+  const shuffled = [...q.opts].sort(()=>Math.random()-.5);
+  const optsEl   = document.getElementById('options');
+  optsEl.innerHTML = shuffled.map(o =>
+    `<button class="opt-btn" onclick="checkAnswer(${o},this)">${o}</button>`
+  ).join('');
+
+  movePlayer(0);
+}
+
+// ── CHECK ANSWER ───────────────────────────────────────────────
+function checkAnswer(val, btn) {
+  if (answered) return;
+  answered = true;
+  const q = QUESTIONS[current];
+
+  if (val === q.a) {
+    btn.classList.add('correct');
+    correct++;
+    // award stars
+    if (correct === 4  && stars < 1) { stars=1; litStar(1); }
+    if (correct === 7  && stars < 2) { stars=2; litStar(2); }
+    if (correct === 10 && stars < 3) { stars=3; litStar(3); }
+    playTone(660,'sine',.2,.3);
+    playTone(880,'sine',.25,.25,.1);
+  } else {
+    btn.classList.add('wrong');
+    // highlight correct
+    document.querySelectorAll('.opt-btn').forEach(b => {
+      if (+b.textContent === q.a) b.classList.add('correct');
+    });
+    playTone(300,'sawtooth',.15,.2);
+  }
+
+  movePlayer(q.pos);
+  setTimeout(() => {
+    current++;
+    if (current < QUESTIONS.length) renderQ();
+    else showResult();
+  }, 1100);
+}
+
+// ── STARS ──────────────────────────────────────────────────────
+function litStar(n) {
+  const el = document.getElementById('s'+n);
+  el.classList.add('lit');
+  el.animate([{transform:'scale(1.5)'},{transform:'scale(1)'}],{duration:400});
+}
+
+// ── RESULT ─────────────────────────────────────────────────────
+function showResult() {
+  const t   = T[lang];
+  const pct = correct / QUESTIONS.length;
+  const idx = pct >= .9 ? 0 : pct >= .7 ? 1 : pct >= .5 ? 2 : 3;
+
+  document.getElementById('rEmoji').textContent = ['🌟','🎉','👏','💪'][idx];
+  document.getElementById('rTitle').textContent = t.title[idx];
+  document.getElementById('rScore').textContent = t.score(correct, QUESTIONS.length);
+  document.getElementById('rFact').textContent  = t.fact;
+  document.getElementById('rBtn').textContent   = t.playAgain;
+  document.getElementById('overlay').classList.add('show');
+
+  if (pct >= .7) launchConfetti();
+}
+
+function restartGame() {
+  current = correct = stars = 0;
+  answered = false;
+  ['s1','s2','s3'].forEach(id => document.getElementById(id).classList.remove('lit'));
+  document.getElementById('overlay').classList.remove('show');
+  renderQ();
+}
+
+// ── LANG ───────────────────────────────────────────────────────
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('gyanplay_lang', l);
+  ['en','hi','as'].forEach(x => {
+    document.getElementById(`lb${x.charAt(0).toUpperCase()+x.slice(1)}`).classList.toggle('active', x===l);
+  });
+  if (current < QUESTIONS.length) renderQ();
+}
+
+// ── AUDIO ──────────────────────────────────────────────────────
+let _ctx;
+function getCtx() { return _ctx || (_ctx = new (window.AudioContext||window.webkitAudioContext)()); }
+function playTone(freq,type,dur,gain,delay){
+  try{
+    const ctx=getCtx(), d=delay||0;
+    const osc=ctx.createOscillator(), g=ctx.createGain();
+    osc.type=type; osc.frequency.setValueAtTime(freq, ctx.currentTime+d);
+    g.gain.setValueAtTime(0, ctx.currentTime+d);
+    g.gain.linearRampToValueAtTime(gain||.2, ctx.currentTime+d+.01);
+    g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime+d+dur);
+    osc.connect(g); g.connect(ctx.destination);
+    osc.start(ctx.currentTime+d); osc.stop(ctx.currentTime+d+dur+.05);
+  }catch(e){}
+}
+document.addEventListener('click', ()=>{ try{ getCtx().resume(); }catch(e){} }, {once:true});
+
+// ── CONFETTI ───────────────────────────────────────────────────
+function launchConfetti(){
+  const colors=['#FFB800','#00AEEF','#FF4081','#00C853','#7C3AED'];
+  for(let i=0;i<30;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;
+      background:${colors[i%colors.length]};
+      --dur:${1.4+Math.random()*1.2}s;
+      --dx:${(Math.random()-.5)*160}px;
+      border-radius:${Math.random()>.5?'50%':'3px'}`;
+    document.body.appendChild(el);
+    el.addEventListener('animationend',()=>el.remove());
+  }
+}
+
+// ── BOOT ───────────────────────────────────────────────────────
+buildNumline();
+setLang(lang);
+renderQ();
+</script>
+</body>
+</html>

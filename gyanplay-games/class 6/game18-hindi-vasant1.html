@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Hindi Vasant Bhag 1 – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;
+  --pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;
+  --card:#1a1740;--text:#EEE;--muted:#aaa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  font-family:'Nunito',sans-serif;color:var(--text);padding-bottom:40px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeIn .45s ease both}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;
+  background:rgba(255,255,255,.04);backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.back-btn{background:none;border:1px solid rgba(255,255,255,.2);color:#fff;
+  padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;
+  font-size:.85rem;transition:all .2s}
+.back-btn:hover{background:rgba(255,255,255,.1)}
+.badge{background:var(--purple);color:#fff;padding:4px 14px;border-radius:20px;
+  font-size:.8rem;font-weight:700;font-family:'Baloo 2',sans-serif;letter-spacing:.5px}
+.title-bar{font-family:'Baloo 2',sans-serif;font-size:1.15rem;font-weight:700;flex:1;text-align:center}
+.lang-toggle{display:flex;gap:4px;margin-left:auto}
+.lang-btn{background:rgba(255,255,255,.08);border:none;color:#ccc;
+  padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;
+  font-family:'Nunito',sans-serif;transition:all .2s}
+.lang-btn.active{background:var(--purple);color:#fff;font-weight:700}
+.score-wrap{max-width:700px;margin:18px auto 0;padding:0 16px}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.score-label{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;color:var(--gold)}
+.score-val{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--saffron)}
+.prog-bar{height:8px;background:rgba(255,255,255,.1);border-radius:8px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:8px;transition:width .4s ease}
+.q-wrap{max-width:700px;margin:22px auto 0;padding:0 16px}
+.chapter-tag{display:inline-block;background:rgba(124,58,237,.25);border:1px solid var(--purple);
+  color:#c4b5fd;padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:700;margin-bottom:12px}
+.q-card{background:var(--card);border-radius:18px;padding:28px 26px;
+  border:1px solid rgba(124,58,237,.25);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.q-num{font-size:.8rem;color:var(--muted);margin-bottom:6px;font-weight:600}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;line-height:1.6;margin-bottom:22px}
+.options{display:grid;gap:10px}
+.opt-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  color:var(--text);padding:13px 18px;border-radius:12px;cursor:pointer;
+  font-family:'Nunito',sans-serif;font-size:.97rem;font-weight:600;
+  text-align:left;transition:all .22s;display:flex;align-items:center;gap:10px}
+.opt-btn:hover:not(:disabled){background:rgba(124,58,237,.2);border-color:var(--purple);transform:translateX(4px)}
+.opt-btn:disabled{cursor:default}
+.opt-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:#fff}
+.opt-btn.wrong{background:rgba(255,64,129,.18);border-color:var(--pink);color:#fff}
+.opt-icon{font-size:1.1rem;min-width:22px}
+.explanation{margin-top:16px;padding:14px 18px;background:rgba(255,255,255,.06);
+  border-radius:12px;border-left:3px solid var(--purple);font-size:.92rem;line-height:1.6;display:none}
+.explanation.show{display:block}
+.explanation strong{color:var(--gold)}
+.next-btn{margin-top:18px;width:100%;padding:14px;background:linear-gradient(90deg,var(--purple),var(--pink));
+  border:none;color:#fff;border-radius:12px;font-family:'Baloo 2',sans-serif;
+  font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s;display:none}
+.next-btn:hover{opacity:.88}
+.next-btn.show{display:block}
+.result-card{max-width:700px;margin:40px auto;padding:0 16px;text-align:center}
+.result-inner{background:var(--card);border-radius:20px;padding:40px 30px;border:1px solid rgba(124,58,237,.3)}
+.stars{font-size:2.5rem;letter-spacing:4px;margin-bottom:16px}
+.result-score{font-family:'Baloo 2',sans-serif;font-size:3rem;font-weight:800;color:var(--saffron)}
+.result-msg{font-size:1.1rem;color:var(--muted);margin:8px 0 28px}
+.play-again{padding:14px 40px;background:linear-gradient(90deg,var(--purple),var(--pink));
+  border:none;color:#fff;border-radius:12px;font-family:'Baloo 2',sans-serif;
+  font-size:1.1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.play-again:hover{opacity:.85}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="badge">हिंदी</span>
+  <span class="title-bar">📖 हिंदी वसंत भाग 1</span>
+  <div class="lang-toggle">
+    <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+    <button class="lang-btn active" onclick="setLang('hi',this)">हि</button>
+    <button class="lang-btn" onclick="setLang('bn',this)">অ</button>
+  </div>
+</div>
+<div class="score-wrap">
+  <div class="score-row">
+    <span class="score-label" id="scoreLabel">स्कोर</span>
+    <span class="score-val"><span id="scoreNum">0</span>/100</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+<div class="q-wrap" id="gameArea"></div>
+<div class="result-card fade" id="resultCard" style="display:none"></div>
+<script>
+let currentLang='hi';
+const questions=[
+  {
+    chapter:"वह चिड़िया जो",
+    q:{
+      en:"'Vah Chidiya Jo' (वह चिड़िया जो) is a poem written by which poet?",
+      hi:"'वह चिड़िया जो' कविता किस कवि ने लिखी है?",
+      bn:"'ওয়াহ চিড়িয়া জো' কবিতাটি কোন কবি রচনা করেছেন?"
+    },
+    opts:{
+      en:["Tulsidas","Kedar Nath Agarwal","Prem Chand","Shailendra"],
+      hi:["तुलसीदास","केदार नाथ अग्रवाल","प्रेम चंद","शैलेंद्र"],
+      bn:["তুলসীদাস","কেদার নাথ আগরওয়াল","প্রেম চন্দ","শৈলেন্দ্র"]
+    },
+    ans:1,
+    exp:{
+      en:"<strong>Kedar Nath Agarwal</strong> wrote 'Vah Chidiya Jo'. The poem beautifully describes a little blue bird that loves freedom, grain, and the flowing river.",
+      hi:"<strong>केदार नाथ अग्रवाल</strong> ने 'वह चिड़िया जो' कविता लिखी। यह कविता एक नीली चिड़िया के बारे में है जो स्वतंत्रता और प्रकृति से प्यार करती है।",
+      bn:"<strong>কেদার নাথ আগরওয়াল</strong> 'ওয়াহ চিড়িয়া জো' লিখেছেন। কবিতাটি একটি নীল পাখির কথা বলে যে স্বাধীনতা ভালোবাসে।"
+    }
+  },
+  {
+    chapter:"बचपन",
+    q:{
+      en:"'Bachpan' (बचपन) is an autobiographical extract written by:",
+      hi:"'बचपन' किसकी आत्मकथात्मक रचना है?",
+      bn:"'বচপন' কার আত্মজীবনীমূলক রচনা?"
+    },
+    opts:{
+      en:["Prem Chand","Shamsher Bahadur Singh","Krishna Sobti","Kedar Nath Agarwal"],
+      hi:["प्रेम चंद","शमशेर बहादुर सिंह","कृष्णा सोबती","केदार नाथ अग्रवाल"],
+      bn:["প্রেম চন্দ","শমসের বাহাদুর সিং","কৃষ্ণা সোবতি","কেদার নাথ আগরওয়াল"]
+    },
+    ans:2,
+    exp:{
+      en:"<strong>Krishna Sobti</strong> wrote 'Bachpan'. In this piece, she beautifully recalls her childhood memories, including her love for frocks, food, and shoes.",
+      hi:"<strong>कृष्णा सोबती</strong> ने 'बचपन' लिखा। इसमें वे अपने बचपन की यादें साझा करती हैं — फ्रॉक, खाना, और जूतों के प्रति उनका प्रेम।",
+      bn:"<strong>কৃষ্ণা সোবতি</strong> 'বচপন' লিখেছেন। এতে তিনি শৈশবের স্মৃতি শেয়ার করেছেন।"
+    }
+  },
+  {
+    chapter:"नादान दोस्त",
+    q:{
+      en:"In 'Naadan Dost' (नादान दोस्त), Kedar and Shyama are curious about which animal's eggs?",
+      hi:"'नादान दोस्त' में केदार और श्यामा किसके अंडों को लेकर उत्सुक हैं?",
+      bn:"'নাদান দোস্ত'-এ কেদার ও শ্যামা কোন প্রাণীর ডিম নিয়ে কৌতূহলী?"
+    },
+    opts:{
+      en:["Parrot","Pigeon","Sparrow","Crow"],
+      hi:["तोता","कबूतर","गौरेया (चिड़िया)","कौआ"],
+      bn:["তোতা","কবুতর","চড়ুই","কাক"]
+    },
+    ans:2,
+    exp:{
+      en:"In <strong>Prem Chand's</strong> 'Naadan Dost', Kedar and Shyama find a <strong>Sparrow's</strong> nest with eggs near their window and try to care for them innocently, but cause harm unknowingly.",
+      hi:"<strong>प्रेम चंद</strong> की 'नादान दोस्त' में केदार और श्यामा को खिड़की के पास एक <strong>गौरेया</strong> के अंडे मिलते हैं। वे बच्चों की तरह उनकी देखभाल करने की कोशिश करते हैं।",
+      bn:"<strong>প্রেম চন্দ</strong>-এর 'নাদান দোস্ত'-এ কেদার ও শ্যামা জানালার কাছে একটি <strong>চড়ুইয়ের</strong> ডিম খুঁজে পায়।"
+    }
+  },
+  {
+    chapter:"चाँद से थोड़ी सी गप्पें",
+    q:{
+      en:"'Chaand Se Thodi Si Gappe' is a poem by which poet?",
+      hi:"'चाँद से थोड़ी सी गप्पें' किस कवि की कविता है?",
+      bn:"'চাঁদ সে থোড়ি সি গাপ্পে' কোন কবির কবিতা?"
+    },
+    opts:{
+      en:["Kedar Nath Agarwal","Shivprasad Singh","Shamsher Bahadur Singh","Prem Chand"],
+      hi:["केदार नाथ अग्रवाल","शिवप्रसाद सिंह","शमशेर बहादुर सिंह","प्रेम चंद"],
+      bn:["কেদার নাথ আগরওয়াল","শিবপ্রসাদ সিং","শমসের বাহাদুর সিং","প্রেম চন্দ"]
+    },
+    ans:2,
+    exp:{
+      en:"<strong>Shamsher Bahadur Singh</strong> wrote this playful poem where a child talks to the moon and points out that the moon appears different shapes (tilted) in the sky.",
+      hi:"<strong>शमशेर बहादुर सिंह</strong> ने यह मजेदार कविता लिखी जिसमें एक बच्ची चाँद से बातें करती है और उसके झुके-तिरछे दिखने पर सवाल करती है।",
+      bn:"<strong>শমসের বাহাদুর সিং</strong> এই মজাদার কবিতাটি লিখেছেন যেখানে একটি শিশু চাঁদের সাথে কথা বলে।"
+    }
+  },
+  {
+    chapter:"नादान दोस्त",
+    q:{
+      en:"'Naadan Dost' was written by which famous Hindi author?",
+      hi:"'नादान दोस्त' किस प्रसिद्ध हिंदी लेखक ने लिखी?",
+      bn:"'নাদান দোস্ত' কোন বিখ্যাত হিন্দি লেখক লিখেছেন?"
+    },
+    opts:{
+      en:["Bankim Chandra","Prem Chand","Rabindranath Tagore","Harivansh Rai Bachchan"],
+      hi:["बंकिम चंद्र","प्रेम चंद","रबींद्रनाथ टैगोर","हरिवंश राय बच्चन"],
+      bn:["বঙ্কিম চন্দ্র","প্রেম চন্দ","রবীন্দ্রনাথ ঠাকুর","হরিবংশ রাই বচ্চন"]
+    },
+    ans:1,
+    exp:{
+      en:"<strong>Prem Chand</strong> (Munshi Prem Chand) wrote 'Naadan Dost'. He is one of the greatest Hindi-Urdu writers, known for stories about common people.",
+      hi:"<strong>प्रेम चंद</strong> (मुंशी प्रेम चंद) ने 'नादान दोस्त' लिखी। वे हिंदी के महान कथाकार हैं जो आम जीवन की कहानियाँ लिखते थे।",
+      bn:"<strong>প্রেম চন্দ</strong> (মুন্সি প্রেম চন্দ) 'নাদান দোস্ত' লিখেছেন। তিনি হিন্দি-উর্দুর অন্যতম সেরা লেখক।"
+    }
+  },
+  {
+    chapter:"साथी हाथ बढ़ाना",
+    q:{
+      en:"'Saathi Haath Badhana' is a poem/song written by:",
+      hi:"'साथी हाथ बढ़ाना' गीत किसने लिखा?",
+      bn:"'সাথী হাথ বাড়ানা' গানটি কে লিখেছেন?"
+    },
+    opts:{
+      en:["Kedar Nath Agarwal","Shailendra","Gulzar","Vishnu Prabhakar"],
+      hi:["केदार नाथ अग्रवाल","शैलेंद्र","गुलज़ार","विष्णु प्रभाकर"],
+      bn:["কেদার নাথ আগরওয়াল","শৈলেন্দ্র","গুলজার","বিষ্ণু প্রভাকর"]
+    },
+    ans:1,
+    exp:{
+      en:"<strong>Shailendra</strong> wrote 'Saathi Haath Badhana', originally a song from the Bollywood film 'Naya Daur' (1957). It conveys the message of unity, cooperation and teamwork.",
+      hi:"<strong>शैलेंद्र</strong> ने यह गाना 'नया दौर' (1957) फ़िल्म के लिए लिखा था। इसका संदेश है — मिलकर काम करो, एकता में शक्ति है।",
+      bn:"<strong>শৈলেন্দ্র</strong> 'নয়া দৌর' (১৯৫৭) চলচ্চিত্রের জন্য এই গানটি লিখেছিলেন। এটি ঐক্য ও সহযোগিতার বার্তা দেয়।"
+    }
+  },
+  {
+    chapter:"वह चिड़िया जो",
+    q:{
+      en:"In 'Vah Chidiya Jo', which quality of the bird is described as 'निडर' (fearless)?",
+      hi:"'वह चिड़िया जो' में चिड़िया की कौन-सी विशेषता 'निडर' बताई गई है?",
+      bn:"'ওয়াহ চিড়িয়া জো'-তে পাখির কোন বৈশিষ্ট্যকে 'নির্ভীক' বলা হয়েছে?"
+    },
+    opts:{
+      en:["She sleeps in trees","She sings fearlessly even in storm","She eats grain from fields","She never flies high"],
+      hi:["वह पेड़ पर सोती है","वह आंधी में भी निडर होकर गाती है","वह खेतों से अनाज खाती है","वह कभी ऊँचा नहीं उड़ती"],
+      bn:["সে গাছে ঘুমায়","সে ঝড়েও নির্ভীকভাবে গান করে","সে মাঠ থেকে শস্য খায়","সে কখনো উঁচুতে ওড়ে না"]
+    },
+    ans:1,
+    exp:{
+      en:"The bird in the poem sings <strong>fearlessly even in storms</strong>. The poet uses this to show that true courage is when you do what you love despite all difficulties.",
+      hi:"कविता में चिड़िया <strong>आंधी में भी निडर होकर गाती</strong> है। कवि इससे यह दर्शाते हैं कि सच्ची हिम्मत मुश्किलों के बावजूद अपना काम करना है।",
+      bn:"কবিতায় পাখিটি <strong>ঝড়েও নির্ভীকভাবে গান করে</strong>।"
+    }
+  },
+  {
+    chapter:"ऐसे-ऐसे",
+    q:{
+      en:"'Aise Aise' (ऐसे-ऐसे) is a one-act play written by:",
+      hi:"'ऐसे-ऐसे' एकांकी नाटक किसने लिखा?",
+      bn:"'আইসে আইসে' একাঙ্কিকা কে লিখেছেন?"
+    },
+    opts:{
+      en:["Shivprasad Singh","Vishnu Prabhakar","Prem Chand","Kedar Nath Agarwal"],
+      hi:["शिवप्रसाद सिंह","विष्णु प्रभाकर","प्रेम चंद","केदार नाथ अग्रवाल"],
+      bn:["শিবপ্রসাদ সিং","বিষ্ণু প্রভাকর","প্রেম চন্দ","কেদার নাথ আগরওয়াল"]
+    },
+    ans:1,
+    exp:{
+      en:"<strong>Vishnu Prabhakar</strong> wrote the one-act play 'Aise Aise'. It humorously shows a boy who complains of stomachache ('aise aise') to avoid going to school, but the doctor finds nothing wrong.",
+      hi:"<strong>विष्णु प्रभाकर</strong> ने 'ऐसे-ऐसे' लिखा। इसमें एक लड़का स्कूल न जाने के लिए पेट दर्द ('ऐसे-ऐसे') का बहाना बनाता है, पर डॉक्टर को कुछ नहीं मिलता।",
+      bn:"<strong>বিষ্ণু প্রভাকর</strong> 'আইসে আইসে' লিখেছেন। একটি ছেলে স্কুল এড়াতে পেট ব্যথার অভিনয় করে।"
+    }
+  },
+  {
+    chapter:"आकाश पंछी",
+    q:{
+      en:"'Aakash Panchi' (आकाश पंछी) is written by which author?",
+      hi:"'आकाश पंछी' किसने लिखा?",
+      bn:"'আকাশ পাঞ্ছি' কে লিখেছেন?"
+    },
+    opts:{
+      en:["Prem Chand","Kedar Nath Agarwal","Shivprasad Singh","Krishna Sobti"],
+      hi:["प्रेम चंद","केदार नाथ अग्रवाल","शिवप्रसाद सिंह","कृष्णा सोबती"],
+      bn:["প্রেম চন্দ","কেদার নাথ আগরওয়াল","শিবপ্রসাদ সিং","কৃষ্ণা সোবতি"]
+    },
+    ans:2,
+    exp:{
+      en:"<strong>Shivprasad Singh</strong> wrote 'Aakash Panchi'. The story is about a crane (सारस/baiheron) raised as a pet bird that eventually returns to the wild, showing the importance of freedom.",
+      hi:"<strong>शिवप्रसाद सिंह</strong> ने 'आकाश पंछी' लिखा। यह एक पालतू बगुले की कहानी है जो अंततः प्रकृति में वापस लौट जाता है — स्वतंत्रता का महत्व दर्शाता है।",
+      bn:"<strong>শিবপ্রসাদ সিং</strong> 'আকাশ পাঞ্ছি' লিখেছেন। এটি একটি পোষা বকের গল্প যে অবশেষে প্রকৃতিতে ফিরে যায়।"
+    }
+  },
+  {
+    chapter:"बचपन",
+    q:{
+      en:"In 'Bachpan', the author recalls her love for which types of footwear as a child?",
+      hi:"'बचपन' में लेखिका को बचपन में किस प्रकार के जूतों का शौक था?",
+      bn:"'বচপন'-এ লেখিকা শৈশবে কোন ধরনের জুতার প্রতি আগ্রহী ছিলেন?"
+    },
+    opts:{
+      en:["High heels","Canvas shoes and slippers","Rubber sandals","School shoes"],
+      hi:["ऊँची एड़ी के जूते","कैनवास के जूते और चप्पल","रबर की सैंडल","स्कूल के जूते"],
+      bn:["হাই হিল","ক্যানভাস জুতো ও চপ্পল","রাবার স্যান্ডেল","স্কুলের জুতো"]
+    },
+    ans:1,
+    exp:{
+      en:"In 'Bachpan', Krishna Sobti recalls her fondness for <strong>canvas shoes and slippers</strong> as a child, among other memories like frocks and food from her childhood days.",
+      hi:"'बचपन' में कृष्णा सोबती को <strong>कैनवास के जूतों और चप्पलों</strong> का बहुत शौक था। वे फ्रॉक और खाने की यादें भी साझा करती हैं।",
+      bn:"'বচপন'-এ কৃষ্ণা সোবতি <strong>ক্যানভাস জুতো ও চপ্পলের</strong> প্রতি তার আগ্রহের কথা স্মরণ করেন।"
+    }
+  }
+];
+let currentQ=0,score=0,answered=false;
+function setLang(l,btn){
+  currentLang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('scoreLabel').textContent=l==='hi'?'स्कोर':l==='bn'?'স্কোর':'Score';
+  renderQ();
+}
+function renderQ(){
+  answered=false;
+  const q=questions[currentQ];
+  const l=currentLang;
+  document.getElementById('progFill').style.width=Math.round((currentQ/questions.length)*100)+'%';
+  const qText=q.q[l]||q.q.hi;
+  const opts=q.opts[l]||q.opts.hi;
+  document.getElementById('gameArea').innerHTML=`
+    <div class="q-card fade">
+      <div class="chapter-tag">📚 ${q.chapter}</div>
+      <div class="q-num">प्रश्न ${currentQ+1} / ${questions.length}</div>
+      <div class="q-text">${qText}</div>
+      <div class="options">
+        ${opts.map((o,i)=>`<button class="opt-btn" onclick="pick(${i})" id="opt${i}">
+          <span class="opt-icon">◦</span>${o}</button>`).join('')}
+      </div>
+      <div class="explanation" id="exp">${(q.exp[l]||q.exp.hi)}</div>
+      <button class="next-btn" id="nextBtn" onclick="nextQ()">${currentQ===questions.length-1?'परिणाम देखें →':'अगला प्रश्न →'}</button>
+    </div>`;
+}
+function pick(i){
+  if(answered)return;answered=true;
+  const q=questions[currentQ];const pts=Math.round(100/questions.length);
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  if(i===q.ans){
+    document.getElementById('opt'+i).classList.add('correct');
+    document.getElementById('opt'+i).querySelector('.opt-icon').textContent='✓';
+    score+=pts;document.getElementById('scoreNum').textContent=score;
+  } else {
+    document.getElementById('opt'+i).classList.add('wrong');
+    document.getElementById('opt'+i).querySelector('.opt-icon').textContent='✗';
+    document.getElementById('opt'+q.ans).classList.add('correct');
+    document.getElementById('opt'+q.ans).querySelector('.opt-icon').textContent='✓';
+  }
+  document.getElementById('exp').classList.add('show');
+  document.getElementById('nextBtn').classList.add('show');
+}
+function nextQ(){currentQ++;if(currentQ>=questions.length){showResult();return;}renderQ();}
+function showResult(){
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('gameArea').style.display='none';
+  const pct=score;
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'';
+  const msgs={en:['Outstanding! Hindi champion!','Great work! Well done!','Good effort! Keep reading!','Keep practicing!'],hi:['शानदार! हिंदी चैंपियन!','बहुत अच्छा! शाबाश!','अच्छी कोशिश! पढ़ते रहो!','अभ्यास जारी रखो!'],bn:['অসাধারণ! হিন্দি চ্যাম্পিয়ন!','দারুণ কাজ!','ভালো চেষ্টা! পড়তে থাকো!','অনুশীলন চালিয়ে যাও!']};
+  const msgArr=msgs[currentLang]||msgs.hi;
+  const msg=pct>=90?msgArr[0]:pct>=70?msgArr[1]:pct>=40?msgArr[2]:msgArr[3];
+  document.getElementById('resultCard').style.display='block';
+  document.getElementById('resultCard').innerHTML=`
+    <div class="result-inner fade">
+      <div class="stars">${stars||'📖'}</div>
+      <div class="result-score">${score}/100</div>
+      <div class="result-msg">${msg}</div>
+      <button class="play-again" onclick="restart()">🔄 फिर खेलें</button>
+    </div>`;
+}
+function restart(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('scoreNum').textContent=0;
+  document.getElementById('progFill').style.width='0%';
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  renderQ();
+}
+renderQ();
+</script>
+</body>
+</html>

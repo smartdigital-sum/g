@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Number Adventure 🔢 | Rongmon's World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0f1a2e;--card:#162240;--accent:#ff9f1c;--green:#2ec4b6;--red:#e71d36;
+  --purple:#7b2d8b;--star:#ffe066;--txt:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Baloo 2',cursive;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+/* ── BG PARTICLES ── */
+#stars{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.2}50%{opacity:.9}}
+#floating-nums{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.fnum{position:absolute;font-size:28px;font-weight:900;opacity:.08;animation:floatUp 10s linear infinite}
+@keyframes floatUp{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(-110vh) rotate(360deg)}}
+
+/* ── LAYOUT ── */
+#game-wrap{position:relative;z-index:10;max-width:440px;margin:0 auto;padding:16px 12px 100px}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 18px}
+.logo{font-size:22px;font-weight:900;background:linear-gradient(135deg,#ff9f1c,#2ec4b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hud{display:flex;gap:10px;align-items:center}
+.hud-pill{background:rgba(255,255,255,.1);border-radius:20px;padding:6px 14px;font-size:14px;font-weight:700}
+.hud-pill span{color:var(--accent)}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:8px;margin-bottom:18px}
+.tab{flex:1;padding:10px 4px;border-radius:14px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;color:rgba(255,255,255,.5);cursor:pointer;transition:.2s}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#0f1a2e}
+.tab:hover:not(.active){border-color:var(--accent);color:#fff}
+
+/* ── SCREENS ── */
+.screen{display:none;animation:fadeIn .3s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── QUESTION CARD ── */
+.q-card{background:var(--card);border-radius:24px;padding:24px 20px;margin-bottom:18px;border:2px solid rgba(255,255,255,.08);text-align:center}
+.q-label{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase}
+.q-scene{font-size:52px;line-height:1.3;margin-bottom:10px;min-height:80px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px}
+.q-text{font-size:20px;font-weight:800;margin-bottom:4px}
+.q-sub{font-size:14px;color:rgba(255,255,255,.6)}
+
+/* ── ANSWER CHOICES ── */
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.choice{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.15);border-radius:18px;padding:18px 12px;font-family:'Baloo 2',cursive;font-size:28px;font-weight:900;color:#fff;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
+.choice:hover{border-color:var(--accent);transform:scale(1.04);background:rgba(255,159,28,.08)}
+.choice.correct{border-color:var(--green);background:rgba(46,196,182,.18);animation:pop .3s ease}
+.choice.wrong{border-color:var(--red);background:rgba(231,29,54,.18);animation:shake .35s ease}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+
+/* ── COMPARE SCREEN ── */
+.compare-row{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px 0}
+.cmp-box{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.18);border-radius:18px;width:100px;height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:36px;font-weight:900}
+.cmp-box small{font-size:12px;color:rgba(255,255,255,.5);margin-top:2px}
+.cmp-btns{display:flex;justify-content:center;gap:10px;margin:16px 0}
+.cmp-btn{width:80px;height:80px;border-radius:50%;border:3px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);font-size:32px;cursor:pointer;font-family:'Baloo 2',cursive;color:#fff;transition:.15s}
+.cmp-btn:hover{transform:scale(1.1);border-color:var(--accent)}
+.cmp-btn.correct{border-color:var(--green);background:rgba(46,196,182,.2);animation:pop .3s ease}
+.cmp-btn.wrong{border-color:var(--red);background:rgba(231,29,54,.2);animation:shake .35s ease}
+
+/* ── FILL SCREEN ── */
+.fill-display{font-size:48px;font-weight:900;letter-spacing:12px;text-align:center;margin:18px 0;min-height:72px;display:flex;align-items:center;justify-content:center;gap:16px}
+.blank-box{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:14px;border:3px dashed var(--accent);color:var(--accent);font-size:42px;font-weight:900;background:rgba(255,159,28,.06);transition:.2s}
+.blank-box.filled{border-style:solid;border-color:var(--green);color:var(--green);background:rgba(46,196,182,.1)}
+.numpad{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}
+.numpad-key{background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.12);border-radius:14px;padding:12px 4px;font-family:'Baloo 2',cursive;font-size:22px;font-weight:800;color:#fff;cursor:pointer;transition:.15s}
+.numpad-key:hover{border-color:var(--accent);background:rgba(255,159,28,.12)}
+.numpad-key.pressed{background:var(--accent);color:#0f1a2e;transform:scale(.93)}
+
+/* ── FEEDBACK ── */
+.feedback-bar{height:52px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;border-radius:14px;margin-bottom:12px;transition:.3s;opacity:0}
+.feedback-bar.show{opacity:1}
+.feedback-bar.good{background:rgba(46,196,182,.2);color:var(--green)}
+.feedback-bar.bad{background:rgba(231,29,54,.2);color:var(--red)}
+
+/* ── PROGRESS BAR ── */
+.prog-wrap{background:rgba(255,255,255,.06);border-radius:20px;height:10px;margin-bottom:16px;overflow:hidden}
+.prog-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .4s ease}
+
+/* ── STARS ── */
+.star-row{display:flex;gap:6px;justify-content:center;margin:8px 0 14px}
+.star-icon{font-size:28px;opacity:.25;transition:.3s}
+.star-icon.earned{opacity:1;animation:starPop .5s ease}
+@keyframes starPop{0%{transform:scale(0) rotate(-30deg)}70%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0)}}
+
+/* ── VICTORY ── */
+#screen-victory{text-align:center;padding:20px}
+.vic-emoji{font-size:80px;animation:bounce 2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+.vic-title{font-size:30px;font-weight:900;background:linear-gradient(135deg,#ff9f1c,#2ec4b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:10px 0}
+.vic-score{font-size:20px;font-weight:800;color:var(--star);margin:8px 0 18px}
+.vic-fact{background:rgba(255,255,255,.07);border-radius:18px;padding:16px;font-size:14px;line-height:1.7;color:rgba(255,255,255,.85);margin-bottom:20px;border:1px solid rgba(255,255,255,.1)}
+.btn-replay{width:100%;padding:16px;border-radius:20px;border:none;background:linear-gradient(135deg,#ff9f1c,#f77f00);color:#0f1a2e;font-family:'Baloo 2',cursive;font-size:19px;font-weight:900;cursor:pointer;margin-bottom:10px;transition:.15s}
+.btn-replay:hover{transform:scale(1.03)}
+.btn-home{width:100%;padding:14px;border-radius:20px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font-family:'Baloo 2',cursive;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:8px;transition:.15s}
+.btn-home:hover{border-color:var(--accent)}
+
+/* ── SCORE ── */
+#score-anim{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:48px;font-weight:900;color:var(--accent);pointer-events:none;z-index:200;opacity:0;transition:none}
+.hidden{display:none!important}
+</style>
+<style>.hidden { display: none !important; }</style>
+</head>
+<body>
+
+<div id="stars"></div>
+<div id="floating-nums"></div>
+
+<div id="game-wrap">
+    <div class="hud">
+      <div class="hud-pill">⭐ <span id="total-score">0</span></div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="lang-pill" style="display:flex; gap:4px; z-index:100; background:rgba(255,255,255,0.1); padding:2px; border-radius:15px;">
+          <button class="lpill active" id="lp-en" onclick="setLang('en')" style="font-family:'Baloo 2'; font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px; border:none; background:transparent; color:#fff; cursor:pointer;">EN</button>
+          <button class="lpill" id="lp-as" onclick="setLang('as')" style="font-family:'Baloo 2'; font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px; border:none; background:transparent; color:rgba(255,255,255,0.5); cursor:pointer;">অস</button>
+        </div>
+        <div class="hud-pill">❓ <span id="q-count">1</span>/10</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-count" onclick="setMode('count')">
+      <span class="en">🍎 Count</span>
+      <span class="as hidden">🍎 গণনা</span>
+    </button>
+    <button class="tab" id="tab-compare" onclick="setMode('compare')">
+      <span class="en">⚖️ Compare</span>
+      <span class="as hidden">⚖️ তুলনা</span>
+    </button>
+    <button class="tab" id="tab-fill" onclick="setMode('fill')">
+      <span class="en">🔲 Fill</span>
+      <span class="as hidden">🔲 খালী ঠাই</span>
+    </button>
+  </div>
+
+  <div class="star-row">
+    <span class="star-icon" id="s1">⭐</span>
+    <span class="star-icon" id="s2">⭐</span>
+    <span class="star-icon" id="s3">⭐</span>
+    <span class="star-icon" id="s4">⭐</span>
+    <span class="star-icon" id="s5">⭐</span>
+  </div>
+
+  <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+
+  <!-- COUNT MODE -->
+  <div class="screen active" id="screen-count">
+    <div class="q-card">
+      <div class="q-label">How many? / কিমান?</div>
+      <div class="q-scene" id="cnt-scene"></div>
+      <div class="q-sub">Count the <span id="cnt-thing">animals</span> and choose!</div>
+    </div>
+    <div class="feedback-bar" id="fb-count"></div>
+    <div class="choices" id="choices-count"></div>
+  </div>
+
+  <!-- COMPARE MODE -->
+  <div class="screen" id="screen-compare">
+    <div class="q-card">
+      <div class="q-label">Which is bigger? / কোনটো বেছি?</div>
+      <div class="compare-row">
+        <div class="cmp-box"><span id="cmp-a-icon">🦏</span><span id="cmp-a-num" style="font-size:28px;font-weight:900;">5</span><small>Left</small></div>
+        <div style="font-size:28px;font-weight:900;color:rgba(255,255,255,.3)">VS</div>
+        <div class="cmp-box"><span id="cmp-b-icon">🐘</span><span id="cmp-b-num" style="font-size:28px;font-weight:900;">8</span><small>Right</small></div>
+      </div>
+      <div class="cmp-btns" id="cmp-btns">
+        <button class="cmp-btn" id="cmp-left" onclick="answerCompare('left')">⬅️</button>
+        <button class="cmp-btn" id="cmp-equal" onclick="answerCompare('equal')">=</button>
+        <button class="cmp-btn" id="cmp-right" onclick="answerCompare('right')">➡️</button>
+      </div>
+      <div class="feedback-bar" id="fb-cmp"></div>
+    </div>
+  </div>
+
+  <!-- FILL MODE -->
+  <div class="screen" id="screen-fill">
+    <div class="q-card">
+      <div class="q-label">Fill the blank! / খালী ঠাই পূৰ কৰ!</div>
+      <div class="fill-display" id="fill-display"></div>
+      <div class="q-sub" id="fill-sub">What number comes next?</div>
+    </div>
+    <div class="feedback-bar" id="fb-fill"></div>
+    <div class="numpad" id="numpad"></div>
+  </div>
+
+  <!-- VICTORY -->
+  <div class="screen" id="screen-victory">
+    <div class="vic-emoji">🎉</div>
+    <div class="vic-title" id="vic-title">Amazing! You're a Maths Star!</div>
+    <div class="vic-score" id="vic-score">⭐ Score: 0</div>
+    <div class="vic-fact" id="vic-fact">
+      Assam has 35 districts and over 3 crore people. Numbers help us understand our amazing world!
+    </div>
+    <button class="btn-replay" onclick="restartGame()">🔄 Play Again!</button>
+    <button class="btn-home" onclick="shareScore()" style="background:rgba(37,211,102,.1);border-color:rgba(37,211,102,.4);color:#25d366;">📤 Share on WhatsApp</button>
+    <button class="btn-home" onclick="window.location.href='../index.html'">🏠 Back to Home</button>
+  </div>
+</div>
+
+<!-- Score animation -->
+<div id="score-anim">+10</div>
+
+<!-- Onboarding Overlay -->
+<div id="onboarding" class="hidden" style="position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:linear-gradient(135deg,#0f1a2e,#162240);border-radius:24px;padding:32px 24px;max-width:320px;width:100%;text-align:center;border:2px solid rgba(255,159,28,.4);">
+    <div style="font-size:64px;margin-bottom:8px;">🔢</div>
+    <div style="font-size:22px;font-weight:900;color:#ff9f1c;margin-bottom:10px;">How to Play</div>
+    <div style="font-size:14px;color:rgba(255,255,255,.85);line-height:1.85;margin-bottom:20px;text-align:left;">
+      🍎 <strong>COUNT</strong> – Count the Assam animals or objects and choose the right number!<br/>
+      ⚖️ <strong>COMPARE</strong> – Pick which group has more, or if they're equal!<br/>
+      🔲 <strong>FILL</strong> – Tap the missing number in the pattern!<br/>
+      ⭐ Earn stars for every correct answer – get 10 right to win!
+    </div>
+    <button onclick="dismissOnboarding()" style="font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;padding:12px 36px;border-radius:50px;border:none;background:#ff9f1c;color:#0f1a2e;cursor:pointer;width:100%;">
+      Let's Count! ▶
+    </button>
+  </div>
+</div>
+
+<!-- Mute Toggle -->
+<button id="mute-btn-game" onclick="toggleMuteGame()" style="position:fixed;bottom:20px;right:20px;z-index:500;width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:rgba(15,26,46,.9);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🔊</button>
+
+<script>
+// ══ DATA ══
+const MODE_COUNT = 'count', MODE_COMPARE = 'compare', MODE_FILL = 'fill';
+const EMOJIS = {
+  rhino:['🦏','rhinos'],elephant:['🐘','elephants'],bird:['🦜','birds'],
+  flower:['🌸','flowers'],fish:['🐟','fish'],bamboo:['🎋','bamboo'],
+  monkey:['🐒','monkeys'],star:['⭐','stars'],mango:['🥭','mangoes'],
+  lotus:['🪷','lotuses'],
+};
+const KEYS = Object.keys(EMOJIS);
+const FACTS = [
+  'Assam has one-horned rhinos found nowhere else on Earth! 🦏',
+  'The Brahmaputra river is one of the widest rivers in the world! 🌊',
+  'Assam produces more than 50% of India\'s tea! 🍵',
+  'Kaziranga has over 2,500 one-horned rhinos — the most in the world!',
+  'Assam is home to over 850 species of birds! 🐦',
+  'The Bihu dance is performed at Assam\'s most important festival! 💃',
+  'Assam has 35 districts and is known as the "Gateway to Northeast India".',
+  'The golden silk muga of Assam is found only in this state! 🪡',
+];
+
+let mode = MODE_COUNT, score = 0, qNum = 0, correct = 0, starsEarned = 0;
+let totalQuestions = 10;
+let answering = false;
+let currentAnswer;
+let currentMode;
+
+// ══ BACKGROUND ══
+(function spawnBg(){
+  const sl = document.getElementById('stars');
+  for(let i=0;i<40;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const size=Math.random()*3+1;
+    Object.assign(s.style,{width:size+'px',height:size+'px',left:Math.random()*100+'%',top:Math.random()*100+'%','animation-duration':(2+Math.random()*4)+'s','animation-delay':Math.random()*4+'s'});
+    sl.appendChild(s);
+  }
+  const nl = document.getElementById('floating-nums');
+  for(let i=1;i<=10;i++){
+    const n=document.createElement('div');
+    n.className='fnum';
+    n.textContent=i;
+    Object.assign(n.style,{left:Math.random()*95+'%',top:100+Math.random()*50+'%','animation-duration':(8+Math.random()*8)+'s','animation-delay':Math.random()*10+'s','font-size':(20+Math.random()*30)+'px'});
+    nl.appendChild(n);
+  }
+})();
+
+// ══ TABS ══
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+m).classList.add('active');
+  score=0;qNum=0;correct=0;starsEarned=0;
+  document.getElementById('total-score').textContent='0';
+  updateStars();
+  updateProgress();
+  document.getElementById('q-count').textContent='1';
+  showQuestion();
+}
+
+// ══ QUESTION FLOW ══
+function showQuestion(){
+  hideAllScreens();
+  answering=false;
+  document.querySelectorAll('.feedback-bar').forEach(f=>{f.className='feedback-bar';f.textContent='';});
+  if(qNum >= totalQuestions){ showVictory(); return; }
+  currentMode = mode;
+  if(mode===MODE_COUNT) buildCount();
+  else if(mode===MODE_COMPARE) buildCompare();
+  else buildFill();
+}
+
+function hideAllScreens(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+}
+
+function next(){
+  qNum++;
+  document.getElementById('q-count').textContent = Math.min(qNum+1, totalQuestions);
+  updateProgress();
+  setTimeout(showQuestion, 700);
+}
+
+function updateProgress(){
+  const pct = (qNum/totalQuestions)*100;
+  document.getElementById('prog').style.width = pct+'%';
+}
+
+function updateStars(){
+  for(let i=1;i<=5;i++){
+    const el=document.getElementById('s'+i);
+    el.classList.toggle('earned', i<=(starsEarned));
+  }
+}
+
+function showFeedback(id, good, msg){
+  const el=document.getElementById(id);
+  el.textContent= good ? '✅ '+msg : '❌ '+msg;
+  el.className='feedback-bar '+(good?'good':'bad')+' show';
+}
+
+function animateScore(pts){
+  const el=document.getElementById('score-anim');
+  el.textContent='+'+pts;
+  el.style.opacity='1';
+  el.style.transition='opacity .15s, transform .15s';
+  el.style.transform='translate(-50%,-60%)';
+  setTimeout(()=>{
+    el.style.transition='opacity .5s, transform .5s';
+    el.style.opacity='0';
+    el.style.transform='translate(-50%,-120%)';
+  },300);
+}
+
+function awardCorrect(){
+  const pts=10;
+  score+=pts;correct++;starsEarned=Math.min(5,correct);
+  document.getElementById('total-score').textContent=score;
+  updateStars();
+  animateScore(pts);
+  if(typeof RongmonAudio!=='undefined') RongmonAudio.playCorrect();
+}
+function awardWrong(){
+  if(typeof RongmonAudio!=='undefined') RongmonAudio.playWrong();
+}
+
+// ══ COUNT MODE ══
+const countDifficulty=[
+  {min:1,max:5},{min:1,max:5},{min:2,max:8},{min:2,max:8},
+  {min:3,max:10},{min:3,max:10},{min:4,max:12},{min:4,max:12},
+  {min:5,max:15},{min:5,max:15}
+];
+function buildCount(){
+  const diff = countDifficulty[Math.min(qNum,9)];
+  const ans = diff.min + Math.floor(Math.random()*(diff.max-diff.min+1));
+  const key = KEYS[Math.floor(Math.random()*KEYS.length)];
+  const [emoji, name] = EMOJIS[key];
+  currentAnswer = ans;
+
+  // Scene
+  const scene = document.getElementById('cnt-scene');
+  scene.innerHTML='';
+  for(let i=0;i<ans;i++){
+    const s=document.createElement('span');
+    s.textContent=emoji;s.style.fontSize='36px';s.style.display='inline-block';
+    s.style.animationDelay=(i*0.05)+'s';
+    scene.appendChild(s);
+  }
+  document.getElementById('cnt-thing').textContent=name;
+
+  // Choices (3 wrong + 1 right)
+  const choices=new Set([ans]);
+  while(choices.size<4){
+    const wrong=Math.max(1,ans+Math.floor(Math.random()*7)-3);
+    if(wrong!==ans) choices.add(wrong);
+  }
+  const arr=[...choices].sort(()=>Math.random()-.5);
+  const container=document.getElementById('choices-count');
+  container.innerHTML='';
+  arr.forEach(n=>{
+    const btn=document.createElement('button');
+    btn.className='choice';btn.textContent=n;
+    btn.onclick=()=>answerCount(btn,n);
+    container.appendChild(btn);
+  });
+  document.getElementById('screen-count').classList.add('active');
+}
+
+function answerCount(btn, val){
+  if(answering) return;
+  answering=true;
+  const right = val===currentAnswer;
+  btn.classList.add(right?'correct':'wrong');
+  if(right){ awardCorrect(); showFeedback('fb-count',true,'Correct! '+currentAnswer+' '+btn.textContent); }
+  else{ awardWrong(); document.querySelectorAll('#choices-count .choice').forEach(b=>{ if(+b.textContent===currentAnswer) b.classList.add('correct');}); showFeedback('fb-count',false,'It was '+currentAnswer+'!'); }
+  next();
+}
+
+// ══ COMPARE MODE ══
+const cmpPairs=[
+  [2,5],[7,3],[4,4],[1,9],[6,3],[5,5],[8,2],[10,7],[3,9],[6,6]
+];
+const cmpEmojis=['🦏','🐘','🎋','🌸','🐒','🥭','🐟','🪷','⭐','🦜'];
+function buildCompare(){
+  const pair = cmpPairs[qNum];
+  const [a,b] = pair;
+  const iconA = cmpEmojis[Math.floor(Math.random()*cmpEmojis.length)];
+  let iconB; do { iconB=cmpEmojis[Math.floor(Math.random()*cmpEmojis.length)]; } while(iconB===iconA);
+  document.getElementById('cmp-a-icon').textContent=iconA;
+  document.getElementById('cmp-b-icon').textContent=iconB;
+  document.getElementById('cmp-a-num').textContent=a;
+  document.getElementById('cmp-b-num').textContent=b;
+  currentAnswer = a>b?'left':a<b?'right':'equal';
+  document.querySelectorAll('.cmp-btn').forEach(b=>b.className='cmp-btn');
+  document.getElementById('screen-compare').classList.add('active');
+}
+
+function answerCompare(val){
+  if(answering) return;
+  answering=true;
+  const right=val===currentAnswer;
+  const btnMap={left:'cmp-left',equal:'cmp-equal',right:'cmp-right'};
+  document.getElementById(btnMap[val]).classList.add(right?'correct':'wrong');
+  if(!right) document.getElementById(btnMap[currentAnswer]).classList.add('correct');
+  const msg={left:'Left group is bigger!',right:'Right group is bigger!',equal:'They are equal!'};
+  if(right){ awardCorrect(); showFeedback('fb-cmp',true,msg[currentAnswer]); }
+  else { awardWrong(); showFeedback('fb-cmp',false,msg[currentAnswer]); }
+  next();
+}
+
+// ══ FILL MODE ══
+const fillTemplates=[
+  {seq:[1,2,'?',4,5],ans:3,sub:'What comes next in the sequence?'},
+  {seq:[2,4,'?',8,10],ans:6,sub:'Count by 2s!'},
+  {seq:[5,'?',15,20,25],ans:10,sub:'Count by 5s!'},
+  {seq:[1,3,'?',7,9],ans:5,sub:'Count by 2s!'},
+  {seq:[10,'?',30,40,50],ans:20,sub:'Count by 10s!'},
+  {seq:[3,6,'?',12,15],ans:9,sub:'Count by 3s!'},
+  {seq:[7,'?',9,10,11],ans:8,sub:'Find the missing number!'},
+  {seq:['?',14,16,18,20],ans:12,sub:'Count by 2s!'},
+  {seq:[4,8,'?',16,20],ans:12,sub:'Count by 4s!'},
+  {seq:[1,'?',9,13,17],ans:5,sub:'Count by 4s!'},
+];
+function buildFill(){
+  const t=fillTemplates[qNum%fillTemplates.length];
+  const display=document.getElementById('fill-display');
+  display.innerHTML='';
+  t.seq.forEach((v,i)=>{
+    if(v==='?'){
+      const b=document.createElement('span');
+      b.className='blank-box';b.id='blank';b.textContent='?';
+      display.appendChild(b);
+    } else {
+      const n=document.createElement('span');
+      n.style.cssText='font-size:42px;font-weight:900;';
+      n.textContent=v;
+      display.appendChild(n);
+    }
+    if(i<t.seq.length-1){
+      const c=document.createElement('span');
+      c.style.cssText='font-size:22px;color:rgba(255,255,255,.3);';c.textContent=',';
+      display.appendChild(c);
+    }
+  });
+  document.getElementById('fill-sub').textContent=t.sub;
+  currentAnswer=t.ans;
+
+  // Numpad
+  const choices=new Set([t.ans]);
+  while(choices.size<10){choices.add(Math.max(1,t.ans+Math.floor(Math.random()*12)-6));}
+  const nums=[...choices].sort((a,b)=>a-b).slice(0,10);
+  const pad=document.getElementById('numpad');
+  pad.innerHTML='';
+  nums.forEach(n=>{
+    const k=document.createElement('button');
+    k.className='numpad-key';k.textContent=n;
+    k.onclick=()=>answerFill(k,n);
+    pad.appendChild(k);
+  });
+  document.getElementById('screen-fill').classList.add('active');
+}
+
+function answerFill(btn, val){
+  if(answering) return;
+  answering=true;
+  btn.classList.add('pressed');
+  const right=val===currentAnswer;
+  const blank=document.getElementById('blank');
+  blank.textContent=currentAnswer;
+  blank.classList.add('filled');
+  if(right){ awardCorrect(); showFeedback('fb-fill',true,'Yes! The number is '+currentAnswer+'!'); }
+  else { awardWrong(); showFeedback('fb-fill',false,'It was '+currentAnswer+'!'); }
+  next();
+}
+
+// ══ VICTORY ══
+function showVictory(){
+  hideAllScreens();
+  const stars=Math.round((correct/totalQuestions)*5);
+  document.getElementById('vic-title').textContent=
+    correct>=9?'🏆 Perfect Score! Maths Champion!':
+    correct>=7?'🌟 Amazing! You\'re a Maths Star!':
+    correct>=5?'🎉 Well Done! Keep Practising!':
+    '💪 Good Try! Play Again to Improve!';
+  document.getElementById('vic-score').textContent=`⭐ ${score} pts · ${correct}/10 correct`;
+  document.getElementById('vic-fact').textContent=FACTS[Math.floor(Math.random()*FACTS.length)];
+  document.getElementById('screen-victory').classList.add('active');
+  if(typeof RongmonData!=='undefined') RongmonData.saveScore('number-adventure',score);
+  if(typeof RongmonAudio!=='undefined') RongmonAudio.playVictory();
+}
+
+function restartGame(){
+  score=0;qNum=0;correct=0;starsEarned=0;
+  document.getElementById('total-score').textContent='0';
+  document.getElementById('q-count').textContent='1';
+  updateStars();updateProgress();
+  showQuestion();
+}
+
+function setLang(l){
+  lang=l;
+  const lpEn = document.getElementById('lp-en');
+  const lpAs = document.getElementById('lp-as');
+  if(lpEn) lpEn.classList.toggle('active', l==='en');
+  if(lpAs) lpAs.classList.toggle('active', l==='as');
+  if(lpEn) lpEn.style.color = l==='en' ? '#fff' : 'rgba(255,255,255,0.5)';
+  if(lpAs) lpAs.style.color = l==='as' ? '#fff' : 'rgba(255,255,255,0.5)';
+  
+  document.querySelectorAll('.en').forEach(el=>el.classList.toggle('hidden', l==='as'));
+  document.querySelectorAll('.as').forEach(el=>el.classList.toggle('hidden', l==='en'));
+  
+  if(!document.getElementById('screen-intro').classList.contains('active')) showQuestion();
+}
+
+function shareScore(){
+  const msg = lang==='en' 
+    ? `I scored ${score} pts in Number Adventure! 🔢 Count with Rongmon & learn Assam facts! #AssamKids`
+    : `মই সংখ্যাৰ অভিযানত ${score} পইণ্ট লাভ কৰিলোঁ! 🔢 ৰংমনৰ সৈতে গণনা শিকক! #AssamKids`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+// ══ ONBOARDING + MUTE ══
+function dismissOnboarding(){
+  document.getElementById('onboarding').classList.add('hidden');
+  if(typeof RongmonData!=='undefined') RongmonData.markOnboardingSeen('number-adventure');
+}
+function toggleMuteGame(){
+  if(typeof RongmonAudio!=='undefined'){
+    const m=RongmonAudio.toggleMute();
+    document.getElementById('mute-btn-game').textContent=m?'🔇':'🔊';
+  }
+}
+
+// ── Shared modules ──
+window.addEventListener('load', () => {
+    if (typeof RongmonData !== 'undefined' && !RongmonData.hasSeenOnboarding('number-adventure')) {
+        document.getElementById('onboarding').classList.remove('hidden');
+    }
+    if (typeof RongmonData !== 'undefined') {
+        const m = RongmonData.getSetting('muted');
+        document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+    }
+});
+
+// ══ START ══
+document.addEventListener('DOMContentLoaded', () => {
+    showQuestion();
+});
+</script>
+<script src="rongmon-data.js"></script>
+<script src="rongmon-audio.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creative Writing Engine — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#1A0F00 0%,#0F0800 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(255,159,28,.13),rgba(255,159,28,.04));border:1px solid rgba(255,159,28,.3);border-radius:16px;padding:16px;margin-bottom:16px}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55}
+.wow-text strong{color:var(--gold)}
+
+/* Progress stepper */
+.stepper{display:flex;align-items:center;gap:0;margin-bottom:20px}
+.step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.step-circle{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,159,28,.25);background:var(--card);display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-size:.75rem;font-weight:700;color:var(--dim);transition:all .3s;z-index:1}
+.step-circle.active{border-color:var(--orange);background:rgba(255,159,28,.15);color:var(--orange)}
+.step-circle.done{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal)}
+.step-label{font-size:.6rem;color:var(--dim);margin-top:4px;text-align:center;line-height:1.2;max-width:52px}
+.step-label.active{color:var(--orange)}
+.step-label.done{color:var(--teal)}
+.step-line{height:2px;flex:1;background:rgba(255,159,28,.15);margin-top:-14px;z-index:0}
+.step-line.done{background:var(--teal)}
+
+/* Choice cards */
+.choice-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.choice-card{background:rgba(255,159,28,.05);border:2px solid rgba(255,159,28,.18);border-radius:16px;padding:14px;cursor:pointer;transition:all .25s;display:flex;align-items:flex-start;gap:12px}
+.choice-card:hover{border-color:rgba(255,159,28,.5);background:rgba(255,159,28,.1);transform:translateX(4px)}
+.choice-card.selected{border-color:var(--orange);background:rgba(255,159,28,.14)}
+.choice-card.locked{pointer-events:none;opacity:.6}
+.choice-card.best-pick{border-color:var(--teal);background:rgba(6,214,160,.08)}
+.choice-card.weak-pick{border-color:var(--coral);background:rgba(255,107,107,.06)}
+.choice-emoji{font-size:1.6rem;flex-shrink:0;margin-top:2px}
+.choice-text{flex:1}
+.choice-title{font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:3px}
+.choice-desc{font-size:.8rem;color:var(--dim);line-height:1.4}
+.choice-badge{font-size:.68rem;font-weight:700;margin-top:6px;display:none}
+.choice-card.best-pick .choice-badge{display:block;color:var(--teal)}
+.choice-card.weak-pick .choice-badge{display:block;color:var(--coral)}
+.confirm-btn{background:var(--orange);color:#060A10;border:none;border-radius:100px;padding:11px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;width:100%;opacity:.4;pointer-events:none}
+.confirm-btn.ready{opacity:1;pointer-events:all}
+.confirm-btn:hover.ready{opacity:.88;transform:scale(1.02)}
+
+/* Story preview panel */
+.story-preview{background:rgba(6,10,16,.6);border:1px solid rgba(255,209,102,.15);border-radius:18px;padding:18px;margin-bottom:14px}
+.story-preview-label{font-size:.65rem;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:700}
+.story-element-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:.83rem}
+.element-key{color:var(--dim);min-width:90px;font-size:.75rem}
+.element-val{font-family:'Crimson Pro',serif;color:var(--text);font-style:italic;flex:1}
+.element-placeholder{color:rgba(255,159,28,.35);font-size:.78rem;font-style:italic}
+
+/* Final story output */
+.story-output{background:rgba(6,10,16,.5);border:1px solid rgba(255,209,102,.2);border-radius:16px;padding:20px;margin-bottom:14px}
+.story-output-title{font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;color:var(--gold);margin-bottom:14px;text-align:center}
+.story-text{font-family:'Crimson Pro',serif;font-size:1.05rem;line-height:1.85;color:var(--text)}
+.story-text .highlight{color:var(--gold);font-weight:600}
+.story-text .hook-line{font-size:1.12rem;font-weight:600;color:var(--orange)}
+
+/* Feedback panel */
+.writing-feedback{background:var(--card);border:1px solid rgba(255,159,28,.2);border-radius:14px;padding:14px;margin-bottom:14px}
+.feedback-title{font-family:'Baloo 2',cursive;font-size:.9rem;font-weight:700;color:var(--orange);margin-bottom:10px}
+.feedback-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.feedback-icon{font-size:1rem;flex-shrink:0}
+.feedback-text{font-size:.82rem;color:var(--text);line-height:1.4}
+.feedback-text strong{color:var(--gold)}
+
+/* Strength meter */
+.strength-bar-wrap{margin-bottom:14px}
+.strength-label{font-size:.75rem;color:var(--dim);margin-bottom:5px;display:flex;justify-content:space-between}
+.strength-bar{height:8px;background:rgba(255,159,28,.1);border-radius:100px;overflow:hidden}
+.strength-fill{height:100%;border-radius:100px;transition:width .8s ease}
+
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.45}
+.game-card{background:var(--card);border:1px solid rgba(255,159,28,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--orange);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:700}
+.feedback-inline{text-align:center;font-family:'Baloo 2',cursive;font-size:.92rem;font-weight:600;min-height:26px;margin:10px 0 4px}
+.feedback-inline.correct{color:var(--teal)}
+.feedback-inline.wrong{color:var(--coral)}
+
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#0F0800 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--orange);color:var(--orange);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.play-again-btn:hover{background:rgba(255,159,28,.1)}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">✏️ Creative Writing Engine</div>
+      <span class="subject-tag">English · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="wow-emoji">📖</span>
+    <div class="wow-text">The opening sentence of a novel decides whether you read page 2. Publishers receive <strong>10,000 submissions a year</strong> and reject 99% after the <strong>FIRST SENTENCE.</strong> One sentence = one chance!</div>
+  </div>
+
+  <!-- Stepper -->
+  <div class="stepper" id="stepper">
+    <div class="step"><div class="step-circle active" id="sc0">1</div><div class="step-label active" id="sl0">Setting</div></div>
+    <div class="step-line" id="line0"></div>
+    <div class="step"><div class="step-circle" id="sc1">2</div><div class="step-label" id="sl1">Character</div></div>
+    <div class="step-line" id="line1"></div>
+    <div class="step"><div class="step-circle" id="sc2">3</div><div class="step-label" id="sl2">Mood</div></div>
+    <div class="step-line" id="line2"></div>
+    <div class="step"><div class="step-circle" id="sc3">4</div><div class="step-label" id="sl3">Conflict</div></div>
+    <div class="step-line" id="line3"></div>
+    <div class="step"><div class="step-circle" id="sc4">5</div><div class="step-label" id="sl4">Opening</div></div>
+  </div>
+
+  <div id="storyPreview" style="display:none"></div>
+  <div id="gameArea"></div>
+
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Step 1 of 5</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<script>
+const STEPS = [
+  {
+    label:'Setting',
+    question:'Where does your story take place?',
+    choices:[
+      {e:'🌊',title:'The banks of the Brahmaputra at dawn',desc:'Mist rises off the river, fishermen cast nets, a heron watches silently.',quality:'best',badge:'✨ Vivid & specific — great writers ground readers in a real place!'},
+      {e:'🏫',title:'A classroom in a school',desc:'Desks, a blackboard, students sitting in rows.',quality:'weak',badge:'⚠️ Too generic — readers have seen this a thousand times.'},
+      {e:'🌿',title:'A forgotten tea garden, overgrown and silent',desc:'Old tea bushes taller than a person, broken wooden signs, the smell of damp earth.',quality:'best',badge:'✨ Mysterious & original — this makes readers want to explore!'},
+    ],
+    bestIndices:[0,2],
+    feedback:'Great settings are SPECIFIC and SENSORY. "A school" tells us nothing. "The overgrown tea garden" makes us see, smell, and feel.'
+  },
+  {
+    label:'Character',
+    question:'Who is your main character?',
+    choices:[
+      {e:'👦',title:'A brave boy named Rohan',desc:'He is 12 years old and very brave and kind and smart.',quality:'weak',badge:'⚠️ Telling, not showing. "Brave" tells us — behaviour SHOWS us.'},
+      {e:'👧',title:'Priya — who collects stray dogs and argues with teachers',desc:'She has ink-stained fingers and a notebook full of sketches nobody is allowed to see.',quality:'best',badge:'✨ Specific details reveal character — this feels like a real person!'},
+      {e:'🧓',title:'An old man who hums to himself',desc:'Nobody knows his name. He arrives each morning before the birds wake up.',quality:'best',badge:'✨ Mystery creates intrigue — readers immediately want to know more!'},
+    ],
+    bestIndices:[1,2],
+    feedback:'Show character through ACTIONS and DETAILS, not labels. "Ink-stained fingers and a secret notebook" tells us far more than "smart and creative".'
+  },
+  {
+    label:'Mood',
+    question:'What FEELING should the opening create?',
+    choices:[
+      {e:'😨',title:'Dread and unease',desc:'Something is wrong but we can\'t name it yet.',quality:'best',badge:'✨ Suspense hooks readers — they must read on to find out what\'s wrong!'},
+      {e:'😊',title:'Happy and cheerful',desc:'Everything is fine, the weather is nice, people are smiling.',quality:'weak',badge:'⚠️ Stories need TENSION. A purely happy opening gives readers nothing to worry about.'},
+      {e:'🤔',title:'Curious and mysterious',desc:'Something unusual is happening that doesn\'t quite make sense.',quality:'best',badge:'✨ Mystery creates a question in the reader\'s mind — the best hook of all!'},
+    ],
+    bestIndices:[0,2],
+    feedback:'The best openings create a QUESTION or a TENSION in the reader\'s mind. Happy, conflict-free openings have nothing pulling the reader forward.'
+  },
+  {
+    label:'Conflict',
+    question:'What problem or tension starts the story?',
+    choices:[
+      {e:'🔍',title:'Someone has disappeared — and only our character noticed',desc:'Everyone else acts normal. Was it even real?',quality:'best',badge:'✨ Mystery + doubt = irresistible tension!'},
+      {e:'📝',title:'The character has homework due tomorrow',desc:'They forgot and are now stressed.',quality:'weak',badge:'⚠️ Too ordinary — readers need conflict that feels urgent and surprising.'},
+      {e:'🌊',title:'A letter arrives addressed to a dead person',desc:'But it\'s dated today.',quality:'best',badge:'✨ Impossible situation = immediate intrigue. The reader has NO choice but to continue!'},
+    ],
+    bestIndices:[0,2],
+    feedback:'Great story conflicts feel IMPOSSIBLE or URGENT. They create a problem the character — and reader — cannot ignore or walk away from.'
+  },
+  {
+    label:'Opening Line',
+    question:'Which opening LINE best grabs the reader?',
+    choices:[
+      {e:'📝',title:'"It was a normal morning."',desc:'Nothing unusual had happened yet.',quality:'weak',badge:'⚠️ "Normal" is the enemy of story. If nothing is unusual, why read on?'},
+      {e:'🌟',title:'"The letter was addressed to my grandmother — who had been dead for seven years."',desc:'',quality:'best',badge:'✨ Immediate mystery! A dead person gets a letter — impossible. Read on!'},
+      {e:'🌊',title:'"Nobody believed me when I said the river had moved overnight."',desc:'',quality:'best',badge:'✨ Specific, impossible, and personal — this promises a unique story!'},
+    ],
+    bestIndices:[1,2],
+    feedback:'A great opening line does THREE things: introduces a character (or voice), creates an impossible or unusual situation, and makes the reader ask "WHY?" or "WHAT NEXT?"'
+  },
+];
+
+const STORY_TEMPLATES = {
+  best:{
+    setting:['The banks of the Brahmaputra at dawn','A forgotten tea garden, overgrown and silent'],
+    character:['Priya — who collects stray dogs and argues with teachers','An old man who hums to himself'],
+    mood:['Dread and unease','Curious and mysterious'],
+    conflict:['Someone has disappeared — and only our character noticed','A letter arrives addressed to a dead person'],
+    opening:['The letter was addressed to my grandmother — who had been dead for seven years.','Nobody believed me when I said the river had moved overnight.'],
+  }
+};
+
+let choices={};
+let currentStep=0;
+let score=0;
+let stepScores=[];
+
+function confetti(){
+  const C=['#FFD166','#FF9F1C','#06D6A0','#C77DFF','#4CC9F0'];
+  for(let i=0;i<28;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+}
+function updateStars(){const lit=Math.min(5,Math.ceil(score));for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.toggle('lit',i<=lit)}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(q,t){document.getElementById('progressLabel').textContent=`Step ${q} of ${t}`}
+
+function updateStepper(step){
+  for(let i=0;i<5;i++){
+    const sc=document.getElementById('sc'+i);
+    const sl=document.getElementById('sl'+i);
+    if(i<step){sc.className='step-circle done';sl.className='step-label done';sc.textContent='✓';}
+    else if(i===step){sc.className='step-circle active';sl.className='step-label active';}
+    else{sc.className='step-circle';sl.className='step-label';}
+    if(i<4){document.getElementById('line'+i).className='step-line'+(i<step?' done':'');}
+  }
+}
+
+function updatePreview(){
+  const keys=['setting','character','mood','conflict','opening'];
+  const labels=['🌍 Setting','👤 Character','🎭 Mood','⚡ Conflict','✍️ Opening'];
+  let html=`<div class="story-preview">
+    <div class="story-preview-label">Your Story Blueprint</div>`;
+  keys.forEach((k,i)=>{
+    const val=choices[k];
+    html+=`<div class="story-element-row">
+      <div class="element-key">${labels[i]}</div>
+      ${val?`<div class="element-val">${val}</div>`:`<div class="element-placeholder">— choose below —</div>`}
+    </div>`;
+  });
+  html+=`</div>`;
+  const prev=document.getElementById('storyPreview');
+  prev.innerHTML=html;
+  prev.style.display='block';
+}
+
+function renderStep(stepIdx){
+  currentStep=stepIdx;
+  updateStepper(stepIdx);
+  setProgress(stepIdx+1,5);
+  const step=STEPS[stepIdx];
+  const keys=['setting','character','mood','conflict','opening'];
+  const key=keys[stepIdx];
+  let selectedIdx=null;
+
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">✍️ Step ${stepIdx+1} — Choose Your ${step.label}</div>
+      <div class="question-text">${step.question}</div>
+      <div class="choice-grid" id="choiceGrid">
+        ${step.choices.map((c,i)=>`
+          <div class="choice-card" id="cc${i}" onclick="selectChoice(${i},${stepIdx},'${key}',${JSON.stringify(step.bestIndices)})">
+            <div class="choice-emoji">${c.e}</div>
+            <div class="choice-text">
+              <div class="choice-title">${c.title}</div>
+              ${c.desc?`<div class="choice-desc">${c.desc}</div>`:''}
+              <div class="choice-badge">${c.badge}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+      <button class="confirm-btn" id="confirmBtn" onclick="confirmStep(${stepIdx},'${key}',${JSON.stringify(step.bestIndices)},'${step.feedback.replace(/'/g,"\\'")}')">Confirm Choice →</button>
+      <div class="feedback-inline" id="fb"></div>
+    </div>`;
+  updatePreview();
+}
+
+let pendingChoiceIdx=null;
+function selectChoice(idx,stepIdx,key,bestIndices){
+  pendingChoiceIdx=idx;
+  document.querySelectorAll('.choice-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('cc'+idx).classList.add('selected');
+  const step=STEPS[stepIdx];
+  choices[key]=step.choices[idx].title;
+  updatePreview();
+  document.getElementById('confirmBtn').classList.add('ready');
+}
+function confirmStep(stepIdx,key,bestIndices,feedback){
+  if(pendingChoiceIdx===null)return;
+  const isBest=bestIndices.includes(pendingChoiceIdx);
+  // Reveal all badges
+  STEPS[stepIdx].choices.forEach((c,i)=>{
+    const card=document.getElementById('cc'+i);
+    if(!card)return;
+    card.classList.add('locked');
+    if(bestIndices.includes(i))card.classList.add('best-pick');
+    else card.classList.add('weak-pick');
+    card.querySelector('.choice-badge').style.display='block';
+  });
+  document.getElementById('confirmBtn').disabled=true;
+  const fb=document.getElementById('fb');
+  if(isBest){
+    score=Math.min(5,score+1);updateStars();
+    fb.textContent='Great choice! '+feedback.slice(0,60)+'…';fb.className='feedback-inline correct';
+    stepScores.push(true);
+    if(score%2===0)confetti();
+  } else {
+    fb.textContent='Good try! '+feedback.slice(0,60)+'…';fb.className='feedback-inline wrong';
+    stepScores.push(false);
+  }
+  showNext(true);
+  pendingChoiceIdx=null;
+}
+
+function buildFinalStory(){
+  // Compose a short story opening paragraph from choices
+  const setting=choices.setting||'a mysterious place';
+  const char=choices.character||'a young person';
+  const mood=choices.mood||'curious';
+  const conflict=choices.conflict||'something unusual happened';
+  const opening=choices.opening||'Something was different today.';
+
+  const isBestOpening=STEPS[4].bestIndices.includes(
+    STEPS[4].choices.findIndex(c=>c.title===opening)
+  );
+  const isBestChar=STEPS[1].bestIndices.includes(
+    STEPS[1].choices.findIndex(c=>c.title===char)
+  );
+
+  return `<span class="hook-line">${opening}</span>\n\n` +
+    `The scene: <span class="highlight">${setting}</span>. ` +
+    `Our character: <span class="highlight">${char}</span>. ` +
+    `The mood: <span class="highlight">${mood.toLowerCase()}</span>, the kind that makes the air feel heavier than it should. ` +
+    `And at the centre of it all — <span class="highlight">${conflict.toLowerCase()}</span>. ` +
+    `This is how great stories begin — not with "once upon a time", but with a crack in the ordinary world that cannot be ignored.`;
+}
+
+function buildFeedbackPanel(){
+  const goods=stepScores.filter(Boolean).length;
+  const pct=Math.round(goods/5*100);
+  const feedbacks=[
+    {icon:'✍️',text:'<strong>Opening line:</strong> '+(stepScores[4]?'Strong hook — creates immediate mystery or impossibility.':'Try an opening that feels IMPOSSIBLE or SURPRISING.')},
+    {icon:'⚡',text:'<strong>Conflict:</strong> '+(stepScores[3]?'Your conflict feels urgent and unignorable — perfect!':'Great conflicts feel impossible to ignore or walk away from.')},
+    {icon:'🌍',text:'<strong>Setting:</strong> '+(stepScores[0]?'Specific and sensory — readers can picture it instantly.':'Be specific. Not "a river" — "the Brahmaputra at dawn, mist rising".')},
+    {icon:'👤',text:'<strong>Character:</strong> '+(stepScores[1]?'Shown through behaviour, not labels — exactly right!':'Show character through ACTIONS, not adjectives like "brave" or "kind".')},
+  ];
+  let html=`<div class="writing-feedback">
+    <div class="feedback-title">📊 Your Writing Choices</div>
+    <div class="strength-bar-wrap">
+      <div class="strength-label"><span>Story Strength</span><span>${pct}%</span></div>
+      <div class="strength-bar"><div class="strength-fill" style="width:${pct}%;background:${pct>=80?'var(--teal)':pct>=60?'var(--gold)':'var(--coral)'}"></div></div>
+    </div>
+    ${feedbacks.map(f=>`<div class="feedback-row"><div class="feedback-icon">${f.icon}</div><div class="feedback-text">${f.text}</div></div>`).join('')}
+  </div>`;
+  return html;
+}
+
+function endGame(){
+  confetti();
+  updateStepper(5);
+  document.getElementById('storyPreview').style.display='none';
+  const goods=stepScores.filter(Boolean).length;
+  const medal=goods>=4?'Master Storyteller 🌟':goods>=3?'Story Champion 🏆':goods>=2?'Plot Builder ✍️':'Story Apprentice 🌱';
+  document.getElementById('gameArea').innerHTML=`
+    <div style="margin-bottom:14px">
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);text-align:center;margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.8rem;font-weight:800;color:var(--orange);text-align:center;margin-bottom:14px">${goods} / 5 best choices</div>
+    </div>
+    <div class="story-output">
+      <div class="story-output-title">📖 Your Story Opening</div>
+      <div class="story-text">${buildFinalStory()}</div>
+    </div>
+    ${buildFeedbackPanel()}
+    <button class="play-again-btn" onclick="resetGame()">🔄 Try Again — New Choices</button>`;
+  document.getElementById('progressLabel').textContent=`Story complete!`;
+  showNext(false);
+}
+
+function nextStep(){
+  currentStep++;
+  if(currentStep<5)renderStep(currentStep);
+  else endGame();
+}
+function resetGame(){
+  choices={};stepScores=[];currentStep=0;score=0;pendingChoiceIdx=null;
+  for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.remove('lit');
+  document.getElementById('nextBtn').textContent='Next →';
+  document.getElementById('nextBtn').onclick=nextStep;
+  renderStep(0);
+}
+document.getElementById('nextBtn').addEventListener('click',nextStep);
+renderStep(0);
+</script>
+</body>
+</html>

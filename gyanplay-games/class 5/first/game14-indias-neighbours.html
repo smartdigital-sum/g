@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>G5-14 · India's Neighbours · GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--lime:#A8E063;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;
+  --grad-from:#071A12;--grad-to:#040E0A;--accent:var(--lime);
+  --border:rgba(168,224,99,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(145deg,var(--grad-from),var(--grad-to));min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;padding:0 0 48px;}
+.header{width:100%;max-width:480px;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;}
+.subject-tag{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);}
+.stars{display:flex;gap:3px;}
+.star{font-size:1rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+
+.wow-card{width:calc(100% - 32px);max-width:448px;background:linear-gradient(135deg,rgba(168,224,99,.15),rgba(6,214,160,.08));border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin:8px 16px 16px;text-align:center;}
+.wow-label{font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.wow-card p{font-size:.95rem;line-height:1.6;}
+.wow-card strong{color:var(--gold);}
+
+.stage-tabs{width:calc(100% - 32px);max-width:448px;margin:0 16px 14px;display:flex;gap:6px;}
+.tab-btn{flex:1;padding:8px 4px;border-radius:10px;border:2px solid transparent;font-family:'Baloo 2',cursive;font-weight:700;font-size:.72rem;background:var(--card);color:var(--dim);cursor:pointer;transition:all .2s;text-align:center;}
+.tab-btn.active{border-color:var(--lime);color:var(--lime);background:rgba(168,224,99,.1);}
+
+.section{width:calc(100% - 32px);max-width:448px;margin:0 16px;}
+
+/* MAP */
+.map-wrap{background:var(--card);border:2px solid var(--border);border-radius:18px;padding:14px;margin-bottom:14px;}
+.map-label{font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);text-align:center;margin-bottom:8px;}
+.south-asia-map{position:relative;width:100%;max-width:320px;margin:0 auto;}
+.south-asia-map svg{width:100%;height:auto;}
+
+/* COUNTRY CARDS */
+.country-card{
+  background:var(--card);border:2px solid var(--border);
+  border-radius:14px;padding:14px 16px;margin-bottom:10px;
+  cursor:pointer;transition:all .2s;
+}
+.country-card:hover{border-color:var(--lime);}
+.country-card.selected{border-color:var(--gold);background:rgba(255,209,102,.08);}
+.country-card.correct-a{border-color:var(--teal);background:rgba(6,214,160,.1);}
+.country-card.wrong-a{border-color:var(--coral);background:rgba(255,107,107,.08);}
+.cc-top{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.cc-flag{font-size:1.6rem;}
+.cc-name{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;color:#fff;}
+.cc-capital{font-size:.75rem;color:var(--dim);}
+.cc-fact{font-size:.8rem;color:var(--text);line-height:1.5;opacity:.8;}
+
+/* QUIZ */
+.quiz-q{font-size:.92rem;font-weight:700;line-height:1.6;color:var(--text);margin-bottom:10px;}
+.quiz-q strong{color:var(--gold);}
+.quiz-opts{display:flex;flex-direction:column;gap:7px;}
+.q-opt{background:rgba(168,224,99,.08);border:2px solid rgba(168,224,99,.18);color:var(--text);font-weight:600;font-size:.88rem;padding:10px 14px;border-radius:10px;cursor:pointer;transition:all .2s;}
+.q-opt:hover{border-color:var(--lime);}
+.q-opt.chosen{border-color:var(--lime);background:rgba(168,224,99,.15);color:var(--lime);}
+.q-opt.correct-a{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal);}
+.q-opt.wrong-a{border-color:var(--coral);background:rgba(255,107,107,.1);color:var(--coral);}
+
+.question-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:12px;}
+
+.check-btn{width:100%;padding:14px;border-radius:14px;border:none;font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--lime),var(--teal));color:#000;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(168,224,99,.3);}
+.check-btn:hover{opacity:.9;}
+.check-btn:disabled{opacity:.4;cursor:not-allowed;}
+.feedback{margin-top:12px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.9rem;text-align:center;display:none;}
+.feedback.correct{background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.4);color:var(--teal);}
+.feedback.wrong{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:var(--coral);}
+
+.progress-row{width:calc(100% - 32px);max-width:448px;margin:16px 16px 0;display:flex;align-items:center;justify-content:space-between;}
+.progress-text{font-size:.8rem;font-weight:700;color:var(--dim);}
+.next-btn{background:var(--gold);color:#1A0F00;font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;border:none;border-radius:50px;padding:8px 22px;cursor:pointer;display:none;}
+
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:28px;max-width:360px;width:90%;text-align:center;}
+.overlay-box .o-emoji{font-size:3rem;margin-bottom:10px;}
+.overlay-box h3{font-family:'Baloo 2',cursive;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.overlay-box p{font-size:.88rem;color:var(--text);line-height:1.6;}
+.overlay-box strong{color:var(--teal);}
+
+.complete-screen{width:calc(100% - 32px);max-width:448px;margin:20px 16px;background:var(--card);border:2px solid rgba(6,214,160,.3);border-radius:22px;padding:32px 24px;text-align:center;display:none;}
+.complete-screen .big{font-size:4rem;margin-bottom:12px;}
+.complete-screen h2{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--gold);margin-bottom:8px;}
+.complete-screen p{color:var(--text);font-size:.95rem;line-height:1.6;margin-bottom:20px;}
+.play-again{background:var(--teal);color:#040E04;font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;border:none;border-radius:50px;padding:12px 28px;cursor:pointer;}
+
+.confetti-piece{position:fixed;width:10px;height:10px;opacity:0;animation:confFall 1.8s ease-in forwards;pointer-events:none;z-index:200;}
+@keyframes confFall{0%{opacity:1;transform:translateY(0) rotate(0deg);}100%{opacity:0;transform:translateY(80vh) rotate(720deg);}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="subject-tag">SST</div>
+  <div class="game-title">🗺️ India's Neighbours</div>
+  <div class="stars">
+    <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+    <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+  </div>
+</div>
+
+<div class="wow-card">
+  <div class="wow-label">🤯 Did You Know?</div>
+  <p>India shares borders with <strong>7 countries</strong> and coastlines with <strong>2 island nations.</strong> It is the <strong>ONLY country</strong> that shares land borders with both Pakistan AND Bangladesh — making its diplomacy the most complex in Asia!</p>
+</div>
+
+<div class="stage-tabs">
+  <div class="tab-btn active" id="tab1">1. Meet Neighbours</div>
+  <div class="tab-btn" id="tab2">2. Capital Quiz</div>
+  <div class="tab-btn" id="tab3">3. Fact Match</div>
+</div>
+
+<!-- STAGE 1: EXPLORE NEIGHBOURS -->
+<div class="section" id="stage1">
+  <div class="map-wrap">
+    <div class="map-label">🗺️ India and Its Neighbours — Tap a country card below</div>
+    <div class="south-asia-map">
+      <svg viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg">
+        <!-- Simplified South Asia map -->
+        <!-- India -->
+        <path d="M110,40 L165,38 L195,55 L210,80 L218,110 L215,140 L205,165 L188,185 L165,200 L145,212 L125,215 L105,208 L88,195 L75,178 L68,160 L65,140 L67,115 L72,90 L82,65 Z" fill="rgba(6,214,160,.2)" stroke="rgba(6,214,160,.6)" stroke-width="2" id="india-shape"/>
+        <text x="140" y="130" text-anchor="middle" font-size="11" fill="rgba(6,214,160,.9)" font-family="Baloo 2" font-weight="700">India</text>
+        <!-- Pakistan (west) -->
+        <path d="M82,65 L72,90 L65,100 L50,95 L35,80 L40,55 L55,40 L75,38 L90,42 Z" fill="rgba(255,159,28,.12)" stroke="rgba(255,159,28,.4)" stroke-width="1.5"/>
+        <text x="57" y="72" text-anchor="middle" font-size="8" fill="rgba(255,159,28,.8)" font-family="Nunito">Pakistan</text>
+        <!-- Nepal (north middle) -->
+        <path d="M115,40 L140,35 L165,38 L163,50 L135,52 L115,50 Z" fill="rgba(76,201,240,.15)" stroke="rgba(76,201,240,.4)" stroke-width="1.5"/>
+        <text x="140" y="47" text-anchor="middle" font-size="7.5" fill="rgba(76,201,240,.9)" font-family="Nunito">Nepal</text>
+        <!-- Bhutan (north east) -->
+        <path d="M170,40 L190,38 L195,50 L172,52 Z" fill="rgba(255,209,102,.15)" stroke="rgba(255,209,102,.4)" stroke-width="1.5"/>
+        <text x="183" y="47" text-anchor="middle" font-size="6.5" fill="rgba(255,209,102,.9)" font-family="Nunito">Bhutan</text>
+        <!-- China (far north) -->
+        <path d="M80,38 L115,28 L195,30 L210,40 L195,38 L165,38 L140,35 L115,40 L90,42 Z" fill="rgba(255,107,107,.1)" stroke="rgba(255,107,107,.3)" stroke-width="1.5"/>
+        <text x="148" y="28" text-anchor="middle" font-size="8" fill="rgba(255,107,107,.8)" font-family="Nunito">China</text>
+        <!-- Bangladesh (east) -->
+        <path d="M193,110 L215,115 L210,145 L195,155 L185,145 L185,120 Z" fill="rgba(168,224,99,.15)" stroke="rgba(168,224,99,.4)" stroke-width="1.5"/>
+        <text x="200" y="132" text-anchor="middle" font-size="6.5" fill="rgba(168,224,99,.9)" font-family="Nunito">Bangla</text>
+        <!-- Myanmar (far east) -->
+        <path d="M215,115 L235,110 L240,140 L230,165 L215,155 L210,145 Z" fill="rgba(199,125,255,.1)" stroke="rgba(199,125,255,.3)" stroke-width="1.5"/>
+        <text x="228" y="135" text-anchor="middle" font-size="6.5" fill="rgba(199,125,255,.8)" font-family="Nunito">Myanmar</text>
+        <!-- Afghanistan (northwest) -->
+        <path d="M40,55 L55,40 L75,38 L80,38 L65,30 L45,35 L30,50 Z" fill="rgba(255,209,102,.1)" stroke="rgba(255,209,102,.3)" stroke-width="1"/>
+        <text x="52" y="38" text-anchor="middle" font-size="6" fill="rgba(255,209,102,.7)" font-family="Nunito">Afgha-</text>
+        <text x="52" y="46" text-anchor="middle" font-size="6" fill="rgba(255,209,102,.7)" font-family="Nunito">nistan</text>
+        <!-- Sri Lanka (south island) -->
+        <ellipse cx="148" cy="235" rx="12" ry="16" fill="rgba(76,201,240,.15)" stroke="rgba(76,201,240,.4)" stroke-width="1.5"/>
+        <text x="148" y="238" text-anchor="middle" font-size="5.5" fill="rgba(76,201,240,.8)" font-family="Nunito">Sri Lanka</text>
+        <!-- Ocean labels -->
+        <text x="40" y="200" text-anchor="middle" font-size="7" fill="rgba(76,201,240,.3)" font-family="Nunito">Arabian</text>
+        <text x="40" y="208" text-anchor="middle" font-size="7" fill="rgba(76,201,240,.3)" font-family="Nunito">Sea</text>
+        <text x="250" y="195" text-anchor="middle" font-size="7" fill="rgba(76,201,240,.3)" font-family="Nunito">Bay of</text>
+        <text x="250" y="203" text-anchor="middle" font-size="7" fill="rgba(76,201,240,.3)" font-family="Nunito">Bengal</text>
+      </svg>
+    </div>
+  </div>
+
+  <div id="neighbourCards"></div>
+  <button class="check-btn" id="s1Btn" onclick="nextStage()">Continue to Capital Quiz →</button>
+  <div class="feedback" id="s1FB"></div>
+</div>
+
+<!-- STAGE 2: CAPITAL QUIZ -->
+<div class="section" id="stage2" style="display:none;">
+  <div id="capitalQuestions"></div>
+  <button class="check-btn" id="s2Btn" onclick="checkCapitals()">Check Capitals ✓</button>
+  <div class="feedback" id="s2FB"></div>
+</div>
+
+<!-- STAGE 3: FACT MATCH -->
+<div class="section" id="stage3" style="display:none;">
+  <div style="background:rgba(168,224,99,.08);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:.88rem;line-height:1.6;">
+    <strong style="color:var(--lime);">🤝 Match each neighbour to its unique shared fact with India.</strong>
+  </div>
+  <div id="factQuestions"></div>
+  <button class="check-btn" id="s3Btn" onclick="checkFacts()">Check Matches ✓</button>
+  <div class="feedback" id="s3FB"></div>
+</div>
+
+<div class="progress-row">
+  <span class="progress-text" id="progressText">Stage 1 of 3</span>
+  <button class="next-btn" id="nextBtn" onclick="nextStage()">Next Stage →</button>
+</div>
+
+<div class="complete-screen" id="completeScreen">
+  <div class="big">🗺️</div>
+  <h2>Diplomatic Expert!</h2>
+  <p>You know all of India's 9 neighbours, their capitals, and shared cultural links. India's diplomatic complexity is real — now you understand why!</p>
+  <button class="play-again" onclick="restartGame()">Play Again 🔄</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="o-emoji" id="oEmoji">🌏</div>
+    <h3 id="oTitle">Neighbour!</h3>
+    <p id="oFact"></p>
+  </div>
+</div>
+
+<script>
+const NEIGHBOURS=[
+  {flag:'🇵🇰',name:'Pakistan',capital:'Islamabad',direction:'Northwest',border:'Land',
+   fact:'India and Pakistan share the Punjab region, the same language (Punjabi), similar cuisines and cricket rivalry! Before 1947, they were one country.',
+   unique:'Shares Punjab region and same cricket history'},
+  {flag:'🇨🇳',name:'China',capital:'Beijing',direction:'North',border:'Land',
+   fact:'India and China share the Himalayas and the Brahmaputra river. Both are ancient civilisations over 5,000 years old with incredible histories.',
+   unique:'Shares the Himalayas and Brahmaputra river'},
+  {flag:'🇳🇵',name:'Nepal',capital:'Kathmandu',direction:'North',border:'Land',
+   fact:'Nepal and India share an open border — citizens of both countries can cross freely! India is Nepal\'s largest trading partner and they share many Hindu pilgrimage sites.',
+   unique:'Open border — citizens cross without passport'},
+  {flag:'🇧🇹',name:'Bhutan',capital:'Thimphu',direction:'Northeast',border:'Land',
+   fact:'Bhutan measures national happiness (GNH — Gross National Happiness), not just GDP. India handles Bhutan\'s foreign affairs and defence under a special friendship treaty.',
+   unique:'India manages Bhutan\'s foreign affairs by treaty'},
+  {flag:'🇧🇩',name:'Bangladesh',capital:'Dhaka',direction:'East',border:'Land',
+   fact:'Bangladesh was part of India until 1947 and then East Pakistan until 1971. India helped Bangladesh achieve independence in the Liberation War of 1971. They share the Ganga-Brahmaputra delta.',
+   unique:'India helped Bangladesh win independence in 1971'},
+  {flag:'🇲🇲',name:'Myanmar',capital:'Naypyidaw',direction:'East',border:'Land',
+   fact:'Myanmar was part of British India until 1937. India and Myanmar share the Andaman Sea and have deep historical Buddhist connections. The Kaladan river connects the two.',
+   unique:'Was part of British India until 1937'},
+  {flag:'🇦🇫',name:'Afghanistan',capital:'Kabul',direction:'Northwest',border:'Land',
+   fact:'India and Afghanistan have deep historical ties through the Silk Road trade routes. India built the Salma Dam (Friendship Dam) in Afghanistan as a development gift.',
+   unique:'India built the Salma Friendship Dam for them'},
+  {flag:'🇱🇰',name:'Sri Lanka',capital:'Sri Jayawardenepura Kotte',direction:'South',border:'Sea',
+   fact:'Sri Lanka and India are separated by only the Palk Strait — just 22km at the narrowest point! Ancient Hindu epic Ramayana has deep connections to Sri Lanka.',
+   unique:'Just 22km away — Palk Strait crossing'},
+  {flag:'🇲🇻',name:'Maldives',capital:'Malé',direction:'Southwest',border:'Sea',
+   fact:'Maldives is India\'s nearest island neighbour. India is always first to help Maldives in emergencies — called "India First" policy. The islands could disappear with rising sea levels!',
+   unique:'"India First" emergency policy — first responder'},
+];
+
+const CAPITAL_QS=[
+  {country:'Nepal',opts:['Islamabad','Kathmandu','Dhaka','Thimphu'],answer:1},
+  {country:'Bhutan',opts:['Kathmandu','Colombo','Thimphu','Naypyidaw'],answer:2},
+  {country:'Bangladesh',opts:['Dhaka','Islamabad','Kabul','Dhaka'],answer:0},
+  {country:'Sri Lanka',opts:['Colombo','Malé','Kathmandu','Sri Jayawardenepura Kotte'],answer:3},
+  {country:'Maldives',opts:['Colombo','Malé','Dhaka','Naypyidaw'],answer:1},
+];
+
+const FACT_QS=[
+  {country:'Nepal 🇳🇵',opts:['Open border policy','Friendship Dam','22km sea crossing','Helped win independence'],answer:0},
+  {country:'Bangladesh 🇧🇩',opts:['Shares Himalayas','Helped win independence in 1971','Open border','Palk Strait crossing'],answer:1},
+  {country:'Bhutan 🇧🇹',opts:['India manages Bhutan\'s foreign affairs','Open border','22km crossing','Liberation War ally'],answer:0},
+  {country:'Sri Lanka 🇱🇰',opts:['India First policy','Helped win independence','Just 22km at Palk Strait','Open border'],answer:2},
+];
+
+let stage=1, score=0, capSels={}, factSels={};
+
+function buildNeighbours(){
+  const c=document.getElementById('neighbourCards');
+  NEIGHBOURS.forEach((n,i)=>{
+    const card=document.createElement('div');
+    card.className='country-card';
+    card.innerHTML=`
+      <div class="cc-top">
+        <span class="cc-flag">${n.flag}</span>
+        <div>
+          <div class="cc-name">${n.name}</div>
+          <div class="cc-capital">Capital: ${n.capital} · ${n.border} border · ${n.direction}</div>
+        </div>
+      </div>
+      <div class="cc-fact">${n.fact}</div>`;
+    card.onclick=()=>showOverlay('🌏',n.name+'!',`<strong>Capital:</strong> ${n.capital}<br/>${n.fact}`);
+    c.appendChild(card);
+  });
+}
+
+function buildCapitals(){
+  const c=document.getElementById('capitalQuestions');
+  c.innerHTML='';
+  CAPITAL_QS.forEach((q,i)=>{
+    const card=document.createElement('div');
+    card.className='question-card';
+    card.innerHTML=`
+      <div class="quiz-q">What is the capital of <strong>${q.country}?</strong></div>
+      <div class="quiz-opts">
+        ${q.opts.map((o,j)=>`<button class="q-opt" id="copt_${i}_${j}" onclick="pickCap(${i},${j},this)">${o}</button>`).join('')}
+      </div>`;
+    c.appendChild(card);
+  });
+}
+
+window.pickCap=function(qi,oi,el){capSels[qi]=oi;document.querySelectorAll(`[id^="copt_${qi}_"]`).forEach(b=>b.classList.toggle('chosen',b===el));}
+
+function checkCapitals(){
+  if(Object.keys(capSels).length<CAPITAL_QS.length){showFB('s2FB','wrong','⚠️ Answer all 5!');return;}
+  let correct=0;
+  CAPITAL_QS.forEach((q,i)=>{
+    const isRight=capSels[i]===q.answer;
+    if(isRight) correct++;
+    document.getElementById(`copt_${i}_${q.answer}`).classList.add('correct-a');
+    if(!isRight) document.getElementById(`copt_${i}_${capSels[i]}`)?.classList.add('wrong-a');
+  });
+  score+=correct; updateStars();
+  document.getElementById('s2Btn').disabled=true;
+  showFB('s2FB',correct>=4?'correct':'wrong',correct===5?'✅ All 5 capitals correct!':` ${correct}/5 correct!`);
+  if(correct>=4) spawnConfetti();
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function buildFacts(){
+  const c=document.getElementById('factQuestions');
+  c.innerHTML='';
+  FACT_QS.forEach((q,i)=>{
+    const card=document.createElement('div');
+    card.className='question-card';
+    const shuffled=q.opts.map((o,j)=>({o,j})).sort(()=>Math.random()-.5);
+    card.innerHTML=`
+      <div class="quiz-q">What is <strong>${q.country}'s</strong> unique connection to India?</div>
+      <div class="quiz-opts">
+        ${shuffled.map(({o,j})=>`<button class="q-opt" id="fopt_${i}_${j}" onclick="pickFact(${i},${j},this)">${o}</button>`).join('')}
+      </div>`;
+    c.appendChild(card);
+  });
+}
+
+window.pickFact=function(qi,oi,el){factSels[qi]=oi;document.querySelectorAll(`[id^="fopt_${qi}_"]`).forEach(b=>b.classList.toggle('chosen',b===el));}
+
+function checkFacts(){
+  if(Object.keys(factSels).length<FACT_QS.length){showFB('s3FB','wrong','⚠️ Match all 4!');return;}
+  let correct=0;
+  FACT_QS.forEach((q,i)=>{
+    const isRight=factSels[i]===q.answer;
+    if(isRight) correct++;
+    document.getElementById(`fopt_${i}_${q.answer}`).classList.add('correct-a');
+    if(!isRight) document.getElementById(`fopt_${i}_${factSels[i]}`)?.classList.add('wrong-a');
+  });
+  score+=correct; updateStars();
+  document.getElementById('s3Btn').disabled=true;
+  showFB('s3FB',correct>=3?'correct':'wrong',correct===4?'✅ Perfect fact matching!':` ${correct}/4 correct!`);
+  if(correct>=3) spawnConfetti();
+  setTimeout(()=>{
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+    document.querySelector('.stage-tabs').style.display='none';
+    document.querySelector('.progress-row').style.display='none';
+    document.getElementById('completeScreen').style.display='block';
+    if(correct>=3) spawnConfetti();
+  },2200);
+}
+
+function setStage(n){
+  stage=n;
+  [1,2,3].forEach(i=>{document.getElementById('stage'+i).style.display=i===n?'block':'none';document.getElementById('tab'+i).classList.toggle('active',i===n);});
+  document.getElementById('progressText').textContent=`Stage ${n} of 3`;
+  document.getElementById('nextBtn').style.display='none';
+  if(n===2) buildCapitals();
+  if(n===3) buildFacts();
+}
+function nextStage(){if(stage<3){score++;updateStars();setStage(stage+1);} else{buildFacts();}}
+
+function showFB(id,type,msg){const el=document.getElementById(id);el.textContent=msg;el.className=`feedback ${type}`;el.style.display='block';}
+function updateStars(){const c=Math.min(5,Math.ceil(score/2));for(let i=1;i<=c;i++) document.getElementById('s'+i).classList.add('lit');}
+function showOverlay(emoji,title,fact){
+  document.getElementById('oEmoji').textContent=emoji;document.getElementById('oTitle').textContent=title;document.getElementById('oFact').innerHTML=fact;
+  const ov=document.getElementById('overlay');ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),2600);
+}
+function spawnConfetti(){
+  const colors=['#FFD166','#A8E063','#06D6A0','#4CC9F0','#FF9F1C'];
+  for(let i=0;i<28;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[i%5]};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()*2}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),3500);}
+}
+function restartGame(){
+  stage=1;score=0;capSels={};factSels={};
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('completeScreen').style.display='none';
+  document.querySelectorAll('.section').forEach(s=>s.style.display='block');
+  document.querySelector('.stage-tabs').style.display='flex';
+  document.querySelector('.progress-row').style.display='flex';
+  setStage(1);
+}
+
+buildNeighbours();
+</script>
+</body>
+</html>

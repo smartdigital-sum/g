@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sense Safari - GyanPlay Class 2</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #55efc4, #00b894);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #55efc4;
+            font-size: 2rem;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .score {
+            background: #e94560;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text {
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        .sense-organs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .sense-organ {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 4px solid #dfe6e9;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .sense-organ:hover {
+            transform: scale(1.1);
+        }
+        
+        .sense-organ.selected {
+            border-color: #00b894;
+            background: #55efc4;
+        }
+        
+        .organ-icon {
+            font-size: 3rem;
+        }
+        
+        .organ-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #2d3436;
+            margin-top: 5px;
+        }
+        
+        .safari-scene {
+            background: linear-gradient(180deg, #87CEEB 0%, #90EE90 50%, #228B22 100%);
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 300px;
+            position: relative;
+        }
+        
+        .scene-title {
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .objects-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .object-item {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            text-align: center;
+            min-width: 100px;
+        }
+        
+        .object-item:hover {
+            transform: scale(1.1);
+        }
+        
+        .object-item.correct {
+            border-color: #00b894;
+            background: #55efc4;
+            animation: bounce 0.5s;
+        }
+        
+        .object-item.wrong {
+            border-color: #e94560;
+            background: #ff7675;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .object-icon {
+            font-size: 3rem;
+        }
+        
+        .object-name {
+            font-size: 1rem;
+            color: #2d3436;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .question-box {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .question-text {
+            font-size: 1.5rem;
+            color: #2d3436;
+            margin-bottom: 15px;
+        }
+        
+        .question-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .option-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(243, 156, 18, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .feedback-content.correct {
+            border: 5px solid #00b894;
+        }
+        
+        .feedback-content.wrong {
+            border: 5px solid #e94560;
+        }
+        
+        .feedback-icon {
+            font-size: 5rem;
+        }
+        
+        .feedback-text {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            color: #2d3436;
+        }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .level-indicator {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .senses-info {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .senses-title {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .sense-info {
+            color: #dfe6e9;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch1-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🦁 Sense Safari</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Level: <span id="level">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Match objects to the sense you use to experience them!</p>
+        </div>
+        
+        <div class="level-indicator" id="levelIndicator">Level 1: Match the object to its sense</div>
+        
+        <div class="sense-organs" id="senseOrgans">
+            <div class="sense-organ" data-sense="eyes" onclick="selectSense('eyes')">
+                <span class="organ-icon">👀</span>
+                <span class="organ-name">Eyes</span>
+            </div>
+            <div class="sense-organ" data-sense="ears" onclick="selectSense('ears')">
+                <span class="organ-icon">👂</span>
+                <span class="organ-name">Ears</span>
+            </div>
+            <div class="sense-organ" data-sense="nose" onclick="selectSense('nose')">
+                <span class="organ-icon">👃</span>
+                <span class="organ-name">Nose</span>
+            </div>
+            <div class="sense-organ" data-sense="tongue" onclick="selectSense('tongue')">
+                <span class="organ-icon">👅</span>
+                <span class="organ-name">Tongue</span>
+            </div>
+            <div class="sense-organ" data-sense="skin" onclick="selectSense('skin')">
+                <span class="organ-icon">✋</span>
+                <span class="organ-name">Skin</span>
+            </div>
+        </div>
+        
+        <div class="safari-scene">
+            <div class="scene-title">🦁 Safari Objects</div>
+            <div class="objects-container" id="objectsContainer">
+                <!-- Objects will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="question-box" id="questionBox" style="display: none;">
+            <div class="question-text" id="questionText">Which sense do you use to taste?</div>
+            <div class="question-options" id="questionOptions">
+                <button class="option-btn" onclick="answerQuestion('eyes')">👀 Eyes</button>
+                <button class="option-btn" onclick="answerQuestion('ears')">👂 Ears</button>
+                <button class="option-btn" onclick="answerQuestion('nose')">👃 Nose</button>
+                <button class="option-btn" onclick="answerQuestion('tongue')">👅 Tongue</button>
+                <button class="option-btn" onclick="answerQuestion('skin')">✋ Skin</button>
+            </div>
+        </div>
+        
+        <div class="senses-info">
+            <div class="senses-title">📖 Our 5 Senses:</div>
+            <div class="sense-info">👀 Eyes - See (look at colors, shapes)</div>
+            <div class="sense-info">👂 Ears - Hear (listen to sounds)</div>
+            <div class="sense-info">👃 Nose - Smell (sniff odors)</div>
+            <div class="sense-info">👅 Tongue - Taste (sweet, salty, sour, bitter)</div>
+            <div class="sense-info">✋ Skin - Touch (feel hot, cold, rough, smooth)</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextLevel()">Next Level →</button>
+        </div>
+    </div>
+    
+    <script>
+        const objects = [
+            { icon: '🌺', name: 'Flower', sense: 'eyes' },
+            { icon: '🔔', name: 'Bell', sense: 'ears' },
+            { icon: '🍕', name: 'Pizza', sense: 'tongue' },
+            { icon: '🌹', name: 'Rose', sense: 'nose' },
+            { icon: '🔥', name: 'Fire', sense: 'skin' },
+            { icon: '🌙', name: 'Moon', sense: 'eyes' },
+            { icon: '🎵', name: 'Music', sense: 'ears' },
+            { icon: '🍬', name: 'Candy', sense: 'tongue' },
+            { icon: '🧴', name: 'Perfume', sense: 'nose' },
+            { icon: '❄️', name: 'Ice', sense: 'skin' },
+            { icon: '🦋', name: 'Butterfly', sense: 'eyes' },
+            { icon: '🐕', name: 'Dog bark', sense: 'ears' },
+            { icon: '🍋', name: 'Lemon', sense: 'tongue' },
+            { icon: '🧺', name: 'Spices', sense: 'nose' },
+            { icon: '🪨', name: 'Rock', sense: 'skin' }
+        ];
+        
+        let level = 1;
+        let score = 0;
+        let selectedSense = null;
+        let currentObjects = [];
+        let objectAnswers = {};
+        
+        function initLevel() {
+            currentObjects = [...objects].sort(() => Math.random() - 0.5).slice(0, 4);
+            objectAnswers = {};
+            
+            const container = document.getElementById('objectsContainer');
+            container.innerHTML = '';
+            
+            currentObjects.forEach((obj, index) => {
+                const div = document.createElement('div');
+                div.className = 'object-item';
+                div.dataset.index = index;
+                div.innerHTML = `
+                    <span class="object-icon">${obj.icon}</span>
+                    <span class="object-name">${obj.name}</span>
+                `;
+                div.onclick = () => selectObject(div, obj);
+                container.appendChild(div);
+            });
+            
+            document.getElementById('level').textContent = level;
+            
+            if (level === 1) {
+                document.getElementById('levelIndicator').textContent = 'Level 1: Tap the sense organ, then tap matching objects';
+                document.getElementById('questionBox').style.display = 'none';
+            } else {
+                document.getElementById('levelIndicator').textContent = 'Level 2: Answer the question about senses';
+                document.getElementById('questionBox').style.display = 'block';
+                generateQuestion();
+            }
+            
+            // Reset selections
+            document.querySelectorAll('.sense-organ').forEach(o => o.classList.remove('selected'));
+            selectedSense = null;
+        }
+        
+        function selectSense(sense) {
+            selectedSense = sense;
+            document.querySelectorAll('.sense-organ').forEach(o => {
+                o.classList.toggle('selected', o.dataset.sense === sense);
+            });
+        }
+        
+        function selectObject(div, obj) {
+            if (!selectedSense) {
+                alert('Please tap a sense organ first!');
+                return;
+            }
+            
+            if (obj.sense === selectedSense) {
+                div.classList.add('correct');
+                objectAnswers[obj.name] = true;
+                score += 5;
+                document.getElementById('score').textContent = score;
+            } else {
+                div.classList.add('wrong');
+                objectAnswers[obj.name] = false;
+            }
+            
+            setTimeout(() => {
+                div.classList.remove('correct', 'wrong');
+            }, 1000);
+        }
+        
+        function generateQuestion() {
+            const questions = [
+                { text: 'Which sense do you use to see?', answer: 'eyes' },
+                { text: 'Which sense do you use to hear?', answer: 'ears' },
+                { text: 'Which sense do you use to smell?', answer: 'nose' },
+                { text: 'Which sense do you use to taste?', answer: 'tongue' },
+                { text: 'Which sense do you use to touch?', answer: 'skin' }
+            ];
+            
+            const q = questions[Math.floor(Math.random() * questions.length)];
+            document.getElementById('questionText').textContent = q.text;
+            document.getElementById('questionText').dataset.answer = q.answer;
+        }
+        
+        function answerQuestion(sense) {
+            const correctAnswer = document.getElementById('questionText').dataset.answer;
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            if (sense === correctAnswer) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Correct!';
+                score += 10;
+                document.getElementById('score').textContent = score;
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = 'Try again!';
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextLevel() {
+            document.getElementById('feedback').classList.remove('show');
+            level++;
+            if (level > 2) level = 1;
+            initLevel();
+        }
+        
+        initLevel();
+    </script>
+</body>
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+<title>शब्द बनाओ - Word Weaver - GyanPlay Class 2</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Comic Sans MS', 'Arial', sans-serif;
+        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+    
+    .game-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .header {
+        background: linear-gradient(135deg, #2d3436, #1e272e);
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .header h1 {
+        color: #ff6b6b;
+        font-size: 2rem;
+    }
+    
+    .score-board {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 10px;
+    }
+    
+    .score {
+        background: #00b894;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-size: 1.2rem;
+    }
+    
+    .instruction-box {
+        background: rgba(255,255,255,0.2);
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .instruction-text {
+        color: white;
+        font-size: 1.3rem;
+    }
+    
+    .word-display {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .target-word-label {
+        color: #636e72;
+        font-size: 1.2rem;
+    }
+    
+    .target-word {
+        font-size: 3rem;
+        color: #2d3436;
+        font-weight: bold;
+        margin: 20px 0;
+        letter-spacing: 10px;
+    }
+    
+    .meaning {
+        color: #e17055;
+        font-size: 1.2rem;
+    }
+    
+    .syllables-area {
+        background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .syllables-label {
+        color: white;
+        text-align: center;
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+    
+    .syllables-container {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .syllable-block {
+        background: white;
+        border-radius: 15px;
+        padding: 15px 25px;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2d3436;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 4px solid transparent;
+    }
+    
+    .syllable-block:hover {
+        transform: scale(1.1);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    
+    .syllable-block.selected {
+        border-color: #e94560;
+        background: #ffeaa7;
+    }
+    
+    .word-building-area {
+        background: linear-gradient(135deg, #00b894, #55efc4);
+        border-radius: 20px;
+        padding: 20px;
+    }
+    
+    .build-label {
+        color: white;
+        text-align: center;
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+    
+    .built-word {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        min-height: 80px;
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .built-letter {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #2d3436;
+        width: 60px;
+        text-align: center;
+        background: #dfe6e9;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+    
+    .built-letter:hover {
+        background: #ff7675;
+        color: white;
+    }
+    
+    .check-btn {
+        display: block;
+        margin: 20px auto;
+        padding: 15px 50px;
+        font-size: 1.5rem;
+        background: linear-gradient(135deg, #f39c12, #f1c40f);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        box-shadow: 0 5px 20px rgba(243, 156, 18, 0.4);
+        transition: transform 0.3s;
+    }
+    
+    .check-btn:hover {
+        transform: scale(1.05);
+    }
+    
+    .feedback {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        background: rgba(0,0,0,0.7);
+    }
+    
+    .feedback.show { display: flex; }
+    
+    .feedback-content {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        animation: popIn 0.5s;
+    }
+    
+    @keyframes popIn {
+        from { transform: scale(0); }
+        to { transform: scale(1); }
+    }
+    
+    .feedback-content.correct {
+        border: 5px solid #00b894;
+    }
+    
+    .feedback-content.wrong {
+        border: 5px solid #e94560;
+    }
+    
+    .feedback-icon {
+        font-size: 5rem;
+    }
+    
+    .feedback-text {
+        font-size: 1.8rem;
+        margin: 20px 0;
+        color: #2d3436;
+    }
+    
+    .next-btn {
+        padding: 15px 40px;
+        font-size: 1.3rem;
+        background: #e94560;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+    
+    .back-btn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        padding: 10px 20px;
+        background: #2d3436;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+    
+    .hint-box {
+        background: rgba(255,255,255,0.1);
+        border-radius: 15px;
+        padding: 15px;
+        margin-top: 20px;
+    }
+    
+    .hint-title {
+        color: white;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+    
+    .hint-text {
+        color: #dfe6e9;
+        font-size: 0.9rem;
+    }
+</style>
+</head>
+<body>
+<button class="back-btn" onclick="window.location.href='batch1-index.html'">← Back</button>
+
+<div class="game-container">
+    <div class="header">
+        <h1>🔤 शब्द बनाओ (Word Weaver)</h1>
+        <div class="score-board">
+            <div class="score">स्कोर: <span id="score">0</span></div>
+            <div class="score">शब्द: <span id="wordNum">1</span></div>
+        </div>
+    </div>
+    
+    <div class="instruction-box">
+        <p class="instruction-text">सिलेबल खींचकर सही शब्द बनाओ! (Drag syllables to build the word)</p>
+    </div>
+    
+    <div class="word-display">
+        <div class="target-word-label">यह शब्द बनाओ:</div>
+        <div class="target-word" id="targetWord">कमल</div>
+        <div class="meaning" id="meaning">Lotus</div>
+    </div>
+    
+    <div class="syllables-area">
+        <div class="syllables-label">🔮 उपलब्ध सिलेबल (Available Syllables):</div>
+        <div class="syllables-container" id="syllablesContainer">
+            <!-- Syllables will be generated by JS -->
+        </div>
+    </div>
+    
+    <div class="word-building-area">
+        <div class="build-label">📝 तुम्हारा शब्द (Your Word):</div>
+        <div class="built-word" id="builtWord">
+            <span style="color: #636e72; font-size: 1.5rem; align-self: center;">सिलेबल यहाँ खींचें</span>
+        </div>
+    </div>
+    
+    <button class="check-btn" onclick="checkAnswer()">✓ जांचें (Check)</button>
+    
+    <div class="hint-box">
+        <div class="hint-title">💡 सुझाव (Hint):</div>
+        <div class="hint-text">शब्द को तोड़कर सीखें - कमल = क + म + ल</div>
+    </div>
+</div>
+
+<div class="feedback" id="feedback">
+    <div class="feedback-content" id="feedbackContent">
+        <div class="feedback-icon" id="feedbackIcon">🎉</div>
+        <div class="feedback-text" id="feedbackText">सही!</div>
+        <button class="next-btn" onclick="nextWord()">अगला शब्द →</button>
+    </div>
+</div>
+
+<script>
+    const words = [
+        { word: 'कमल', syllables: ['क', 'म', 'ल', 'त', 'प'], meaning: 'Lotus (कमल)' },
+        { word: 'पानी', syllables: ['प', 'ना', 'नी', 'का', 'त'], meaning: 'Water (पानी)' },
+        { word: 'बालक', syllables: ['बा', 'ल', 'क', 'ता', 'का'], meaning: 'Child (बालक)' },
+        { word: 'गाय', syllables: ['गा', 'य', 'व', 'ना', 'ल'], meaning: 'Cow (गाय)' },
+        { word: 'स्कूल', syllables: ['स्कू', 'ल', 'घर', 'पाठ', 'म'], meaning: 'School (स्कूल)' },
+        { word: 'पुस्तक', syllables: ['पु', 'स्त', 'क', 'बा', 'त'], meaning: 'Book (पुस्तक)' },
+        { word: 'फूल', syllables: ['फू', 'ल', 'गंध', 'लाल', 'सफेद'], meaning: 'Flower (फूल)' },
+        { word: 'देव', syllables: ['दे', 'व', 'भग', 'वा', 'न'], meaning: 'God (देव)' },
+        { word: 'विद्यालय', syllables: ['वि', 'द्या', 'लय', 'स्कूल', 'पाठ'], meaning: 'School (विद्यालय)' },
+        { word: 'माता', syllables: ['मा', 'ता', 'पिता', 'घर', 'न'], meaning: 'Mother (माता)' },
+        { word: 'पिता', syllables: ['पि', 'ता', 'माता', 'घर', 'न'], meaning: 'Father (पिता)' },
+        { word: 'जल', syllables: ['ज', 'ल', 'पानी', 'नी', 'धर'], meaning: 'Water (जल)' },
+        { word: 'अग्नि', syllables: ['अग्नि', 'आग', 'जल', 'हवा', 'धुआं'], meaning: 'Fire (अग्नि)' },
+        { word: 'वायु', syllables: ['वा', 'यु', 'हवा', 'हाथ', 'फू'], meaning: 'Air (वायु)' },
+        { word: 'भूमि', syllables: ['भू', 'मि', 'जमीन', 'धरती', 'खेत'], meaning: 'Earth (भूमि)' }
+    ];
+    
+    let currentIndex = 0;
+    let score = 0;
+    let builtLetters = [];
+    let availableSyllables = [];
+    
+    function loadWord() {
+        const wordData = words[currentIndex];
+        document.getElementById('targetWord').textContent = wordData.word;
+        document.getElementById('meaning').textContent = wordData.meaning;
+        document.getElementById('wordNum').textContent = currentIndex + 1;
+        
+        // Shuffle syllables
+        availableSyllables = [...wordData.syllables].sort(() => Math.random() - 0.5);
+        
+        const container = document.getElementById('syllablesContainer');
+        container.innerHTML = '';
+        
+        availableSyllables.forEach((syl, index) => {
+            const div = document.createElement('div');
+            div.className = 'syllable-block';
+            div.textContent = syl;
+            div.dataset.syllable = syl;
+            div.onclick = () => selectSyllable(div, syl);
+            container.appendChild(div);
+        });
+        
+        builtLetters = [];
+        updateBuiltWord();
+    }
+    
+    function selectSyllable(div, syllable) {
+        if (div.classList.contains('selected')) {
+            // Remove from built word
+            div.classList.remove('selected');
+            builtLetters = builtLetters.filter(s => s !== syllable);
+        } else {
+            // Add to built word
+            div.classList.add('selected');
+            builtLetters.push(syllable);
+        }
+        updateBuiltWord();
+    }
+    
+    function updateBuiltWord() {
+        const container = document.getElementById('builtWord');
+        
+        if (builtLetters.length === 0) {
+            container.innerHTML = '<span style="color: #636e72; font-size: 1.5rem; align-self: center;">सिलेबल यहाँ खींचें / Click syllables above</span>';
+            return;
+        }
+        
+        container.innerHTML = builtLetters.map((letter, index) => 
+            `<span class="built-letter" onclick="removeLetter(${index})">${letter}</span>`
+        ).join('');
+    }
+    
+    function removeLetter(index) {
+        const letter = builtLetters[index];
+        builtLetters.splice(index, 1);
+        
+        // Remove selection from the syllable block
+        document.querySelectorAll('.syllable-block').forEach(block => {
+            if (block.dataset.syllable === letter) {
+                block.classList.remove('selected');
+            }
+        });
+        
+        updateBuiltWord();
+    }
+    
+    function checkAnswer() {
+        if (builtLetters.length === 0) {
+            alert('कृपया सिलेबल चुनें (Please select syllables)');
+            return;
+        }
+        
+        const userWord = builtLetters.join('');
+        const correctWord = words[currentIndex].word;
+        
+        const feedback = document.getElementById('feedback');
+        const content = document.getElementById('feedbackContent');
+        const icon = document.getElementById('feedbackIcon');
+        const text = document.getElementById('feedbackText');
+        
+        if (userWord === correctWord) {
+            content.className = 'feedback-content correct';
+            icon.textContent = '🎉';
+            text.textContent = 'बहुत बढ़िया! (Excellent!)';
+            score += 10;
+            document.getElementById('score').textContent = score;
+        } else {
+            content.className = 'feedback-content wrong';
+            icon.textContent = '😅';
+            text.textContent = 'पुनः प्रयास करें!';
+        }
+        
+        feedback.classList.add('show');
+    }
+    
+    function nextWord() {
+        document.getElementById('feedback').classList.remove('show');
+        currentIndex = (currentIndex + 1) % words.length;
+        loadWord();
+    }
+    
+    loadWord();
+</script>
+</body>
+</html>

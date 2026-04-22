@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔍 कहानी के गुप्त सुराग — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050E0A;--card:#0A1C14;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--green:#4CAF50;--muted:#7AB87A;--text:#E8F5E9;--dim:#3A7A4A;--paper:#0F2018}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(6,214,160,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.35rem;font-weight:800;color:var(--gold)}
+.hindi-sub{font-family:'Noto Sans Devanagari',sans-serif;font-size:.88rem;color:var(--teal)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.2rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+.hook{background:linear-gradient(135deg,rgba(6,214,160,.1),rgba(76,175,80,.07));border:1px solid rgba(6,214,160,.25);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.87rem;line-height:1.65;color:#B8F0C4}
+.hook strong{color:var(--gold)}.hook .hindi{font-family:'Noto Sans Devanagari',sans-serif;color:var(--teal);font-size:.95rem}
+/* Story card */
+.story-card{background:var(--paper);border-radius:14px;padding:18px 20px;width:100%;max-width:460px;border-left:4px solid var(--teal);border-top:1px solid rgba(6,214,160,.15);border-right:1px solid rgba(6,214,160,.15);border-bottom:1px solid rgba(6,214,160,.15)}
+.story-loc{font-size:.68rem;text-transform:uppercase;letter-spacing:2px;color:var(--teal);margin-bottom:8px}
+.story-title{font-family:'Noto Sans Devanagari',sans-serif;font-size:1.1rem;font-weight:700;color:var(--gold);margin-bottom:10px}
+.story-text{font-family:'Noto Sans Devanagari',sans-serif;font-size:.98rem;line-height:2;color:var(--text)}
+.story-text-en{font-size:.78rem;color:rgba(255,255,255,.3);line-height:1.5;margin-top:8px;font-style:italic}
+/* Questions */
+.questions{display:flex;flex-direction:column;gap:12px;width:100%;max-width:460px}
+.q-block{background:var(--card);border-radius:12px;padding:14px 16px;border:1px solid rgba(6,214,160,.12)}
+.q-type-label{font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;font-weight:700}
+.q-type-label.factual{color:var(--teal)}
+.q-type-label.inference{color:var(--gold)}
+.q-text{font-family:'Noto Sans Devanagari',sans-serif;font-size:.95rem;color:var(--text);margin-bottom:10px;line-height:1.6}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{padding:9px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(6,214,160,.15);border-radius:8px;cursor:pointer;font-family:'Noto Sans Devanagari',sans-serif;font-size:.88rem;color:var(--muted);transition:all .15s;text-align:left;line-height:1.4}
+.q-opt:hover{border-color:var(--teal);color:var(--text);background:rgba(6,214,160,.07)}
+.q-opt.correct{border-color:var(--teal);background:rgba(6,214,160,.12);color:var(--teal)}
+.q-opt.wrong{border-color:var(--coral);background:rgba(255,107,107,.08);color:var(--coral)}
+.q-exp{font-size:.78rem;color:var(--dim);margin-top:8px;line-height:1.5;display:none;padding:8px;background:rgba(0,0,0,.2);border-radius:6px}
+.q-exp.show{display:block}
+.done-banner{background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.25);border-radius:10px;padding:10px 16px;text-align:center;font-size:.85rem;color:var(--teal);display:none}
+.done-banner.show{display:block}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#050E0A;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(5,14,10,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4rem}.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.9rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.88rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="game-title">🔍 <span class="hindi-sub">कहानी के गुप्त सुराग</span></div>
+    <div class="subject-tag">Hindi · Reading Comprehension · Class 3</div>
+  </div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+<div class="game-area">
+  <div class="hook">
+    <span class="hindi">एक अच्छा पाठक शब्दों के पीछे की बात भी समझता है!</span><br>
+    A good reader reads <strong>between the lines</strong>. Facts are in the text — clues are hidden inside. Find both!
+  </div>
+  <div id="mainContent"></div>
+</div>
+<div class="bottom">
+  <div class="prog" id="prog">कहानी 1 / 3</div>
+  <button class="next-btn" id="nextBtn" onclick="nextStory()">अगली कहानी →</button>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">शाबाश!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+<script>
+const STORIES=[
+  {
+    loc:'📍 असम का चाय बागान',
+    title:'खोया हुआ छाता',
+    text:'रिया हर रोज़ स्कूल जाती थी। आज बारिश हो रही थी। उसने अपना लाल छाता उठाया और घर से निकली। रास्ते में उसे पानी की बड़ी-बड़ी बूँदें दिखीं। स्कूल पहुँचकर उसने देखा — उसका छाता नहीं था!',
+    textEn:'Riya went to school every day. Today it was raining. She picked up her red umbrella and left home. On the way she saw big drops of rain. Reaching school she saw — her umbrella was gone!',
+    qs:[
+      {type:'factual',q:'रिया का छाता किस रंग का था?',opts:['नीला','लाल','हरा','पीला'],ans:1,exp:'कहानी में लिखा है: "उसने अपना लाल छाता उठाया।" (Story says: she picked up her red umbrella.)'},
+      {type:'factual',q:'रिया कहाँ जा रही थी?',opts:['बाज़ार','दोस्त के घर','स्कूल','नदी के पास'],ans:2,exp:'कहानी में लिखा है: "रिया हर रोज़ स्कूल जाती थी।"'},
+      {type:'inference',q:'छाता कहाँ छूट गया होगा?',opts:['स्कूल में','घर पर','रास्ते में कहीं','बाज़ार में'],ans:2,exp:'वह घर से छाता लेकर निकली, लेकिन स्कूल पहुँचकर छाता नहीं था — इसलिए रास्ते में कहीं छूट गया होगा!'},
+    ]
+  },
+  {
+    loc:'📍 ब्रह्मपुत्र नदी का किनारा',
+    title:'मछुआरे का जाल',
+    text:'सुबह हुई। नदी के किनारे बूढ़े रतन अपना जाल फैला रहे थे। पानी शांत था। अचानक जाल हिला — बहुत ज़ोर से! रतन के चेहरे पर मुस्कान आ गई।',
+    textEn:'Morning arrived. Old Ratan was spreading his net by the river. The water was calm. Suddenly the net shook — very hard! A smile appeared on Ratan\'s face.',
+    qs:[
+      {type:'factual',q:'रतन नदी किनारे क्या कर रहे थे?',opts:['सो रहे थे','जाल फैला रहे थे','खाना खा रहे थे','नाव चला रहे थे'],ans:1,exp:'कहानी में है: "रतन अपना जाल फैला रहे थे।"'},
+      {type:'factual',q:'पानी कैसा था?',opts:['तेज़','गंदा','शांत','ठंडा'],ans:2,exp:'"पानी शांत था" — यह कहानी में साफ़ लिखा है।'},
+      {type:'inference',q:'रतन की मुस्कान का कारण क्या था?',opts:['धूप निकल आई','जाल में मछली फंसी होगी','उनका दोस्त आया','नाव मिल गई'],ans:1,exp:'जाल ज़ोर से हिला + रतन मुस्कुराए — मछुआरे खुश तभी होते हैं जब मछली मिलती है! यही अनुमान (inference) है।'},
+    ]
+  },
+  {
+    loc:'📍 गाँव का मेला, असम',
+    title:'बिहू का दिन',
+    text:'आज बिहू था। गाँव में ढोल की आवाज़ आ रही थी। सबने नए कपड़े पहने थे। छोटी मीना दौड़कर घर से बाहर आई। उसकी आँखें चमक रही थीं।',
+    textEn:'Today was Bihu. The sound of drums was coming from the village. Everyone had worn new clothes. Little Meena came running out of the house. Her eyes were shining.',
+    qs:[
+      {type:'factual',q:'गाँव में कौन-सी आवाज़ आ रही थी?',opts:['बाँसुरी की','ढोल की','पक्षियों की','बारिश की'],ans:1,exp:'"गाँव में ढोल की आवाज़ आ रही थी।" — यह सीधे लिखा है।'},
+      {type:'factual',q:'लोगों ने क्या पहना था?',opts:['पुराने कपड़े','स्कूल की यूनिफ़ॉर्म','नए कपड़े','सफ़ेद कपड़े'],ans:2,exp:'"सबने नए कपड़े पहने थे।" — कहानी में स्पष्ट लिखा है।'},
+      {type:'inference',q:'मीना की आँखें क्यों चमक रही थीं?',opts:['उसे नींद आ रही थी','वह बहुत खुश और उत्साहित थी','उसकी आँखें दुख रही थीं','वह रो रही थी'],ans:1,exp:'बिहू का दिन + दौड़कर बाहर आना + चमकती आँखें — ये सब मिलकर बताते हैं कि मीना बहुत खुश थी! चमकती आँखें खुशी की निशानी हैं।'},
+    ]
+  }
+];
+let si=0,score=0,answeredQ={},storyDone=false;
+function loadStory(){
+  const s=STORIES[si];answeredQ={};storyDone=false;
+  document.getElementById('prog').textContent=`कहानी ${si+1} / ${STORIES.length}`;
+  document.getElementById('nextBtn').style.display='none';
+  const mc=document.getElementById('mainContent');mc.innerHTML='';
+  // Story card
+  const sc=document.createElement('div');sc.className='story-card';
+  sc.innerHTML=`<div class="story-loc">${s.loc}</div><div class="story-title">${s.title}</div><div class="story-text">${s.text}</div><div class="story-text-en">${s.textEn}</div>`;
+  mc.appendChild(sc);
+  // Questions
+  const qarea=document.createElement('div');qarea.className='questions';
+  s.qs.forEach((q,qi)=>{
+    const block=document.createElement('div');block.className='q-block';
+    const typeLabel=q.type==='factual'?'📋 तथ्य — कहानी में देखो':'🧠 अनुमान — सुराग ढूँढो';
+    block.innerHTML=`<div class="q-type-label ${q.type}">${typeLabel}</div><div class="q-text">${q.q}</div><div class="q-opts" id="qopts-${qi}"></div><div class="q-exp" id="qexp-${qi}">${q.exp}</div>`;
+    q.opts.forEach((o,oi)=>{
+      const btn=document.createElement('button');btn.className='q-opt';btn.textContent=o;
+      btn.onclick=()=>pickAnswer(qi,oi,q.ans,btn,s.qs.length);
+      document.createElement('div');
+      block.querySelector(`#qopts-${qi}`).appendChild(btn);
+    });
+    qarea.appendChild(block);
+  });
+  const banner=document.createElement('div');banner.className='done-banner';banner.id='doneBanner';banner.textContent='✅ सभी सवालों के जवाब मिल गए! बहुत अच्छे जासूस हो!';
+  qarea.appendChild(banner);
+  mc.appendChild(qarea);
+}
+function pickAnswer(qi,oi,correct,btn,total){
+  if(answeredQ[qi]!==undefined)return;
+  const opts=document.getElementById(`qopts-${qi}`).querySelectorAll('.q-opt');
+  opts.forEach(b=>b.style.pointerEvents='none');
+  if(oi===correct){btn.classList.add('correct');score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');}
+  else{btn.classList.add('wrong');opts[correct].classList.add('correct');}
+  document.getElementById(`qexp-${qi}`).classList.add('show');
+  answeredQ[qi]=true;
+  if(Object.keys(answeredQ).length===total&&!storyDone){
+    storyDone=true;
+    document.getElementById('doneBanner').classList.add('show');
+    showOv('जासूस! 🔍','कहानी में facts भी मिले, और सुराग भी! Excellent reading!');confetti();setTimeout(hideOv,2400);
+    document.getElementById('nextBtn').style.display='block';
+  }
+}
+function nextStory(){si++;document.getElementById('nextBtn').style.display='none';if(si>=STORIES.length){endGame();return;}loadStory();}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOv(`Score: ${score}/${STORIES.length*3}!`,'हिंदी जासूस उस्ताद! You found every clue in every story!');
+  document.getElementById('nextBtn').textContent='फिर खेलो ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;si=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='अगली कहानी →';document.getElementById('nextBtn').onclick=nextStory;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='शाबाश!';hideOv();loadStory();};
+}
+function showOv(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOv(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#06D6A0','#FFD166','#4CAF50','#C77DFF','#FF9F1C'];for(let i=0;i<25;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+loadStory();
+</script>
+</body>
+</html>

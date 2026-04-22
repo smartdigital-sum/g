@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Fraction War – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#0F0C29;--dark:#1A1A2E;--gold:#FFB800;--sky:#00AEEF;
+    --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg);color:#fff;font-family:'Nunito',sans-serif;
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    padding:20px;animation:fadeIn .6s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  /* TOP BAR */
+  .topbar{width:100%;max-width:640px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
+  .back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.85rem;}
+  .back-btn:hover{background:rgba(255,255,255,.2);}
+  .badge{background:var(--purple);color:#fff;padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:800;letter-spacing:1px;}
+  .lang-bar{display:flex;gap:6px;}
+  .lang-btn{background:rgba(255,255,255,.1);border:none;color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;}
+  .lang-btn.active{background:var(--gold);color:#000;}
+
+  /* HEADER */
+  h1{font-family:'Baloo 2',cursive;font-size:2.2rem;color:var(--gold);text-align:center;line-height:1.2;}
+  .subtitle{font-size:.9rem;color:#aaa;margin-top:4px;text-align:center;}
+
+  /* STARS */
+  .stars{display:flex;justify-content:center;gap:10px;margin:14px 0;}
+  .star{font-size:2rem;color:#444;transition:color .4s;}
+  .star.lit{color:var(--gold);}
+
+  /* SCORE */
+  .score-bar{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:640px;background:var(--dark);border-radius:12px;padding:10px 20px;margin-bottom:18px;}
+  .score-label{font-size:.85rem;color:#aaa;}
+  .score-val{font-family:'Baloo 2',cursive;font-size:1.6rem;color:var(--gold);}
+  .round-info{font-size:.85rem;color:#aaa;}
+
+  /* CARD */
+  .card{background:var(--dark);border-radius:20px;padding:30px 24px;width:100%;max-width:640px;text-align:center;}
+  .question-label{font-size:1rem;color:#ccc;margin-bottom:22px;font-weight:700;min-height:24px;}
+
+  /* FRACTION BUTTONS */
+  .fracs{display:flex;gap:20px;justify-content:center;align-items:stretch;margin:10px 0 24px;}
+  .frac-btn{
+    background:linear-gradient(135deg,rgba(124,58,237,.25),rgba(0,174,239,.15));
+    border:2px solid var(--purple);color:#fff;border-radius:16px;
+    padding:20px 30px;cursor:pointer;font-family:'Baloo 2',cursive;
+    font-size:2.2rem;line-height:1;transition:transform .15s,border-color .15s,background .15s;
+    min-width:130px;display:flex;flex-direction:column;align-items:center;gap:0;
+  }
+  .frac-btn:hover{transform:scale(1.06);border-color:var(--sky);}
+  .frac-btn:disabled{cursor:not-allowed;transform:none;}
+  .frac-btn.correct{border-color:var(--green);background:rgba(0,200,83,.2);}
+  .frac-btn.wrong{border-color:var(--pink);background:rgba(255,64,129,.2);}
+  .frac-num,.frac-den{display:block;font-size:2rem;}
+  .frac-line{display:block;width:60px;height:3px;background:#fff;border-radius:2px;margin:4px auto;}
+  .vs-label{display:flex;align-items:center;font-family:'Baloo 2',cursive;font-size:1.6rem;color:var(--gold);}
+
+  /* FEEDBACK */
+  .feedback{min-height:36px;font-size:1.1rem;font-weight:800;margin-bottom:18px;transition:all .3s;}
+  .feedback.correct{color:var(--green);}
+  .feedback.wrong{color:var(--pink);}
+
+  /* PROGRESS */
+  .progress-wrap{width:100%;max-width:640px;background:rgba(255,255,255,.1);border-radius:10px;height:8px;margin-bottom:18px;}
+  .progress-fill{height:8px;border-radius:10px;background:linear-gradient(90deg,var(--purple),var(--sky));transition:width .4s;}
+
+  /* NEXT / RESTART */
+  .next-btn{background:linear-gradient(135deg,var(--purple),var(--sky));border:none;color:#fff;padding:12px 36px;border-radius:24px;font-family:'Baloo 2',cursive;font-size:1.1rem;cursor:pointer;display:none;margin-top:8px;}
+  .next-btn:hover{opacity:.9;}
+  .restart-btn{background:linear-gradient(135deg,var(--gold),var(--pink));border:none;color:#000;padding:12px 36px;border-radius:24px;font-family:'Baloo 2',cursive;font-size:1.1rem;cursor:pointer;font-weight:800;}
+  .restart-btn:hover{opacity:.9;}
+
+  /* END SCREEN */
+  .end-screen{display:none;text-align:center;}
+  .end-screen h2{font-family:'Baloo 2',cursive;font-size:2rem;color:var(--gold);margin-bottom:10px;}
+  .end-screen p{font-size:1.1rem;margin-bottom:20px;color:#ddd;}
+
+  [data-lang]{display:none;}
+  .hint{font-size:.78rem;color:#888;margin-top:8px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="badge">MATHS</span>
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<h1>⚔️ <span data-lang="en">Fraction War</span><span data-lang="hi">भिन्न युद्ध</span><span data-lang="as">ভিন্ন যুদ্ধ</span></h1>
+<p class="subtitle">NCERT Class 7 · Fractions &amp; Decimals</p>
+
+<div class="stars">
+  <span class="star" id="s1">★</span>
+  <span class="star" id="s2">★</span>
+  <span class="star" id="s3">★</span>
+</div>
+
+<div class="score-bar">
+  <div><div class="score-label" data-lang="en">Score</div><div class="score-label" data-lang="hi">अंक</div><div class="score-label" data-lang="as">নম্বৰ</div><div class="score-val" id="scoreVal">0</div></div>
+  <div class="round-info" id="roundInfo">Round 1 / 10</div>
+</div>
+
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+<!-- GAME AREA -->
+<div class="card" id="gameArea">
+  <div class="question-label">
+    <span data-lang="en">Which fraction is BIGGER?</span>
+    <span data-lang="hi">कौन सा भिन्न बड़ा है?</span>
+    <span data-lang="as">কোনটো ভিন্ন ডাঙৰ?</span>
+  </div>
+
+  <div class="fracs">
+    <button class="frac-btn" id="btnA" onclick="answer(0)">
+      <span class="frac-num" id="numA">3</span>
+      <span class="frac-line"></span>
+      <span class="frac-den" id="denA">4</span>
+    </button>
+    <div class="vs-label">VS</div>
+    <button class="frac-btn" id="btnB" onclick="answer(1)">
+      <span class="frac-num" id="numB">2</span>
+      <span class="frac-line"></span>
+      <span class="frac-den" id="denB">3</span>
+    </button>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+
+  <button class="next-btn" id="nextBtn" onclick="nextRound()">
+    <span data-lang="en">Next →</span><span data-lang="hi">अगला →</span><span data-lang="as">পৰৱৰ্তী →</span>
+  </button>
+  <p class="hint" id="hintText"></p>
+</div>
+
+<!-- END SCREEN -->
+<div class="card end-screen" id="endScreen">
+  <h2 id="endTitle"></h2>
+  <p id="endMsg"></p>
+  <div class="stars" id="endStars">
+    <span class="star" id="es1">★</span>
+    <span class="star" id="es2">★</span>
+    <span class="star" id="es3">★</span>
+  </div>
+  <p style="font-size:1.3rem;color:var(--gold);font-weight:800;margin-bottom:18px;" id="finalScore"></p>
+  <button class="restart-btn" onclick="restart()">
+    <span data-lang="en">Play Again</span><span data-lang="hi">फिर खेलो</span><span data-lang="as">আকৌ খেলক</span>
+  </button>
+</div>
+
+<script>
+const questions=[
+  {a:[3,4],b:[2,3],ans:0},
+  {a:[5,8],b:[7,12],ans:0},
+  {a:[1,2],b:[3,7],ans:0},
+  {a:[4,5],b:[7,9],ans:1},
+  {a:[2,3],b:[5,8],ans:0},
+  {a:[3,5],b:[4,7],ans:0},
+  {a:[7,10],b:[5,7],ans:1},
+  {a:[1,3],b:[2,7],ans:0},
+  {a:[5,6],b:[7,9],ans:0},
+  {a:[3,8],b:[2,5],ans:1}
+];
+
+const msgs={
+  en:{correct:'✅ Correct! Well done!',wrong:'❌ Try again next time!',next:'Next →',
+      endWin:'🎉 Well done!',endLose:'Keep practising!',
+      score:'Your score:',hint:'Hint: Cross-multiply to compare fractions!'},
+  hi:{correct:'✅ सही! शाबाश!',wrong:'❌ अगली बार कोशिश करो!',next:'अगला →',
+      endWin:'🎉 शाबाश!',endLose:'अभ्यास जारी रखो!',
+      score:'तुम्हारा स्कोर:',hint:'संकेत: तुलना के लिए क्रॉस-गुणा करो!'},
+  as:{correct:'✅ শুদ্ধ! বাহ বাহ!',wrong:'❌ পৰৱৰ্তী বাৰ চেষ্টা কৰক!',next:'পৰৱৰ্তী →',
+      endWin:'🎉 বাহ বাহ!',endLose:'অনুশীলন জাৰি ৰাখক!',
+      score:'তোমাৰ নম্বৰ:',hint:'ইংগিত: ভিন্ন তুলনা কৰিবলৈ ক্ৰছ-গুণ কৰক!'}
+};
+
+let cur=0,score=0,lang='en',answered=false;
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>el.style.display='none');
+  document.querySelectorAll(`[data-lang="${l}"]`).forEach(el=>el.style.display='inline');
+  document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.remove('active');if(b.textContent.trim()===(l==='en'?'EN':l==='hi'?'हि':'অ'))b.classList.add('active');});
+}
+
+function loadQuestion(){
+  const q=questions[cur];
+  document.getElementById('numA').textContent=q.a[0];
+  document.getElementById('denA').textContent=q.a[1];
+  document.getElementById('numB').textContent=q.b[0];
+  document.getElementById('denB').textContent=q.b[1];
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('hintText').textContent='';
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('btnA').disabled=false;
+  document.getElementById('btnB').disabled=false;
+  document.getElementById('btnA').className='frac-btn';
+  document.getElementById('btnB').className='frac-btn';
+  document.getElementById('roundInfo').textContent=`Round ${cur+1} / 10`;
+  document.getElementById('progress').style.width=`${cur*10}%`;
+  answered=false;
+}
+
+function answer(choice){
+  if(answered)return;
+  answered=true;
+  const q=questions[cur];
+  const fb=document.getElementById('feedback');
+  const btnA=document.getElementById('btnA');
+  const btnB=document.getElementById('btnB');
+  btnA.disabled=true; btnB.disabled=true;
+
+  if(choice===q.ans){
+    score+=10;
+    fb.textContent=msgs[lang].correct;
+    fb.className='feedback correct';
+    (choice===0?btnA:btnB).classList.add('correct');
+  } else {
+    fb.textContent=msgs[lang].wrong;
+    fb.className='feedback wrong';
+    (choice===0?btnA:btnB).classList.add('wrong');
+    (q.ans===0?btnA:btnB).classList.add('correct');
+    document.getElementById('hintText').textContent=msgs[lang].hint;
+  }
+  document.getElementById('scoreVal').textContent=score;
+  updateStars(score);
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextRound(){
+  cur++;
+  if(cur>=questions.length){showEnd();return;}
+  loadQuestion();
+}
+
+function updateStars(s){
+  const pct=s/100*100;
+  document.getElementById('s1').className='star'+(pct>=40?' lit':'');
+  document.getElementById('s2').className='star'+(pct>=70?' lit':'');
+  document.getElementById('s3').className='star'+(pct>=90?' lit':'');
+}
+
+function showEnd(){
+  document.getElementById('gameArea').style.display='none';
+  const es=document.getElementById('endScreen');
+  es.style.display='block';
+  const pct=score/100*100;
+  document.getElementById('endTitle').textContent=pct>=70?msgs[lang].endWin:msgs[lang].endLose;
+  document.getElementById('endMsg').textContent=msgs[lang].score+' '+score+' / 100';
+  document.getElementById('finalScore').textContent=score+' pts';
+  document.getElementById('progress').style.width='100%';
+  ['es1','es2','es3'].forEach((id,i)=>{
+    document.getElementById(id).className='star'+([40,70,90][i]<=pct?' lit':'');
+  });
+  setLang(lang);
+}
+
+function restart(){
+  cur=0;score=0;
+  document.getElementById('gameArea').style.display='block';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('scoreVal').textContent='0';
+  updateStars(0);
+  loadQuestion();
+  setLang(lang);
+}
+
+setLang('en');
+loadQuestion();
+</script>
+</body>
+</html>

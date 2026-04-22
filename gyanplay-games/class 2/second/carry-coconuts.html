@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carry the Coconuts - GyanPlay Class 2</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #38ef7d;
+            font-size: 2rem;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .score {
+            background: #e94560;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .beach-scene {
+            background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 30%, #F4E4BA 70%, #DEB887 100%);
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 400px;
+            position: relative;
+        }
+        
+        .ocean {
+            position: absolute;
+            top: 30%;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(180deg, #0077b6, #00b4d8);
+            border-radius: 0 0 50% 50%;
+        }
+        
+        .palm-tree {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            font-size: 5rem;
+        }
+        
+        .problem-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        .basket {
+            background: linear-gradient(135deg, #8B4513, #A0522D);
+            border-radius: 0 0 30px 30px;
+            padding: 20px;
+            min-width: 150px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 4px solid #654321;
+            position: relative;
+        }
+        
+        .basket-label {
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .basket-number {
+            font-size: 3rem;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .coconuts-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 10px;
+            min-height: 60px;
+        }
+        
+        .coconut {
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .coconut:hover {
+            transform: scale(1.2);
+        }
+        
+        .plus-sign {
+            font-size: 3rem;
+            color: white;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .equals-sign {
+            font-size: 3rem;
+            color: white;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .answer-basket {
+            background: linear-gradient(135deg, #e17055, #fab1a0);
+            border: 4px solid #e17055;
+        }
+        
+        .carry-zone {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #feca57;
+            padding: 5px 15px;
+            border-radius: 10px;
+            border: 2px solid #f39c12;
+            display: none;
+        }
+        
+        .carry-zone.show {
+            display: block;
+            animation: bounce 0.5s;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-20px); }
+        }
+        
+        .carry-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2d3436;
+        }
+        
+        .column-addition {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .column-title {
+            color: #2d3436;
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .columns-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .add-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .column-box {
+            width: 80px;
+            height: 80px;
+            border: 3px solid #2d3436;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            background: #f1f2f6;
+            cursor: pointer;
+        }
+        
+        .column-box.tens {
+            border-color: #00b894;
+        }
+        
+        .carry-box {
+            width: 50px;
+            height: 40px;
+            background: #feca57;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .input-box {
+            background: #dfe6e9;
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .feedback-content.correct {
+            border: 5px solid #00b894;
+        }
+        
+        .feedback-content.wrong {
+            border: 5px solid #e94560;
+        }
+        
+        .feedback-icon {
+            font-size: 5rem;
+        }
+        
+        .feedback-text {
+            font-size: 2rem;
+            margin: 20px 0;
+        }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .hint-text {
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch1-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🥥 Carry the Coconuts</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Problem: <span id="problemNum">1</span></div>
+            </div>
+        </div>
+        
+        <p class="hint-text">Add the coconuts and carry over when needed!</p>
+        
+        <div class="beach-scene">
+            <div class="palm-tree">🌴</div>
+            
+            <div class="problem-area">
+                <div class="basket" id="basket1">
+                    <div class="basket-label">Basket A</div>
+                    <div class="basket-number" id="num1">47</div>
+                    <div class="coconuts-container" id="coconuts1"></div>
+                    <div class="carry-zone" id="carry1"><span class="carry-value">0</span></div>
+                </div>
+                
+                <span class="plus-sign">+</span>
+                
+                <div class="basket" id="basket2">
+                    <div class="basket-label">Basket B</div>
+                    <div class="basket-number" id="num2">38</div>
+                    <div class="coconuts-container" id="coconuts2"></div>
+                    <div class="carry-zone" id="carry2"><span class="carry-value">0</span></div>
+                </div>
+                
+                <span class="equals-sign">=</span>
+                
+                <div class="basket answer-basket">
+                    <div class="basket-label">Total</div>
+                    <div class="basket-number" id="total">?</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="column-addition">
+            <div class="column-title">📝 Column Addition - Tap boxes to enter answer</div>
+            <div class="columns-container">
+                <div class="add-column">
+                    <div class="carry-box" id="carryTens">0</div>
+                    <div class="column-box" id="onesBox1">7</div>
+                    <div class="column-box" id="onesBox2">8</div>
+                    <div class="column-box input-box" id="onesAnswer" onclick="editNumber('onesAnswer')">?</div>
+                </div>
+                <div class="add-column">
+                    <div class="carry-box"></div>
+                    <div class="column-box tens" id="tensBox1">4</div>
+                    <div class="column-box tens" id="tensBox2">3</div>
+                    <div class="column-box tens input-box" id="tensAnswer" onclick="editNumber('tensAnswer')">?</div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="check-btn" onclick="checkAnswer()">✓ Check Answer</button>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextProblem()">Next Problem →</button>
+        </div>
+    </div>
+    
+    <script>
+        let num1 = 47;
+        let num2 = 38;
+        let correctAnswer = 85;
+        let score = 0;
+        let problemNum = 1;
+        
+        function generateProblem() {
+            const max = Math.min(50 + problemNum * 10, 99);
+            const min = 10 + Math.floor(problemNum / 2);
+            
+            num1 = Math.floor(Math.random() * (max - min)) + min;
+            num2 = Math.floor(Math.random() * (max - min)) + min;
+            
+            const ones1 = num1 % 10;
+            const ones2 = num2 % 10;
+            const sumOnes = ones1 + ones2;
+            
+            correctAnswer = num1 + num2;
+            
+            if (sumOnes < 10) {
+                num2 = (10 - ones1) + Math.floor(Math.random() * 10);
+                correctAnswer = num1 + num2;
+            }
+            
+            document.getElementById('num1').textContent = num1;
+            document.getElementById('num2').textContent = num2;
+            
+            document.getElementById('onesBox1').textContent = num1 % 10;
+            document.getElementById('onesBox2').textContent = num2 % 10;
+            document.getElementById('tensBox1').textContent = Math.floor(num1 / 10);
+            document.getElementById('tensBox2').textContent = Math.floor(num2 / 10);
+            
+            document.getElementById('onesAnswer').textContent = '?';
+            document.getElementById('tensAnswer').textContent = '?';
+            document.getElementById('carryTens').textContent = '0';
+            
+            updateCoconuts();
+            
+            if (num1 % 10 + num2 % 10 >= 10) {
+                setTimeout(() => {
+                    document.getElementById('carry1').classList.add('show');
+                    document.getElementById('carry1').querySelector('span').textContent = (num1 % 10 + num2 % 10 - 10);
+                }, 1000);
+            }
+        }
+        
+        function updateCoconuts() {
+            const c1 = document.getElementById('coconuts1');
+            const c2 = document.getElementById('coconuts2');
+            
+            c1.innerHTML = '';
+            c2.innerHTML = '';
+            
+            for (let i = 0; i < num1 % 10; i++) {
+                const span = document.createElement('span');
+                span.className = 'coconut';
+                span.textContent = '🥥';
+                c1.appendChild(span);
+            }
+            
+            for (let i = 0; i < num2 % 10; i++) {
+                const span = document.createElement('span');
+                span.className = 'coconut';
+                span.textContent = '🥥';
+                c2.appendChild(span);
+            }
+        }
+        
+        let currentEditing = null;
+        
+        function editNumber(boxId) {
+            currentEditing = boxId;
+            const box = document.getElementById(boxId);
+            const current = box.textContent === '?' ? '' : box.textContent;
+            const num = prompt('Enter digit (0-9):', current);
+            if (num !== null && num >= '0' && num <= '9') {
+                box.textContent = num;
+                
+                if (boxId === 'onesAnswer') {
+                    const onesSum = parseInt(num);
+                    const carry = onesSum >= 10 ? 1 : 0;
+                    document.getElementById('carryTens').textContent = carry;
+                    if (onesSum >= 10) {
+                        document.getElementById('carryTens').style.background = '#feca57';
+                    } else {
+                        document.getElementById('carryTens').style.background = '#dfe6e9';
+                    }
+                }
+            }
+        }
+        
+        function checkAnswer() {
+            const onesAns = document.getElementById('onesAnswer').textContent;
+            const tensAns = document.getElementById('tensAnswer').textContent;
+            
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            const correctOnes = correctAnswer % 10;
+            const correctTens = Math.floor(correctAnswer / 10);
+            
+            if (onesAns == correctOnes && tensAns == correctTens) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Correct! You carried the coconuts!';
+                score += 10;
+                document.getElementById('score').textContent = score;
+                document.getElementById('total').textContent = correctAnswer;
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = `Try again! The answer is ${correctAnswer}`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextProblem() {
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('total').textContent = '?';
+            document.getElementById('carry1').classList.remove('show');
+            problemNum++;
+            document.getElementById('problemNum').textContent = problemNum;
+            generateProblem();
+        }
+        
+        generateProblem();
+    </script>
+</body>
+</html>

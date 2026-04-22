@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Conjunction Junction — GyanPlay Class 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#1A0F00,#0F0800);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 40px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.h-left{display:flex;flex-direction:column;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.game-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--dim);}
+.subject-tag{font-size:0.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:1.3rem;opacity:.25;transition:opacity .3s,filter .3s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.wow{background:linear-gradient(135deg,rgba(255,159,28,.15),rgba(255,159,28,.04));
+  border:1px solid rgba(255,159,28,.3);border-radius:16px;padding:16px;margin-bottom:18px;}
+.wow-emoji{font-size:2rem;margin-bottom:6px;}
+.wow p{font-size:0.88rem;line-height:1.55;}
+.wow p span{color:var(--gold);font-weight:700;}
+.wow-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--dim);margin-top:6px;}
+.game-area{background:var(--card);border-radius:20px;padding:20px;margin-bottom:16px;
+  border:1px solid rgba(255,159,28,.15);}
+/* Two ideas display */
+.ideas-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.idea-card{background:rgba(255,255,255,.04);border-radius:10px;padding:10px 14px;font-size:.92rem;color:var(--text);line-height:1.5;}
+.idea-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-bottom:3px;}
+.connector{text-align:center;padding:4px 0;}
+.blank-pill{display:inline-block;background:rgba(255,209,102,.1);border:2px dashed rgba(255,209,102,.4);
+  border-radius:99px;padding:4px 18px;font-family:'Baloo 2',sans-serif;font-size:1rem;
+  font-weight:800;color:var(--gold);min-width:80px;text-align:center;}
+.blank-pill.filled{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal);border-style:solid;}
+/* Result sentence */
+.result-box{background:rgba(255,159,28,.06);border:1px solid rgba(255,159,28,.2);
+  border-radius:12px;padding:12px;margin-bottom:14px;font-size:.88rem;line-height:1.6;
+  text-align:center;min-height:44px;color:var(--text);}
+.result-box .conj{color:var(--gold);font-weight:800;}
+/* Options */
+.opts-label{font-size:.72rem;color:var(--dim);margin-bottom:8px;}
+.opts-label .as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.68rem;}
+.conj-opts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px;}
+.conj-btn{padding:10px 18px;background:rgba(255,159,28,.08);border:2px solid rgba(255,159,28,.25);
+  border-radius:10px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:800;
+  color:var(--text);cursor:pointer;touch-action:manipulation;transition:background .15s,transform .1s;}
+.conj-btn:active{transform:scale(.95);}
+.conj-btn.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal);pointer-events:none;}
+.conj-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral);pointer-events:none;}
+.conj-btn.disabled{pointer-events:none;opacity:.5;}
+/* Wrong result funnybox */
+.funny-box{background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.2);
+  border-radius:10px;padding:10px 12px;font-size:.8rem;color:var(--coral);
+  text-align:center;margin-bottom:10px;display:none;font-style:italic;}
+.feedback{text-align:center;font-size:.88rem;min-height:1.2em;font-weight:600;}
+.feedback.ok{color:var(--teal);}
+.feedback.err{color:var(--coral);}
+.progress-wrap{margin-bottom:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);margin-bottom:5px;}
+.prog-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--orange);border-radius:99px;transition:width .4s;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;
+  justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-card{background:var(--card);border:1px solid rgba(255,159,28,.3);border-radius:22px;
+  padding:28px 24px;text-align:center;max-width:320px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);}to{transform:scale(1) translateY(0);}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px;}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.ov-fact{font-size:.83rem;line-height:1.5;margin-bottom:12px;}
+.ov-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+.ov-btn{padding:12px 28px;background:var(--gold);color:#0F0820;border:none;border-radius:12px;
+  font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:200;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen"><div style="font-size:2.5rem">🔗</div><p>Loading… / লোড হৈছে…</p></div>
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="h-left">
+      <div class="game-title">Conjunction Junction</div>
+      <div class="game-title-as">সংযোগী শব্দৰ সন্ধিস্থল</div>
+      <div class="subject-tag">English · শ্ৰেণী ৪</div>
+    </div>
+    <div class="stars" id="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+      <span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+  <div class="wow">
+    <div class="wow-emoji">🔗</div>
+    <p><span>Because, although, however, unless</span> — these tiny words CONTROL the relationship between ideas. <span>Change the conjunction, change the meaning completely!</span></p>
+    <div class="wow-as">কাৰণ, যদিও, কিন্তু, যদি না — এই সৰু শব্দবোৰে ধাৰণাৰ সম্পৰ্ক নিয়ন্ত্ৰণ কৰে!</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-label"><span>Q <span id="qNum">1</span>/10</span><span style="font-family:'Noto Sans Devanagari',sans-serif;">প্ৰশ্ন <span id="qNumAs">১</span>/১০</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="game-area">
+    <div class="ideas-wrap">
+      <div class="idea-card"><div class="idea-label">Idea A</div><div id="ideaA">—</div></div>
+      <div class="connector"><div class="blank-pill" id="blankPill">___</div></div>
+      <div class="idea-card"><div class="idea-label">Idea B</div><div id="ideaB">—</div></div>
+    </div>
+    <div class="result-box" id="resultBox">Choose a conjunction to join the ideas!</div>
+    <div class="funny-box" id="funnyBox"></div>
+    <div class="opts-label">Choose the right conjunction / <span class="as">সঠিক সংযোগী শব্দটো বাচক</span></div>
+    <div class="conj-opts" id="conjOpts"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">Spot on!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <div class="ov-as" id="ovAs"></div>
+    <button class="ov-btn" id="ovBtn" onclick="nextQ()">Next →</button>
+  </div>
+</div>
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",
+  projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let currentUser=null;
+auth.onAuthStateChanged(u=>{
+  if(!u){window.location.href='/login.html';return;}
+  currentUser=u;
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initGame();
+});
+
+const QS=[
+  {a:"I was hungry",b:"I ate my lunch.",ans:"because",opts:["because","although","unless","however"],
+   funny:"I ate lunch ALTHOUGH I was not hungry. (The chicken is confused 🐔)",
+   result:"I was hungry <b>because</b> I ate my lunch. ❌ → I ate my lunch <b>because</b> I was hungry. ✓",
+   fact:"'Because' shows CAUSE and EFFECT — one thing happens because of another.",factAs:"'কাৰণ' কাৰণ আৰু ফলাফল দেখায়।"},
+  {a:"She studied hard",b:"she passed the exam.",ans:"so",opts:["so","but","unless","however"],
+   result:"She studied hard <b>so</b> she passed the exam.",
+   funny:"She studied hard BUT she passed. (Makes no sense — 'but' shows contrast!)",
+   fact:"'So' shows a RESULT. Study hard → so → pass! It's the cause-effect conjunction.",factAs:"'তেনেহ'লে' ফলাফল দেখায়।"},
+  {a:"It was raining",b:"we went for a walk.",ans:"although",opts:["although","because","and","so"],
+   result:"<b>Although</b> it was raining, we went for a walk.",
+   funny:"It was raining BECAUSE we went for a walk. (Did our walking cause the rain? 😂)",
+   fact:"'Although' shows CONTRAST — two ideas that seem to conflict. Very mature use of language!",factAs:"'যদিও' বিপৰীত ধাৰণা দেখায়।"},
+  {a:"You cannot go outside",b:"you finish your homework.",ans:"unless",opts:["unless","but","and","because"],
+   result:"You cannot go outside <b>unless</b> you finish your homework.",
+   funny:"You cannot go outside BECAUSE you finish homework. (Finishing work is the problem? 😅)",
+   fact:"'Unless' means 'if not' — it sets a CONDITION that must be met.",factAs:"'যদি না' চৰ্ত নিৰ্ধাৰণ কৰে।"},
+  {a:"Assam is known for tea",b:"it is also famous for silk.",ans:"but",opts:["but","because","unless","although"],
+   result:"Assam is known for tea <b>but</b> it is also famous for silk.",
+   funny:"Assam is known for tea UNLESS it is famous for silk. (That makes no sense!)",
+   fact:"'But' shows contrast or addition of a DIFFERENT point. And vs But — different relationships!",factAs:"'কিন্তু' বিপৰীত কথা যোগ কৰে।"},
+  {a:"The Brahmaputra floods every year",b:"farmers prepare for it.",ans:"so",opts:["so","although","unless","but"],
+   result:"The Brahmaputra floods every year <b>so</b> farmers prepare for it.",
+   funny:"",fact:"'So' connects a situation to its NATURAL RESPONSE — a key conjunction in news writing!",factAs:"'তেনেহ'লে' পৰিস্থিতি আৰু প্ৰতিক্ৰিয়া সংযুক্ত কৰে।"},
+  {a:"She is tired",b:"she keeps working.",ans:"yet",opts:["yet","because","unless","so"],
+   result:"She is tired <b>yet</b> she keeps working.",
+   funny:"She is tired BECAUSE she keeps working. (Hmm, that might actually work! But 'yet' is better here.)",
+   fact:"'Yet' = 'but still'. It emphasises that something happens DESPITE expectations. Very powerful!",factAs:"'তথাপিও' প্ৰত্যাশাৰ বিৰুদ্ধে কিবা হয় দেখায়।"},
+  {a:"I like cricket",b:"I also enjoy football.",ans:"and",opts:["and","but","because","unless"],
+   result:"I like cricket <b>and</b> I also enjoy football.",
+   funny:"I like cricket ALTHOUGH I enjoy football. (Enjoying both sports is not a contradiction!)",
+   fact:"'And' is a COORDINATOR — it joins two equal, compatible ideas. The simplest conjunction!",factAs:"'আৰু' দুটা সামঞ্জস্যপূৰ্ণ ধাৰণা সংযুক্ত কৰে।"},
+  {a:"I will come to your party",b:"it rains heavily.",ans:"unless",opts:["unless","and","so","yet"],
+   result:"I will come to your party <b>unless</b> it rains heavily.",
+   funny:"I will come to your party BECAUSE it rains heavily. (Rain is the reason? Unusual party!)",
+   fact:"'Unless' sets a CONDITION — everything is fine unless that condition happens.",factAs:"'যদি না' চৰ্ত নিৰ্ধাৰণ কৰে।"},
+  {a:"The tea workers started early",b:"they finished before sunset.",ans:"so",opts:["so","although","unless","but"],
+   result:"The tea workers started early <b>so</b> they finished before sunset.",
+   funny:"",fact:"In Assam's tea gardens, workers start at dawn — 'so' their work links cause to outcome!",factAs:"অসমৰ চাহ বাগানত শ্ৰমিক ভোৰতে আৰম্ভ কৰে — 'তেনেহ'লে' কাৰণ আৰু ফলাফল!"}
+];
+const MSG=["Spot on!","Brilliant!","Amazing!","Excellent!","Outstanding!","You got it!","Perfect!","Champion!","Well done!","Superstar!"];
+let round=0,score=0;
+
+function initGame(){round=0;score=0;updateStars(0);loadQ();}
+
+function loadQ(){
+  const q=QS[round];
+  document.getElementById('ideaA').textContent=q.a;
+  document.getElementById('ideaB').textContent=q.b;
+  document.getElementById('blankPill').textContent='___';
+  document.getElementById('blankPill').className='blank-pill';
+  document.getElementById('resultBox').innerHTML='Choose a conjunction to join the ideas!';
+  document.getElementById('funnyBox').style.display='none';
+  document.getElementById('feedback').textContent='';
+  document.getElementById('qNum').textContent=round+1;
+  document.getElementById('qNumAs').textContent=['১','২','৩','৪','৫','৬','৭','৮','৯','১০'][round];
+  document.getElementById('progFill').style.width=(round/10*100)+'%';
+  const opts=document.getElementById('conjOpts');
+  opts.innerHTML='';
+  const shuffled=[...q.opts].sort(()=>Math.random()-.5);
+  shuffled.forEach(o=>{
+    const btn=document.createElement('div');btn.className='conj-btn';btn.textContent=o;
+    btn.addEventListener('click',()=>choose(btn,o,q));
+    opts.appendChild(btn);
+  });
+}
+
+function choose(btn,chosen,q){
+  document.querySelectorAll('.conj-btn').forEach(b=>b.classList.add('disabled'));
+  const fb=document.getElementById('feedback');
+  if(chosen===q.ans){
+    btn.classList.add('correct');
+    document.getElementById('blankPill').textContent=chosen;
+    document.getElementById('blankPill').classList.add('filled');
+    document.getElementById('resultBox').innerHTML=q.result;
+    score++;updateStars(Math.min(5,Math.ceil(score/2)));confetti();
+    const msg=MSG[round%MSG.length];
+    document.getElementById('ovEmoji').textContent='🔗';
+    document.getElementById('ovTitle').textContent=msg;
+    document.getElementById('ovFact').textContent=q.fact;
+    document.getElementById('ovAs').textContent=q.factAs;
+    document.getElementById('ovBtn').textContent=round<9?'Next → / পৰৱৰ্তী':'Finish! / শেষ!';
+    setTimeout(()=>showOverlay(true),400);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.conj-btn').forEach(b=>{if(b.textContent===q.ans)b.classList.add('correct');});
+    if(q.funny){
+      document.getElementById('funnyBox').textContent='😂 With "'+chosen+'": '+q.funny;
+      document.getElementById('funnyBox').style.display='block';
+    }
+    fb.className='feedback err';fb.textContent='❌ Not quite! / ঠিক নহয়!';
+    setTimeout(()=>nextQ(),2500);
+  }
+}
+
+function nextQ(){showOverlay(false);round++;if(round>=10){endGame();}else{loadQ();}}
+
+function endGame(){
+  trackProgress();
+  document.getElementById('ovEmoji').textContent='🏆';
+  document.getElementById('ovTitle').textContent='Conjunction Champion! / সংযোগৰ চেম্পিয়ন!';
+  document.getElementById('ovFact').textContent=`Score: ${score}/10! Small words, big power — you now control the logic of language!`;
+  document.getElementById('ovAs').textContent=`স্কোৰ: ${score}/১০! সৰু শব্দ, ডাঙৰ শক্তি — তুমি এতিয়া ভাষাৰ যুক্তি নিয়ন্ত্ৰণ কৰে!`;
+  document.getElementById('ovBtn').textContent='🔄 Play Again / আকৌ খেলক';
+  document.getElementById('ovBtn').onclick=()=>{showOverlay(false);initGame();};
+  showOverlay(true);
+}
+async function trackProgress(){
+  if(!currentUser)return;
+  try{await db.collection('users').doc(currentUser.uid).collection('progress').doc('class4-game8').set(
+    {score,total:10,gameId:'class4-game8',gameName:'Conjunction Junction',class:4,subject:'English',
+     completedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+}
+function updateStars(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function showOverlay(s){document.getElementById('overlay').classList.toggle('show',s);}
+function confetti(){
+  const cols=['#FFD166','#FF9F1C','#06D6A0','#FF6B6B','#C77DFF'];
+  for(let i=0;i<28;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%5]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);
+  }
+}
+</script>
+</body>
+</html>

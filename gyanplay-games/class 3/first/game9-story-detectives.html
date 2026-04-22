@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔍 Story Detectives — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#08100A;--card:#0E1A10;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--green:#4CAF50;--muted:#8BC28E;--text:#E8F5E9;--dim:#5A8A5E;--paper:#1A2A1C}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(76,175,80,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.3rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:18px 16px;gap:16px}
+.hook{background:linear-gradient(135deg,rgba(6,214,160,.1),rgba(76,175,80,.07));border:1px solid rgba(6,214,160,.25);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.88rem;line-height:1.6;color:#B8F0C4}
+.hook strong{color:var(--gold)}
+/* Story card - looks like a real page */
+.story-card{background:var(--paper);border-radius:14px;padding:20px 22px;border:1px solid rgba(76,175,80,.2);border-left:4px solid var(--teal);width:100%;max-width:480px;position:relative}
+.story-location{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--teal);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.story-title{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;color:var(--gold);margin-bottom:12px}
+.story-text{font-family:'Crimson Pro',serif;font-size:1.05rem;line-height:1.85;color:var(--text)}
+.story-text .highlight{background:rgba(255,209,102,.15);border-radius:3px;padding:0 3px;cursor:pointer;border-bottom:1px dashed rgba(255,209,102,.5);transition:background .2s}
+.story-text .highlight:hover{background:rgba(255,209,102,.3)}
+.detective-badge{position:absolute;top:14px;right:16px;font-size:1.6rem;opacity:.5}
+/* Questions */
+.questions-area{width:100%;max-width:480px;display:flex;flex-direction:column;gap:12px}
+.q-block{background:var(--card);border-radius:12px;padding:16px;border:1px solid rgba(76,175,80,.15)}
+.q-type{font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;font-weight:700}
+.q-type.factual{color:var(--teal)}
+.q-type.inference{color:var(--gold)}
+.q-text{font-size:.92rem;color:var(--text);margin-bottom:10px;line-height:1.5}
+.q-options{display:flex;flex-direction:column;gap:6px}
+.q-opt{padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(76,175,80,.2);border-radius:8px;cursor:pointer;font-size:.88rem;color:var(--muted);transition:border-color .15s,background .15s,color .15s;text-align:left}
+.q-opt:hover{border-color:var(--teal);background:rgba(6,214,160,.08);color:var(--text)}
+.q-opt.correct{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal)}
+.q-opt.wrong{border-color:var(--coral);background:rgba(255,107,107,.1);color:var(--coral)}
+.q-explanation{font-size:.78rem;color:var(--dim);margin-top:8px;line-height:1.5;display:none;padding:8px;background:rgba(0,0,0,.2);border-radius:6px}
+.q-explanation.show{display:block}
+.all-correct-banner{background:rgba(6,214,160,.12);border:1px solid rgba(6,214,160,.3);border-radius:10px;padding:12px 18px;text-align:center;font-size:.88rem;color:var(--teal);display:none}
+.all-correct-banner.show{display:block}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#0A1A00;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(8,16,10,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4.5rem}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:320px;font-size:.9rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🔍 Story Detectives</div><div class="subject-tag">English · Comprehension · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+
+<div class="game-area">
+  <div class="hook">🔍 Real detectives don't just read the facts — they read <strong>between the lines</strong>. Good readers do the exact same thing. Every paragraph has <strong>hidden clues</strong>. Can you find them?</div>
+
+  <div class="story-card" id="storyCard">
+    <div class="story-location" id="storyLoc">📍 Loading...</div>
+    <div class="story-title" id="storyTitle">Loading...</div>
+    <div class="story-text" id="storyText">Loading...</div>
+    <div class="detective-badge">🔍</div>
+  </div>
+
+  <div class="questions-area" id="questionsArea"></div>
+  <div class="all-correct-banner" id="allCorrectBanner">✅ All questions answered! Great detective work!</div>
+</div>
+
+<div class="bottom">
+  <div class="prog" id="prog">Story 1 of 4</div>
+  <button class="next-btn" id="nextBtn" onclick="nextStory()">Next Case →</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">Case Solved!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+
+<script>
+const STORIES=[
+  {
+    loc:'📍 Kaziranga National Park, Assam',
+    title:'The Muddy Morning',
+    text:'Diya woke up early and put on her boots. She could smell something earthy through the window. When she stepped outside, the grass was wet and the path was covered in large, round prints. Her father pointed to the edge of the forest and smiled. "We were not alone last night," he whispered.',
+    qs:[
+      {type:'factual',q:'What did Diya put on before going outside?',opts:['Her raincoat','Her boots','Her school bag','Her slippers'],ans:1,exp:'The story says: "she put on her boots."'},
+      {type:'factual',q:'What was on the path outside?',opts:['Flowers','Puddles of water','Large round prints','Fallen leaves'],ans:2,exp:'The story says: "the path was covered in large, round prints."'},
+      {type:'inference',q:'What animal most likely made the prints?',opts:['A dog','A rhino or elephant','A small bird','A cow'],ans:1,exp:'Kaziranga is famous for rhinos and elephants. Large, round prints in the forest edge = a big animal. Her father\'s smile shows it\'s exciting, not scary!'},
+    ]
+  },
+  {
+    loc:'📍 Tea Garden, Upper Assam',
+    title:'The Missing Basket',
+    text:'Priti searched everywhere for her red basket. She had left it near the second row of tea bushes that morning. Now her basket was gone, but she noticed that the tea leaves inside her friend Mira\'s basket were much more than before. Mira was very quiet at lunch and did not look at Priti.',
+    qs:[
+      {type:'factual',q:'Where had Priti left her basket?',opts:['Near the river','Near the first row of tea bushes','Near the second row of tea bushes','At home'],ans:2,exp:'The story says: "She had left it near the second row of tea bushes."'},
+      {type:'factual',q:'What did Priti notice about Mira\'s basket?',opts:['It was red too','It had more tea leaves than before','It was missing','It was torn'],ans:1,exp:'The story says: "Mira\'s basket were much more than before."'},
+      {type:'inference',q:'What do you think happened to Priti\'s basket?',opts:['It blew away in the wind','An animal took it','Mira probably took the leaves from it','Priti forgot where she left it'],ans:2,exp:'Clues: Mira has extra leaves, Mira is quiet, and Mira won\'t look at Priti. These clues together suggest Mira took the leaves. This is inference — the story never says it directly!'},
+    ]
+  },
+  {
+    loc:'📍 Brahmaputra River Bank, Guwahati',
+    title:'The Boat That Didn\'t Return',
+    text:'Every evening, old Ratan brought his blue boat back by sunset. But tonight the river was golden with the last light and Ratan\'s boat was still not there. His granddaughter Leela stood at the bank, holding the rope that was used to tie the boat. The rope was frayed at one end, as if it had been pulled very hard.',
+    qs:[
+      {type:'factual',q:'When did Ratan usually return?',opts:['At sunrise','At noon','By sunset','After dinner'],ans:2,exp:'The story says: "Every evening, old Ratan brought his blue boat back by sunset."'},
+      {type:'factual',q:'What did Leela notice about the rope?',opts:['It was missing completely','It was frayed at one end','It was wet and muddy','It was tied to a tree'],ans:1,exp:'The story says: "The rope was frayed at one end, as if it had been pulled very hard."'},
+      {type:'inference',q:'Why was the rope frayed? What might have happened?',opts:['Leela chewed it','The boat was pulled by strong current and broke free','Someone cut it with scissors','It was an old rope that broke on its own'],ans:1,exp:'The rope is frayed "as if pulled very hard" — this suggests the boat was dragged away by strong river current. The Brahmaputra is known for powerful currents. Inference means using clues to guess what happened!'},
+    ]
+  },
+  {
+    loc:'📍 Morigaon Village, Assam',
+    title:'The Sweet Smell of Rain',
+    text:'Bina ran indoors just as the first drops fell. The air smelled sweet and dusty at once — the smell Bina loved more than anything. Her grandmother was already covering the rice that was drying in the courtyard. Outside, the frogs began their loud chorus from the pond behind the house. The parched earth was drinking at last.',
+    qs:[
+      {type:'factual',q:'What was drying in the courtyard?',opts:['Clothes','Spices','Rice','Mangoes'],ans:2,exp:'The story says: "her grandmother was already covering the rice that was drying in the courtyard."'},
+      {type:'factual',q:'Where were the frogs?',opts:['In the courtyard','In the house','In a pond behind the house','On the roof'],ans:2,exp:'The story says: "from the pond behind the house."'},
+      {type:'inference',q:'The story says "the parched earth was drinking at last." What does this tell us?',opts:['The earth was actually thirsty like a person','It had not rained for a long time before this','Someone was watering the ground','The earth was making a noise'],ans:1,exp:'"Parched" means very dry. "Drinking at last" means the rain finally came after a long dry spell. This is a metaphor — the writer describes the earth as if it were a thirsty person. Clever writing uses images like this!'},
+    ]
+  }
+];
+const MSGS=['Case solved! 🔍','Sharp mind! 🧠','Great detective! 🕵️','Excellent reading! 📖'];
+let si=0,score=0,answered={},storyDone=false;
+
+function loadStory(){
+  const s=STORIES[si]; answered={}; storyDone=false;
+  document.getElementById('storyLoc').textContent=s.loc;
+  document.getElementById('storyTitle').textContent=s.title;
+  document.getElementById('storyText').textContent=s.text;
+  document.getElementById('allCorrectBanner').classList.remove('show');
+  document.getElementById('nextBtn').style.display='none';
+  buildQs(s);
+}
+
+function buildQs(s){
+  const area=document.getElementById('questionsArea'); area.innerHTML='';
+  s.qs.forEach((q,qi)=>{
+    const block=document.createElement('div'); block.className='q-block';
+    const typeLabel=q.type==='factual'?'📋 Factual — find it in the story':'🧠 Inference — read between the lines';
+    block.innerHTML=`
+      <div class="q-type ${q.type}">${typeLabel}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-options" id="qopts-${qi}"></div>
+      <div class="q-explanation" id="qexp-${qi}">${q.exp}</div>`;
+    area.appendChild(block);
+    q.opts.forEach((o,oi)=>{
+      const btn=document.createElement('button');btn.className='q-opt';btn.textContent=o;
+      btn.onclick=()=>pickAnswer(qi,oi,q.ans,btn,q.exp,s.qs.length);
+      document.getElementById(`qopts-${qi}`).appendChild(btn);
+    });
+  });
+}
+
+function pickAnswer(qi,oi,correct,btn,exp,total){
+  const opts=document.getElementById(`qopts-${qi}`).querySelectorAll('.q-opt');
+  opts.forEach(b=>{b.style.pointerEvents='none';});
+  if(oi===correct){btn.classList.add('correct');}
+  else{btn.classList.add('wrong');opts[correct].classList.add('correct');}
+  document.getElementById(`qexp-${qi}`).classList.add('show');
+  answered[qi]=true;
+  if(Object.keys(answered).length===total&&!storyDone){allAnswered();}
+}
+
+function allAnswered(){
+  storyDone=true; score++;
+  if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+  document.getElementById('allCorrectBanner').classList.add('show');
+  showOverlay(MSGS[si]||'Well done!','Reading detectives find clues others miss. Great job!');
+  confetti(); setTimeout(hideOverlay,2500);
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function nextStory(){
+  si++; document.getElementById('nextBtn').style.display='none';
+  if(si>=STORIES.length){endGame();return;}
+  document.getElementById('prog').textContent=`Story ${si+1} of ${STORIES.length}`;
+  loadStory();
+}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOverlay(`Score: ${score}/${STORIES.length}!`,'Master Detective — you read facts AND between the lines!');
+  document.getElementById('nextBtn').textContent='Read Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;si=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Next Case →';document.getElementById('nextBtn').onclick=nextStory;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='Case Solved!';hideOverlay();loadStory();};
+}
+function showOverlay(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOverlay(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#FFD166','#FF6B6B','#06D6A0','#C77DFF','#FF9F1C'];for(let i=0;i<28;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+loadStory();
+</script>
+</body>
+</html>

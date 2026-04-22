@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>नाक कहाँ है? 👃</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Noto+Sans+Devanagari:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Noto Sans Devanagari','Baloo 2',cursive;
+    background:linear-gradient(160deg,#667eea,#764ba2,#f093fb);
+    min-height:100vh;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    user-select:none;
+  }
+  .stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
+  .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle 2s infinite;}
+  @keyframes twinkle{0%,100%{opacity:.2;}50%{opacity:.8;}}
+
+  .header{position:relative;z-index:10;text-align:center;padding:18px 20px 8px;width:100%;}
+  .title{font-size:clamp(1.4rem,5vw,2.2rem);color:#FFD700;text-shadow:0 0 20px rgba(255,215,0,.4);}
+
+  .score-bar{position:relative;z-index:10;display:flex;gap:16px;align-items:center;margin-top:8px;}
+  .score-box{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);border-radius:20px;padding:6px 18px;color:#fff;font-size:1rem;}
+  .score-box span{color:#FFD700;font-size:1.2rem;}
+
+  .progress{position:relative;z-index:10;display:flex;gap:8px;margin-top:8px;}
+  .dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s;}
+  .dot.done{background:#FFD700;box-shadow:0 0 8px #FFD700;}
+  .dot.active{background:#fff;transform:scale(1.3);}
+
+  /* question box */
+  .question-box{
+    position:relative;z-index:10;
+    background:rgba(255,255,255,.15);backdrop-filter:blur(10px);
+    border:3px solid rgba(255,255,255,.3);border-radius:24px;
+    padding:16px 28px;margin:12px 20px;
+    text-align:center;width:90%;max-width:500px;
+  }
+  .q-hindi{color:#FFD700;font-size:clamp(1.6rem,7vw,2.8rem);font-weight:800;text-shadow:0 0 20px rgba(255,215,0,.4);}
+  .q-english{color:rgba(255,255,255,.7);font-size:clamp(.9rem,3.5vw,1.3rem);font-weight:700;font-family:'Baloo 2',cursive;}
+
+  /* body person */
+  .person-container{
+    position:relative;z-index:10;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .person{
+    position:relative;
+    font-size:clamp(7rem,25vw,14rem);
+    line-height:1;
+    filter:drop-shadow(0 8px 24px rgba(0,0,0,.3));
+    animation:personBob 2s ease-in-out infinite;
+  }
+  @keyframes personBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+  /* hotspots on the person */
+  .hotspot{
+    position:absolute;
+    border-radius:50%;
+    cursor:pointer;
+    border:3px solid transparent;
+    transition:all .2s;
+    z-index:20;
+  }
+  .hotspot:hover{border-color:rgba(255,215,0,.8);background:rgba(255,215,0,.2);}
+  .hotspot.highlight{
+    border-color:#FFD700;
+    background:rgba(255,215,0,.3);
+    animation:hotspotPulse .6s ease infinite alternate;
+  }
+  @keyframes hotspotPulse{from{box-shadow:0 0 0 rgba(255,215,0,.4);}to{box-shadow:0 0 15px rgba(255,215,0,.6);}}
+  .hotspot.correct{border-color:#2ed573;background:rgba(46,213,115,.4);animation:correctPop .5s ease;}
+  .hotspot.wrong{border-color:#FF4757;background:rgba(255,71,87,.3);animation:wrongShake .4s ease;}
+  @keyframes correctPop{0%{transform:scale(1);}50%{transform:scale(1.3);}100%{transform:scale(1);}}
+  @keyframes wrongShake{0%,100%{transform:translate(0);}25%{transform:translate(-6px,0);}75%{transform:translate(6px,0);}}
+
+  /* answer label popup */
+  .answer-popup{
+    position:fixed;z-index:150;pointer-events:none;
+    background:rgba(0,0,0,.8);color:#FFD700;
+    font-size:clamp(1.2rem,5vw,2rem);font-weight:800;
+    padding:12px 24px;border-radius:20px;
+    animation:popupIn .4s ease both,popupOut .3s 1.5s ease forwards;
+    text-align:center;
+  }
+  @keyframes popupIn{from{transform:scale(0) translateY(20px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
+  @keyframes popupOut{to{transform:scale(.8) translateY(-20px);opacity:0;}}
+
+  /* choice buttons */
+  .choices{
+    position:relative;z-index:10;
+    display:flex;gap:clamp(8px,3vw,14px);
+    flex-wrap:wrap;justify-content:center;
+    padding:0 20px;width:100%;max-width:600px;
+  }
+  .part-btn{
+    background:rgba(255,255,255,.15);backdrop-filter:blur(6px);
+    border:3px solid rgba(255,255,255,.25);border-radius:20px;
+    padding:clamp(10px,3vw,16px) clamp(12px,4vw,20px);
+    cursor:pointer;transition:all .2s;
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    min-width:clamp(80px,20vw,110px);
+  }
+  .part-btn:hover{transform:scale(1.08);border-color:rgba(255,215,0,.6);}
+  .part-btn .p-emoji{font-size:clamp(1.8rem,7vw,2.8rem);}
+  .part-btn .p-hindi{color:#FFD700;font-size:clamp(.75rem,3vw,1rem);font-weight:800;}
+  .part-btn .p-english{color:rgba(255,255,255,.6);font-size:clamp(.6rem,2vw,.8rem);font-family:'Baloo 2',cursive;}
+  .part-btn.correct{border-color:#2ed573;background:rgba(46,213,115,.3);animation:correctPop .5s ease;}
+  .part-btn.wrong{border-color:#FF4757;background:rgba(255,71,87,.2);animation:wrongShake .4s ease;}
+
+  .celebration{
+    position:fixed;inset:0;z-index:200;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(50,0,100,.8);backdrop-filter:blur(10px);animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .celeb-emoji{font-size:clamp(4rem,15vw,7rem);animation:celebBounce .5s ease infinite alternate;}
+  @keyframes celebBounce{from{transform:scale(1);}to{transform:scale(1.15);}}
+  .celebration h2{color:#FFD700;font-size:clamp(2rem,8vw,3.5rem);text-align:center;margin:16px 0 8px;}
+  .celebration p{color:#fff;font-size:clamp(1rem,4vw,1.4rem);margin-bottom:24px;text-align:center;padding:0 16px;line-height:1.7;}
+  .next-btn{
+    background:linear-gradient(135deg,#FF6B00,#FFB800);color:#fff;border:none;border-radius:50px;
+    padding:14px 40px;font-family:'Baloo 2',cursive;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;
+    cursor:pointer;box-shadow:0 6px 24px rgba(255,107,0,.4);transition:transform .2s;
+  }
+  .next-btn:hover{transform:scale(1.05);}
+  .confetti-piece{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.2s ease-in forwards;}
+  @keyframes confettiFall{0%{opacity:1;}100%{transform:translateY(300px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+
+<div class="header">
+  <div class="title">👃 शरीर के अंग — Body Parts</div>
+</div>
+<div class="score-bar">
+  <div class="score-box">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="score-box">🎯 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress" id="progress"></div>
+
+<div class="question-box">
+  <div class="q-hindi" id="qHindi">नाक कहाँ है?</div>
+  <div class="q-english" id="qEnglish">Where is the nose?</div>
+</div>
+
+<div class="choices" id="choices"></div>
+
+<script>
+const BODY_PARTS=[
+  {emoji:'👃',hindi:'नाक',english:'Nose',ask:'नाक कहाँ है?',askEn:'Where is the nose?'},
+  {emoji:'👁️',hindi:'आँख',english:'Eyes',ask:'आँख कहाँ है?',askEn:'Where are the eyes?'},
+  {emoji:'👂',hindi:'कान',english:'Ear',ask:'कान कहाँ है?',askEn:'Where is the ear?'},
+  {emoji:'👄',hindi:'मुँह',english:'Mouth',ask:'मुँह कहाँ है?',askEn:'Where is the mouth?'},
+  {emoji:'✋',hindi:'हाथ',english:'Hand',ask:'हाथ कहाँ है?',askEn:'Where is the hand?'},
+  {emoji:'🦶',hindi:'पैर',english:'Foot',ask:'पैर कहाँ है?',askEn:'Where is the foot?'},
+  {emoji:'🦴',hindi:'पेट',english:'Tummy',ask:'पेट कहाँ है?',askEn:'Where is the tummy?'},
+  {emoji:'💇',hindi:'बाल',english:'Hair',ask:'बाल कहाँ हैं?',askEn:'Where is the hair?'},
+];
+
+let score=0,round=0,current=null,answered=false;
+const TOTAL=10;
+let audioCtx;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function playCorrect(){
+  const ctx=getAudio();
+  [523,659,784,1047].forEach((f,i)=>{
+    setTimeout(()=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.4);
+      o.start();o.stop(ctx.currentTime+.4);
+    },i*100);
+  });
+}
+function playWrong(){
+  const ctx=getAudio();
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);
+  o.frequency.value=220;o.type='sine';
+  g.gain.setValueAtTime(.2,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.25);
+  o.start();o.stop(ctx.currentTime+.25);
+}
+
+function speak(text,lang='hi-IN'){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.8;u.pitch=1.3;u.lang=lang;
+  window.speechSynthesis.speak(u);
+}
+
+function makeDots(){
+  const p=document.getElementById('progress');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+
+function spawnConfetti(){
+  const cols=['#FF4757','#FFD700','#a55eea','#f093fb','#2ed573'];
+  for(let i=0;i<20;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`left:${Math.random()*100}%;top:25%;background:${cols[i%cols.length]};animation-duration:${.8+Math.random()*.6}s;`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1400);
+  }
+}
+
+function showAnswerPopup(text){
+  const el=document.createElement('div');
+  el.className='answer-popup';
+  el.textContent=text;
+  el.style.cssText=`top:40%;left:50%;transform:translateX(-50%);`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),2000);
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  current=BODY_PARTS[Math.floor(Math.random()*BODY_PARTS.length)];
+  document.getElementById('qHindi').textContent=current.ask;
+  document.getElementById('qEnglish').textContent=current.askEn;
+
+  // build choices
+  const others=BODY_PARTS.filter(b=>b.hindi!==current.hindi).sort(()=>Math.random()-.5).slice(0,3);
+  const allChoices=[current,...others].sort(()=>Math.random()-.5);
+
+  const choicesEl=document.getElementById('choices');
+  choicesEl.innerHTML='';
+  allChoices.forEach(part=>{
+    const btn=document.createElement('div');
+    btn.className='part-btn';
+    btn.innerHTML=`
+      <span class="p-emoji">${part.emoji}</span>
+      <span class="p-hindi">${part.hindi}</span>
+      <span class="p-english">${part.english}</span>
+    `;
+    btn.onclick=()=>checkAnswer(btn,part);
+    choicesEl.appendChild(btn);
+  });
+
+  setTimeout(()=>speak(`${current.ask} ${current.english}!`,'hi-IN'),300);
+}
+
+function checkAnswer(btn,part){
+  if(answered)return;
+  answered=true;
+  if(part.hindi===current.hindi){
+    btn.classList.add('correct');
+    playCorrect();
+    spawnConfetti();
+    showAnswerPopup(`✅ ${current.hindi} = ${current.english}`);
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    speak(`शाबाश! यह ${current.hindi} है! ${current.english}!`,'hi-IN');
+    round++;
+    makeDots();
+    setTimeout(newRound,2000);
+  } else {
+    btn.classList.add('wrong');
+    playWrong();
+    speak(`नहीं! ${current.hindi} ढूंढो!`,'hi-IN');
+    setTimeout(()=>{btn.classList.remove('wrong');answered=false;},800);
+  }
+}
+
+function showCelebration(){
+  speak(`शाबाश! सभी अंग सीख लिए!`,'hi-IN');
+  const ov=document.createElement('div');
+  ov.className='celebration';
+  ov.innerHTML=`
+    <div class="celeb-emoji">🌟</div>
+    <h2>शरीर विशेषज्ञ!</h2>
+    <p>You know all body parts in Hindi!<br/>
+    नाक 👃 आँख 👁️ कान 👂 मुँह 👄<br/>
+    Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span></p>
+    <button class="next-btn" onclick="restartGame()">Play Again 👃</button>
+  `;
+  document.body.appendChild(ov);
+}
+
+function restartGame(){
+  document.querySelector('.celebration')?.remove();
+  score=0;round=0;
+  document.getElementById('scoreVal').textContent=0;
+  newRound();
+}
+
+function makeStars(){
+  const c=document.getElementById('stars');
+  for(let i=0;i<40;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const sz=Math.random()*2+1;
+    s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${1.5+Math.random()*2}s;`;
+    c.appendChild(s);
+  }
+}
+
+window.addEventListener('load',()=>{
+  makeStars();
+  window.speechSynthesis.getVoices();
+  makeDots();
+  setTimeout(()=>{
+    speak('शरीर के अंग सीखो! Let\'s learn body parts!','hi-IN');
+    setTimeout(newRound,1500);
+  },500);
+});
+</script>
+</body>
+</html>

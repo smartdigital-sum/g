@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Indian Constitution & Parliament — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:#fff;padding-bottom:40px}
+  h1,h2,h3{font-family:'Baloo 2',sans-serif}
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);position:sticky;top:0;z-index:99}
+  .back-btn{background:rgba(255,255,255,0.12);border:none;color:#fff;padding:7px 16px;border-radius:20px;cursor:pointer;font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;transition:background .2s}
+  .back-btn:hover{background:rgba(255,255,255,0.22)}
+  .badge{background:var(--pink);color:#fff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;font-family:'Baloo 2',sans-serif}
+  .lang-toggle{margin-left:auto;display:flex;gap:6px}
+  .lang-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s}
+  .lang-btn.active{background:var(--pink);border-color:var(--pink)}
+  .progress-wrap{padding:16px 20px 0}
+  .progress-info{display:flex;justify-content:space-between;font-size:13px;opacity:.8;margin-bottom:6px}
+  .progress-bar{height:8px;background:rgba(255,255,255,0.12);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--saffron));border-radius:4px;transition:width .5s ease}
+  .card{background:var(--card);border-radius:20px;padding:28px 24px;margin:20px auto;max-width:680px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:fadeIn .4s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .q-meta{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;opacity:.7}
+  .q-num{background:var(--pink);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;font-family:'Baloo 2',sans-serif;flex-shrink:0}
+  .scene-emoji{font-size:40px;text-align:center;margin-bottom:10px}
+  .question{font-size:18px;font-weight:700;line-height:1.5;margin-bottom:20px;font-family:'Baloo 2',sans-serif}
+
+  /* Constitution theme decorative strip */
+  .const-strip{display:flex;height:5px;border-radius:3px;overflow:hidden;margin-bottom:18px}
+  .cs1{flex:1;background:#FF9933}
+  .cs2{flex:1;background:#ffffff}
+  .cs3{flex:1;background:#138808}
+
+  .options{display:grid;gap:12px}
+  .opt-btn{background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);color:#fff;padding:14px 18px;border-radius:14px;cursor:pointer;text-align:left;font-size:15px;font-family:'Nunito',sans-serif;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:10px}
+  .opt-btn:hover:not(:disabled){background:rgba(255,64,129,0.15);border-color:var(--pink)}
+  .opt-btn.correct{background:rgba(0,200,83,0.2);border-color:var(--green)}
+  .opt-btn.wrong{background:rgba(255,64,129,0.18);border-color:var(--pink)}
+  .opt-btn:disabled{cursor:default}
+  .opt-label{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:14px;line-height:1.6;display:none;animation:fadeIn .3s ease}
+  .feedback.show{display:block}
+  .feedback.correct-fb{background:rgba(0,200,83,0.15);border:1px solid var(--green)}
+  .feedback.wrong-fb{background:rgba(255,64,129,0.12);border:1px solid var(--pink)}
+  .fb-icon{font-size:18px;margin-right:6px}
+  .score-live{background:rgba(255,64,129,0.18);border:1px solid var(--pink);padding:4px 12px;border-radius:12px;font-size:13px;font-weight:700;color:var(--pink)}
+  .next-btn{display:none;margin:20px auto 0;background:linear-gradient(135deg,var(--pink),#c73663);border:none;color:#fff;padding:13px 36px;border-radius:24px;font-size:16px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 18px rgba(255,64,129,0.4)}
+  .next-btn:hover{transform:translateY(-2px)}
+  .next-btn.show{display:block}
+  .end-screen{display:none;text-align:center;padding:30px 20px;max-width:520px;margin:40px auto}
+  .end-screen.show{display:block;animation:fadeIn .5s ease}
+  .stars{font-size:44px;letter-spacing:4px;margin:10px 0}
+  .final-score{font-size:54px;font-weight:800;color:var(--gold);line-height:1;font-family:'Baloo 2',sans-serif}
+  .score-label{font-size:15px;opacity:.7;margin-bottom:20px}
+  .play-again{background:linear-gradient(135deg,var(--pink),var(--saffron));border:none;color:#fff;padding:14px 40px;border-radius:28px;font-size:17px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s;box-shadow:0 4px 20px rgba(255,64,129,0.4)}
+  .play-again:hover{transform:scale(1.05)}
+  .end-title{font-size:26px;font-weight:800;margin-bottom:8px;font-family:'Baloo 2',sans-serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">উভতি যাওক</span></button>
+  <span class="badge">Social Studies</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-info">
+    <span data-lang="en">Question <span id="qNum">1</span>/10</span>
+    <span data-lang="hi" style="display:none">प्रश्न <span id="qNumHi">1</span>/10</span>
+    <span data-lang="as" style="display:none">প্ৰশ্ন <span id="qNumAs">1</span>/10</span>
+    <span class="score-live">Score: <span id="scoreLive">0</span>/100</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+</div>
+
+<div class="card" id="questionCard">
+  <div class="q-meta">
+    <div class="q-num" id="qBadge">1</div>
+    <span data-lang="en">The Indian Constitution &amp; Parliament</span>
+    <span data-lang="hi" style="display:none">भारतीय संविधान और संसद</span>
+    <span data-lang="as" style="display:none">ভাৰতীয় সংবিধান আৰু সংসদ</span>
+  </div>
+  <div class="const-strip"><div class="cs1"></div><div class="cs2"></div><div class="cs3"></div></div>
+  <div class="scene-emoji" id="sceneEmoji">📜</div>
+  <div class="question" id="questionText"></div>
+  <div class="options" id="optionsDiv"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+    <span data-lang="en">Next Question →</span>
+    <span data-lang="hi" style="display:none">अगला प्रश्न →</span>
+    <span data-lang="as" style="display:none">পৰৱৰ্তী প্ৰশ্ন →</span>
+  </button>
+</div>
+
+<div class="end-screen" id="endScreen">
+  <div class="end-title" data-lang="en">Quiz Complete! 🎉</div>
+  <div class="end-title" data-lang="hi" style="display:none">क्विज़ पूर्ण! 🎉</div>
+  <div class="end-title" data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ! 🎉</div>
+  <div class="stars" id="starsDisplay">⭐⭐⭐</div>
+  <div class="final-score" id="finalScore">0</div>
+  <div class="score-label">/100</div>
+  <button class="play-again" onclick="restartGame()">
+    <span data-lang="en">Play Again 🔄</span>
+    <span data-lang="hi" style="display:none">फिर खेलें 🔄</span>
+    <span data-lang="as" style="display:none">আকৌ খেলক 🔄</span>
+  </button>
+</div>
+
+<script>
+const questions=[
+  {
+    emoji:"📜",
+    en:"Which of the following is NOT one of the four values mentioned in the Preamble of the Indian Constitution?",
+    hi:"भारतीय संविधान की प्रस्तावना में उल्लिखित चार मूल्यों में से कौन सा नहीं है?",
+    as:"ভাৰতীয় সংবিধানৰ প্ৰস্তাৱনাত উল্লিখিত চাৰিটা মূল্যবোধৰ মাজত কোনটো নহয়?",
+    options:{en:["Prosperity","Justice","Liberty","Fraternity"],hi:["समृद्धि","न्याय","स्वतंत्रता","बंधुत्व"],as:["সমৃদ্ধি","ন্যায়","স্বাধীনতা","ভ্ৰাতৃত্ব"]},
+    correct:0,
+    explanation:{en:"The Preamble mentions Justice, Liberty, Equality, and Fraternity. 'Prosperity' is not one of the Preamble's four core values.",hi:"प्रस्तावना में न्याय, स्वतंत्रता, समानता और बंधुत्व का उल्लेख है। 'समृद्धि' इसमें नहीं है।",as:"প্ৰস্তাৱনাত ন্যায়, স্বাধীনতা, সমতা আৰু ভ্ৰাতৃত্বৰ উল্লেখ আছে। 'সমৃদ্ধি' ইয়াত নাই।"}
+  },
+  {
+    emoji:"📜",
+    en:"How many Fundamental Rights are guaranteed by the Indian Constitution?",
+    hi:"भारतीय संविधान में कितने मूल अधिकार हैं?",
+    as:"ভাৰতীয় সংবিধানত কিমানটা মৌলিক অধিকাৰ দিয়া হৈছে?",
+    options:{en:["6","7","5","8"],hi:["6","7","5","8"],as:["6","7","5","8"]},
+    correct:0,
+    explanation:{en:"The Indian Constitution guarantees 6 Fundamental Rights: Right to Equality, Right to Freedom, Right against Exploitation, Right to Freedom of Religion, Cultural & Educational Rights, and Right to Constitutional Remedies.",hi:"भारतीय संविधान 6 मूल अधिकार देता है: समानता, स्वतंत्रता, शोषण के विरुद्ध, धर्म की स्वतंत्रता, सांस्कृतिक-शैक्षिक, और संवैधानिक उपचार।",as:"ভাৰতীয় সংবিধানে ৬টা মৌলিক অধিকাৰ দিয়ে: সমতাৰ অধিকাৰ, স্বাধীনতাৰ অধিকাৰ, শোষণৰ বিৰুদ্ধে অধিকাৰ, ধৰ্মীয় স্বাধীনতাৰ অধিকাৰ, সাংস্কৃতিক-শিক্ষামূলক অধিকাৰ আৰু সাংবিধানিক প্ৰতিকাৰৰ অধিকাৰ।"}
+  },
+  {
+    emoji:"📜",
+    en:"Which article of the Indian Constitution gives citizens the Right to Constitutional Remedies?",
+    hi:"भारतीय संविधान का कौन सा अनुच्छेद नागरिकों को संवैधानिक उपचार का अधिकार देता है?",
+    as:"ভাৰতীয় সংবিধানৰ কোন অনুচ্ছেদে নাগৰিকক সাংবিধানিক প্ৰতিকাৰৰ অধিকাৰ দিয়ে?",
+    options:{en:["Article 32","Article 21","Article 14","Article 19"],hi:["अनुच्छेद 32","अनुच्छेद 21","अनुच्छेद 14","अनुच्छेद 19"],as:["অনুচ্ছেদ 32","অনুচ্ছেদ 21","অনুচ্ছেদ 14","অনুচ্ছেদ 19"]},
+    correct:0,
+    explanation:{en:"Article 32 is the Right to Constitutional Remedies — it allows citizens to approach the Supreme Court to enforce Fundamental Rights. Dr. Ambedkar called it the 'heart and soul' of the Constitution.",hi:"अनुच्छेद 32 संवैधानिक उपचार का अधिकार है। यह नागरिकों को मूल अधिकारों के प्रवर्तन के लिए सर्वोच्च न्यायालय जाने का अधिकार देता है।",as:"অনুচ্ছেদ 32 হৈছে সাংবিধানিক প্ৰতিকাৰৰ অধিকাৰ। ই নাগৰিকক মৌলিক অধিকাৰ বলবৎ কৰিবলৈ উচ্চতম ন্যায়ালয়লৈ যোৱাৰ অধিকাৰ দিয়ে।"}
+  },
+  {
+    emoji:"🏛️",
+    en:"What is the lower house of the Indian Parliament called?",
+    hi:"भारतीय संसद के निचले सदन को क्या कहते हैं?",
+    as:"ভাৰতীয় সংসদৰ নিম্ন কক্ষক কি বোলা হয়?",
+    options:{en:["Lok Sabha","Rajya Sabha","Vidhan Sabha","Vidhan Parishad"],hi:["लोक सभा","राज्य सभा","विधान सभा","विधान परिषद"],as:["লোক সভা","ৰাজ্য সভা","বিধান সভা","বিধান পৰিষদ"]},
+    correct:0,
+    explanation:{en:"Lok Sabha is the lower house (House of the People) of India's Parliament. It has a maximum of 552 members elected directly by citizens. Rajya Sabha is the upper house (Council of States).",hi:"लोक सभा संसद का निचला सदन (जनता का सदन) है। इसमें अधिकतम 552 सदस्य होते हैं जो जनता द्वारा सीधे चुने जाते हैं।",as:"লোক সভা হৈছে সংসদৰ নিম্ন কক্ষ (জনতাৰ সদন)। ইয়াত সর্বোচ্চ 552 জন সদস্য থাকে যি প্ৰত্যক্ষভাৱে নাগৰিকদ্বাৰা নিৰ্বাচিত।"}
+  },
+  {
+    emoji:"📜",
+    en:"Directive Principles of State Policy are contained in which part of the Indian Constitution?",
+    hi:"राज्य के नीति निदेशक तत्व भारतीय संविधान के किस भाग में हैं?",
+    as:"ৰাজ্যৰ নীতি নিৰ্দেশক নীতিসমূহ ভাৰতীয় সংবিধানৰ কোন ভাগত আছে?",
+    options:{en:["Part IV","Part III","Part II","Part V"],hi:["भाग IV","भाग III","भाग II","भाग V"],as:["ভাগ IV","ভাগ III","ভাগ II","ভাগ V"]},
+    correct:0,
+    explanation:{en:"Directive Principles of State Policy are in Part IV (Articles 36–51). They are guidelines for the government to make laws for social and economic welfare but are not legally enforceable in courts.",hi:"राज्य के नीति निदेशक तत्व भाग IV (अनुच्छेद 36-51) में हैं। ये सरकार को कानून बनाने के दिशा-निर्देश हैं लेकिन न्यायालय में प्रवर्तनीय नहीं हैं।",as:"নীতি নিৰ্দেশক নীতি ভাগ IV (অনুচ্ছেদ 36-51)ত আছে। এইবোৰ চৰকাৰক আইন প্ৰণয়নৰ নিৰ্দেশনা কিন্তু আদালতত বলবৎযোগ্য নহয়।"}
+  },
+  {
+    emoji:"🗳️",
+    en:"What is the minimum age to vote in Indian elections?",
+    hi:"भारतीय चुनाव में मतदान करने की न्यूनतम आयु क्या है?",
+    as:"ভাৰতীয় নিৰ্বাচনত ভোট দিবলৈ নূন্যতম বয়স কিমান?",
+    options:{en:["18 years","21 years","25 years","16 years"],hi:["18 वर्ष","21 वर्ष","25 वर्ष","16 वर्ष"],as:["18 বছৰ","21 বছৰ","25 বছৰ","16 বছৰ"]},
+    correct:0,
+    explanation:{en:"The minimum voting age in India is 18 years (lowered from 21 in 1989 by the 61st Constitutional Amendment). Every citizen above 18 has the right to vote.",hi:"भारत में मतदान की न्यूनतम आयु 18 वर्ष है (1989 में 61वें संशोधन द्वारा 21 से घटाई गई)।",as:"ভাৰতত ভোট দিবলৈ ন্যূনতম বয়স ১৮ বছৰ (1989ত 61তম সংশোধনীদ্বাৰা 21ৰ পৰা হ্ৰাস কৰা হৈছিল)।"}
+  },
+  {
+    emoji:"👑",
+    en:"Who is the constitutional head of India (titular head)?",
+    hi:"भारत का संवैधानिक प्रमुख (नाममात्र प्रमुख) कौन है?",
+    as:"ভাৰতৰ সাংবিধানিক প্ৰধান (নামিক প্ৰধান) কোন?",
+    options:{en:["The President","The Prime Minister","The Chief Justice","The Speaker of Lok Sabha"],hi:["राष्ट्रपति","प्रधानमंत्री","मुख्य न्यायाधीश","लोक सभा अध्यक्ष"],as:["ৰাষ্ট্ৰপতি","প্ৰধানমন্ত্ৰী","মুখ্য ন্যায়াধীশ","লোক সভাৰ অধ্যক্ষ"]},
+    correct:0,
+    explanation:{en:"The President of India is the constitutional/titular head of state. The real executive power rests with the Prime Minister and the Council of Ministers.",hi:"भारत के राष्ट्रपति राज्य के संवैधानिक/नाममात्र प्रमुख हैं। वास्तविक कार्यकारी शक्ति प्रधानमंत्री और मंत्रिमंडल के पास होती है।",as:"ভাৰতৰ ৰাষ্ট্ৰপতি হৈছেন ৰাষ্ট্ৰৰ সাংবিধানিক/নামিক প্ৰধান। প্ৰকৃত কাৰ্যনিৰ্বাহী ক্ষমতা প্ৰধানমন্ত্ৰী আৰু মন্ত্ৰী পৰিষদৰ হাতত থাকে।"}
+  },
+  {
+    emoji:"⚖️",
+    en:"Which Fundamental Right protects citizens against arrest without reason and ensures a fair trial?",
+    hi:"कौन सा मूल अधिकार नागरिकों को बिना कारण गिरफ्तारी से बचाता है और उचित सुनवाई सुनिश्चित करता है?",
+    as:"কোন মৌলিক অধিকাৰে নাগৰিকক কাৰণ নোহোৱাকৈ গ্ৰেপ্তাৰৰ পৰা ৰক্ষা কৰে আৰু ন্যায্য বিচাৰ নিশ্চিত কৰে?",
+    options:{en:["Right to Freedom","Right to Equality","Right against Exploitation","Right to Constitutional Remedies"],hi:["स्वतंत्रता का अधिकार","समानता का अधिकार","शोषण के विरुद्ध अधिकार","संवैधानिक उपचार का अधिकार"],as:["স্বাধীনতাৰ অধিকাৰ","সমতাৰ অধিকাৰ","শোষণৰ বিৰুদ্ধে অধিকাৰ","সাংবিধানিক প্ৰতিকাৰৰ অধিকাৰ"]},
+    correct:0,
+    explanation:{en:"The Right to Freedom (Articles 19–22) includes protection against arbitrary arrest. Article 22 guarantees the right to be informed of the reason for arrest and to consult a lawyer.",hi:"स्वतंत्रता का अधिकार (अनुच्छेद 19-22) में मनमानी गिरफ्तारी के विरुद्ध सुरक्षा शामिल है। अनुच्छेद 22 गिरफ्तारी का कारण जानने और वकील से परामर्श का अधिकार देता है।",as:"স্বাধীনতাৰ অধিকাৰত (অনুচ্ছেদ 19-22) স্বেচ্ছাচাৰী গ্ৰেপ্তাৰৰ বিৰুদ্ধে সুৰক্ষা অন্তৰ্ভুক্ত।"}
+  },
+  {
+    emoji:"📜",
+    en:"Which part of the Indian Constitution contains the Fundamental Duties of citizens?",
+    hi:"भारतीय संविधान के किस भाग में नागरिकों के मूल कर्तव्य हैं?",
+    as:"ভাৰতীয় সংবিধানৰ কোন ভাগত নাগৰিকৰ মৌলিক কৰ্তব্য আছে?",
+    options:{en:["Part IV-A","Part III","Part IV","Part V"],hi:["भाग IV-A","भाग III","भाग IV","भाग V"],as:["ভাগ IV-A","ভাগ III","ভাগ IV","ভাগ V"]},
+    correct:0,
+    explanation:{en:"Fundamental Duties are in Part IV-A (Article 51-A), added by the 42nd Constitutional Amendment in 1976. There are 11 Fundamental Duties that remind citizens of their responsibilities.",hi:"मूल कर्तव्य भाग IV-A (अनुच्छेद 51-A) में हैं, जो 42वें संशोधन (1976) द्वारा जोड़े गए। 11 मूल कर्तव्य नागरिकों को उनकी जिम्मेदारियां याद दिलाते हैं।",as:"মৌলিক কৰ্তব্যসমূহ ভাগ IV-A (অনুচ্ছেদ 51-A)ত আছে, যা 42তম সংশোধনী (1976)দ্বাৰা যোগ কৰা হৈছিল। 11টা মৌলিক কৰ্তব্য আছে।"}
+  },
+  {
+    emoji:"🏛️",
+    en:"The Rajya Sabha is also known as the:",
+    hi:"राज्य सभा को अन्य किस नाम से जाना जाता है?",
+    as:"ৰাজ্য সভাক আন কি নামেৰে জনা যায়?",
+    options:{en:["Council of States (Upper House)","House of the People (Lower House)","State Legislative Assembly","Union Cabinet"],hi:["राज्यों की परिषद (उच्च सदन)","जनता का सदन (निचला सदन)","राज्य विधान सभा","केंद्रीय मंत्रिमंडल"],as:["ৰাজ্যসমূহৰ পৰিষদ (উচ্চ কক্ষ)","জনতাৰ সদন (নিম্ন কক্ষ)","ৰাজ্য বিধান সভা","কেন্দ্ৰীয় মন্ত্ৰী পৰিষদ"]},
+    correct:0,
+    explanation:{en:"Rajya Sabha is the upper house of Parliament, also called the Council of States. It has 250 members. It cannot be dissolved — members serve 6-year terms with 1/3 retiring every 2 years.",hi:"राज्य सभा संसद का उच्च सदन है, जिसे राज्यों की परिषद भी कहते हैं। इसमें 250 सदस्य होते हैं और यह विघटित नहीं होती।",as:"ৰাজ্য সভা সংসদৰ উচ্চ কক্ষ, যাক ৰাজ্যসমূহৰ পৰিষদও বোলা হয়। ইয়াত 250 জন সদস্য থাকে আৰু ইয়াক ভংগ কৰিব নোৱাৰি।"}
+  }
+];
+
+let current=0,score=0,answered=false,lang='en';
+function setLang(l){lang=l;document.querySelectorAll('.lang-btn').forEach((b,i)=>{b.classList.toggle('active',['en','hi','as'][i]===l)});document.querySelectorAll('[data-lang]').forEach(el=>{el.style.display=el.dataset.lang===l?'':'none'});updateQNum()}
+function updateQNum(){const n=current+1;['qNum','qNumHi','qNumAs'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n});document.getElementById('qBadge').textContent=n}
+function renderQuestion(){
+  if(current>=questions.length){showEnd();return}
+  answered=false;const q=questions[current];
+  document.getElementById('progressFill').style.width=((current+1)/questions.length*100)+'%';
+  updateQNum();document.getElementById('sceneEmoji').textContent=q.emoji||'📜';
+  document.getElementById('questionText').textContent=q[lang]||q.en;
+  const opts=q.options[lang]||q.options.en;const labels=['A','B','C','D'];
+  document.getElementById('optionsDiv').innerHTML=opts.map((o,i)=>`<button class="opt-btn" onclick="answer(${i})" id="opt${i}"><span class="opt-label">${labels[i]}</span>${o}</button>`).join('');
+  const fb=document.getElementById('feedback');fb.className='feedback';fb.textContent='';
+  document.getElementById('nextBtn').classList.remove('show');
+}
+function answer(idx){
+  if(answered)return;answered=true;const q=questions[current];const isCorrect=idx===q.correct;
+  if(isCorrect)score+=10;document.getElementById('scoreLive').textContent=score;
+  document.querySelectorAll('.opt-btn').forEach((b,i)=>{b.disabled=true;if(i===q.correct)b.classList.add('correct');else if(i===idx&&!isCorrect)b.classList.add('wrong')});
+  const fb=document.getElementById('feedback');
+  fb.className='feedback show '+(isCorrect?'correct-fb':'wrong-fb');
+  const exp=(q.explanation&&q.explanation[lang])||q.explanation.en;
+  fb.innerHTML=`<span class="fb-icon">${isCorrect?'✓':'✗'}</span> ${exp}`;
+  document.getElementById('nextBtn').classList.add('show');
+}
+function nextQuestion(){current++;if(current>=questions.length){showEnd();return}renderQuestion()}
+function showEnd(){
+  document.getElementById('questionCard').style.display='none';document.getElementById('progressWrap').style.display='none';
+  const es=document.getElementById('endScreen');es.classList.add('show');
+  document.getElementById('finalScore').textContent=score;const p=score;
+  document.getElementById('starsDisplay').textContent=p>=90?'⭐⭐⭐':p>=70?'⭐⭐':p>=40?'⭐':'☆☆☆';
+}
+function restartGame(){
+  current=0;score=0;answered=false;document.getElementById('scoreLive').textContent=0;
+  document.getElementById('endScreen').classList.remove('show');
+  document.getElementById('questionCard').style.display='';document.getElementById('progressWrap').style.display='';
+  renderQuestion();
+}
+setLang('en');renderQuestion();
+</script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>G5-23 · Binary Decoder · GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--text:#E8F0FF;--dim:#4A6A8A;
+  --grad-from:#050E1A;--grad-to:#030810;--accent:var(--blue);
+  --border:rgba(76,201,240,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(145deg,var(--grad-from),var(--grad-to));min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;padding:0 0 48px;}
+.header{width:100%;max-width:480px;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;}
+.subject-tag{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);}
+.stars{display:flex;gap:3px;}
+.star{font-size:1rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+
+.wow-card{width:calc(100% - 32px);max-width:448px;background:linear-gradient(135deg,rgba(76,201,240,.18),rgba(6,214,160,.06));border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin:8px 16px 16px;text-align:center;}
+.wow-label{font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.wow-card p{font-size:.95rem;line-height:1.6;}
+.wow-card strong{color:var(--gold);}
+
+.stage-tabs{width:calc(100% - 32px);max-width:448px;margin:0 16px 14px;display:flex;gap:6px;}
+.tab-btn{flex:1;padding:8px 4px;border-radius:10px;border:2px solid transparent;font-family:'Baloo 2',cursive;font-weight:700;font-size:.72rem;background:var(--card);color:var(--dim);cursor:pointer;transition:all .2s;text-align:center;}
+.tab-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(76,201,240,.1);}
+
+.section{width:calc(100% - 32px);max-width:448px;margin:0 16px;}
+
+/* SWITCH BOARD */
+.board-wrap{background:var(--card);border:2px solid var(--border);border-radius:18px;padding:16px;margin-bottom:14px;}
+.board-label{font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);text-align:center;margin-bottom:12px;}
+.switches-row{display:flex;justify-content:center;gap:6px;margin-bottom:8px;}
+.switch-col{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.bit-value{font-size:.72rem;font-weight:800;color:var(--dim);text-align:center;}
+.switch-btn{
+  width:44px;height:44px;border-radius:10px;
+  border:2px solid rgba(76,201,240,.3);
+  background:rgba(76,201,240,.05);
+  font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;
+  color:var(--dim);cursor:pointer;transition:all .2s;
+}
+.switch-btn.on{
+  background:var(--blue);border-color:var(--blue);
+  color:#000;box-shadow:0 0 12px rgba(76,201,240,.5);
+}
+.bit-label{font-size:.6rem;color:var(--dim);font-weight:700;}
+
+/* DECIMAL DISPLAY */
+.decimal-display{
+  background:rgba(76,201,240,.08);border:1px solid var(--border);
+  border-radius:12px;padding:10px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+.dd-label{font-size:.72rem;font-weight:700;color:var(--dim);}
+.dd-value{font-family:'Baloo 2',cursive;font-size:1.6rem;font-weight:800;color:var(--blue);}
+
+/* TARGETS */
+.target-card{background:rgba(76,201,240,.06);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:12px;}
+.tc-q{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:6px;}
+.tc-q strong{color:var(--gold);}
+.tc-hint{font-size:.75rem;color:var(--dim);}
+.check-mini{background:var(--blue);color:#000;font-family:'Baloo 2',cursive;font-weight:800;font-size:.85rem;border:none;border-radius:20px;padding:6px 16px;cursor:pointer;margin-top:8px;display:block;transition:opacity .2s;}
+.check-mini:hover{opacity:.85;}
+.target-fb{font-size:.78rem;font-weight:700;margin-top:6px;display:none;}
+.target-fb.correct{color:var(--teal);}
+.target-fb.wrong{color:var(--coral);}
+
+/* LETTER ENCODER */
+.binary-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:14px;background:var(--card);border-radius:12px;overflow:hidden;}
+.binary-table th{background:rgba(76,201,240,.15);padding:8px 12px;text-align:left;font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--blue);}
+.binary-table td{padding:8px 12px;border-top:1px solid rgba(255,255,255,.04);font-family:'Courier New',monospace;font-size:.82rem;}
+.binary-table tr:hover td{background:rgba(76,201,240,.04);}
+.letter-col{font-weight:700;color:var(--gold);}
+.binary-col{color:var(--blue);}
+.decimal-col{color:var(--teal);}
+
+/* QUIZ */
+.quiz-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:12px;}
+.qq{font-size:.92rem;font-weight:700;color:var(--text);line-height:1.6;margin-bottom:10px;}
+.qq strong{color:var(--gold);}
+.qopts{display:flex;flex-direction:column;gap:7px;}
+.q-opt{background:rgba(76,201,240,.08);border:2px solid rgba(76,201,240,.18);color:var(--text);font-weight:600;font-size:.88rem;padding:10px 14px;border-radius:10px;cursor:pointer;transition:all .2s;font-family:'Courier New',monospace;}
+.q-opt:hover{border-color:var(--blue);}
+.q-opt.chosen{border-color:var(--blue);background:rgba(76,201,240,.18);color:var(--blue);}
+.q-opt.correct-a{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal);}
+.q-opt.wrong-a{border-color:var(--coral);background:rgba(255,107,107,.1);color:var(--coral);}
+
+.check-btn{width:100%;padding:14px;border-radius:14px;border:none;font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--teal));color:#000;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(76,201,240,.3);}
+.check-btn:hover{opacity:.9;}
+.check-btn:disabled{opacity:.4;cursor:not-allowed;}
+.feedback{margin-top:12px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.9rem;text-align:center;display:none;}
+.feedback.correct{background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.4);color:var(--teal);}
+.feedback.wrong{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:var(--coral);}
+
+.progress-row{width:calc(100% - 32px);max-width:448px;margin:16px 16px 0;display:flex;align-items:center;justify-content:space-between;}
+.progress-text{font-size:.8rem;font-weight:700;color:var(--dim);}
+.next-btn{background:var(--gold);color:#1A0F00;font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;border:none;border-radius:50px;padding:8px 22px;cursor:pointer;display:none;}
+
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:28px;max-width:360px;width:90%;text-align:center;}
+.overlay-box .o-emoji{font-size:3rem;margin-bottom:10px;}
+.overlay-box h3{font-family:'Baloo 2',cursive;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.overlay-box p{font-size:.88rem;color:var(--text);line-height:1.6;}
+.overlay-box strong{color:var(--teal);}
+
+.complete-screen{width:calc(100% - 32px);max-width:448px;margin:20px 16px;background:var(--card);border:2px solid rgba(6,214,160,.3);border-radius:22px;padding:32px 24px;text-align:center;display:none;}
+.complete-screen .big{font-size:4rem;margin-bottom:12px;}
+.complete-screen h2{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--gold);margin-bottom:8px;}
+.complete-screen p{color:var(--text);font-size:.95rem;line-height:1.6;margin-bottom:20px;}
+.play-again{background:var(--teal);color:#040E04;font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;border:none;border-radius:50px;padding:12px 28px;cursor:pointer;}
+
+.confetti-piece{position:fixed;width:10px;height:10px;opacity:0;animation:confFall 1.8s ease-in forwards;pointer-events:none;z-index:200;}
+@keyframes confFall{0%{opacity:1;transform:translateY(0) rotate(0deg);}100%{opacity:0;transform:translateY(80vh) rotate(720deg);}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="subject-tag">Computer</div>
+  <div class="game-title">🔢 Binary Decoder</div>
+  <div class="stars">
+    <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+    <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+  </div>
+</div>
+
+<div class="wow-card">
+  <div class="wow-label">🤯 Did You Know?</div>
+  <p>Every photo, song and message on your phone is secretly <strong>JUST zeros and ones.</strong> Billions of them. The most complex game in the world is ultimately <strong>1,000,000,000,000 binary switches!</strong></p>
+</div>
+
+<div class="stage-tabs">
+  <div class="tab-btn active" id="tab1">1. Flip Switches</div>
+  <div class="tab-btn" id="tab2">2. Decode Letters</div>
+  <div class="tab-btn" id="tab3">3. Quiz</div>
+</div>
+
+<!-- STAGE 1: SWITCH BOARD -->
+<div class="section" id="stage1">
+  <div style="background:rgba(76,201,240,.08);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:.88rem;line-height:1.6;">
+    <strong>💡 How binary works:</strong> Each switch = 1 bit. ON (1) × its value, OFF (0) = nothing. Add all ON values to get the decimal number!<br/>
+    <code style="font-size:.75rem;background:rgba(76,201,240,.15);padding:2px 6px;border-radius:4px;">128 + 64 + 32 + 16 + 8 + 4 + 2 + 1</code>
+  </div>
+
+  <div class="board-wrap">
+    <div class="board-label">8-Bit Switch Board — Tap to toggle</div>
+    <div class="switches-row" id="switchRow"></div>
+    <div class="decimal-display">
+      <span class="dd-label">Decimal Value:</span>
+      <span class="dd-value" id="decimalDisplay">0</span>
+    </div>
+  </div>
+
+  <div id="targetsArea"></div>
+  <div class="feedback" id="s1FB"></div>
+</div>
+
+<!-- STAGE 2: LETTER DECODER -->
+<div class="section" id="stage2" style="display:none;">
+  <div style="background:rgba(76,201,240,.08);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:.88rem;line-height:1.6;">
+    <strong>🔤 ASCII Code!</strong> Every letter has a number. Computers store letters as binary. 'A' = 65 = <code>01000001</code>. Decode the hidden word below!
+  </div>
+  <table class="binary-table">
+    <thead><tr><th>Letter</th><th>Binary</th><th>Decimal</th></tr></thead>
+    <tbody id="letterTable"></tbody>
+  </table>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:12px;">
+    <div style="font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;">🔐 Hidden Word — Decode each binary number:</div>
+    <div id="decodeChallenge"></div>
+  </div>
+  <button class="check-btn" id="s2Btn" onclick="checkDecode()">Check Decoding ✓</button>
+  <div class="feedback" id="s2FB"></div>
+</div>
+
+<!-- STAGE 3: QUIZ -->
+<div class="section" id="stage3" style="display:none;">
+  <div id="quizArea"></div>
+  <button class="check-btn" id="s3Btn" onclick="checkQuiz()">Submit Answers ✓</button>
+  <div class="feedback" id="s3FB"></div>
+</div>
+
+<div class="progress-row">
+  <span class="progress-text" id="progressText">Stage 1 of 3</span>
+  <button class="next-btn" id="nextBtn" onclick="nextStage()">Next Stage →</button>
+</div>
+
+<div class="complete-screen" id="completeScreen">
+  <div class="big">🔢</div>
+  <h2>Binary Master!</h2>
+  <p>You've flipped binary switches, decoded ASCII letters, and answered the quiz. Every single thing on your phone is ultimately <strong>zeros and ones</strong> — and now you understand why!</p>
+  <button class="play-again" onclick="restartGame()">Play Again 🔄</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="o-emoji" id="oEmoji">🔢</div>
+    <h3 id="oTitle">Binary!</h3>
+    <p id="oFact"></p>
+  </div>
+</div>
+
+<script>
+const BIT_VALUES=[128,64,32,16,8,4,2,1];
+let switches=[0,0,0,0,0,0,0,0];
+let stage=1, score=0;
+let targetIdx=0, targetsDone=0;
+let decodeSels={}, quizSels={};
+
+const TARGETS=[
+  {value:10,hint:'8+2 = ?'},
+  {value:65,hint:'The ASCII code for "A"!'},
+  {value:42,hint:'The answer to life, the universe and everything!'},
+  {value:255,hint:'All 8 switches ON — maximum byte value!'},
+];
+
+// ── STAGE 1 ──
+function buildSwitches(){
+  const row=document.getElementById('switchRow');
+  row.innerHTML='';
+  BIT_VALUES.forEach((v,i)=>{
+    const col=document.createElement('div');
+    col.className='switch-col';
+    col.innerHTML=`
+      <div class="bit-value">${v}</div>
+      <button class="switch-btn" id="sw_${i}" onclick="toggleSwitch(${i})">${switches[i]}</button>
+      <div class="bit-label">bit ${7-i}</div>`;
+    row.appendChild(col);
+  });
+  updateDecimal();
+}
+
+window.toggleSwitch=function(idx){
+  switches[idx]=switches[idx]?0:1;
+  const btn=document.getElementById(`sw_${idx}`);
+  btn.textContent=switches[idx];
+  btn.classList.toggle('on',switches[idx]===1);
+  updateDecimal();
+}
+
+function updateDecimal(){
+  const val=switches.reduce((acc,bit,i)=>acc+bit*BIT_VALUES[i],0);
+  document.getElementById('decimalDisplay').textContent=val;
+  return val;
+}
+
+function buildTargets(){
+  const area=document.getElementById('targetsArea');
+  area.innerHTML='';
+  TARGETS.forEach((t,i)=>{
+    const card=document.createElement('div');
+    card.className='target-card';
+    card.id=`tc_${i}`;
+    card.innerHTML=`
+      <div class="tc-q">Target ${i+1}: Set the switches to show <strong>${t.value}</strong> in decimal</div>
+      <div class="tc-hint">💡 Hint: ${t.hint}</div>
+      <button class="check-mini" onclick="checkTarget(${i},${t.value})">Check ✓</button>
+      <div class="target-fb" id="tfb_${i}"></div>`;
+    area.appendChild(card);
+  });
+}
+
+window.checkTarget=function(idx,target){
+  const val=updateDecimal();
+  const isRight=val===target;
+  const fb=document.getElementById(`tfb_${idx}`);
+  if(isRight){
+    fb.textContent=`✅ Correct! ${target} in binary = ${switches.join('')}`;
+    fb.className='target-fb correct'; fb.style.display='block';
+    document.querySelector(`#tc_${idx} .check-mini`).disabled=true;
+    score++; updateStars(); spawnConfetti();
+    targetsDone++;
+    showOverlay('🔢','Binary!',`<strong>${target}</strong> = binary <strong>${target.toString(2).padStart(8,'0')}</strong>. Each "1" bit adds its value to the total!`);
+    if(targetsDone>=3){document.getElementById('nextBtn').style.display='block';document.getElementById('progressText').textContent=`${targetsDone}/4 targets done!`;}
+  } else {
+    fb.textContent=`❌ Got ${val}, need ${target}. Try: ${target.toString(2).padStart(8,'0').split('').map((b,i)=>b==='1'?BIT_VALUES[i]:0).filter(v=>v).join(' + ')} = ${target}`;
+    fb.className='target-fb wrong'; fb.style.display='block';
+  }
+}
+
+// ── STAGE 2: DECODE ──
+const ASCII_MAP={65:'A',66:'B',67:'C',68:'D',69:'E',70:'F',71:'G',72:'H',73:'I',74:'J',75:'K',76:'L',77:'M',78:'N',79:'O',80:'P'};
+const HIDDEN_WORD_CODES=[72,73,77,65,76]; // HIMAL
+const HIDDEN_WORD='HIMAL';
+
+function buildLetterTable(){
+  const tbody=document.getElementById('letterTable');
+  tbody.innerHTML='';
+  [65,66,67,68,72,73,76,77,78,65].filter((v,i,a)=>a.indexOf(v)===i).sort((a,b)=>a-b).forEach(code=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="letter-col">${ASCII_MAP[code]}</td><td class="binary-col">${code.toString(2).padStart(8,'0')}</td><td class="decimal-col">${code}</td>`;
+    tbody.appendChild(tr);
+  });
+  const c=document.getElementById('decodeChallenge');
+  c.innerHTML='';
+  HIDDEN_WORD_CODES.forEach((code,i)=>{
+    const binary=code.toString(2).padStart(8,'0');
+    const div=document.createElement('div');
+    div.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px;';
+    const shuffled=Object.entries(ASCII_MAP).sort(()=>Math.random()-.5).slice(0,4);
+    if(!shuffled.find(([k])=>+k===code)) shuffled[0]=[code,ASCII_MAP[code]];
+    const opts=shuffled.map(([k,v])=>v).sort(()=>Math.random()-.5);
+    div.innerHTML=`
+      <code style="font-family:'Courier New',monospace;font-size:.82rem;background:rgba(76,201,240,.12);padding:4px 10px;border-radius:6px;color:var(--blue);flex-shrink:0;">${binary}</code>
+      <select id="dec_${i}" style="background:var(--card);border:2px solid var(--border);color:var(--text);border-radius:8px;padding:5px 10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.88rem;flex:1;">
+        <option value="">—</option>
+        ${opts.map(o=>`<option value="${o}">${o}</option>`).join('')}
+      </select>`;
+    c.appendChild(div);
+  });
+}
+
+function checkDecode(){
+  let correct=0;
+  HIDDEN_WORD_CODES.forEach((code,i)=>{
+    const sel=document.getElementById(`dec_${i}`);
+    if(sel&&sel.value===ASCII_MAP[code]) correct++;
+  });
+  score+=correct; updateStars();
+  document.getElementById('s2Btn').disabled=true;
+  const word=HIDDEN_WORD_CODES.map(c=>ASCII_MAP[c]).join('');
+  showFB('s2FB',correct>=4?'correct':'wrong',correct===5?`✅ You decoded "${word}"! Perfect!`:` ${correct}/5 letters correct. The hidden word was: ${word}`);
+  if(correct>=4) spawnConfetti();
+  showOverlay('🔤','Decoded!',`The hidden word is <strong>${word}</strong>! Every letter on your phone, tablet and computer is secretly just a number in binary.`);
+  document.getElementById('nextBtn').style.display='block';
+}
+
+// ── STAGE 3: QUIZ ──
+const QUIZ_QS=[
+  {q:'What is binary number <code>00001010</code> in decimal?',opts:['8','10','12','14'],answer:1,
+   exp:'<code>00001010</code> = 8 + 2 = <strong>10</strong>. Only the 8 and 2 bits are ON!'},
+  {q:'How many bits are in 1 byte?',opts:['4','6','8','16'],answer:2,
+   exp:'1 byte = <strong>8 bits</strong>. A byte can store values from 0 to 255 (that\'s 256 possible values).'},
+  {q:'What decimal number does <code>11111111</code> (all switches ON) equal?',opts:['128','200','255','256'],answer:2,
+   exp:'128+64+32+16+8+4+2+1 = <strong>255</strong>. Maximum value for 1 byte!'},
+  {q:"What does ASCII stand for?",opts:['A Standard Code for Information Interchange','American Standard Code for Information Interchange','Advanced System Code for Internet Interchange','Automatic System of Computer Instruction'],answer:1,
+   exp:'"<strong>American Standard Code for Information Interchange</strong>" — invented in 1963 to let computers from different companies share text!'},
+];
+
+function buildQuiz(){
+  const c=document.getElementById('quizArea');
+  c.innerHTML='';
+  QUIZ_QS.forEach((q,i)=>{
+    const card=document.createElement('div');
+    card.className='quiz-card';
+    card.innerHTML=`
+      <div class="qq">${i+1}. ${q.q}</div>
+      <div class="qopts">
+        ${q.opts.map((o,j)=>`<button class="q-opt" id="qopt_${i}_${j}" onclick="pickQ(${i},${j},this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="qfb_${i}" style="margin-top:6px;"></div>`;
+    c.appendChild(card);
+  });
+}
+
+window.pickQ=function(qi,oi,el){quizSels[qi]=oi;document.querySelectorAll(`[id^="qopt_${qi}_"]`).forEach(b=>b.classList.toggle('chosen',b===el));}
+
+function checkQuiz(){
+  if(Object.keys(quizSels).length<QUIZ_QS.length){showFB('s3FB','wrong','⚠️ Answer all 4!');return;}
+  let correct=0;
+  QUIZ_QS.forEach((q,i)=>{
+    const isRight=quizSels[i]===q.answer;
+    if(isRight) correct++;
+    document.getElementById(`qopt_${i}_${q.answer}`).classList.add('correct-a');
+    if(!isRight) document.getElementById(`qopt_${i}_${quizSels[i]}`)?.classList.add('wrong-a');
+    const fb=document.getElementById(`qfb_${i}`);
+    fb.innerHTML=isRight?`✅ Correct! ${q.exp}`:`❌ ${q.exp}`;
+    fb.className=`feedback ${isRight?'correct':'wrong'}`;fb.style.display='block';
+  });
+  score+=correct; updateStars();
+  document.getElementById('s3Btn').disabled=true;
+  showFB('s3FB',correct>=3?'correct':'wrong',correct===4?'✅ Perfect! Binary Master achieved!':` ${correct}/4 correct!`);
+  if(correct>=3) spawnConfetti();
+  setTimeout(()=>{
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+    document.querySelector('.stage-tabs').style.display='none';
+    document.querySelector('.progress-row').style.display='none';
+    document.getElementById('completeScreen').style.display='block';
+    if(correct>=3) spawnConfetti();
+  },2200);
+}
+
+function setStage(n){
+  stage=n;
+  [1,2,3].forEach(i=>{document.getElementById('stage'+i).style.display=i===n?'block':'none';document.getElementById('tab'+i).classList.toggle('active',i===n);});
+  document.getElementById('progressText').textContent=`Stage ${n} of 3`;
+  document.getElementById('nextBtn').style.display='none';
+  if(n===2) buildLetterTable();
+  if(n===3) buildQuiz();
+}
+function nextStage(){if(stage<3) setStage(stage+1);}
+function showFB(id,type,msg){const el=document.getElementById(id);el.innerHTML=msg;el.className=`feedback ${type}`;el.style.display='block';}
+function updateStars(){const c=Math.min(5,Math.ceil(score/2));for(let i=1;i<=c;i++) document.getElementById('s'+i).classList.add('lit');}
+function showOverlay(emoji,title,fact){
+  document.getElementById('oEmoji').textContent=emoji;document.getElementById('oTitle').textContent=title;document.getElementById('oFact').innerHTML=fact;
+  const ov=document.getElementById('overlay');ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),2600);
+}
+function spawnConfetti(){
+  const colors=['#FFD166','#4CC9F0','#06D6A0','#C77DFF','#A8E063'];
+  for(let i=0;i<28;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[i%5]};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()*2}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),3500);}
+}
+function restartGame(){
+  stage=1;score=0;switches=[0,0,0,0,0,0,0,0];targetsDone=0;targetIdx=0;decodeSels={};quizSels={};
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('completeScreen').style.display='none';
+  document.querySelectorAll('.section').forEach(s=>s.style.display='block');
+  document.querySelector('.stage-tabs').style.display='flex';
+  document.querySelector('.progress-row').style.display='flex';
+  buildSwitches(); buildTargets(); setStage(1);
+}
+buildSwitches(); buildTargets();
+</script>
+</body>
+</html>

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rongmon's World — Parent Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f4f7fb;
+  --bg2:#fff;
+  --jungle:#1a5c2e;
+  --jungle-mid:#2d8a47;
+  --leaf:#4caf50;
+  --gold:#f5c518;
+  --gold-dark:#d4a900;
+  --red:#e63946;
+  --orange:#f4a261;
+  --sky:#48cae4;
+  --sky-dark:#0096c7;
+  --dark:#1a1a2e;
+  --text-dim:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --shadow:0 2px 16px rgba(0,0,0,0.07);
+  --shadow-md:0 6px 30px rgba(0,0,0,0.10);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Baloo 2',cursive;background:var(--bg);color:var(--dark);min-height:100vh;}
+
+/* ── TOP BAR ── */
+.topbar{
+  background:var(--jungle);
+  padding:0 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:60px;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 3px 12px rgba(0,0,0,0.2);
+}
+.topbar-brand{display:flex;align-items:center;gap:10px;}
+.topbar-logo{font-size:22px;}
+.topbar-title{font-size:17px;font-weight:800;color:#fff;line-height:1;}
+.topbar-title small{font-size:11px;color:rgba(255,255,255,0.6);font-weight:600;display:block;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.lang-row{display:flex;gap:4px;}
+.lpill{font-family:'Baloo 2',cursive;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1.5px solid transparent;cursor:pointer;background:transparent;color:rgba(255,255,255,0.5);}
+.lpill.active{background:var(--gold);color:var(--jungle);border-color:var(--gold);}
+.back-btn{font-family:'Baloo 2',cursive;font-size:12px;font-weight:700;padding:5px 14px;border-radius:18px;border:1.5px solid rgba(255,255,255,0.3);background:transparent;color:rgba(255,255,255,0.8);cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.back-btn:hover{background:rgba(255,255,255,0.12);}
+
+/* ── CHILD SELECTOR ── */
+.child-selector{
+  background:var(--jungle);
+  padding:0 24px 20px;
+  display:flex;gap:12px;overflow-x:auto;
+  scrollbar-width:none;
+}
+.child-selector::-webkit-scrollbar{display:none;}
+.child-chip{
+  flex-shrink:0;
+  display:flex;align-items:center;gap:8px;
+  padding:8px 18px;border-radius:30px;
+  border:2px solid rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.08);
+  cursor:pointer;transition:all 0.2s;
+  color:rgba(255,255,255,0.7);font-size:14px;font-weight:700;
+}
+.child-chip.active{background:var(--gold);color:var(--jungle);border-color:var(--gold);}
+.child-chip:hover:not(.active){background:rgba(255,255,255,0.15);color:#fff;}
+.child-avatar{font-size:20px;}
+.add-child-btn{
+  flex-shrink:0;
+  display:flex;align-items:center;gap:6px;
+  padding:8px 18px;border-radius:30px;
+  border:2px dashed rgba(255,255,255,0.3);
+  background:transparent;cursor:pointer;
+  color:rgba(255,255,255,0.5);font-size:13px;font-weight:700;
+  font-family:'Baloo 2',cursive;transition:all 0.2s;
+}
+.add-child-btn:hover{border-color:rgba(255,255,255,0.6);color:rgba(255,255,255,0.8);}
+
+/* ── PAGE ── */
+.page{max-width:780px;margin:0 auto;padding:24px 16px 80px;}
+
+/* ── OVERVIEW CARDS ── */
+.overview-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-bottom:24px;
+}
+@media(min-width:500px){.overview-grid{grid-template-columns:repeat(4,1fr);}}
+.ov-card{
+  background:var(--card);
+  border-radius:16px;
+  padding:16px 14px;
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
+  text-align:center;
+  transition:transform 0.2s;
+}
+.ov-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.ov-icon{font-size:30px;display:block;margin-bottom:6px;}
+.ov-num{font-size:26px;font-weight:900;line-height:1;display:block;}
+.ov-label{font-size:11px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
+.col-gold{color:var(--gold-dark);}
+.col-green{color:var(--jungle);}
+.col-sky{color:var(--sky-dark);}
+.col-red{color:var(--red);}
+
+/* ── SECTION ── */
+.dash-section{margin-bottom:24px;}
+.ds-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.ds-title{font-size:15px;font-weight:800;color:var(--dark);display:flex;align-items:center;gap:7px;}
+.ds-link{font-size:12px;font-weight:700;color:var(--jungle);text-decoration:none;cursor:pointer;}
+
+/* ── ACTIVITY CHART ── */
+.activity-card{
+  background:var(--card);border-radius:16px;padding:20px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+}
+.chart-wrap{display:flex;align-items:flex-end;gap:8px;height:90px;margin-bottom:8px;}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.bar{
+  width:100%;border-radius:6px 6px 0 0;
+  transition:height 0.8s cubic-bezier(0.34,1.2,0.64,1);
+  cursor:pointer;position:relative;
+}
+.bar:hover::after{
+  content:attr(data-tip);
+  position:absolute;top:-28px;left:50%;transform:translateX(-50%);
+  background:var(--dark);color:#fff;font-size:11px;font-weight:700;
+  padding:3px 8px;border-radius:8px;white-space:nowrap;
+  pointer-events:none;
+}
+.bar-day{font-size:10px;color:var(--text-dim);font-weight:700;text-transform:uppercase;}
+.chart-legend{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-dim);font-weight:600;}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+/* ── LETTERS PROGRESS ── */
+.letters-card{
+  background:var(--card);border-radius:16px;padding:20px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+}
+.letter-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+.letter-row:last-child{border-bottom:none;}
+.lr-letter{
+  font-family:'Hind Siliguri',sans-serif;
+  font-size:26px;font-weight:700;
+  width:40px;text-align:center;flex-shrink:0;
+}
+.lr-word{flex:1;}
+.lr-word-as{font-family:'Hind Siliguri',sans-serif;font-size:15px;font-weight:700;color:var(--dark);}
+.lr-word-en{font-size:11px;color:var(--text-dim);font-weight:600;}
+.lr-progress{width:110px;flex-shrink:0;}
+.lr-bar-wrap{background:var(--border);border-radius:4px;height:6px;overflow:hidden;margin-bottom:3px;}
+.lr-bar{height:100%;border-radius:4px;transition:width 0.8s ease;}
+.lr-pct{font-size:10px;color:var(--text-dim);font-weight:700;text-align:right;}
+.lr-badge{
+  font-size:11px;font-weight:700;padding:2px 10px;border-radius:10px;
+  flex-shrink:0;
+}
+.lr-badge.mastered{background:#e8f5e9;color:var(--jungle);}
+.lr-badge.learning{background:#fff8e1;color:#b07d00;}
+.lr-badge.locked{background:#f3f4f6;color:var(--text-dim);}
+
+/* ── GAME HISTORY ── */
+.history-list{display:flex;flex-direction:column;gap:10px;}
+.history-item{
+  background:var(--card);border-radius:14px;padding:14px 16px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;
+}
+.hi-icon{font-size:32px;flex-shrink:0;}
+.hi-info{flex:1;}
+.hi-title{font-size:14px;font-weight:800;color:var(--dark);}
+.hi-meta{font-size:12px;color:var(--text-dim);font-weight:600;margin-top:2px;}
+.hi-right{text-align:right;flex-shrink:0;}
+.hi-stars{font-size:14px;}
+.hi-score{font-size:13px;font-weight:800;color:var(--gold-dark);}
+.hi-time{font-size:11px;color:var(--text-dim);font-weight:600;}
+
+/* ── SETTINGS ── */
+.settings-card{
+  background:var(--card);border-radius:16px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  overflow:hidden;
+}
+.setting-row{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 18px;
+  border-bottom:1px solid var(--border);
+  transition:background 0.15s;cursor:pointer;
+}
+.setting-row:last-child{border-bottom:none;}
+.setting-row:hover{background:#f9fafb;}
+.sr-icon{font-size:26px;flex-shrink:0;}
+.sr-text{flex:1;}
+.sr-title{font-size:14px;font-weight:800;color:var(--dark);}
+.sr-sub{font-size:11px;color:var(--text-dim);font-weight:600;margin-top:1px;}
+.sr-control{flex-shrink:0;}
+/* Toggle switch */
+.toggle{position:relative;width:42px;height:24px;display:inline-block;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{
+  position:absolute;inset:0;background:#d1d5db;border-radius:24px;
+  transition:background 0.2s;cursor:pointer;
+}
+.toggle-slider::before{
+  content:'';position:absolute;
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  top:3px;left:3px;transition:transform 0.2s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.2);
+}
+.toggle input:checked+.toggle-slider{background:var(--jungle);}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px);}
+.select-control{
+  font-family:'Baloo 2',cursive;font-size:13px;font-weight:700;
+  padding:4px 10px;border-radius:8px;border:1.5px solid var(--border);
+  background:#f9fafb;color:var(--dark);cursor:pointer;
+}
+
+/* ── WEEKLY REPORT BTN ── */
+.report-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:16px;border-radius:14px;
+  background:var(--jungle);color:#fff;
+  font-family:'Baloo 2',cursive;font-size:16px;font-weight:800;
+  border:none;cursor:pointer;transition:all 0.2s;
+  box-shadow:0 4px 16px rgba(26,92,46,0.3);
+}
+.report-btn:hover{background:var(--jungle-mid);transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,92,46,0.4);}
+
+/* ── TEACHER MODE BANNER ── */
+.teacher-banner{
+  background:linear-gradient(135deg,var(--sky-dark),#0077a8);
+  border-radius:16px;padding:18px 20px;
+  display:flex;align-items:center;gap:14px;
+  box-shadow:var(--shadow-md);
+  cursor:pointer;transition:opacity 0.2s;
+  margin-bottom:24px;
+}
+.teacher-banner:hover{opacity:0.9;}
+.tb-icon{font-size:40px;}
+.tb-text h3{font-size:15px;font-weight:800;color:#fff;margin-bottom:3px;}
+.tb-text p{font-size:12px;color:rgba(255,255,255,0.8);line-height:1.5;}
+.tb-arrow{font-size:20px;color:rgba(255,255,255,0.6);margin-left:auto;}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--dark);color:#fff;
+  font-size:14px;font-weight:700;padding:10px 24px;border-radius:30px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  z-index:999;white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <span class="topbar-logo">🦏</span>
+    <div class="topbar-title">
+      Parent Dashboard
+      <small>Rongmon's World</small>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="lang-row">
+      <button class="lpill active" id="lp-en" onclick="setLang('en')">EN</button>
+      <button class="lpill" id="lp-as" onclick="setLang('as')">অস</button>
+    </div>
+    <a href="../index.html" class="back-btn">← Home</a>
+  </div>
+</div>
+
+<!-- CHILD SELECTOR -->
+<div class="child-selector">
+  <div class="child-chip active" onclick="selectChild(0,this)">
+    <span class="child-avatar">👧</span> <span>Riya</span>
+  </div>
+  <div class="child-chip" onclick="selectChild(1,this)">
+    <span class="child-avatar">👦</span> <span>Arnab</span>
+  </div>
+  <button class="add-child-btn" onclick="toast('+ Add Child feature coming soon!')">
+    ＋ <span id="add-child-txt">Add Child</span>
+  </button>
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- OVERVIEW -->
+  <div class="overview-grid">
+    <div class="ov-card">
+      <span class="ov-icon">⭐</span>
+      <span class="ov-num col-gold" id="ov-stars">85</span>
+      <div class="ov-label" id="ov-stars-l">Total Stars</div>
+    </div>
+    <div class="ov-card">
+      <span class="ov-icon">🐾</span>
+      <span class="ov-num col-green" id="ov-animals">5</span>
+      <div class="ov-label" id="ov-animals-l">Animals Freed</div>
+    </div>
+    <div class="ov-card">
+      <span class="ov-icon">⏱️</span>
+      <span class="ov-num col-sky" id="ov-time">42m</span>
+      <div class="ov-label" id="ov-time-l">Play Time</div>
+    </div>
+    <div class="ov-card">
+      <span class="ov-icon">🔥</span>
+      <span class="ov-num col-red" id="ov-streak">3</span>
+      <div class="ov-label" id="ov-streak-l">Day Streak</div>
+    </div>
+  </div>
+
+  <!-- TEACHER BANNER -->
+  <div class="teacher-banner" onclick="toast('Teacher Mode coming soon!')">
+    <span class="tb-icon">🏫</span>
+    <div class="tb-text">
+      <h3 id="tb-h">Teacher Mode</h3>
+      <p id="tb-p">Assign games as class activities. Track entire class progress.</p>
+    </div>
+    <span class="tb-arrow">›</span>
+  </div>
+
+  <!-- ACTIVITY CHART -->
+  <div class="dash-section">
+    <div class="ds-head">
+      <div class="ds-title">📅 <span id="act-title">This Week's Activity</span></div>
+      <span class="ds-link" onclick="toast('Full history coming soon!')">See all ›</span>
+    </div>
+    <div class="activity-card">
+      <div class="chart-wrap" id="chart-wrap"></div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--jungle)"></div> <span id="leg1">Minutes played</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div> <span id="leg2">Stars earned</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LETTERS PROGRESS -->
+  <div class="dash-section">
+    <div class="ds-head">
+      <div class="ds-title">✏️ <span id="let-title">Assamese Letter Progress</span></div>
+      <span class="ds-link" id="let-sub">5 / 8 learned</span>
+    </div>
+    <div class="letters-card" id="letters-card"></div>
+  </div>
+
+  <!-- GAME HISTORY -->
+  <div class="dash-section">
+    <div class="ds-head">
+      <div class="ds-title">🎮 <span id="hist-title">Recent Games</span></div>
+      <span class="ds-link" onclick="toast('Full history coming soon!')">View all ›</span>
+    </div>
+    <div class="history-list" id="history-list"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="dash-section">
+    <div class="ds-head">
+      <div class="ds-title">⚙️ <span id="set-title">Settings</span></div>
+    </div>
+    <div class="settings-card">
+      <div class="setting-row">
+        <span class="sr-icon">⏰</span>
+        <div class="sr-text">
+          <div class="sr-title" id="set1-t">Daily Play Limit</div>
+          <div class="sr-sub" id="set1-s">Restrict screen time per day</div>
+        </div>
+        <div class="sr-control">
+          <select class="select-control" onchange="toast('Setting saved!')">
+            <option>30 min</option>
+            <option selected>45 min</option>
+            <option>1 hour</option>
+            <option>Unlimited</option>
+          </select>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span class="sr-icon">🔔</span>
+        <div class="sr-text">
+          <div class="sr-title" id="set2-t">Daily Reminder</div>
+          <div class="sr-sub" id="set2-s">Remind child to practice daily</div>
+        </div>
+        <div class="sr-control">
+          <label class="toggle"><input type="checkbox" checked onchange="toast('Reminder updated!')"/><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span class="sr-icon">📊</span>
+        <div class="sr-text">
+          <div class="sr-title" id="set3-t">Weekly Report on WhatsApp</div>
+          <div class="sr-sub" id="set3-s">Get progress summary every Sunday</div>
+        </div>
+        <div class="sr-control">
+          <label class="toggle"><input type="checkbox" checked onchange="toast('Report preference saved!')"/><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span class="sr-icon">🌐</span>
+        <div class="sr-text">
+          <div class="sr-title" id="set4-t">Game Language</div>
+          <div class="sr-sub" id="set4-s">Default language for games</div>
+        </div>
+        <div class="sr-control">
+          <select class="select-control" onchange="toast('Language saved!')">
+            <option selected>Assamese + English</option>
+            <option>English only</option>
+            <option>Assamese only</option>
+          </select>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span class="sr-icon">🔒</span>
+        <div class="sr-text">
+          <div class="sr-title" id="set5-t">Child Safe Mode</div>
+          <div class="sr-sub" id="set5-s">No ads, no external links, always on</div>
+        </div>
+        <div class="sr-control">
+          <label class="toggle"><input type="checkbox" checked disabled/><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEKLY REPORT -->
+  <button class="report-btn" onclick="toast('📨 Report sent to your WhatsApp!')">
+    📨 <span id="report-btn-txt">Download Weekly Report</span>
+  </button>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CHILD DATA ──
+const children = [
+  {
+    name:'Riya', avatar:'👧', age:7,
+    stars:85, animals:5, time:'42m', streak:3,
+    week:[
+      {day:'Mon',min:15,stars:10},
+      {day:'Tue',min:20,stars:15},
+      {day:'Wed',min:0,stars:0},
+      {day:'Thu',min:25,stars:18},
+      {day:'Fri',min:12,stars:8},
+      {day:'Sat',min:30,stars:20},
+      {day:'Sun',min:18,stars:14},
+    ],
+    letters:[
+      {letter:'অ',word_as:'অজগৰ',word_en:'Python',pct:100,status:'mastered'},
+      {letter:'হ',word_as:'হাতী',word_en:'Elephant',pct:100,status:'mastered'},
+      {letter:'ক',word_as:'কপৌ',word_en:'Dove',pct:80,status:'mastered'},
+      {letter:'গ',word_as:'গঁড়',word_en:'Rhino',pct:90,status:'mastered'},
+      {letter:'ম',word_as:'মাছ',word_en:'Fish',pct:60,status:'learning'},
+      {letter:'ব',word_as:'বাঘ',word_en:'Tiger',pct:0,status:'locked'},
+      {letter:'প',word_as:'পহু',word_en:'Deer',pct:0,status:'locked'},
+      {letter:'ৰ',word_as:'ৰঙীন চৰাই',word_en:'Colourful Bird',pct:0,status:'locked'},
+    ],
+    history:[
+      {icon:'🐘',title:'Jungle Rescue',meta:'Level 2 — Elephant freed',stars:3,score:'+25',time:'8 min ago'},
+      {icon:'🐍',title:'Jungle Rescue',meta:'Level 1 — Python freed',stars:3,score:'+20',time:'Yesterday'},
+      {icon:'🦏',title:'Jungle Rescue',meta:'Level 4 — Rhino freed',stars:2,score:'+18',time:'2 days ago'},
+    ]
+  },
+  {
+    name:'Arnab', avatar:'👦', age:9,
+    stars:120, animals:7, time:'1h 12m', streak:6,
+    week:[
+      {day:'Mon',min:25,stars:20},
+      {day:'Tue',min:18,stars:14},
+      {day:'Wed',min:30,stars:22},
+      {day:'Thu',min:22,stars:16},
+      {day:'Fri',min:28,stars:19},
+      {day:'Sat',min:35,stars:24},
+      {day:'Sun',min:20,stars:15},
+    ],
+    letters:[
+      {letter:'অ',word_as:'অজগৰ',word_en:'Python',pct:100,status:'mastered'},
+      {letter:'হ',word_as:'হাতী',word_en:'Elephant',pct:100,status:'mastered'},
+      {letter:'ক',word_as:'কপৌ',word_en:'Dove',pct:100,status:'mastered'},
+      {letter:'গ',word_as:'গঁড়',word_en:'Rhino',pct:100,status:'mastered'},
+      {letter:'ম',word_as:'মাছ',word_en:'Fish',pct:95,status:'mastered'},
+      {letter:'ব',word_as:'বাঘ',word_en:'Tiger',pct:80,status:'mastered'},
+      {letter:'প',word_as:'পহু',word_en:'Deer',pct:60,status:'learning'},
+      {letter:'ৰ',word_as:'ৰঙীন চৰাই',word_en:'Colourful Bird',pct:20,status:'learning'},
+    ],
+    history:[
+      {icon:'🦌',title:'Jungle Rescue',meta:'Level 7 — Deer freed',stars:3,score:'+30',time:'5 min ago'},
+      {icon:'🐯',title:'Jungle Rescue',meta:'Level 6 — Tiger freed',stars:3,score:'+28',time:'Yesterday'},
+      {icon:'🐟',title:'Jungle Rescue',meta:'Level 5 — Fish freed',stars:3,score:'+25',time:'2 days ago'},
+    ]
+  }
+];
+
+let lang = 'en';
+let currentChild = 0;
+
+const langText = {
+  en:{
+    'add-child-txt':'Add Child',
+    'ov-stars-l':'Total Stars','ov-animals-l':'Animals Freed','ov-time-l':'Play Time','ov-streak-l':'Day Streak',
+    'tb-h':'Teacher Mode','tb-p':'Assign games as class activities. Track entire class progress.',
+    'act-title':"This Week's Activity",'leg1':'Minutes played','leg2':'Stars earned',
+    'let-title':'Assamese Letter Progress','let-sub':'5 / 8 learned',
+    'hist-title':'Recent Games',
+    'set-title':'Settings',
+    'set1-t':'Daily Play Limit','set1-s':'Restrict screen time per day',
+    'set2-t':'Daily Reminder','set2-s':'Remind child to practice daily',
+    'set3-t':'Weekly Report on WhatsApp','set3-s':'Get progress summary every Sunday',
+    'set4-t':'Game Language','set4-s':'Default language for games',
+    'set5-t':'Child Safe Mode','set5-s':'No ads, no external links, always on',
+    'report-btn-txt':'Download Weekly Report',
+    mastered:'Mastered',learning:'Learning',locked:'Not yet',
+  },
+  as:{
+    'add-child-txt':'শিশু যোগ কৰক',
+    'ov-stars-l':'মুঠ তাৰকা','ov-animals-l':'মুক্ত কৰা জন্তু','ov-time-l':'খেলৰ সময়','ov-streak-l':'দিনৰ ধাৰা',
+    'tb-h':'শিক্ষক মোড','tb-p':'ক্লাছত খেল নিযুক্ত কৰক। সম্পূৰ্ণ ক্লাছৰ অগ্ৰগতি চাওক।',
+    'act-title':'এই সপ্তাহৰ কাৰ্যকলাপ','leg1':'খেলৰ মিনিট','leg2':'অৰ্জিত তাৰকা',
+    'let-title':'অসমীয়া আখৰৰ অগ্ৰগতি','let-sub':'৫ / ৮ শিকিছে',
+    'hist-title':'শেহতীয়া খেলসমূহ',
+    'set-title':'ছেটিংছ',
+    'set1-t':'দৈনিক খেলৰ সীমা','set1-s':'দৈনিক স্ক্ৰীন সময় নিয়ন্ত্ৰণ কৰক',
+    'set2-t':'দৈনিক স্মৰণ','set2-s':'শিশুক প্ৰতিদিন অনুশীলনৰ কথা মনত পেলাওক',
+    'set3-t':'WhatsAppত সাপ্তাহিক প্ৰতিবেদন','set3-s':'প্ৰতি দেওবাৰে প্ৰগতিৰ সাৰাংশ পাওক',
+    'set4-t':'খেলৰ ভাষা','set4-s':'খেলৰ বাবে ডিফল্ট ভাষা',
+    'set5-t':'শিশু সুৰক্ষিত মোড','set5-s':'বিজ্ঞাপন নাই, সদায় চালু',
+    'report-btn-txt':'সাপ্তাহিক প্ৰতিবেদন ডাউনলোড কৰক',
+    mastered:'আয়ত্ত',learning:'শিকিছে',locked:'এতিয়াও নহয়',
+  }
+};
+
+function setLang(l){
+  lang=l;
+  document.getElementById('lp-en').classList.toggle('active',l==='en');
+  document.getElementById('lp-as').classList.toggle('active',l==='as');
+  const t=langText[l];
+  for(const [id,val] of Object.entries(t)){
+    const el=document.getElementById(id);
+    if(el&&typeof val==='string') el.innerHTML=val;
+  }
+  renderChild(currentChild);
+}
+
+function selectChild(i,el){
+  currentChild=i;
+  document.querySelectorAll('.child-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderChild(i);
+}
+
+function renderChild(i){
+  const c=children[i];
+  const t=langText[lang];
+  document.getElementById('ov-stars').textContent=c.stars;
+  document.getElementById('ov-animals').textContent=c.animals;
+  document.getElementById('ov-time').textContent=c.time;
+  document.getElementById('ov-streak').textContent=c.streak;
+  renderChart(c.week);
+  renderLetters(c.letters,t);
+  renderHistory(c.history);
+}
+
+function renderChart(week){
+  const wrap=document.getElementById('chart-wrap');
+  wrap.innerHTML='';
+  const maxMin=Math.max(...week.map(d=>d.min),1);
+  const maxStars=Math.max(...week.map(d=>d.stars),1);
+  week.forEach(d=>{
+    const col=document.createElement('div');
+    col.className='bar-col';
+    const hMin=Math.round((d.min/maxMin)*80);
+    const hStars=Math.round((d.stars/maxStars)*60);
+    col.innerHTML=`
+      <div style="display:flex;align-items:flex-end;gap:2px;height:80px;">
+        <div class="bar" style="height:${hMin}px;background:var(--jungle);opacity:0.85;width:45%;" data-tip="${d.min}min"></div>
+        <div class="bar" style="height:${hStars}px;background:var(--gold);width:45%;" data-tip="${d.stars}⭐"></div>
+      </div>
+      <div class="bar-day">${d.day}</div>
+    `;
+    wrap.appendChild(col);
+  });
+}
+
+function renderLetters(letters,t){
+  const card=document.getElementById('letters-card');
+  card.innerHTML='';
+  const barColors={mastered:'var(--leaf)',learning:'var(--gold)',locked:'var(--border)'};
+  letters.forEach(l=>{
+    const row=document.createElement('div');
+    row.className='letter-row';
+    const statusLabel=t[l.status]||l.status;
+    const badgeClass=l.status;
+    row.innerHTML=`
+      <div class="lr-letter" style="color:${l.status==='locked'?'#ccc':'var(--jungle)'}">${l.letter}</div>
+      <div class="lr-word">
+        <div class="lr-word-as">${l.word_as}</div>
+        <div class="lr-word-en">${l.word_en}</div>
+      </div>
+      <div class="lr-progress">
+        <div class="lr-bar-wrap"><div class="lr-bar" style="width:${l.pct}%;background:${barColors[l.status]}"></div></div>
+        <div class="lr-pct">${l.pct}%</div>
+      </div>
+      <div class="lr-badge ${badgeClass}">${statusLabel}</div>
+    `;
+    card.appendChild(row);
+  });
+}
+
+function renderHistory(history){
+  const list=document.getElementById('history-list');
+  list.innerHTML='';
+  history.forEach(h=>{
+    const item=document.createElement('div');
+    item.className='history-item';
+    item.innerHTML=`
+      <span class="hi-icon">${h.icon}</span>
+      <div class="hi-info">
+        <div class="hi-title">${h.title}</div>
+        <div class="hi-meta">${h.meta}</div>
+      </div>
+      <div class="hi-right">
+        <div class="hi-stars">${'⭐'.repeat(h.stars)}</div>
+        <div class="hi-score">${h.score} pts</div>
+        <div class="hi-time">${h.time}</div>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// Init
+renderChild(0);
+</script>
+</body>
+</html>

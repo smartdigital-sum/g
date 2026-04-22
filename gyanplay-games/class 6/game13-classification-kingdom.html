@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classification Kingdom — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--purple:#C77DFF;--lime:#A8E063;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#071A07 0%,#040E04 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(168,224,99,.13),rgba(168,224,99,.04));border:1px solid rgba(168,224,99,.3);border-radius:16px;padding:16px;margin-bottom:16px}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(168,224,99,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--lime);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:700}
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.45}
+
+/* Organism display card */
+.organism-card{background:rgba(168,224,99,.06);border:1px solid rgba(168,224,99,.2);border-radius:16px;padding:16px;margin-bottom:14px;text-align:center}
+.org-emoji{font-size:3.5rem;margin-bottom:8px;display:block}
+.org-name{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--lime)}
+.org-clues{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.clue-chip{background:rgba(168,224,99,.1);border:1px solid rgba(168,224,99,.25);border-radius:100px;padding:4px 11px;font-size:.75rem;color:var(--lime);font-weight:600}
+
+/* Dichotomous key tree */
+.dich-tree{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.dich-node{background:rgba(168,224,99,.05);border:1px solid rgba(168,224,99,.18);border-radius:14px;padding:12px}
+.dich-question{font-size:.88rem;color:var(--text);margin-bottom:8px;font-weight:600}
+.dich-options{display:flex;gap:8px}
+.dich-opt{flex:1;background:rgba(168,224,99,.07);border:2px solid rgba(168,224,99,.2);border-radius:10px;padding:9px 6px;font-family:'Baloo 2',cursive;font-size:.88rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center}
+.dich-opt:hover{border-color:var(--lime);background:rgba(168,224,99,.15);transform:translateY(-2px)}
+.dich-opt.selected{border-color:var(--gold);background:rgba(255,209,102,.1);color:var(--gold)}
+.dich-opt.correct-path{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal)}
+.dich-opt.wrong-path{border-color:var(--coral);background:rgba(255,107,107,.12);color:var(--coral)}
+.dich-opt:disabled,.dich-opt.locked{pointer-events:none}
+.dich-result{background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.3);border-radius:12px;padding:12px;text-align:center;display:none}
+.dich-result.show{display:block}
+.dich-result-name{font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;color:var(--teal)}
+.dich-result-fact{font-size:.8rem;color:var(--dim);margin-top:4px;line-height:1.4}
+
+/* Kingdom sort */
+.kingdom-bins{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.kingdom-bin{background:rgba(168,224,99,.05);border:2px solid rgba(168,224,99,.18);border-radius:14px;padding:10px;min-height:80px;transition:all .2s}
+.kingdom-bin.highlight{border-color:var(--lime);background:rgba(168,224,99,.1)}
+.bin-label{font-family:'Baloo 2',cursive;font-size:.82rem;font-weight:700;color:var(--lime);margin-bottom:6px;text-align:center}
+.bin-items{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.bin-item{background:rgba(168,224,99,.15);border-radius:8px;padding:4px 8px;font-size:.75rem;color:var(--lime);font-weight:600}
+.sort-items{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;background:rgba(168,224,99,.04);border:1px dashed rgba(168,224,99,.2);border-radius:12px;padding:10px;min-height:50px}
+.sort-chip{background:rgba(168,224,99,.1);border:2px solid rgba(168,224,99,.25);border-radius:100px;padding:7px 13px;font-size:.82rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;user-select:none}
+.sort-chip:hover{border-color:var(--lime);transform:scale(1.05)}
+.sort-chip.selected-chip{border-color:var(--gold);background:rgba(255,209,102,.15);color:var(--gold)}
+.sort-chip.placed{opacity:.3;pointer-events:none}
+
+/* MCQ */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(168,224,99,.07);border:2px solid rgba(168,224,99,.2);border-radius:14px;padding:12px 8px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--lime);background:rgba(168,224,99,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.92rem;font-weight:600;min-height:26px;margin:10px 0 4px}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#040E04 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--lime);color:var(--lime);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(168,224,99,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stage-transition{background:linear-gradient(135deg,rgba(168,224,99,.1),rgba(168,224,99,.03));border:1px solid rgba(168,224,99,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--lime);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confirm-btn{background:var(--lime);color:#060A10;border:none;border-radius:100px;padding:10px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;width:100%;margin-top:8px;opacity:.4;pointer-events:none}
+.confirm-btn.ready{opacity:1;pointer-events:all}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">🌍 Classification Kingdom</div>
+      <span class="subject-tag">Science · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+  <div class="wow-hook">
+    <span class="wow-emoji">🔭</span>
+    <div class="wow-text">There are an estimated <strong>8.7 MILLION species</strong> on Earth. Scientists have only named <strong>1.5 million</strong>. Every year, <strong>15,000 NEW species</strong> are discovered. Classification is humanity's greatest cataloguing project!</div>
+  </div>
+  <div id="gameArea"></div>
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Stage 1 of 3</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+<script>
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+let stg=1,qIdx=0,score=0,answered=false;
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  const C=['#A8E063','#FFD166','#06D6A0','#4CC9F0','#C77DFF'];
+  for(let i=0;i<28;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+}
+function updateStars(){const lit=Math.min(5,Math.ceil(score/2.2));for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.toggle('lit',i<=lit)}
+function showOverlay(emoji,title,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovFact').textContent=fact;document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay');ov.classList.add('show');
+  if(!isEnd)setTimeout(()=>ov.classList.remove('show'),2700);
+}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(t){document.getElementById('progressLabel').textContent=t}
+
+/* ── Stage 1: Dichotomous Key ── */
+const DICH_ORGANISMS=[
+  {
+    name:'Indian One-Horned Rhino',emoji:'🦏',
+    clues:['Has backbone','Warm-blooded','Has hair/fur','Gives birth to live young','No wings'],
+    steps:[
+      {q:'Does it have a backbone (vertebra)?',yes:'Next question →',no:'→ Invertebrate'},
+      {q:'Is it warm-blooded?',yes:'Next question →',no:'→ Reptile or Fish'},
+      {q:'Does it have hair or fur?',yes:'→ Mammal ✓',no:'→ Bird'},
+    ],
+    correctPath:['yes','yes','yes'],
+    result:'Mammal',fact:'The Indian One-Horned Rhino is a mammal — warm-blooded, has hair, and nurses young with milk. Kaziranga NP has the world\'s largest population!'
+  },
+  {
+    name:'King Cobra',emoji:'🐍',
+    clues:['Has backbone','Cold-blooded','Has scales','Lays eggs','No legs'],
+    steps:[
+      {q:'Does it have a backbone?',yes:'Next question →',no:'→ Invertebrate'},
+      {q:'Is it warm-blooded?',yes:'→ Mammal or Bird',no:'Next question →'},
+      {q:'Does it have scales AND lay eggs?',yes:'→ Reptile ✓',no:'→ Amphibian'},
+    ],
+    correctPath:['yes','no','yes'],
+    result:'Reptile',fact:'Reptiles are cold-blooded, have scales, and mostly lay eggs. Snakes are reptiles — they evolved from lizard ancestors over 100 million years ago!'
+  },
+  {
+    name:'River Dolphin',emoji:'🐬',
+    clues:['Has backbone','Warm-blooded','Lives in water','Breathes air (lungs)','Gives birth to live young'],
+    steps:[
+      {q:'Does it have a backbone?',yes:'Next question →',no:'→ Invertebrate'},
+      {q:'Does it breathe through lungs (not gills)?',yes:'Next question →',no:'→ Fish'},
+      {q:'Is it warm-blooded and nurses young with milk?',yes:'→ Mammal ✓',no:'→ Reptile'},
+    ],
+    correctPath:['yes','yes','yes'],
+    result:'Mammal',fact:'River dolphins are mammals — they must surface to breathe! The Ganges River Dolphin is endangered. They navigate using echolocation like bats!'
+  },
+  {
+    name:'Frog',emoji:'🐸',
+    clues:['Has backbone','Cold-blooded','Moist skin (no scales)','Lays eggs in water','Lives on land AND water'],
+    steps:[
+      {q:'Does it have a backbone?',yes:'Next question →',no:'→ Invertebrate'},
+      {q:'Is it warm-blooded?',yes:'→ Mammal or Bird',no:'Next question →'},
+      {q:'Does it have moist skin (no scales) and live both on land and water?',yes:'→ Amphibian ✓',no:'→ Reptile or Fish'},
+    ],
+    correctPath:['yes','no','yes'],
+    result:'Amphibian',fact:'Amphibians live double lives — born in water (tadpole), then develop to live on land. "Amphibian" means "double life" in Greek!'
+  },
+];
+
+let dichStep=0,dichAnswers=[],currentOrg=0;
+function renderStage1(orgIdx){
+  setProgress(`Stage 1 of 3 — Organism ${orgIdx+1} of ${DICH_ORGANISMS.length}`);
+  answered=false;showNext(false);dichStep=0;dichAnswers=[];currentOrg=orgIdx;
+  const org=DICH_ORGANISMS[orgIdx];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🔑 Stage 1 — Dichotomous Key</div>
+      <div class="organism-card">
+        <span class="org-emoji">${org.emoji}</span>
+        <div class="org-name">${org.name}</div>
+        <div class="org-clues">${org.clues.map(c=>`<div class="clue-chip">${c}</div>`).join('')}</div>
+      </div>
+      <div style="font-size:.8rem;color:var(--dim);margin-bottom:10px;text-align:center">Answer YES or NO at each step to classify this organism:</div>
+      <div class="dich-tree" id="dichTree"></div>
+      <div class="dich-result" id="dichResult"></div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+  renderDichStep(org,0);
+}
+function renderDichStep(org,step){
+  const tree=document.getElementById('dichTree');
+  if(!tree)return;
+  // Remove nodes beyond current step
+  while(tree.children.length>step) tree.removeChild(tree.lastChild);
+  if(step>=org.steps.length){showDichResult(org);return;}
+  const s=org.steps[step];
+  const node=document.createElement('div');
+  node.className='dich-node';node.id='dnode'+step;
+  node.innerHTML=`<div class="dich-question">❓ ${s.q}</div>
+    <div class="dich-options">
+      <div class="dich-opt" id="dyes${step}" onclick="dichAnswer('yes',${step})">✅ YES<br><small style="font-size:.7rem;font-weight:400;color:var(--dim)">${s.yes}</small></div>
+      <div class="dich-opt" id="dno${step}" onclick="dichAnswer('no',${step})">❌ NO<br><small style="font-size:.7rem;font-weight:400;color:var(--dim)">${s.no}</small></div>
+    </div>`;
+  tree.appendChild(node);
+}
+function dichAnswer(ans,step){
+  const org=DICH_ORGANISMS[currentOrg];
+  const correct=org.correctPath[step];
+  const yesEl=document.getElementById('dyes'+step);
+  const noEl=document.getElementById('dno'+step);
+  if(yesEl)yesEl.classList.add('locked');
+  if(noEl)noEl.classList.add('locked');
+  dichAnswers.push(ans);
+  if(ans===correct){
+    const el=document.getElementById('d'+ans+step);
+    if(el)el.classList.add('correct-path');
+    if(step===org.steps.length-1){
+      // Final correct answer
+      score++;updateStars();
+      showDichResult(org,true);
+      if(score%2===0)confetti();
+      setTimeout(()=>showOverlay('🔑',cheer(),org.fact,false),400);
+      showNext(true);
+    } else {
+      renderDichStep(org,step+1);
+    }
+  } else {
+    const el=document.getElementById('d'+ans+step);
+    if(el)el.classList.add('wrong-path');
+    const correctEl=document.getElementById('d'+correct+step);
+    if(correctEl)correctEl.classList.add('correct-path');
+    const fb=document.getElementById('fb');
+    fb.textContent='Not quite — check the clues and try the next organism!';fb.className='feedback wrong';
+    showDichResult(org,false);
+    showNext(true);
+  }
+}
+function showDichResult(org,correct){
+  const res=document.getElementById('dichResult');
+  if(!res)return;
+  res.innerHTML=`<div class="dich-result-name">${correct?'✅':'🔍'} ${org.name} → ${org.result}</div>
+    <div class="dich-result-fact">${org.fact}</div>`;
+  res.classList.add('show');
+}
+
+/* ── Stage 2: Sort into 5 Kingdoms ── */
+const KINGDOMS=['Monera','Protista','Fungi','Plantae','Animalia'];
+const KINGDOM_ITEMS=[
+  {name:'Bacteria',kingdom:'Monera',emoji:'🦠'},
+  {name:'Blue-green algae',kingdom:'Monera',emoji:'💧'},
+  {name:'Amoeba',kingdom:'Protista',emoji:'🔵'},
+  {name:'Mushroom',kingdom:'Fungi',emoji:'🍄'},
+  {name:'Mould',kingdom:'Fungi',emoji:'🌑'},
+  {name:'Mango tree',kingdom:'Plantae',emoji:'🥭'},
+  {name:'Fern',kingdom:'Plantae',emoji:'🌿'},
+  {name:'Tiger',kingdom:'Animalia',emoji:'🐯'},
+  {name:'Earthworm',kingdom:'Animalia',emoji:'🪱'},
+  {name:'Diatom',kingdom:'Protista',emoji:'🟡'},
+];
+let selectedSortItem=null,kingdomPlaced={};
+
+function renderStage2(){
+  setProgress('Stage 2 of 3 — Sort into Kingdoms');
+  answered=false;showNext(false);selectedSortItem=null;kingdomPlaced={};
+  const shuffled=[...KINGDOM_ITEMS].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🗂️ Stage 2 — Five Kingdoms Sort</div>
+      <div class="question-text">Tap an organism, then tap its kingdom bin to place it:</div>
+      <div class="sort-items" id="sortItems">
+        ${shuffled.map((it,i)=>`<div class="sort-chip" id="sc${i}" onclick="selectSortItem(${i},'${it.name}','${it.kingdom}')">${it.emoji} ${it.name}</div>`).join('')}
+      </div>
+      <div class="kingdom-bins" id="kingdomBins">
+        ${KINGDOMS.map(k=>`
+          <div class="kingdom-bin" id="bin_${k}" onclick="placeInBin('${k}')">
+            <div class="bin-label">${{Monera:'🦠',Protista:'🔵',Fungi:'🍄',Plantae:'🌿',Animalia:'🐾'}[k]} ${k}</div>
+            <div class="bin-items" id="binItems_${k}"></div>
+          </div>`).join('')}
+      </div>
+      <button class="confirm-btn" id="sortConfirm" onclick="confirmSort()">Confirm Sorting →</button>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function selectSortItem(idx,name,kingdom){
+  if(document.getElementById('sc'+idx)?.classList.contains('placed'))return;
+  selectedSortItem={idx,name,kingdom};
+  document.querySelectorAll('.sort-chip').forEach(c=>c.classList.remove('selected-chip'));
+  document.getElementById('sc'+idx)?.classList.add('selected-chip');
+  document.querySelectorAll('.kingdom-bin').forEach(b=>b.classList.remove('highlight'));
+}
+function placeInBin(k){
+  if(!selectedSortItem)return;
+  const {idx,name,kingdom}=selectedSortItem;
+  if(!kingdomPlaced[k])kingdomPlaced[k]=[];
+  kingdomPlaced[k].push({name,correct:kingdom,emoji:KINGDOM_ITEMS.find(it=>it.name===name)?.emoji||''});
+  document.getElementById('sc'+idx)?.classList.add('placed');
+  document.getElementById('sc'+idx)?.classList.remove('selected-chip');
+  const binItems=document.getElementById('binItems_'+k);
+  if(binItems){const chip=document.createElement('div');chip.className='bin-item';chip.textContent=KINGDOM_ITEMS.find(it=>it.name===name)?.emoji+' '+name;binItems.appendChild(chip);}
+  selectedSortItem=null;
+  const placed=Object.values(kingdomPlaced).flat().length;
+  if(placed===KINGDOM_ITEMS.length){
+    document.getElementById('sortConfirm')?.classList.add('ready');
+  }
+}
+function confirmSort(){
+  if(answered)return;answered=true;
+  document.getElementById('sortConfirm').disabled=true;
+  let correct=0;
+  Object.entries(kingdomPlaced).forEach(([bin,items])=>{
+    items.forEach(it=>{if(it.correct===bin)correct++;});
+  });
+  score+=Math.min(2,Math.round(correct/KINGDOM_ITEMS.length*2));updateStars();
+  const fb=document.getElementById('fb');
+  if(correct===KINGDOM_ITEMS.length){
+    fb.textContent=cheer()+` All ${KINGDOM_ITEMS.length} correctly sorted!`;fb.className='feedback correct';
+    confetti();
+    setTimeout(()=>showOverlay('🗂️',cheer(),'The 5-Kingdom system was proposed by Robert Whittaker in 1969. Before that, everything was either Plant or Animal!',false),400);
+  } else {
+    fb.textContent=`${correct} of ${KINGDOM_ITEMS.length} correct. Keep practising the kingdoms!`;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+/* ── Stage 3: MCQ classification facts ── */
+const MCQ=[
+  {q:'Vertebrates have a backbone. Which of these is an INVERTEBRATE?',correct:'Jellyfish',opts:['Frog','Eagle','Jellyfish','Crocodile'],fact:'Jellyfish have no backbone — they are invertebrates. About 97% of all animal species are invertebrates!'},
+  {q:'Which group of animals is WARM-BLOODED?',correct:'Birds and Mammals',opts:['Reptiles and Amphibians','Fish and Reptiles','Birds and Mammals','Amphibians and Fish'],fact:'Warm-blooded animals regulate their own body temperature internally. Cold-blooded animals depend on the environment.'},
+  {q:'Fungi are different from plants because fungi:',correct:'Cannot make their own food',opts:['Have no cells','Cannot make their own food','Cannot reproduce','Live only in water'],fact:'Plants make food through photosynthesis. Fungi feed by absorbing nutrients from dead or living matter — they are decomposers!'},
+  {q:'The Indian One-Horned Rhino in Kaziranga belongs to which class?',correct:'Mammalia',opts:['Reptilia','Aves','Mammalia','Amphibia'],fact:'Rhinos are mammals — warm-blooded, have hair, and nurse their young with milk. Kaziranga has over 2,600 rhinos!'},
+];
+function renderStage3(i){
+  setProgress(`Stage 3 of 3 — Quiz ${i+1} of ${MCQ.length}`);
+  answered=false;showNext(false);
+  const q=MCQ[i];const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">❓ Stage 3 — Classification Quiz</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkMCQ('${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}','${q.fact.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkMCQ(sel,correct,fact,btn){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct');score++;updateStars();
+    fb.textContent=cheer()+'  Correct!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🌍',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function nextQ(){
+  if(stg===1){
+    qIdx++;
+    if(qIdx<DICH_ORGANISMS.length)renderStage1(qIdx);
+    else{stg=2;showTrans('🗂️','Stage 2: Five Kingdoms!','All living things belong to one of five kingdoms. Sort these organisms into the right bins!',()=>renderStage2())}
+  } else if(stg===2){
+    stg=3;qIdx=0;showTrans('❓','Stage 3: Classification Quiz!','Final test — answer these classification questions!',()=>renderStage3(0));
+  } else {
+    qIdx++;if(qIdx<MCQ.length)renderStage3(qIdx);else endGame();
+  }
+}
+function showTrans(emoji,title,desc,cb){
+  showNext(false);
+  document.getElementById('gameArea').innerHTML=`<div class="stage-transition"><div style="font-size:2.5rem">${emoji}</div><h3>${title}</h3><p>${desc}</p></div>`;
+  const nb=document.getElementById('nextBtn');nb.textContent='Start →';nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →';nb.onclick=nextQ;cb()};
+}
+function endGame(){
+  confetti();
+  const medals=['Naturalist Learner 🌱','Species Spotter 🔍','Classifier 🌍','Science Champion 🏆','Classification Legend 🌟'];
+  const medal=medals[Math.min(4,Math.floor(score/2.5))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--lime);margin:10px 0">${score} pts</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        Carl Linnaeus created the classification system in 1758. Today it covers 8.7 million species — from the rhinos of Kaziranga to the bacteria inside you!
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  setProgress('Complete!');showNext(false);
+}
+function resetGame(){
+  stg=1;qIdx=0;score=0;answered=false;dichStep=0;dichAnswers=[];currentOrg=0;selectedSortItem=null;kingdomPlaced={};
+  for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.remove('lit');
+  document.getElementById('nextBtn').textContent='Next →';document.getElementById('nextBtn').onclick=nextQ;
+  renderStage1(0);
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{document.getElementById('overlay').classList.remove('show');resetGame()});
+renderStage1(0);
+</script>
+</body>
+</html>

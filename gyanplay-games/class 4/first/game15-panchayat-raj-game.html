@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Panchayat Raj Game — GyanPlay Class 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --lime:#A8E063;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#071A12,#040E0A);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 40px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.h-left{display:flex;flex-direction:column;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.game-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);}
+.subject-tag{font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:1.3rem;opacity:.25;transition:opacity .3s,filter .3s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.wow{background:linear-gradient(135deg,rgba(168,224,99,.15),rgba(168,224,99,.04));
+  border:1px solid rgba(168,224,99,.3);border-radius:16px;padding:16px;margin-bottom:18px;}
+.wow-emoji{font-size:2rem;margin-bottom:6px;}
+.wow p{font-size:.88rem;line-height:1.55;}
+.wow p span{color:var(--gold);font-weight:700;}
+.wow-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-top:6px;}
+/* Sarpanch badge */
+.sarpanch-bar{display:flex;align-items:center;gap:12px;background:rgba(255,209,102,.07);
+  border:1px solid rgba(255,209,102,.2);border-radius:14px;padding:12px 16px;margin-bottom:16px;}
+.sb-emoji{font-size:2rem;}
+.sb-info{flex:1;}
+.sb-title{font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:800;color:var(--gold);}
+.sb-sub{font-size:.72rem;color:var(--dim);}
+.sb-sub .as{font-family:'Noto Sans Devanagari',sans-serif;}
+.sb-score{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:800;color:var(--lime);}
+/* Problem card */
+.game-area{background:var(--card);border-radius:20px;padding:20px;margin-bottom:14px;
+  border:1px solid rgba(168,224,99,.12);}
+.problem-num{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.problem-title{font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;color:var(--gold);margin-bottom:4px;}
+.problem-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:10px;}
+.problem-story{font-size:.88rem;line-height:1.6;color:var(--text);margin-bottom:6px;}
+.problem-story-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:16px;}
+/* Choices */
+.choices-label{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+.choices-label .as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.68rem;}
+.choices{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.choice-btn{padding:14px 16px;background:rgba(168,224,99,.07);border:2px solid rgba(168,224,99,.18);
+  border-radius:14px;font-size:.88rem;line-height:1.5;cursor:pointer;touch-action:manipulation;
+  transition:all .15s;}
+.choice-btn:active{transform:scale(.98);}
+.choice-btn.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal);}
+.choice-btn.wrong{background:rgba(255,107,107,.1);border-color:var(--coral);color:var(--coral);}
+.choice-btn.disabled{pointer-events:none;}
+.choice-tag{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+  margin-bottom:3px;opacity:.7;}
+/* Consequence */
+.consequence{background:rgba(255,255,255,.03);border-radius:10px;padding:12px;margin-bottom:10px;
+  font-size:.82rem;line-height:1.5;display:none;}
+.consequence.show{display:block;}
+.consequence.good{border-left:3px solid var(--teal);color:var(--teal);}
+.consequence.bad{border-left:3px solid var(--coral);color:var(--dim);}
+.consequence-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.72rem;margin-top:4px;}
+/* Progress */
+.progress-wrap{margin-bottom:14px;}
+.prog-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--lime);border-radius:99px;transition:width .4s;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-card{background:var(--card);border:1px solid rgba(168,224,99,.3);border-radius:22px;padding:28px 24px;text-align:center;max-width:320px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);}to{transform:scale(1) translateY(0);}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px;}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.ov-fact{font-size:.83rem;line-height:1.5;margin-bottom:12px;}
+.ov-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+.ov-btn{padding:12px 28px;background:var(--gold);color:#0F0820;border:none;border-radius:12px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:200;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen"><div style="font-size:2.5rem">🏛️</div><p>Loading… / লোড হৈছে…</p></div>
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="h-left">
+      <div class="game-title">Panchayat Raj Game</div>
+      <div class="game-title-as">পঞ্চায়তী ৰাজ খেল</div>
+      <div class="subject-tag">SST · শ্ৰেণী ৪</div>
+    </div>
+    <div class="stars" id="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+      <span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+  <div class="wow">
+    <div class="wow-emoji">🗳️</div>
+    <p>A child's complaint about a broken village road can go directly to the gram panchayat and get it fixed within weeks — that is <span>DEMOCRACY at its smallest and fastest level!</span></p>
+    <div class="wow-as">এজন শিশুৰ ভঙা পথৰ অভিযোগ সপ্তাহৰ ভিতৰতে গ্ৰাম পঞ্চায়তেৰে সমাধান হ'ব পাৰে!</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="sarpanch-bar">
+    <div class="sb-emoji">🏛️</div>
+    <div class="sb-info">
+      <div class="sb-title">You are the Sarpanch!</div>
+      <div class="sb-sub">Solve 5 village problems / <span class="as">৫টা গাওঁৰ সমস্যা সমাধান কৰক</span></div>
+    </div>
+    <div class="sb-score"><span id="scoreDisplay">0</span>/5</div>
+  </div>
+  <div class="game-area" id="gameArea"></div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">Good Decision!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <div class="ov-as" id="ovAs"></div>
+    <button class="ov-btn" id="ovBtn" onclick="nextProblem()">Next Problem →</button>
+  </div>
+</div>
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let currentUser=null;
+auth.onAuthStateChanged(u=>{
+  if(!u){window.location.href='/login.html';return;}
+  currentUser=u;
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initGame();
+});
+
+const PROBLEMS=[
+  {
+    emoji:'🛣️',title:'Broken Village Road',titleAs:'ভঙা গাওঁৰ পথ',
+    story:'Heavy rains have damaged the main road in Rupahi village (Assam). Children can\'t reach school safely. Farmers can\'t transport their vegetables to market.',
+    storyAs:'প্ৰচণ্ড বৰষুণে ৰূপহী গাওঁৰ মূল পথ নষ্ট কৰিছে। শিশুসকলে নিৰাপদে বিদ্যালয়লৈ যাব নোৱাৰে।',
+    choices:[
+      {text:'A) Refer to the Block Development Officer for road repair funds and PWD team.',
+       as:'ব্লক উন্নয়ন বিষয়াক পথ মেৰামতিৰ বাবে পুঁজি আৰু পি.ডব্লিউ.ডি দলৰ বাবে পঠাওক।',
+       correct:true,
+       consequence:'The BDO allocates emergency funds. PWD team arrives in 3 days. Road is repaired in 2 weeks. School attendance returns to normal.',
+       conseqAs:'বি.ডি.অ.ই জৰুৰীকালীন পুঁজি বৰাদ্দ কৰিলে। পথ ২ সপ্তাহত মেৰামতি হ'ল।'},
+      {text:'B) Ask villagers to donate money and repair it themselves.',
+       as:'গাওঁবাসীক টকা দান কৰিবলৈ কৈ নিজেই মেৰামতি কৰক।',
+       correct:false,
+       consequence:'Villagers struggle to raise funds. The repair is poor quality and breaks again in the next rain.',
+       conseqAs:'গাওঁবাসীয়ে পুঁজি যোগাৰ কৰিবলৈ কষ্ট পাইছে। মেৰামতি বেয়া মানৰ হ'ল।'},
+      {text:'C) Write a letter to the Chief Minister directly.',
+       as:'পোনে পোনে মুখ্যমন্ত্ৰীলৈ পত্ৰ লিখক।',
+       correct:false,
+       consequence:'Letter takes months to process. Meanwhile the road stays broken all season.',
+       conseqAs:'পত্ৰ প্ৰক্ৰিয়া হ'বলৈ মাহ লাগে। ততালিকে পথ ভঙাই থাকে।'}
+    ],
+    fact:"The Panchayat system has 3 levels — Gram Panchayat, Panchayat Samiti, and Zilla Parishad. The BDO is the Samiti level!",
+    factAs:"পঞ্চায়তী ব্যৱস্থা ৩ স্তৰীয় — গ্ৰাম পঞ্চায়ত, পঞ্চায়ত সমিতি, জিলা পৰিষদ।"
+  },
+  {
+    emoji:'💧',title:'Dirty Drinking Water',titleAs:'দূষিত পানীয় জল',
+    story:'The village well in Bokajan has become polluted. Several children are falling sick. The nearest clean water source is 2 km away.',
+    storyAs:'বকজানৰ গাওঁৰ কুঁৱা প্ৰদূষিত হৈছে। কেইজনমান শিশু অসুস্থ পৰিছে।',
+    choices:[
+      {text:'A) Contact the Jal Shakti Department and request an emergency water tanker + borewell scheme.',
+       as:'জল শক্তি বিভাগৰ সৈতে যোগাযোগ কৰক আৰু জৰুৰীকালীন পানীৰ টেংকাৰ + নলকূপৰ দাবী কৰক।',
+       correct:true,
+       consequence:'Emergency tanker arrives within 24 hours. Borewell installation approved. Clean water supply restored in 1 month.',
+       conseqAs:'২৪ ঘণ্টাৰ ভিতৰত টেংকাৰ আহিল। ১ মাহত পৰিষ্কাৰ পানীৰ যোগান পুনৰুদ্ধাৰ।'},
+      {text:'B) Tell villagers to boil all water — no need for official help.',
+       as:'গাওঁবাসীক সকলো পানী উতলাবলৈ কওক — চৰকাৰী সহায়ৰ দৰকাৰ নাই।',
+       correct:false,
+       consequence:'Not everyone has fuel to boil water. Children continue getting sick. Problem not solved properly.',
+       conseqAs:'সকলোৰে পানী উতলোৱাৰ সামগ্ৰী নাই। শিশুসকল অসুস্থ হৈয়ে থাকে।'},
+      {text:'C) Wait for the next budget cycle to apply for funds.',
+       as:'পুঁজি আবেদনৰ বাবে পৰৱৰ্তী বাজেট চক্ৰৰ বাট চাওক।',
+       correct:false,
+       consequence:'The wait is 6–9 months. Villagers suffer. A crisis becomes a disaster.',
+       conseqAs:'৬-৯ মাহ অপেক্ষা। গাওঁবাসীয়ে কষ্ট পায়।'}
+    ],
+    fact:"India has over 2.5 lakh Gram Panchayats — each one is a mini democracy solving local problems!",
+    factAs:"ভাৰতত ২.৫ লাখতকৈ বেছি গ্ৰাম পঞ্চায়ত আছে — প্ৰতিটো স্থানীয় সমস্যা সমাধানকাৰী ক্ষুদ্ৰ গণতন্ত্ৰ!"
+  },
+  {
+    emoji:'🏫',title:'School Roof Damage',titleAs:'বিদ্যালয়ৰ চাদ নষ্ট',
+    story:'The roof of the primary school in Tezpur district is leaking badly after floods. Classes have stopped. 200 children are missing school.',
+    storyAs:'বানপানীৰ পিছত তেজপুৰ জিলাৰ প্ৰাথমিক বিদ্যালয়ৰ চাদ বেয়াকৈ লিক হৈছে।',
+    choices:[
+      {text:'A) Apply to the Samagra Shiksha Abhiyan fund for emergency school repair.',
+       as:'জৰুৰীকালীন বিদ্যালয় মেৰামতিৰ বাবে সমগ্ৰ শিক্ষা অভিযান পুঁজিত আবেদন কৰক।',
+       correct:true,
+       consequence:'Funds approved in 2 weeks. Roof repaired in a month. School reopens. 200 children back to learning!',
+       conseqAs:'২ সপ্তাহত পুঁজি অনুমোদিত। ১ মাহত চাদ মেৰামতি। ২০০ শিশু পুনৰ পঢ়িবলৈ পালে!'},
+      {text:'B) Hold classes under a tree in the schoolyard.',
+       as:'বিদ্যালয়ৰ মাঠত গছৰ তলত শ্ৰেণী পাঠদান কৰক।',
+       correct:false,
+       consequence:'Rain and heat make outdoor classes difficult. Attendance drops further. Learning suffers.',
+       conseqAs:'বৰষুণ আৰু গৰমে বাহিৰৰ শ্ৰেণী কঠিন কৰে। উপস্থিতি আৰু কমে।'},
+      {text:'C) Ask parents to contribute repair costs.',
+       as:'অভিভাৱকসকলক মেৰামতিৰ খৰচ দিবলৈ কওক।',
+       correct:false,
+       consequence:'Many parents cannot afford it. Rich-poor divide causes conflict in the village.',
+       conseqAs:'বহু অভিভাৱকে সামৰিব নোৱাৰে। ধনী-দুখীয়াৰ বিভাজনে দ্বন্দ্ব সৃষ্টি কৰে।'}
+    ],
+    fact:"Samagra Shiksha Abhiyan is India's flagship school education programme — it has funds for exactly this kind of emergency!",
+    factAs:"সমগ্ৰ শিক্ষা অভিযান ভাৰতৰ প্ৰধান বিদ্যালয় শিক্ষা কাৰ্যসূচী।"
+  },
+  {
+    emoji:'🏥',title:'Medical Camp Request',titleAs:'চিকিৎসা শিবিৰৰ অনুৰোধ',
+    story:'A remote village in Majuli island (world\'s largest river island — Assam!) has no doctor. Elderly people and children need health check-ups.',
+    storyAs:'মাজুলীৰ (বিশ্বৰ সৰ্ববৃহৎ নদী দ্বীপ!) এটা দূৰৱৰ্তী গাওঁত চিকিৎসক নাই।',
+    choices:[
+      {text:'A) Coordinate with the District Health Officer to organise a mobile medical camp.',
+       as:'ভ্ৰাম্যমাণ চিকিৎসা শিবিৰ আয়োজনৰ বাবে জিলা স্বাস্থ্য বিষয়াৰ সৈতে সমন্বয় কৰক।',
+       correct:true,
+       consequence:'Mobile camp arrives. 150 villagers checked. 3 serious conditions detected early. Lives saved!',
+       conseqAs:'ভ্ৰাম্যমাণ শিবিৰ আহিল। ১৫০ জন গাওঁবাসী পৰীক্ষিত। ৩টা গুৰুতৰ ৰোগ প্ৰাৰম্ভিক পৰ্যায়ত ধৰা পৰিল!'},
+      {text:'B) Tell sick people to travel to Jorhat city hospital (100 km away).',
+       as:'অসুস্থ লোকসকলক যোৰহাট চহৰৰ চিকিৎসালয়লৈ যাবলৈ কওক (১০০ কি.মি.)।',
+       correct:false,
+       consequence:'Elderly and very sick people cannot travel 100 km. Conditions worsen.',
+       conseqAs:'বৃদ্ধ আৰু অতি অসুস্থ লোকে ১০০ কি.মি. যাব নোৱাৰে। অৱস্থা অৱনতি হয়।'},
+      {text:'C) Post an advertisement for a doctor in the newspaper.',
+       as:'বাতৰি কাকতত চিকিৎসকৰ বাবে বিজ্ঞাপন দিয়ক।',
+       correct:false,
+       consequence:'Takes months with no guarantee of result. Immediate health crisis ignored.',
+       conseqAs:'মাহ লাগে, ফলাফলৰ নিশ্চয়তা নাই। তৎকালীন স্বাস্থ্য সংকট অৱহেলিত।'}
+    ],
+    fact:"Majuli is the world's largest river island and is in Assam's Jorhat district. It was made a district in 2016!",
+    factAs:"মাজুলী বিশ্বৰ সৰ্ববৃহৎ নদী দ্বীপ — অসমৰ যোৰহাট জিলাত। ২০১৬ত ইয়াক জিলা কৰা হৈছিল!"
+  },
+  {
+    emoji:'⚖️',title:'Land Dispute',titleAs:'মাটিৰ বিবাদ',
+    story:'Two families in Sibsagar village are arguing over the boundary of their farmland. It is becoming violent. Both families want you, the Sarpanch, to decide.',
+    storyAs:'শিৱসাগৰৰ দুটা পৰিয়ালে তেওঁলোকৰ কৃষিভূমিৰ সীমা লৈ বিবাদ কৰিছে।',
+    choices:[
+      {text:'A) Convene a Gram Sabha meeting with witnesses and check official land records.',
+       as:'সাক্ষীসহ গ্ৰাম সভা বোলাওক আৰু চৰকাৰী ভূমি আলেখ্য পৰীক্ষা কৰক।',
+       correct:true,
+       consequence:'Records show the correct boundary. Both families accept the evidence. Dispute resolved peacefully!',
+       conseqAs:'আলেখ্যত সঠিক সীমা দেখা গ'ল। উভয় পৰিয়ালে প্ৰমাণ মানিলে। বিবাদ শান্তিপূৰ্ণভাৱে নিষ্পত্তি!'},
+      {text:'B) Side with the family you like better.',
+       as:'তুমি যি পৰিয়ালটো বেছি পচন্দ কৰা তাৰ পক্ষ লওক।',
+       correct:false,
+       consequence:'The other family is furious. Unfair decision leads to bigger conflict. Trust in Panchayat destroyed.',
+       conseqAs:'আনটো পৰিয়াল ক্ষুব্ধ। অন্যায় সিদ্ধান্তে ডাঙৰ দ্বন্দ্বৰ সৃষ্টি কৰে।'},
+      {text:'C) Tell them to go to the court in the city.',
+       as:'তেওঁলোকক চহৰৰ আদালতলৈ যাবলৈ কওক।',
+       correct:false,
+       consequence:'Court cases take years and cost both families money. Small dispute becomes expensive legal battle.',
+       conseqAs:'আদালতৰ গোচৰ বছৰ লাগে। সৰু বিবাদ ব্যয়বহুল আইনী যুদ্ধলৈ পৰিণত হয়।'}
+    ],
+    fact:"Gram Sabha is a meeting of all adult voters of a village — the most basic form of democracy in India!",
+    factAs:"গ্ৰাম সভা গাওঁৰ সকলো প্ৰাপ্তবয়স্ক ভোটাৰৰ সভা — ভাৰতৰ গণতন্ত্ৰৰ সৰ্বাধিক মৌলিক ৰূপ!"
+  }
+];
+
+let round=0,score=0;
+
+function initGame(){round=0;score=0;updateStars(0);loadProblem();}
+
+function loadProblem(){
+  const p=PROBLEMS[round];
+  document.getElementById('scoreDisplay').textContent=score;
+  document.getElementById('progFill').style.width=(round/5*100)+'%';
+  const ga=document.getElementById('gameArea');
+  ga.innerHTML=`
+    <div class="problem-num">Problem ${round+1} of 5</div>
+    <div class="problem-title">${p.emoji} ${p.title}</div>
+    <div class="problem-title-as">${p.titleAs}</div>
+    <div class="problem-story">${p.story}</div>
+    <div class="problem-story-as">${p.storyAs}</div>
+    <div class="choices-label">What do you decide? / <span class="as">তুমি কি সিদ্ধান্ত লোৱা?</span></div>
+    <div class="choices" id="choices">
+      ${p.choices.map((c,i)=>`
+        <div class="choice-btn" onclick="choose(${i})">
+          <div class="choice-tag">${['Option A','Option B','Option C'][i]}</div>
+          ${c.text}<br><span style="font-family:'Noto Sans Devanagari',sans-serif;font-size:.72rem;color:var(--dim);">${c.as}</span>
+        </div>`).join('')}
+    </div>
+    <div class="consequence" id="consequence"></div>`;
+}
+
+function choose(idx){
+  document.querySelectorAll('.choice-btn').forEach(b=>b.classList.add('disabled'));
+  const p=PROBLEMS[round];
+  const c=p.choices[idx];
+  const cons=document.getElementById('consequence');
+  document.querySelectorAll('.choice-btn')[idx].classList.add(c.correct?'correct':'wrong');
+  cons.className='consequence show '+(c.correct?'good':'bad');
+  cons.innerHTML=`${c.correct?'✓':'✗'} ${c.consequence}<div class="consequence-as">${c.conseqAs}</div>`;
+  if(c.correct){
+    score++;document.getElementById('scoreDisplay').textContent=score;
+    updateStars(Math.min(5,score));confetti();
+    document.getElementById('ovEmoji').textContent=p.emoji;
+    document.getElementById('ovTitle').textContent='Good Decision! / ভালো সিদ্ধান্ত!';
+    document.getElementById('ovFact').textContent=p.fact;
+    document.getElementById('ovAs').textContent=p.factAs;
+    document.getElementById('ovBtn').textContent=round<4?'Next Problem → / পৰৱৰ্তী সমস্যা':'Finish! / শেষ!';
+    setTimeout(()=>showOverlay(true),800);
+  } else {
+    setTimeout(()=>nextProblem(),2800);
+  }
+}
+
+function nextProblem(){showOverlay(false);round++;if(round>=5)endGame();else loadProblem();}
+
+function endGame(){
+  trackProgress();
+  const titles=['Village Learner','Ward Member','Panchayat Member','Sarpanch','Gram Panchayat Hero!'];
+  document.getElementById('ovEmoji').textContent='🏆';
+  document.getElementById('ovTitle').textContent=titles[Math.min(4,score-1)]||'Keep trying!';
+  document.getElementById('ovFact').textContent=`Score: ${score}/5! India has 2.5 lakh Gram Panchayats — each one needs wise Sarpanchs like you!`;
+  document.getElementById('ovAs').textContent=`স্কোৰ: ${score}/৫! ভাৰতত ২.৫ লাখ গ্ৰাম পঞ্চায়ত আছে — তোমাৰ দৰে বিচক্ষণ সৰপঞ্চৰ প্ৰয়োজন!`;
+  document.getElementById('ovBtn').textContent='🔄 Play Again / আকৌ খেলক';
+  document.getElementById('ovBtn').onclick=()=>{showOverlay(false);initGame();};
+  showOverlay(true);
+}
+async function trackProgress(){
+  if(!currentUser)return;
+  try{await db.collection('users').doc(currentUser.uid).collection('progress').doc('class4-game15').set(
+    {score,total:5,gameId:'class4-game15',gameName:'Panchayat Raj Game',class:4,subject:'SST',completedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+}
+function updateStars(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function showOverlay(s){document.getElementById('overlay').classList.toggle('show',s);}
+function confetti(){
+  const cols=['#FFD166','#A8E063','#06D6A0','#FF6B6B','#C77DFF'];
+  for(let i=0;i<26;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%5]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}
+}
+</script>
+</body>
+</html>

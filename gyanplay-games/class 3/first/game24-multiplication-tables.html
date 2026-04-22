@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Multiplication Tables – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;
+  --pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;
+  --card:#1a1740;--text:#EEE;--muted:#aaa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  font-family:'Nunito',sans-serif;color:var(--text);padding-bottom:40px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+.fade{animation:fadeIn .45s ease both}
+.pop{animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;
+  background:rgba(255,255,255,.04);backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.back-btn{background:none;border:1px solid rgba(255,255,255,.2);color:#fff;
+  padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;
+  font-size:.85rem;transition:all .2s}
+.back-btn:hover{background:rgba(255,255,255,.1)}
+.badge{background:var(--saffron);color:#fff;padding:4px 14px;border-radius:20px;
+  font-size:.8rem;font-weight:700;font-family:'Baloo 2',sans-serif;letter-spacing:.5px}
+.title-bar{font-family:'Baloo 2',sans-serif;font-size:1.15rem;font-weight:700;
+  flex:1;text-align:center}
+.lang-toggle{display:flex;gap:4px;margin-left:auto}
+.lang-btn{background:rgba(255,255,255,.08);border:none;color:#ccc;
+  padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;
+  font-family:'Nunito',sans-serif;transition:all .2s}
+.lang-btn.active{background:var(--saffron);color:#fff;font-weight:700}
+
+/* SCORE */
+.score-wrap{max-width:680px;margin:18px auto 0;padding:0 16px}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.score-label{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;color:var(--gold)}
+.score-val{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--saffron)}
+.prog-bar{height:8px;background:rgba(255,255,255,.1);border-radius:8px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--saffron),var(--gold));
+  border-radius:8px;transition:width .4s ease}
+
+/* QUESTION AREA */
+.q-wrap{max-width:680px;margin:22px auto 0;padding:0 16px}
+.q-card{background:var(--card);border-radius:20px;padding:30px 26px;
+  border:1px solid rgba(255,107,0,.25);box-shadow:0 8px 36px rgba(0,0,0,.45)}
+.q-num{font-size:.8rem;color:var(--muted);margin-bottom:12px;font-weight:600;letter-spacing:.5px}
+
+/* BIG MATH BOX */
+.math-box{background:linear-gradient(135deg,rgba(255,107,0,.15),rgba(255,184,0,.1));
+  border:2px solid rgba(255,184,0,.3);border-radius:16px;
+  padding:28px 20px;text-align:center;margin-bottom:26px}
+.math-question{font-family:'Baloo 2',sans-serif;font-size:3rem;font-weight:800;
+  color:#fff;letter-spacing:2px;line-height:1.1}
+.math-question .op{color:var(--gold)}
+.math-question .eq{color:var(--saffron)}
+.math-question .blank{color:var(--sky);background:rgba(0,174,239,.15);
+  padding:2px 18px;border-radius:10px;border-bottom:3px solid var(--sky)}
+.table-tag{display:inline-block;margin-top:10px;background:rgba(255,107,0,.2);
+  border:1px solid rgba(255,107,0,.4);color:#ffa96b;padding:3px 14px;
+  border-radius:20px;font-size:.8rem;font-weight:700}
+
+/* OPTIONS */
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt-btn{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.12);
+  color:var(--text);padding:16px 12px;border-radius:14px;cursor:pointer;
+  font-family:'Baloo 2',sans-serif;font-size:1.6rem;font-weight:800;
+  text-align:center;transition:all .22s}
+.opt-btn:hover:not(:disabled){background:rgba(255,107,0,.18);
+  border-color:var(--saffron);transform:translateY(-3px);box-shadow:0 6px 20px rgba(255,107,0,.25)}
+.opt-btn:disabled{cursor:default}
+.opt-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);
+  color:var(--green);box-shadow:0 4px 18px rgba(0,200,83,.3)}
+.opt-btn.wrong{background:rgba(255,64,129,.18);border-color:var(--pink);color:var(--pink)}
+
+/* EXPLANATION */
+.explanation{margin-top:18px;padding:16px 18px;background:rgba(255,255,255,.05);
+  border-radius:14px;border-left:4px solid var(--gold);font-size:.93rem;
+  line-height:1.7;display:none}
+.explanation.show{display:block}
+.explanation strong{color:var(--gold)}
+.full-table{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.table-row{background:rgba(255,184,0,.12);border:1px solid rgba(255,184,0,.25);
+  padding:4px 12px;border-radius:8px;font-family:'Baloo 2',sans-serif;
+  font-size:.9rem;font-weight:700;color:#ffe08a}
+.table-row.highlight{background:rgba(0,200,83,.2);border-color:var(--green);color:#fff}
+
+/* NEXT */
+.next-btn{margin-top:18px;width:100%;padding:15px;
+  background:linear-gradient(90deg,var(--saffron),var(--gold));
+  border:none;color:#fff;border-radius:14px;font-family:'Baloo 2',sans-serif;
+  font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s;display:none}
+.next-btn:hover{opacity:.88}
+.next-btn.show{display:block}
+
+/* RESULT */
+.result-card{max-width:680px;margin:40px auto;padding:0 16px;text-align:center}
+.result-inner{background:var(--card);border-radius:22px;padding:44px 30px;
+  border:1px solid rgba(255,107,0,.3);box-shadow:0 8px 36px rgba(0,0,0,.4)}
+.stars{font-size:2.8rem;letter-spacing:6px;margin-bottom:16px}
+.result-score{font-family:'Baloo 2',sans-serif;font-size:3.2rem;font-weight:800;color:var(--saffron)}
+.result-msg{font-size:1.1rem;color:var(--muted);margin:10px 0 30px}
+.play-again{padding:14px 44px;background:linear-gradient(90deg,var(--saffron),var(--gold));
+  border:none;color:#fff;border-radius:14px;font-family:'Baloo 2',sans-serif;
+  font-size:1.1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.play-again:hover{opacity:.85}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="badge">Maths</span>
+  <span class="title-bar">
+    <span class="lbl-en">✖️ Multiplication Tables</span>
+    <span class="lbl-hi" style="display:none">✖️ पहाड़े</span>
+    <span class="lbl-bn" style="display:none">✖️ গুণের ঘর</span>
+  </span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+    <button class="lang-btn" onclick="setLang('hi',this)">हि</button>
+    <button class="lang-btn" onclick="setLang('bn',this)">অ</button>
+  </div>
+</div>
+
+<div class="score-wrap">
+  <div class="score-row">
+    <span class="score-label" id="scoreLabel">Score</span>
+    <span class="score-val"><span id="scoreNum">0</span>/100</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<div class="q-wrap" id="gameArea"></div>
+<div class="result-card" id="resultCard" style="display:none"></div>
+
+<script>
+const LANGS={
+  en:{score:'Score',next:'Next Question →',result:'See Result →',again:'🔄 Play Again',
+    msgs:['🌟 Times Table Champion!','Great job! Well done!','Good effort! Keep practicing!','Keep going! You can do it!'],
+    qof:'Question',of:'of'},
+  hi:{score:'स्कोर',next:'अगला प्रश्न →',result:'परिणाम देखें →',again:'🔄 फिर खेलें',
+    msgs:['🌟 पहाड़े के चैंपियन!','बहुत अच्छा! शाबाश!','अच्छी कोशिश! अभ्यास करो!','हिम्मत रखो! तुम कर सकते हो!'],
+    qof:'प्रश्न',of:'का'},
+  bn:{score:'স্কোর',next:'পরের প্রশ্ন →',result:'ফলাফল দেখো →',again:'🔄 আবার খেলো',
+    msgs:['🌟 গুণের চ্যাম্পিয়ন!','দারুণ কাজ! শাবাশ!','ভালো চেষ্টা! অনুশীলন করো!','চালিয়ে যাও! তুমি পারবে!'],
+    qof:'প্রশ্ন',of:'এর'}
+};
+
+let lang='en', currentQ=0, score=0, answered=false;
+let questions=[];
+
+function genQuestions(){
+  questions=[];
+  const used=new Set();
+  while(questions.length<10){
+    const a=Math.floor(Math.random()*9)+2; // 2–10
+    const b=Math.floor(Math.random()*10)+1; // 1–10
+    const key=a+'-'+b;
+    if(used.has(key))continue;
+    used.add(key);
+    const correct=a*b;
+    const wrongs=new Set();
+    while(wrongs.size<3){
+      const delta=Math.floor(Math.random()*20)+1;
+      const w=correct+(Math.random()>.5?delta:-delta);
+      if(w>0&&w!==correct)wrongs.add(w);
+    }
+    const opts=[correct,...wrongs].sort(()=>Math.random()-.5);
+    const ansIdx=opts.indexOf(correct);
+    // Build full table for explanation
+    const tableRows=[];
+    for(let i=1;i<=10;i++){
+      tableRows.push({text:`${a} × ${i} = ${a*i}`,highlight:i===b});
+    }
+    questions.push({a,b,correct,opts,ans:ansIdx,tableRows});
+  }
+}
+
+function setLang(l,btn){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelector('.lbl-en').style.display=l==='en'?'':'none';
+  document.querySelector('.lbl-hi').style.display=l==='hi'?'':'none';
+  document.querySelector('.lbl-bn').style.display=l==='bn'?'':'none';
+  document.getElementById('scoreLabel').textContent=LANGS[l].score;
+}
+
+function renderQ(){
+  answered=false;
+  const q=questions[currentQ];
+  const L=LANGS[lang];
+  document.getElementById('progFill').style.width=Math.round((currentQ/questions.length)*100)+'%';
+  const tableHTML=q.tableRows.map(r=>
+    `<span class="table-row${r.highlight?' highlight':''}">${r.text}</span>`
+  ).join('');
+  const isLast=currentQ===questions.length-1;
+  document.getElementById('gameArea').innerHTML=`
+    <div class="q-card fade">
+      <div class="q-num">${L.qof} ${currentQ+1} ${L.of} ${questions.length}</div>
+      <div class="math-box pop">
+        <div class="math-question">
+          <span>${q.a}</span>
+          <span class="op"> × </span>
+          <span>${q.b}</span>
+          <span class="eq"> = </span>
+          <span class="blank">?</span>
+        </div>
+        <div class="table-tag">Table of ${q.a}</div>
+      </div>
+      <div class="options">
+        ${q.opts.map((o,i)=>`<button class="opt-btn" onclick="pick(${i})" id="opt${i}">${o}</button>`).join('')}
+      </div>
+      <div class="explanation" id="exp">
+        <strong>${q.a} × ${q.b} = ${q.correct}</strong><br>
+        Here's the full table of ${q.a}:<br>
+        <div class="full-table">${tableHTML}</div>
+      </div>
+      <button class="next-btn" id="nextBtn" onclick="nextQ()">${isLast?L.result:L.next}</button>
+    </div>`;
+}
+
+function pick(i){
+  if(answered)return;
+  answered=true;
+  const q=questions[currentQ];
+  const pts=Math.round(100/questions.length);
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  if(i===q.ans){
+    document.getElementById('opt'+i).classList.add('correct');
+    score+=pts;
+    document.getElementById('scoreNum').textContent=score;
+  } else {
+    document.getElementById('opt'+i).classList.add('wrong');
+    document.getElementById('opt'+q.ans).classList.add('correct');
+  }
+  document.getElementById('exp').classList.add('show');
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQ(){
+  currentQ++;
+  if(currentQ>=questions.length){showResult();return;}
+  renderQ();
+}
+
+function showResult(){
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('gameArea').style.display='none';
+  const L=LANGS[lang];
+  const stars=score>=90?'⭐⭐⭐':score>=70?'⭐⭐':score>=40?'⭐':'';
+  const msg=score>=90?L.msgs[0]:score>=70?L.msgs[1]:score>=40?L.msgs[2]:L.msgs[3];
+  document.getElementById('resultCard').style.display='block';
+  document.getElementById('resultCard').innerHTML=`
+    <div class="result-inner fade">
+      <div class="stars">${stars||'✖️'}</div>
+      <div class="result-score">${score}/100</div>
+      <div class="result-msg">${msg}</div>
+      <button class="play-again" onclick="restart()">${L.again}</button>
+    </div>`;
+}
+
+function restart(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('scoreNum').textContent=0;
+  document.getElementById('progFill').style.width='0%';
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  genQuestions();
+  renderQ();
+}
+
+genQuestions();
+renderQ();
+</script>
+</body>
+</html>

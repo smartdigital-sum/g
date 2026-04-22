@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Magnetic Effects &amp; Sources of Energy — GyanPlay Class 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+  --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+  --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));min-height:100vh;color:#fff;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fadeIn{animation:fadeIn .45s ease both;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:99;}
+.back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:.95rem;padding:7px 16px;border-radius:20px;cursor:pointer;transition:.2s;}
+.back-btn:hover{background:rgba(255,255,255,.22);}
+.badge{background:var(--green);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.82rem;padding:5px 14px;border-radius:20px;letter-spacing:.5px;}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:.8rem;padding:5px 11px;border-radius:14px;cursor:pointer;transition:.2s;}
+.lang-btn.active,.lang-btn:hover{background:var(--purple);}
+.container{max-width:780px;margin:0 auto;padding:24px 16px 60px;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.7rem;font-weight:800;text-align:center;margin-bottom:4px;background:linear-gradient(90deg,var(--gold),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.game-sub{text-align:center;font-size:.88rem;color:#bbb;margin-bottom:22px;}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.prog-bar{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--green));border-radius:4px;transition:width .4s ease;}
+.prog-label{font-size:.82rem;color:#aaa;white-space:nowrap;}
+.score-display{text-align:right;font-family:'Baloo 2',sans-serif;font-size:1rem;color:var(--gold);margin-bottom:14px;}
+.q-card{background:var(--card);border-radius:18px;padding:26px 24px;border:1px solid rgba(255,255,255,.09);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.q-num{font-size:.78rem;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:8px;}
+.q-emoji{font-size:2rem;text-align:center;margin-bottom:10px;}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.08rem;font-weight:600;line-height:1.55;margin-bottom:18px;}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.options{grid-template-columns:1fr;}}
+.opt-btn{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);color:#e8e8e8;font-family:'Nunito',sans-serif;font-size:.93rem;padding:13px 16px;border-radius:12px;cursor:pointer;text-align:left;transition:.22s;line-height:1.4;}
+.opt-btn:hover:not(:disabled){background:rgba(0,200,83,.2);border-color:var(--green);}
+.opt-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);color:#fff;}
+.opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);color:#fff;}
+.opt-btn:disabled{cursor:not-allowed;}
+.feedback{margin-top:16px;padding:12px 16px;border-radius:12px;font-size:.92rem;line-height:1.5;display:none;}
+.feedback.show{display:block;}
+.feedback.correct{background:rgba(0,200,83,.15);border:1px solid var(--green);color:#b9f6ca;}
+.feedback.wrong{background:rgba(255,64,129,.15);border:1px solid var(--pink);color:#ffd0dd;}
+.next-btn{display:block;margin:20px auto 0;background:linear-gradient(135deg,var(--green),#007a32);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:13px 36px;border-radius:24px;cursor:pointer;transition:.2s;opacity:0;pointer-events:none;}
+.next-btn.visible{opacity:1;pointer-events:all;}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,200,83,.4);}
+.end-screen{background:var(--card);border-radius:20px;padding:36px 28px;text-align:center;border:1px solid rgba(255,255,255,.09);}
+.stars{font-size:2.8rem;margin-bottom:10px;letter-spacing:4px;}
+.final-score{font-family:'Baloo 2',sans-serif;font-size:2.4rem;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.final-msg{color:#ccc;font-size:1rem;margin-bottom:24px;}
+.play-again{background:linear-gradient(135deg,var(--green),#007a32);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:14px 38px;border-radius:24px;cursor:pointer;transition:.2s;}
+.play-again:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,200,83,.5);}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">&#8592; Back</button>
+  <span class="badge">Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="game-title">
+    <span data-lang="en">Magnetic Effects &amp; Energy Sources</span>
+    <span data-lang="hi" class="hidden">विद्युत धारा के चुम्बकीय प्रभाव एवं ऊर्जा के स्रोत</span>
+    <span data-lang="as" class="hidden">বিদ্যুৎ প্ৰৱাহৰ চুম্বকীয় প্ৰভাৱ আৰু শক্তিৰ উৎস</span>
+  </div>
+  <div class="game-sub">Class 10 Science &nbsp;|&nbsp; Ch 13–14 NCERT &nbsp;|&nbsp; 10 Questions</div>
+
+  <div class="prog-row">
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <span class="prog-label" id="progLabel">0 / 10</span>
+  </div>
+  <div class="score-display">Score: <span id="scoreVal">0</span> / 100</div>
+
+  <div id="gameArea"></div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    emoji:"🔌",
+    en:"According to the Right-Hand Thumb Rule, if the thumb of the right hand points in the direction of current in a straight conductor, the fingers curl in the direction of:",
+    hi:"दाएँ हाथ के अंगूठे के नियम के अनुसार, यदि दाएँ हाथ का अंगूठा धारा की दिशा में हो, तो उंगलियाँ किसकी दिशा में मुड़ती हैं?",
+    as:"সোঁ-হাতৰ বুঢ়া আঙুলিৰ নিয়ম অনুসৰি, যদি বুঢ়া আঙুলি বিদ্যুৎ প্ৰৱাহৰ দিশত থাকে তেন্তে আঙুলিবোৰ কোনফালে কোঁচ খায়?",
+    opts:{
+      en:["Magnetic field lines","Electric field lines","Gravitational field","None of these"],
+      hi:["चुम्बकीय क्षेत्र रेखाएँ","विद्युत क्षेत्र रेखाएँ","गुरुत्वाकर्षण क्षेत्र","इनमें से कोई नहीं"],
+      as:["চুম্বকীয় ক্ষেত্ৰৰেখা","বৈদ্যুতিক ক্ষেত্ৰৰেখা","মাধ্যাকৰ্ষণ ক্ষেত্ৰ","এইবোৰৰ কোনোটোৱেই নহয়"]
+    },
+    ans:0,
+    exp:{
+      en:"Right-Hand Thumb Rule: thumb → current direction; curled fingers → direction of magnetic field (circular field lines around conductor).",
+      hi:"दाएँ हाथ के अंगूठे का नियम: अंगूठा → धारा की दिशा; मुड़ी उंगलियाँ → चुम्बकीय क्षेत्र की दिशा।",
+      as:"সোঁ হাতৰ বুঢ়া আঙুলি: বিদ্যুৎ প্ৰৱাহৰ দিশ; কোঁচ খোৱা আঙুলি: চুম্বকীয় ক্ষেত্ৰৰ দিশ।"
+    }
+  },
+  {
+    emoji:"⚡",
+    en:"Fleming's Left-Hand Rule is used to determine the direction of force on a current-carrying conductor placed in a magnetic field. Which finger represents the direction of current?",
+    hi:"फ्लेमिंग के बाएँ हाथ के नियम में कौन-सी उंगली धारा की दिशा दर्शाती है?",
+    as:"ফ্লেমিঙৰ বাঁওহাতৰ নিয়মত কোন আঙুলিয়ে বিদ্যুৎ প্ৰৱাহৰ দিশ দেখুৱায়?",
+    opts:{
+      en:["Forefinger (index finger)","Middle finger","Thumb","Ring finger"],
+      hi:["तर्जनी (अनामिका)","मध्यमा उंगली","अंगूठा","अनामिका"],
+      as:["তৰ্জনী (আঙুলি)","মধ্যমা আঙুলি","বুঢ়া আঙুলি","অনামিকা"]
+    },
+    ans:1,
+    exp:{
+      en:"Fleming's Left-Hand Rule: Forefinger → magnetic field (B), Middle finger → current (I), Thumb → force/motion on conductor.",
+      hi:"फ्लेमिंग का बाएँ हाथ का नियम: तर्जनी → चुम्बकीय क्षेत्र (B), मध्यमा → धारा (I), अंगूठा → बल की दिशा।",
+      as:"ফ্লেমিঙৰ বাঁওহাতৰ নিয়ম: তৰ্জনী → চুম্বকীয় ক্ষেত্ৰ (B), মধ্যমা → বিদ্যুৎ (I), বুঢ়া আঙুলি → বলৰ দিশ।"
+    }
+  },
+  {
+    emoji:"⚡",
+    en:"An electric motor converts:",
+    hi:"विद्युत मोटर किसे परिवर्तित करता है?",
+    as:"বৈদ্যুতিক মটৰে কি ৰূপান্তৰিত কৰে?",
+    opts:{
+      en:["Mechanical energy to electrical energy","Electrical energy to mechanical energy","Chemical energy to electrical energy","Heat energy to electrical energy"],
+      hi:["यांत्रिक ऊर्जा को विद्युत ऊर्जा में","विद्युत ऊर्जा को यांत्रिक ऊर्जा में","रासायनिक ऊर्जा को विद्युत ऊर्जा में","ऊष्मा ऊर्जा को विद्युत ऊर्जा में"],
+      as:["যান্ত্ৰিক শক্তিক বৈদ্যুতিক শক্তিলৈ","বৈদ্যুতিক শক্তিক যান্ত্ৰিক শক্তিলৈ","ৰাসায়নিক শক্তিক বৈদ্যুতিক শক্তিলৈ","তাপ শক্তিক বৈদ্যুতিক শক্তিলৈ"]
+    },
+    ans:1,
+    exp:{
+      en:"Electric motor: electrical → mechanical energy. Electric generator: mechanical → electrical energy. These are reverse of each other.",
+      hi:"विद्युत मोटर: विद्युत → यांत्रिक। विद्युत जनित्र: यांत्रिक → विद्युत। ये एक-दूसरे के विपरीत हैं।",
+      as:"বৈদ্যুতিক মটৰ: বৈদ্যুতিক → যান্ত্ৰিক। বৈদ্যুতিক জেনেৰেটৰ: যান্ত্ৰিক → বৈদ্যুতিক।"
+    }
+  },
+  {
+    emoji:"⚡",
+    en:"Electromagnetic induction was discovered by:",
+    hi:"विद्युत चुम्बकीय प्रेरण की खोज किसने की?",
+    as:"তড়িৎ চুম্বকীয় আনয়ন কোনে আৱিষ্কাৰ কৰিছিল?",
+    opts:{
+      en:["James Clerk Maxwell","Michael Faraday","Nikola Tesla","Heinrich Hertz"],
+      hi:["जेम्स क्लर्क मैक्सवेल","माइकल फैराडे","निकोला टेस्ला","हेनरिख हर्ट्ज़"],
+      as:["জেমছ ক্লাৰ্ক মেক্সৱেল","মাইকেল ফেৰাডে","নিকোলা টেছলা","হেইনৰিখ হাৰ্টজ"]
+    },
+    ans:1,
+    exp:{
+      en:"Michael Faraday discovered electromagnetic induction in 1831. Fleming's Right-Hand Rule (for generators) is based on this principle.",
+      hi:"माइकल फैराडे ने 1831 में विद्युत चुम्बकीय प्रेरण की खोज की। फ्लेमिंग का दाएँ हाथ का नियम इसी पर आधारित है।",
+      as:"মাইকেল ফেৰাডে ১৮৩১ চনত তড়িৎ চুম্বকীয় আনয়ন আৱিষ্কাৰ কৰিছিল।"
+    }
+  },
+  {
+    emoji:"⚡",
+    en:"Which of the following is the main difference between AC (Alternating Current) and DC (Direct Current)?",
+    hi:"AC और DC धारा में मुख्य अंतर क्या है?",
+    as:"AC আৰু DC ধাৰাৰ মূল পাৰ্থক্য কি?",
+    opts:{
+      en:["AC changes direction periodically; DC flows in one direction","AC flows in one direction; DC changes direction","AC has higher voltage; DC has lower voltage","AC is used in batteries; DC is used in homes"],
+      hi:["AC आवधिक रूप से दिशा बदलती है; DC एक दिशा में बहती है","AC एक दिशा में बहती है; DC दिशा बदलती है","AC का वोल्टेज अधिक; DC का कम","AC बैटरी में; DC घरों में"],
+      as:["AC সময়ে সময়ে দিশ সলায়; DC এক দিশে বৈ যায়","AC এক দিশে বৈ যায়; DC দিশ সলায়","AC উচ্চ ভোল্টেজ; DC কম ভোল্টেজ","AC বেটাৰিত; DC ঘৰত"]
+    },
+    ans:0,
+    exp:{
+      en:"AC (Alternating Current) periodically reverses direction (frequency 50 Hz in India). DC (Direct Current) flows in one direction only — used in batteries and electronic circuits.",
+      hi:"AC (प्रत्यावर्ती धारा) समय-समय पर दिशा बदलती है (भारत में 50 Hz)। DC (दिष्ट धारा) हमेशा एक दिशा में बहती है — बैटरी और इलेक्ट्रॉनिक्स में।",
+      as:"AC (প্ৰত্যাবৰ্তী বিদ্যুৎ) সময়ে সময়ে দিশ সলায় (ভাৰতত ৫০ Hz)। DC (একমুখী বিদ্যুৎ) সদায় এক দিশে বৈ যায়।"
+    }
+  },
+  {
+    emoji:"⚡",
+    en:"A step-up transformer increases voltage. This is achieved because:",
+    hi:"स्टेप-अप ट्रांसफॉर्मर वोल्टेज को बढ़ाता है, क्योंकि:",
+    as:"ষ্টেপ-আপ ট্ৰেন্সফৰ্মাৰে ভোল্টেজ বৃদ্ধি কৰে, কাৰণ:",
+    opts:{
+      en:["Secondary coil has more turns than primary","Primary coil has more turns than secondary","Both coils have equal turns","Secondary coil has thicker wire"],
+      hi:["द्वितीयक कुंडली में प्राथमिक से अधिक फेरे हैं","प्राथमिक में द्वितीयक से अधिक फेरे हैं","दोनों में समान फेरे हैं","द्वितीयक तार मोटा है"],
+      as:["গৌণ কুণ্ডলীত প্ৰাথমিকতকৈ বেছি পাক আছে","প্ৰাথমিক কুণ্ডলীত গৌণতকৈ বেছি পাক আছে","দুয়োটাত সমান পাক আছে","গৌণ তাঁৰ মোটা"]
+    },
+    ans:0,
+    exp:{
+      en:"Transformer formula: Vs/Vp = Ns/Np. Step-up: Ns > Np → Vs > Vp. Step-down: Ns < Np → Vs < Vp. Transformers work only on AC.",
+      hi:"ट्रांसफॉर्मर सूत्र: Vs/Vp = Ns/Np। स्टेप-अप: Ns > Np → Vs > Vp। स्टेप-डाउन: Ns < Np। ट्रांसफॉर्मर केवल AC पर काम करता है।",
+      as:"ট্ৰেন্সফৰ্মাৰ সূত্ৰ: Vs/Vp = Ns/Np। ষ্টেপ-আপ: Ns > Np → Vs > Vp। ট্ৰেন্সফৰ্মাৰ কেৱল AC-ত কাম কৰে।"
+    }
+  },
+  {
+    emoji:"🌞",
+    en:"Which of the following is a NON-CONVENTIONAL source of energy?",
+    hi:"निम्नलिखित में से कौन-सा ऊर्जा का गैर-परम्परागत स्रोत है?",
+    as:"নিম্নলিখিতবোৰৰ মাজত কোনটো অপ্ৰচলিত শক্তিৰ উৎস?",
+    opts:{
+      en:["Coal","Solar energy","Natural gas","Petroleum"],
+      hi:["कोयला","सौर ऊर्जा","प्राकृतिक गैस","पेट्रोलियम"],
+      as:["কয়লা","সৌৰ শক্তি","প্ৰাকৃতিক গেছ","পেট্ৰ'লিয়াম"]
+    },
+    ans:1,
+    exp:{
+      en:"Non-conventional (renewable) sources: solar, wind, tidal, geothermal, biogas. Conventional sources: coal, petroleum, natural gas, firewood.",
+      hi:"गैर-परम्परागत (नवीकरणीय) स्रोत: सौर, पवन, ज्वारीय, भूतापीय, बायोगैस। परम्परागत: कोयला, पेट्रोलियम, प्राकृतिक गैस।",
+      as:"অপ্ৰচলিত (নবায়নযোগ্য) উৎস: সৌৰ, বায়ু, জোৱাৰ-ভাটা, ভূতাপ, বায়'গেছ। প্ৰচলিত: কয়লা, পেট্ৰ'লিয়াম, প্ৰাকৃতিক গেছ।"
+    }
+  },
+  {
+    emoji:"💨",
+    en:"Which gas is primarily produced in a biogas plant?",
+    hi:"बायोगैस संयंत्र में मुख्यतः कौन-सी गैस उत्पन्न होती है?",
+    as:"বায়'গেছ প্লান্টত মূলতঃ কোন গেছ উৎপন্ন হয়?",
+    opts:{
+      en:["Carbon dioxide (CO₂)","Methane (CH₄)","Hydrogen (H₂)","Nitrogen (N₂)"],
+      hi:["कार्बन डाइऑक्साइड (CO₂)","मीथेन (CH₄)","हाइड्रोजन (H₂)","नाइट्रोजन (N₂)"],
+      as:["কাৰ্বন ডাইঅক্সাইড (CO₂)","মিথেন (CH₄)","হাইড্ৰ'জেন (H₂)","নাইট্ৰ'জেন (N₂)"]
+    },
+    ans:1,
+    exp:{
+      en:"Biogas consists mainly of methane (CH₄ ~75%) and CO₂. It is produced by anaerobic decomposition of animal dung and plant waste. The slurry left is excellent manure.",
+      hi:"बायोगैस मुख्यतः मीथेन (CH₄ ~75%) और CO₂ से बनी होती है। पशु गोबर और पादप कचरे के अवायवीय अपघटन से बनती है।",
+      as:"বায়'গেছত মূলতঃ মিথেন (CH₄ ~৭৫%) আৰু CO₂ থাকে। পশুৰ গোবৰ আৰু উদ্ভিদৰ পচনৰ পৰা উৎপন্ন হয়।"
+    }
+  },
+  {
+    emoji:"🌞",
+    en:"Nuclear fission is the process in which:",
+    hi:"नाभिकीय विखंडन की प्रक्रिया में:",
+    as:"নিউক্লিয়াৰ ফিছনত:",
+    opts:{
+      en:["Two lighter nuclei combine to form a heavier nucleus","A heavy nucleus splits into two lighter nuclei","An atom loses its electrons","Protons and neutrons combine"],
+      hi:["दो हल्के नाभिक मिलकर भारी नाभिक बनाते हैं","एक भारी नाभिक दो हल्के नाभिकों में विखंडित होता है","परमाणु इलेक्ट्रॉन खोता है","प्रोटॉन और न्यूट्रॉन मिलते हैं"],
+      as:["দুটা পাতল নিউক্লিয়াছ মিলি এটা গধুৰ নিউক্লিয়াছ গঠন কৰে","এটা গধুৰ নিউক্লিয়াছ দুটা পাতল নিউক্লিয়াছত বিভক্ত হয়","পৰমাণুৱে ইলেক্ট্ৰন হেৰুৱায়","প্ৰ'টন আৰু নিউট্ৰন মিলে"]
+    },
+    ans:1,
+    exp:{
+      en:"Nuclear Fission: heavy nucleus (e.g., U-235) splits → lighter nuclei + energy. Nuclear Fusion: two lighter nuclei (e.g., H) combine → heavier nucleus + enormous energy (basis of the sun's energy).",
+      hi:"नाभिकीय विखंडन: भारी नाभिक (जैसे U-235) → हल्के नाभिक + ऊर्जा। नाभिकीय संलयन: दो हल्के नाभिक → भारी नाभिक + ऊर्जा (सूर्य की ऊर्जा का आधार)।",
+      as:["নিউক্লিয়াৰ ফিছন: গধুৰ নিউক্লিয়াছ (U-235) → পাতল নিউক্লিয়াছ + শক্তি। নিউক্লিয়াৰ ফিউজন: দুটা পাতল নিউক্লিয়াছ → গধুৰ নিউক্লিয়াছ + বিপুল শক্তি।"]
+    }
+  },
+  {
+    emoji:"🌊",
+    en:"Which of the following is a major disadvantage of hydroelectric power plants?",
+    hi:"जल-विद्युत संयंत्रों का एक प्रमुख नुकसान क्या है?",
+    as:"জলবিদ্যুৎ কেন্দ্ৰৰ এটা প্ৰধান অসুবিধা কি?",
+    opts:{
+      en:["They produce greenhouse gases","They require submersion of large areas of land and displacement of people","They use nuclear fuel","They cannot produce electricity at night"],
+      hi:["ये ग्रीनहाउस गैसें उत्पन्न करते हैं","इनमें बड़े क्षेत्र डूब जाते हैं और लोग विस्थापित होते हैं","ये परमाणु ईंधन का उपयोग करते हैं","रात में बिजली उत्पन्न नहीं कर सकते"],
+      as:["এইবোৰে গ্ৰীনহাউছ গেছ উৎপন্ন কৰে","বৃহৎ অঞ্চল ডুব যায় আৰু লোকসকল বিস্থাপিত হয়","এইবোৰে পাৰমাণৱিক ইন্ধন ব্যৱহাৰ কৰে","নিশাত বিদ্যুৎ উৎপাদন কৰিব নোৱাৰি"]
+    },
+    ans:1,
+    exp:{
+      en:"Hydroelectric plants require building large dams, causing submersion of vast areas (including forests and villages), displacement of local communities, and disruption of ecosystems.",
+      hi:"जल-विद्युत संयंत्रों के लिए बड़े बाँध बनाने पड़ते हैं जिससे विशाल क्षेत्र (जंगल, गाँव) डूब जाते हैं, लोग विस्थापित होते हैं, और पारिस्थितिक तंत्र बाधित होता है।",
+      as:["জলবিদ্যুৎ কেন্দ্ৰৰ বাবে বৃহৎ বান্ধ নিৰ্মাণ কৰিব লাগে, ফলত বিশাল অঞ্চল (অৰণ্য, গাঁও) ডুব যায়, লোক বিস্থাপিত হয়।"]
+    }
+  }
+];
+
+let current=0, score=0, lang='en', answered=false;
+const TOTAL=QUESTIONS.length, PTS=10;
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.toggle('active',b.textContent.trim()===(l==='en'?'EN':l==='hi'?'हि':'অ'));});
+  document.querySelectorAll('[data-lang]').forEach(el=>{el.classList.toggle('hidden',el.dataset.lang!==l);});
+  if(!document.getElementById('endScreen')) renderQ();
+}
+
+function renderQ(){
+  if(current>=TOTAL){showEnd();return;}
+  const q=QUESTIONS[current];
+  answered=false;
+  const pct=Math.round((current/TOTAL)*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progLabel').textContent=current+' / '+TOTAL;
+  const optsHtml=q.opts[lang].map((o,i)=>`<button class="opt-btn" onclick="choose(${i})">${o}</button>`).join('');
+  document.getElementById('gameArea').innerHTML=`
+    <div class="q-card fadeIn">
+      <div class="q-num">QUESTION ${current+1} OF ${TOTAL}</div>
+      <div class="q-emoji">${q.emoji}</div>
+      <div class="q-text" data-lang="${lang}">${q[lang]}</div>
+      <div class="options">${optsHtml}</div>
+      <div class="feedback" id="fb"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQ()">${lang==='hi'?'अगला प्रश्न →':lang==='as'?'পৰৱৰ্তী প্ৰশ্ন →':'Next Question →'}</button>
+    </div>`;
+}
+
+function choose(i){
+  if(answered)return;
+  answered=true;
+  const q=QUESTIONS[current];
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[q.ans].classList.add('correct');
+  const fb=document.getElementById('fb');
+  if(i===q.ans){
+    score+=PTS;
+    document.getElementById('scoreVal').textContent=score;
+    fb.className='feedback correct show';
+    fb.innerHTML='✓ '+q.exp[lang];
+  } else {
+    btns[i].classList.add('wrong');
+    fb.className='feedback wrong show';
+    fb.innerHTML='✗ '+q.exp[lang];
+  }
+  document.getElementById('nextBtn').classList.add('visible');
+}
+
+function nextQ(){current++;renderQ();}
+
+function showEnd(){
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('progLabel').textContent=TOTAL+' / '+TOTAL;
+  const pct=score;
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'';
+  const msgs={en:['Keep studying! You can do it!','Good effort! Review the topics.','Well done! Great understanding!','Outstanding! Perfect score!'],
+               hi:['पढ़ते रहो! आप कर सकते हो!','अच्छा प्रयास! विषयों की समीक्षा करें।','शाबाश! बेहतरीन समझ!','अद्भुत! परफेक्ट स्कोर!'],
+               as:['পঢ়ি থাকা! তুমি পাৰিবা!','ভাল প্ৰচেষ্টা! বিষয়বোৰ পুনৰীক্ষণ কৰা।','চমৎকাৰ! উত্তম বোধ!','অসাধাৰণ! পূৰ্ণ নম্বৰ!']};
+  const idx=pct>=90?3:pct>=70?2:pct>=40?1:0;
+  document.getElementById('gameArea').innerHTML=`
+    <div class="end-screen fadeIn" id="endScreen">
+      <div class="stars">${stars||'📚'}</div>
+      <div class="final-score">${score}/100</div>
+      <div class="final-msg">${msgs[lang][idx]}</div>
+      <button class="play-again" onclick="restart()">${lang==='hi'?'फिर से खेलें':lang==='as'?'পুনৰ খেলা':'Play Again'}</button>
+    </div>`;
+}
+
+function restart(){current=0;score=0;document.getElementById('scoreVal').textContent=0;renderQ();}
+
+renderQ();
+</script>
+</body>
+</html>

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Rongmon's Fruit Catch — Rongmon's World</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --sky-top: #4fc3f7;
+    --sky-bot: #e1f5fe;
+    --grass: #4caf50;
+    --wood: #8d6e63;
+    --gold: #f5c518;
+    --bihu-red: #e63946;
+    --dark: #1a1a2e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; }
+  body {
+    font-family: 'Baloo 2', cursive;
+    background: #111; color: var(--dark);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; overflow: hidden;
+  }
+  .as { font-family: 'Hind Siliguri', sans-serif; }
+
+  /* ══ APP ══ */
+  #game-wrap {
+    width: 100%; max-width: 800px; height: 100vh; max-height: 700px;
+    background: linear-gradient(var(--sky-top), var(--sky-bot));
+    position: relative; overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column;
+  }
+  @media(min-width: 820px) { #game-wrap { height: 90vh; border-radius: 24px; border: 8px solid var(--wood); } }
+
+  /* ══ ENVIRONMENT ══ */
+  .tree-branch { position: absolute; top: -20px; left: 0; right: 0; height: 120px; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><path d="M0 0 Q25 40 50 10 T100 0 Z" fill="%232e7d32" opacity="0.9"/></svg>') repeat-x; background-size: 200px 100px; z-index: 5; }
+  .ground { position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: var(--grass); z-index: 10; border-top: 6px solid #388e3c; }
+
+  /* ══ HUD ══ */
+  #hud { position: absolute; top: 0; left: 0; right: 0; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: linear-gradient(to bottom, rgba(46,125,50,0.8), transparent); }
+  #hud.hidden { display: none; }
+  .hud-left, .hud-right { display: flex; gap: 12px; align-items: center; }
+  .hud-stat { background: rgba(255,255,255,0.95); padding: 4px 14px; border-radius: 20px; font-weight: 800; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); color: var(--wood); display: flex; align-items: center; gap: 6px; }
+  .lang-pill { display: flex; background: rgba(255,255,255,0.95); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+  .lang-pill button { border: none; background: none; padding: 4px 12px; font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 14px; cursor: pointer; color: #888; transition: 0.2s; }
+  .lang-pill button.active { background: var(--gold); color: var(--wood); text-shadow: 0 1px 1px rgba(255,255,255,0.8); }
+
+  /* ══ SCREENS ══ */
+  .screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; z-index: 50; }
+  .screen.hidden { display: none; }
+  .overlay-box { background: #fff; padding: 30px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); max-width: 420px; width: 90%; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); position: relative; z-index: 60; border: 4px solid var(--grass); }
+  @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+  /* BUTTONS */
+  .btn-primary { background: var(--gold); color: #8b5e3c; border: none; padding: 12px 30px; font-size: 20px; font-weight: 800; border-radius: 50px; cursor: pointer; box-shadow: 0 6px 0 #b07d00; transition: transform 0.1s, box-shadow 0.1s; font-family: 'Baloo 2', cursive; margin-top: 15px; }
+  .btn-primary:active { transform: translateY(6px); box-shadow: 0 0px 0 #b07d00; }
+  .btn-home { position: fixed; top: 20px; left: 20px; z-index: 500; width: 44px; height: 44px; border-radius: 50%; background: #fff; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .mute-btn { position: fixed; bottom: 20px; right: 20px; z-index: 500; width: 44px; height: 44px; border-radius: 50%; border: none; background: #fff; font-size: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .title-lg { font-size: 34px; font-weight: 900; color: var(--wood); line-height: 1.1; margin-bottom: 10px; }
+  .desc-txt { font-size: 17px; color: #666; font-weight: 600; margin-bottom: 15px; line-height: 1.2; }
+
+  /* ══ GAME SCREEN ══ */
+  #screen-game { justify-content: flex-start; padding: 80px 0 20px 0; z-index: 10; pointer-events: none; }
+  .game-header { z-index: 20; position: relative; text-align: center; pointer-events: none; }
+  .seq-hint { font-size: 22px; font-weight: 900; color: #fff; background: rgba(141,110,99,0.9); padding: 8px 24px; border-radius: 30px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 3px solid rgba(255,255,255,0.5); }
+
+  /* ══ PLAYER/BASKET ══ */
+  .player-area { position: absolute; bottom: 80px; left: 0; right: 0; height: 100px; z-index: 15; pointer-events: none; }
+  #player-char {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 90px; height: 100px; transition: left 0.1s linear;
+  }
+  .bhoruka-basket {
+    position: absolute; bottom: 30px; left: 10px; right: 10px; height: 40px;
+    background: repeating-linear-gradient(45deg, #d4a373, #d4a373 5px, #c38f5a 5px, #c38f5a 10px);
+    border: 3px solid #8d6e63; border-radius: 10px 10px 30px 30px;
+    z-index: 20; box-shadow: inset 0 -5px 10px rgba(0,0,0,0.3);
+  }
+  /* Rongmon Head SVG */
+  .rongmon-head { position: absolute; bottom: 5px; left: 25px; width: 40px; height: 40px; z-index: 15; }
+
+  /* ══ CONTROLS ══ */
+  .touch-controls { position: absolute; inset: 0; z-index: 25; display: flex; }
+  .touch-left, .touch-right { flex: 1; height: 100%; cursor: pointer; }
+
+  /* ══ FALLING OBJECTS ══ */
+  .fall-obj {
+    position: absolute; width: 50px; height: 50px; top: -50px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 34px; font-weight: 800; z-index: 12;
+    transition: transform 0.1s linear; pointer-events: none;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  .fall-obj.caught { animation: popScale 0.3s forwards; opacity: 0; }
+  @keyframes popScale { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+
+  .confetti-piece { position: absolute; pointer-events: none; z-index: 150; animation: fallAnim 2s linear forwards; }
+  @keyframes fallAnim { 0% { transform: translate(0,0) rotate(0deg); opacity: 1; } 100% { transform: translate(var(--cx), var(--cy)) rotate(var(--cr)); opacity: 0; } }
+
+  /* ══ ONBOARDING ══ */
+  #onboarding { background: rgba(0,0,0,0.8); z-index: 200; backdrop-filter: blur(5px); }
+</style>
+</head>
+<body>
+
+<a href="../index.html#games" class="btn-home" title="Back to Home">🏠</a>
+<button class="mute-btn" id="mute-btn-game" onclick="toggleMuteGame()">🔊</button>
+
+<div id="game-wrap">
+
+  <div class="tree-branch"></div>
+  <div class="ground"></div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-left">
+      <div class="hud-stat" title="Score">⭐ <span id="score-disp">0</span></div>
+      <div class="hud-stat" title="Level">🥭 <span id="level-disp">1</span></div>
+    </div>
+    <div class="hud-right">
+      <div class="lang-pill">
+        <button class="active" onclick="setLang('en')" id="lp-en">EN</button>
+        <button onclick="setLang('as')" id="lp-as">অস</button>
+      </div>
+      <div class="hud-stat" id="lives-disp">❤️❤️❤️</div>
+    </div>
+  </div>
+
+  <!-- SCREEN: INTRO -->
+  <div class="screen" id="screen-intro">
+    <div class="overlay-box" style="background:transparent;box-shadow:none;border:none;">
+      <div style="font-size:70px;margin-bottom:10px;">🧺</div>
+      <h1 class="title-lg" id="intro-title" style="color:#fff;text-shadow:0 4px 10px rgba(0,0,0,0.3);">Fruit Catch!</h1>
+      <p class="desc-txt" id="intro-desc" style="color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.3);">Help Rongmon fill his Bhoruka! Tap the screen sides to move left and right. Catch only the correct items!</p>
+      <button class="btn-primary" onclick="startGame()" id="btn-start">🧺 Let's Catch!</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: GAME -->
+  <div class="screen hidden" id="screen-game">
+    <div class="game-header">
+      <div class="seq-hint" id="level-hint">Catch the Fruits!</div>
+    </div>
+
+    <div class="touch-controls" id="touch-controls">
+      <div class="touch-left" id="t-left"></div>
+      <div class="touch-right" id="t-right"></div>
+    </div>
+
+    <!-- Active game area -->
+    <div id="fall-container" style="position:absolute;inset:0;pointer-events:none;z-index:9;"></div>
+
+    <div class="player-area">
+      <div id="player-char">
+        <!-- SVG Rongmon Face -->
+        <svg class="rongmon-head" viewBox="0 0 100 100">
+          <ellipse cx="50" cy="50" rx="40" ry="45" fill="#a08060"/>
+          <circle cx="35" cy="40" r="5" fill="#3a2a10"/>
+          <circle cx="65" cy="40" r="5" fill="#3a2a10"/>
+          <ellipse cx="50" cy="55" rx="8" ry="6" fill="#8b7355"/>
+          <path d="M40 70 Q50 85 60 70" stroke="#3a2a10" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div class="bhoruka-basket" id="basket"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: LEVEL UP -->
+  <div class="screen hidden" id="screen-levelup">
+    <div class="overlay-box">
+      <div style="font-size:60px">🌟</div>
+      <h2 class="title-lg" id="lu-title" style="color:var(--grass)">Level Cleared!</h2>
+      <p class="desc-txt" id="lu-desc">Great job! The categories will change now.</p>
+      <button class="btn-primary" onclick="nextLevel()" id="btn-next">Next Level ▶</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: GAME OVER -->
+  <div class="screen hidden" id="screen-gameover">
+    <div class="overlay-box">
+      <div style="font-size:60px">👞</div>
+      <h2 class="title-lg" id="go-title" style="color:var(--bihu-red)">Oops!</h2>
+      <p class="desc-txt" id="go-desc">You caught the wrong items! The Bhoruka is torn!</p>
+      <div id="go-score" style="font-size:18px;font-weight:800;color:var(--dark);margin-bottom:10px;">⭐ Final Score: 0</div>
+      <button class="btn-primary" onclick="startGame()" id="btn-retry">🔄 Try Again</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: VICTORY -->
+  <div class="screen hidden" id="screen-victory">
+    <div class="overlay-box" style="border-color:var(--gold)">
+      <div style="font-size:60px">🏆</div>
+      <h2 class="title-lg" id="vic-title" style="color:var(--gold)">Master Catcher!</h2>
+      <p class="desc-txt" id="vic-desc">You completed all levels! Rongmon's basket is full.</p>
+      <div id="vic-score" style="font-size:18px;font-weight:800;color:var(--dark);margin-bottom:10px;">⭐ Score: 0</div>
+      <button class="btn-primary" onclick="startGame()" id="btn-replay">🔄 Play Again</button>
+      <br/><a href="../index.html#games" style="font-size:14px;color:#999;text-decoration:none;display:inline-block;margin-top:10px;" id="btn-home-v">🏠 Back to Home</a>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div id="onboarding" class="screen hidden">
+    <div class="overlay-box">
+      <h2 class="title-lg" style="font-size:30px">How to Play</h2>
+      <p class="desc-txt" style="text-align:left;font-size:15px;" id="ob-desc">
+        1. Read the category rule at the top! 🧠<br>
+        2. Tap the left or right side of the screen to move Rongmon's basket. 👈👉<br>
+        3. Catch the matching items, and avoid the wrong ones (like old shoes!) 👞❌<br>
+        <span class="as" style="font-size:13px;">১. ওপৰৰ নিয়মটো পঢ়ক! ২. বাস্কেটখন লৰচৰ কৰিবলৈ স্ক্ৰীণত টিপক। ৩. সঠিক বস্তুবোৰ ধৰক আৰু বেয়াবোৰ এৰাই চলক!</span>
+      </p>
+      <button class="btn-primary" onclick="dismissOnboarding()">Got it! 👍</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="rongmon-data.js"></script>
+<script src="rongmon-audio.js"></script>
+<script>
+// ══ CATEGORIES & ITEMS ══
+const ITEMS = {
+  fruits: [
+    { txt: '🥭', type: 'fruit' }, { txt: '🍌', type: 'fruit' }, 
+    { txt: '🍍', type: 'fruit' }, { txt: '🥥', type: 'fruit' } // Assume Litchi/coconut
+  ],
+  trash: [
+    { txt: '👞', type: 'trash' }, { txt: '🪨', type: 'trash' }, { txt: '🐟', type: 'trash' } // Fish bone/rock
+  ],
+  numbersHigh: [
+    { txt: '6', type: 'numHigh' }, { txt: '7', type: 'numHigh' }, 
+    { txt: '8', type: 'numHigh' }, { txt: '9', type: 'numHigh' }
+  ],
+  numbersLow: [
+    { txt: '1', type: 'numLow' }, { txt: '2', type: 'numLow' }, 
+    { txt: '3', type: 'numLow' }, { txt: '4', type: 'numLow' }
+  ],
+  vowels: [
+    { txt: 'অ', type: 'vowel' }, { txt: 'আ', type: 'vowel' }, 
+    { txt: 'ই', type: 'vowel' }, { txt: 'ঈ', type: 'vowel' }
+  ],
+  consonants: [
+    { txt: 'ক', type: 'cons' }, { txt: 'খ', type: 'cons' }, 
+    { txt: 'গ', type: 'cons' }, { txt: 'ঘ', type: 'cons' }
+  ]
+};
+
+const LEVELS = [
+  {
+    hint_en: 'Catch only Fruits!', hint_as: 'কেৱল ফল ধৰক!',
+    good: ['fruit'], bad: ['trash'], targetScore: 100
+  },
+  {
+    hint_en: 'Catch numbers > 5!', hint_as: '৫ তকৈ ডাঙৰ সংখ্যা ধৰক!',
+    good: ['numHigh'], bad: ['numLow', 'trash', 'fruit'], targetScore: 120
+  },
+  {
+    hint_en: 'Catch Assamese Vowels (অ আ ই)!', hint_as: 'অসমীয়া স্বৰবৰ্ণ ধৰক!',
+    good: ['vowel'], bad: ['cons', 'numHigh'], targetScore: 150
+  }
+];
+
+// ══ STATE ══
+let score = 0, lives = 3, level = 0, lang = 'en';
+let gameLoop, spawnLoop;
+let playerX = 50; // percentage
+let movingLeft = false, movingRight = false;
+let activeObjects = [];
+let roundScore = 0;
+const gameWrap = document.getElementById('game-wrap');
+
+// ══ LANG ══
+const lt = {
+  en: {
+    'intro-title':'Fruit Catch!',
+    'intro-desc':'Help Rongmon fill his Bhoruka! Tap the screen sides to move left and right. Catch only the correct items!',
+    'btn-start':"🧺 Let's Catch!",
+    'lu-title':'Level Cleared!',
+    'lu-desc':'Great job! The categories will change now.',
+    'btn-next':'Next Level ▶',
+    'go-title':'Oops!',
+    'go-desc':"You caught the wrong items! The Bhoruka is torn!",
+    'btn-retry':'🔄 Try Again',
+    'vic-title':'Master Catcher!',
+    'vic-desc':"You completed all levels! Rongmon's basket is full.",
+    'btn-replay':'🔄 Play Again',
+    'btn-home-v':'🏠 Back to Home',
+  },
+  as: {
+    'intro-title':'ফল ধৰোঁ আহা!',
+    'intro-desc':'ৰংমনক বাস্কেট পূৰাবলৈ সহায় কৰক! সোঁ আৰু বাঁওফালে যাবলৈ স্ক্ৰীণত টিপক। কেৱল সঠিক বস্তুবোৰ ধৰক!',
+    'btn-start':"🧺 আৰম্ভ কৰক!",
+    'lu-title':'স্তৰ অতিক্ৰম!',
+    'lu-desc':'বহুত ভাল! এতিয়া নিয়ম সলনি হ\'ব।',
+    'btn-next':'পৰৱৰ্তী স্তৰ ▶',
+    'go-title':'হায়!',
+    'go-desc':"আপুনি ভুল বস্তু ধৰিলে! বাস্কেটখন ফালি গ'ল!",
+    'btn-retry':'🔄 আকৌ চেষ্টা কৰক',
+    'vic-title':'মাষ্টাৰ কেচাৰ!',
+    'vic-desc':"আপুনি সকলো স্তৰ পাৰ কৰিলে! ৰংমনৰ বাস্কেট সম্পূৰ্ণ।",
+    'btn-replay':'🔄 আকৌ খেলক',
+    'btn-home-v':'🏠 মূল পৃষ্ঠালৈ',
+  }
+};
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('lp-en').classList.toggle('active', l==='en');
+  document.getElementById('lp-as').classList.toggle('active', l==='as');
+  for (const [id,val] of Object.entries(lt[l])) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = val;
+  }
+  if (level < LEVELS.length) {
+    document.getElementById('level-hint').textContent = lang==='en' ? LEVELS[level].hint_en : LEVELS[level].hint_as;
+  }
+}
+
+function showScreen(id) {
+  ['screen-intro','screen-game','screen-levelup','screen-gameover','screen-victory'].forEach(s =>
+    document.getElementById(s).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  document.getElementById('hud').classList.toggle('hidden', id==='screen-intro'||id==='screen-gameover'||id==='screen-victory');
+}
+
+function updateHUD() {
+  document.getElementById('score-disp').textContent = score;
+  document.getElementById('level-disp').textContent = level + 1;
+  document.getElementById('lives-disp').textContent = '❤️'.repeat(Math.max(0, lives));
+}
+
+// ══ CONTROLS ══
+document.getElementById('t-left').addEventListener('pointerdown', (e) => { e.preventDefault(); movingLeft = true; });
+document.getElementById('t-left').addEventListener('pointerup', (e) => { e.preventDefault(); movingLeft = false; });
+document.getElementById('t-left').addEventListener('pointercancel', (e) => { e.preventDefault(); movingLeft = false; });
+document.getElementById('t-right').addEventListener('pointerdown', (e) => { e.preventDefault(); movingRight = true; });
+document.getElementById('t-right').addEventListener('pointerup', (e) => { e.preventDefault(); movingRight = false; });
+document.getElementById('t-right').addEventListener('pointercancel', (e) => { e.preventDefault(); movingRight = false; });
+
+// Keyboard
+window.addEventListener('keydown', (e) => {
+  if(e.key === 'ArrowLeft') movingLeft = true;
+  if(e.key === 'ArrowRight') movingRight = true;
+});
+window.addEventListener('keyup', (e) => {
+  if(e.key === 'ArrowLeft') movingLeft = false;
+  if(e.key === 'ArrowRight') movingRight = false;
+});
+
+// ══ LOGIC ══
+function startGame() {
+  score = 0; lives = 3; level = 0;
+  startLevel();
+}
+
+function startLevel() {
+  updateHUD();
+  document.getElementById('level-hint').textContent = lang==='en' ? LEVELS[level].hint_en : LEVELS[level].hint_as;
+  showScreen('screen-game');
+  roundScore = 0;
+  activeObjects.forEach(o => o.el.remove());
+  activeObjects = [];
+  playerX = 50;
+  
+  // Game loops
+  if (gameLoop) cancelAnimationFrame(gameLoop);
+  if (spawnLoop) clearInterval(spawnLoop);
+
+  const curLvl = LEVELS[level];
+  const spawnRate = Math.max(1500 - (level * 200), 800);
+
+  spawnLoop = setInterval(() => spawnObject(curLvl), spawnRate);
+  gameLoop = requestAnimationFrame(updateGame);
+}
+
+function spawnObject(curLvl) {
+  const isGood = Math.random() > 0.4; // 60% chance for good item
+  let pool = [];
+  if (isGood) {
+    curLvl.good.forEach(type => pool = pool.concat(ITEMS[type]));
+  } else {
+    curLvl.bad.forEach(type => pool = pool.concat(ITEMS[type]));
+  }
+
+  const itm = pool[Math.floor(Math.random() * pool.length)];
+  const el = document.createElement('div');
+  el.className = 'fall-obj';
+  el.textContent = itm.txt;
+
+  const startX = 5 + Math.random() * 90; // percentage
+  el.style.left = startX + '%';
+  document.getElementById('fall-container').appendChild(el);
+
+  activeObjects.push({
+    el: el,
+    x: startX,
+    y: -10, // percentage
+    speed: 0.25 + (level * 0.05) + (Math.random() * 0.15),
+    isGood: curLvl.good.includes(itm.type)
+  });
+}
+
+function updateGame() {
+  // Move player
+  if (movingLeft) playerX = Math.max(5, playerX - 1.5);
+  if (movingRight) playerX = Math.min(95, playerX + 1.5);
+  document.getElementById('player-char').style.left = playerX + '%';
+
+  // Move objects
+  for (let i = activeObjects.length - 1; i >= 0; i--) {
+    let obj = activeObjects[i];
+    obj.y += obj.speed;
+    obj.el.style.top = obj.y + '%';
+
+    // Check collision (y ~ 80% is basket height)
+    if (obj.y > 75 && obj.y < 85) {
+      if (Math.abs(obj.x - playerX) < 10) {
+        // Caught
+        handleCatch(obj, i);
+        continue;
+      }
+    }
+
+    // Check miss
+    if (obj.y > 105) {
+      // Missed a good object? Lose life optionally. We won't punish missing tightly here to keep it friendly.
+      obj.el.remove();
+      activeObjects.splice(i, 1);
+    }
+  }
+
+  // Check end condition
+  if (roundScore >= LEVELS[level].targetScore) {
+    endRound();
+    return;
+  }
+  if (lives <= 0) {
+    endGame();
+    return;
+  }
+
+  gameLoop = requestAnimationFrame(updateGame);
+}
+
+function handleCatch(obj, idx) {
+  obj.el.classList.add('caught');
+  setTimeout(() => obj.el.remove(), 300);
+  activeObjects.splice(idx, 1);
+
+  if (obj.isGood) {
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playStar();
+    score += 10;
+    roundScore += 10;
+  } else {
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playWrong();
+    lives--;
+    shakeScreen();
+  }
+  updateHUD();
+}
+
+function shakeScreen() {
+  gameWrap.style.transform = 'translate(5px, 5px)';
+  setTimeout(() => gameWrap.style.transform = 'translate(-5px, -5px)', 50);
+  setTimeout(() => gameWrap.style.transform = 'translate(5px, -5px)', 100);
+  setTimeout(() => gameWrap.style.transform = 'translate(0, 0)', 150);
+}
+
+function endRound() {
+  cancelAnimationFrame(gameLoop);
+  clearInterval(spawnLoop);
+  if(typeof RongmonAudio!=='undefined') RongmonAudio.playLevelUp();
+  
+  if (level + 1 >= LEVELS.length) {
+    document.getElementById('vic-score').textContent = `⭐ ${lang==='en'?'Score':'স্কোৰ'}: ${score}`;
+    showScreen('screen-victory');
+    spawnConfetti();
+    setTimeout(spawnConfetti, 1000);
+  } else {
+    showScreen('screen-levelup');
+    spawnConfetti();
+  }
+}
+
+function nextLevel() {
+  level++;
+  startLevel();
+}
+
+function endGame() {
+  cancelAnimationFrame(gameLoop);
+  clearInterval(spawnLoop);
+  document.getElementById('go-score').textContent = `⭐ ${lang==='en'?'Final Score':'সৰ্বমুঠ স্কোৰ'}: ${score}`;
+  showScreen('screen-gameover');
+}
+
+// ══ EFFECTS ══
+function spawnConfetti(){
+  const wrap=document.getElementById('game-wrap');
+  const cols=['#e63946','#f4a261','#4caf50','#f5c518','#00b4d8'];
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    const cx=(Math.random()-0.5)*400; const cy=200+Math.random()*200;
+    p.style.cssText=`
+      left:${50+(Math.random()-0.5)*20}%; top:30%;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
+      --cx:${cx}px; --cy:${cy}px; --cr:${Math.random()*360}deg;
+      animation-duration:${0.8+Math.random()*0.8}s;
+      width:${8+Math.random()*6}px; height:${8+Math.random()*6}px;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+    `;
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(),2000);
+  }
+}
+
+// ── Shared ──
+window.addEventListener('DOMContentLoaded', () => {
+  if (typeof RongmonData !== 'undefined' && !RongmonData.hasSeenOnboarding('fruit-catch')) {
+    document.getElementById('onboarding').classList.remove('hidden');
+  }
+  if (typeof RongmonData !== 'undefined') {
+    const m = RongmonData.getSetting('muted');
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+  setLang('en');
+});
+function dismissOnboarding() {
+  document.getElementById('onboarding').classList.add('hidden');
+  if (typeof RongmonData !== 'undefined') RongmonData.markOnboardingSeen('fruit-catch');
+}
+function toggleMuteGame() {
+  if (typeof RongmonAudio !== 'undefined') {
+    const m = RongmonAudio.toggleMute();
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+}
+</script>
+</body>
+</html>

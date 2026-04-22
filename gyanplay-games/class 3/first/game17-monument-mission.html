@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏛️ Monument Mission — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#100808;--card:#1E1010;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--orange:#FF9F1C;--red:#FF4757;--text:#FFF0E0;--dim:#8A5A3A}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(255,209,102,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.35rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.2rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+.hook{background:linear-gradient(135deg,rgba(255,159,28,.12),rgba(255,71,87,.08));border:1px solid rgba(255,159,28,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.87rem;line-height:1.65;color:#FFD5A0}
+.hook strong{color:var(--gold)}
+/* Monument display */
+.monument-display{background:var(--card);border-radius:16px;padding:24px 20px;width:100%;max-width:460px;text-align:center;border:2px solid rgba(255,209,102,.15);position:relative;overflow:hidden}
+.monument-display::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,209,102,.06),transparent 60%)}
+.monument-emoji{font-size:5rem;line-height:1;margin-bottom:10px;filter:drop-shadow(0 4px 20px rgba(255,159,28,.3));display:block}
+.monument-hint{font-size:.82rem;color:var(--dim);line-height:1.5;font-style:italic}
+.monument-hint strong{color:rgba(255,209,102,.7);font-style:normal}
+/* ID options */
+.id-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:460px}
+.id-btn{padding:13px 12px;background:var(--card);border:2px solid rgba(255,159,28,.2);border-radius:12px;cursor:pointer;font-size:.88rem;color:var(--dim);transition:all .15s;text-align:center;line-height:1.4}
+.id-btn:hover{border-color:var(--orange);color:var(--text);background:rgba(255,159,28,.07)}
+.id-btn.correct{border-color:var(--teal);background:rgba(6,214,160,.12);color:var(--teal)}
+.id-btn.wrong{border-color:var(--coral);background:rgba(255,107,107,.08);color:var(--coral)}
+/* Fact reveal */
+.fact-reveal{background:rgba(255,159,28,.07);border:1px solid rgba(255,159,28,.25);border-radius:12px;padding:16px 18px;width:100%;max-width:460px;display:none}
+.fact-reveal.show{display:block}
+.fact-name{font-family:'Baloo 2',sans-serif;font-size:1.15rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.fact-where{font-size:.72rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--orange);margin-bottom:10px}
+.fact-wow{font-size:.9rem;color:var(--text);line-height:1.6;margin-bottom:8px}
+.fact-extra{font-size:.8rem;color:var(--dim);line-height:1.5}
+/* Score streak */
+.streak-bar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.streak-dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.1);transition:background .3s}
+.streak-dot.done{background:var(--teal)}
+.streak-dot.active{background:var(--gold);box-shadow:0 0 8px rgba(255,209,102,.6)}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#100808;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(16,8,8,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4rem}.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.9rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.88rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🏛️ Monument Mission</div><div class="subject-tag">Social Studies · Monuments · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+<div class="game-area">
+  <div class="hook">🏛️ The Kamakhya Temple is over <strong>1,000 years old</strong>. The Taj Mahal took <strong>22 years and 20,000 workers</strong> to build. These aren't just old buildings — they are <strong>frozen history</strong> with incredible stories!</div>
+  <div class="streak-bar" id="streakBar"></div>
+  <div class="monument-display" id="monumentDisplay">
+    <span class="monument-emoji" id="monEmoji">⏳</span>
+    <div class="monument-hint" id="monHint">Loading...</div>
+  </div>
+  <div class="id-grid" id="idGrid"></div>
+  <div class="fact-reveal" id="factReveal"></div>
+</div>
+<div class="bottom">
+  <div class="prog" id="prog">Monument 1 of 7</div>
+  <button class="next-btn" id="nextBtn" onclick="nextMon()">Next Monument →</button>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">Identified!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+<script>
+const MONUMENTS=[
+  {emoji:'🕌',name:'Taj Mahal',where:'Agra, Uttar Pradesh',hint:'Built by a <strong>Mughal emperor</strong> as a symbol of love. It took <strong>22 years</strong> and <strong>20,000 workers</strong>.',wow:'Shah Jahan built it in memory of his wife Mumtaz Mahal who died in 1631. It is made of white marble from Rajasthan and has precious stones inlaid in its walls.',extra:'It is one of the Seven Wonders of the World and attracts millions of visitors every year.',opts:['Red Fort','Taj Mahal','Qutub Minar','Gateway of India'],ans:1},
+  {emoji:'🛕',name:'Kamakhya Temple',where:'Nilachal Hill, Guwahati, Assam',hint:'Over <strong>1,000 years old</strong>. Sits on a hill overlooking the <strong>Brahmaputra river</strong> in Assam.',wow:'One of the most sacred temples in India, dedicated to Goddess Kamakhya. The current structure was rebuilt in the 17th century after being destroyed.',extra:'Every year, millions of pilgrims visit during the Ambubachi Mela festival. It is the most important temple in all of Northeast India!',opts:['Kamakhya Temple','Sivasagar Temple','Umananda Temple','Rang Ghar'],ans:0},
+  {emoji:'🏰',name:'Red Fort',where:'Delhi',hint:'Built by Emperor <strong>Shah Jahan</strong> in 1648. India\'s Prime Minister speaks from here every <strong>Independence Day</strong>.',wow:'The Red Fort was the main residence of Mughal emperors for nearly 200 years. Its massive red sandstone walls are up to 33 metres high.',extra:'On 15 August 1947, Jawaharlal Nehru raised the Indian flag here for the first time. That tradition continues today!',opts:['Agra Fort','Red Fort','Golconda Fort','Chittorgarh Fort'],ans:1},
+  {emoji:'⛩️',name:'Rang Ghar',where:'Sibsagar, Assam',hint:'A <strong>2,000-year-old amphitheatre</strong> built by the Ahom kings for watching <strong>elephant and buffalo fights</strong>.',wow:'Rang Ghar is one of the oldest surviving amphitheatres in Asia. The Ahom kings used it as a royal sports pavilion during festivals.',extra:'It was built without using any cement — the bricks were held together with sticky rice and egg whites! Incredibly, it still stands today.',opts:['Rang Ghar','Kareng Ghar','Talatal Ghar','Sivasagar Devaloy'],ans:0},
+  {emoji:'🗼',name:'Qutub Minar',where:'Delhi',hint:'The <strong>tallest stone tower in India</strong> at 73 metres. Built in <strong>1193 AD</strong> — over 800 years ago!',wow:'Qutub Minar was built by Qutb ud-Din Aibak, the first ruler of the Delhi Sultanate. Its construction started in 1193 and was completed by his successors.',extra:'It is made of red and buff sandstone with intricate carvings and inscriptions from the Quran. A UNESCO World Heritage Site.',opts:['Eiffel Tower','Leaning Tower','Qutub Minar','Charminar'],ans:2},
+  {emoji:'🚪',name:'Gateway of India',where:'Mumbai, Maharashtra',hint:'Built to welcome <strong>King George V</strong> of Britain when he visited India in 1911. Made of <strong>yellow basalt stone</strong>.',wow:'The Gateway of India was the first thing people saw when arriving in Mumbai by sea. Ironically, the last British troops left India through this same gate in 1948.',extra:'It stands 26 metres high and faces the Arabian Sea. Today it is one of Mumbai\'s most iconic landmarks.',opts:['Gateway of India','India Gate','Char Minar','Hawa Mahal'],ans:0},
+  {emoji:'🏟️',name:'Talatal Ghar',where:'Sibsagar, Assam',hint:'The <strong>largest Ahom palace</strong> in Assam. Has <strong>3 underground floors</strong> with secret tunnels for escape!',wow:'Talatal Ghar means "palace with underground floors." The Ahom kings built secret tunnels under it stretching for miles, so they could escape in case of attack.',extra:'It was built in 1751 by King Rajeswar Singha. The underground floors were used for storage, as living quarters for the royal family, and as secret escape routes.',opts:['Talatal Ghar','Rang Ghar','Kareng Ghar','Agnigarh'],ans:0},
+];
+let mi=0,score=0,answered=false;
+function loadMon(){
+  const m=MONUMENTS[mi];answered=false;
+  document.getElementById('prog').textContent=`Monument ${mi+1} of ${MONUMENTS.length}`;
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('monEmoji').textContent=m.emoji;
+  document.getElementById('monHint').innerHTML=`🔍 Clue: ${m.hint}`;
+  document.getElementById('factReveal').classList.remove('show');
+  document.getElementById('factReveal').innerHTML='';
+  buildStreak();
+  buildOpts(m);
+}
+function buildStreak(){
+  const bar=document.getElementById('streakBar');bar.innerHTML='';
+  MONUMENTS.forEach((_,i)=>{const d=document.createElement('div');d.className='streak-dot'+(i<mi?' done':i===mi?' active':'');bar.appendChild(d);});
+}
+function buildOpts(m){
+  const grid=document.getElementById('idGrid');grid.innerHTML='';
+  const arr=[...m.opts].sort(()=>Math.random()-.5);
+  arr.forEach(o=>{
+    const b=document.createElement('button');b.className='id-btn';b.textContent=o;
+    b.onclick=()=>pick(b,o,m);grid.appendChild(b);
+  });
+}
+function pick(btn,val,m){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.id-btn').forEach(b=>b.style.pointerEvents='none');
+  if(val===m.name){
+    btn.classList.add('correct');score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+    showOv('Identified! 🏛️',`${m.name} — ${m.where}`);confetti();setTimeout(hideOv,2200);
+  } else {
+    btn.classList.add('wrong');document.querySelectorAll('.id-btn').forEach(b=>{if(b.textContent===m.name)b.classList.add('correct');});
+  }
+  const fr=document.getElementById('factReveal');
+  fr.innerHTML=`<div class="fact-name">${m.emoji} ${m.name}</div><div class="fact-where">📍 ${m.where}</div><div class="fact-wow">${m.wow}</div><div class="fact-extra">💡 ${m.extra}</div>`;
+  fr.classList.add('show');
+  document.getElementById('nextBtn').style.display='block';
+}
+function nextMon(){mi++;document.getElementById('nextBtn').style.display='none';if(mi>=MONUMENTS.length){endGame();return;}loadMon();}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOv(`Score: ${score}/${MONUMENTS.length}!`,'Monument Mission complete! You know the stories behind the stones.');
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;mi=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Next Monument →';document.getElementById('nextBtn').onclick=nextMon;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='Identified!';hideOv();loadMon();};
+}
+function showOv(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOv(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#FFD166','#FF9F1C','#06D6A0','#FF6B6B','#C77DFF'];for(let i=0;i<25;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+loadMon();
+</script>
+</body>
+</html>

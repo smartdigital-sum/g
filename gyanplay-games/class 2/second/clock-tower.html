@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Clock Tower - GyanPlay Class 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #fd79a8;
+            font-size: 2rem;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .score {
+            background: #00b894;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text {
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        .clock-display {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .time-display {
+            font-size: 2.5rem;
+            color: #2d3436;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .clock-face {
+            width: 250px;
+            height: 250px;
+            background: white;
+            border-radius: 50%;
+            border: 8px solid #2d3436;
+            position: relative;
+            margin: 20px auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .clock-number {
+            position: absolute;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2d3436;
+        }
+        
+        .n12 { top: 10px; left: 50%; transform: translateX(-50%); }
+        .n3 { top: 50%; right: 10px; transform: translateY(-50%); }
+        .n6 { bottom: 10px; left: 50%; transform: translateX(-50%); }
+        .n9 { top: 50%; left: 10px; transform: translateY(-50%); }
+        
+        .clock-hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            background: #2d3436;
+            border-radius: 5px;
+        }
+        
+        .hour-hand {
+            width: 6px;
+            height: 60px;
+            margin-left: -3px;
+        }
+        
+        .minute-hand {
+            width: 4px;
+            height: 85px;
+            margin-left: -2px;
+            background: #e84393;
+        }
+        
+        .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 15px;
+            height: 15px;
+            background: #e84393;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .control-btn {
+            background: white;
+            border: 3px solid #dfe6e9;
+            border-radius: 15px;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .control-btn:hover {
+            border-color: #e84393;
+            transform: scale(1.1);
+        }
+        
+        .control-btn.active {
+            background: #e84393;
+            color: white;
+            border-color: #e84393;
+        }
+        
+        .schedule-box {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .schedule-title {
+            color: white;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .schedule-items {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .schedule-item {
+            background: white;
+            border-radius: 10px;
+            padding: 10px 15px;
+            text-align: center;
+        }
+        
+        .schedule-icon {
+            font-size: 2rem;
+        }
+        
+        .schedule-time {
+            color: #e84393;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        .schedule-label {
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #00b894, #55efc4);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 184, 148, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .feedback-content.correct {
+            border: 5px solid #00b894;
+        }
+        
+        .feedback-content.wrong {
+            border: 5px solid #e94560;
+        }
+        
+        .feedback-icon {
+            font-size: 5rem;
+        }
+        
+        .feedback-text {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            color: #2d3436;
+        }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch2-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🕐 Clock Tower</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Time: <span id="timeNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Set the clock to show the correct time!</p>
+        </div>
+        
+        <div class="clock-display">
+            <div class="time-display" id="targetTime">⏰ 7:00</div>
+            
+            <div class="clock-face" id="clockFace">
+                <span class="clock-number n12">12</span>
+                <span class="clock-number n3">3</span>
+                <span class="clock-number n6">6</span>
+                <span class="clock-number n9">9</span>
+                
+                <div class="clock-hand hour-hand" id="hourHand"></div>
+                <div class="clock-hand minute-hand" id="minuteHand"></div>
+                <div class="center-dot"></div>
+            </div>
+            
+            <div class="controls">
+                <button class="control-btn" onclick="moveHour('add')">+ Hour</button>
+                <button class="control-btn" onclick="moveMinute('add')">+ 30 min</button>
+                <button class="control-btn" onclick="resetClock()">Reset</button>
+            </div>
+        </div>
+        
+        <div class="schedule-box">
+            <div class="schedule-title">📅 Anu's Daily Schedule</div>
+            <div class="schedule-items">
+                <div class="schedule-item">
+                    <div class="schedule-icon">🌅</div>
+                    <div class="schedule-time">7:00</div>
+                    <div class="schedule-label">Wake up</div>
+                </div>
+                <div class="schedule-item">
+                    <div class="schedule-icon">🏫</div>
+                    <div class="schedule-time">8:00</div>
+                    <div class="schedule-label">School</div>
+                </div>
+                <div class="schedule-item">
+                    <div class="schedule-icon">🍱</div>
+                    <div class="schedule-time">12:00</div>
+                    <div class="schedule-label">Lunch</div>
+                </div>
+                <div class="schedule-item">
+                    <div class="schedule-icon">😴</div>
+                    <div class="schedule-time">2:00</div>
+                    <div class="schedule-label">Nap time</div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="check-btn" onclick="checkAnswer()">✓ Check Time</button>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextTime()">Next Time →</button>
+        </div>
+    </div>
+    
+    <script>
+        const times = [
+            { time: '7:00', label: 'Wake up', hour: 7, minute: 0 },
+            { time: '8:00', label: 'School starts', hour: 8, minute: 0 },
+            { time: '12:00', label: 'Lunch time', hour: 12, minute: 0 },
+            { time: '2:00', label: 'Nap time', hour: 2, minute: 0 },
+            { time: '3:30', label: 'Play time', hour: 3, minute: 30 },
+            { time: '6:00', label: 'Evening', hour: 6, minute: 0 },
+            { time: '9:00', label: 'Bedtime', hour: 9, minute: 0 },
+            { time: '1:30', label: 'Afternoon', hour: 1, minute: 30 },
+            { time: '5:30', label: 'Snack time', hour: 5, minute: 30 },
+            { time: '11:00', label: 'Morning', hour: 11, minute: 0 }
+        ];
+        
+        let currentIndex = 0;
+        let score = 0;
+        let currentHour = 6;
+        let currentMinute = 0;
+        
+        function updateClock() {
+            const hourHand = document.getElementById('hourHand');
+            const minuteHand = document.getElementById('minuteHand');
+            
+            const hourAngle = (currentHour % 12) * 30 + (currentMinute / 2);
+            const minuteAngle = currentMinute * 6;
+            
+            hourHand.style.transform = `translateX(-50%) rotate(${hourAngle}deg)`;
+            minuteHand.style.transform = `translateX(-50%) rotate(${minuteAngle}deg)`;
+        }
+        
+        function loadTime() {
+            const t = times[currentIndex];
+            document.getElementById('targetTime').textContent = `⏰ ${t.time} - ${t.label}`;
+            document.getElementById('timeNum').textContent = currentIndex + 1;
+            
+            // Set current to a different time for practice
+            currentHour = Math.floor(Math.random() * 12) + 1;
+            currentMinute = Math.random() > 0.5 ? 0 : 30;
+            updateClock();
+        }
+        
+        function moveHour(direction) {
+            if (direction === 'add') {
+                currentHour = currentHour >= 12 ? 1 : currentHour + 1;
+            } else {
+                currentHour = currentHour <= 1 ? 12 : currentHour - 1;
+            }
+            updateClock();
+        }
+        
+        function moveMinute(direction) {
+            if (direction === 'add') {
+                currentMinute = currentMinute === 0 ? 30 : 0;
+            }
+            updateClock();
+        }
+        
+        function resetClock() {
+            currentHour = 6;
+            currentMinute = 0;
+            updateClock();
+        }
+        
+        function checkAnswer() {
+            const target = times[currentIndex];
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            const targetHour = target.hour;
+            const targetMinute = target.minute;
+            
+            // Normalize hours for comparison
+            const normalizedCurrent = currentHour > 12 ? currentHour - 12 : currentHour;
+            const normalizedTarget = targetHour > 12 ? targetHour - 12 : targetHour;
+            
+            if (normalizedCurrent === normalizedTarget && currentMinute === targetMinute) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Correct! Great timekeeping!';
+                score += 10;
+                document.getElementById('score').textContent = score;
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = `The time should be ${target.time}`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextTime() {
+            document.getElementById('feedback').classList.remove('show');
+            currentIndex = (currentIndex + 1) % times.length;
+            loadTime();
+        }
+        
+        loadTime();
+    </script>
+</body>
+</html>

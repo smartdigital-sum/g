@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Family 👨‍👩‍👧‍👦</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Baloo 2',cursive;
+    background:linear-gradient(160deg,#FF9A9E,#FAD0C4,#FFB6C1,#FFC0CB);
+    min-height:100vh;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    user-select:none;
+  }
+  /* house bg */
+  .house-bg{
+    position:fixed;bottom:0;left:0;right:0;height:160px;
+    z-index:1;pointer-events:none;
+  }
+  .house-bg::before{
+    content:'🏡';
+    position:absolute;font-size:clamp(6rem,20vw,10rem);
+    bottom:0;left:50%;transform:translateX(-50%);
+    opacity:.15;
+  }
+  .flowers{position:fixed;bottom:20px;left:0;right:0;z-index:2;pointer-events:none;text-align:center;font-size:1.5rem;opacity:.5;}
+
+  .header{position:relative;z-index:10;text-align:center;padding:18px 20px 8px;width:100%;}
+  .title{font-size:clamp(1.4rem,5vw,2.2rem);color:#8B0000;text-shadow:0 2px 6px rgba(255,255,255,.4);}
+
+  .question-box{
+    position:relative;z-index:10;
+    background:rgba(255,255,255,.5);backdrop-filter:blur(10px);
+    border:3px solid rgba(255,255,255,.7);border-radius:24px;
+    padding:14px 28px;margin:10px 20px;
+    text-align:center;box-shadow:0 8px 32px rgba(255,100,100,.2);
+  }
+  .q-text{color:#8B0000;font-size:clamp(1.2rem,5vw,1.8rem);font-weight:700;}
+
+  .score-bar{position:relative;z-index:10;display:flex;gap:16px;align-items:center;margin-top:8px;}
+  .score-box{background:rgba(255,255,255,.4);border:2px solid rgba(255,255,255,.6);border-radius:20px;padding:6px 18px;color:#8B0000;font-size:1rem;}
+  .score-box span{color:#FF4757;font-size:1.2rem;}
+
+  .progress{position:relative;z-index:10;display:flex;gap:8px;margin-top:8px;}
+  .dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.4);transition:all .3s;}
+  .dot.done{background:#FF6B6B;box-shadow:0 0 8px #FF6B6B;}
+  .dot.active{background:#fff;transform:scale(1.3);}
+
+  /* family members grid */
+  .family-grid{
+    position:relative;z-index:10;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:clamp(10px,3vw,18px);
+    padding:0 20px;
+    width:100%;max-width:600px;
+  }
+  .family-card{
+    background:rgba(255,255,255,.45);backdrop-filter:blur(8px);
+    border:3px solid rgba(255,255,255,.6);border-radius:24px;
+    padding:clamp(12px,3vw,20px) clamp(8px,2vw,16px);
+    text-align:center;cursor:pointer;
+    transition:all .2s;
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+  }
+  .family-card:hover{transform:scale(1.06) translateY(-4px);border-color:rgba(255,100,100,.6);box-shadow:0 8px 24px rgba(255,100,100,.2);}
+  .family-card.correct{
+    border-color:#2ed573;background:rgba(46,213,115,.3);
+    animation:correctPop .5s ease;
+  }
+  .family-card.wrong{
+    border-color:#FF4757;background:rgba(255,71,87,.2);
+    animation:wrongShake .4s ease;
+  }
+  @keyframes correctPop{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1);}}
+  @keyframes wrongShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-10px);}75%{transform:translateX(10px);}}
+  .family-emoji{font-size:clamp(2.5rem,10vw,4rem);}
+  .family-name{color:#8B0000;font-size:clamp(.75rem,2.5vw,1rem);font-weight:700;}
+
+  /* wave + speech */
+  .speech-bubble{
+    position:fixed;pointer-events:none;z-index:100;
+    background:rgba(255,255,255,.95);border-radius:20px;
+    padding:10px 18px;font-size:clamp(.9rem,3vw,1.2rem);
+    color:#8B0000;font-weight:700;
+    box-shadow:0 4px 20px rgba(0,0,0,.15);
+    animation:speechIn .4s ease both, speechOut .3s 1.8s ease forwards;
+    border:2px solid rgba(255,150,150,.4);
+  }
+  .speech-bubble::after{
+    content:'';position:absolute;bottom:-12px;left:20px;
+    border:6px solid transparent;border-top-color:rgba(255,255,255,.95);
+  }
+  @keyframes speechIn{from{transform:scale(0) translateY(10px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
+  @keyframes speechOut{to{transform:scale(.8) translateY(-10px);opacity:0;}}
+
+  .celebration{
+    position:fixed;inset:0;z-index:200;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.6);backdrop-filter:blur(10px);animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .celeb-emoji{font-size:clamp(4rem,15vw,7rem);animation:celebBounce .5s ease infinite alternate;}
+  @keyframes celebBounce{from{transform:scale(1);}to{transform:scale(1.15);}}
+  .celebration h2{color:#FFD700;font-size:clamp(2rem,8vw,3.5rem);text-align:center;margin:16px 0 8px;}
+  .celebration p{color:#fff;font-size:clamp(1rem,4vw,1.4rem);margin-bottom:24px;text-align:center;}
+  .next-btn{
+    background:linear-gradient(135deg,#FF6B00,#FFB800);color:#fff;border:none;border-radius:50px;
+    padding:14px 40px;font-family:'Baloo 2',cursive;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;
+    cursor:pointer;box-shadow:0 6px 24px rgba(255,107,0,.4);transition:transform .2s;
+  }
+  .next-btn:hover{transform:scale(1.05);}
+  .confetti-piece{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.2s ease-in forwards;}
+  @keyframes confettiFall{0%{opacity:1;}100%{transform:translateY(300px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="house-bg"></div>
+<div class="flowers">🌸🌺🌼🌸🌺🌼🌸🌺🌼</div>
+
+<div class="header">
+  <div class="title">👨‍👩‍👧‍👦 My Family</div>
+</div>
+<div class="score-bar">
+  <div class="score-box">❤️ Score: <span id="scoreVal">0</span></div>
+  <div class="score-box">🎯 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress" id="progress"></div>
+
+<div class="question-box">
+  <div class="q-text" id="qText">Tap the <span id="qTarget" style="color:#FF4757;">Grandma</span>!</div>
+</div>
+
+<div class="family-grid" id="familyGrid"></div>
+
+<script>
+const FAMILY_MEMBERS=[
+  {emoji:'👴',name:'Grandpa',greeting:'Hello! I am Grandpa! I love my family!',desc:'grandpa'},
+  {emoji:'👵',name:'Grandma',greeting:'Hello dear! I am Grandma! Have some sweets!',desc:'grandma'},
+  {emoji:'👨',name:'Papa',greeting:'Hi! I am Papa! I go to work!',desc:'papa'},
+  {emoji:'👩',name:'Mama',greeting:'Hello sweetheart! I am Mama! I love you!',desc:'mama'},
+  {emoji:'🧒',name:'Brother',greeting:'Hey! I am your brother! Let\'s play!',desc:'brother'},
+  {emoji:'👧',name:'Sister',greeting:'Hi! I am your sister! Let\'s dance!',desc:'sister'},
+  {emoji:'👼',name:'Baby',greeting:'Goo goo! I am the baby!',desc:'baby'},
+  {emoji:'🐕',name:'Dog',greeting:'Woof woof! I am the family dog!',desc:'dog'},
+];
+
+let score=0,round=0,current=null,answered=false;
+const TOTAL=10;
+let audioCtx;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function playCorrect(){
+  const ctx=getAudio();
+  [523,659,784,880].forEach((f,i)=>{
+    setTimeout(()=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.4);
+      o.start();o.stop(ctx.currentTime+.4);
+    },i*90);
+  });
+}
+
+function playWrong(){
+  const ctx=getAudio();
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);
+  o.frequency.value=250;o.type='sine';
+  g.gain.setValueAtTime(.2,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.25);
+  o.start();o.stop(ctx.currentTime+.25);
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.85;u.pitch=1.3;
+  window.speechSynthesis.speak(u);
+}
+
+function showSpeechBubble(member,cardEl){
+  const rect=cardEl.getBoundingClientRect();
+  const bubble=document.createElement('div');
+  bubble.className='speech-bubble';
+  bubble.textContent=member.greeting;
+  bubble.style.cssText=`position:fixed;left:${Math.min(rect.left,window.innerWidth-220)}px;top:${rect.top-60}px;max-width:200px;`;
+  document.body.appendChild(bubble);
+  setTimeout(()=>bubble.remove(),2200);
+}
+
+function makeDots(){
+  const p=document.getElementById('progress');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+
+function spawnConfetti(){
+  const cols=['#FF4757','#FFD700','#FF6B81','#FF6B00','#a55eea'];
+  for(let i=0;i<20;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`left:${Math.random()*100}%;top:20%;background:${cols[i%cols.length]};animation-duration:${.8+Math.random()*.6}s;`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1400);
+  }
+}
+
+let usedQuestions=[];
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  current=FAMILY_MEMBERS[Math.floor(Math.random()*FAMILY_MEMBERS.length)];
+  document.getElementById('qTarget').textContent=current.name;
+
+  // 6 members to show
+  const others=FAMILY_MEMBERS.filter(m=>m.name!==current.name).sort(()=>Math.random()-.5).slice(0,5);
+  const allMembers=[current,...others].sort(()=>Math.random()-.5);
+
+  const grid=document.getElementById('familyGrid');
+  grid.innerHTML='';
+  allMembers.forEach(m=>{
+    const card=document.createElement('div');
+    card.className='family-card';
+    card.innerHTML=`<span class="family-emoji">${m.emoji}</span><span class="family-name">${m.name}</span>`;
+    card.onclick=()=>checkAnswer(card,m);
+    grid.appendChild(card);
+  });
+
+  setTimeout(()=>speak(`Tap the ${current.desc}! Find the ${current.desc}!`),300);
+}
+
+function checkAnswer(card,member){
+  if(answered)return;
+  answered=true;
+  if(member.name===current.name){
+    card.classList.add('correct');
+    playCorrect();
+    spawnConfetti();
+    showSpeechBubble(member,card);
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    speak(`Yes! That is ${current.name}! ${current.greeting}`);
+    round++;
+    makeDots();
+    setTimeout(newRound,2200);
+  } else {
+    card.classList.add('wrong');
+    playWrong();
+    speak(`Oops! That is ${member.name}! Find the ${current.desc}!`);
+    setTimeout(()=>{card.classList.remove('wrong');answered=false;},800);
+  }
+}
+
+function showCelebration(){
+  speak(`You know all your family members! Your family loves you!`);
+  const ov=document.createElement('div');
+  ov.className='celebration';
+  ov.innerHTML=`
+    <div class="celeb-emoji">👨‍👩‍👧‍👦</div>
+    <h2>Family Expert!</h2>
+    <p>You know everyone in your family!<br/>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</p>
+    <button class="next-btn" onclick="restartGame()">Play Again ❤️</button>
+  `;
+  document.body.appendChild(ov);
+}
+
+function restartGame(){
+  document.querySelector('.celebration')?.remove();
+  score=0;round=0;
+  document.getElementById('scoreVal').textContent=0;
+  newRound();
+}
+
+window.addEventListener('load',()=>{
+  window.speechSynthesis.getVoices();
+  makeDots();
+  setTimeout(()=>{
+    speak('Welcome! Let\'s meet your family!');
+    setTimeout(newRound,1200);
+  },500);
+});
+</script>
+</body>
+</html>

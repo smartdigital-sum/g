@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍽️ Division Diner — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A1628;--card:#122040;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--orange:#FF9F1C;--purple:#C77DFF;--text:#F0F8FF;--dim:#6A8FAD}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(255,209,102,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.3rem}
+.star{opacity:.3;transition:all .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:18px 16px;gap:16px}
+.hook{background:linear-gradient(135deg,rgba(6,214,160,.1),rgba(255,159,28,.08));border:1px solid rgba(6,214,160,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.88rem;line-height:1.6;color:#B8EFE8}
+.hook strong{color:var(--gold)}
+.problem-card{background:var(--card);border-radius:16px;padding:20px 28px;text-align:center;border:2px solid rgba(6,214,160,.25);width:100%;max-width:440px}
+.problem-eq{font-family:'Baloo 2',sans-serif;font-size:2.4rem;font-weight:800;color:var(--gold)}
+.problem-label{font-size:.85rem;color:var(--dim);margin-top:4px}
+.plates-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:500px}
+.plate-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.plate{width:80px;height:80px;border-radius:50%;border:3px solid rgba(6,214,160,.4);background:rgba(18,32,64,.8);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px;padding:8px;transition:border-color .3s,transform .2s;position:relative;overflow:hidden}
+.plate.full{border-color:var(--teal);box-shadow:0 0 14px rgba(6,214,160,.3)}
+.plate-label{font-size:.72rem;color:var(--dim)}
+.plate-food{font-size:1.1rem;line-height:1}
+.food-pool{background:var(--card);border-radius:16px;padding:18px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:440px;border:2px dashed rgba(255,209,102,.2);min-height:80px;align-items:center;cursor:pointer}
+.food-item{font-size:1.8rem;cursor:pointer;transition:transform .15s,opacity .3s;user-select:none;display:inline-block}
+.food-item:hover{transform:scale(1.25)}
+.food-item.served{opacity:.3;pointer-events:none;transform:scale(.8)}
+.serve-btn{padding:14px 32px;background:var(--teal);color:#042A1C;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(6,214,160,.35)}
+.serve-btn:hover{transform:scale(1.05)}
+.serve-btn:disabled{background:rgba(6,214,160,.3);color:rgba(4,42,28,.5);cursor:not-allowed;transform:none;box-shadow:none}
+.result-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.result-chip{background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:10px;padding:8px 16px;font-size:.88rem;color:var(--gold);display:none}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#1B0A3C;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(10,22,40,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4.5rem}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.9rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@keyframes popIn{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.popin{animation:popIn .35s ease forwards}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🍽️ Division Diner</div><div class="subject-tag">Maths · Division · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+
+<div class="game-area">
+  <div class="hook">🍱 Division is just <strong>FAIR SHARING</strong>! If 12 laddoos are shared equally among 4 friends, everyone gets exactly 3. Click each food item to serve it to the next plate in turn!</div>
+
+  <div class="problem-card">
+    <div class="problem-eq" id="eqDisplay">12 ÷ 4 = ?</div>
+    <div class="problem-label" id="eqLabel">Share 12 laddoos equally among 4 friends</div>
+  </div>
+
+  <div class="plates-row" id="platesRow"></div>
+
+  <div class="food-pool" id="foodPool" title="Click any food to serve it!">
+    <div style="color:var(--dim);font-size:.85rem">← Click food items to serve them →</div>
+  </div>
+
+  <div class="result-row">
+    <div class="result-chip" id="resultChip">🎉 Each friend gets <span id="resultNum">?</span> items!</div>
+  </div>
+</div>
+
+<div class="bottom">
+  <div class="prog" id="prog">Round 1 of 6</div>
+  <button class="next-btn" id="nextBtn" onclick="nextRound()">Next Table →</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">Fair Share!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+
+<script>
+const PROBLEMS=[
+  {total:12,divisor:4,food:'🟡',name:'laddoos'},
+  {total:15,divisor:3,food:'🥮',name:'barfis'},
+  {total:20,divisor:5,food:'🍪',name:'biscuits'},
+  {total:18,divisor:6,food:'🍊',name:'oranges'},
+  {total:16,divisor:4,food:'🥜',name:'peanuts'},
+  {total:21,divisor:3,food:'🍬',name:'candies'}
+];
+const MSGS=['Fair and square! 🎉','Perfect sharing! 🤝','Division master! 🧮','Everyone\'s happy! 😊','Brilliant! 🌟','Division expert! 🏆'];
+const FACTS=[
+  '12 ÷ 4 = 3 because 4 groups of 3 make 12!',
+  'Division is the opposite of multiplication — they\'re best friends!',
+  'When we divide equally, everyone gets the SAME amount. That\'s fairness!',
+  '18 ÷ 6 = 3. You can check: 3 × 6 = 18. Always works!',
+  'Division helps us share things in real life — food, time, money!',
+  'You\'ve learned all your basic division facts. Amazing!'
+];
+let round=0,score=0,served=0,plateCur=0,prob,plateItems,done=false;
+
+function setup(){
+  prob=PROBLEMS[round];
+  done=false;served=0;plateCur=0;
+  plateItems=Array(prob.divisor).fill(0);
+  document.getElementById('eqDisplay').textContent=`${prob.total} ÷ ${prob.divisor} = ?`;
+  document.getElementById('eqLabel').textContent=`Share ${prob.total} ${prob.name} equally among ${prob.divisor} friends`;
+  document.getElementById('resultChip').style.display='none';
+  document.getElementById('nextBtn').style.display='none';
+  buildPlates();
+  buildFood();
+}
+
+function buildPlates(){
+  const row=document.getElementById('platesRow');
+  row.innerHTML='';
+  for(let i=0;i<prob.divisor;i++){
+    const wrap=document.createElement('div');wrap.className='plate-wrap';
+    const pl=document.createElement('div');pl.className='plate';pl.id=`plate-${i}`;
+    const lbl=document.createElement('div');lbl.className='plate-label';lbl.textContent=`Friend ${i+1}`;
+    wrap.appendChild(pl);wrap.appendChild(lbl);row.appendChild(wrap);
+  }
+}
+
+function buildFood(){
+  const pool=document.getElementById('foodPool');
+  pool.innerHTML='';
+  for(let i=0;i<prob.total;i++){
+    const el=document.createElement('span');
+    el.className='food-item';el.textContent=prob.food;el.id=`fi-${i}`;
+    el.onclick=()=>serveItem(i,el);
+    pool.appendChild(el);
+  }
+}
+
+function serveItem(idx,el){
+  if(done||el.classList.contains('served'))return;
+  el.classList.add('served');
+  const plate=document.getElementById(`plate-${plateCur}`);
+  plateItems[plateCur]++;
+  const span=document.createElement('span');
+  span.className='plate-food popin';span.textContent=prob.food;
+  plate.appendChild(span);
+  plateCur=(plateCur+1)%prob.divisor;
+  served++;
+  if(served===prob.total){allServed();}
+}
+
+function allServed(){
+  done=true;
+  const ans=prob.total/prob.divisor;
+  // Color all plates
+  for(let i=0;i<prob.divisor;i++){document.getElementById(`plate-${i}`).classList.add('full');}
+  document.getElementById('resultNum').textContent=ans;
+  document.getElementById('resultChip').style.display='block';
+  score++;
+  if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+  showOverlay(MSGS[round]||'',FACTS[round]||'');
+  confetti();
+  setTimeout(hideOverlay,2600);
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function nextRound(){
+  round++;
+  document.getElementById('nextBtn').style.display='none';
+  if(round>=PROBLEMS.length){endGame();return;}
+  document.getElementById('prog').textContent=`Round ${round+1} of ${PROBLEMS.length}`;
+  setup();
+}
+
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOverlay(`Score: ${score}/${PROBLEMS.length}!`,'Division Diner champion! Fair sharing expert!');
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;round=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Next Table →';document.getElementById('nextBtn').onclick=nextRound;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='Fair Share!';hideOverlay();setup();};
+}
+
+function showOverlay(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOverlay(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#FFD166','#FF6B6B','#06D6A0','#C77DFF','#FF9F1C'];for(let i=0;i<28;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+setup();
+</script>
+</body>
+</html>

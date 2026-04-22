@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Story Tap 📖 — Class 1 English</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--brown:#4E342E;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#FFF8E1,#FFECB3,#FFE082,#FFF8E1);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* BOOK BG */
+.book-lines{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:repeating-linear-gradient(180deg,transparent,transparent 35px,rgba(255,193,7,.15) 35px,rgba(255,193,7,.15) 36px);background-size:100% 36px;}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#4E342E;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#4E342E;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#4E342E;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* STORY CARD — the actual visual story plays here */
+.story-card{
+  position:relative;z-index:20;
+  background:rgba(255,255,255,.88);backdrop-filter:blur(10px);
+  border:4px solid rgba(255,255,255,.95);border-radius:28px;
+  padding:clamp(14px,3.5vw,22px) clamp(16px,4vw,28px);
+  margin:8px 14px;text-align:center;
+  max-width:660px;width:calc(100% - 28px);
+  box-shadow:0 8px 28px rgba(0,0,0,.1);
+}
+/* Scene */
+.scene-area{min-height:clamp(80px,20vw,130px);display:flex;align-items:center;justify-content:center;gap:clamp(6px,2.5vw,16px);margin-bottom:10px;flex-wrap:wrap;}
+.scene-char{font-size:clamp(2.5rem,10vw,5rem);transition:all .5s cubic-bezier(.34,1.56,.64,1);display:inline-block;}
+.scene-char.bounce{animation:charBounce .5s ease;}
+@keyframes charBounce{0%{transform:scale(1);}40%{transform:scale(1.3);}70%{transform:scale(.9);}100%{transform:scale(1);}}
+.scene-char.slide-in{animation:slideIn .5s ease;}
+@keyframes slideIn{from{transform:translateX(-60px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+
+/* Story text lines */
+.story-lines{min-height:clamp(60px,14vw,90px);}
+.story-line{
+  font-size:clamp(1rem,3.8vw,1.35rem);font-weight:700;
+  color:#4E342E;line-height:1.5;
+  opacity:0;transform:translateY(8px);
+  transition:all .5s ease;
+  margin-bottom:4px;
+}
+.story-line.visible{opacity:1;transform:translateY(0);}
+.story-line .highlight-word{
+  color:#E65100;
+  background:rgba(255,152,0,.15);
+  border-radius:6px;padding:0 4px;
+  font-weight:800;
+}
+
+/* NEXT LINE BTN */
+.next-line-btn{background:linear-gradient(135deg,#FF8F00,#FFD700);color:#fff;border:none;border-radius:50px;padding:10px 24px;font-family:'Fredoka One',cursive;font-size:clamp(.9rem,3.5vw,1.2rem);cursor:pointer;box-shadow:0 4px 14px rgba(255,143,0,.35);transition:transform .2s;margin-top:8px;}
+.next-line-btn:hover{transform:scale(1.05);}
+.next-line-btn:disabled{opacity:.35;}
+
+/* QUESTION SECTION */
+.q-section{position:relative;z-index:20;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.95);border-radius:24px;padding:12px 16px;margin:6px 14px;max-width:660px;width:calc(100% - 28px);}
+.q-number{font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(78,52,46,.4);margin-bottom:4px;}
+.q-text{font-family:'Fredoka One',cursive;font-size:clamp(1rem,4.2vw,1.5rem);color:#4E342E;margin-bottom:10px;}
+.q-choices{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.q-btn{
+  padding:clamp(10px,2.5vw,14px) clamp(14px,4vw,24px);
+  border-radius:16px;border:none;cursor:pointer;
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(.88rem,3.5vw,1.2rem);color:#fff;
+  box-shadow:0 4px 0 rgba(0,0,0,.2);transition:all .15s;position:relative;top:0;
+  flex:1;min-width:clamp(80px,20vw,120px);max-width:200px;
+}
+.q-btn:hover{top:-2px;box-shadow:0 6px 0 rgba(0,0,0,.18);}
+.q-btn:active{top:3px;box-shadow:0 1px 0 rgba(0,0,0,.2);}
+.q-btn.correct-ans{animation:qPop .45s ease;border:3px solid rgba(67,160,71,.8);}
+@keyframes qPop{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1);}}
+.q-btn.wrong-ans{animation:qShake .35s ease;opacity:.3;pointer-events:none;}
+@keyframes qShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
+
+/* EXPLANATION */
+.explain-box{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(78,52,46,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:400px;width:90%;text-align:center;animation:exIn .3s ease both,exOut .3s 3s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes exIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes exOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.88rem,3vw,1.1rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:1.8;}
+.ov-btn{background:linear-gradient(135deg,#4E342E,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(78,52,46,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="book-lines"></div>
+
+<div class="header">
+  <div class="title">📖 Story Tap</div>
+  <div class="lvchip" id="lvChip">Read & Answer!</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">📖 Story: <span id="roundVal">1</span>/5</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="story-card" id="storyCard">
+  <div class="scene-area" id="sceneArea"></div>
+  <div class="story-lines" id="storyLines"></div>
+  <button class="next-line-btn" id="nextLineBtn" onclick="showNextLine()">▶ Next →</button>
+</div>
+
+<div class="q-section" id="qSection" style="display:none;">
+  <div class="q-number" id="qNumber">Question 1 of 2</div>
+  <div class="q-text" id="qText"></div>
+  <div class="q-choices" id="qChoices"></div>
+</div>
+
+<script>
+const STORIES=[
+  {
+    title:'The Little Bird',
+    lines:[
+      {text:'A little <b>bird</b> sat on a tree.',scene:['🌳','🐦'],speak:'A little bird sat on a tree.'},
+      {text:'The bird saw some <b>seeds</b> on the ground.',scene:['🌳','🐦','🌱'],speak:'The bird saw some seeds on the ground.'},
+      {text:'It flew <b>down</b> and ate the seeds.',scene:['🐦','🌱'],speak:'It flew down and ate the seeds.'},
+      {text:'Then it flew back to its <b>nest</b>.',scene:['🪺','🐦'],speak:'Then it flew back to its nest.'},
+    ],
+    questions:[
+      {q:'Where did the bird sit first?',choices:['On a rock','On a tree','In the water','In a house'],ans:1,explain:'The story says: "A little bird sat on a TREE!"'},
+      {q:'What did the bird eat?',choices:['Fruits','Worms','Seeds','Fish'],ans:2,explain:'The bird saw seeds on the ground and ate them!'},
+    ]
+  },
+  {
+    title:'Mia\'s Cat',
+    lines:[
+      {text:'<b>Mia</b> has a cat.',scene:['👧','🐱'],speak:'Mia has a cat.'},
+      {text:'The cat is <b>white</b> and soft.',scene:['🐱','⬜'],speak:'The cat is white and soft.'},
+      {text:'Mia gives the cat <b>milk</b> every day.',scene:['👧','🐱','🥛'],speak:'Mia gives the cat milk every day.'},
+      {text:'The cat says <b>meow</b> and is happy!',scene:['🐱','💗'],speak:'The cat says meow and is happy!'},
+    ],
+    questions:[
+      {q:'What colour is Mia\'s cat?',choices:['Black','Brown','White','Orange'],ans:2,explain:'The story says: "The cat is WHITE and soft!"'},
+      {q:'What does Mia give the cat?',choices:['Water','Milk','Fish','Bread'],ans:1,explain:'Mia gives the cat MILK every day!'},
+    ]
+  },
+  {
+    title:'Rain and Rainbow',
+    lines:[
+      {text:'Dark <b>clouds</b> came in the sky.',scene:['☁️','🌧️'],speak:'Dark clouds came in the sky.'},
+      {text:'It began to <b>rain</b>.',scene:['🌧️','💧','💧'],speak:'It began to rain.'},
+      {text:'The flowers drank the <b>water</b>.',scene:['🌸','💧'],speak:'The flowers drank the water.'},
+      {text:'The sun came out and a <b>rainbow</b> appeared!',scene:['☀️','🌈'],speak:'The sun came out and a rainbow appeared!'},
+    ],
+    questions:[
+      {q:'What came in the sky first?',choices:['A rainbow','The sun','Dark clouds','Birds'],ans:2,explain:'First dark CLOUDS came in the sky, then rain!'},
+      {q:'What appeared after the rain?',choices:['Snow','A rainbow','More clouds','Stars'],ans:1,explain:'After rain, the SUN came out and a RAINBOW appeared!'},
+    ]
+  },
+  {
+    title:'Anu Goes to School',
+    lines:[
+      {text:'<b>Anu</b> woke up early in the morning.',scene:['👧','🌅'],speak:'Anu woke up early in the morning.'},
+      {text:'She ate her <b>breakfast</b> quickly.',scene:['👧','🍳'],speak:'She ate her breakfast quickly.'},
+      {text:'She picked up her <b>school bag</b>.',scene:['👧','🎒'],speak:'She picked up her school bag.'},
+      {text:'She was happy to see her <b>friends</b>!',scene:['👧','👦','👦','🏫'],speak:'She was happy to see her friends!'},
+    ],
+    questions:[
+      {q:'When did Anu wake up?',choices:['At night','In the afternoon','Early in the morning','At noon'],ans:2,explain:'Anu woke up EARLY IN THE MORNING to go to school!'},
+      {q:'Why was Anu happy?',choices:['She got a gift','She saw her friends','She found money','She ate cake'],ans:1,explain:'Anu was happy because she saw her FRIENDS at school!'},
+    ]
+  },
+  {
+    title:'The Helpful Tree — Assam',
+    lines:[
+      {text:'In Assam, there was a big <b>mango tree</b>.',scene:['🌳','🥭'],speak:'In Assam, there was a big mango tree.'},
+      {text:'Birds made <b>nests</b> in its branches.',scene:['🌳','🪺','🐦'],speak:'Birds made nests in its branches.'},
+      {text:'Children played in its <b>shade</b>.',scene:['🌳','👧','👦'],speak:'Children played in its shade.'},
+      {text:'The tree gave <b>mangoes</b> to everyone!',scene:['🥭','😊','👨‍👩‍👧'],speak:'The tree gave mangoes to everyone!'},
+    ],
+    questions:[
+      {q:'Where was the big mango tree?',choices:['In Delhi','In Assam','In Mumbai','In Kerala'],ans:1,explain:'The story says: "In ASSAM, there was a big mango tree!"'},
+      {q:'What did the tree give to everyone?',choices:['Bananas','Apples','Mangoes','Coconuts'],ans:2,explain:'The tree gave MANGOES to everyone — it was very helpful!'},
+    ]
+  },
+];
+
+const Q_COLORS=['#E53935','#1E88E5','#43A047','#FB8C00'];
+const TOTAL_STORIES=5;
+let score=0,round=0,lineIdx=0,qIdx=0,currentStory=null,inQuestion=false,qAnswered=false;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playPageTurn(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(800,c.currentTime);o.frequency.exponentialRampToValueAtTime(400,c.currentTime+.2);g.gain.setValueAtTime(.1,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.22);o.start();o.stop(c.currentTime+.22);}
+function playCorrect(){const c=ac();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*100));}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.85;u.pitch=1.15;window.speechSynthesis.speak(u);}
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL_STORIES;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#4E342E','#FFD700','#E53935','#1E88E5','#FF8F00'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showExplain(txt){document.querySelector('.explain-box')?.remove();const el=document.createElement('div');el.className='explain-box';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+
+function showNextLine(){
+  if(lineIdx>=currentStory.lines.length){
+    startQuestions();return;
+  }
+  playPageTurn();
+  const line=currentStory.lines[lineIdx];
+  // update scene
+  const sceneArea=document.getElementById('sceneArea');
+  sceneArea.innerHTML='';
+  line.scene.forEach((ch,i)=>{
+    const el=document.createElement('span');el.className='scene-char slide-in';
+    el.textContent=ch;el.style.animationDelay=(i*.12)+'s';
+    sceneArea.appendChild(el);
+  });
+  // add text line
+  const storyLines=document.getElementById('storyLines');
+  const lineEl=document.createElement('div');lineEl.className='story-line';
+  lineEl.innerHTML=line.text.replace(/<b>(.*?)<\/b>/g,'<span class="highlight-word">$1</span>');
+  storyLines.appendChild(lineEl);
+  setTimeout(()=>lineEl.classList.add('visible'),50);
+  speak(line.speak);
+  lineIdx++;
+  // update button
+  const btn=document.getElementById('nextLineBtn');
+  if(lineIdx>=currentStory.lines.length)btn.textContent='📝 Answer Questions!';
+}
+window.showNextLine=showNextLine;
+
+function startQuestions(){
+  document.getElementById('storyCard').style.display='none';
+  document.getElementById('qSection').style.display='';
+  qIdx=0;qAnswered=false;inQuestion=true;
+  showQuestion();
+}
+
+function showQuestion(){
+  if(qIdx>=currentStory.questions.length){
+    // story complete
+    round++;makeDots();
+    setTimeout(()=>{document.getElementById('qSection').style.display='none';newStory();},1200);
+    return;
+  }
+  qAnswered=false;
+  const q=currentStory.questions[qIdx];
+  document.getElementById('qNumber').textContent=`Question ${qIdx+1} of ${currentStory.questions.length}`;
+  document.getElementById('qText').textContent=q.q;
+  const choices=document.getElementById('qChoices');choices.innerHTML='';
+  q.choices.forEach((ch,i)=>{
+    const btn=document.createElement('button');btn.className='q-btn';btn.textContent=ch;
+    btn.style.background=`linear-gradient(135deg,${Q_COLORS[i]},${Q_COLORS[(i+1)%Q_COLORS.length]})`;
+    btn.onclick=()=>checkQ(btn,i,q);
+    choices.appendChild(btn);
+  });
+  setTimeout(()=>speak(q.q),300);
+}
+
+function checkQ(btn,chosen,q){
+  if(qAnswered)return;
+  if(chosen===q.ans){
+    qAnswered=true;btn.classList.add('correct-ans');
+    playCorrect();spawnConf();
+    score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(`Correct! ${q.explain}`);
+    showExplain('✅ '+q.explain);
+    qIdx++;setTimeout(showQuestion,2200);
+  } else {
+    btn.classList.add('wrong-ans');playWrong();
+    showExplain(`💡 Read the story again! ${q.explain}`);
+    speak(`Not quite! ${q.explain}`);
+  }
+}
+
+function newStory(){
+  if(round>=TOTAL_STORIES){showCelebration();return;}
+  lineIdx=0;qIdx=0;inQuestion=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+  currentStory=STORIES[round%STORIES.length];
+  document.getElementById('lvChip').textContent=`Story ${round+1}: "${currentStory.title}"`;
+  document.getElementById('storyCard').style.display='';
+  document.getElementById('storyLines').innerHTML='';
+  document.getElementById('sceneArea').innerHTML='';
+  document.getElementById('nextLineBtn').textContent='▶ Next →';
+  setTimeout(()=>speak(`Story ${round+1}: ${currentStory.title}. Tap next to read!`),400);
+  showNextLine();
+}
+
+function showCelebration(){
+  playChime();spawnConf();speak('You are a reading superstar! You understood all the stories!');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">📖</div>
+    <div class="ov-title">Reading Champion!</div>
+    <div class="ov-sub">You read 5 stories and answered all questions!<br/>Reading helps us learn and understand the world!<br/><br/>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</div>
+    <button class="ov-btn" onclick="restart()">Read Again 📖</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newStory();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Welcome to Story Tap! Read the story and answer questions!');setTimeout(newStory,1500);},400);});
+</script>
+</body>
+</html>

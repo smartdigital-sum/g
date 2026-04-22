@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Neighbourhood - GyanPlay Class 2</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #a29bfe;
+            font-size: 2rem;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .score {
+            background: #e94560;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text {
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        .clue-box {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .clue-label {
+            color: #636e72;
+            font-size: 1rem;
+        }
+        
+        .clue-text {
+            color: #2d3436;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 10px;
+            padding: 15px;
+            background: #dfe6e9;
+            border-radius: 10px;
+        }
+        
+        .town-map {
+            background: linear-gradient(180deg, #81ecec 0%, #55efc4 30%, #00b894 70%, #2d3436 100%);
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 400px;
+            position: relative;
+        }
+        
+        .roads {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        
+        .road-h {
+            position: absolute;
+            background: #636e72;
+            height: 30px;
+            left: 0;
+            right: 0;
+        }
+        
+        .road-h:nth-child(1) { top: 30%; }
+        .road-h:nth-child(2) { top: 70%; }
+        
+        .road-v {
+            position: absolute;
+            background: #636e72;
+            width: 30px;
+            top: 0;
+            bottom: 0;
+        }
+        
+        .road-v:nth-child(3) { left: 30%; }
+        .road-v:nth-child(4) { left: 70%; }
+        
+        .buildings-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        .map-building {
+            background: white;
+            border-radius: 15px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .map-building:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .map-building.correct {
+            border-color: #00b894;
+            background: #55efc4;
+            animation: bounce 0.5s;
+        }
+        
+        .map-building.wrong {
+            border-color: #e94560;
+            background: #ff7675;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .building-icon {
+            font-size: 2.5rem;
+        }
+        
+        .building-label {
+            font-size: 0.8rem;
+            color: #2d3436;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 15px;
+        }
+        
+        .progress-text {
+            color: white;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        
+        .progress-track {
+            background: #dfe6e9;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #f39c12, #f1c40f);
+            height: 100%;
+            transition: width 0.5s;
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #e17055, #fab1a0);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(225, 112, 85, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .feedback-content.correct {
+            border: 5px solid #00b894;
+        }
+        
+        .feedback-content.wrong {
+            border: 5px solid #e94560;
+        }
+        
+        .feedback-icon {
+            font-size: 5rem;
+        }
+        
+        .feedback-text {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            color: #2d3436;
+        }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .places-info {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .places-title {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .place-info {
+            color: #dfe6e9;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch1-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🏘️ My Neighbourhood</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Building: <span id="currentNum">1</span>/8</div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Find the building that matches the clue!</p>
+        </div>
+        
+        <div class="clue-box">
+            <div class="clue-label">🔍 Find this place:</div>
+            <div class="clue-text" id="clueText">Where do we post letters?</div>
+        </div>
+        
+        <div class="town-map">
+            <div class="buildings-grid" id="buildingsGrid">
+                <!-- Buildings will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-text">Found: <span id="foundCount">0</span> / 8 places</div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <div class="places-info">
+            <div class="places-title">📖 Community Places:</div>
+            <div class="place-info">🏫 School - Where children learn</div>
+            <div class="place-info">🏥 Hospital - Where doctors help sick people</div>
+            <div class="place-info">🏪 Shop - Where we buy things</div>
+            <div class="place-info">🏢 Post Office - Where we send letters</div>
+            <div class="place-info">⛲ Park - Where we play and relax</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextClue()">Next Clue →</button>
+        </div>
+    </div>
+    
+    <script>
+        const places = [
+            { icon: '🏫', name: 'School', clue: 'Where do children learn?' },
+            { icon: '🏥', name: 'Hospital', clue: 'Where do we go when we are sick?' },
+            { icon: '🏪', name: 'Shop', clue: 'Where do we buy groceries?' },
+            { icon: '🏢', name: 'Post Office', clue: 'Where do we post letters?' },
+            { icon: '⛲', name: 'Park', clue: 'Where do children play?' },
+            { icon: '⛪', name: 'Temple', clue: 'Where do we pray to God?' },
+            { icon: '🏦', name: 'Bank', clue: 'Where do we keep money safe?' },
+            { icon: '🏠', name: 'Home', clue: 'Where do we live?' }
+        ];
+        
+        let currentIndex = 0;
+        let score = 0;
+        let foundPlaces = [];
+        
+        function initGame() {
+            // Shuffle all places for the map
+            const shuffledPlaces = [...places].sort(() => Math.random() - 0.5);
+            
+            const grid = document.getElementById('buildingsGrid');
+            grid.innerHTML = '';
+            
+            shuffledPlaces.forEach((place, index) => {
+                const div = document.createElement('div');
+                div.className = 'map-building';
+                div.dataset.name = place.name;
+                div.innerHTML = `
+                    <span class="building-icon">${place.icon}</span>
+                    <span class="building-label">${place.name}</span>
+                `;
+                div.onclick = () => selectBuilding(div, place);
+                grid.appendChild(div);
+            });
+            
+            showClue();
+        }
+        
+        function showClue() {
+            if (currentIndex >= places.length) {
+                document.getElementById('clueText').textContent = '🎉 You found all places!';
+                document.getElementById('currentNum').textContent = places.length;
+                setTimeout(() => {
+                    alert('Congratulations! You completed the neighbourhood!');
+                    resetGame();
+                }, 1000);
+                return;
+            }
+            
+            document.getElementById('clueText').textContent = places[currentIndex].clue;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+        }
+        
+        function selectBuilding(div, place) {
+            const correctPlace = places[currentIndex];
+            
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            if (place.name === correctPlace.name) {
+                div.classList.add('correct');
+                foundPlaces.push(place.name);
+                score += 10;
+                document.getElementById('score').textContent = score;
+                document.getElementById('foundCount').textContent = foundPlaces.length;
+                document.getElementById('progressFill').style.width = (foundPlaces.length / 8 * 100) + '%';
+                
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = `Correct! This is the ${place.name}!`;
+            } else {
+                div.classList.add('wrong');
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😅';
+                text.textContent = `Not quite! This is a ${place.name}.`;
+            }
+            
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                div.classList.remove('correct', 'wrong');
+            }, 1000);
+        }
+        
+        function nextClue() {
+            document.getElementById('feedback').classList.remove('show');
+            currentIndex++;
+            showClue();
+        }
+        
+        function resetGame() {
+            currentIndex = 0;
+            foundPlaces = [];
+            document.getElementById('score').textContent = '0';
+            document.getElementById('foundCount').textContent = '0';
+            document.getElementById('progressFill').style.width = '0%';
+            initGame();
+        }
+        
+        initGame();
+    </script>
+</body>
+</html>

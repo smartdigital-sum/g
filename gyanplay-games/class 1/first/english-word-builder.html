@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Word Builder 🔤 — Class 1 English</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--navy:#1A237E;--sky:#0288D1;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#E3F2FD,#BBDEFB,#90CAF9);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* BOOKSHELF BG */
+.shelf{position:fixed;bottom:0;left:0;right:0;height:80px;background:linear-gradient(180deg,#8D6E63,#5D4037);z-index:1;}
+.shelf::before{content:'';position:absolute;top:0;left:0;right:0;height:12px;background:#A1887F;}
+.pencil{position:fixed;pointer-events:none;z-index:2;font-size:1.5rem;animation:pencilWobble 3s ease-in-out infinite;}
+@keyframes pencilWobble{0%,100%{transform:rotate(-8deg);}50%{transform:rotate(8deg);}}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#1A237E;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#1A237E;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#1A237E;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* TARGET PICTURE */
+.picture-card{
+  position:relative;z-index:20;
+  background:rgba(255,255,255,.82);backdrop-filter:blur(10px);
+  border:3px solid rgba(255,255,255,.95);border-radius:28px;
+  padding:clamp(12px,3vw,20px) clamp(20px,5vw,36px);
+  margin:8px 16px;text-align:center;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+  max-width:500px;width:calc(100% - 32px);
+}
+.pic-emoji{font-size:clamp(3.5rem,14vw,6.5rem);animation:picBob 2s ease-in-out infinite;display:block;}
+@keyframes picBob{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}	}
+.pic-hint{color:#1A237E;font-size:clamp(.85rem,3vw,1.1rem);font-weight:700;margin-top:4px;}
+
+/* WORD SLOTS */
+.slots-row{
+  position:relative;z-index:20;
+  display:flex;gap:clamp(6px,2vw,12px);
+  justify-content:center;
+  margin:10px 16px;
+}
+.slot{
+  width:clamp(54px,14vw,78px);height:clamp(62px,16vw,88px);
+  border-radius:16px;
+  border:3px dashed rgba(26,35,126,.3);
+  background:rgba(255,255,255,.6);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;font-size:clamp(1.8rem,7vw,3rem);
+  color:#1A237E;
+  transition:all .3s;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  position:relative;
+}
+.slot.filled{border-style:solid;border-color:#1E88E5;background:rgba(30,136,229,.1);}
+.slot.correct{border-color:#43A047;background:rgba(67,160,71,.15);}
+.slot.error{animation:slotErr .35s ease;}
+@keyframes slotErr{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+.slot-pos{position:absolute;bottom:4px;font-size:.6rem;font-weight:800;color:rgba(26,35,126,.35);letter-spacing:1px;}
+
+/* CHECK/CLEAR BUTTONS */
+.action-row{position:relative;z-index:20;display:flex;gap:10px;margin:6px 0;}
+.act-btn{padding:10px 22px;border-radius:50px;border:none;font-family:'Fredoka One',cursive;font-size:clamp(.9rem,3.5vw,1.2rem);cursor:pointer;transition:transform .2s;box-shadow:0 4px 12px rgba(0,0,0,.15);}
+.act-btn:hover{transform:scale(1.05);}
+.act-btn.check{background:linear-gradient(135deg,#43A047,#76FF03);color:#fff;}
+.act-btn.clear{background:rgba(255,255,255,.7);color:#1A237E;}
+
+/* LETTER TILES */
+.tiles-area{position:relative;z-index:20;background:rgba(255,255,255,.78);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.95);border-radius:22px;padding:12px 14px;margin:8px 14px;max-width:680px;width:calc(100% - 28px);box-shadow:0 6px 20px rgba(0,0,0,.08);margin-bottom:90px;}
+.tiles-lbl{font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(26,35,126,.35);margin-bottom:8px;text-align:center;}
+.tiles-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+
+.tile{
+  width:clamp(50px,12vw,66px);height:clamp(56px,13vw,74px);
+  border-radius:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5.5vw,2.2rem);
+  color:#fff;
+  box-shadow:0 4px 0 rgba(0,0,0,.25),0 6px 14px rgba(0,0,0,.12);
+  transition:all .15s;position:relative;top:0;
+  border:2px solid rgba(255,255,255,.3);
+}
+.tile:hover{top:-3px;box-shadow:0 7px 0 rgba(0,0,0,.2);}
+.tile:active{top:3px;box-shadow:0 1px 0 rgba(0,0,0,.2);}
+.tile.used{opacity:.22;pointer-events:none;transform:scale(.85);}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.95rem,3.5vw,1.25rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:1.7;}
+.ov-btn{background:linear-gradient(135deg,#1A237E,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(26,35,126,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+.word-flash{position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.wf-text{font-family:'Fredoka One',cursive;font-size:clamp(4rem,16vw,8rem);color:#FFD700;text-shadow:0 0 40px rgba(255,215,0,.6);animation:wfIn .5s ease both,wfOut .35s .9s ease forwards;}
+@keyframes wfIn{from{transform:scale(0) rotate(-10deg);opacity:0;}to{transform:scale(1);opacity:1;}}
+@keyframes wfOut{to{transform:scale(1.6);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="shelf"></div>
+<div class="pencil" style="bottom:70px;left:20px;">✏️</div>
+<div class="pencil" style="bottom:70px;right:30px;animation-delay:.7s;">📏</div>
+
+<div class="header">
+  <div class="title">🔤 Word Builder</div>
+  <div class="lvchip" id="lvChip">Level 1 · 3-letter words (CVC)</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">📚 Round: <span id="roundVal">1</span>/12</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="picture-card">
+  <span class="pic-emoji" id="picEmoji">🐱</span>
+  <div class="pic-hint" id="picHint">Spell the word! Tap the letters in order.</div>
+</div>
+
+<div class="slots-row" id="slotsRow"></div>
+<div class="action-row">
+  <button class="act-btn check" onclick="checkWord()">✅ Check!</button>
+  <button class="act-btn clear" onclick="clearSlots()">🗑 Clear</button>
+</div>
+
+<div class="tiles-area">
+  <div class="tiles-lbl">🔤 Tap letters to spell the word</div>
+  <div class="tiles-row" id="tilesRow"></div>
+</div>
+
+<script>
+const WORDS=[
+  // Level 1 — 3-letter CVC
+  {emoji:'🐱',word:'CAT',hint:'A furry pet that says meow!',level:1},
+  {emoji:'🐶',word:'DOG',hint:'A friendly pet that says woof!',level:1},
+  {emoji:'🐷',word:'PIG',hint:'A pink farm animal!',level:1},
+  {emoji:'🐟',word:'FIN',hint:'A fish\'s flap for swimming!',level:1},
+  {emoji:'☀️',word:'SUN',hint:'It shines in the sky!',level:1},
+  {emoji:'🚌',word:'BUS',hint:'We ride this to school!',level:1},
+  {emoji:'🪁',word:'BOW',hint:'Used for archery!',level:1},
+  {emoji:'🎩',word:'HAT',hint:'We wear this on our head!',level:1},
+  // Level 2 — 4-letter words
+  {emoji:'🍎',word:'APPLE',hint:'A red fruit!',level:2},
+  {emoji:'🐸',word:'FROG',hint:'It jumps and says ribbit!',level:2},
+  {emoji:'⭐',word:'STAR',hint:'It shines in the night sky!',level:2},
+  {emoji:'📚',word:'BOOK',hint:'We read this to learn!',level:2},
+];
+const TILE_COLORS=['#E53935','#1E88E5','#43A047','#FB8C00','#8E24AA','#00897B','#F4511E','#3949AB','#039BE5'];
+const TOTAL=12;
+let score=0,round=0,current=null,answered=false,filledSlots=[],usedTileIdxs=[];
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playTap(){
+  const c=ac(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type='sine';
+  o.frequency.setValueAtTime(600,c.currentTime);o.frequency.exponentialRampToValueAtTime(900,c.currentTime+.1);
+  g.gain.setValueAtTime(.2,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.15);
+  o.start();o.stop(c.currentTime+.15);
+}
+function playCorrect(){
+  const c=ac();
+  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';
+    g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);
+    o.start();o.stop(c.currentTime+.4);
+  },i*100));
+}
+function playWrong(){
+  const c=ac(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;
+  g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);
+  o.start();o.stop(c.currentTime+.3);
+}
+function playChime(){
+  const c=ac();
+  [523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';
+    g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);
+    o.start();o.stop(c.currentTime+.45);
+  },i*90));
+}
+function speak(t){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;
+  window.speechSynthesis.speak(u);
+}
+
+function makeDots(){
+  const p=document.getElementById('progRow');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='pdot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+function spawnConf(){
+  const cols=['#1A237E','#FFD700','#E53935','#43A047','#0288D1'];
+  for(let i=0;i<22;i++){
+    const c=document.createElement('div');c.className='conf';
+    c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;
+    document.body.appendChild(c);setTimeout(()=>c.remove(),1600);
+  }
+}
+function showWordFlash(word){
+  const el=document.createElement('div');el.className='word-flash';
+  el.innerHTML=`<div class="wf-text">${word}</div>`;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1500);
+}
+
+function buildSlots(){
+  const row=document.getElementById('slotsRow');row.innerHTML='';
+  filledSlots=[];
+  for(let i=0;i<current.word.length;i++){
+    const slot=document.createElement('div');slot.className='slot';
+    slot.id=`slot_${i}`;
+    const posLabel=['1st','2nd','3rd','4th','5th'][i];
+    slot.innerHTML=`<span class="slot-pos">${posLabel}</span>`;
+    row.appendChild(slot);
+    filledSlots.push('');
+  }
+}
+
+function buildTiles(){
+  // create shuffled letter tiles from the word + distractors
+  const wordLetters=[...current.word];
+  // distractors
+  const alpha='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').filter(c=>!wordLetters.includes(c));
+  alpha.sort(()=>Math.random()-.5);
+  const distractors=alpha.slice(0,Math.min(5,10-wordLetters.length));
+  const allLetters=[...wordLetters,...distractors].sort(()=>Math.random()-.5);
+
+  usedTileIdxs=[];
+  const row=document.getElementById('tilesRow');row.innerHTML='';
+  allLetters.forEach((letter,i)=>{
+    const tile=document.createElement('div');tile.className='tile';
+    tile.textContent=letter;tile.dataset.idx=i;tile.dataset.letter=letter;
+    tile.style.background=`linear-gradient(135deg,${TILE_COLORS[i%TILE_COLORS.length]},${TILE_COLORS[(i+3)%TILE_COLORS.length]})`;
+    tile.onclick=()=>tapTile(tile,letter,i);
+    row.appendChild(tile);
+  });
+}
+
+function tapTile(tile,letter,idx){
+  if(usedTileIdxs.includes(idx))return;
+  const nextEmpty=filledSlots.indexOf('');
+  if(nextEmpty===-1)return;
+  playTap();
+  filledSlots[nextEmpty]=letter;
+  usedTileIdxs.push(idx);
+  tile.classList.add('used');
+  // update slot
+  const slot=document.getElementById(`slot_${nextEmpty}`);
+  slot.textContent=letter;slot.classList.add('filled');
+  const posLabel=['1st','2nd','3rd','4th','5th'][nextEmpty];
+  slot.innerHTML=letter+`<span class="slot-pos">${posLabel}</span>`;
+}
+
+function checkWord(){
+  const built=filledSlots.join('');
+  if(built.length<current.word.length){speak('Fill all the letter boxes first!');return;}
+  if(answered)return;
+  if(built===current.word){
+    answered=true;
+    playCorrect();spawnConf();showWordFlash(current.word);
+    document.querySelectorAll('.slot').forEach(s=>s.classList.add('correct'));
+    score+=15;document.getElementById('scoreVal').textContent=score;
+    speak(`${current.word}! You spelled it correctly! ${current.hint}`);
+    round++;makeDots();setTimeout(newRound,2200);
+  } else {
+    playWrong();
+    document.querySelectorAll('.slot').forEach(s=>s.classList.add('error'));
+    speak(`Not quite! The word starts with ${current.word[0]}. Try again!`);
+    setTimeout(()=>{
+      document.querySelectorAll('.slot').forEach(s=>s.classList.remove('error'));
+    },500);
+    // give hint — show first letter
+    if(filledSlots[0]!==current.word[0]){
+      speak(`Hint: The first letter is ${current.word[0]}!`);
+    }
+  }
+}
+window.checkWord=checkWord;
+
+function clearSlots(){
+  filledSlots=[];usedTileIdxs=[];
+  document.querySelectorAll('.slot').forEach((s,i)=>{
+    s.className='slot';
+    const pos=['1st','2nd','3rd','4th','5th'][i];
+    s.innerHTML=`<span class="slot-pos">${pos}</span>`;
+  });
+  document.querySelectorAll('.tile').forEach(t=>t.classList.remove('used'));
+}
+window.clearSlots=clearSlots;
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  const lvIdx=round<8?0:1;
+  const levelWords=WORDS.filter(w=>w.level===(lvIdx+1));
+  current=levelWords[round%levelWords.length];
+  document.getElementById('lvChip').textContent=`Level ${lvIdx+1} · ${lvIdx===0?'3-letter CVC words':'4-letter words'}`;
+  document.getElementById('picEmoji').textContent=current.emoji;
+  document.getElementById('picHint').textContent=`Spell: "${current.word}" — ${current.hint}`;
+  makeDots();buildSlots();buildTiles();
+  setTimeout(()=>speak(`Spell the word! ${current.hint} It is a ${current.word.length}-letter word. First letter: ${current.word[0]}!`),400);
+}
+
+function showCelebration(){
+  playChime();spawnConf();
+  speak(`Amazing! You can build words! You are a spelling champion!`);
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🔤</div>
+    <div class="ov-title">Word Wizard!</div>
+    <div class="ov-sub">You spelled all the words!<br/>CAT, DOG, SUN, BUS and more!<br/>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</div>
+    <button class="ov-btn" onclick="restart()">Play Again 🔤</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Build the word by tapping the letters!');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

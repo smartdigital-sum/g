@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Educational gaming website for students aged 6-9 in Assam, India - Learn through fun games aligned with SEBA curriculum">
+    <meta name="theme-color" content="#2196F3">
+    <title>Assam Kids Learn - Educational Games</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- GyanPlay Back Button -->
+  <a href="../../index.html" style="position:fixed;top:12px;left:12px;z-index:99999;display:inline-flex;align-items:center;gap:8px;background:#1A1A2E;color:#FFB800;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.85rem;padding:8px 16px;border-radius:50px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.3);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+    ← <span>Gyan<span style="color:#00AEEF">Play</span></span>
+  </a>
+    <!-- Language Selection Modal -->
+    <div id="languageModal" class="modal">
+        <div class="modal-content language-modal">
+            <h2>Select Your Language / আপোনাৰ ভাষা বাছক</h2>
+            <div class="language-options">
+                <button class="lang-btn" data-lang="en">
+                    <span class="lang-flag">🇬🇧</span>
+                    <span>English</span>
+                </button>
+                <button class="lang-btn" data-lang="as">
+                    <span class="lang-flag">🇮🇳</span>
+                    <span>অসমীয়া</span>
+                </button>
+                <button class="lang-btn" data-lang="hi">
+                    <span class="lang-flag">🇮🇳</span>
+                    <span>हिंदी</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loader">
+            <div class="loader-icon">🎮</div>
+            <div class="loader-text">Loading...</div>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app" class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <button id="menuBtn" class="icon-btn" aria-label="Menu">☰</button>
+                <div class="logo">
+                    <span class="logo-icon">📚</span>
+                    <span class="logo-text" data-i18n="appName">Assam Kids Learn</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="themeToggleBtn" class="icon-btn" aria-label="Toggle Theme">🌙</button>
+                <button id="soundToggleBtn" class="icon-btn" aria-label="Toggle Sound">🔊</button>
+                <button id="progressBtn" class="icon-btn" aria-label="Progress">📊</button>
+                <div class="user-avatar" id="userAvatar">
+                    <span id="avatarEmoji">👤</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar Overlay -->
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <span class="logo-text" data-i18n="appName">Assam Kids Learn</span>
+                <button id="closeSidebar" class="close-btn" aria-label="Close menu">×</button>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-item active" data-i18n="navHome">🏠 Home</a></li>
+                <li><a href="#math" class="nav-item" data-i18n="navMath">🔢 Math</a></li>
+                <li><a href="#english" class="nav-item" data-i18n="navEnglish">📖 English</a></li>
+                <li><a href="#assamese" class="nav-item" data-i18n="navAssamese">🅰️ Assamese</a></li>
+                <li><a href="#evs" class="nav-item" data-i18n="navEVS">🌿 EVS</a></li>
+                <li><a href="#games" class="nav-item" data-i18n="navGames">🎮 All Games</a></li>
+                <li><a href="#progress" class="nav-item" data-i18n="navProgress">📈 My Progress</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <button id="settingsBtn" class="settings-btn">⚙️ Settings</button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="mainContent" class="main-content">
+            <!-- Home Section -->
+            <section id="homeSection" class="content-section active">
+                <div class="welcome-banner">
+                    <div class="welcome-text">
+                        <h1 data-i18n="welcomeTitle">Welcome, Learner! 🎉</h1>
+                        <p data-i18n="welcomeSubtitle">Let's learn and play together</p>
+                        <span id="streakDisplay" class="streak-badge">🔥 0 day streak</span>
+                    </div>
+                    <div class="mascot">🦉</div>
+                </div>
+
+                <!-- Daily Challenge Card -->
+                <div class="daily-challenge-card">
+                    <div class="challenge-badge">⭐ Daily Challenge</div>
+                    <h3 data-i18n="dailyChallengeTitle">Complete 3 Math Games!</h3>
+                    <div class="challenge-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">0/3</span>
+                    </div>
+                    <button class="play-btn" data-game="math" data-i18n="playNow">Play Now</button>
+                </div>
+
+                <!-- Subject Categories -->
+                <h2 class="section-title" data-i18n="chooseSubject">Choose Your Subject</h2>
+                <div class="subject-grid">
+                    <div class="subject-card math" data-subject="math">
+                        <div class="subject-icon">🔢</div>
+                        <h3 data-i18n="subjectMath">Math</h3>
+                        <p data-i18n="mathDesc">Numbers, shapes & counting</p>
+                        <div class="subject-progress">
+                            <span class="stars">⭐ 0</span>
+                        </div>
+                    </div>
+                    <div class="subject-card english" data-subject="english">
+                        <div class="subject-icon">📖</div>
+                        <h3 data-i18n="subjectEnglish">English</h3>
+                        <p data-i18n="englishDesc">Words & reading</p>
+                        <div class="subject-progress">
+                            <span class="stars">⭐ 0</span>
+                        </div>
+                    </div>
+                    <div class="subject-card assamese" data-subject="assamese">
+                        <div class="subject-icon">🅰️</div>
+                        <h3 data-i18n="subjectAssamese">Assamese</h3>
+                        <p data-i18n="assameseDesc">অসমীয়া বর্ণমালা</p>
+                        <div class="subject-progress">
+                            <span class="stars">⭐ 0</span>
+                        </div>
+                    </div>
+                    <div class="subject-card evs" data-subject="evs">
+                        <div class="subject-icon">🌿</div>
+                        <h3 data-i18n="subjectEVS">EVS</h3>
+                        <p data-i18n="evsDesc">Nature & around us</p>
+                        <div class="subject-progress">
+                            <span class="stars">⭐ 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Games -->
+                <h2 class="section-title" data-i18n="featuredGames">Featured Games</h2>
+                <div class="games-carousel">
+                    <div class="game-card featured" data-game="numberMatch">
+                        <div class="game-thumbnail number-game-bg">🔢</div>
+                        <div class="game-info">
+                            <span class="game-badge math">🔢 Math</span>
+                            <h4>Number Match</h4>
+                            <p>Match numbers and learn counting</p>
+                            <button class="play-btn-small" data-i18n="play">Play ▶</button>
+                        </div>
+                    </div>
+                    <div class="game-card featured" data-game="wordPuzzle">
+                        <div class="game-thumbnail word-game-bg">📝</div>
+                        <div class="game-info">
+                            <span class="game-badge english">📖 English</span>
+                            <h4>Word Puzzle</h4>
+                            <p>Find hidden words</p>
+                            <button class="play-btn-small" data-i18n="play">Play ▶</button>
+                        </div>
+                    </div>
+                    <div class="game-card featured" data-game="assameseAlpha">
+                        <div class="game-thumbnail assamese-game-bg">অ</div>
+                        <div class="game-info">
+                            <span class="game-badge assamese">🅰️ Assamese</span>
+                            <h4>Assamese Alphabet</h4>
+                            <p>Master Assamese alphabet</p>
+                            <button class="play-btn-small" data-i18n="play">Play ▶</button>
+                        </div>
+                    </div>
+                    <div class="game-card featured" data-game="animalWorld">
+                        <div class="game-thumbnail nature-game-bg">🐘</div>
+                        <div class="game-info">
+                            <span class="game-badge evs">🌿 EVS</span>
+                            <h4>Animal World</h4>
+                            <p>Learn about animals</p>
+                            <button class="play-btn-small" data-i18n="play">Play ▶</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Games Button -->
+                <button class="play-btn all-games-btn" id="allGamesBtn" data-i18n="viewAllGames">🎮 View All Games</button>
+            </section>
+
+            <!-- Games Section -->
+            <section id="gamesSection" class="content-section">
+                <h2 class="section-title" data-i18n="allGames">All Games</h2>
+                <div class="games-filter">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="math">🔢 Math</button>
+                    <button class="filter-btn" data-filter="english">📖 English</button>
+                    <button class="filter-btn" data-filter="assamese">🅰️ Assamese</button>
+                    <button class="filter-btn" data-filter="evs">🌿 EVS</button>
+                </div>
+                <div id="gamesList" class="games-grid">
+                    <!-- Games will be dynamically inserted here -->
+                </div>
+            </section>
+
+            <!-- Progress Section -->
+            <section id="progressSection" class="content-section">
+                <h2 class="section-title" data-i18n="myProgress">My Progress</h2>
+                <div class="progress-overview">
+                    <div class="progress-stat">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-value" id="totalStars">0</div>
+                        <div class="stat-label" data-i18n="totalStars">Total Stars</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="stat-icon">🎮</div>
+                        <div class="stat-value" id="gamesPlayed">0</div>
+                        <div class="stat-label" data-i18n="gamesPlayed">Games Played</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-value" id="badgesEarned">0</div>
+                        <div class="stat-label" data-i18n="badgesEarned">Badges</div>
+                    </div>
+                </div>
+                
+                <h3 class="subsection-title">🏆 Badges Earned</h3>
+                <div class="badges-grid" id="badgesGrid">
+                    <!-- Badges will be dynamically inserted -->
+                </div>
+
+                <h3 class="subsection-title" data-i18n="subjectProgress">Subject Progress</h3>
+                <div class="subject-progress-list">
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>🔢 Math</span>
+                            <span class="progress-percent">0%</span>
+                        </div>
+                        <div class="progress-bar-large">
+                            <div class="progress-fill" data-subject="math" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>📖 English</span>
+                            <span class="progress-percent">0%</span>
+                        </div>
+                        <div class="progress-bar-large">
+                            <div class="progress-fill" data-subject="english" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>🅰️ Assamese</span>
+                            <span class="progress-percent">0%</span>
+                        </div>
+                        <div class="progress-bar-large">
+                            <div class="progress-fill" data-subject="assamese" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>🌿 EVS</span>
+                            <span class="progress-percent">0%</span>
+                        </div>
+                        <div class="progress-bar-large">
+                            <div class="progress-fill" data-subject="evs" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Game Container (Full Screen) -->
+        <div id="gameContainer" class="game-container">
+            <div class="game-header">
+                <button id="backToHome" class="back-btn">← Back</button>
+                <div class="game-title" id="gameTitle">Game Title</div>
+                <div class="game-stats">
+                    <span id="gameScore">⭐ 0</span>
+                    <span id="gameLevel">Level 1</span>
+                </div>
+            </div>
+            <div id="gameCanvas" class="game-canvas">
+                <!-- Game content will be rendered here -->
+            </div>
+            <div id="gameControls" class="game-controls">
+                <!-- Dynamic game controls -->
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toastContainer" class="toast-container"></div>
+
+        <!-- Confetti Container -->
+        <div id="confettiContainer" class="confetti-container"></div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content settings-modal">
+            <div class="modal-header">
+                <h2>⚙️ Settings</h2>
+                <button class="modal-close-btn" id="closeSettings">×</button>
+            </div>
+            <div class="settings-body">
+                <div class="setting-group">
+                    <label class="setting-label" data-i18n="selectLanguage">🌐 Language</label>
+                    <div class="setting-options">
+                        <button class="setting-option lang-setting" data-lang="en">
+                            <span>🇬🇧</span> English
+                        </button>
+                        <button class="setting-option lang-setting" data-lang="as">
+                            <span>🇮🇳</span> অসমীয়া
+                        </button>
+                        <button class="setting-option lang-setting" data-lang="hi">
+                            <span>🇮🇳</span> हिंदी
+                        </button>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">🔊 Sound Effects</label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="soundToggle" checked>
+                        <label for="soundToggle" class="toggle-slider"></label>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">📱 Low Data Mode</label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="lowDataToggle">
+                        <label for="lowDataToggle" class="toggle-slider"></label>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">🌙 Dark Mode</label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <label for="darkModeToggle" class="toggle-slider"></label>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <button class="reset-btn" id="resetProgressBtn">🔄 Reset Progress</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile/Avatar Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content profile-modal">
+            <div class="modal-header">
+                <h2>👤 Choose Your Avatar</h2>
+                <button class="modal-close-btn" id="closeProfile">×</button>
+            </div>
+            <div class="avatar-grid">
+                <button class="avatar-option" data-avatar="👦">👦</button>
+                <button class="avatar-option" data-avatar="👧">👧</button>
+                <button class="avatar-option" data-avatar="🧒">🧒</button>
+                <button class="avatar-option" data-avatar="🦁">🦁</button>
+                <button class="avatar-option" data-avatar="🐯">🐯</button>
+                <button class="avatar-option" data-avatar="🐘">🐘</button>
+                <button class="avatar-option" data-avatar="🦚">🦚</button>
+                <button class="avatar-option" data-avatar="🦉">🦉</button>
+                <button class="avatar-option" data-avatar="🐼">🐼</button>
+                <button class="avatar-option" data-avatar="🦋">🦋</button>
+                <button class="avatar-option" data-avatar="🌟">🌟</button>
+                <button class="avatar-option" data-avatar="🚀">🚀</button>
+            </div>
+            <div class="profile-name-section">
+                <label class="setting-label">Your Name</label>
+                <input type="text" id="playerName" class="name-input" placeholder="Enter your name" maxlength="20">
+                <button class="play-btn" id="saveProfile" style="margin-top: 1rem;">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Complete Modal -->
+    <div id="gameCompleteModal" class="modal">
+        <div class="modal-content game-complete-modal">
+            <div class="completion-celebration">
+                <div class="completion-icon">🎉</div>
+                <h2 data-i18n="levelComplete">Level Complete!</h2>
+                <div class="stars-earned" id="starsEarned">
+                    <span class="star">⭐</span>
+                    <span class="star">⭐</span>
+                    <span class="star">⭐</span>
+                </div>
+                <div class="completion-stats">
+                    <div class="stat-row">
+                        <span>Stars Earned</span>
+                        <span id="completionStars" class="stat-value">+10</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Total Score</span>
+                        <span id="completionScore" class="stat-value">50</span>
+                    </div>
+                </div>
+                <div class="completion-actions">
+                    <button class="play-btn" id="playAgainBtn">🔄 Play Again</button>
+                    <button class="play-btn secondary" id="nextLevelBtn">➡️ Next Level</button>
+                    <button class="play-btn outline" id="backToMenuBtn">🏠 Back to Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.log('SW registration failed'));
+            });
+        }
+    </script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Heredity & Evolution — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+  --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+  --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Nunito',sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  min-height:100vh;color:#fff;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fadeIn{animation:fadeIn .45s ease both;}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:99;}
+.back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;
+  font-family:'Baloo 2',sans-serif;font-size:.95rem;padding:7px 16px;
+  border-radius:20px;cursor:pointer;transition:.2s;}
+.back-btn:hover{background:rgba(255,255,255,.22);}
+.badge{background:var(--green);color:#fff;font-family:'Baloo 2',sans-serif;
+  font-weight:700;font-size:.82rem;padding:5px 14px;border-radius:20px;letter-spacing:.5px;}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{background:rgba(255,255,255,.1);border:none;color:#fff;
+  font-size:.8rem;padding:5px 11px;border-radius:14px;cursor:pointer;transition:.2s;}
+.lang-btn.active,.lang-btn:hover{background:var(--purple);}
+
+/* MAIN */
+.container{max-width:780px;margin:0 auto;padding:24px 16px 60px;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.7rem;font-weight:800;
+  text-align:center;margin-bottom:4px;
+  background:linear-gradient(90deg,var(--green),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.game-sub{text-align:center;font-size:.88rem;color:#bbb;margin-bottom:22px;}
+
+/* PROGRESS */
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.prog-bar{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));
+  border-radius:4px;transition:width .4s ease;}
+.prog-label{font-size:.82rem;color:#aaa;white-space:nowrap;}
+
+/* SCORE */
+.score-display{text-align:right;font-family:'Baloo 2',sans-serif;
+  font-size:1rem;color:var(--gold);margin-bottom:14px;}
+
+/* CARD */
+.q-card{background:var(--card);border-radius:18px;
+  padding:26px 24px;border:1px solid rgba(255,255,255,.09);
+  box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.q-num{font-size:.78rem;color:var(--green);font-weight:700;
+  letter-spacing:1px;margin-bottom:8px;}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.12rem;
+  font-weight:600;line-height:1.55;margin-bottom:20px;}
+
+/* OPTIONS */
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.options{grid-template-columns:1fr;}}
+.opt-btn{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);
+  color:#e8e8e8;font-family:'Nunito',sans-serif;font-size:.95rem;
+  padding:13px 16px;border-radius:12px;cursor:pointer;text-align:left;
+  transition:.22s;line-height:1.4;}
+.opt-btn:hover:not(:disabled){background:rgba(124,58,237,.25);
+  border-color:var(--purple);}
+.opt-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);color:#fff;}
+.opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);color:#fff;}
+.opt-btn:disabled{cursor:not-allowed;}
+
+/* FEEDBACK */
+.feedback{margin-top:16px;padding:12px 16px;border-radius:12px;
+  font-size:.92rem;line-height:1.5;display:none;}
+.feedback.show{display:block;}
+.feedback.correct{background:rgba(0,200,83,.15);border:1px solid var(--green);color:#b9f6ca;}
+.feedback.wrong{background:rgba(255,64,129,.15);border:1px solid var(--pink);color:#ffd0dd;}
+
+/* NEXT BTN */
+.next-btn{display:block;margin:20px auto 0;
+  background:linear-gradient(135deg,var(--green),#00a046);
+  border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;
+  font-size:1rem;padding:13px 36px;border-radius:24px;cursor:pointer;
+  transition:.2s;opacity:0;pointer-events:none;}
+.next-btn.visible{opacity:1;pointer-events:all;}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,200,83,.4);}
+
+/* END SCREEN */
+.end-screen{background:var(--card);border-radius:20px;
+  padding:36px 28px;text-align:center;
+  border:1px solid rgba(255,255,255,.09);}
+.stars{font-size:2.8rem;margin-bottom:10px;letter-spacing:4px;}
+.final-score{font-family:'Baloo 2',sans-serif;font-size:2.4rem;
+  font-weight:800;color:var(--gold);margin-bottom:6px;}
+.final-msg{color:#ccc;font-size:1rem;margin-bottom:24px;}
+.play-again{background:linear-gradient(135deg,var(--purple),#5b21b6);
+  border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;
+  font-size:1rem;padding:14px 38px;border-radius:24px;cursor:pointer;transition:.2s;}
+.play-again:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(124,58,237,.5);}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">&#8592; Back</button>
+  <span class="badge">Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('bn')">অ</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="game-title">
+    <span data-lang="en">Heredity &amp; Evolution</span>
+    <span data-lang="hi" class="hidden">आनुवंशिकता और विकास</span>
+    <span data-lang="bn" class="hidden">বংশগতি ও বিবর্তন</span>
+  </div>
+  <div class="game-sub">Class 10 Science &nbsp;|&nbsp; Ch 9 NCERT &nbsp;|&nbsp; 10 Questions</div>
+
+  <div class="prog-row">
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-label" id="progLabel">0 / 10</div>
+  </div>
+  <div class="score-display">Score: <span id="scoreVal">0</span> / 100</div>
+
+  <!-- QUESTION CARD -->
+  <div class="q-card fadeIn" id="qCard">
+    <div class="q-num" id="qNum">QUESTION 1</div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="optionsGrid"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next &#8594;</button>
+  </div>
+
+  <!-- END SCREEN -->
+  <div class="end-screen fadeIn hidden" id="endScreen">
+    <div class="stars" id="stars"></div>
+    <div class="final-score" id="finalScore"></div>
+    <div class="final-msg" id="finalMsg"></div>
+    <button class="play-again" onclick="restartGame()">&#9654; Play Again</button>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    en:"Mendel's Law of Segregation states that:",
+    hi:"मेंडल का पृथक्करण का नियम कहता है कि:",
+    bn:"মেন্ডেলের পৃথকীকরণ সূত্র বলে:",
+    opts:{
+      en:["Two alleles for each trait separate during gamete formation","Traits blend together in offspring","Dominant traits always disappear","All offspring show the same trait"],
+      hi:["प्रत्येक लक्षण के दो एलील युग्मक बनते समय अलग हो जाते हैं","लक्षण संतति में मिल जाते हैं","प्रभावी लक्षण हमेशा गायब हो जाते हैं","सभी संतति एक ही लक्षण दिखाते हैं"],
+      bn:["প্রতিটি বৈশিষ্ট্যের দুটি অ্যালিল গ্যামেট গঠনের সময় আলাদা হয়","বৈশিষ্ট্যগুলি সন্তানে মিশে যায়","প্রভাবশালী বৈশিষ্ট্য সবসময় অদৃশ্য হয়","সব সন্তান একই বৈশিষ্ট্য দেখায়"]
+    },
+    ans:0,
+    feedback:{
+      en:"Correct! Law of Segregation: Each parent carries 2 alleles for a trait; during gamete formation, only one allele is passed to each gamete.",
+      hi:"सही! पृथक्करण का नियम: प्रत्येक जनक में 2 एलील होते हैं; युग्मक बनते समय, केवल एक एलील प्रत्येक युग्मक को जाता है।",
+      bn:"সঠিক! পৃথকীকরণ সূত্র: প্রতিটি পিতামাতার প্রতিটি বৈশিষ্ট্যের জন্য ২টি অ্যালিল থাকে; গ্যামেট গঠনে একটিই যায়।"
+    }
+  },
+  {
+    en:"In a monohybrid cross between Tall (TT) and Dwarf (tt) pea plants, what is the phenotypic ratio in F₂ generation?",
+    hi:"लम्बे (TT) और बौने (tt) मटर पौधों के बीच मोनोहाइब्रिड क्रॉस में F₂ पीढ़ी में फीनोटाइपिक अनुपात क्या है?",
+    bn:"লম্বা (TT) ও বামন (tt) মটর গাছের মনোহাইব্রিড ক্রসে F₂ প্রজন্মে ফিনোটাইপিক অনুপাত কত?",
+    opts:{
+      en:["1:1","2:1","3:1","1:2:1"],
+      hi:["1:1","2:1","3:1","1:2:1"],
+      bn:["1:1","2:1","3:1","1:2:1"]
+    },
+    ans:2,
+    feedback:{
+      en:"Correct! F₂ gives 3 Tall : 1 Dwarf (3:1). Genotypes are TT, Tt, Tt, tt — 3 tall phenotypes to 1 dwarf.",
+      hi:"सही! F₂ में 3 लम्बे : 1 बौना (3:1) अनुपात मिलता है। जीनोटाइप TT, Tt, Tt, tt हैं।",
+      bn:"সঠিক! F₂-এ ৩ লম্বা : ১ বামন (৩:১) অনুপাত পাওয়া যায়। জিনোটাইপ হলো TT, Tt, Tt, tt।"
+    }
+  },
+  {
+    en:"In humans, sex is determined by:",
+    hi:"मनुष्यों में लिंग निर्धारण होता है:",
+    bn:"মানুষের মধ্যে লিঙ্গ নির্ধারণ হয়:",
+    opts:{
+      en:["Chromosomes from the mother","Chromosomes from the father","Nutrition of the mother","Temperature during development"],
+      hi:["माँ से गुणसूत्र","पिता से गुणसूत्र","माँ का पोषण","विकास के दौरान तापमान"],
+      bn:["মায়ের ক্রোমোজোম","বাবার ক্রোমোজোম","মায়ের পুষ্টি","বিকাশের সময় তাপমাত্রা"]
+    },
+    ans:1,
+    feedback:{
+      en:"Correct! Females are XX and males are XY. The sperm from the father carries either X or Y chromosome, determining the baby's sex.",
+      hi:"सही! मादा XX और नर XY होते हैं। पिता के शुक्राणु में X या Y गुणसूत्र होता है, जो शिशु का लिंग निर्धारित करता है।",
+      bn:"সঠিক! মহিলারা XX এবং পুরুষরা XY। বাবার শুক্রাণুতে X বা Y ক্রোমোজোম থাকে যা শিশুর লিঙ্গ নির্ধারণ করে।"
+    }
+  },
+  {
+    en:"Which of the following is an example of an ACQUIRED trait (not inherited)?",
+    hi:"निम्नलिखित में से कौन अर्जित लक्षण का उदाहरण है (वंशानुगत नहीं)?",
+    bn:"নিচের কোনটি অর্জিত বৈশিষ্ট্যের উদাহরণ (বংশগত নয়)?",
+    opts:{
+      en:["Eye colour","Bodybuilder's muscular arms","Blood group","Skin colour"],
+      hi:["आँखों का रंग","बॉडीबिल्डर की मांसपेशियाँ","रक्त समूह","त्वचा का रंग"],
+      bn:["চোখের রং","বডিবিল্ডারের পেশীবহুল বাহু","রক্তের গ্রুপ","ত্বকের রং"]
+    },
+    ans:1,
+    feedback:{
+      en:"Correct! Acquired traits (like muscles built through exercise) are NOT inherited because they don't change the DNA in gametes.",
+      hi:"सही! अर्जित लक्षण (जैसे व्यायाम से बनी मांसपेशियाँ) वंशानुगत नहीं होते क्योंकि ये युग्मकों के DNA को नहीं बदलते।",
+      bn:"সঠিক! অর্জিত বৈশিষ্ট্য (যেমন ব্যায়ামের মাধ্যমে গড়া পেশী) বংশগত নয় কারণ এগুলি গ্যামেটের DNA পরিবর্তন করে না।"
+    }
+  },
+  {
+    en:"Darwin's theory of Natural Selection is based on the principle that:",
+    hi:"डार्विन का प्राकृतिक चयन का सिद्धांत इस सिद्धांत पर आधारित है कि:",
+    bn:"ডারউইনের প্রাকৃতিক নির্বাচন তত্ত্ব এই নীতির উপর ভিত্তি করে:",
+    opts:{
+      en:["Only the strongest animals survive","Organisms with favourable variations survive and reproduce more","All mutations are beneficial","Species never change over time"],
+      hi:["केवल सबसे मजबूत जानवर जीवित रहते हैं","अनुकूल विभिन्नताओं वाले जीव जीवित रहते और अधिक प्रजनन करते हैं","सभी उत्परिवर्तन लाभकारी हैं","प्रजातियाँ कभी नहीं बदलतीं"],
+      bn:["কেবল সবচেয়ে শক্তিশালী প্রাণী বেঁচে থাকে","অনুকূল বৈচিত্র্যসম্পন্ন জীব বেশি বেঁচে থাকে ও প্রজনন করে","সব মিউটেশন উপকারী","প্রজাতি কখনো পরিবর্তন হয় না"],
+    },
+    ans:1,
+    feedback:{
+      en:"Correct! Natural selection: individuals with advantageous traits survive longer and reproduce more, passing those traits to offspring — 'survival of the fittest'.",
+      hi:"सही! प्राकृतिक चयन: लाभकारी लक्षणों वाले जीव अधिक जीवित रहते और प्रजनन करते हैं — 'योग्यतम की उत्तरजीविता'।",
+      bn:"সঠিক! প্রাকৃতিক নির্বাচন: সুবিধাজনক বৈশিষ্ট্যসম্পন্ন জীব বেশি বেঁচে থাকে ও প্রজনন করে — 'যোগ্যতমের টিকে থাকা'।"
+    }
+  },
+  {
+    en:"Fossils are important evidence for evolution because they:",
+    hi:"जीवाश्म विकास के महत्वपूर्ण प्रमाण हैं क्योंकि वे:",
+    bn:"জীবাশ্ম বিবর্তনের গুরুত্বপূর্ণ প্রমাণ কারণ তারা:",
+    opts:{
+      en:["Show extinct organisms and transitional forms","Prove all species came from one ancestor","Only found in deserts","Disprove natural selection"],
+      hi:["विलुप्त जीवों और संक्रमणकालीन रूपों को दिखाते हैं","साबित करते हैं कि सभी प्रजातियाँ एक पूर्वज से आईं","केवल रेगिस्तान में पाए जाते हैं","प्राकृतिक चयन को अस्वीकार करते हैं"],
+      bn:["বিলুপ্ত জীব ও রূপান্তরিত আকৃতি দেখায়","প্রমাণ করে সব প্রজাতি একটি পূর্বপুরুষ থেকে এসেছে","কেবল মরুভূমিতে পাওয়া যায়","প্রাকৃতিক নির্বাচন অস্বীকার করে"]
+    },
+    ans:0,
+    feedback:{
+      en:"Correct! Fossils preserve remains of organisms from the past and show us transitional forms — organisms intermediate between ancestral and modern species.",
+      hi:"सही! जीवाश्म अतीत के जीवों के अवशेषों को संरक्षित करते हैं और संक्रमणकालीन रूप दिखाते हैं।",
+      bn:"সঠিক! জীবাশ্ম অতীতের জীবদের অবশেষ সংরক্ষণ করে এবং পূর্বপুরুষ ও আধুনিক প্রজাতির মধ্যবর্তী রূপ দেখায়।"
+    }
+  },
+  {
+    en:"Homologous organs are organs that have:",
+    hi:"समजात अंग वे अंग हैं जिनकी:",
+    bn:"সমসংস্থ অঙ্গ হলো সেই অঙ্গ যাদের:",
+    opts:{
+      en:["Same function but different structure","Same basic structure but different functions","Identical function and structure","No relation to each other"],
+      hi:["समान कार्य लेकिन भिन्न संरचना","समान मूल संरचना लेकिन भिन्न कार्य","समान कार्य और संरचना","आपस में कोई संबंध नहीं"],
+      bn:["একই কাজ কিন্তু ভিন্ন গঠন","একই মূল গঠন কিন্তু ভিন্ন কাজ","একই কাজ এবং গঠন","পরস্পরের সাথে কোনো সম্পর্ক নেই"]
+    },
+    ans:1,
+    feedback:{
+      en:"Correct! Homologous organs have the same basic structure (common ancestry) but serve different functions. E.g., human arm, bat wing, whale flipper — all have the same bone pattern.",
+      hi:"सही! समजात अंगों की समान मूल संरचना (समान पूर्वज) होती है लेकिन अलग-अलग कार्य। जैसे मानव बाँह, चमगादड़ का पंख, व्हेल का फिन।",
+      bn:"সঠিক! সমসংস্থ অঙ্গের একই মূল গঠন (সাধারণ পূর্বপুরুষ) থাকে কিন্তু ভিন্ন কাজ করে। যেমন মানুষের বাহু, বাদুড়ের ডানা, তিমির পাখনা।"
+    }
+  },
+  {
+    en:"Analogous organs are best described as organs that have:",
+    hi:"समवृत्ति अंगों को सबसे अच्छे तरह से कहा जाता है वे अंग जिनमें:",
+    bn:"সমকার্যী অঙ্গকে সবচেয়ে ভালো বলা যায় যে অঙ্গের:",
+    opts:{
+      en:["Same origin and same function","Same origin but different function","Different origin but same function","Different origin and different function"],
+      hi:["समान उत्पत्ति और समान कार्य","समान उत्पत्ति लेकिन भिन्न कार्य","भिन्न उत्पत्ति लेकिन समान कार्य","भिन्न उत्पत्ति और भिन्न कार्य"],
+      bn:["একই উৎস ও একই কাজ","একই উৎস কিন্তু ভিন্ন কাজ","ভিন্ন উৎস কিন্তু একই কাজ","ভিন্ন উৎস ও ভিন্ন কাজ"]
+    },
+    ans:2,
+    feedback:{
+      en:"Correct! Analogous organs have different origins but perform the same function. Example: wings of birds and wings of insects — different structure, same function (flying).",
+      hi:"सही! समवृत्ति अंगों की उत्पत्ति भिन्न होती है लेकिन कार्य समान होता है। जैसे पक्षी के पंख और कीड़े के पंख।",
+      bn:"সঠিক! সমকার্যী অঙ্গের উৎস আলাদা কিন্তু কাজ একই। উদাহরণ: পাখির ডানা ও পোকার ডানা।"
+    }
+  },
+  {
+    en:"Speciation (formation of new species) occurs when:",
+    hi:"प्रजातिकरण (नई प्रजातियों का निर्माण) तब होता है जब:",
+    bn:"নতুন প্রজাতির গঠন (স্পেশিয়েশন) ঘটে যখন:",
+    opts:{
+      en:["Two populations can still interbreed freely","Geographical or reproductive barriers stop interbreeding leading to genetic divergence","A species moves to a new habitat","An organism mutates once"],
+      hi:["दो आबादी अभी भी स्वतंत्र रूप से प्रजनन कर सकती है","भौगोलिक या प्रजनन अवरोध अंतःप्रजनन को रोककर आनुवंशिक विचलन लाते हैं","एक प्रजाति नए आवास में जाती है","एक जीव एक बार उत्परिवर्तित होता है"],
+      bn:["দুটি জনগোষ্ঠী এখনো অবাধে আন্তঃপ্রজনন করতে পারে","ভৌগোলিক বা প্রজনন বাধা আন্তঃপ্রজনন বন্ধ করে জিনগত বিচ্যুতি আনে","একটি প্রজাতি নতুন আবাসে চলে যায়","একটি জীব একবার মিউটেশন করে"]
+    },
+    ans:1,
+    feedback:{
+      en:"Correct! When populations are separated by barriers (mountains, rivers) and can no longer interbreed, genetic differences accumulate and new species form.",
+      hi:"सही! जब जनसंख्या बाधाओं द्वारा अलग हो जाती है और अंतःप्रजनन नहीं हो पाता, तो आनुवंशिक अंतर बढ़ते हैं और नई प्रजातियाँ बनती हैं।",
+      bn:"সঠিক! যখন জনগোষ্ঠী বাধা দ্বারা আলাদা হয় এবং আন্তঃপ্রজনন সম্ভব হয় না, তখন জিনগত পার্থক্য বাড়ে এবং নতুন প্রজাতি তৈরি হয়।"
+    }
+  },
+  {
+    en:"Mendel's Law of Independent Assortment states that:",
+    hi:"मेंडल का स्वतंत्र अपव्यूहन का नियम कहता है कि:",
+    bn:"মেন্ডেলের স্বাধীন বিন্যাস সূত্র বলে:",
+    opts:{
+      en:["Traits always stay linked together","Alleles of different genes are inherited independently of each other","Dominant traits mask all recessive traits","Only one trait can be inherited at a time"],
+      hi:["लक्षण हमेशा एक साथ जुड़े रहते हैं","विभिन्न जीन के एलील एक दूसरे से स्वतंत्र रूप से वंशानुगत होते हैं","प्रभावी लक्षण सभी अप्रभावी लक्षणों को छिपाते हैं","एक समय में केवल एक लक्षण वंशानुगत हो सकता है"],
+      bn:["বৈশিষ্ট্যগুলি সবসময় একসাথে যুক্ত থাকে","ভিন্ন জিনের অ্যালিলগুলি একে অপরের থেকে স্বাধীনভাবে বংশগত হয়","প্রভাবশালী বৈশিষ্ট্য সব প্রচ্ছন্ন বৈশিষ্ট্যকে ঢেকে রাখে","একবারে শুধুমাত্র একটি বৈশিষ্ট্য বংশগত হতে পারে"]
+    },
+    ans:1,
+    feedback:{
+      en:"Correct! Law of Independent Assortment: alleles of different genes sort independently during gamete formation, so traits are inherited independently (as shown in dihybrid crosses with 9:3:3:1 ratio).",
+      hi:"सही! स्वतंत्र अपव्यूहन का नियम: विभिन्न जीन के एलील युग्मक बनते समय स्वतंत्र रूप से पृथक होते हैं (द्विसंकर क्रॉस में 9:3:3:1 अनुपात)।",
+      bn:"সঠিক! স্বাধীন বিন্যাস সূত্র: ভিন্ন জিনের অ্যালিলগুলি গ্যামেট গঠনের সময় স্বাধীনভাবে আলাদা হয় (ডাইহাইব্রিড ক্রসে ৯:৩:৩:১ অনুপাত)।"
+    }
+  }
+];
+
+let current=0,score=0,lang='en',answered=false;
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(current>=questions.length){showEnd();return;}
+  const q=questions[current];
+  document.getElementById('qNum').textContent='QUESTION '+(current+1)+' OF 10';
+  document.getElementById('qText').textContent=q[lang]||q.en;
+  const opts=q.opts[lang]||q.opts.en;
+  const grid=document.getElementById('optionsGrid');
+  grid.innerHTML='';
+  opts.forEach((o,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.textContent=o;
+    btn.onclick=()=>answer(i);
+    grid.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('feedback').textContent='';
+  document.getElementById('nextBtn').classList.remove('visible');
+  document.getElementById('progFill').style.width=(current/10*100)+'%';
+  document.getElementById('progLabel').textContent=current+' / 10';
+  document.getElementById('scoreVal').textContent=score;
+  answered=false;
+  document.getElementById('qCard').classList.remove('fadeIn');
+  void document.getElementById('qCard').offsetWidth;
+  document.getElementById('qCard').classList.add('fadeIn');
+}
+
+function answer(idx){
+  if(answered)return;
+  answered=true;
+  const q=questions[current];
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('feedback');
+  if(idx===q.ans){
+    btns[idx].classList.add('correct');
+    score+=10;
+    fb.className='feedback correct show';
+    fb.textContent='✓ '+(q.feedback[lang]||q.feedback.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    fb.className='feedback wrong show';
+    fb.textContent='✗ '+(q.feedback[lang]||q.feedback.en);
+  }
+  document.getElementById('nextBtn').classList.add('visible');
+}
+
+function nextQuestion(){
+  current++;
+  if(current>=questions.length){showEnd();}
+  else{renderQuestion();}
+}
+
+function showEnd(){
+  document.getElementById('qCard').classList.add('hidden');
+  const es=document.getElementById('endScreen');
+  es.classList.remove('hidden');
+  es.classList.remove('fadeIn');void es.offsetWidth;es.classList.add('fadeIn');
+  document.getElementById('finalScore').textContent=score+' / 100';
+  let stars='',msg='';
+  if(score>=90){stars='⭐⭐⭐';msg='Outstanding! You\'re a Genetics & Evolution expert!';}
+  else if(score>=60){stars='⭐⭐';msg='Good work! Review a few more concepts.';}
+  else{stars='⭐';msg='Keep studying — you\'ll master it!';}
+  document.getElementById('stars').textContent=stars;
+  document.getElementById('finalMsg').textContent=msg;
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('progLabel').textContent='10 / 10';
+  document.getElementById('scoreVal').textContent=score;
+}
+
+function restartGame(){
+  current=0;score=0;answered=false;
+  document.getElementById('endScreen').classList.add('hidden');
+  document.getElementById('qCard').classList.remove('hidden');
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>

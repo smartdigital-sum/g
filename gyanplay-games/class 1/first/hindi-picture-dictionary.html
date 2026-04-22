@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hindi Dictionary 📖 — Class 1 Hindi</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans+Devanagari:wght@700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--saffron:#FF6B00;--deep:#4A148C;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans Devanagari','Nunito',sans-serif;background:linear-gradient(160deg,#FFF9C4,#FFECB3,#FFE082,#FFCC02);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* BOOK LINES */
+.book-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:repeating-linear-gradient(180deg,transparent,transparent 38px,rgba(255,193,7,.2) 38px,rgba(255,193,7,.2) 39px);}
+.book-margin{position:fixed;left:0;top:0;bottom:0;width:4px;background:rgba(255,100,0,.3);z-index:0;}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 4px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#4A148C;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#4A148C;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#4A148C;}
+.spill span{color:#FF6B00;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:#FF6B00;box-shadow:0 0 8px #FF6B00;}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* PICTURE CARD */
+.picture-card{
+  position:relative;z-index:20;
+  background:rgba(255,255,255,.88);backdrop-filter:blur(10px);
+  border:4px solid rgba(255,255,255,.95);border-radius:28px;
+  padding:clamp(12px,3vw,20px) clamp(20px,5vw,40px);
+  margin:8px 16px;text-align:center;
+  max-width:600px;width:calc(100% - 32px);
+  box-shadow:0 8px 28px rgba(0,0,0,.08);
+}
+.big-pic{font-size:clamp(4rem,15vw,7rem);animation:picBob 2s ease-in-out infinite;display:block;}
+@keyframes picBob{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.q-text{font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4.5vw,1.7rem);color:#4A148C;margin-top:6px;}
+.q-sub{font-size:clamp(.8rem,3vw,1.05rem);color:#7B1FA2;font-weight:700;margin-top:4px;}
+.hear-btn{background:rgba(255,107,0,.15);border:2px solid rgba(255,107,0,.4);color:#E65100;border-radius:50px;padding:6px 16px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem;cursor:pointer;margin-top:8px;}
+
+/* WORD CHOICES */
+.choices-grid{
+  position:relative;z-index:20;
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:clamp(8px,2.5vw,14px);
+  padding:0 14px;max-width:660px;width:100%;
+  margin:6px 0;
+}
+.word-choice{
+  background:rgba(255,255,255,.82);backdrop-filter:blur(8px);
+  border:3px solid rgba(255,255,255,.9);border-radius:20px;
+  padding:clamp(10px,2.5vw,18px) clamp(10px,2.5vw,16px);
+  text-align:center;cursor:pointer;
+  transition:all .2s;
+  box-shadow:0 5px 0 rgba(0,0,0,.1);
+  position:relative;top:0;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.word-choice:hover{top:-3px;box-shadow:0 8px 0 rgba(0,0,0,.08);}
+.wc-hindi{font-size:clamp(1.4rem,5.5vw,2.2rem);font-weight:900;color:#4A148C;}
+.wc-roman{font-size:clamp(.65rem,2.2vw,.88rem);font-weight:800;color:#7B1FA2;font-family:'Fredoka One',cursive;}
+.wc-english{font-size:clamp(.62rem,2vw,.82rem);font-weight:700;color:#9C27B0;}
+.word-choice.correct{border-color:#43A047;background:rgba(67,160,71,.2);animation:wcPop .5s ease;}
+@keyframes wcPop{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+.word-choice.wrong{border-color:#E53935;background:rgba(229,57,53,.1);animation:wcShake .35s ease;opacity:.35;pointer-events:none;}
+@keyframes wcShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
+
+/* FACT */
+.fact-box{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(74,20,140,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:400px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.85rem,3vw,1.05rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:2;}
+.ov-btn{background:linear-gradient(135deg,#FF6B00,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(255,107,0,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="book-bg"></div>
+<div class="book-margin"></div>
+
+<div class="header">
+  <div class="title">📖 Hindi Dictionary</div>
+  <div class="lvchip" id="lvChip">Words & Pictures</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">📖 Round: <span id="roundVal">1</span>/20</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="picture-card">
+  <span class="big-pic" id="bigPic">🐮</span>
+  <div class="q-text">इस तस्वीर का हिंदी नाम क्या है?</div>
+  <div class="q-sub" id="qSub">What is this called in Hindi?</div>
+  <button class="hear-btn" onclick="hearWord()">🔊 सुनो!</button>
+</div>
+
+<div class="choices-grid" id="choicesGrid"></div>
+
+<script>
+const DICT=[
+  {pic:'🐮',hindi:'गाय',roman:'Gaay',english:'Cow',fact:'गाय = Cow 🐮 — Cows give us milk!'},
+  {pic:'🐘',hindi:'हाथी',roman:'Haathi',english:'Elephant',fact:'हाथी = Elephant 🐘 — Elephants are very big!'},
+  {pic:'🌸',hindi:'फूल',roman:'Phool',english:'Flower',fact:'फूल = Flower 🌸 — Flowers are beautiful!'},
+  {pic:'🏠',hindi:'घर',roman:'Ghar',english:'House',fact:'घर = House 🏠 — We live in a घर!'},
+  {pic:'💧',hindi:'पानी',roman:'Paani',english:'Water',fact:'पानी = Water 💧 — We drink पानी every day!'},
+  {pic:'☀️',hindi:'सूरज',roman:'Suraj',english:'Sun',fact:'सूरज = Sun ☀️ — सूरज gives us light!'},
+  {pic:'🌙',hindi:'चाँद',roman:'Chaand',english:'Moon',fact:'चाँद = Moon 🌙 — चाँद shines at night!'},
+  {pic:'🍎',hindi:'सेब',roman:'Seb',english:'Apple',fact:'सेब = Apple 🍎 — सेब is red and sweet!'},
+  {pic:'🥭',hindi:'आम',roman:'Aam',english:'Mango',fact:'आम = Mango 🥭 — Assam grows many आम!'},
+  {pic:'🐦',hindi:'पक्षी',roman:'Pakshi',english:'Bird',fact:'पक्षी = Bird 🐦 — पक्षी can fly!'},
+  {pic:'🐟',hindi:'मछली',roman:'Machhli',english:'Fish',fact:'मछली = Fish 🐟 — मछली lives in water!'},
+  {pic:'🌳',hindi:'पेड़',roman:'Ped',english:'Tree',fact:'पेड़ = Tree 🌳 — पेड़ gives us oxygen!'},
+  {pic:'📚',hindi:'किताब',roman:'Kitab',english:'Book',fact:'किताब = Book 📚 — We read किताब to learn!'},
+  {pic:'✏️',hindi:'पेंसिल',roman:'Pencil',english:'Pencil',fact:'पेंसिल = Pencil ✏️ — We write with a पेंसिल!'},
+  {pic:'🎒',hindi:'बस्ता',roman:'Basta',english:'School bag',fact:'बस्ता = School bag 🎒 — We carry books in our बस्ता!'},
+  {pic:'🐅',hindi:'बाघ',roman:'Baagh',english:'Tiger',fact:'बाघ = Tiger 🐅 — The बाघ is India\'s national animal!'},
+  {pic:'🦏',hindi:'गैंडा',roman:'Gainda',english:'Rhino',fact:'गैंडा = Rhino 🦏 — Kaziranga in Assam has many गैंडे!'},
+  {pic:'🍵',hindi:'चाय',roman:'Chai',english:'Tea',fact:'चाय = Tea 🍵 — Assam is famous for its चाय!'},
+  {pic:'🌾',hindi:'धान',roman:'Dhaan',english:'Rice (paddy)',fact:'धान = Rice plant 🌾 — Assam grows lots of धान!'},
+  {pic:'🏔️',hindi:'पहाड़',roman:'Pahad',english:'Mountain',fact:'पहाड़ = Mountain 🏔️ — Himalayas are big पहाड़!'},
+];
+
+const TOTAL=20;
+let score=0,round=0,current=null,answered=false,shuffled=[];
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playCorrect(){const c=ac();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*100));}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t,lang='hi-IN'){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.8;u.pitch=1.3;u.lang=lang;window.speechSynthesis.speak(u);}
+function hearWord(){if(current)speak(`${current.hindi}! ${current.hindi} = ${current.english}!`);}
+window.hearWord=hearWord;
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#FF6B00','#FFD700','#4A148C','#43A047','#E53935'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showFact(txt){document.querySelector('.fact-box')?.remove();const el=document.createElement('div');el.className='fact-box';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),3200);}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+  current=shuffled[round%shuffled.length];
+  document.getElementById('bigPic').textContent=current.pic;
+  document.getElementById('qSub').textContent=`What is ${current.english} called in Hindi?`;
+
+  // 4 word choices
+  const others=DICT.filter(d=>d.hindi!==current.hindi).sort(()=>Math.random()-.5).slice(0,3);
+  const all=[current,...others].sort(()=>Math.random()-.5);
+  const grid=document.getElementById('choicesGrid');grid.innerHTML='';
+  const colors=['#E53935','#1E88E5','#43A047','#FB8C00'];
+  all.forEach((w,i)=>{
+    const card=document.createElement('div');card.className='word-choice';
+    card.style.borderColor=colors[i]+'44';
+    card.innerHTML=`<span class="wc-hindi" style="color:${colors[i]};">${w.hindi}</span><span class="wc-roman">${w.roman}</span><span class="wc-english">${w.english}</span>`;
+    card.onclick=()=>checkWord(card,w);
+    grid.appendChild(card);
+  });
+
+  setTimeout(()=>speak(`${current.english} को हिंदी में क्या कहते हैं? ${current.hindi}?`),400);
+}
+
+function checkWord(card,word){
+  if(answered)return;
+  if(word.hindi===current.hindi){
+    answered=true;card.classList.add('correct');
+    playCorrect();spawnConf();showFact(current.fact);
+    score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(`${word.hindi}! शाबाश! ${current.english} को ${current.hindi} कहते हैं!`);
+    round++;makeDots();setTimeout(newRound,2600);
+  } else {
+    card.classList.add('wrong');playWrong();
+    speak(`वह ${word.hindi} है! ${current.english} को ${current.hindi} कहते हैं!`);
+  }
+}
+
+function showCelebration(){
+  playChime();spawnConf();speak('शाबाश! आपने सभी हिंदी शब्द सीख लिए!','hi-IN');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">📖</div>
+    <div class="ov-title">Hindi Champion!</div>
+    <div class="ov-sub">
+      🐮 गाय · 🐘 हाथी · 🌸 फूल · 🏠 घर<br/>
+      💧 पानी · ☀️ सूरज · 🥭 आम · 📚 किताब<br/>
+      🦏 गैंडा · 🍵 चाय · 🌾 धान (Assam!)<br/><br/>
+      Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!
+    </div>
+    <button class="ov-btn" onclick="restart()">Play Again 📖</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{shuffled=[...DICT].sort(()=>Math.random()-.5);window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('हिंदी शब्द सीखो! Learn Hindi words!','hi-IN');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

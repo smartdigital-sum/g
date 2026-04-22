@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motion Master — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F0C29;
+  --dark: #1A1A2E;
+  --gold: #FFB800;
+  --sky: #00AEEF;
+  --green: #00C853;
+  --pink: #FF4081;
+  --purple: #7C3AED;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+body { background: var(--bg); min-height: 100vh; color: #fff; font-family: 'Nunito', sans-serif; display: flex; justify-content: center; align-items: flex-start; padding: 24px 16px 48px; animation: fadeIn .4s ease; }
+.shell { width: 100%; max-width: 520px; }
+.top-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.back-btn { background: rgba(255,255,255,.1); color: #fff; border: none; border-radius: 999px; padding: 8px 20px; font-family: 'Nunito', sans-serif; font-size: .9rem; font-weight: 700; cursor: pointer; transition: background .2s; }
+.back-btn:hover { background: rgba(255,255,255,.18); }
+.badge { background: var(--green); color: #0a1a0a; border-radius: 999px; padding: 6px 16px; font-size: .8rem; font-weight: 800; letter-spacing: .04em; }
+.lang-toggle { display: flex; gap: 6px; margin-left: auto; }
+.lang-btn { background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,255,255,.18); color: #fff; border-radius: 999px; padding: 5px 14px; font-size: .82rem; font-weight: 700; cursor: pointer; transition: all .2s; }
+.lang-btn.active { background: var(--green); color: #0a1a0a; border-color: var(--green); }
+.game-title { font-family: 'Baloo 2', cursive; font-size: 2rem; font-weight: 800; color: var(--green); margin-bottom: 4px; line-height: 1.1; }
+.game-sub { font-size: .9rem; color: rgba(255,255,255,.55); margin-bottom: 24px; }
+.progress-bar-wrap { background: rgba(255,255,255,.08); border-radius: 999px; height: 8px; margin-bottom: 20px; }
+.progress-bar { height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--green), var(--sky)); transition: width .4s ease; }
+.q-counter { font-size: .85rem; color: rgba(255,255,255,.55); margin-bottom: 12px; }
+.question-card { background: var(--dark); border: 1.5px solid rgba(255,255,255,.08); border-radius: 20px; padding: 24px; margin-bottom: 18px; }
+.question-text { font-size: 1.08rem; font-weight: 700; line-height: 1.5; margin-bottom: 20px; }
+.choices { display: flex; flex-direction: column; gap: 10px; }
+.choice-btn { background: rgba(255,255,255,.06); border: 1.5px solid rgba(255,255,255,.12); border-radius: 14px; padding: 13px 18px; color: #fff; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: left; transition: all .18s; }
+.choice-btn:hover:not(:disabled) { background: rgba(0,200,83,.12); border-color: var(--green); }
+.choice-btn.correct { background: rgba(0,200,83,.18); border-color: var(--green); color: var(--green); }
+.choice-btn.wrong { background: rgba(255,64,129,.15); border-color: var(--pink); color: var(--pink); }
+.choice-btn:disabled { cursor: default; }
+.feedback { margin-top: 14px; padding: 12px 16px; border-radius: 12px; font-weight: 700; font-size: .95rem; display: none; }
+.feedback.correct { background: rgba(0,200,83,.15); color: var(--green); border: 1px solid rgba(0,200,83,.3); }
+.feedback.wrong { background: rgba(255,64,129,.12); color: var(--pink); border: 1px solid rgba(255,64,129,.28); }
+.next-btn { background: var(--green); color: #0a1a0a; border: none; border-radius: 999px; padding: 13px 32px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; margin-top: 16px; display: none; transition: transform .15s; }
+.next-btn:hover { transform: scale(1.04); }
+.result-card { background: var(--dark); border: 1.5px solid rgba(255,255,255,.1); border-radius: 24px; padding: 36px 28px; text-align: center; display: none; }
+.result-title { font-family: 'Baloo 2', cursive; font-size: 2rem; font-weight: 800; color: var(--green); margin-bottom: 8px; }
+.result-score { font-size: 3.5rem; font-weight: 800; color: #fff; margin: 12px 0; }
+.result-stars { font-size: 2.8rem; margin: 10px 0 20px; }
+.result-msg { font-size: 1rem; color: rgba(255,255,255,.7); margin-bottom: 24px; }
+.restart-btn { background: var(--purple); color: #fff; border: none; border-radius: 999px; padding: 14px 36px; font-family: 'Nunito', sans-serif; font-size: 1.05rem; font-weight: 800; cursor: pointer; transition: transform .15s; }
+.restart-btn:hover { transform: scale(1.05); }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Science · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('hi')">हि</button>
+      <button class="lang-btn" onclick="setLang('as')">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">Motion Master</span>
+    <span data-lang="hi" style="display:none">गति मास्टर</span>
+    <span data-lang="as" style="display:none">গতি মাষ্টাৰ</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — Motion</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — गति</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — গতি</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">आगे →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Mission Complete!</span>
+      <span data-lang="hi" style="display:none">मिशन पूरा!</span>
+      <span data-lang="as" style="display:none">মিছন সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore">0/10</div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">Play Again 🔄</span>
+      <span data-lang="hi" style="display:none">फिर खेलें 🔄</span>
+      <span data-lang="as" style="display:none">পুনৰ খেলক 🔄</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  { en: "Speed = ___", hi: "चाल = ___", as: "বেগ (গতি) = ___", choices: { en: ["Distance × Time", "Distance / Time", "Time / Distance"], hi: ["दूरी × समय", "दूरी / समय", "समय / दूरी"], as: ["দূৰত্ব × সময়", "দূৰত্ব / সময়", "সময় / দূৰত্ব"] }, answer: 1 },
+  { en: "The SI unit of speed is ___", hi: "चाल की SI इकाई ___ है", as: "বেগৰ SI একক হ'ল ___", choices: { en: ["km/h", "m/s", "m/s²"], hi: ["km/h", "m/s", "m/s²"], as: ["km/h", "m/s", "m/s²"] }, answer: 1 },
+  { en: "A body moving in a circle has ___", hi: "वृत्ताकार गति करने वाले पिंड की ___", as: "বৃত্তত গতি কৰা বস্তুৰ ___", choices: { en: ["Uniform velocity", "Uniform speed but variable velocity", "Zero speed"], hi: ["समान वेग", "समान चाल परंतु परिवर्तनशील वेग", "शून्य चाल"], as: ["সমান বেগ", "সমান গতি কিন্তু পৰিবৰ্তনশীল বেগ", "শূন্য গতি"] }, answer: 1 },
+  { en: "Acceleration = ___", hi: "त्वरण = ___", as: "ত্বৰণ = ___", choices: { en: ["Speed × Time", "Change in velocity / Time", "Distance / Speed"], hi: ["चाल × समय", "वेग में परिवर्तन / समय", "दूरी / चाल"], as: ["বেগ × সময়", "বেগৰ পৰিৱৰ্তন / সময়", "দূৰত্ব / বেগ"] }, answer: 1 },
+  { en: "If a body has zero acceleration, it moves ___", hi: "यदि किसी पिंड का त्वरण शून्य है, तो वह ___ गति करता है", as: "যদি কোনো বস্তুৰ ত্বৰণ শূন্য, তেন্তে ই ___ গতি কৰে", choices: { en: ["Faster and faster", "At constant velocity", "Slower and slower"], hi: ["तेज और तेज", "स्थिर वेग से", "धीमे और धीमे"], as: ["ক্ৰমাগত দ্ৰুততৰ", "স্থিৰ বেগত", "ক্ৰমাগত ধীৰতৰ"] }, answer: 1 },
+  { en: "The slope of a distance-time graph gives ___", hi: "दूरी-समय ग्राफ का ढाल ___ दर्शाता है", as: "দূৰত্ব-সময় গ্ৰাফৰ ঢাল ___ দিয়ে", choices: { en: ["Acceleration", "Speed", "Distance"], hi: ["त्वरण", "चाल", "दूरी"], as: ["ত্বৰণ", "গতি", "দূৰত্ব"] }, answer: 1 },
+  { en: "A car starts from rest and reaches 20 m/s in 5 s. Acceleration = ?", hi: "एक कार विराम से चलकर 5 सेकंड में 20 m/s की गति प्राप्त करती है। त्वरण = ?", as: "এখন গাড়ী বিশ্ৰামৰ পৰা চলি 5 ছেকেণ্ডত 20 m/s পায়। ত্বৰণ = ?", choices: { en: ["2 m/s²", "4 m/s²", "5 m/s²"], hi: ["2 m/s²", "4 m/s²", "5 m/s²"], as: ["2 m/s²", "4 m/s²", "5 m/s²"] }, answer: 1 },
+  { en: "Equations of motion were given by ___", hi: "गति के समीकरण ___ ने दिए", as: "গতিৰ সমীকৰণ ___ এ দিছিল", choices: { en: ["Einstein", "Newton", "Galileo"], hi: ["आइंस्टीन", "न्यूटन", "गैलीलियो"], as: ["আইনষ্টাইন", "নিউটন", "গেলিলিঅ"] }, answer: 1 },
+  { en: "A body thrown upward has acceleration ___", hi: "ऊपर फेंका गया पिंड ___ दिशा में त्वरण रखता है", as: "ওপৰলৈ দলিওৱা বস্তুৰ ত্বৰণ ___", choices: { en: ["Upward", "Downward (due to gravity)", "Zero"], hi: ["ऊपर की ओर", "नीचे की ओर (गुरुत्व के कारण)", "शून्य"], as: ["ওপৰলৈ", "তললৈ (মাধ্যাকৰ্ষণৰ বাবে)", "শূন্য"] }, answer: 1 },
+  { en: "Uniform circular motion has ___", hi: "एकसमान वृत्तीय गति में ___", as: "সমান বৃত্তাকাৰ গতিত ___", choices: { en: ["Changing speed", "Constant speed with changing direction", "No acceleration"], hi: ["परिवर्तनशील चाल", "स्थिर चाल और बदलती दिशा", "त्वरण शून्य"], as: ["পৰিৱৰ্তনশীল গতি", "স্থিৰ গতি আৰু সলনি হোৱা দিশ", "ত্বৰণ শূন্য"] }, answer: 1 }
+];
+
+let currentQ = 0, score = 0, lang = 'en', answered = false;
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach((b, i) => b.classList.toggle('active', ['en','hi','as'][i] === l));
+  document.querySelectorAll('[data-lang]').forEach(el => el.style.display = el.getAttribute('data-lang') === l ? '' : 'none');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (currentQ >= questions.length) { showResult(); return; }
+  const q = questions[currentQ];
+  document.getElementById('qCounter').textContent = `Question ${currentQ + 1} of ${questions.length}`;
+  document.getElementById('progressBar').style.width = `${(currentQ / questions.length) * 100}%`;
+  document.getElementById('questionText').textContent = q[lang] || q.en;
+  const ch = q.choices[lang] || q.choices.en;
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  ch.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = c;
+    btn.onclick = () => handleAnswer(i);
+    choicesEl.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').style.display = 'none';
+  answered = false;
+}
+
+function handleAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const ch = q.choices[lang] || q.choices.en;
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.answer) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.textContent = '✅ Correct!';
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.answer].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.textContent = `❌ Wrong — correct answer: ${ch[q.answer]}`;
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() { currentQ++; renderQuestion(); }
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  document.getElementById('resultScore').textContent = `${score}/10`;
+  const pct = score / 10;
+  let stars = '', msg = '';
+  if (pct >= .9) { stars = '⭐⭐⭐'; msg = 'Superb! You are a Motion Master! 🚀'; }
+  else if (pct >= .7) { stars = '⭐⭐'; msg = 'Great understanding of motion concepts!'; }
+  else if (pct >= .4) { stars = '⭐'; msg = 'Good effort! Revise the equations of motion!'; }
+  else { stars = ''; msg = 'Keep going — physics gets exciting!'; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg;
+}
+
+function restartGame() {
+  currentQ = 0; score = 0; answered = false;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

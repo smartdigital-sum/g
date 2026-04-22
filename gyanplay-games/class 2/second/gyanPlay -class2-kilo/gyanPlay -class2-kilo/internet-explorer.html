@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Internet Explorer Jr. - GyanPlay Class 2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0984e3, #74b9ff);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 { color: #74b9ff; font-size: 2rem; }
+        
+        .score-board { display: flex; justify-content: center; gap: 30px; margin-top: 10px; }
+        
+        .score { background: #e94560; color: white; padding: 10px 20px; border-radius: 10px; font-size: 1.2rem; }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text { color: white; font-size: 1.3rem; }
+        
+        .story-box {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .story-title {
+            color: #2d3436;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .story-text {
+            color: #636e72;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .choices-area {
+            background: linear-gradient(180deg, #87CEEB 0%, #0984e3 100%);
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 300px;
+        }
+        
+        .choices-title {
+            text-align: center;
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .choices-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .choice-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 150px;
+            border: 3px solid transparent;
+        }
+        
+        .choice-card:hover { transform: scale(1.1); border-color: #74b9ff; }
+        
+        .choice-card.correct { border-color: #00b894; background: #55efc4; }
+        .choice-card.wrong { border-color: #e94560; background: #ff7675; }
+        
+        .choice-icon { font-size: 3rem; display: block; margin-bottom: 10px; }
+        
+        .choice-text {
+            color: #2d3436;
+            font-weight: bold;
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover { transform: scale(1.05); }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        
+        .feedback-content.correct { border: 5px solid #00b894; }
+        .feedback-content.wrong { border: 5px solid #e94560; }
+        
+        .feedback-icon { font-size: 5rem; }
+        .feedback-text { font-size: 1.8rem; margin: 20px 0; color: #2d3436; }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-title { color: white; font-size: 1.1rem; margin-bottom: 10px; }
+        .info-text { color: #dfe6e9; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch3-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🌐 Internet Explorer Jr.</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Story: <span id="storyNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Learn about the internet and safe browsing!</p>
+        </div>
+        
+        <div class="story-box">
+            <div class="story-title">📖 Anu's Story</div>
+            <div class="story-text" id="storyText">
+                Anu wants to send a message to her grandmother who lives far away. She needs to use the internet. But she needs to be careful!
+            </div>
+        </div>
+        
+        <div class="choices-area">
+            <div class="choices-title">❓ What should Anu do?</div>
+            <div class="choices-grid" id="choicesGrid">
+                <!-- Choices will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <div class="info-title">💻 Internet Safety:</div>
+            <div class="info-text">🌐 Internet - A network that connects computers worldwide</div>
+            <div class="info-text">📧 Email - Send messages to others</div>
+            <div class="info-text">⚠️ Never share personal information with strangers</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextStory()">Next Story →</button>
+        </div>
+    </div>
+    
+    <script>
+        const stories = [
+            {
+                story: "Anu wants to send a message to her grandmother. What should she use?",
+                choices: [
+                    { icon: '📧', text: 'Email', correct: true },
+                    { icon: '📞', text: 'Phone call', correct: false },
+                    { icon: '📝', text: 'Letter', correct: false },
+                    { icon: '📦', text: 'Parcel', correct: false }
+                ]
+            },
+            {
+                story: "A stranger online asks for Anu's home address. What should she do?",
+                choices: [
+                    { icon: '✅', text: 'Say No', correct: true },
+                    { icon: '❓', text: 'Ask parents first', correct: true },
+                    { icon: '📍', text: 'Share address', correct: false },
+                    { icon: '🤫', text: 'Keep it secret', correct: false }
+                ]
+            },
+            {
+                story: "Anu sees a pop-up saying 'You won a prize! Click here!'. What should she do?",
+                choices: [
+                    { icon: '🚫', text: 'Ignore it', correct: true },
+                    { icon: '🎁', text: 'Click to claim', correct: false },
+                    { icon: '📱', text: 'Share with friends', correct: false },
+                    { icon: '💰', text: 'Give phone number', correct: false }
+                ]
+            },
+            {
+                story: "What is the internet used for?",
+                choices: [
+                    { icon: '🌐', text: 'Connect people', correct: true },
+                    { icon: '🎮', text: 'Play games', correct: true },
+                    { icon: '📚', text: 'Learn new things', correct: true },
+                    { icon: '⚠️', text: 'Meet strangers', correct: false }
+                ]
+            },
+            {
+                story: "Anu needs help with the computer. Who should she ask?",
+                choices: [
+                    { icon: '👨‍👩‍👧', text: 'Parents/Teachers', correct: true },
+                    { icon: '🤖', text: 'Robot', correct: false },
+                    { icon: '👤', text: 'Online stranger', correct: false },
+                    { icon: '🎲', text: 'Random person', correct: false }
+                ]
+            }
+        ];
+        
+        let currentIndex = 0;
+        let score = 0;
+        
+        function loadStory() {
+            const story = stories[currentIndex];
+            
+            document.getElementById('storyText').textContent = story.story;
+            document.getElementById('storyNum').textContent = currentIndex + 1;
+            
+            const grid = document.getElementById('choicesGrid');
+            grid.innerHTML = '';
+            
+            const shuffled = [...story.choices].sort(() => Math.random() - 0.5);
+            
+            shuffled.forEach(choice => {
+                const div = document.createElement('div');
+                div.className = 'choice-card';
+                div.innerHTML = `
+                    <span class="choice-icon">${choice.icon}</span>
+                    <span class="choice-text">${choice.text}</span>
+                `;
+                div.onclick = () => selectChoice(div, choice);
+                grid.appendChild(div);
+            });
+        }
+        
+        function selectChoice(div, choice) {
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            // Clear previous selections
+            document.querySelectorAll('.choice-card').forEach(c => {
+                c.classList.remove('correct', 'wrong');
+            });
+            
+            if (choice.correct) {
+                div.classList.add('correct');
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Correct! Good internet safety!';
+                score += 10;
+                document.getElementById('score').textContent = score;
+            } else {
+                div.classList.add('wrong');
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = 'Think about internet safety!';
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextStory() {
+            document.getElementById('feedback').classList.remove('show');
+            currentIndex = (currentIndex + 1) % stories.length;
+            loadStory();
+        }
+        
+        loadStory();
+    </script>
+</body>
+</html>

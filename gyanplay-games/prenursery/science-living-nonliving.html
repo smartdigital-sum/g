@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Living or Not? 🌿</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Baloo 2',cursive;
+    min-height:100vh;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    user-select:none;
+    background:linear-gradient(160deg,#2d6a4f,#40916c,#74c69d);
+  }
+  .sun{position:fixed;top:40px;right:50px;font-size:clamp(3rem,10vw,5rem);z-index:1;animation:sunSpin 15s linear infinite;}
+  @keyframes sunSpin{to{transform:rotate(360deg);}}
+  .grass{position:fixed;bottom:0;left:0;right:0;height:50px;background:linear-gradient(180deg,#52b788,#2d6a4f);z-index:1;}
+
+  .header{position:relative;z-index:10;text-align:center;padding:18px 20px 8px;width:100%;}
+  .title{font-size:clamp(1.4rem,5vw,2.2rem);color:#fff;text-shadow:0 2px 8px rgba(0,50,20,.3);}
+  .instruction{
+    background:rgba(255,255,255,.2);backdrop-filter:blur(8px);
+    border:2px solid rgba(255,255,255,.4);border-radius:50px;
+    padding:10px 24px;font-size:clamp(1rem,4vw,1.4rem);color:#fff;
+    margin-top:10px;display:inline-block;font-weight:700;
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.03);}}
+
+  .score-bar{position:relative;z-index:10;display:flex;gap:16px;align-items:center;margin-top:8px;}
+  .score-box{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.35);border-radius:20px;padding:6px 18px;color:#fff;font-size:1rem;}
+  .score-box span{color:#FFD700;font-size:1.2rem;}
+
+  .progress{position:relative;z-index:10;display:flex;gap:8px;margin-top:8px;}
+  .dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.25);transition:all .3s;}
+  .dot.done{background:#FFD700;box-shadow:0 0 8px #FFD700;}
+  .dot.active{background:#fff;transform:scale(1.3);}
+
+  /* the item card */
+  .item-card{
+    position:relative;z-index:10;
+    background:rgba(255,255,255,.2);backdrop-filter:blur(10px);
+    border:3px solid rgba(255,255,255,.4);border-radius:28px;
+    padding:clamp(16px,4vw,28px) clamp(24px,6vw,48px);
+    margin:12px 20px;text-align:center;
+    box-shadow:0 8px 32px rgba(0,0,0,.2);
+    width:90%;max-width:400px;
+  }
+  .item-emoji{font-size:clamp(4.5rem,18vw,8rem);line-height:1;animation:itemBob 2s ease-in-out infinite;display:block;}
+  @keyframes itemBob{0%,100%{transform:scale(1);}50%{transform:scale(1.1) translateY(-5px);}}
+  .item-name{color:#fff;font-size:clamp(1.2rem,5vw,2rem);font-weight:800;margin-top:8px;text-shadow:0 2px 6px rgba(0,0,0,.2);}
+  .item-hint{color:rgba(255,255,255,.65);font-size:clamp(.8rem,3vw,1rem);font-weight:700;margin-top:4px;}
+
+  /* sort buttons */
+  .sort-btns{
+    position:relative;z-index:10;
+    display:flex;gap:clamp(12px,4vw,24px);
+    padding:0 20px;
+  }
+  .sort-btn{
+    flex:1;max-width:200px;
+    border-radius:24px;border:none;cursor:pointer;
+    padding:clamp(16px,4vw,24px);
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    transition:all .2s;
+    box-shadow:0 6px 20px rgba(0,0,0,.2);
+  }
+  .sort-btn:hover{transform:translateY(-4px) scale(1.04);}
+  .sort-btn:active{transform:scale(.96);}
+  .sort-btn.living{background:linear-gradient(135deg,#00C853,#69F0AE);}
+  .sort-btn.nonliving{background:linear-gradient(135deg,#455A64,#90A4AE);}
+  .sort-btn .s-emoji{font-size:clamp(2.5rem,10vw,4rem);}
+  .sort-btn .s-label{color:#fff;font-size:clamp(1rem,4vw,1.4rem);font-weight:800;text-shadow:0 2px 6px rgba(0,0,0,.3);}
+  .sort-btn .s-sub{color:rgba(255,255,255,.75);font-size:clamp(.7rem,2.5vw,.9rem);font-weight:700;}
+  .sort-btn.correct{animation:correctPop .5s ease;}
+  .sort-btn.wrong{animation:wrongShake .4s ease;}
+  @keyframes correctPop{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1.04);}}
+  @keyframes wrongShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-12px);}75%{transform:translateX(12px);}}
+
+  /* fact popup */
+  .fact-popup{
+    position:fixed;bottom:100px;left:50%;transform:translateX(-50%);
+    z-index:150;pointer-events:none;
+    background:rgba(0,0,0,.85);color:#FFD700;
+    font-size:clamp(.9rem,3.5vw,1.2rem);font-weight:700;
+    padding:12px 24px;border-radius:20px;
+    width:90%;max-width:400px;text-align:center;
+    animation:factIn .4s ease both,factOut .3s 2.2s ease forwards;
+    border:2px solid rgba(255,215,0,.3);
+  }
+  @keyframes factIn{from{transform:translateX(-50%) translateY(20px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+  @keyframes factOut{to{transform:translateX(-50%) translateY(20px);opacity:0;}}
+
+  .celebration{
+    position:fixed;inset:0;z-index:200;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(0,50,20,.8);backdrop-filter:blur(10px);animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .celeb-emoji{font-size:clamp(4rem,15vw,7rem);animation:celebBounce .5s ease infinite alternate;}
+  @keyframes celebBounce{from{transform:scale(1);}to{transform:scale(1.15);}}
+  .celebration h2{color:#FFD700;font-size:clamp(2rem,8vw,3.5rem);text-align:center;margin:16px 0 8px;}
+  .celebration p{color:#fff;font-size:clamp(1rem,4vw,1.4rem);margin-bottom:24px;text-align:center;padding:0 20px;}
+  .next-btn{
+    background:linear-gradient(135deg,#FF6B00,#FFB800);color:#fff;border:none;border-radius:50px;
+    padding:14px 40px;font-family:'Baloo 2',cursive;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;
+    cursor:pointer;box-shadow:0 6px 24px rgba(255,107,0,.4);transition:transform .2s;
+  }
+  .next-btn:hover{transform:scale(1.05);}
+  .confetti-piece{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.2s ease-in forwards;}
+  @keyframes confettiFall{0%{opacity:1;}100%{transform:translateY(300px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="sun">☀️</div>
+<div class="grass"></div>
+
+<div class="header">
+  <div class="title">🌿 Living or Not Living?</div>
+  <div class="instruction">Is it living or not living?</div>
+</div>
+<div class="score-bar">
+  <div class="score-box">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="score-box">🎯 Round: <span id="roundVal">1</span>/12</div>
+</div>
+<div class="progress" id="progress"></div>
+
+<div class="item-card">
+  <span class="item-emoji" id="itemEmoji">🌳</span>
+  <div class="item-name" id="itemName">Tree</div>
+  <div class="item-hint" id="itemHint">Does it breathe? Does it grow?</div>
+</div>
+
+<div class="sort-btns">
+  <button class="sort-btn living" onclick="checkAnswer(true)">
+    <span class="s-emoji">🌱</span>
+    <span class="s-label">LIVING</span>
+    <span class="s-sub">It grows & breathes</span>
+  </button>
+  <button class="sort-btn nonliving" onclick="checkAnswer(false)">
+    <span class="s-emoji">🪨</span>
+    <span class="s-label">NOT LIVING</span>
+    <span class="s-sub">It doesn't grow</span>
+  </button>
+</div>
+
+<script>
+const ITEMS=[
+  {emoji:'🌳',name:'Tree',living:true,hint:'Does it grow?',fact:'Trees are living! They grow and make air for us! 🌿'},
+  {emoji:'🐕',name:'Dog',living:true,hint:'Does it breathe?',fact:'Dogs are living! They breathe, eat and play! 🐾'},
+  {emoji:'🪨',name:'Rock',living:false,hint:'Does it breathe?',fact:'Rocks are NOT living! They don\'t breathe or grow! 🪨'},
+  {emoji:'💧',name:'Water',living:false,hint:'Does it grow?',fact:'Water is NOT living! It has no heartbeat! 💧'},
+  {emoji:'🌸',name:'Flower',living:true,hint:'Does it grow?',fact:'Flowers are living! They grow from seeds! 🌸'},
+  {emoji:'🪑',name:'Chair',living:false,hint:'Does it breathe?',fact:'A chair is NOT living! It\'s made of wood or plastic! 🪑'},
+  {emoji:'🐟',name:'Fish',living:true,hint:'Does it breathe?',fact:'Fish are living! They breathe underwater! 🐠'},
+  {emoji:'☁️',name:'Cloud',living:false,hint:'Does it eat?',fact:'Clouds are NOT living! They are just water vapour! ☁️'},
+  {emoji:'🦋',name:'Butterfly',living:true,hint:'Does it eat?',fact:'Butterflies are living! They eat, grow and fly! 🦋'},
+  {emoji:'📱',name:'Phone',living:false,hint:'Does it grow?',fact:'Phones are NOT living! Humans made them! 📱'},
+  {emoji:'🍄',name:'Mushroom',living:true,hint:'Does it grow?',fact:'Mushrooms are living! They grow in forests! 🍄'},
+  {emoji:'🚗',name:'Car',living:false,hint:'Does it breathe?',fact:'Cars are NOT living! They need petrol to go! 🚗'},
+  {emoji:'🐌',name:'Snail',living:true,hint:'Does it move?',fact:'Snails are living! They move and eat leaves! 🐌'},
+  {emoji:'🏠',name:'House',living:false,hint:'Does it breathe?',fact:'Houses are NOT living! They are buildings! 🏠'},
+  {emoji:'🌵',name:'Cactus',living:true,hint:'Does it grow?',fact:'Cactus is living! It grows in deserts! 🌵'},
+];
+
+let score=0,round=0,answered=false,shuffled=[];
+const TOTAL=12;
+let audioCtx;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function playCorrect(){
+  const ctx=getAudio();
+  [523,659,784,1047].forEach((f,i)=>{
+    setTimeout(()=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.4);
+      o.start();o.stop(ctx.currentTime+.4);
+    },i*100);
+  });
+}
+function playWrong(){
+  const ctx=getAudio();
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);
+  o.frequency.value=220;o.type='sine';
+  g.gain.setValueAtTime(.2,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
+  o.start();o.stop(ctx.currentTime+.3);
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.85;u.pitch=1.3;
+  window.speechSynthesis.speak(u);
+}
+
+function showFact(text){
+  const el=document.createElement('div');
+  el.className='fact-popup';
+  el.textContent=text;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),2700);
+}
+
+function makeDots(){
+  const p=document.getElementById('progress');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+
+function spawnConfetti(){
+  const cols=['#00C853','#FFD700','#2ed573','#69F0AE','#FF6B00'];
+  for(let i=0;i<20;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`left:${Math.random()*100}%;top:20%;background:${cols[i%cols.length]};animation-duration:${.8+Math.random()*.6}s;`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1400);
+  }
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  const item=shuffled[round%shuffled.length];
+  document.getElementById('itemEmoji').textContent=item.emoji;
+  document.getElementById('itemName').textContent=item.name;
+  document.getElementById('itemHint').textContent=item.hint;
+
+  // reset buttons
+  document.querySelectorAll('.sort-btn').forEach(b=>{b.classList.remove('correct','wrong');});
+  setTimeout(()=>speak(`Is a ${item.name} living or not living?`),300);
+}
+
+function checkAnswer(isLiving){
+  if(answered)return;
+  answered=true;
+  const item=shuffled[round%shuffled.length];
+  const btn=document.querySelector(`.sort-btn.${isLiving?'living':'nonliving'}`);
+
+  if(isLiving===item.living){
+    btn.classList.add('correct');
+    playCorrect();
+    spawnConfetti();
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    showFact(item.fact);
+    speak(item.fact);
+    round++;
+    makeDots();
+    setTimeout(newRound,2500);
+  } else {
+    btn.classList.add('wrong');
+    playWrong();
+    speak(`Oops! Think again! Is a ${item.name} living?`);
+    setTimeout(()=>{btn.classList.remove('wrong');answered=false;},800);
+  }
+}
+window.checkAnswer=checkAnswer;
+
+function showCelebration(){
+  speak(`Amazing! You know what is living and what is not! Great scientist!`);
+  const ov=document.createElement('div');
+  ov.className='celebration';
+  ov.innerHTML=`
+    <div class="celeb-emoji">🌿</div>
+    <h2>Nature Scientist!</h2>
+    <p>You know living vs non-living!<br/>🌳 Plants 🐕 Animals = LIVING<br/>🪨 Rocks 🪑 Chair = NOT LIVING<br/>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span></p>
+    <button class="next-btn" onclick="restartGame()">Play Again 🌿</button>
+  `;
+  document.body.appendChild(ov);
+}
+
+function restartGame(){
+  document.querySelector('.celebration')?.remove();
+  score=0;round=0;
+  shuffled=[...ITEMS].sort(()=>Math.random()-.5);
+  document.getElementById('scoreVal').textContent=0;
+  newRound();
+}
+
+window.addEventListener('load',()=>{
+  shuffled=[...ITEMS].sort(()=>Math.random()-.5);
+  window.speechSynthesis.getVoices();
+  makeDots();
+  setTimeout(()=>{
+    speak('Is it living or not living? Let\'s find out!');
+    setTimeout(newRound,1200);
+  },500);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Fraction Faceoff — GyanPlay Class 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#180A28,#0F0820);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 40px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.h-left{display:flex;flex-direction:column;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.game-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--dim);}
+.subject-tag{font-size:0.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:1.3rem;opacity:.25;transition:opacity .3s,filter .3s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.wow{background:linear-gradient(135deg,rgba(199,125,255,.15),rgba(199,125,255,.04));
+  border:1px solid rgba(199,125,255,.3);border-radius:16px;padding:16px;margin-bottom:18px;}
+.wow-emoji{font-size:2rem;margin-bottom:6px;}
+.wow p{font-size:0.88rem;line-height:1.55;}
+.wow p span{color:var(--gold);font-weight:700;}
+.wow-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--dim);margin-top:6px;}
+.game-area{background:var(--card);border-radius:20px;padding:20px;margin-bottom:16px;
+  border:1px solid rgba(199,125,255,.15);}
+.q-instruction{font-size:.82rem;color:var(--dim);text-align:center;margin-bottom:14px;}
+.q-instruction .as{font-family:'Noto Sans Devanagari',sans-serif;display:block;font-size:.75rem;}
+
+/* Pizza visuals */
+.pizzas{display:flex;justify-content:center;align-items:center;gap:16px;margin-bottom:16px;}
+.pizza-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.pizza-svg{width:90px;height:90px;}
+.pizza-label{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--purple);}
+.pizza-sub{font-size:.65rem;color:var(--dim);}
+
+/* Balance scale */
+.scale-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:20px;}
+.scale-beam{position:relative;width:200px;height:8px;background:rgba(255,255,255,.15);
+  border-radius:4px;transition:transform .5s ease;}
+.scale-pivot{width:12px;height:40px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto;}
+.scale-base{width:60px;height:8px;background:rgba(255,255,255,.15);border-radius:4px;margin:0 auto;}
+.pans{display:flex;justify-content:space-between;width:200px;}
+.pan{width:70px;height:12px;background:rgba(255,255,255,.1);border-radius:99px;
+  border:1px solid rgba(255,255,255,.15);position:relative;top:0;transition:top .5s ease;}
+.pan-frac{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);
+  text-align:center;margin-top:4px;}
+
+/* Answer options */
+.ans-row{display:flex;gap:10px;justify-content:center;margin-bottom:14px;}
+.ans-btn{flex:1;max-width:120px;padding:14px 10px;background:rgba(199,125,255,.08);
+  border:2px solid rgba(199,125,255,.2);border-radius:14px;font-family:'Baloo 2',sans-serif;
+  font-size:1rem;font-weight:800;color:var(--text);text-align:center;cursor:pointer;
+  touch-action:manipulation;transition:background .15s,border-color .15s,transform .1s;}
+.ans-btn:active{transform:scale(.96);}
+.ans-btn.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal);}
+.ans-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral);}
+.ans-btn.disabled{pointer-events:none;}
+
+.feedback{text-align:center;font-size:.88rem;min-height:1.2em;font-weight:600;}
+.feedback.ok{color:var(--teal);}
+.feedback.err{color:var(--coral);}
+.progress-wrap{margin-bottom:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);margin-bottom:5px;}
+.prog-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--purple);border-radius:99px;transition:width .4s;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;
+  justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-card{background:var(--card);border:1px solid rgba(199,125,255,.3);border-radius:22px;
+  padding:28px 24px;text-align:center;max-width:320px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);}to{transform:scale(1) translateY(0);}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px;}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.ov-fact{font-size:.83rem;line-height:1.5;margin-bottom:12px;}
+.ov-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+.ov-btn{padding:12px 28px;background:var(--gold);color:#0F0820;border:none;border-radius:12px;
+  font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:200;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen"><div style="font-size:2.5rem">➗</div><p>Loading… / লোড হৈছে…</p></div>
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="h-left">
+      <div class="game-title">Fraction Faceoff</div>
+      <div class="game-title-as">ভগ্নাংশৰ প্ৰতিযোগিতা</div>
+      <div class="subject-tag">Maths · শ্ৰেণী ৪</div>
+    </div>
+    <div class="stars" id="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+      <span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+  <div class="wow">
+    <div class="wow-emoji">🍕</div>
+    <p>One pizza is cut into <span>3 slices</span>, another into <span>8 slices</span>. Which piece is BIGGER? Your brain will surprise you — the answer seems backwards!</p>
+    <div class="wow-as">এটা পিৎজা ৩ ভাগ হ'লে আৰু আনটো ৮ ভাগ হ'লে, কোনটো টুকুৰা ডাঙৰ? উত্তৰটো আচৰিত!</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-label"><span>Round <span id="qNum">1</span>/7</span><span style="font-family:'Noto Sans Devanagari',sans-serif;">ৰাউণ্ড <span id="qNumAs">১</span>/৭</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="game-area">
+    <div class="q-instruction">Which fraction is LARGER?<span class="as">কোনটো ভগ্নাংশ ডাঙৰ?</span></div>
+    <!-- Pizza visuals -->
+    <div class="pizzas">
+      <div class="pizza-wrap">
+        <svg class="pizza-svg" id="pizza0" viewBox="0 0 100 100"></svg>
+        <div class="pizza-label" id="frac0">1/3</div>
+        <div class="pizza-sub">Fraction A</div>
+      </div>
+      <div style="font-family:'Baloo 2',sans-serif;font-size:1.5rem;font-weight:800;color:var(--dim);">vs</div>
+      <div class="pizza-wrap">
+        <svg class="pizza-svg" id="pizza1" viewBox="0 0 100 100"></svg>
+        <div class="pizza-label" id="frac1">1/8</div>
+        <div class="pizza-sub">Fraction B</div>
+      </div>
+    </div>
+    <!-- Scale -->
+    <div class="scale-wrap">
+      <div class="pans"><div class="pan" id="panL"></div><div class="pan" id="panR"></div></div>
+      <div class="scale-beam" id="scaleBeam"></div>
+      <div class="scale-pivot"></div>
+      <div class="scale-base"></div>
+    </div>
+    <!-- Answer buttons -->
+    <div class="ans-row">
+      <div class="ans-btn" id="btnA" onclick="answer('A')">A is larger / A ডাঙৰ</div>
+      <div class="ans-btn" id="btnEq" onclick="answer('eq')">Equal / সমান</div>
+      <div class="ans-btn" id="btnB" onclick="answer('B')">B is larger / B ডাঙৰ</div>
+    </div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <div class="ov-as" id="ovAs"></div>
+    <button class="ov-btn" id="ovBtn" onclick="nextRound()">Next →</button>
+  </div>
+</div>
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",
+  projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",
+  messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let currentUser=null;
+auth.onAuthStateChanged(u=>{
+  if(!u){window.location.href='/login.html';return;}
+  currentUser=u;
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initGame();
+});
+
+// {n1,d1, n2,d2, answer:'A'|'B'|'eq'}
+const ROUNDS=[
+  {n1:1,d1:3,n2:1,d2:8,ans:'A',fact:"1/3 > 1/8 because fewer slices = bigger slice. Same pizza, fewer cuts = more per slice!",factAs:"কম ভাগে বেছি ডাঙৰ টুকুৰা দিয়ে। এয়াই ভগ্নাংশৰ আচৰিত কথা!"},
+  {n1:3,d1:4,n2:2,d2:4,ans:'A',fact:"3/4 > 2/4. Same denominator — bigger numerator wins!",factAs:"একে হৰ হ'লে বড় লব জয়ী হয়!"},
+  {n1:1,d1:2,n2:4,d2:8,ans:'eq',fact:"1/2 = 4/8! These are equivalent fractions — different looks, same value!",factAs:"১/২ = ৪/৮! সমতুল্য ভগ্নাংশ — দেখাত বেলেগ কিন্তু একে মান!"},
+  {n1:2,d1:5,n2:3,d2:10,ans:'eq',fact:"2/5 = 4/10 = 3/... wait, 2/5 = 4/10 ≠ 3/10. Actually 2/5 > 3/10!",factAs:"২/৫ আৰু ৩/১০ তুলনা কৰাৰ সময়ত সাৱধান!"},
+  {n1:3,d1:5,n2:5,d2:8,ans:'B',fact:"3/5 = 0.6 and 5/8 = 0.625 — so 5/8 is just a little bigger! Decimals help compare!",factAs:"৩/৫ = ০.৬ আৰু ৫/৮ = ০.৬২৫ — দশমিকৰ সহায়ত তুলনা সহজ!"},
+  {n1:7,d1:8,n2:3,d2:4,ans:'A',fact:"7/8 vs 3/4: convert 3/4 = 6/8. Now 7/8 > 6/8. Common denominator trick!",factAs:"৩/৪ = ৬/৮, গতিকে ৭/৮ > ৬/৮। সাধাৰণ হৰৰ কৌশল!"},
+  {n1:2,d1:3,n2:4,d2:6,ans:'eq',fact:"2/3 = 4/6! Multiply numerator AND denominator by 2 — equivalent fraction!",factAs:"২/৩ = ৪/৬! লব আৰু হৰ দুয়োটাতে ২ গুণ কৰক — সমতুল্য ভগ্নাংশ!"}
+];
+const MSG=["Excellent!","Brilliant!","Amazing!","Spot on!","Outstanding!","You got it!","Perfect!"];
+let round=0,score=0;
+
+function initGame(){round=0;score=0;updateStars(0);loadRound();}
+
+function drawPizza(svgEl,n,d,color){
+  svgEl.innerHTML='';
+  const cx=50,cy=50,r=44;
+  // background circle
+  const bg=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  bg.setAttribute('cx',cx);bg.setAttribute('cy',cy);bg.setAttribute('r',r);
+  bg.setAttribute('fill','rgba(255,255,255,.06)');bg.setAttribute('stroke','rgba(255,255,255,.15)');bg.setAttribute('stroke-width','1');
+  svgEl.appendChild(bg);
+  // filled slice(s)
+  const sliceAngle=(2*Math.PI)/d;
+  for(let i=0;i<n;i++){
+    const startA=-Math.PI/2+i*sliceAngle;
+    const endA=startA+sliceAngle;
+    const x1=cx+r*Math.cos(startA),y1=cy+r*Math.sin(startA);
+    const x2=cx+r*Math.cos(endA),y2=cy+r*Math.sin(endA);
+    const large=sliceAngle>Math.PI?1:0;
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',`M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} Z`);
+    path.setAttribute('fill',color);path.setAttribute('opacity','0.75');
+    svgEl.appendChild(path);
+  }
+  // dividing lines
+  for(let i=0;i<d;i++){
+    const a=-Math.PI/2+i*sliceAngle;
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',cx);line.setAttribute('y1',cy);
+    line.setAttribute('x2',cx+r*Math.cos(a));line.setAttribute('y2',cy+r*Math.sin(a));
+    line.setAttribute('stroke','rgba(6,10,16,.6)');line.setAttribute('stroke-width','2');
+    svgEl.appendChild(line);
+  }
+}
+
+function loadRound(){
+  const r=ROUNDS[round];
+  document.getElementById('frac0').textContent=`${r.n1}/${r.d1}`;
+  document.getElementById('frac1').textContent=`${r.n2}/${r.d2}`;
+  document.getElementById('qNum').textContent=round+1;
+  document.getElementById('qNumAs').textContent=['১','২','৩','৪','৫','৬','৭'][round];
+  document.getElementById('progFill').style.width=(round/7*100)+'%';
+  document.getElementById('feedback').textContent='';
+  drawPizza(document.getElementById('pizza0'),r.n1,r.d1,'#C77DFF');
+  drawPizza(document.getElementById('pizza1'),r.n2,r.d2,'#FF9F1C');
+  // Reset scale
+  document.getElementById('scaleBeam').style.transform='rotate(0deg)';
+  document.getElementById('panL').style.top='0';
+  document.getElementById('panR').style.top='0';
+  ['btnA','btnEq','btnB'].forEach(id=>{
+    const b=document.getElementById(id);
+    b.className='ans-btn';
+  });
+}
+
+function answer(choice){
+  ['btnA','btnEq','btnB'].forEach(id=>document.getElementById(id).classList.add('disabled'));
+  const r=ROUNDS[round];
+  const correct=r.ans;
+  const isCorrect=choice===correct;
+  const fb=document.getElementById('feedback');
+  // Animate scale
+  const v1=r.n1/r.d1,v2=r.n2/r.d2;
+  if(v1>v2){
+    document.getElementById('scaleBeam').style.transform='rotate(-8deg)';
+    document.getElementById('panL').style.top='-6px';
+    document.getElementById('panR').style.top='6px';
+  } else if(v2>v1){
+    document.getElementById('scaleBeam').style.transform='rotate(8deg)';
+    document.getElementById('panL').style.top='6px';
+    document.getElementById('panR').style.top='-6px';
+  }
+  const btnMap={A:'btnA',eq:'btnEq',B:'btnB'};
+  if(isCorrect){
+    document.getElementById(btnMap[choice]).classList.add('correct');
+    score++;updateStars(Math.min(5,score));confetti();
+    const msg=MSG[Math.floor(Math.random()*MSG.length)];
+    document.getElementById('ovEmoji').textContent='🍕';
+    document.getElementById('ovTitle').textContent=msg;
+    document.getElementById('ovFact').textContent=r.fact;
+    document.getElementById('ovAs').textContent=r.factAs;
+    document.getElementById('ovBtn').textContent=round<6?'Next → / পৰৱৰ্তী':'Finish! / শেষ!';
+    setTimeout(()=>showOverlay(true),600);
+  } else {
+    document.getElementById(btnMap[choice]).classList.add('wrong');
+    document.getElementById(btnMap[correct]).classList.add('correct');
+    fb.className='feedback err';fb.textContent='❌ Not quite! / ঠিক নহয়!';
+    setTimeout(()=>nextRound(),2000);
+  }
+}
+
+function nextRound(){showOverlay(false);round++;if(round>=7){endGame();}else{loadRound();}}
+
+function endGame(){
+  trackProgress();
+  document.getElementById('ovEmoji').textContent='🏆';
+  document.getElementById('ovTitle').textContent='Fraction Champion! / ভগ্নাংশ চেম্পিয়ন!';
+  document.getElementById('ovFact').textContent=`Score: ${score}/7! Fractions will never fool you again!`;
+  document.getElementById('ovAs').textContent=`স্কোৰ: ${score}/৭! ভগ্নাংশে আৰু তোমাক ধোঁকা দিব নোৱাৰে!`;
+  document.getElementById('ovBtn').textContent='🔄 Play Again / আকৌ খেলক';
+  document.getElementById('ovBtn').onclick=()=>{showOverlay(false);initGame();};
+  showOverlay(true);
+}
+async function trackProgress(){
+  if(!currentUser)return;
+  try{await db.collection('users').doc(currentUser.uid).collection('progress').doc('class4-game4').set(
+    {score,total:7,gameId:'class4-game4',gameName:'Fraction Faceoff',class:4,subject:'Maths',
+     completedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+}
+function updateStars(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function showOverlay(s){document.getElementById('overlay').classList.toggle('show',s);}
+function confetti(){
+  const cols=['#FFD166','#C77DFF','#06D6A0','#FF6B6B','#FF9F1C'];
+  for(let i=0;i<28;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%5]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);
+  }
+}
+</script>
+</body>
+</html>

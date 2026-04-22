@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>हिंदी स्वर 🫧</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Noto+Sans+Devanagari:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Noto Sans Devanagari','Baloo 2',cursive;
+    background:linear-gradient(180deg,#FF6B00 0%,#FF8C42 25%,#FFB347 50%,#FFE5B4 100%);
+    min-height:100vh;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    user-select:none;
+  }
+  /* diyas (lamps) bg */
+  .diya{position:fixed;pointer-events:none;z-index:1;font-size:1.5rem;animation:diyaGlow 2s ease-in-out infinite;}
+  @keyframes diyaGlow{0%,100%{opacity:.5;transform:scale(1);}50%{opacity:1;transform:scale(1.15);}}
+
+  .header{position:relative;z-index:10;text-align:center;padding:18px 20px 8px;width:100%;}
+  .title{font-size:clamp(1.4rem,5vw,2.2rem);color:#fff;text-shadow:0 2px 8px rgba(139,60,0,.4);}
+  .instruction{
+    background:rgba(255,255,255,.25);backdrop-filter:blur(8px);
+    border:2px solid rgba(255,255,255,.5);border-radius:50px;
+    padding:10px 24px;font-size:clamp(1.1rem,5vw,1.7rem);color:#fff;
+    margin-top:10px;display:inline-block;font-weight:700;
+    text-shadow:0 1px 4px rgba(139,60,0,.3);
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.03);}}
+
+  .score-bar{position:relative;z-index:10;display:flex;gap:16px;align-items:center;margin-top:8px;}
+  .score-box{background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.4);border-radius:20px;padding:6px 18px;color:#fff;font-size:1rem;font-weight:700;}
+  .score-box span{color:#FFD700;font-size:1.2rem;}
+
+  .progress{position:relative;z-index:10;display:flex;gap:8px;margin-top:8px;}
+  .dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.3);transition:all .3s;}
+  .dot.done{background:#FFD700;box-shadow:0 0 8px #FFD700;}
+  .dot.active{background:#fff;transform:scale(1.3);}
+
+  /* game area */
+  .game-area{position:relative;z-index:5;flex:1;width:100%;max-width:700px;}
+
+  /* bubble */
+  .bubble{
+    position:absolute;border-radius:50%;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;
+    animation:bubbleRise linear forwards;
+    background:radial-gradient(circle at 35% 30%, rgba(255,255,255,.7), rgba(255,200,100,.25));
+    box-shadow:
+      inset -4px -4px 12px rgba(200,100,0,.2),
+      inset 4px 4px 10px rgba(255,255,255,.6),
+      0 4px 20px rgba(200,100,0,.2);
+    border:2px solid rgba(255,255,255,.7);
+  }
+  @keyframes bubbleRise{
+    0%{transform:translateY(0);}
+    100%{transform:translateY(-220vh);}
+  }
+  .bubble-letter{
+    font-size:clamp(2rem,8vw,3.2rem);
+    font-weight:800;color:#8B3A00;
+    text-shadow:0 2px 6px rgba(255,200,100,.5);
+    line-height:1;
+  }
+  .bubble-romanize{
+    font-size:clamp(.55rem,2vw,.8rem);
+    color:rgba(139,58,0,.65);font-weight:700;
+    font-family:'Baloo 2',cursive;
+  }
+
+  /* flash overlay */
+  .letter-flash{
+    position:fixed;inset:0;z-index:150;
+    display:flex;align-items:center;justify-content:center;
+    pointer-events:none;flex-direction:column;gap:8px;
+  }
+  .flash-letter{
+    font-size:clamp(6rem,25vw,12rem);font-weight:800;
+    color:#FFD700;text-shadow:0 0 40px rgba(255,165,0,.6);
+    animation:flashIn .5s ease both, flashOut .3s .6s ease forwards;
+    font-family:'Noto Sans Devanagari',cursive;
+  }
+  .flash-sub{
+    font-size:clamp(1.2rem,5vw,2.5rem);color:#fff;font-weight:700;
+    animation:flashIn .5s .1s ease both, flashOut .3s .6s ease forwards;
+    font-family:'Baloo 2',cursive;
+  }
+  @keyframes flashIn{0%{transform:scale(0);opacity:0;}60%{transform:scale(1.2);opacity:1;}100%{transform:scale(1);opacity:1;}}
+  @keyframes flashOut{to{transform:scale(1.5);opacity:0;}}
+
+  /* splash */
+  .splash{position:fixed;pointer-events:none;z-index:99;animation:splashOut .5s ease-out forwards;font-size:2rem;}
+  @keyframes splashOut{0%{transform:scale(0);opacity:1;}100%{transform:scale(2.5);opacity:0;}}
+
+  .celebration{
+    position:fixed;inset:0;z-index:200;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(139,60,0,.75);backdrop-filter:blur(10px);animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .celeb-emoji{font-size:clamp(4rem,15vw,7rem);animation:celebBounce .5s ease infinite alternate;}
+  @keyframes celebBounce{from{transform:scale(1);}to{transform:scale(1.15);}}
+  .celebration h2{color:#FFD700;font-size:clamp(2rem,8vw,3.5rem);text-align:center;margin:16px 0 8px;}
+  .celebration p{color:#fff;font-size:clamp(1rem,4vw,1.4rem);margin-bottom:24px;}
+  .next-btn{
+    background:linear-gradient(135deg,#FF6B00,#FFB800);color:#fff;border:none;border-radius:50px;
+    padding:14px 40px;font-family:'Baloo 2',cursive;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;
+    cursor:pointer;box-shadow:0 6px 24px rgba(255,107,0,.4);transition:transform .2s;
+  }
+  .next-btn:hover{transform:scale(1.05);}
+  .confetti-piece{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.2s ease-in forwards;}
+  @keyframes confettiFall{0%{opacity:1;}100%{transform:translateY(300px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title">🫧 हिंदी स्वर — Hindi Vowels</div>
+  <div class="instruction">बुलबुले में <span id="targetLetter" style="color:#FFD700;font-size:1.3em;">अ</span> ढूंढो! Find <span id="targetRoman" style="color:#FFD700;">A</span>!</div>
+</div>
+<div class="score-bar">
+  <div class="score-box">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="score-box">🎯 Round: <span id="roundVal">1</span>/11</div>
+</div>
+<div class="progress" id="progress"></div>
+<div class="game-area" id="gameArea"></div>
+
+<script>
+const VOWELS=[
+  {letter:'अ',roman:'A',word:'Anar (Apple)'},
+  {letter:'आ',roman:'Aa',word:'Aam (Mango)'},
+  {letter:'इ',roman:'I',word:'Imli'},
+  {letter:'ई',roman:'Ee',word:'Eent (Brick)'},
+  {letter:'उ',roman:'U',word:'Ullu (Owl)'},
+  {letter:'ऊ',roman:'Oo',word:'Oonth (Camel)'},
+  {letter:'ए',roman:'E',word:'Ek (One)'},
+  {letter:'ऐ',roman:'Ai',word:'Ainuk (Glasses)'},
+  {letter:'ओ',roman:'O',word:'Om'},
+  {letter:'औ',roman:'Au',word:'Aurat (Woman)'},
+  {letter:'अं',roman:'An',word:'Anaar'},
+];
+const COLORS=[
+  '#FF6B00','#FF8C42','#FF4757','#a55eea','#1e90ff',
+  '#2ed573','#FFD700','#FF6B81','#00b4d8','#ff6b6b','#4CAF50'
+];
+
+let score=0,round=0,target=null,used=[],canPop=true;
+let bubbleTimers=[];
+const BUBBLES_PER_ROUND=5;
+
+let audioCtx;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function playPop(correct){
+  const ctx=getAudio();
+  if(correct){
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.setValueAtTime(700,ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(1400,ctx.currentTime+.12);
+    o.type='sine';
+    g.gain.setValueAtTime(.3,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.25);
+    o.start();o.stop(ctx.currentTime+.25);
+    [880,1047,1319].forEach((f,i)=>{
+      setTimeout(()=>{
+        const o2=ctx.createOscillator(),g2=ctx.createGain();
+        o2.connect(g2);g2.connect(ctx.destination);
+        o2.frequency.value=f;o2.type='sine';
+        g2.gain.setValueAtTime(.25,ctx.currentTime);
+        g2.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
+        o2.start();o2.stop(ctx.currentTime+.3);
+      },i*80+150);
+    });
+  } else {
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sine';o.frequency.value=280;
+    g.gain.setValueAtTime(.15,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.2);
+    o.start();o.stop(ctx.currentTime+.2);
+  }
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.75;u.pitch=1.3;u.lang='hi-IN';
+  window.speechSynthesis.speak(u);
+}
+
+function speakEnglish(text){
+  if(!('speechSynthesis' in window))return;
+  setTimeout(()=>{
+    const u=new SpeechSynthesisUtterance(text);
+    u.rate=0.85;u.pitch=1.3;
+    window.speechSynthesis.speak(u);
+  },600);
+}
+
+function makeDots(){
+  const p=document.getElementById('progress');p.innerHTML='';
+  for(let i=0;i<VOWELS.length;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+
+function spawnSplash(x,y){
+  const s=document.createElement('div');
+  s.className='splash';s.textContent='✨';
+  s.style.cssText=`left:${x-15}px;top:${y-15}px;`;
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),600);
+}
+
+function showLetterFlash(v){
+  const el=document.createElement('div');
+  el.className='letter-flash';
+  el.innerHTML=`<div class="flash-letter">${v.letter}</div><div class="flash-sub">${v.roman} — ${v.word}</div>`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1000);
+}
+
+function spawnConfetti(x,y){
+  const cols=['#FF6B00','#FFD700','#FF4757','#a55eea','#2ed573'];
+  for(let i=0;i<15;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`left:${x+Math.random()*100-50}px;top:${y}px;background:${cols[i%cols.length]};animation-duration:${.8+Math.random()*.5}s;`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1400);
+  }
+}
+
+function clearBubbles(){
+  bubbleTimers.forEach(t=>clearTimeout(t));
+  bubbleTimers=[];
+  document.getElementById('gameArea').innerHTML='';
+}
+
+function newRound(){
+  if(used.length>=VOWELS.length){showCelebration();return;}
+  clearBubbles();
+  canPop=true;
+
+  const remaining=VOWELS.filter(v=>!used.some(u=>u.letter===v.letter));
+  target=remaining[Math.floor(Math.random()*remaining.length)];
+  document.getElementById('targetLetter').textContent=target.letter;
+  document.getElementById('targetRoman').textContent=target.roman;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  setTimeout(()=>{
+    speak(`${target.letter} ढूंढो!`);
+    speakEnglish(`Find letter ${target.roman}!`);
+  },300);
+
+  const distractors=VOWELS.filter(v=>v.letter!==target.letter).sort(()=>Math.random()-.5).slice(0,BUBBLES_PER_ROUND-1);
+  const allVowels=[target,...distractors].sort(()=>Math.random()-.5);
+
+  const area=document.getElementById('gameArea');
+  const W=area.offsetWidth||300;
+  const BSIZE=Math.min(W*.18,90);
+
+  allVowels.forEach((v,i)=>{
+    const bubble=document.createElement('div');
+    bubble.className='bubble';
+    const sz=BSIZE*(0.9+Math.random()*.25);
+    const dur=6+Math.random()*4;
+    const delay=i*0.55+Math.random()*.3;
+    const leftPct=5+i*(88/(BUBBLES_PER_ROUND-1||1))+Math.random()*4-2;
+    const color=COLORS[VOWELS.findIndex(vv=>vv.letter===v.letter)%COLORS.length];
+
+    bubble.style.cssText=`
+      width:${sz}px;height:${sz}px;
+      left:${Math.min(90,Math.max(5,leftPct))}%;
+      bottom:-${sz+20}px;
+      animation:bubbleRise ${dur}s ${delay}s linear forwards;
+    `;
+    bubble.innerHTML=`
+      <span class="bubble-letter" style="color:${color}">${v.letter}</span>
+      <span class="bubble-romanize">${v.roman}</span>
+    `;
+
+    bubble.addEventListener('click',(e)=>{
+      const rect=bubble.getBoundingClientRect();
+      popBubble(bubble,v,rect.left+rect.width/2,rect.top+rect.height/2);
+    });
+    bubble.addEventListener('touchstart',(e)=>{
+      e.preventDefault();
+      popBubble(bubble,v,e.touches[0].clientX,e.touches[0].clientY);
+    },{passive:false});
+
+    area.appendChild(bubble);
+    const t=setTimeout(()=>{if(bubble.parentNode)bubble.remove();},(dur+delay+.5)*1000);
+    bubbleTimers.push(t);
+  });
+
+  const autoT=setTimeout(()=>{
+    if(canPop){
+      canPop=false;
+      speak(`${target.letter} था! फिर कोशिश करो!`);
+      setTimeout(newRound,1800);
+    }
+  },(6+BUBBLES_PER_ROUND*.55+4+1)*1000);
+  bubbleTimers.push(autoT);
+}
+
+function popBubble(bubble,v,cx,cy){
+  if(!canPop)return;
+  if(v.letter===target.letter){
+    canPop=false;
+    playPop(true);
+    spawnSplash(cx,cy);
+    spawnConfetti(cx,cy);
+    showLetterFlash(v);
+    bubble.remove();
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    used.push(v);
+    round++;
+    speak(`${v.letter}! शाबाश!`);
+    speakEnglish(`${v.roman}! ${v.word}!`);
+    makeDots();
+    setTimeout(newRound,1800);
+  } else {
+    playPop(false);
+    spawnSplash(cx,cy);
+    speak(`यह ${v.letter} है! ${target.letter} ढूंढो!`);
+  }
+}
+
+function showCelebration(){
+  speak(`शाबाश! सभी स्वर सीख लिए!`);
+  speakEnglish(`Amazing! You learned all Hindi vowels!`);
+  const ov=document.createElement('div');
+  ov.className='celebration';
+  ov.innerHTML=`
+    <div class="celeb-emoji">🎊</div>
+    <h2>सभी स्वर सीख लिए!</h2>
+    <p>You learned all ${VOWELS.length} Hindi vowels!<br/>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span></p>
+    <button class="next-btn" onclick="restartGame()">Play Again 🫧</button>
+  `;
+  document.body.appendChild(ov);
+}
+
+function restartGame(){
+  document.querySelector('.celebration')?.remove();
+  score=0;round=0;used=[];
+  document.getElementById('scoreVal').textContent=0;
+  newRound();
+}
+
+// Diyas
+function makeDiyas(){
+  const pos=[[5,10],[90,15],[50,5],[20,85],[80,80],[35,90]];
+  pos.forEach(([l,t],i)=>{
+    const d=document.createElement('div');
+    d.className='diya';
+    d.textContent='🪔';
+    d.style.cssText=`left:${l}%;top:${t}%;animation-delay:${i*.4}s;`;
+    document.body.appendChild(d);
+  });
+}
+
+window.addEventListener('load',()=>{
+  makeDiyas();
+  window.speechSynthesis.getVoices();
+  makeDots();
+  setTimeout(()=>{
+    speak('हिंदी स्वर सीखो!');
+    speakEnglish('Learn Hindi vowels!');
+    setTimeout(newRound,1500);
+  },500);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Globe &amp; Latitudes — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--lime:#A8E063;--blue:#4CC9F0;--purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#071A12 0%,#040E0A 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(168,224,99,.13),rgba(168,224,99,.04));border:1px solid rgba(168,224,99,.3);border-radius:16px;padding:16px;margin-bottom:16px}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(168,224,99,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--lime);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:700}
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.45}
+
+/* Globe SVG area */
+.globe-wrap{background:#040e0a;border:1.5px solid rgba(168,224,99,.2);border-radius:16px;padding:12px;margin-bottom:14px;display:flex;justify-content:center}
+.globe-wrap svg{max-width:320px;width:100%}
+
+/* Latitude line labels */
+.lat-lines{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.lat-row{display:flex;align-items:center;gap:10px}
+.lat-line-label{font-size:.82rem;color:var(--text);flex:1;font-weight:600}
+.lat-degree{font-family:'Baloo 2',cursive;font-size:.9rem;font-weight:700;color:var(--lime)}
+.lat-desc{font-size:.75rem;color:var(--dim);line-height:1.3}
+
+/* Drag / place labels mechanic */
+.label-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;background:rgba(168,224,99,.04);border:1px dashed rgba(168,224,99,.2);border-radius:12px;padding:10px;min-height:48px}
+.drag-label{background:rgba(168,224,99,.1);border:2px solid rgba(168,224,99,.25);border-radius:100px;padding:6px 14px;font-size:.82rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;user-select:none}
+.drag-label:hover{border-color:var(--lime);transform:scale(1.05)}
+.drag-label.selected-label{border-color:var(--gold);background:rgba(255,209,102,.15);color:var(--gold)}
+.drag-label.placed-label{opacity:.3;pointer-events:none}
+.map-slot{cursor:pointer;transition:all .2s}
+.map-slot:hover rect{fill:rgba(168,224,99,.15)!important;stroke:rgba(168,224,99,.6)!important}
+.map-slot.slot-filled rect{fill:rgba(6,214,160,.15)!important;stroke:var(--teal)!important}
+.map-slot.slot-wrong rect{fill:rgba(255,107,107,.15)!important;stroke:var(--coral)!important}
+
+/* Time zone calculator */
+.tz-display{background:rgba(168,224,99,.06);border:1px solid rgba(168,224,99,.18);border-radius:14px;padding:14px;margin-bottom:14px;text-align:center}
+.tz-title{font-size:.75rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;font-weight:700}
+.tz-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.tz-city{text-align:center}
+.tz-city-name{font-family:'Baloo 2',cursive;font-size:.9rem;font-weight:700;color:var(--text)}
+.tz-time{font-family:'Baloo 2',cursive;font-size:1.6rem;font-weight:800;color:var(--lime)}
+.tz-long{font-size:.7rem;color:var(--dim)}
+.tz-arrow{font-size:1.4rem;color:var(--dim)}
+.tz-diff{background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.2);border-radius:10px;padding:6px 14px;font-family:'Baloo 2',cursive;font-size:.9rem;font-weight:700;color:var(--gold);text-align:center}
+
+/* Options */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(168,224,99,.07);border:2px solid rgba(168,224,99,.2);border-radius:14px;padding:12px 8px;font-family:'Baloo 2',cursive;font-size:.93rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--lime);background:rgba(168,224,99,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.92rem;font-weight:600;min-height:26px;margin:10px 0 4px}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+.score-note{font-size:.78rem;color:var(--dim);text-align:center;margin-bottom:8px}
+.confirm-btn{background:var(--lime);color:#060A10;border:none;border-radius:100px;padding:10px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;width:100%;margin-top:8px;opacity:.4;pointer-events:none}
+.confirm-btn.ready{opacity:1;pointer-events:all}
+.tip-box{background:rgba(168,224,99,.06);border-left:3px solid var(--lime);border-radius:0 10px 10px 0;padding:10px 12px;font-size:.8rem;line-height:1.5;color:var(--dim);margin-bottom:12px}
+.tip-box strong{color:var(--lime)}
+
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#040E0A 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--lime);color:var(--lime);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(168,224,99,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stage-transition{background:linear-gradient(135deg,rgba(168,224,99,.1),rgba(168,224,99,.03));border:1px solid rgba(168,224,99,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--lime);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">🌐 Globe &amp; Latitudes</div>
+      <span class="subject-tag">Social Studies · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+  <div class="wow-hook">
+    <span class="wow-emoji">🕐</span>
+    <div class="wow-text">India is the <strong>ONLY country</strong> in the world to have named its standard time zone by an exact meridian line (<strong>82.5°E</strong>). Every clock in India shows the same time — from Kashmir to Kanyakumari!</div>
+  </div>
+  <div id="gameArea"></div>
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Stage 1 of 3</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+<script>
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+let stg=1,qIdx=0,score=0,answered=false,selectedLabelId=null,placedLabels={};
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  const C=['#A8E063','#FFD166','#06D6A0','#4CC9F0','#C77DFF'];
+  for(let i=0;i<28;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+}
+function updateStars(){const lit=Math.min(5,Math.ceil(score/2));for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.toggle('lit',i<=lit)}
+function showOverlay(emoji,title,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovFact').textContent=fact;document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay');ov.classList.add('show');
+  if(!isEnd)setTimeout(()=>ov.classList.remove('show'),2700);
+}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(t){document.getElementById('progressLabel').textContent=t}
+
+/* ── Stage 1: Label latitude lines on globe SVG ── */
+const LAT_LABELS=[
+  {id:'arctic',name:'Arctic Circle',lat:66.5,slotY:38,color:'#4CC9F0'},
+  {id:'tropicN',name:'Tropic of Cancer',lat:23.5,slotY:55,color:'#FFD166'},
+  {id:'equator',name:'Equator',lat:0,slotY:70,color:'#A8E063'},
+  {id:'tropicS',name:'Tropic of Capricorn',lat:-23.5,slotY:85,color:'#FF9F1C'},
+  {id:'antarctic',name:'Antarctic Circle',lat:-66.5,slotY:102,color:'#C77DFF'},
+];
+
+function globeSVG(){
+  // Simple flat map style with key latitude lines
+  let svg=`<svg viewBox="0 0 320 160" width="320" height="160" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="oceanbg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#071a12"/>
+        <stop offset="100%" stop-color="#040e0a"/>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="320" height="160" fill="url(#oceanbg)" rx="12"/>
+    <!-- Grid lines -->
+    ${Array.from({length:9},(_,i)=>`<line x1="${i*40}" y1="0" x2="${i*40}" y2="160" stroke="rgba(168,224,99,.06)" stroke-width=".5"/>`).join('')}`;
+
+  // Latitude lines and slots
+  LAT_LABELS.forEach(l=>{
+    const isFilled=placedLabels[l.id];
+    svg+=`<!-- ${l.name} -->
+    <line x1="0" y1="${l.slotY}" x2="240" y2="${l.slotY}" stroke="${l.color}" stroke-width="${l.id==='equator'?2:1}" stroke-dasharray="${l.id==='equator'?'0':'5,4'}" opacity=".6"/>
+    <text x="4" y="${l.slotY-3}" font-size="7" fill="${l.color}" font-family="Nunito" opacity=".5">${l.lat>0?'+':''}${l.lat}°</text>
+    <!-- Slot box -->
+    <g class="map-slot ${isFilled?'slot-filled':''}" id="ms_${l.id}" onclick="placeLabel('${l.id}')">
+      <rect x="242" y="${l.slotY-9}" width="74" height="18" rx="5" fill="${isFilled?'rgba(6,214,160,.15)':'rgba(168,224,99,.05)'}" stroke="${isFilled?'var(--teal)':'rgba(168,224,99,.25)'}" stroke-width="1"/>
+      <text x="279" y="${l.slotY+3}" text-anchor="middle" font-size="7" fill="${isFilled?'#06D6A0':'rgba(168,224,99,.4)'}" font-family="Nunito" font-weight="bold">${isFilled?placedLabels[l.id]:'tap to label'}</text>
+    </g>`;
+  });
+
+  // Simple India shape hint
+  svg+=`<path d="M175,65 L185,62 L192,70 L190,85 L183,95 L178,90 L172,82 L170,72 Z" fill="rgba(168,224,99,.15)" stroke="rgba(168,224,99,.4)" stroke-width=".8"/>
+  <text x="181" y="78" font-size="7" fill="rgba(168,224,99,.7)" font-family="Nunito" text-anchor="middle">India</text>
+  <!-- North/South labels -->
+  <text x="8" y="12" font-size="8" fill="rgba(232,240,255,.3)" font-family="Baloo 2" font-weight="bold">N</text>
+  <text x="8" y="156" font-size="8" fill="rgba(232,240,255,.3)" font-family="Baloo 2" font-weight="bold">S</text>
+  </svg>`;
+  return svg;
+}
+
+function renderStage1(){
+  setProgress('Stage 1 of 3 — Label the Latitude Lines');
+  placedLabels={};selectedLabelId=null;answered=false;showNext(false);
+  const shuffled=[...LAT_LABELS].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🌐 Stage 1 — Label the Globe</div>
+      <div class="tip-box"><strong>Tip:</strong> Equator = 0° · Tropics = ±23.5° · Polar circles = ±66.5°. North = positive, South = negative.</div>
+      <div class="globe-wrap" id="globeWrap">${globeSVG()}</div>
+      <div style="font-size:.78rem;color:var(--dim);text-align:center;margin-bottom:8px">1. Tap a label · 2. Tap the correct slot on the map</div>
+      <div class="label-bank" id="labelBank">
+        ${shuffled.map(l=>`<div class="drag-label" id="dl_${l.id}" onclick="selectLabel('${l.id}')">${l.name}</div>`).join('')}
+      </div>
+      <div class="score-note" id="placeScore">Placed: 0 / ${LAT_LABELS.length}</div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function selectLabel(id){
+  if(placedLabels[id])return;
+  selectedLabelId=id;
+  document.querySelectorAll('.drag-label').forEach(d=>d.classList.remove('selected-label'));
+  document.getElementById('dl_'+id)?.classList.add('selected-label');
+}
+function placeLabel(slotId){
+  if(!selectedLabelId){
+    document.getElementById('fb').textContent='👆 First tap a label from the bank below!';
+    document.getElementById('fb').className='feedback wrong';return;
+  }
+  const correctLabel=LAT_LABELS.find(l=>l.id===slotId);
+  if(!correctLabel)return;
+  const fb=document.getElementById('fb');
+  const selectedName=LAT_LABELS.find(l=>l.id===selectedLabelId)?.name||'';
+  if(selectedLabelId===slotId){
+    placedLabels[slotId]=selectedName.split(' ')[0]+(selectedName.includes('Equator')?'':' '+selectedName.split(' ').slice(1,3).join(' '));
+    document.getElementById('dl_'+selectedLabelId)?.classList.add('placed-label');
+    document.getElementById('dl_'+selectedLabelId)?.classList.remove('selected-label');
+    score++;updateStars();
+    fb.textContent=cheer()+` ${selectedName} at ${correctLabel.lat>0?'+':''}${correctLabel.lat}° — correct!`;
+    fb.className='feedback correct';
+    selectedLabelId=null;
+    document.getElementById('globeWrap').innerHTML=globeSVG();
+    const placed=Object.keys(placedLabels).length;
+    document.getElementById('placeScore').textContent=`Placed: ${placed} / ${LAT_LABELS.length}`;
+    if(placed===LAT_LABELS.length){
+      confetti();
+      setTimeout(()=>showOverlay('🌐',cheer(),'The Tropic of Cancer passes through India (through Mizoram, which is adjacent to Assam!). The Equator passes through countries like Kenya, Indonesia, and Ecuador.',false),400);
+      showNext(true);
+      fb.textContent='🎉 All latitude lines labelled! Press Next →';fb.className='feedback correct';
+    }
+  } else {
+    fb.textContent=`That slot is for ${correctLabel.name}, not ${selectedName}. Try again!`;
+    fb.className='feedback wrong';
+  }
+}
+
+/* ── Stage 2: Time zone calculator ── */
+const TZ_Q=[
+  {cityA:{name:'New Delhi',long:'82.5°E (IST)',offset:5.5},cityB:{name:'London',long:'0° (GMT)',offset:0},
+   q:'When it is 12:00 noon in New Delhi (IST), what time is it in London?',
+   correct:'6:30 AM',opts:['6:30 AM','5:30 AM','7:30 AM','3:30 PM'],
+   fact:'India is 5 hours 30 minutes AHEAD of GMT. So if India = 12:00, London = 12:00 − 5:30 = 6:30 AM!'},
+  {cityA:{name:'New York',long:'75°W (EST)',offset:-5},cityB:{name:'New Delhi',long:'82.5°E (IST)',offset:5.5},
+   q:'The time difference between New Delhi and New York is approximately:',
+   correct:'10.5 hours',opts:['10.5 hours','5.5 hours','8 hours','12 hours'],
+   fact:'IST (+5:30) − EST (−5:00) = 10 hours 30 minutes. India is 10.5 hours ahead of New York!'},
+  {cityA:{name:'Tokyo',long:'135°E (JST)',offset:9},cityB:{name:'New Delhi',long:'82.5°E (IST)',offset:5.5},
+   q:'Tokyo (JST, +9:00) vs New Delhi (IST, +5:30). Tokyo is ahead by:',
+   correct:'3.5 hours',opts:['3.5 hours','5.5 hours','9 hours','1 hour'],
+   fact:'9:00 − 5:30 = 3 hours 30 minutes. Tokyo is 3.5 hours ahead of India. For every 15° east, clocks go forward 1 hour!'},
+];
+function renderStage2(i){
+  setProgress(`Stage 2 of 3 — Time Zones ${i+1} of ${TZ_Q.length}`);
+  answered=false;showNext(false);
+  const q=TZ_Q[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🕐 Stage 2 — Time Zones</div>
+      <div class="tip-box"><strong>Rule:</strong> Every 15° of longitude = 1 hour difference. East = ahead in time, West = behind.</div>
+      <div class="tz-display">
+        <div class="tz-title">Time Zone Comparison</div>
+        <div class="tz-row">
+          <div class="tz-city">
+            <div class="tz-city-name">${q.cityA.name}</div>
+            <div class="tz-time">${q.cityA.offset>=0?'+':''}${q.cityA.offset}</div>
+            <div class="tz-long">${q.cityA.long}</div>
+          </div>
+          <div class="tz-arrow">↔️</div>
+          <div class="tz-city">
+            <div class="tz-city-name">${q.cityB.name}</div>
+            <div class="tz-time">${q.cityB.offset>=0?'+':''}${q.cityB.offset}</div>
+            <div class="tz-long">${q.cityB.long}</div>
+          </div>
+        </div>
+        <div class="tz-diff">Difference: ${Math.abs(q.cityA.offset-q.cityB.offset)} hours</div>
+      </div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkTZ('${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}','${q.fact.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkTZ(sel,correct,fact,btn){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct');score++;updateStars();
+    fb.textContent=cheer()+'  Correct!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🕐',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+/* ── Stage 3: MCQ lat/long facts ── */
+const MCQ=[
+  {q:'The Tropic of Cancer passes through which Indian state?',correct:'Mizoram (and others)',opts:['Kerala','Assam','Mizoram (and others)','Punjab'],fact:'The Tropic of Cancer (23.5°N) passes through 8 Indian states including Gujarat, Rajasthan, MP, Chhattisgarh, Jharkhand, West Bengal, Tripura, and Mizoram!'},
+  {q:'What is the latitude of the Equator?',correct:'0°',opts:['23.5°N','66.5°S','90°N','0°'],fact:'The Equator is at 0° latitude — it divides the Earth into Northern and Southern hemispheres. It is the longest line of latitude!'},
+  {q:'India\'s Standard Meridian (IST) passes through:',correct:'82.5°E — through Mirzapur (UP)',opts:['75°E — through Mumbai','90°E — through Assam','82.5°E — through Mirzapur (UP)','70°E — through Rajasthan'],fact:'The 82.5°E meridian passes through Mirzapur in Uttar Pradesh and is chosen as India\'s standard time because it\'s roughly in the middle of India east-to-west!'},
+  {q:'Lines running from North Pole to South Pole are called:',correct:'Meridians (Longitudes)',opts:['Parallels (Latitudes)','Meridians (Longitudes)','Tropics','Equinoxes'],fact:'Meridians (longitudes) run north-south. Parallels (latitudes) run east-west. Together they form the grid system on all maps!'},
+];
+function renderStage3(i){
+  setProgress(`Stage 3 of 3 — Quiz ${i+1} of ${MCQ.length}`);
+  answered=false;showNext(false);
+  const q=MCQ[i];const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">❓ Stage 3 — Globe Quiz</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkMCQ('${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}','${q.fact.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkMCQ(sel,correct,fact,btn){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct');score++;updateStars();
+    fb.textContent=cheer()+'  Correct!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🌐',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function nextQ(){
+  if(stg===1){stg=2;qIdx=0;showTrans('🕐','Stage 2: Time Zones!','Every 15° of longitude = 1 hour. Let\'s calculate time differences across the globe!',()=>renderStage2(0));}
+  else if(stg===2){qIdx++;if(qIdx<TZ_Q.length)renderStage2(qIdx);else{stg=3;qIdx=0;showTrans('❓','Stage 3: Globe Quiz!','Final quiz on latitudes, longitudes, and India\'s place on the globe!',()=>renderStage3(0));}}
+  else{qIdx++;if(qIdx<MCQ.length)renderStage3(qIdx);else endGame();}
+}
+function showTrans(emoji,title,desc,cb){
+  showNext(false);
+  document.getElementById('gameArea').innerHTML=`<div class="stage-transition"><div style="font-size:2.5rem">${emoji}</div><h3>${title}</h3><p>${desc}</p></div>`;
+  const nb=document.getElementById('nextBtn');nb.textContent='Start →';nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →';nb.onclick=nextQ;cb()};
+}
+function endGame(){
+  confetti();
+  const total=LAT_LABELS.length+TZ_Q.length+MCQ.length;
+  const medals=['Globe Learner 🌱','Map Reader 🔍','Geography Master 🌐','Explorer Champion 🏆','Globe Legend 🌟'];
+  const medal=medals[Math.min(4,Math.floor(score*5/total))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--lime);margin:10px 0">${score} pts</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        Every GPS, every satellite, every airline uses the latitude and longitude system you just mastered. When pilots fly over Assam, they navigate using these exact coordinates!
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  setProgress('Complete!');showNext(false);
+}
+function resetGame(){
+  stg=1;qIdx=0;score=0;answered=false;selectedLabelId=null;placedLabels={};
+  for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.remove('lit');
+  document.getElementById('nextBtn').textContent='Next →';document.getElementById('nextBtn').onclick=nextQ;
+  renderStage1();
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{document.getElementById('overlay').classList.remove('show');resetGame()});
+renderStage1();
+</script>
+</body>
+</html>

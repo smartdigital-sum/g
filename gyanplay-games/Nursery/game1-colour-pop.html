@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GyanPlay Nursery — Colour Pop!</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+  /* Domain: Colours — amber theme */
+  .hello-screen { background: linear-gradient(160deg, #FFF8E1, #FFF3CD); }
+  .swatch-display {
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    margin: 0 auto 12px;
+    box-shadow: var(--shadow-lg);
+    transition: background 0.4s;
+    border: 6px solid rgba(255,255,255,0.9);
+  }
+  .swatch-name {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+  }
+  .circles-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    justify-items: center;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+  .colour-option {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    border: 5px solid transparent;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    touch-action: manipulation;
+  }
+  .colour-option:active { transform: scale(0.88); }
+  .colour-option.correct {
+    border-color: var(--green);
+    box-shadow: 0 0 0 5px rgba(0,200,83,0.25);
+    animation: correctPulse 0.45s ease;
+  }
+  .colour-option.wrong { animation: wobble 0.5s ease; }
+  .colour-option.hint {
+    border-color: var(--gold);
+    animation: hintGlow 1s ease-in-out infinite alternate;
+  }
+
+  .domain-badge { background: rgba(255,184,0,0.15); color: #a07000; }
+  .hello-domain-tag {
+    display: inline-block;
+    background: rgba(255,184,0,0.2);
+    color: #8a6000;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 3px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="game-topbar">
+  <a class="game-logo" href="batch1-index.html">Gyan<span>Play</span></a>
+  <div class="topbar-center">🎨 Colour Pop!</div>
+  <div class="topbar-right">
+    <div class="lang-toggle">
+      <button onclick="setLang('en')">EN</button>
+      <button onclick="setLang('as')">অস</button>
+      <button onclick="setLang('hi')">हि</button>
+    </div>
+    <button class="sound-toggle" id="soundToggle" title="Toggle sound">🔊</button>
+  </div>
+</nav>
+
+<!-- PARENT TIP BAR -->
+<div class="parent-tip-bar">
+  <span class="tip-icon">👨‍👩‍👧</span>
+  <div class="tip-text">
+    <span class="tip-label">Parent Tip</span>
+    <span data-lang="en" id="tipEn">Say the colour name out loud with your child before they tap!</span>
+    <span data-lang="as" id="tipAs">আপোনাৰ সন্তানে টেপ কৰাৰ আগতে ৰঙৰ নাম জোৰেকৈ কওক!</span>
+    <span data-lang="hi" id="tipHi">बच्चे के tap करने से पहले रंग का नाम ज़ोर से बोलें!</span>
+  </div>
+</div>
+
+<!-- HELLO SCREEN -->
+<div class="screen hello-screen" id="helloScreen">
+  <div class="hello-emoji" id="helloEmoji">🎨</div>
+  <div class="hello-domain-tag">🎨 Colours</div>
+  <div class="hello-title">
+    <span data-lang="en">Colour Pop!</span>
+    <span data-lang="as">ৰং পপ!</span>
+    <span data-lang="hi">रंग पॉप!</span>
+  </div>
+  <div class="hello-subtitle">
+    <span data-lang="en">Can you find the matching colour? 🌈</span>
+    <span data-lang="as">মিলোৱা ৰংটো বিচাৰিব পাৰিবানে? 🌈</span>
+    <span data-lang="hi">मिलता रंग ढूंढ सकते हो? 🌈</span>
+  </div>
+  <button class="start-btn" onclick="startGame()">
+    <span data-lang="en">▶ Let's Play!</span>
+    <span data-lang="as">▶ খেলো!</span>
+    <span data-lang="hi">▶ खेलते हैं!</span>
+  </button>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="screen hidden" id="gameScreen">
+  <div class="game-wrapper">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <span class="domain-badge domain-badge" style="background:rgba(255,184,0,0.15);color:#8a6000;padding:3px 10px;border-radius:20px;font-size:0.7rem;font-weight:800;text-transform:uppercase;">🎨 Colours</span>
+      <span class="round-indicator" id="roundLabel">1 / 6</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+    <div class="stars-row">
+      <span class="star">⭐</span>
+      <span class="star">⭐</span>
+      <span class="star">⭐</span>
+    </div>
+
+    <div class="game-card">
+      <div class="game-prompt">
+        <span data-lang="en">Tap the <strong id="colourNameEn"></strong> circle!</span>
+        <span data-lang="as"><strong id="colourNameAs"></strong> বৃত্তটো টেপ কৰক!</span>
+        <span data-lang="hi"><strong id="colourNameHi"></strong> वाला गोला tap करो!</span>
+      </div>
+
+      <!-- Big swatch to match -->
+      <div class="swatch-display" id="swatchDisplay"></div>
+      <div class="swatch-name" id="swatchNameDisplay"></div>
+
+      <!-- 4 colour options -->
+      <div class="circles-row" id="circlesRow"></div>
+    </div>
+
+    <button class="next-btn" id="nextBtn" onclick="nextRound()">
+      <span data-lang="en">Next ➜</span>
+      <span data-lang="as">পৰৱৰ্তী ➜</span>
+      <span data-lang="hi">अगला ➜</span>
+    </button>
+  </div>
+</div>
+
+<!-- CELEBRATION OVERLAY -->
+<div class="celebration-overlay" id="celebrationOverlay">
+  <div class="cel-emoji" id="celEmoji">🎉</div>
+  <div class="cel-title" id="celTitle">Well done!</div>
+  <div class="cel-sub" id="celSub"></div>
+  <div class="cel-fact" id="celFact"></div>
+  <button class="play-again-btn" onclick="resetGame()">
+    <span data-lang="en">🔁 Play Again!</span>
+    <span data-lang="as">🔁 আকৌ খেলক!</span>
+    <span data-lang="hi">🔁 फिर खेलें!</span>
+  </button>
+</div>
+
+<script src="audio.js"></script>
+<script src="game-engine.js"></script>
+<script>
+const COLOURS = [
+  { en: 'Red',    as: 'ৰঙা',    hi: 'लाल',    hex: '#E53935', emoji: '🔴' },
+  { en: 'Blue',   as: 'নীলা',   hi: 'नीला',   hex: '#1E88E5', emoji: '🔵' },
+  { en: 'Yellow', as: 'হালধীয়া',hi: 'पीला',   hex: '#FDD835', emoji: '🟡' },
+  { en: 'Green',  as: 'সেউজীয়া',hi: 'हरा',    hex: '#43A047', emoji: '🟢' },
+  { en: 'Orange', as: 'কমলা',   hi: 'नारंगी', hex: '#FB8C00', emoji: '🟠' },
+  { en: 'Purple', as: 'বেঙুনীয়া',hi: 'बैंगनी', hex: '#8E24AA', emoji: '🟣' },
+];
+
+const PARENT_TIPS = {
+  en: [
+    "Say the colour name out loud with your child before they tap!",
+    "Point to something RED in the room. Ask: 'Can you find something red?'",
+    "In Assamese: 'ৰঙা' = Red, 'নীলা' = Blue, 'হালধীয়া' = Yellow",
+    "Hold up a coloured object and say: 'What colour is this?'",
+    "Clap together when they get it right!",
+    "Talk about colours you see every day — sky, grass, fruits!"
+  ],
+  as: [
+    "আপোনাৰ সন্তানে টেপ কৰাৰ আগতে ৰঙৰ নাম জোৰেকৈ কওক!",
+    "কোঠাত কিছু ৰঙা বস্তু দেখাওক। সোধক: 'ৰঙা কিবা বিচাৰি পাইছানে?'",
+    "অসমীয়াত: ৰঙা = Red, নীলা = Blue, হালধীয়া = Yellow",
+    "এটা ৰঙীন বস্তু ধৰক আৰু কওক: 'ইয়াৰ ৰং কি?'",
+    "সঠিক হলে একেলগে হাত চাপৰাওক!",
+    "প্ৰতিদিন দেখা ৰঙবোৰৰ বিষয়ে কথা কওক — আকাশ, ঘাঁহ, ফল!"
+  ],
+  hi: [
+    "बच्चे के tap करने से पहले रंग का नाम ज़ोर से बोलें!",
+    "कमरे में कोई लाल चीज़ दिखाएं। पूछें: 'कुछ लाल ढूंढ सकते हो?'",
+    "असमिया में: 'ৰঙা' = लाल, 'নীলা' = नीला, 'হালধীয়া' = पीला",
+    "एक रंगीन चीज़ उठाएं और पूछें: 'यह कौन सा रंग है?'",
+    "सही जवाब पर साथ में ताली बजाएं!",
+    "रोज़ दिखने वाले रंगों की बात करें — आसमान, घास, फल!"
+  ]
+};
+
+let rounds, currentRound, score;
+
+function startGame() {
+  markVisited('pn-01-colour-pop');
+  soundHello();
+  showScreen('gameScreen');
+  initStars();
+  currentRound = 0;
+  score = 0;
+  rounds = shuffle([...COLOURS]);
+  loadRound();
+}
+
+function loadRound() {
+  if (currentRound >= rounds.length) { endGame(); return; }
+  hideNextBtn();
+
+  const colour = rounds[currentRound];
+  const lang = getLang();
+
+  // Update round indicator
+  document.getElementById('roundLabel').textContent = `${currentRound + 1} / ${rounds.length}`;
+  updateProgress(currentRound, rounds.length);
+
+  // Update parent tip
+  const tipIdx = currentRound % PARENT_TIPS.en.length;
+  document.getElementById('tipEn').textContent = PARENT_TIPS.en[tipIdx];
+  document.getElementById('tipAs').textContent = PARENT_TIPS.as[tipIdx];
+  document.getElementById('tipHi').textContent = PARENT_TIPS.hi[tipIdx];
+
+  // Update swatch
+  const swatch = document.getElementById('swatchDisplay');
+  swatch.style.background = colour.hex;
+
+  // Update colour name
+  document.getElementById('colourNameEn').textContent = colour.en;
+  document.getElementById('colourNameAs').textContent = colour.as;
+  document.getElementById('colourNameHi').textContent = colour.hi;
+  document.getElementById('swatchNameDisplay').textContent =
+    lang === 'as' ? colour.as : lang === 'hi' ? colour.hi : colour.en;
+
+  // Build 4 options (correct + 3 random others)
+  const others = shuffle(COLOURS.filter(c => c.en !== colour.en)).slice(0, 3);
+  const options = shuffle([colour, ...others]);
+
+  const row = document.getElementById('circlesRow');
+  row.innerHTML = '';
+  options.forEach(opt => {
+    const div = document.createElement('div');
+    div.className = 'colour-option';
+    div.style.background = opt.hex;
+    div.setAttribute('data-correct', opt.en === colour.en ? '1' : '0');
+    div.addEventListener('click', () => handleColourTap(div, opt.en === colour.en));
+    row.appendChild(div);
+  });
+}
+
+let answered = false;
+function handleColourTap(el, isCorrect) {
+  if (answered) return;
+  soundTap();
+
+  if (isCorrect) {
+    answered = false; // allow re-tap if needed, but show next
+    correctFeedback(el);
+    soundCorrect();
+    score++;
+    if (score === 2) { awardStar(); soundStar(); }
+    if (score === 4) { awardStar(); soundStar(); }
+    if (score === 6) { awardStar(); soundStar(); }
+    answered = true;
+    setTimeout(() => {
+      answered = false;
+      currentRound++;
+      loadRound();
+    }, 700);
+  } else {
+    wrongFeedback(el);
+    soundWrong();
+    // Show gold hint on the correct one
+    const correctEl = document.querySelector('[data-correct="1"]');
+    if (correctEl) showHint(correctEl);
+  }
+}
+
+function endGame() {
+  updateProgress(rounds.length, rounds.length);
+  soundComplete();
+  const lang = getLang();
+  const titles = { en: '🌈 Brilliant!', as: '🌈 অসাধাৰণ!', hi: '🌈 शानदार!' };
+  const subs = {
+    en: 'You know all 6 colours! Show Mama/Papa how many you found.',
+    as: 'আপুনি ৬টা ৰং জানে! মামা/পাপাক দেখাওক আপুনি কিমান বিচাৰি পালে।',
+    hi: 'आपको 6 रंग पता हैं! Mama/Papa को दिखाएं आपने कितने ढूंढे।'
+  };
+  const facts = {
+    en: '🦏 The one-horned rhino of Kaziranga, Assam has a grey-brown colour — just like a big stone!',
+    as: '🦏 অসমৰ কাজিৰঙাৰ এক-শিঙীয়া গঁড়ৰ ৰং ধূসৰ-বাদামী — ঠিক এটা ডাঙৰ শিলৰ দৰে!',
+    hi: '🦏 असम के काजीरंगा के एक सींग वाले गैंडे का रंग भूरा-ग्रे होता है — बड़े पत्थर जैसा!'
+  };
+  showCelebration({ emoji: '🌈', title: titles[lang], sub: subs[lang], fact: facts[lang] });
+}
+
+function resetGame() {
+  hideCelebration();
+  initStars();
+  currentRound = 0; score = 0;
+  rounds = shuffle([...COLOURS]);
+  showScreen('gameScreen');
+  loadRound();
+}
+
+// refresh lang on swatch name display
+function refreshParentTip(lang) {
+  const tipIdx = currentRound % PARENT_TIPS.en.length;
+  if (PARENT_TIPS[lang]) {
+    document.getElementById(`tip${lang.charAt(0).toUpperCase()+lang.slice(1)}`)
+  }
+  // also refresh swatch label
+  if (rounds && rounds[currentRound]) {
+    const c = rounds[currentRound];
+    document.getElementById('swatchNameDisplay').textContent =
+      lang === 'as' ? c.as : lang === 'hi' ? c.hi : c.en;
+  }
+}
+</script>
+</body>
+</html>

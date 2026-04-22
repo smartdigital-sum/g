@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎨 Adjective Artist — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0F0A1A;--card:#1E1430;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--orange:#FF9F1C;--purple:#C77DFF;--pink:#FF9CC2;--text:#FFF0FF;--dim:#8A6EAA}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(255,209,102,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.3rem}
+.star{opacity:.3;transition:all .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:18px 16px;gap:16px}
+.hook{background:linear-gradient(135deg,rgba(199,125,255,.12),rgba(255,156,194,.08));border:1px solid rgba(199,125,255,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.88rem;line-height:1.6;color:#E4C4FF}
+.hook strong{color:var(--gold)}
+.task-card{background:var(--card);border-radius:14px;padding:14px 20px;text-align:center;border:2px solid rgba(199,125,255,.2);width:100%;max-width:440px}
+.task-text{font-size:1rem;color:var(--dim);margin-bottom:6px}
+.task-target{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:700;color:var(--gold);line-height:1.5}
+/* Scene display */
+.scene-box{background:var(--card);border-radius:16px;padding:20px;border:2px solid rgba(199,125,255,.15);width:100%;max-width:440px}
+.scene-objects{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.scene-obj{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;padding:12px;border-radius:12px;border:2px solid transparent;transition:border-color .2s,background .2s;min-width:90px}
+.scene-obj:hover{background:rgba(199,125,255,.1)}
+.scene-obj.selected{border-color:var(--purple);background:rgba(199,125,255,.12)}
+.scene-obj.matched{border-color:var(--teal);background:rgba(6,214,160,.1)}
+.obj-icon{font-size:3.2rem;transition:transform .3s;line-height:1}
+.obj-label{font-size:.7rem;color:var(--dim);text-align:center;line-height:1.3}
+.adj-badge{font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:20px;margin-top:2px;background:rgba(255,209,102,.15);color:var(--gold);border:1px solid rgba(255,209,102,.3);min-height:22px;display:flex;align-items:center;justify-content:center}
+/* Word bank */
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:440px}
+.word-chip{padding:10px 18px;background:var(--card);border:2px solid rgba(199,125,255,.25);border-radius:50px;color:var(--text);font-size:.9rem;font-weight:600;cursor:pointer;transition:transform .15s,border-color .2s,background .2s;user-select:none}
+.word-chip:hover{transform:scale(1.06);border-color:var(--purple)}
+.word-chip.active{background:var(--purple);border-color:var(--purple);color:white}
+.word-chip.used{opacity:.35;pointer-events:none}
+.hint-text{font-size:.82rem;color:var(--dim);text-align:center}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#1B0A3C;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(15,10,26,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4.5rem}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:320px;font-size:.9rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🎨 Adjective Artist</div><div class="subject-tag">English · Describing Words · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+
+<div class="game-area">
+  <div class="hook">🎨 <strong>"The dog ran"</strong> and <strong>"The huge, shaggy, mud-soaked dog sprinted"</strong> are technically the same sentence. <strong>Adjectives</strong> make you SEE instead of just read — they paint the picture in your mind!</div>
+
+  <div class="task-card">
+    <div class="task-text">Match each word to the correct object 👇</div>
+    <div class="task-target" id="taskTarget">Loading...</div>
+  </div>
+
+  <div class="scene-box">
+    <div class="scene-objects" id="sceneObjs"></div>
+  </div>
+
+  <div class="hint-text" id="hintText">Tap a describing word, then tap the object it matches!</div>
+  <div class="word-bank" id="wordBank"></div>
+</div>
+
+<div class="bottom">
+  <div class="prog" id="prog">Round 1 of 5</div>
+  <button class="next-btn" id="nextBtn" onclick="nextRound()">Next Scene →</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">Beautiful!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+
+<script>
+const ROUNDS=[
+  {
+    target:'A ___ elephant, a ___ flower, and a ___ house',
+    objects:[
+      {emoji:'🐘',label:'Elephant',slot:'big'},
+      {emoji:'🌸',label:'Flower',slot:'red'},
+      {emoji:'🏠',label:'House',slot:'tall'}
+    ],
+    words:['big','red','tall','tiny','blue','short'],
+    correct:{0:'big',1:'red',2:'tall'},
+    fact:'Adjectives describe size, colour, and shape. Without them, everything would just be... a thing!'
+  },
+  {
+    target:'A ___ mango, a ___ river, and a ___ moon',
+    objects:[
+      {emoji:'🥭',label:'Mango',slot:'sweet'},
+      {emoji:'🌊',label:'River',slot:'wide'},
+      {emoji:'🌕',label:'Moon',slot:'round'}
+    ],
+    words:['sweet','wide','round','sour','narrow','square'],
+    correct:{0:'sweet',1:'wide',2:'round'},
+    fact:'Adjectives can describe taste, size, and shape — even things you can\'t touch, like the moon!'
+  },
+  {
+    target:'A ___ rhino, a ___ jungle, and a ___ rain',
+    objects:[
+      {emoji:'🦏',label:'Rhino',slot:'strong'},
+      {emoji:'🌿',label:'Jungle',slot:'dense'},
+      {emoji:'🌧️',label:'Rain',slot:'heavy'}
+    ],
+    words:['strong','dense','heavy','weak','thin','light'],
+    correct:{0:'strong',1:'dense',2:'heavy'},
+    fact:'Assam has the strongest one-horned rhinos in dense jungle with heavy monsoon rains — all adjectives!'
+  },
+  {
+    target:'A ___ bird, a ___ lake, and a ___ boat',
+    objects:[
+      {emoji:'🦅',label:'Eagle',slot:'swift'},
+      {emoji:'💧',label:'Lake',slot:'calm'},
+      {emoji:'⛵',label:'Boat',slot:'small'}
+    ],
+    words:['swift','calm','small','slow','rough','huge'],
+    correct:{0:'swift',1:'calm',2:'small'},
+    fact:'A swift eagle over a calm lake with a small boat — adjectives turn a list of things into a painting!'
+  },
+  {
+    target:'A ___ festival, a ___ drum, and a ___ dancer',
+    objects:[
+      {emoji:'🎉',label:'Festival',slot:'joyful'},
+      {emoji:'🥁',label:'Drum',slot:'loud'},
+      {emoji:'💃',label:'Dancer',slot:'graceful'}
+    ],
+    words:['joyful','loud','graceful','sad','quiet','clumsy'],
+    correct:{0:'joyful',1:'loud',2:'graceful'},
+    fact:'Bihu is a joyful festival with loud drums and graceful dancers — adjectives bring it to life!'
+  }
+];
+const MSGS=['Beautiful! 🎨','Perfect painting! 🖼️','Colourful! 🌈','Vivid! ✨','Adjective Master! 🏆'];
+let round=0,score=0,selectedWord=null,matched={},done=false;
+
+function setup(){
+  const r=ROUNDS[round];done=false;matched={};selectedWord=null;
+  document.getElementById('taskTarget').textContent=r.target;
+  buildScene(r);buildBank(r);
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('hintText').textContent='Tap a describing word, then tap the object it matches!';
+}
+
+function buildScene(r){
+  const cont=document.getElementById('sceneObjs');cont.innerHTML='';
+  r.objects.forEach((obj,i)=>{
+    const div=document.createElement('div');div.className='scene-obj';div.id=`obj-${i}`;
+    div.innerHTML=`<div class="obj-icon" id="icon-${i}">${obj.emoji}</div><div class="obj-label">${obj.label}</div><div class="adj-badge" id="badge-${i}">___</div>`;
+    div.onclick=()=>selectObj(i,r);
+    cont.appendChild(div);
+  });
+}
+
+function buildBank(r){
+  const bank=document.getElementById('wordBank');bank.innerHTML='';
+  r.words.forEach(w=>{
+    const c=document.createElement('span');c.className='word-chip';c.textContent=w;c.id=`word-${w}`;
+    c.onclick=()=>selectWord(w);
+    bank.appendChild(c);
+  });
+}
+
+function selectWord(w){
+  document.querySelectorAll('.word-chip').forEach(c=>c.classList.remove('active'));
+  selectedWord=w;
+  document.getElementById(`word-${w}`).classList.add('active');
+  document.getElementById('hintText').textContent=`"${w}" selected! Now tap the object it describes.`;
+}
+
+function selectObj(i,r){
+  if(done)return;
+  if(!selectedWord){document.getElementById('hintText').textContent='First tap a word from below!';return;}
+  if(matched[i]!==undefined){document.getElementById('hintText').textContent='Already matched! Try another object.';return;}
+  if(selectedWord===r.correct[i]){
+    // Correct match
+    matched[i]=selectedWord;
+    document.getElementById(`badge-${i}`).textContent=selectedWord;
+    document.getElementById(`obj-${i}`).classList.remove('selected');
+    document.getElementById(`obj-${i}`).classList.add('matched');
+    document.getElementById(`icon-${i}`).style.animation='bounce .5s ease';
+    document.getElementById(`word-${selectedWord}`).classList.add('used');
+    selectedWord=null;document.querySelectorAll('.word-chip').forEach(c=>c.classList.remove('active'));
+    document.getElementById('hintText').textContent='Correct match! Keep going...';
+    if(Object.keys(matched).length===r.objects.length)setTimeout(allMatched,400);
+  } else {
+    document.getElementById(`obj-${i}`).classList.add('selected');
+    document.getElementById('hintText').textContent=`Hmm, "${selectedWord}" doesn\'t describe the ${r.objects[i].label}. Try another object!`;
+    setTimeout(()=>document.getElementById(`obj-${i}`).classList.remove('selected'),600);
+  }
+}
+
+function allMatched(){
+  done=true;score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+  showOverlay(MSGS[round]||'',ROUNDS[round].fact||'');confetti();setTimeout(hideOverlay,2800);
+  document.getElementById('nextBtn').style.display='block';
+}
+function nextRound(){
+  round++;document.getElementById('nextBtn').style.display='none';
+  if(round>=ROUNDS.length){endGame();return;}
+  document.getElementById('prog').textContent=`Round ${round+1} of ${ROUNDS.length}`;
+  setup();
+}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOverlay(`Score: ${score}/${ROUNDS.length}!`,'You\'re an Adjective Artist — words are your paintbrush!');
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;round=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Next Scene →';document.getElementById('nextBtn').onclick=nextRound;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='Beautiful!';hideOverlay();setup();};
+}
+function showOverlay(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOverlay(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#FFD166','#FF6B6B','#06D6A0','#C77DFF','#FF9F1C'];for(let i=0;i<28;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+setup();
+</script>
+</body>
+</html>

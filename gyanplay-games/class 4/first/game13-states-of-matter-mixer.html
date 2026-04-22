@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>States of Matter Mixer — GyanPlay Class 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#071A07,#040E04);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 40px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.h-left{display:flex;flex-direction:column;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.game-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);}
+.subject-tag{font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:1.3rem;opacity:.25;transition:opacity .3s,filter .3s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.wow{background:linear-gradient(135deg,rgba(6,214,160,.15),rgba(6,214,160,.04));
+  border:1px solid rgba(6,214,160,.3);border-radius:16px;padding:16px;margin-bottom:18px;}
+.wow-emoji{font-size:2rem;margin-bottom:6px;}
+.wow p{font-size:.88rem;line-height:1.55;}
+.wow p span{color:var(--gold);font-weight:700;}
+.wow-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-top:6px;}
+.game-area{background:var(--card);border-radius:20px;padding:20px;margin-bottom:14px;
+  border:1px solid rgba(6,214,160,.15);}
+/* Challenge */
+.challenge-card{background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.25);
+  border-radius:12px;padding:12px 14px;margin-bottom:16px;text-align:center;}
+.ch-label{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.ch-text{font-size:.92rem;font-weight:600;color:var(--text);line-height:1.5;}
+.ch-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-top:3px;}
+/* Item selector */
+.items-label{font-size:.72rem;color:var(--dim);margin-bottom:8px;}
+.items-label .as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.68rem;}
+.items-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.item-chip{padding:9px 12px;background:rgba(6,214,160,.08);border:2px solid rgba(6,214,160,.2);
+  border-radius:10px;font-size:.88rem;cursor:pointer;touch-action:manipulation;transition:all .15s;text-align:center;}
+.item-chip:active{transform:scale(.95);}
+.item-chip.selected{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal);}
+.item-chip.placed{opacity:.35;pointer-events:none;}
+/* Heat scale */
+.heat-scale-wrap{margin-bottom:14px;}
+.hs-label{font-size:.72rem;color:var(--dim);margin-bottom:8px;display:flex;justify-content:space-between;}
+.hs-label .as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.65rem;}
+.heat-track{position:relative;height:52px;background:linear-gradient(90deg,#0D5FAD,#2196F3,#FF9800,#F44336,#7B1FA2);
+  border-radius:10px;margin-bottom:8px;overflow:hidden;}
+.heat-zones{display:flex;height:100%;}
+.hz{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;
+  cursor:pointer;touch-action:manipulation;border-right:1px solid rgba(0,0,0,.2);transition:background .15s;}
+.hz:last-child{border-right:none;}
+.hz:active{background:rgba(255,255,255,.2);}
+.hz-label{font-size:.58rem;font-weight:700;color:rgba(255,255,255,.9);text-align:center;line-height:1.2;}
+.hz-icon{font-size:1rem;}
+/* Placed item display */
+.placed-wrap{min-height:60px;background:rgba(255,255,255,.03);border:1px dashed rgba(6,214,160,.2);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;padding:8px;}
+.placed-empty{font-size:.8rem;color:var(--dim);text-align:center;}
+.placed-result{text-align:center;}
+.placed-name{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:800;color:var(--gold);}
+.placed-state{font-size:.9rem;color:var(--teal);margin-top:2px;}
+.placed-state-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.72rem;color:var(--dim);}
+.placed-arrow{font-size:1.5rem;margin:0 8px;color:var(--orange);}
+/* Check btn */
+.check-btn{width:100%;padding:13px;background:var(--teal);color:#040E04;border:none;border-radius:13px;
+  font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;touch-action:manipulation;transition:transform .1s;}
+.check-btn:active{transform:scale(.97);}
+.feedback{text-align:center;font-size:.85rem;min-height:1.2em;font-weight:600;margin-top:8px;}
+.feedback.ok{color:var(--teal);}
+.feedback.err{color:var(--coral);}
+.progress-wrap{margin-bottom:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);margin-bottom:5px;}
+.prog-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--teal);border-radius:99px;transition:width .4s;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-card{background:var(--card);border:1px solid rgba(6,214,160,.3);border-radius:22px;padding:28px 24px;text-align:center;max-width:320px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);}to{transform:scale(1) translateY(0);}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px;}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.ov-fact{font-size:.83rem;line-height:1.5;margin-bottom:12px;}
+.ov-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+.ov-btn{padding:12px 28px;background:var(--gold);color:#0F0820;border:none;border-radius:12px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:200;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen"><div style="font-size:2.5rem">🌡️</div><p>Loading… / লোড হৈছে…</p></div>
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="h-left">
+      <div class="game-title">States of Matter Mixer</div>
+      <div class="game-title-as">পদাৰ্থৰ অৱস্থাৰ মিশ্ৰণ</div>
+      <div class="subject-tag">Science · শ্ৰেণী ৪</div>
+    </div>
+    <div class="stars" id="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+      <span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+  <div class="wow">
+    <div class="wow-emoji">🧊</div>
+    <p>At <span>-89°C</span>, carbon dioxide gas becomes a SOLID you can hold — it's called dry ice. It <span>skips liquid entirely</span> — straight from solid to gas!</p>
+    <div class="wow-as">-৮৯°Cত কাৰ্বন ডাই-অক্সাইড গেছ কঠিন হয়। ই কেতিয়াও তৰল নহয় — পোনে পোনে কঠিনৰ পৰা গেছ!</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-label"><span>Challenge <span id="qNum">1</span>/8</span><span style="font-family:'Noto Sans Devanagari',sans-serif;">প্ৰত্যাহ্বান <span id="qNumAs">১</span>/৮</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="game-area">
+    <div class="challenge-card">
+      <div class="ch-label">Challenge / প্ৰত্যাহ্বান</div>
+      <div class="ch-text" id="chText">—</div>
+      <div class="ch-as" id="chAs">—</div>
+    </div>
+    <div class="items-label">1. Pick the item / বস্তু বাচক <span class="as">→ 2. Tap the heat zone / তাপ অঞ্চল টেপ কৰক</span></div>
+    <div class="items-row" id="itemsRow"></div>
+    <div class="heat-scale-wrap">
+      <div class="hs-label"><span>❄️ Cold</span><span>🔥 Very Hot</span></div>
+      <div class="heat-track">
+        <div class="hz" onclick="tapZone('freezing')"><div class="hz-icon">❄️</div><div class="hz-label">Freezing<br>জমা</div></div>
+        <div class="hz" onclick="tapZone('cold')"><div class="hz-icon">🌡️</div><div class="hz-label">Cold<br>ঠাণ্ডা</div></div>
+        <div class="hz" onclick="tapZone('warm')"><div class="hz-icon">☀️</div><div class="hz-label">Warm<br>গৰম</div></div>
+        <div class="hz" onclick="tapZone('hot')"><div class="hz-icon">🔥</div><div class="hz-label">Hot<br>অতি গৰম</div></div>
+        <div class="hz" onclick="tapZone('boiling')"><div class="hz-icon">💨</div><div class="hz-label">Boiling<br>ফুটা</div></div>
+      </div>
+    </div>
+    <div class="placed-wrap" id="placedWrap"><div class="placed-empty">Pick an item and tap a heat zone / বস্তু বাছক আৰু তাপ অঞ্চল টেপ কৰক</div></div>
+    <button class="check-btn" onclick="checkAnswer()">Check ✓ / পৰীক্ষা কৰক</button>
+    <div class="feedback" id="feedback"></div>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <div class="ov-as" id="ovAs"></div>
+    <button class="ov-btn" id="ovBtn" onclick="nextChallenge()">Next →</button>
+  </div>
+</div>
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let currentUser=null;
+auth.onAuthStateChanged(u=>{
+  if(!u){window.location.href='/login.html';return;}
+  currentUser=u;
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initGame();
+});
+
+// zone: freezing | cold | warm | hot | boiling
+// state result per zone per item
+const ITEMS={
+  ice:{emoji:'🧊',name:'Ice',as:'বৰফ',states:{freezing:'Solid ❄️',cold:'Solid ❄️',warm:'Liquid 💧',hot:'Liquid 💧',boiling:'Gas 💨'}},
+  water:{emoji:'💧',name:'Water',as:'পানী',states:{freezing:'Solid ❄️',cold:'Liquid 💧',warm:'Liquid 💧',hot:'Liquid 💧',boiling:'Gas 💨'}},
+  chocolate:{emoji:'🍫',name:'Chocolate',as:'চকলেট',states:{freezing:'Solid ❄️',cold:'Solid ❄️',warm:'Solid ❄️',hot:'Liquid 💧',boiling:'Liquid 💧'}},
+  butter:{emoji:'🧈',name:'Butter',as:'মাখন',states:{freezing:'Solid ❄️',cold:'Solid ❄️',warm:'Liquid 💧',hot:'Liquid 💧',boiling:'Gas 💨'}},
+  steam:{emoji:'💨',name:'Steam',as:'বাষ্প',states:{freezing:'Solid ❄️',cold:'Liquid 💧',warm:'Gas 💨',hot:'Gas 💨',boiling:'Gas 💨'}}
+};
+
+const CHALLENGES=[
+  {text:"Put ICE in a WARM place. What state does it become?",as:"বৰফ গৰম ঠাইত ৰাখক। কোন অৱস্থা হয়?",itemKey:'ice',zone:'warm',fact:"Ice melts at 0°C — solid turns to liquid. In Assam's summer heat, ice melts very fast!",factAs:"বৰফ ০°Cত গলে। অসমৰ গ্ৰীষ্মকালীন গৰমত বৰফ খুব দ্ৰুত গলে!"},
+  {text:"Boil WATER until steam appears. What state is steam?",as:"পানী ফুটাওক। বাষ্প কোন অৱস্থা?",itemKey:'water',zone:'boiling',fact:"Water boils at 100°C — liquid turns to gas. The steam in clouds is water vapour!",factAs:"পানী ১০০°Cত ফুটে। মেঘত থকা বাষ্পও পানীৰ বাষ্প!"},
+  {text:"Melt CHOCOLATE on a hot pan. What does it become?",as:"গৰম পেনত চকলেট গলাওক। কি হয়?",itemKey:'chocolate',zone:'hot',fact:"Chocolate melts at just 37°C — body temperature! That's why it melts in your mouth!",factAs:"চকলেট মাত্ৰ ৩৭°Cত গলে — শৰীৰৰ তাপমাত্ৰা! এইবাবেই মুখত গলে!"},
+  {text:"Leave BUTTER at room temperature (warm). What happens?",as:"মাখন কোঠাৰ উষ্ণতাত ৰাখক (গৰম)। কি হয়?",itemKey:'butter',zone:'warm',fact:"Butter melts around 32–35°C — just above room temperature in summer!",factAs:"মাখন ৩২-৩৫°Cত গলে — গ্ৰীষ্মকালীন কোঠাৰ উষ্ণতাৰ ওপৰত!"},
+  {text:"Cool STEAM down to freezing. What state does it become?",as:"বাষ্প ঠাণ্ডা কৰি বৰফ বনাওক। কোন অৱস্থা?",itemKey:'steam',zone:'freezing',fact:"Gas → liquid → solid as it cools. This is called condensation then freezing!",factAs:"গেছ → তৰল → কঠিন ঠাণ্ডা হ'লে। এটাক পৰিঘনন তাৰপিছত জমা বোলে!"},
+  {text:"Put ICE in a FREEZING area. It stays as…?",as:"বৰফ জমা ঠাইত ৰাখক। কি অৱস্থাত থাকে?",itemKey:'ice',zone:'freezing',fact:"At temperatures below 0°C, water stays solid. Kaziranga in winter gets near 5°C!",factAs:"০°Cতকৈ কম তাপমাত্ৰাত পানী কঠিন থাকে। শীতকালত কাজিৰঙাত প্ৰায় ৫°C হয়!"},
+  {text:"Heat WATER until it boils. What does the water become?",as:"পানী ফুটালৈকে গৰম কৰক। পানী কি হয়?",itemKey:'water',zone:'boiling',fact:"100°C is the boiling point of water at sea level — in Assam's low altitude, it's exactly 100°C!",factAs:"সমুদ্ৰপৃষ্ঠত পানীৰ ফুটনবিন্দু ১০০°C — অসমৰ নিম্ন উচ্চতাত ঠিক ১০০°C!"},
+  {text:"Cool STEAM to just cold (not freezing). It becomes…?",as:"বাষ্প মাত্ৰ ঠাণ্ডা কৰক (জমা নহয়)। কি হয়?",itemKey:'steam',zone:'cold',fact:"Steam condensing into water drops — that's how rain forms! Warm air rises, cools, condenses!",factAs:"বাষ্প ঘনীভূত হৈ পানীৰ টোপাল হয় — এইদৰেই বৰষুণ হয়!"}
+];
+
+const AS_NUMS=['১','২','৩','৪','৫','৬','৭','৮'];
+let round=0,score=0,selectedItem=null,selectedZone=null;
+
+function initGame(){round=0;score=0;updateStars(0);loadChallenge();}
+
+function loadChallenge(){
+  const c=CHALLENGES[round];
+  document.getElementById('chText').textContent=c.text;
+  document.getElementById('chAs').textContent=c.as;
+  document.getElementById('qNum').textContent=round+1;
+  document.getElementById('qNumAs').textContent=AS_NUMS[round];
+  document.getElementById('progFill').style.width=(round/8*100)+'%';
+  document.getElementById('feedback').textContent='';
+  selectedItem=null;selectedZone=null;
+  updatePlacedWrap();
+  // Build item chips — show only relevant items
+  const row=document.getElementById('itemsRow');
+  const allItems=Object.keys(ITEMS);
+  row.innerHTML='';
+  allItems.forEach(key=>{
+    const it=ITEMS[key];
+    const chip=document.createElement('div');
+    chip.className='item-chip'+(key===c.itemKey?'':' dim');
+    chip.style.opacity=key===c.itemKey?'1':'0.5';
+    chip.innerHTML=`${it.emoji} ${it.name}<br><span style="font-family:'Noto Sans Devanagari',sans-serif;font-size:.6rem;">${it.as}</span>`;
+    chip.addEventListener('click',()=>selectItem(key,chip));
+    row.appendChild(chip);
+  });
+}
+
+function selectItem(key,chip){
+  selectedItem=key;
+  document.querySelectorAll('.item-chip').forEach(c=>c.classList.remove('selected'));
+  chip.classList.add('selected');
+  updatePlacedWrap();
+}
+
+function tapZone(zone){
+  selectedZone=zone;
+  document.querySelectorAll('.hz').forEach(h=>h.style.outline='none');
+  event.currentTarget.style.outline='2px solid var(--gold)';
+  updatePlacedWrap();
+}
+
+function updatePlacedWrap(){
+  const wrap=document.getElementById('placedWrap');
+  if(!selectedItem||!selectedZone){
+    wrap.innerHTML='<div class="placed-empty">Pick an item and tap a heat zone / বস্তু বাছক আৰু তাপ অঞ্চল টেপ কৰক</div>';return;
+  }
+  const it=ITEMS[selectedItem];
+  const state=it.states[selectedZone];
+  const stateAs={Solid:'কঠিন','Liquid':'তৰল','Gas':'গেছ'};
+  const stateKey=state.split(' ')[0];
+  wrap.innerHTML=`<div class="placed-result">
+    <div class="placed-name">${it.emoji} ${it.name}</div>
+    <div class="placed-arrow">→</div>
+    <div class="placed-state">${state}</div>
+    <div class="placed-state-as">${stateAs[stateKey]||stateKey}</div>
+  </div>`;
+}
+
+function checkAnswer(){
+  if(!selectedItem||!selectedZone){
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent='Pick an item AND a heat zone first! / বস্তু আৰু তাপ অঞ্চল দুয়োটা বাছক!';
+    setTimeout(()=>document.getElementById('feedback').textContent='',2000);return;
+  }
+  const c=CHALLENGES[round];
+  const fb=document.getElementById('feedback');
+  if(selectedItem===c.itemKey&&selectedZone===c.zone){
+    score++;updateStars(Math.min(5,Math.ceil(score/1.6)));confetti();
+    document.getElementById('ovEmoji').textContent='🌡️';
+    document.getElementById('ovTitle').textContent=['Excellent!','Brilliant!','Spot on!','Amazing!','Outstanding!'][Math.floor(Math.random()*5)];
+    document.getElementById('ovFact').textContent=c.fact;
+    document.getElementById('ovAs').textContent=c.factAs;
+    document.getElementById('ovBtn').textContent=round<7?'Next → / পৰৱৰ্তী':'Finish! / শেষ!';
+    showOverlay(true);
+  } else {
+    fb.className='feedback err';
+    fb.textContent=`❌ Check: ${ITEMS[c.itemKey].name} + ${c.zone} zone! / ${ITEMS[c.itemKey].as} + ${c.zone} অঞ্চল!`;
+    setTimeout(()=>{fb.textContent='';},2200);
+  }
+}
+
+function nextChallenge(){showOverlay(false);round++;if(round>=8)endGame();else loadChallenge();}
+
+function endGame(){
+  trackProgress();
+  document.getElementById('ovEmoji').textContent='🏆';
+  document.getElementById('ovTitle').textContent='Matter Master! / পদাৰ্থৰ ওস্তাদ!';
+  document.getElementById('ovFact').textContent=`Score: ${score}/8! You now know how heat changes the state of every material!`;
+  document.getElementById('ovAs').textContent=`স্কোৰ: ${score}/৮! তুমি এখন জানা যে তাপে প্ৰতিটো পদাৰ্থৰ অৱস্থা সলনি কৰে!`;
+  document.getElementById('ovBtn').textContent='🔄 Play Again / আকৌ খেলক';
+  document.getElementById('ovBtn').onclick=()=>{showOverlay(false);initGame();};
+  showOverlay(true);
+}
+async function trackProgress(){
+  if(!currentUser)return;
+  try{await db.collection('users').doc(currentUser.uid).collection('progress').doc('class4-game13').set(
+    {score,total:8,gameId:'class4-game13',gameName:'States of Matter Mixer',class:4,subject:'Science',completedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+}
+function updateStars(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function showOverlay(s){document.getElementById('overlay').classList.toggle('show',s);}
+function confetti(){
+  const cols=['#FFD166','#4CC9F0','#06D6A0','#FF6B6B','#C77DFF'];
+  for(let i=0;i<22;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%5]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}
+}
+</script>
+</body>
+</html>

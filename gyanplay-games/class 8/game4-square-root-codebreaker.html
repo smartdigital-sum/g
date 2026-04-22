@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G8-04: Square Root Codebreaker | GyanPlay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060A10;
+            --card: #0D1428;
+            --gold: #FFD166;
+            --coral: #FF6B6B;
+            --teal: #06D6A0;
+            --purple: #C77DFF;
+            --orange: #FF9F1C;
+            --text: #E8F0FF;
+            --dim: #4A6A8A;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, #180A28 0%, #0F0820 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .container { max-width: 480px; margin: 0 auto; }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(199, 125, 255, 0.22);
+            margin-bottom: 20px;
+        }
+        
+        .title-section { flex: 1; }
+        .game-title { font-family: 'Baloo 2', cursive; font-size: 1.35rem; color: var(--gold); font-weight: 800; }
+        .subject-tag { font-size: 0.7rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .stars { display: flex; gap: 4px; }
+        .star { font-size: 1.2rem; opacity: 0.3; transition: all 0.3s ease; }
+        .star.lit { opacity: 1; filter: drop-shadow(0 0 8px var(--gold)); }
+        
+        .hook-card {
+            background: linear-gradient(135deg, rgba(199, 125, 255, 0.15), rgba(199, 125, 255, 0.05));
+            border: 1px solid rgba(199, 125, 255, 0.22);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 24px rgba(199, 125, 255, 0.12);
+        }
+        
+        .hook-text { font-size: 0.95rem; line-height: 1.7; }
+        .hook-text strong { color: var(--gold); font-weight: 700; }
+        
+        .game-area {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .stage-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            color: var(--purple);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stage-title::before { content: ''; width: 4px; height: 20px; background: var(--purple); border-radius: 2px; }
+        
+        /* Prime Factor Tree */
+        .number-input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .number-input {
+            flex: 1;
+            background: rgba(6, 10, 16, 0.6);
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text);
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .go-btn {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            color: #060A10;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        
+        .factor-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .tree-level {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tree-node {
+            background: rgba(199, 125, 255, 0.2);
+            border: 2px solid var(--purple);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1rem;
+        }
+        
+        .tree-node.prime {
+            background: rgba(6, 214, 160, 0.2);
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+        
+        .pair-visual {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .prime-pair {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            background: rgba(6, 214, 160, 0.1);
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        
+        .pair-result {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 209, 102, 0.1);
+            border-radius: 10px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            color: var(--gold);
+        }
+        
+        /* Perfect Square Detector */
+        .detector-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .number-card {
+            background: rgba(199, 125, 255, 0.1);
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .number-card:hover { border-color: var(--purple); }
+        .number-card.selected {
+            background: rgba(255, 209, 102, 0.2);
+            border-color: var(--gold);
+        }
+        
+        .number-value {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .number-status {
+            font-size: 0.8rem;
+            color: var(--dim);
+            min-height: 20px;
+        }
+        
+        /* Pythagorean Triplets */
+        .triplet-inputs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .triplet-input {
+            width: 70px;
+            background: rgba(6, 10, 16, 0.6);
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text);
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .check-triplet-btn {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            color: #060A10;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .triplet-result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+        
+        .triplet-result.valid {
+            display: block;
+            background: rgba(6, 214, 160, 0.1);
+            border-left: 3px solid var(--teal);
+        }
+        
+        .triplet-result.invalid {
+            display: block;
+            background: rgba(255, 71, 87, 0.1);
+            border-left: 3px solid var(--coral);
+        }
+        
+        /* Cube Root */
+        .cube-problem {
+            background: rgba(6, 214, 160, 0.1);
+            border: 1px solid rgba(6, 214, 160, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .cube-number {
+            font-family: 'Baloo 2', cursive;
+            font-size: 2rem;
+            color: var(--teal);
+        }
+        
+        .cube-hint {
+            font-size: 0.85rem;
+            color: var(--dim);
+            margin-top: 10px;
+        }
+        
+        .options-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .option-btn {
+            background: rgba(199, 125, 255, 0.1);
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px 25px;
+            color: var(--text);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-btn:hover { border-color: var(--purple); }
+        .option-btn.correct { background: rgba(6, 214, 160, 0.2); border-color: var(--teal); }
+        .option-btn.wrong { background: rgba(255, 71, 87, 0.2); border-color: var(--coral); }
+        
+        /* Bottom Bar */
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 20px;
+        }
+        
+        .progress-info { font-size: 0.85rem; color: var(--dim); }
+        
+        .action-btn {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: #060A10;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 209, 102, 0.4); }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(6, 10, 16, 0.95);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px;
+        }
+        .overlay.active { display: flex; }
+        .overlay-content { text-align: center; max-width: 400px; }
+        .overlay-emoji { font-size: 4rem; margin-bottom: 15px; }
+        .overlay-title { font-family: 'Baloo 2', cursive; font-size: 1.5rem; color: var(--gold); margin-bottom: 10px; }
+        .overlay-message { font-size: 1rem; color: var(--text); margin-bottom: 15px; }
+        .overlay-fact { font-size: 0.85rem; color: var(--dim); padding: 15px; background: rgba(199, 125, 255, 0.1); border-radius: 10px; border-left: 3px solid var(--purple); }
+        
+        /* Completion */
+        .completion-screen { display: none; text-align: center; padding: 40px 20px; }
+        .completion-screen.active { display: block; }
+        .trophy { font-size: 5rem; margin-bottom: 20px; }
+        .completion-title { font-family: 'Baloo 2', cursive; font-size: 2rem; color: var(--gold); margin-bottom: 15px; }
+        .completion-score { font-size: 1.2rem; color: var(--text); margin-bottom: 30px; }
+        .play-again-btn {
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border: none; border-radius: 25px; padding: 15px 40px;
+            color: var(--text); font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 1.1rem;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .play-again-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(199, 125, 255, 0.4); }
+        
+        .stage { display: none; }
+        .stage.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title-section">
+                <div class="subject-tag">Mathematics</div>
+                <div class="game-title">Square Root Codebreaker</div>
+            </div>
+            <div class="stars">
+                <span class="star" id="star1">⭐</span>
+                <span class="star" id="star2">⭐</span>
+                <span class="star" id="star3">⭐</span>
+                <span class="star" id="star4">⭐</span>
+                <span class="star" id="star5">⭐</span>
+            </div>
+        </div>
+        
+        <div class="hook-card">
+            <div class="hook-text">
+                <strong>RSA encryption</strong> — used to secure EVERY online bank transaction — is based on the fact that multiplying two large prime numbers takes milliseconds but REVERSING it (finding the square root of a very large number) takes millions of years. <strong>The difficulty of square roots protects all the world's banking data.</strong>
+            </div>
+        </div>
+        
+        <!-- Stage 1: Prime Factor Tree -->
+        <div class="stage active" id="stage1">
+            <div class="game-area">
+                <div class="stage-title">Stage 1: Prime Factorisation</div>
+                
+                <div class="number-input-row">
+                    <input type="number" class="number-input" id="factorInput" placeholder="Enter a number" value="1764">
+                    <button class="go-btn" onclick="buildFactorTree()">Factorise</button>
+                </div>
+                
+                <div class="factor-tree" id="factorTree" style="display:none">
+                    <div class="tree-level">
+                        <div class="tree-node" id="rootNode">1764</div>
+                    </div>
+                    <div class="tree-level">
+                        <div class="tree-node">2</div>
+                        <div class="tree-node">882</div>
+                    </div>
+                    <div class="tree-level">
+                        <div class="tree-node">2</div>
+                        <div class="tree-node">441</div>
+                    </div>
+                    <div class="tree-level">
+                        <div class="tree-node">3</div>
+                        <div class="tree-node">147</div>
+                    </div>
+                    <div class="tree-level">
+                        <div class="tree-node">3</div>
+                        <div class="tree-node">49</div>
+                    </div>
+                    <div class="tree-level">
+                        <div class="tree-node prime">7</div>
+                        <div class="tree-node prime">7</div>
+                    </div>
+                </div>
+                
+                <div class="pair-visual" id="pairVisual" style="display:none">
+                    <div class="prime-pair">2 × 2</div>
+                    <div class="prime-pair">3 × 3</div>
+                    <div class="prime-pair">7 × 7</div>
+                </div>
+                
+                <div class="pair-result" id="pairResult" style="display:none">
+                    √1764 = 2 × 3 × 7 = <strong>42</strong>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 1 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 2: Perfect Square Detector -->
+        <div class="stage" id="stage2">
+            <div class="game-area">
+                <div class="stage-title">Stage 2: Perfect Square Detector</div>
+                
+                <div style="font-size: 0.9rem; margin-bottom: 15px;">Tap numbers to check if they're perfect squares:</div>
+                
+                <div class="detector-grid">
+                    <div class="number-card" onclick="checkPerfectSquare(this, 144, true)">
+                        <div class="number-value">144</div>
+                        <div class="number-status"></div>
+                    </div>
+                    <div class="number-card" onclick="checkPerfectSquare(this, 200, false)">
+                        <div class="number-value">200</div>
+                        <div class="number-status"></div>
+                    </div>
+                    <div class="number-card" onclick="checkPerfectSquare(this, 256, true)">
+                        <div class="number-value">256</div>
+                        <div class="number-status"></div>
+                    </div>
+                    <div class="number-card" onclick="checkPerfectSquare(this, 300, false)">
+                        <div class="number-value">300</div>
+                        <div class="number-status"></div>
+                    </div>
+                    <div class="number-card" onclick="checkPerfectSquare(this, 361, true)">
+                        <div class="number-value">361</div>
+                        <div class="number-status"></div>
+                    </div>
+                    <div class="number-card" onclick="checkPerfectSquare(this, 400, true)">
+                        <div class="number-value">400</div>
+                        <div class="number-status"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 2 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 3: Pythagorean Triplets -->
+        <div class="stage" id="stage3">
+            <div class="game-area">
+                <div class="stage-title">Stage 3: Pythagorean Triplets</div>
+                
+                <div style="font-size: 0.9rem; margin-bottom: 15px; text-align: center;">
+                    Check if a² + b² = c² (Pythagoras theorem)
+                </div>
+                
+                <div class="triplet-inputs">
+                    <input type="number" class="triplet-input" id="sideA" placeholder="a" value="3">
+                    <span style="font-size: 1.5rem;">² +</span>
+                    <input type="number" class="triplet-input" id="sideB" placeholder="b" value="4">
+                    <span style="font-size: 1.5rem;">² =</span>
+                    <input type="number" class="triplet-input" id="sideC" placeholder="c" value="5">
+                    <span style="font-size: 1.5rem;">²</span>
+                </div>
+                
+                <button class="check-triplet-btn" onclick="checkTriplet()">Check Triplet</button>
+                
+                <div class="triplet-result" id="tripletResult"></div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(6, 10, 16, 0.4); border-radius: 10px;">
+                    <div style="font-size: 0.85rem; color: var(--dim);">
+                        <strong>Tip:</strong> Multiply (3,4,5) by k to get more triplets:<br>
+                        k=2: (6,8,10) | k=3: (9,12,15) | k=4: (12,16,20)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 3 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 4: Cube Root Estimation -->
+        <div class="stage" id="stage4">
+            <div class="game-area">
+                <div class="stage-title">Stage 4: Cube Root Estimation</div>
+                
+                <div class="cube-problem">
+                    <div style="font-size: 0.9rem; margin-bottom: 10px;">Find ∛</div>
+                    <div class="cube-number">2197</div>
+                    <div class="cube-hint">Hint: 10³ = 1000, 15³ = 3375</div>
+                </div>
+                
+                <div class="options-row">
+                    <button class="option-btn" onclick="checkCubeRoot(this, false)">11</button>
+                    <button class="option-btn" onclick="checkCubeRoot(this, false)">12</button>
+                    <button class="option-btn" onclick="checkCubeRoot(this, true)">13</button>
+                    <button class="option-btn" onclick="checkCubeRoot(this, false)">14</button>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(6, 10, 16, 0.4); border-radius: 10px;">
+                    <div style="font-size: 0.85rem; color: var(--dim);">
+                        <strong>Estimation trick:</strong> 2197 ends in 7, so cube root ends in 3 (since 3³=27).<br>
+                        It's between 1000 and 3375, so between 10 and 15. Answer: 13
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 4 of 4</div>
+                <button class="action-btn" onclick="completeGame()">Complete Game</button>
+            </div>
+        </div>
+        
+        <div class="completion-screen" id="completionScreen">
+            <div class="trophy">🏆</div>
+            <div class="completion-title">Codebreaker Unlocked!</div>
+            <div class="completion-score" id="finalScore">You mastered square roots!</div>
+            <button class="play-again-btn" onclick="playAgain()">Play Again</button>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay">
+        <div class="overlay-content">
+            <div class="overlay-emoji" id="overlayEmoji">✓</div>
+            <div class="overlay-title" id="overlayTitle">Correct!</div>
+            <div class="overlay-message" id="overlayMessage"></div>
+            <div class="overlay-fact" id="overlayFact"></div>
+        </div>
+    </div>
+    
+    <script>
+        let currentStage = 1;
+        let score = 0;
+        
+        function buildFactorTree() {
+            const num = parseInt(document.getElementById('factorInput').value) || 1764;
+            document.getElementById('rootNode').textContent = num;
+            document.getElementById('factorTree').style.display = 'flex';
+            document.getElementById('pairVisual').style.display = 'flex';
+            document.getElementById('pairResult').style.display = 'block';
+            
+            document.getElementById('star1').classList.add('lit');
+            score += 20;
+        }
+        
+        function checkPerfectSquare(card, num, isPerfect) {
+            card.classList.add('selected');
+            const status = card.querySelector('.number-status');
+            const root = Math.sqrt(num);
+            
+            if (isPerfect) {
+                status.innerHTML = `<span style="color: var(--teal);">✓ √${num} = ${root}</span>`;
+            } else {
+                status.innerHTML = `<span style="color: var(--coral);">✗ Not perfect</span>`;
+            }
+            
+            document.getElementById('star2').classList.add('lit');
+            score += 5;
+        }
+        
+        function checkTriplet() {
+            const a = parseInt(document.getElementById('sideA').value) || 0;
+            const b = parseInt(document.getElementById('sideB').value) || 0;
+            const c = parseInt(document.getElementById('sideC').value) || 0;
+            
+            const result = document.getElementById('tripletResult');
+            const lhs = a*a + b*b;
+            const rhs = c*c;
+            
+            if (lhs === rhs) {
+                result.className = 'triplet-result valid';
+                result.innerHTML = `<strong>✓ Valid Triplet!</strong><br>${a}² + ${b}² = ${lhs} = ${c}²`;
+                document.getElementById('star3').classList.add('lit');
+                score += 20;
+                showOverlay('✓', 'Valid Triplet!', `${a}, ${b}, ${c} form a right triangle.`, 'Pythagorean triplets are used in construction and navigation.');
+            } else {
+                result.className = 'triplet-result invalid';
+                result.innerHTML = `<strong>✗ Not a triplet</strong><br>${a}² + ${b}² = ${lhs} ≠ ${c}² = ${rhs}`;
+            }
+        }
+        
+        function checkCubeRoot(btn, correct) {
+            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+            
+            if (correct) {
+                btn.classList.add('correct');
+                document.getElementById('star4').classList.add('lit');
+                score += 20;
+                showOverlay('✓', 'Correct!', '∛2197 = 13', 'Cube roots are harder than square roots — that\'s why they\'re used in encryption!');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Not quite', '13³ = 2197', 'Look at the last digit: 7 means cube root ends in 3.');
+            }
+        }
+        
+        function nextStage() {
+            document.getElementById('stage' + currentStage).classList.remove('active');
+            currentStage++;
+            document.getElementById('stage' + currentStage).classList.add('active');
+        }
+        
+        function completeGame() {
+            document.getElementById('star5').classList.add('lit');
+            score += 20;
+            
+            localStorage.setItem('G8-04', JSON.stringify({
+                visited: true,
+                score: score,
+                date: new Date().toISOString()
+            }));
+            
+            document.querySelectorAll('.stage').forEach(s => s.style.display = 'none');
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.hook-card').style.display = 'none';
+            document.getElementById('completionScreen').classList.add('active');
+            document.getElementById('finalScore').textContent = `You scored ${score}/100!`;
+        }
+        
+        function playAgain() {
+            currentStage = 1;
+            score = 0;
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+            document.querySelectorAll('.stage').forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'block';
+            });
+            document.getElementById('stage1').classList.add('active');
+            document.querySelector('.header').style.display = 'flex';
+            document.querySelector('.hook-card').style.display = 'block';
+            document.getElementById('completionScreen').classList.remove('active');
+            
+            document.getElementById('factorTree').style.display = 'none';
+            document.getElementById('pairVisual').style.display = 'none';
+            document.getElementById('pairResult').style.display = 'none';
+            
+            document.querySelectorAll('.number-card').forEach(c => {
+                c.classList.remove('selected');
+                c.querySelector('.number-status').textContent = '';
+            });
+            
+            document.getElementById('tripletResult').className = 'triplet-result';
+            document.getElementById('tripletResult').innerHTML = '';
+            
+            document.querySelectorAll('.option-btn').forEach(b => {
+                b.disabled = false;
+                b.classList.remove('correct', 'wrong');
+            });
+        }
+        
+        function showOverlay(emoji, title, message, fact) {
+            document.getElementById('overlayEmoji').textContent = emoji;
+            document.getElementById('overlayTitle').textContent = title;
+            document.getElementById('overlayMessage').textContent = message;
+            document.getElementById('overlayFact').textContent = fact;
+            document.getElementById('overlay').classList.add('active');
+            setTimeout(() => document.getElementById('overlay').classList.remove('active'), 2500);
+        }
+        
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('G8-04');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.score > 0) {
+                    const stars = Math.ceil(data.score / 20);
+                    for (let i = 1; i <= stars; i++) document.getElementById('star' + i).classList.add('lit');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

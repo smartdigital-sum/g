@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Count the Animals 🐾</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Baloo 2',cursive;
+    background:linear-gradient(160deg,#1a3a2a,#2d6a4f,#1b4332);
+    min-height:100vh;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    user-select:none;
+  }
+  /* grass ground */
+  .ground{
+    position:fixed;bottom:0;left:0;right:0;height:80px;
+    background:linear-gradient(180deg,#40916c,#2d6a4f);
+    z-index:1;
+  }
+  .ground::before{
+    content:'';position:absolute;top:-20px;left:0;right:0;height:30px;
+    background:radial-gradient(ellipse 30px 20px,#52b788 50%,transparent 50%) repeat-x;
+    background-size:40px 30px;
+  }
+
+  .header{position:relative;z-index:10;text-align:center;padding:18px 20px 8px;width:100%;}
+  .title{font-size:clamp(1.4rem,5vw,2.2rem);color:#FFD700;text-shadow:0 2px 10px rgba(0,0,0,.3);}
+  .question-box{
+    background:rgba(255,255,255,.15);backdrop-filter:blur(8px);
+    border:2px solid rgba(255,255,255,.3);border-radius:20px;
+    padding:12px 28px;margin-top:12px;display:inline-flex;align-items:center;gap:12px;
+    font-size:clamp(1.2rem,5vw,1.8rem);color:#fff;
+  }
+  .question-emoji{font-size:clamp(1.8rem,7vw,2.5rem);}
+
+  .score-bar{position:relative;z-index:10;display:flex;gap:16px;align-items:center;margin-top:8px;}
+  .score-box{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);border-radius:20px;padding:6px 18px;color:#fff;font-size:1rem;}
+  .score-box span{color:#FFD700;font-size:1.2rem;}
+
+  /* animals area */
+  .animals-stage{
+    position:relative;z-index:5;
+    flex:1;width:100%;max-width:700px;
+    display:flex;align-items:center;justify-content:center;
+    flex-wrap:wrap;gap:clamp(10px,3vw,20px);
+    padding:20px;
+  }
+  .animal{
+    font-size:clamp(2.5rem,9vw,4.5rem);
+    cursor:default;
+    animation:animalBounce 2s ease-in-out infinite;
+    display:inline-block;
+    filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));
+  }
+  @keyframes animalBounce{
+    0%,100%{transform:translateY(0) scale(1);}
+    50%{transform:translateY(-8px) scale(1.05);}
+  }
+  .animal:nth-child(odd){animation-delay:.3s;}
+  .animal:nth-child(3n){animation-delay:.6s;}
+
+  /* answer buttons */
+  .answers{
+    position:relative;z-index:10;
+    display:flex;gap:clamp(8px,3vw,16px);
+    padding:0 20px 20px;
+    flex-wrap:wrap;justify-content:center;
+    margin-bottom:80px;
+  }
+  .ans-btn{
+    width:clamp(65px,15vw,85px);height:clamp(65px,15vw,85px);
+    border-radius:50%;border:4px solid rgba(255,255,255,.4);
+    background:rgba(255,255,255,.15);backdrop-filter:blur(6px);
+    color:#fff;font-size:clamp(1.4rem,5vw,2rem);font-weight:800;
+    cursor:pointer;transition:all .2s;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .ans-btn:hover{transform:scale(1.12);background:rgba(255,255,255,.3);border-color:#FFD700;}
+  .ans-btn.correct{
+    background:rgba(46,213,115,.6);border-color:#2ed573;
+    animation:correctPop .4s ease;
+  }
+  .ans-btn.wrong{
+    background:rgba(255,71,87,.5);border-color:#FF4757;
+    animation:wrongShake .4s ease;
+  }
+  @keyframes correctPop{0%{transform:scale(1);}50%{transform:scale(1.25);}100%{transform:scale(1.1);}}
+  @keyframes wrongShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+
+  /* progress */
+  .progress{position:relative;z-index:10;display:flex;gap:8px;margin-top:8px;}
+  .dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s;}
+  .dot.done{background:#FFD700;box-shadow:0 0 8px #FFD700;}
+  .dot.active{background:#fff;transform:scale(1.3);}
+
+  /* dancing overlay */
+  .dance-overlay{
+    position:fixed;inset:0;z-index:50;pointer-events:none;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .dance-text{
+    font-size:clamp(3rem,12vw,6rem);
+    color:#FFD700;font-weight:800;
+    text-shadow:0 0 30px rgba(255,215,0,.8);
+    animation:danceIn .4s ease both;
+    opacity:0;
+  }
+  @keyframes danceIn{0%{transform:scale(0) rotate(-10deg);opacity:0;}60%{transform:scale(1.3) rotate(5deg);opacity:1;}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+
+  /* celebration */
+  .celebration{
+    position:fixed;inset:0;z-index:200;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.75);backdrop-filter:blur(8px);animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .celeb-emoji{font-size:clamp(4rem,15vw,7rem);animation:celebBounce .5s ease infinite alternate;}
+  @keyframes celebBounce{from{transform:scale(1);}to{transform:scale(1.15);}}
+  .celebration h2{color:#FFD700;font-size:clamp(2rem,8vw,3.5rem);text-align:center;margin:16px 0 8px;}
+  .celebration p{color:#fff;font-size:clamp(1rem,4vw,1.4rem);margin-bottom:24px;}
+  .next-btn{
+    background:linear-gradient(135deg,#FF6B00,#FFB800);color:#fff;border:none;border-radius:50px;
+    padding:14px 40px;font-family:'Baloo 2',cursive;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;
+    cursor:pointer;box-shadow:0 6px 24px rgba(255,107,0,.4);transition:transform .2s;
+  }
+  .next-btn:hover{transform:scale(1.05);}
+
+  /* confetti */
+  .confetti-piece{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.2s ease-in forwards;}
+  @keyframes confettiFall{0%{opacity:1;}100%{transform:translateY(300px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="ground"></div>
+
+<div class="header">
+  <div class="title">🐾 Count the Animals</div>
+  <div class="question-box">
+    <span class="question-emoji" id="qEmoji">🐱</span>
+    <span id="questionText">How many cats?</span>
+  </div>
+</div>
+<div class="score-bar">
+  <div class="score-box">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="score-box">🎯 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress" id="progress"></div>
+
+<div class="animals-stage" id="animalsStage"></div>
+
+<div class="answers" id="answers"></div>
+
+<script>
+const ANIMALS=[
+  {emoji:'🐱',name:'cats'},{emoji:'🐶',name:'dogs'},{emoji:'🐸',name:'frogs'},
+  {emoji:'🦋',name:'butterflies'},{emoji:'🐰',name:'rabbits'},{emoji:'🐥',name:'chicks'},
+  {emoji:'🐮',name:'cows'},{emoji:'🦊',name:'foxes'},{emoji:'🐻',name:'bears'},
+  {emoji:'🐧',name:'penguins'},{emoji:'🦁',name:'lions'},{emoji:'🐘',name:'elephants'},
+];
+
+let score=0,round=0,correctAns=0,answered=false;
+const TOTAL=10;
+
+let audioCtx;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function playCorrect(){
+  const ctx=getAudio();
+  [523,659,784,1047].forEach((f,i)=>{
+    setTimeout(()=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.4);
+      o.start();o.stop(ctx.currentTime+.4);
+    },i*100);
+  });
+}
+
+function playWrong(){
+  const ctx=getAudio();
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);
+  o.type='sine';o.frequency.value=220;
+  g.gain.setValueAtTime(.2,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
+  o.start();o.stop(ctx.currentTime+.3);
+}
+
+function playCelebration(){
+  const ctx=getAudio();
+  [523,659,784,880,1047,1319].forEach((f,i)=>{
+    setTimeout(()=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.45);
+      o.start();o.stop(ctx.currentTime+.45);
+    },i*90);
+  });
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.85;u.pitch=1.3;u.volume=1;
+  window.speechSynthesis.speak(u);
+}
+
+function makeDots(){
+  const p=document.getElementById('progress');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+
+function spawnConfetti(){
+  const cols=['#FF4757','#FFD700','#2ed573','#1e90ff','#a55eea'];
+  for(let i=0;i<25;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`left:${Math.random()*100}%;top:20%;background:${cols[i%cols.length]};animation-duration:${.8+Math.random()*.6}s;transform:rotate(${Math.random()*360}deg);`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1400);
+  }
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  const animal=ANIMALS[Math.floor(Math.random()*ANIMALS.length)];
+  correctAns=Math.floor(Math.random()*5)+1;
+
+  document.getElementById('qEmoji').textContent=animal.emoji;
+  document.getElementById('questionText').textContent=`How many ${animal.name}?`;
+
+  // render animals
+  const stage=document.getElementById('animalsStage');
+  stage.innerHTML='';
+  for(let i=0;i<correctAns;i++){
+    const a=document.createElement('span');
+    a.className='animal';
+    a.textContent=animal.emoji;
+    a.style.animationDelay=(i*0.2)+'s';
+    stage.appendChild(a);
+  }
+
+  // answer buttons: correct + 2 distractors
+  const ansBtns=new Set([correctAns]);
+  while(ansBtns.size<3){
+    let n=Math.floor(Math.random()*7)+1;
+    if(n!==correctAns) ansBtns.add(n);
+  }
+  const ansArr=[...ansBtns].sort(()=>Math.random()-.5);
+
+  const answersEl=document.getElementById('answers');
+  answersEl.innerHTML='';
+  ansArr.forEach(n=>{
+    const btn=document.createElement('button');
+    btn.className='ans-btn';
+    btn.textContent=n;
+    btn.onclick=()=>checkAnswer(btn,n);
+    answersEl.appendChild(btn);
+  });
+
+  setTimeout(()=>speak(`How many ${animal.name} do you see? Count and tap the number!`),300);
+}
+
+function checkAnswer(btn,n){
+  if(answered)return;
+  answered=true;
+  if(n===correctAns){
+    btn.classList.add('correct');
+    playCorrect();
+    spawnConfetti();
+    // make animals dance
+    document.querySelectorAll('.animal').forEach(a=>{
+      a.style.animation='celebBounce .3s ease infinite alternate';
+    });
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    speak(`Yes! ${correctAns}! You counted perfectly!`);
+    round++;
+    makeDots();
+    setTimeout(newRound,1800);
+  } else {
+    btn.classList.add('wrong');
+    playWrong();
+    speak(`Oops! Count again! How many do you see?`);
+    setTimeout(()=>{
+      btn.classList.remove('wrong');
+      answered=false;
+    },800);
+  }
+}
+
+function showCelebration(){
+  playCelebration();
+  speak(`Amazing! You counted all the animals! You are so smart!`);
+  const ov=document.createElement('div');
+  ov.className='celebration';
+  ov.innerHTML=`
+    <div class="celeb-emoji">🎊</div>
+    <h2>Great Counting!</h2>
+    <p>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</p>
+    <button class="next-btn" onclick="restartGame()">Play Again 🐾</button>
+  `;
+  document.body.appendChild(ov);
+}
+
+function restartGame(){
+  document.querySelector('.celebration')?.remove();
+  score=0;round=0;
+  document.getElementById('scoreVal').textContent=0;
+  newRound();
+}
+
+window.addEventListener('load',()=>{
+  window.speechSynthesis.getVoices();
+  makeDots();
+  setTimeout(()=>{
+    speak('Count the animals!');
+    setTimeout(newRound,1200);
+  },500);
+});
+</script>
+</body>
+</html>

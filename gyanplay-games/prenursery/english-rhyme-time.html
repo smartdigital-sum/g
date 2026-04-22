@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rhyme Time 🎵</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Baloo 2',cursive;
+    background:linear-gradient(160deg,#f953c6,#b91d73,#6d0f7a);
+    min-height:100vh;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    user-select:none;
+  }
+  /* music notes floating */
+  .note{position:fixed;pointer-events:none;z-index:1;color:rgba(255,255,255,.2);font-size:1.8rem;animation:noteFloat 5s ease-in-out infinite;}
+  @keyframes noteFloat{0%,100%{transform:translateY(0) rotate(-10deg);}50%{transform:translateY(-20px) rotate(10deg);}}
+
+  .header{position:relative;z-index:10;text-align:center;padding:18px 20px 8px;width:100%;}
+  .title{font-size:clamp(1.4rem,5vw,2.2rem);color:#FFD700;text-shadow:0 0 20px rgba(255,215,0,.4);}
+
+  .score-bar{position:relative;z-index:10;display:flex;gap:16px;align-items:center;margin-top:8px;}
+  .score-box{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);border-radius:20px;padding:6px 18px;color:#fff;font-size:1rem;}
+  .score-box span{color:#FFD700;font-size:1.2rem;}
+
+  .progress{position:relative;z-index:10;display:flex;gap:8px;margin-top:8px;}
+  .dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s;}
+  .dot.done{background:#FFD700;box-shadow:0 0 8px #FFD700;}
+  .dot.active{background:#fff;transform:scale(1.3);}
+
+  /* rhyme card */
+  .rhyme-card{
+    position:relative;z-index:10;
+    background:rgba(255,255,255,.15);backdrop-filter:blur(12px);
+    border:3px solid rgba(255,255,255,.3);border-radius:28px;
+    padding:clamp(16px,4vw,28px) clamp(20px,5vw,40px);
+    margin:14px 20px;text-align:center;
+    width:90%;max-width:500px;
+    box-shadow:0 8px 32px rgba(0,0,0,.2);
+  }
+  .rhyme-word-emoji{font-size:clamp(3.5rem,15vw,7rem);animation:wordBob 1.8s ease-in-out infinite;}
+  @keyframes wordBob{0%,100%{transform:scale(1);}50%{transform:scale(1.08) rotate(-3deg);}}
+  .rhyme-word{color:#FFD700;font-size:clamp(2rem,8vw,3.5rem);font-weight:800;text-shadow:0 0 20px rgba(255,215,0,.4);}
+  .rhyme-prompt{color:rgba(255,255,255,.75);font-size:clamp(.9rem,3.5vw,1.3rem);font-weight:700;margin-top:6px;}
+  .play-btn{
+    background:rgba(255,215,0,.2);border:2px solid rgba(255,215,0,.4);
+    color:#FFD700;border-radius:50px;padding:8px 20px;
+    font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;
+    cursor:pointer;margin-top:10px;transition:all .2s;
+  }
+  .play-btn:hover{background:rgba(255,215,0,.35);}
+
+  /* choice cards */
+  .choices{
+    position:relative;z-index:10;
+    display:flex;gap:clamp(12px,4vw,20px);
+    padding:0 20px;
+    flex-wrap:wrap;justify-content:center;
+    width:100%;max-width:600px;
+  }
+  .choice-card{
+    background:rgba(255,255,255,.15);backdrop-filter:blur(8px);
+    border:3px solid rgba(255,255,255,.25);border-radius:24px;
+    padding:clamp(14px,4vw,24px) clamp(16px,5vw,32px);
+    cursor:pointer;transition:all .2s;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    flex:1;min-width:clamp(110px,28vw,160px);
+  }
+  .choice-card:hover{transform:scale(1.06) translateY(-4px);border-color:rgba(255,215,0,.6);background:rgba(255,215,0,.12);}
+  .choice-emoji{font-size:clamp(3rem,12vw,5rem);}
+  .choice-word{color:#fff;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;}
+  .choice-card.correct{border-color:#2ed573;background:rgba(46,213,115,.25);animation:correctPop .5s ease;}
+  .choice-card.wrong{border-color:#FF4757;background:rgba(255,71,87,.2);animation:wrongShake .4s ease;}
+  @keyframes correctPop{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1);}}
+  @keyframes wrongShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-12px);}75%{transform:translateX(12px);}}
+
+  /* rhyme reveal */
+  .rhyme-reveal{
+    position:fixed;inset:0;z-index:150;
+    display:flex;align-items:center;justify-content:center;
+    pointer-events:none;
+    flex-direction:column;gap:12px;
+  }
+  .reveal-text{
+    color:#FFD700;font-size:clamp(2.5rem,10vw,5rem);font-weight:800;
+    text-shadow:0 0 30px rgba(255,215,0,.6);
+    animation:revealIn .4s ease both,revealOut .3s 1.8s ease forwards;
+    text-align:center;
+  }
+  .reveal-sub{
+    color:#fff;font-size:clamp(1rem,4vw,1.8rem);font-weight:700;
+    animation:revealIn .4s .1s ease both,revealOut .3s 1.8s ease forwards;
+  }
+  @keyframes revealIn{from{transform:scale(0) rotate(-10deg);opacity:0;}60%{transform:scale(1.2);opacity:1;}to{transform:scale(1);opacity:1;}}
+  @keyframes revealOut{to{transform:scale(1.5);opacity:0;}}
+
+  .celebration{
+    position:fixed;inset:0;z-index:200;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(70,0,80,.8);backdrop-filter:blur(10px);animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .celeb-emoji{font-size:clamp(4rem,15vw,7rem);animation:celebBounce .5s ease infinite alternate;}
+  @keyframes celebBounce{from{transform:scale(1);}to{transform:scale(1.15);}}
+  .celebration h2{color:#FFD700;font-size:clamp(2rem,8vw,3.5rem);text-align:center;margin:16px 0 8px;}
+  .celebration p{color:#fff;font-size:clamp(1rem,4vw,1.4rem);margin-bottom:24px;}
+  .next-btn{
+    background:linear-gradient(135deg,#f953c6,#FFB800);color:#fff;border:none;border-radius:50px;
+    padding:14px 40px;font-family:'Baloo 2',cursive;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;
+    cursor:pointer;box-shadow:0 6px 24px rgba(249,83,198,.4);transition:transform .2s;
+  }
+  .next-btn:hover{transform:scale(1.05);}
+  .confetti-piece{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.2s ease-in forwards;}
+  @keyframes confettiFall{0%{opacity:1;}100%{transform:translateY(300px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title">🎵 Rhyme Time!</div>
+</div>
+<div class="score-bar">
+  <div class="score-box">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="score-box">🎯 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress" id="progress"></div>
+
+<div class="rhyme-card">
+  <div class="rhyme-word-emoji" id="rhymeEmoji">🐱</div>
+  <div class="rhyme-word" id="rhymeWord">CAT</div>
+  <div class="rhyme-prompt">What rhymes with <span id="rhymeTarget" style="color:#FFD700;">CAT</span>?</div>
+  <button class="play-btn" onclick="repeatWord()">🔊 Hear it!</button>
+</div>
+
+<div class="choices" id="choices"></div>
+
+<script>
+const RHYMES=[
+  {word:'CAT',emoji:'🐱',rhyme:'HAT',rhymeEmoji:'🎩',wrong:[{w:'DOG',e:'🐶'},{w:'FISH',e:'🐟'}]},
+  {word:'BEE',emoji:'🐝',rhyme:'TREE',rhymeEmoji:'🌳',wrong:[{w:'BALL',e:'⚽'},{w:'COW',e:'🐄'}]},
+  {word:'MOON',emoji:'🌙',rhyme:'SPOON',rhymeEmoji:'🥄',wrong:[{w:'SUN',e:'☀️'},{w:'RAIN',e:'🌧️'}]},
+  {word:'STAR',emoji:'⭐',rhyme:'CAR',rhymeEmoji:'🚗',wrong:[{w:'BIRD',e:'🐦'},{w:'FISH',e:'🐟'}]},
+  {word:'CAKE',emoji:'🎂',rhyme:'LAKE',rhymeEmoji:'🏞️',wrong:[{w:'BALL',e:'⚽'},{w:'DOG',e:'🐶'}]},
+  {word:'DOG',emoji:'🐶',rhyme:'LOG',rhymeEmoji:'🪵',wrong:[{w:'CAT',e:'🐱'},{w:'FISH',e:'🐟'}]},
+  {word:'RAT',emoji:'🐀',rhyme:'MAT',rhymeEmoji:'🛸',wrong:[{w:'COW',e:'🐄'},{w:'BEE',e:'🐝'}]},
+  {word:'HEN',emoji:'🐔',rhyme:'PEN',rhymeEmoji:'✒️',wrong:[{w:'CAT',e:'🐱'},{w:'DOG',e:'🐶'}]},
+  {word:'SHIP',emoji:'🚢',rhyme:'CHIP',rhymeEmoji:'🍟',wrong:[{w:'CAR',e:'🚗'},{w:'BIRD',e:'🐦'}]},
+  {word:'KING',emoji:'👑',rhyme:'RING',rhymeEmoji:'💍',wrong:[{w:'DOG',e:'🐶'},{w:'FISH',e:'🐟'}]},
+];
+
+let score=0,round=0,answered=false,current=null;
+const TOTAL=10;
+let audioCtx;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function playChime(correct){
+  const ctx=getAudio();
+  if(correct){
+    // musical fanfare
+    const melody=[523,659,784,659,784,1047];
+    melody.forEach((f,i)=>{
+      setTimeout(()=>{
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.frequency.value=f;o.type='sine';
+        g.gain.setValueAtTime(.3,ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.25);
+        o.start();o.stop(ctx.currentTime+.25);
+      },i*100);
+    });
+  } else {
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sine';o.frequency.value=200;
+    g.gain.setValueAtTime(.2,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
+    o.start();o.stop(ctx.currentTime+.3);
+  }
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.8;u.pitch=1.4;
+  window.speechSynthesis.speak(u);
+}
+
+function repeatWord(){
+  if(current) speak(`${current.word}... ${current.word}... What rhymes with ${current.word}?`);
+}
+window.repeatWord=repeatWord;
+
+function makeDots(){
+  const p=document.getElementById('progress');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+
+function spawnConfetti(){
+  const cols=['#f953c6','#FFD700','#2ed573','#b91d73','#fff'];
+  for(let i=0;i<20;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`left:${Math.random()*100}%;top:20%;background:${cols[i%cols.length]};animation-duration:${.8+Math.random()*.6}s;`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1400);
+  }
+}
+
+function showRhymeReveal(word1,word2){
+  const el=document.createElement('div');
+  el.className='rhyme-reveal';
+  el.innerHTML=`<div class="reveal-text">${word1} 🎵 ${word2}</div><div class="reveal-sub">They rhyme!</div>`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),2300);
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  current=RHYMES[round%RHYMES.length];
+  document.getElementById('rhymeEmoji').textContent=current.emoji;
+  document.getElementById('rhymeWord').textContent=current.word;
+  document.getElementById('rhymeTarget').textContent=current.word;
+
+  // build choices
+  const allChoices=[
+    {w:current.rhyme,e:current.rhymeEmoji,correct:true},
+    ...current.wrong.map(w=>({...w,correct:false}))
+  ].sort(()=>Math.random()-.5);
+
+  const choicesEl=document.getElementById('choices');
+  choicesEl.innerHTML='';
+  allChoices.forEach(choice=>{
+    const card=document.createElement('div');
+    card.className='choice-card';
+    card.innerHTML=`<span class="choice-emoji">${choice.e}</span><span class="choice-word">${choice.w}</span>`;
+    card.onclick=()=>checkAnswer(card,choice);
+    choicesEl.appendChild(card);
+  });
+
+  setTimeout(()=>speak(`${current.word}... ${current.word}... What rhymes with ${current.word}?`),300);
+}
+
+function checkAnswer(card,choice){
+  if(answered)return;
+  answered=true;
+  if(choice.correct){
+    card.classList.add('correct');
+    playChime(true);
+    spawnConfetti();
+    showRhymeReveal(current.word,current.rhyme);
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    speak(`${current.word} and ${current.rhyme}! They rhyme! Great!`);
+    round++;
+    makeDots();
+    setTimeout(newRound,2400);
+  } else {
+    card.classList.add('wrong');
+    playChime(false);
+    speak(`${choice.w} doesn't rhyme! Listen again... ${current.word}...`);
+    setTimeout(()=>{card.classList.remove('wrong');answered=false;},800);
+  }
+}
+
+function showCelebration(){
+  speak(`Amazing! You are a rhyming superstar!`);
+  const ov=document.createElement('div');
+  ov.className='celebration';
+  ov.innerHTML=`
+    <div class="celeb-emoji">🎵</div>
+    <h2>Rhyme Superstar!</h2>
+    <p>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</p>
+    <button class="next-btn" onclick="restartGame()">Play Again 🎵</button>
+  `;
+  document.body.appendChild(ov);
+}
+
+function restartGame(){
+  document.querySelector('.celebration')?.remove();
+  score=0;round=0;
+  document.getElementById('scoreVal').textContent=0;
+  newRound();
+}
+
+// Music notes
+function makeNotes(){
+  const notes=['♪','♫','♬','♩','🎵','🎶'];
+  for(let i=0;i<10;i++){
+    const n=document.createElement('div');
+    n.className='note';
+    n.textContent=notes[i%notes.length];
+    n.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*80}%;animation-delay:${Math.random()*4}s;animation-duration:${3+Math.random()*3}s;font-size:${1+Math.random()*1.5}rem;`;
+    document.body.appendChild(n);
+  }
+}
+
+window.addEventListener('load',()=>{
+  makeNotes();
+  window.speechSynthesis.getVoices();
+  makeDots();
+  setTimeout(()=>{
+    speak('Rhyme time! Find the word that rhymes!');
+    setTimeout(newRound,1200);
+  },500);
+});
+</script>
+</body>
+</html>

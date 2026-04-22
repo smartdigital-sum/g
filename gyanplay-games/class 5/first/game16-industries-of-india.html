@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>G5-16 · Industries of India · GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--lime:#A8E063;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;
+  --grad-from:#071A12;--grad-to:#040E0A;--accent:var(--lime);
+  --border:rgba(168,224,99,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(145deg,var(--grad-from),var(--grad-to));min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;padding:0 0 48px;}
+.header{width:100%;max-width:480px;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;}
+.subject-tag{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold);}
+.stars{display:flex;gap:3px;}
+.star{font-size:1rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+
+.wow-card{width:calc(100% - 32px);max-width:448px;background:linear-gradient(135deg,rgba(168,224,99,.18),rgba(6,214,160,.08));border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin:8px 16px 16px;text-align:center;}
+.wow-label{font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.wow-card p{font-size:.95rem;line-height:1.6;}
+.wow-card strong{color:var(--gold);}
+
+.stage-tabs{width:calc(100% - 32px);max-width:448px;margin:0 16px 14px;display:flex;gap:6px;}
+.tab-btn{flex:1;padding:8px 4px;border-radius:10px;border:2px solid transparent;font-family:'Baloo 2',cursive;font-weight:700;font-size:.72rem;background:var(--card);color:var(--dim);cursor:pointer;transition:all .2s;text-align:center;}
+.tab-btn.active{border-color:var(--lime);color:var(--lime);background:rgba(168,224,99,.1);}
+
+.section{width:calc(100% - 32px);max-width:448px;margin:0 16px;}
+
+/* LEGEND */
+.sector-legend{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.legend-pill{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:.75rem;font-weight:800;}
+.lp-primary  {background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.3);color:var(--teal);}
+.lp-secondary{background:rgba(255,159,28,.12);border:1px solid rgba(255,159,28,.3);color:var(--orange);}
+.lp-tertiary {background:rgba(76,201,240,.12);border:1px solid rgba(76,201,240,.3);color:var(--blue);}
+
+/* TILE BANK */
+.tile-bank{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:14px;}
+.tb-label{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin-bottom:8px;}
+.tiles-wrap{display:flex;flex-wrap:wrap;gap:7px;}
+.ind-tile{
+  background:rgba(168,224,99,.1);border:2px solid var(--border);
+  color:var(--text);font-size:.8rem;font-weight:700;
+  padding:7px 12px;border-radius:20px;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:5px;
+}
+.ind-tile:hover{border-color:var(--lime);color:var(--lime);}
+.ind-tile.selected{border-color:var(--gold);background:rgba(255,209,102,.12);color:var(--gold);}
+.ind-tile.placed{opacity:.3;pointer-events:none;}
+
+/* BINS */
+.bins-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.sort-bin{background:var(--card);border:2px dashed rgba(255,255,255,.1);border-radius:14px;padding:12px 14px;min-height:80px;}
+.sort-bin.primary-bin  {border-color:rgba(6,214,160,.3);}
+.sort-bin.secondary-bin{border-color:rgba(255,159,28,.3);}
+.sort-bin.tertiary-bin {border-color:rgba(76,201,240,.3);}
+.bin-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.bin-title{font-family:'Baloo 2',cursive;font-size:.9rem;font-weight:800;}
+.bin-desc{font-size:.7rem;color:var(--dim);line-height:1.3;}
+.bin-items{display:flex;flex-wrap:wrap;gap:6px;min-height:32px;}
+.placed-item{
+  font-size:.75rem;font-weight:700;
+  padding:5px 10px;border-radius:20px;
+  display:flex;align-items:center;gap:4px;cursor:pointer;
+}
+.placed-item.pi-primary  {background:rgba(6,214,160,.2);color:var(--teal);}
+.placed-item.pi-secondary{background:rgba(255,159,28,.18);color:var(--orange);}
+.placed-item.pi-tertiary {background:rgba(76,201,240,.15);color:var(--blue);}
+.placed-item.correct{border:1px solid var(--teal);}
+.placed-item.wrong  {border:1px solid var(--coral);text-decoration:line-through;opacity:.6;}
+
+/* MATCH STAGE */
+.match-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin-bottom:10px;}
+.mc-industry{font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.mc-opts{display:flex;flex-direction:column;gap:6px;}
+.mc-opt{background:rgba(168,224,99,.08);border:2px solid rgba(168,224,99,.2);color:var(--text);font-size:.85rem;font-weight:600;padding:9px 14px;border-radius:10px;cursor:pointer;transition:all .2s;}
+.mc-opt:hover{border-color:var(--lime);}
+.mc-opt.chosen{border-color:var(--lime);background:rgba(168,224,99,.15);color:var(--lime);}
+.mc-opt.correct-a{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal);}
+.mc-opt.wrong-a{border-color:var(--coral);background:rgba(255,107,107,.1);color:var(--coral);}
+
+.check-btn{width:100%;padding:14px;border-radius:14px;border:none;font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--lime),var(--teal));color:#000;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(168,224,99,.3);}
+.check-btn:hover{opacity:.9;}
+.check-btn:disabled{opacity:.4;cursor:not-allowed;}
+.feedback{margin-top:12px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.9rem;text-align:center;display:none;}
+.feedback.correct{background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.4);color:var(--teal);}
+.feedback.wrong{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:var(--coral);}
+
+.progress-row{width:calc(100% - 32px);max-width:448px;margin:16px 16px 0;display:flex;align-items:center;justify-content:space-between;}
+.progress-text{font-size:.8rem;font-weight:700;color:var(--dim);}
+.next-btn{background:var(--gold);color:#1A0F00;font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;border:none;border-radius:50px;padding:8px 22px;cursor:pointer;display:none;}
+
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:28px;max-width:360px;width:90%;text-align:center;}
+.overlay-box .o-emoji{font-size:3rem;margin-bottom:10px;}
+.overlay-box h3{font-family:'Baloo 2',cursive;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.overlay-box p{font-size:.88rem;color:var(--text);line-height:1.6;}
+.overlay-box strong{color:var(--teal);}
+
+.complete-screen{width:calc(100% - 32px);max-width:448px;margin:20px 16px;background:var(--card);border:2px solid rgba(6,214,160,.3);border-radius:22px;padding:32px 24px;text-align:center;display:none;}
+.complete-screen .big{font-size:4rem;margin-bottom:12px;}
+.complete-screen h2{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--gold);margin-bottom:8px;}
+.complete-screen p{color:var(--text);font-size:.95rem;line-height:1.6;margin-bottom:20px;}
+.play-again{background:var(--teal);color:#040E04;font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;border:none;border-radius:50px;padding:12px 28px;cursor:pointer;}
+
+.confetti-piece{position:fixed;width:10px;height:10px;opacity:0;animation:confFall 1.8s ease-in forwards;pointer-events:none;z-index:200;}
+@keyframes confFall{0%{opacity:1;transform:translateY(0) rotate(0deg);}100%{opacity:0;transform:translateY(80vh) rotate(720deg);}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="subject-tag">SST</div>
+  <div class="game-title">🏭 Industries of India</div>
+  <div class="stars">
+    <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+    <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+  </div>
+</div>
+
+<div class="wow-card">
+  <div class="wow-label">🤯 Did You Know?</div>
+  <p>India is the world's <strong>LARGEST producer of milk</strong>, the <strong>second-largest</strong> producer of rice, and the <strong>third-largest</strong> producer of steel. The same country makes <strong>Bollywood films AND spacecraft!</strong></p>
+</div>
+
+<div class="stage-tabs">
+  <div class="tab-btn active" id="tab1">1. Sort Industries</div>
+  <div class="tab-btn" id="tab2">2. State Match</div>
+</div>
+
+<!-- STAGE 1: SORT -->
+<div class="section" id="stage1">
+  <div class="sector-legend">
+    <div class="legend-pill lp-primary">🌾 Primary — Takes from nature</div>
+    <div class="legend-pill lp-secondary">🏭 Secondary — Makes things</div>
+    <div class="legend-pill lp-tertiary">🛎️ Tertiary — Provides services</div>
+  </div>
+
+  <div class="tile-bank">
+    <div class="tb-label">Tap a tile to select, then tap the correct sector bin</div>
+    <div class="tiles-wrap" id="tileBank"></div>
+  </div>
+
+  <div class="bins-grid">
+    <div class="sort-bin primary-bin" onclick="placeInBin('primary')">
+      <div class="bin-header">
+        <span style="font-size:1.4rem;">🌾</span>
+        <div>
+          <div class="bin-title" style="color:var(--teal);">Primary Sector</div>
+          <div class="bin-desc">Farming, mining, fishing, forestry — takes raw materials from nature</div>
+        </div>
+      </div>
+      <div class="bin-items" id="primaryItems"></div>
+    </div>
+    <div class="sort-bin secondary-bin" onclick="placeInBin('secondary')">
+      <div class="bin-header">
+        <span style="font-size:1.4rem;">🏭</span>
+        <div>
+          <div class="bin-title" style="color:var(--orange);">Secondary Sector</div>
+          <div class="bin-desc">Manufacturing, processing — turns raw materials into finished products</div>
+        </div>
+      </div>
+      <div class="bin-items" id="secondaryItems"></div>
+    </div>
+    <div class="sort-bin tertiary-bin" onclick="placeInBin('tertiary')">
+      <div class="bin-header">
+        <span style="font-size:1.4rem;">🛎️</span>
+        <div>
+          <div class="bin-title" style="color:var(--blue);">Tertiary Sector</div>
+          <div class="bin-desc">Services — banking, tourism, IT, transport, education</div>
+        </div>
+      </div>
+      <div class="bin-items" id="tertiaryItems"></div>
+    </div>
+  </div>
+
+  <button class="check-btn" id="s1Btn" onclick="checkSort()">Check My Sort ✓</button>
+  <div class="feedback" id="s1FB"></div>
+</div>
+
+<!-- STAGE 2: STATE MATCH -->
+<div class="section" id="stage2" style="display:none;">
+  <div style="background:rgba(168,224,99,.08);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:.88rem;line-height:1.6;">
+    <strong style="color:var(--lime);">🗺️ Match the industry to the Indian state most famous for it!</strong>
+  </div>
+  <div id="matchCards"></div>
+  <button class="check-btn" id="s2Btn" onclick="checkMatch()">Check Matches ✓</button>
+  <div class="feedback" id="s2FB"></div>
+</div>
+
+<div class="progress-row">
+  <span class="progress-text" id="progressText">Stage 1 of 2</span>
+  <button class="next-btn" id="nextBtn" onclick="nextStage()">State Match →</button>
+</div>
+
+<div class="complete-screen" id="completeScreen">
+  <div class="big">🏭</div>
+  <h2>Industry Expert!</h2>
+  <p>You sorted 18 industries into 3 sectors and matched them to Indian states. India produces milk, steel, films AND spacecraft — all in one remarkable country!</p>
+  <button class="play-again" onclick="restartGame()">Play Again 🔄</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="o-emoji" id="oEmoji">🏭</div>
+    <h3 id="oTitle">Sorted!</h3>
+    <p id="oFact"></p>
+  </div>
+</div>
+
+<script>
+const INDUSTRIES=[
+  {emoji:'🌾',name:'Farming',sector:'primary'},
+  {emoji:'🐟',name:'Fishing',sector:'primary'},
+  {emoji:'⛏️',name:'Mining',sector:'primary'},
+  {emoji:'🌲',name:'Forestry',sector:'primary'},
+  {emoji:'🥛',name:'Dairy / Milk',sector:'primary'},
+  {emoji:'🏭',name:'Steel Making',sector:'secondary'},
+  {emoji:'🧵',name:'Textile / Cloth',sector:'secondary'},
+  {emoji:'🚗',name:'Car Manufacturing',sector:'secondary'},
+  {emoji:'💊',name:'Pharmaceuticals',sector:'secondary'},
+  {emoji:'🎬',name:'Film Production',sector:'secondary'},
+  {emoji:'🍫',name:'Food Processing',sector:'secondary'},
+  {emoji:'🏦',name:'Banking',sector:'tertiary'},
+  {emoji:'✈️',name:'Tourism',sector:'tertiary'},
+  {emoji:'💻',name:'IT / Software',sector:'tertiary'},
+  {emoji:'🚂',name:'Railways',sector:'tertiary'},
+  {emoji:'📚',name:'Education',sector:'tertiary'},
+  {emoji:'🏥',name:'Healthcare',sector:'tertiary'},
+  {emoji:'☕',name:'Tea Trade (Assam)',sector:'primary'},
+];
+
+const STATE_MATCH=[
+  {industry:'🫖 Tea Industry',opts:['Gujarat','Assam','Maharashtra','Karnataka'],answer:1,
+   fact:'Assam produces <strong>52% of India\'s tea</strong> — one of the world\'s largest tea producers! The Brahmaputra valley\'s climate is perfect for the Camellia sinensis plant.'},
+  {industry:'🎬 Bollywood Films',opts:['Chennai','Kolkata','Mumbai','Delhi'],answer:2,
+   fact:'<strong>Mumbai (Bollywood)</strong> makes 1,500–2,000 films a year — more than any other film industry on Earth! India\'s film industry earns ₹18,000 crore annually.'},
+  {industry:'💻 IT & Software',opts:['Lucknow','Bhopal','Jaipur','Bengaluru'],answer:3,
+   fact:'<strong>Bengaluru (Silicon Valley of India)</strong> is home to 35% of India\'s software exports. Companies like Infosys, Wipro and TCS serve clients in 50+ countries!'},
+  {industry:'⛏️ Coal Mining',opts:['Jharkhand','Rajasthan','Goa','Kerala'],answer:0,
+   fact:'<strong>Jharkhand</strong> holds 26% of India\'s coal reserves. Jharia coalfield in Jharkhand has been burning underground for over 100 years — a real underground fire!'},
+  {industry:'🚗 Car Manufacturing',opts:['Assam','Punjab','Gujarat','Tamil Nadu'],answer:3,
+   fact:'<strong>Tamil Nadu (Chennai)</strong> is called the "Detroit of India" — it produces 35% of India\'s automobiles! Ford, BMW, Hyundai and Renault all have plants there.'},
+];
+
+let stage=1, score=0, selectedTile=null, placements={}, matchSels={};
+
+function buildTiles(){
+  const bank=document.getElementById('tileBank');
+  bank.innerHTML='';
+  const shuffled=[...INDUSTRIES].sort(()=>Math.random()-.5);
+  shuffled.forEach((ind,i)=>{
+    const tile=document.createElement('div');
+    tile.className='ind-tile';
+    tile.id=`tile_${ind.name.replace(/\W/g,'_')}`;
+    tile.innerHTML=`${ind.emoji} ${ind.name}`;
+    tile.onclick=()=>selectTile(ind.name,tile);
+    bank.appendChild(tile);
+  });
+  ['primary','secondary','tertiary'].forEach(s=>document.getElementById(s+'Items').innerHTML='');
+  placements={};
+}
+
+function selectTile(name,el){
+  selectedTile=name;
+  document.querySelectorAll('.ind-tile').forEach(t=>t.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function placeInBin(sector){
+  if(!selectedTile) return;
+  // Remove from previous bin if already placed
+  const prev=placements[selectedTile];
+  if(prev){
+    const binItems=document.getElementById(prev+'Items');
+    const existing=binItems.querySelector(`[data-name="${selectedTile}"]`);
+    if(existing) existing.remove();
+  }
+  placements[selectedTile]=sector;
+  const ind=INDUSTRIES.find(i=>i.name===selectedTile);
+  const item=document.createElement('div');
+  item.className=`placed-item pi-${sector}`;
+  item.dataset.name=selectedTile;
+  item.innerHTML=`${ind.emoji} ${ind.name} ✕`;
+  item.onclick=(e)=>{e.stopPropagation();delete placements[selectedTile||ind.name];item.remove();const tile=document.getElementById(`tile_${ind.name.replace(/\W/g,'_')}`);if(tile)tile.classList.remove('placed');};
+  document.getElementById(sector+'Items').appendChild(item);
+  const tile=document.getElementById(`tile_${ind.name.replace(/\W/g,'_')}`);
+  if(tile) tile.classList.add('placed');
+  selectedTile=null;
+  document.querySelectorAll('.ind-tile').forEach(t=>t.classList.remove('selected'));
+  showOverlay('🏭',`${sector.charAt(0).toUpperCase()+sector.slice(1)} Sector!`,
+    sector==='primary'?'<strong>Primary sector</strong> extracts from nature — farming, mining, fishing. It employs 44% of India\'s workers!':
+    sector==='secondary'?'<strong>Secondary sector</strong> transforms raw materials into products — steel, textiles, cars. India is the world\'s 6th largest manufacturer!':
+    '<strong>Tertiary sector</strong> provides services — India\'s IT exports earn <strong>$200 billion per year!</strong>');
+}
+
+function checkSort(){
+  const placed=Object.keys(placements).length;
+  if(placed<INDUSTRIES.length){showFB('s1FB','wrong',`⚠️ Sort all ${INDUSTRIES.length} tiles first! (${placed}/${INDUSTRIES.length} done)`);return;}
+  let correct=0;
+  INDUSTRIES.forEach(ind=>{
+    const isRight=placements[ind.name]===ind.sector;
+    if(isRight) correct++;
+    const item=document.querySelector(`[data-name="${ind.name}"]`);
+    if(item) item.classList.add(isRight?'correct':'wrong');
+  });
+  score+=correct; updateStars();
+  document.getElementById('s1Btn').disabled=true;
+  showFB('s1FB',correct>=14?'correct':'wrong',
+    correct===INDUSTRIES.length?`✅ Perfect! All ${INDUSTRIES.length} industries sorted correctly!`:`✅ ${correct}/${INDUSTRIES.length} correct — wrong ones are crossed out above!`);
+  if(correct>=14) spawnConfetti();
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function buildMatch(){
+  const c=document.getElementById('matchCards');
+  c.innerHTML='';
+  STATE_MATCH.forEach((q,i)=>{
+    const card=document.createElement('div');
+    card.className='match-card';
+    const shuffled=q.opts.map((o,j)=>({o,j})).sort(()=>Math.random()-.5);
+    card.innerHTML=`
+      <div class="mc-industry">${q.industry}</div>
+      <div class="mc-opts">
+        ${shuffled.map(({o,j})=>`<button class="mc-opt" id="mopt_${i}_${j}" onclick="pickMatch(${i},${j},this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="mfb_${i}" style="margin-top:6px;"></div>`;
+    c.appendChild(card);
+  });
+}
+
+window.pickMatch=function(qi,oi,el){matchSels[qi]=oi;document.querySelectorAll(`[id^="mopt_${qi}_"]`).forEach(b=>b.classList.toggle('chosen',b===el));}
+
+function checkMatch(){
+  if(Object.keys(matchSels).length<STATE_MATCH.length){showFB('s2FB','wrong','⚠️ Match all 5 industries!');return;}
+  let correct=0;
+  STATE_MATCH.forEach((q,i)=>{
+    const isRight=matchSels[i]===q.answer;
+    if(isRight) correct++;
+    document.getElementById(`mopt_${i}_${q.answer}`).classList.add('correct-a');
+    if(!isRight) document.getElementById(`mopt_${i}_${matchSels[i]}`)?.classList.add('wrong-a');
+    const fb=document.getElementById(`mfb_${i}`);
+    fb.innerHTML=isRight?`✅ Correct! ${q.fact}`:`❌ ${q.fact}`;
+    fb.className=`feedback ${isRight?'correct':'wrong'}`;
+    fb.style.display='block';
+  });
+  score+=correct; updateStars();
+  document.getElementById('s2Btn').disabled=true;
+  showFB('s2FB',correct>=4?'correct':'wrong',correct===5?'✅ Perfect state matching!':` ${correct}/5 correct — read the facts!`);
+  if(correct>=4) spawnConfetti();
+  setTimeout(()=>{
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+    document.querySelector('.stage-tabs').style.display='none';
+    document.querySelector('.progress-row').style.display='none';
+    document.getElementById('completeScreen').style.display='block';
+    if(correct>=4) spawnConfetti();
+  },2500);
+}
+
+function setStage(n){
+  stage=n;
+  [1,2].forEach(i=>{document.getElementById('stage'+i).style.display=i===n?'block':'none';document.getElementById('tab'+i).classList.toggle('active',i===n);});
+  document.getElementById('progressText').textContent=`Stage ${n} of 2`;
+  document.getElementById('nextBtn').style.display='none';
+  if(n===2) buildMatch();
+}
+function nextStage(){if(stage<2) setStage(stage+1);}
+function showFB(id,type,msg){const el=document.getElementById(id);el.textContent=msg;el.className=`feedback ${type}`;el.style.display='block';}
+function updateStars(){const c=Math.min(5,Math.ceil(score/4));for(let i=1;i<=c;i++) document.getElementById('s'+i).classList.add('lit');}
+function showOverlay(emoji,title,fact){
+  document.getElementById('oEmoji').textContent=emoji;document.getElementById('oTitle').textContent=title;document.getElementById('oFact').innerHTML=fact;
+  const ov=document.getElementById('overlay');ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),2200);
+}
+function spawnConfetti(){
+  const colors=['#FFD166','#A8E063','#06D6A0','#FF9F1C','#4CC9F0'];
+  for(let i=0;i<28;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[i%5]};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()*2}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),3500);}
+}
+function restartGame(){
+  stage=1;score=0;selectedTile=null;placements={};matchSels={};
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('completeScreen').style.display='none';
+  document.querySelectorAll('.section').forEach(s=>s.style.display='block');
+  document.querySelector('.stage-tabs').style.display='flex';
+  document.querySelector('.progress-row').style.display='flex';
+  document.getElementById('s1Btn').disabled=false;
+  buildTiles(); setStage(1);
+}
+buildTiles();
+</script>
+</body>
+</html>

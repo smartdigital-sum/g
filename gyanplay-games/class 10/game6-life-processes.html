@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Life Processes – Class 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+    --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+    --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{min-height:100vh;font-family:'Nunito',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff;}
+  .topbar{display:flex;align-items:center;gap:12px;padding:12px 20px;
+    background:rgba(0,0,0,.35);flex-wrap:wrap;}
+  .back-btn{background:rgba(255,255,255,.12);border:none;color:#fff;
+    padding:7px 16px;border-radius:20px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.9rem;transition:background .2s;}
+  .back-btn:hover{background:rgba(255,255,255,.25);}
+  .subject-badge{background:var(--green);color:#fff;padding:5px 14px;
+    border-radius:20px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.85rem;}
+  .title-bar{flex:1;font-family:'Baloo 2',sans-serif;font-weight:700;
+    font-size:1.05rem;color:var(--gold);}
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;transition:all .2s;}
+  .lang-btn.active{background:var(--sky);border-color:var(--sky);}
+  .progress-wrap{padding:14px 20px 0;}
+  .progress-info{display:flex;justify-content:space-between;font-size:.85rem;color:#ccc;margin-bottom:6px;}
+  .progress-bar-bg{background:rgba(255,255,255,.12);border-radius:10px;height:8px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--pink));
+    border-radius:10px;transition:width .5s;}
+  .game-wrap{max-width:740px;margin:18px auto;padding:0 16px 40px;}
+  .card{background:var(--card);border-radius:18px;padding:26px;
+    box-shadow:0 8px 32px rgba(0,0,0,.45);animation:fadeIn .4s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .q-number{font-family:'Baloo 2',sans-serif;font-size:.85rem;color:var(--sky);margin-bottom:8px;font-weight:600;}
+  .q-emoji{font-size:2rem;margin-bottom:8px;display:block;}
+  .q-text{font-size:1.08rem;line-height:1.6;margin-bottom:6px;font-weight:600;}
+  .eq-box{background:#0d0b22;border:1px solid rgba(0,200,83,.25);border-radius:10px;
+    padding:12px 16px;margin:12px 0;font-family:'Courier New',monospace;
+    font-size:1rem;color:var(--green);letter-spacing:.5px;}
+  .options{display:grid;gap:10px;margin-top:16px;}
+  .opt-btn{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);
+    color:#fff;padding:13px 18px;border-radius:12px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.97rem;text-align:left;transition:all .2s;}
+  .opt-btn:hover:not(:disabled){background:rgba(0,200,83,.18);border-color:var(--green);}
+  .opt-btn.correct{background:rgba(0,200,83,.25);border-color:var(--green);}
+  .opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);}
+  .opt-btn:disabled{cursor:default;}
+  .feedback{margin-top:14px;padding:11px 16px;border-radius:10px;
+    font-weight:700;font-size:.95rem;display:none;}
+  .feedback.show{display:block;animation:fadeIn .3s ease;}
+  .feedback.ok{background:rgba(0,200,83,.2);color:var(--green);}
+  .feedback.no{background:rgba(255,64,129,.18);color:#ff7eb3;}
+  .next-btn{margin-top:18px;background:linear-gradient(135deg,var(--green),var(--sky));
+    border:none;color:#fff;padding:12px 32px;border-radius:25px;
+    font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;
+    cursor:pointer;display:none;transition:transform .15s;}
+  .next-btn:hover{transform:scale(1.04);}
+  .end-screen{display:none;text-align:center;}
+  .end-screen.show{display:block;animation:fadeIn .5s ease;}
+  .score-big{font-family:'Baloo 2',sans-serif;font-size:3.5rem;font-weight:800;
+    color:var(--gold);line-height:1;margin:10px 0;}
+  .score-label{color:#ccc;font-size:.95rem;margin-bottom:18px;}
+  .stars{font-size:2.5rem;margin:10px 0;}
+  .play-again{background:linear-gradient(135deg,var(--saffron),var(--gold));
+    border:none;color:#fff;padding:14px 36px;border-radius:28px;
+    font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;
+    cursor:pointer;margin-top:16px;transition:transform .15s;}
+  .play-again:hover{transform:scale(1.05);}
+  .result-detail{margin-top:22px;text-align:left;}
+  .result-detail h3{font-family:'Baloo 2',sans-serif;color:var(--sky);margin-bottom:10px;}
+  .result-item{padding:9px 14px;border-radius:8px;margin-bottom:7px;
+    font-size:.9rem;line-height:1.4;background:rgba(255,255,255,.06);}
+  .result-item.r-ok{border-left:3px solid var(--green);}
+  .result-item.r-no{border-left:3px solid var(--pink);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">পিছলৈ</span></button>
+  <span class="subject-badge">Science</span>
+  <span class="title-bar">
+    <span data-lang="en">Life Processes</span>
+    <span data-lang="hi" style="display:none">जैव प्रक्रियाएँ</span>
+    <span data-lang="as" style="display:none">জীৱন প্ৰক্ৰিয়া</span>
+  </span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span><span data-lang="en">Question</span><span data-lang="hi" style="display:none">प्रश्न</span><span data-lang="as" style="display:none">প্ৰশ্ন</span> <span id="qNum">1</span>/10</span>
+    <span><span data-lang="en">Score</span><span data-lang="hi" style="display:none">स्कोर</span><span data-lang="as" style="display:none">স্কোৰ</span>: <span id="scoreDisp">0</span>/100</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progBar" style="width:0%"></div></div>
+</div>
+
+<div class="game-wrap">
+  <div class="card" id="questionCard">
+    <div class="q-number" id="qLabel">Question 1 of 10</div>
+    <span class="q-emoji" id="qEmoji">🌿</span>
+    <div class="q-text" id="qText"></div>
+    <div class="eq-box" id="eqBox" style="display:none"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="card end-screen" id="endScreen">
+    <div class="score-big" id="finalScore">0</div>
+    <div class="score-label">
+      <span data-lang="en">out of 100</span>
+      <span data-lang="hi" style="display:none">100 में से</span>
+      <span data-lang="as" style="display:none">100ৰ মাজৰ পৰা</span>
+    </div>
+    <div class="stars" id="stars">⭐⭐⭐</div>
+    <p id="endMsg" style="color:#ccc;font-size:1rem;"></p>
+    <button class="play-again" onclick="restartGame()">
+      <span data-lang="en">Play Again</span>
+      <span data-lang="hi" style="display:none">फिर खेलें</span>
+      <span data-lang="as" style="display:none">পুনৰ খেলক</span>
+    </button>
+    <div class="result-detail" id="resultDetail"></div>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    emoji:"🌿",
+    eq:"6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂",
+    en:{q:"What is the correct equation for PHOTOSYNTHESIS?",
+    opts:["6CO₂ + 6H₂O + light → C₆H₁₂O₆ + 6O₂",
+          "C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + energy",
+          "CO₂ + H₂O → glucose","6O₂ + glucose → 6CO₂"],ans:0,
+    exp:"Photosynthesis: plants use CO₂, water and sunlight to make glucose and release oxygen."},
+    hi:{q:"प्रकाश संश्लेषण का सही समीकरण कौन सा है?",
+    opts:["6CO₂ + 6H₂O + प्रकाश → C₆H₁₂O₆ + 6O₂",
+          "C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ऊर्जा",
+          "CO₂ + H₂O → ग्लूकोज","6O₂ + ग्लूकोज → 6CO₂"],exp:"प्रकाश संश्लेषण: पौधे CO₂, जल और सूर्यप्रकाश से ग्लूकोज बनाते हैं।"},
+    as:{q:"সালোকসংশ্লেষণৰ সঠিক সমীকৰণ কোনটো?",
+    opts:["6CO₂ + 6H₂O + পোহৰ → C₆H₁₂O₆ + 6O₂",
+          "C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + শক্তি",
+          "CO₂ + H₂O → গ্লুকোজ","6O₂ + গ্লুকোজ → 6CO₂"],exp:"সালোকসংশ্লেষণ: উদ্ভিদে CO₂, পানী আৰু সূৰ্যালোক ব্যৱহাৰ কৰি গ্লুকোজ তৈয়াৰ কৰে।"}
+  },
+  {
+    emoji:"🌿",
+    eq:null,
+    en:{q:"What is the CORRECT order of the human digestive system?",
+    opts:["Mouth → Oesophagus → Stomach → Small intestine → Large intestine",
+          "Mouth → Stomach → Oesophagus → Small intestine → Large intestine",
+          "Mouth → Small intestine → Stomach → Large intestine",
+          "Mouth → Oesophagus → Small intestine → Stomach → Large intestine"],ans:0,
+    exp:"Food travels: Mouth (chewing) → Oesophagus (peristalsis) → Stomach (acid digestion) → Small intestine (absorption) → Large intestine (water absorption)."},
+    hi:{q:"मानव पाचन तंत्र का सही क्रम क्या है?",
+    opts:["मुंह → ग्रासनली → आमाशय → छोटी आँत → बड़ी आँत",
+          "मुंह → आमाशय → ग्रासनली → छोटी आँत → बड़ी आँत",
+          "मुंह → छोटी आँत → आमाशय → बड़ी आँत",
+          "मुंह → ग्रासनली → छोटी आँत → आमाशय → बड़ी आँत"],exp:"भोजन: मुंह → ग्रासनली → आमाशय → छोटी आँत → बड़ी आँत।"},
+    as:{q:"মানুহৰ পাচন তন্ত্ৰৰ সঠিক ক্ৰম কি?",
+    opts:["মুখ → অন্ননালী → পাকস্থলী → ক্ষুদ্ৰান্ত্ৰ → বৃহদান্ত্ৰ",
+          "মুখ → পাকস্থলী → অন্ননালী → ক্ষুদ্ৰান্ত্ৰ → বৃহদান্ত্ৰ",
+          "মুখ → ক্ষুদ্ৰান্ত্ৰ → পাকস্থলী → বৃহদান্ত্ৰ",
+          "মুখ → অন্ননালী → ক্ষুদ্ৰান্ত্ৰ → পাকস্থলী → বৃহদান্ত্ৰ"],exp:"খাদ্য: মুখ → অন্ননালী → পাকস্থলী → ক্ষুদ্ৰান্ত্ৰ → বৃহদান্ত্ৰ।"}
+  },
+  {
+    emoji:"🫁",
+    eq:null,
+    en:{q:"What is the DIFFERENCE between breathing and respiration?",
+    opts:["Breathing is a physical process (inhaling/exhaling); respiration is a chemical process releasing energy from glucose",
+          "They are the same process","Breathing releases energy; respiration is physical",
+          "Respiration only happens in plants"],ans:0,
+    exp:"Breathing = physical movement of air. Respiration = cellular chemical process: C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ATP energy."},
+    hi:{q:"श्वसन और सांस लेने में क्या अंतर है?",
+    opts:["सांस लेना एक भौतिक प्रक्रिया है; श्वसन एक रासायनिक प्रक्रिया है जो ऊर्जा मुक्त करती है",
+          "दोनों एक ही हैं","श्वसन ऊर्जा मुक्त करता है; सांस लेना भौतिक है",
+          "श्वसन केवल पौधों में होता है"],exp:"सांस लेना = हवा का भौतिक आवागमन। श्वसन = कोशिकीय रासायनिक प्रक्रिया।"},
+    as:{q:"উশাহ লোৱা আৰু শ্বসনৰ পাৰ্থক্য কি?",
+    opts:["উশাহ লোৱা এটা ভৌতিক প্ৰক্ৰিয়া; শ্বসন এটা ৰাসায়নিক প্ৰক্ৰিয়া যি শক্তি মুক্ত কৰে",
+          "দুয়োটা একেই","শ্বসনে শক্তি মুক্ত কৰে; উশাহ লোৱা ভৌতিক",
+          "শ্বসন কেৱল উদ্ভিদত হয়"],exp:"উশাহ লোৱা = বায়ুৰ ভৌতিক আহ-যাহ। শ্বসন = কোষীয় ৰাসায়নিক প্ৰক্ৰিয়া।"}
+  },
+  {
+    emoji:"🫁",
+    eq:null,
+    en:{q:"In ANAEROBIC respiration (in yeast), glucose breaks down into:",
+    opts:["Ethanol + CO₂ + small amount of energy","CO₂ + H₂O + large energy","Lactic acid only","Glucose + ATP"],ans:0,
+    exp:"Yeast (anaerobic): C₆H₁₂O₆ → 2C₂H₅OH + 2CO₂ + 2ATP. In human muscles (anaerobic): glucose → lactic acid, causing muscle cramp."},
+    hi:{q:"अवायवीय श्वसन (यीस्ट में) में ग्लूकोज का विघटन होता है:",
+    opts:["इथेनॉल + CO₂ + थोड़ी ऊर्जा","CO₂ + H₂O + अधिक ऊर्जा","केवल लैक्टिक अम्ल","ग्लूकोज + ATP"],exp:"यीस्ट (अवायवीय): C₆H₁₂O₆ → 2C₂H₅OH + 2CO₂। मानव मांसपेशियों में: ग्लूकोज → लैक्टिक अम्ल।"},
+    as:{q:"অবায়ৱীয় শ্বসনত (ইষ্টত) গ্লুকোজ বিভাজিত হয়:",
+    opts:["ইথানল + CO₂ + সামান্য শক্তি","CO₂ + H₂O + অধিক শক্তি","কেৱল লেক্টিক এছিড","গ্লুকোজ + ATP"],exp:"ইষ্ট (অবায়ৱীয়): গ্লুকোজ → ইথানল + CO₂। মানুহৰ পেশীত: গ্লুকোজ → লেক্টিক এছিড।"}
+  },
+  {
+    emoji:"❤️",
+    eq:null,
+    en:{q:"How many chambers does the human heart have, and what are they?",
+    opts:["4 chambers — Right Atrium, Right Ventricle, Left Atrium, Left Ventricle",
+          "2 chambers — 1 Atrium, 1 Ventricle","3 chambers — 2 Atria, 1 Ventricle",
+          "4 chambers — 2 Atria, 2 Ventricles (different names)"],ans:0,
+    exp:"The human heart has 4 chambers: Right Atrium (receives deoxygenated blood), Right Ventricle (pumps to lungs), Left Atrium (receives oxygenated blood), Left Ventricle (pumps to body)."},
+    hi:{q:"मानव हृदय में कितने कक्ष होते हैं?",
+    opts:["4 कक्ष — दायाँ अलिंद, दायाँ निलय, बायाँ अलिंद, बायाँ निलय",
+          "2 कक्ष — 1 अलिंद, 1 निलय","3 कक्ष — 2 अलिंद, 1 निलय",
+          "4 कक्ष (अलग नाम)"],exp:"मानव हृदय में 4 कक्ष: दायाँ अलिंद, दायाँ निलय (फेफड़ों को), बायाँ अलिंद, बायाँ निलय (शरीर को)।"},
+    as:{q:"মানুহৰ হৃদয়ত কিমানটা কোঠা আছে?",
+    opts:["4টা কোঠা — সোঁ অলিন্দ, সোঁ নিলয়, বাওঁ অলিন্দ, বাওঁ নিলয়",
+          "2টা কোঠা","3টা কোঠা — 2টা অলিন্দ, 1টা নিলয়",
+          "4টা কোঠা (ভিন্ন নাম)"],exp:"মানুহৰ হৃদয়ত 4টা কোঠা: সোঁ অলিন্দ, সোঁ নিলয় (হাঁওফাঁওলৈ), বাওঁ অলিন্দ, বাওঁ নিলয় (শৰীৰলৈ)।"}
+  },
+  {
+    emoji:"❤️",
+    eq:null,
+    en:{q:"What is the difference between ARTERIES and VEINS?",
+    opts:["Arteries carry blood AWAY from heart (oxygenated); Veins carry blood TO heart (deoxygenated)",
+          "Veins carry blood away from heart; Arteries carry to heart",
+          "Both carry oxygenated blood","Arteries have valves; veins don't"],ans:0,
+    exp:"Arteries: thick walls, carry oxygenated blood from heart (except pulmonary artery). Veins: thin walls, have valves, carry deoxygenated blood to heart (except pulmonary vein)."},
+    hi:{q:"धमनी और शिरा में क्या अंतर है?",
+    opts:["धमनी हृदय से रक्त ले जाती है (ऑक्सीजनयुक्त); शिरा हृदय की ओर रक्त लाती है (विऑक्सीजनेटेड)",
+          "शिरा हृदय से ले जाती है; धमनी हृदय की ओर",
+          "दोनों ऑक्सीजनयुक्त रक्त ले जाती हैं","धमनी में वाल्व होते हैं"],exp:"धमनी: मोटी दीवार, हृदय से ऑक्सीजनयुक्त रक्त ले जाती है। शिरा: पतली दीवार, वाल्व, हृदय की ओर।"},
+    as:{q:"ধমনী আৰু শিৰাৰ পাৰ্থক্য কি?",
+    opts:["ধমনীয়ে হৃদয়ৰ পৰা ৰক্ত বহন কৰে (অক্সিজেনযুক্ত); শিৰাই হৃদয়লৈ ৰক্ত আনে (অক্সিজেনহীন)",
+          "শিৰাই হৃদয়ৰ পৰা বহন কৰে; ধমনীয়ে হৃদয়লৈ",
+          "দুয়োটাই অক্সিজেনযুক্ত ৰক্ত বহন কৰে","ধমনীত কপাটিকা থাকে"],exp:"ধমনী: ডাঠ বেৰ, হৃদয়ৰ পৰা অক্সিজেনযুক্ত ৰক্ত। শিৰা: পাতল বেৰ, কপাটিকা, হৃদয়লৈ।"}
+  },
+  {
+    emoji:"🌿",
+    eq:null,
+    en:{q:"What is an AUTOTROPH? Which of these is an example?",
+    opts:["Organisms that make their own food using sunlight — Green plants",
+          "Organisms that eat other organisms — Lion","Organisms that decompose dead matter — Fungi",
+          "Organisms that eat both plants and animals — Humans"],ans:0,
+    exp:"Autotrophs (self-feeders) make food via photosynthesis using light energy (plants, algae, some bacteria). Heterotrophs depend on other organisms for food."},
+    hi:{q:"स्वपोषी क्या होते हैं? इनका उदाहरण कौन सा है?",
+    opts:["जो सूर्य की ऊर्जा से भोजन बनाते हैं — हरे पौधे",
+          "जो दूसरे जीवों को खाते हैं — शेर","जो मृत पदार्थ सड़ाते हैं — कवक",
+          "जो पौधे और जीव दोनों खाते हैं — मनुष्य"],exp:"स्वपोषी प्रकाश संश्लेषण से भोजन बनाते हैं (पौधे, शैवाल)। विषमपोषी दूसरे जीवों पर निर्भर हैं।"},
+    as:{q:"স্বয়ংপোষী কি? ইয়াৰ উদাহৰণ কোনটো?",
+    opts:["সূৰ্যালোক ব্যৱহাৰ কৰি নিজেই খাদ্য তৈয়াৰ কৰা জীৱ — সেউজ উদ্ভিদ",
+          "অন্য জীৱ খোৱা জীৱ — সিংহ","মৃত পদাৰ্থ পচোৱা জীৱ — ভেঁকুৰ",
+          "উদ্ভিদ আৰু প্ৰাণী দুয়োটা খোৱা জীৱ — মানুহ"],exp:"স্বয়ংপোষীয়ে সালোকসংশ্লেষণেৰে খাদ্য তৈয়াৰ কৰে (উদ্ভিদ, শেলাই)।"}
+  },
+  {
+    emoji:"🫁",
+    eq:null,
+    en:{q:"What is the functional unit of the kidney called?",
+    opts:["Nephron","Alveolus","Villus","Neuron"],ans:0,
+    exp:"The nephron is the structural and functional unit of the kidney. Each kidney contains about 1 million nephrons. It filters blood and forms urine."},
+    hi:{q:"वृक्क (किडनी) की कार्यात्मक इकाई को क्या कहते हैं?",
+    opts:["नेफ्रॉन","एल्वियोलस","विली","न्यूरॉन"],exp:"नेफ्रॉन वृक्क की संरचनात्मक और कार्यात्मक इकाई है। प्रत्येक वृक्क में लगभग 10 लाख नेफ्रॉन होते हैं।"},
+    as:{q:"বৃক্কৰ কাৰ্যকৰী একক কি?",
+    opts:["নেফ্ৰন","এলভিওলাছ","ভিলাছ","নিউৰন"],exp:"নেফ্ৰন হৈছে বৃক্কৰ গাঁথনিগত আৰু কাৰ্যকৰী একক। প্ৰতিটো বৃক্কত প্ৰায় 10 লাখ নেফ্ৰন থাকে।"}
+  },
+  {
+    emoji:"❤️",
+    eq:null,
+    en:{q:"What are the four main components of human BLOOD?",
+    opts:["Red blood cells (RBC), White blood cells (WBC), Platelets, Plasma",
+          "RBC, WBC, Haemoglobin, Oxygen","Plasma, Glucose, Salts, Proteins",
+          "RBC, Plasma, Glucose, Antibodies"],ans:0,
+    exp:"Blood = Plasma (55%, liquid) + RBCs (carry O₂ via haemoglobin) + WBCs (immunity) + Platelets (clotting)."},
+    hi:{q:"मानव रक्त के चार मुख्य घटक कौन से हैं?",
+    opts:["लाल रक्त कणिकाएँ, श्वेत रक्त कणिकाएँ, प्लेटलेट्स, प्लाज्मा",
+          "RBC, WBC, हीमोग्लोबिन, ऑक्सीजन","प्लाज्मा, ग्लूकोज, लवण, प्रोटीन",
+          "RBC, प्लाज्मा, ग्लूकोज, एंटीबॉडी"],exp:"रक्त = प्लाज्मा + RBC (हीमोग्लोबिन से O₂) + WBC (प्रतिरक्षा) + प्लेटलेट्स (थक्का)।"},
+    as:{q:"মানুহৰ ৰক্তৰ চাৰিটা মূল উপাদান কি?",
+    opts:["ৰক্ত কণিকা (RBC), শ্বেত ৰক্ত কণিকা (WBC), অণুচক্ৰিকা, প্লাজমা",
+          "RBC, WBC, হিমোগ্লোবিন, অক্সিজেন","প্লাজমা, গ্লুকোজ, লৱণ, প্ৰটিন",
+          "RBC, প্লাজমা, গ্লুকোজ, এণ্টিবডি"],exp:"ৰক্ত = প্লাজমা + RBC (হিমোগ্লোবিনেৰে O₂) + WBC (প্ৰতিৰোধ) + অণুচক্ৰিকা (থেকা)।"}
+  },
+  {
+    emoji:"🌿",
+    eq:null,
+    en:{q:"What is DIALYSIS and why is it needed?",
+    opts:["Artificial kidney filtration of blood — needed when kidneys fail",
+          "Process of photosynthesis in plants","Heart transplant surgery",
+          "Blood transfusion process"],ans:0,
+    exp:"Dialysis is the artificial filtration of blood using a machine (artificial kidney) when a patient's kidneys fail to filter waste properly. It removes urea and toxins."},
+    hi:{q:"डायलिसिस क्या है और इसकी जरूरत क्यों होती है?",
+    opts:["रक्त का कृत्रिम निस्पंदन — जब गुर्दे खराब हों",
+          "पौधों में प्रकाश संश्लेषण की प्रक्रिया","हृदय प्रत्यारोपण शल्य",
+          "रक्त आधान प्रक्रिया"],exp:"डायलिसिस मशीन द्वारा रक्त का कृत्रिम निस्पंदन है जब गुर्दे विफल हो जाते हैं। यह यूरिया और विषाक्त पदार्थ हटाता है।"},
+    as:{q:"ডায়েলিচিছ কি আৰু ইয়াৰ কিয় প্ৰয়োজন?",
+    opts:["ৰক্তৰ কৃত্ৰিম পৰিস্ৰাৱণ — বৃক্ক বিফল হ'লে",
+          "উদ্ভিদত সালোকসংশ্লেষণ প্ৰক্ৰিয়া","হৃদয় প্ৰতিৰোপণ শস্ত্ৰচিকিৎসা",
+          "ৰক্ত পৰিসঞ্চালন প্ৰক্ৰিয়া"],exp:"ডায়েলিচিছ হৈছে যন্ত্ৰৰ সহায়ত ৰক্তৰ কৃত্ৰিম পৰিস্ৰাৱণ যেতিয়া বৃক্কে ইউৰিয়া আৰু বিষাক্ত পদাৰ্থ ফিল্টাৰ কৰিব নোৱাৰে।"}
+  }
+];
+
+let current=0,score=0,answered=[],currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display=el.getAttribute('data-lang')===l?'':'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['en','hi','as'][i]===l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(current>=questions.length){showEnd();return;}
+  const q=questions[current];
+  const lang=q[currentLang]||q['en'];
+  const enQ=q['en'];
+  document.getElementById('qNum').textContent=current+1;
+  document.getElementById('scoreDisp').textContent=score;
+  document.getElementById('qLabel').textContent=`Question ${current+1} of 10`;
+  document.getElementById('qEmoji').textContent=q.emoji;
+  document.getElementById('qText').textContent=lang.q||enQ.q;
+  document.getElementById('progBar').style.width=((current)/10*100)+'%';
+  const eqBox=document.getElementById('eqBox');
+  if(q.eq){eqBox.textContent=q.eq;eqBox.style.display='block';}
+  else{eqBox.style.display='none';}
+  const opts=lang.opts||enQ.opts;
+  const optDiv=document.getElementById('options');
+  optDiv.innerHTML='';
+  opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';b.textContent=o;
+    b.onclick=()=>selectAnswer(i,enQ.ans,lang.exp||enQ.exp);
+    optDiv.appendChild(b);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').style.display='none';
+}
+
+function selectAnswer(chosen,correct,exp){
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[correct].classList.add('correct');
+  const fb=document.getElementById('feedback');
+  if(chosen===correct){
+    score+=10;document.getElementById('scoreDisp').textContent=score;
+    fb.textContent='✓ Correct! '+exp;fb.className='feedback ok show';
+  } else {
+    btns[chosen].classList.add('wrong');
+    fb.textContent='✗ Not quite. '+exp;fb.className='feedback no show';
+  }
+  answered.push({q:questions[current]['en'].q,correct:chosen===correct,exp});
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextQuestion(){current++;renderQuestion();}
+
+function showEnd(){
+  document.getElementById('questionCard').style.display='none';
+  document.getElementById('progBar').style.width='100%';
+  document.getElementById('finalScore').textContent=score;
+  let stars='';
+  if(score>=90)stars='⭐⭐⭐';
+  else if(score>=70)stars='⭐⭐';
+  else if(score>=40)stars='⭐';
+  document.getElementById('stars').textContent=stars||'☆☆☆';
+  const msgs={en:['Keep going!','Good work!','Biology genius! 🌿'],
+    hi:['जारी रखें!','अच्छा काम!','जीव विज्ञान विशेषज्ञ! 🌿'],
+    as:['চেষ্টা কৰি যাওক!','ভাল কাম!','জীৱ বিজ্ঞান বিশেষজ্ঞ! 🌿']};
+  const mArr=msgs[currentLang]||msgs.en;
+  document.getElementById('endMsg').textContent=score>=90?mArr[2]:score>=70?mArr[1]:mArr[0];
+  let html='<h3>Review</h3>';
+  answered.forEach((a,i)=>{
+    html+=`<div class="result-item ${a.correct?'r-ok':'r-no'}">
+      <strong>Q${i+1}:</strong> ${a.correct?'✓':'✗'} ${a.q}<br/><small>${a.exp}</small></div>`;
+  });
+  document.getElementById('resultDetail').innerHTML=html;
+  const es=document.getElementById('endScreen');
+  es.style.display='block';es.classList.add('show');
+}
+
+function restartGame(){
+  current=0;score=0;answered=[];
+  document.getElementById('questionCard').style.display='block';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('endScreen').classList.remove('show');
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

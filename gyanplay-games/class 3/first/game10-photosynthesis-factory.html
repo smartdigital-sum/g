@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌿 Photosynthesis Factory — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#071A07;--card:#0D280D;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--green:#4CAF50;--lime:#A8E063;--sun:#FFB700;--text:#E8F5E9;--dim:#4A8A4A}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(168,224,99,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.3rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:18px 16px;gap:16px}
+.hook{background:linear-gradient(135deg,rgba(168,224,99,.12),rgba(6,214,160,.08));border:1px solid rgba(168,224,99,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.88rem;line-height:1.6;color:#C8F0A0}
+.hook strong{color:var(--gold)}
+/* Plant scene */
+.scene{position:relative;width:100%;max-width:440px;height:260px;background:linear-gradient(180deg,#0A3A14 0%,#071A07 55%,#3D2808 100%);border-radius:16px;border:2px solid rgba(168,224,99,.2);overflow:hidden}
+.sky{position:absolute;top:0;left:0;right:0;height:55%;background:linear-gradient(180deg,rgba(0,30,60,.8),transparent)}
+.soil{position:absolute;bottom:0;left:0;right:0;height:38%;background:linear-gradient(180deg,#3D2808,#2A1A05);border-top:2px solid rgba(255,159,28,.2)}
+/* Plant SVG */
+.plant-wrap{position:absolute;bottom:36%;left:50%;transform:translateX(-50%)}
+.plant-svg{transition:all .5s ease}
+/* Ingredient slots */
+.slots{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:440px}
+.slot{width:85px;padding:14px 8px;background:var(--card);border:2px dashed rgba(168,224,99,.3);border-radius:14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:all .25s;text-align:center;user-select:none}
+.slot:hover{border-color:var(--lime);background:rgba(168,224,99,.08)}
+.slot.filled{border-style:solid;border-color:var(--lime);background:rgba(168,224,99,.12)}
+.slot.filled:hover{cursor:default}
+.slot-icon{font-size:2rem;line-height:1;transition:transform .3s}
+.slot.filled .slot-icon{transform:scale(1.15);filter:drop-shadow(0 0 8px rgba(168,224,99,.6))}
+.slot-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--dim)}
+.slot.filled .slot-label{color:var(--lime)}
+/* Output area */
+.output-area{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;max-width:440px}
+.output-chip{background:var(--card);border:1px solid rgba(168,224,99,.15);border-radius:10px;padding:10px 18px;display:flex;align-items:center;gap:8px;font-size:.88rem;color:var(--dim);transition:all .5s}
+.output-chip.active{border-color:var(--lime);color:var(--lime);background:rgba(168,224,99,.1);box-shadow:0 0 12px rgba(168,224,99,.2)}
+/* Remove ingredient button */
+.slot.filled::after{content:'×';position:absolute;top:4px;right:6px;font-size:.8rem;color:var(--coral);opacity:.6}
+.slot{position:relative}
+/* Missing ingredient warning */
+.warning{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.25);border-radius:10px;padding:10px 16px;font-size:.82rem;color:var(--coral);text-align:center;display:none;max-width:440px}
+.warning.show{display:block}
+/* Stage progress */
+.stage-row{display:flex;gap:6px;justify-content:center}
+.stage-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.15);transition:background .4s}
+.stage-dot.done{background:var(--lime)}
+.stage-dot.active{background:var(--gold);box-shadow:0 0 8px rgba(255,215,0,.5)}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#071A07;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(7,26,7,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4.5rem}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:320px;font-size:.9rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@keyframes sway{0%,100%{transform:translateX(-50%) rotate(-2deg)}50%{transform:translateX(-50%) rotate(2deg)}}
+@keyframes wilt{to{transform:translateX(-50%) rotate(-30deg) scaleY(.7);filter:brightness(.5)}}
+@keyframes grow{0%{transform:translateX(-50%) scale(.8)}100%{transform:translateX(-50%) scale(1.15)}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🌿 Photosynthesis Factory</div><div class="subject-tag">Science · Plants · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+
+<div class="game-area">
+  <div class="hook">🌱 Plants are the <strong>ONLY</strong> living things on Earth that make their own food — they don't eat anything! They're <strong>solar-powered factories</strong>. Without them, literally nothing else could survive. Let's power the factory!</div>
+
+  <div class="scene" id="scene">
+    <div class="sky"></div>
+    <div class="soil"></div>
+    <!-- Sun -->
+    <div id="sunEl" style="position:absolute;top:8px;right:16px;font-size:2.4rem;opacity:.3;transition:opacity .5s,filter .5s">☀️</div>
+    <!-- Water drops from soil -->
+    <div id="waterEl" style="position:absolute;bottom:30%;left:16px;font-size:1.6rem;opacity:.3;transition:opacity .5s">💧</div>
+    <!-- CO2 clouds -->
+    <div id="co2El" style="position:absolute;top:12px;left:16px;font-size:.75rem;color:rgba(200,200,255,.3);transition:opacity .5s;line-height:1.4">CO₂<br>↓</div>
+    <!-- Plant SVG -->
+    <div class="plant-wrap" id="plantWrap" style="animation:sway 3s ease-in-out infinite">
+      <svg id="plantSvg" width="80" height="110" viewBox="0 0 80 110">
+        <!-- Stem -->
+        <rect x="37" y="40" width="6" height="70" rx="3" fill="#4CAF50" id="stem"/>
+        <!-- Leaves -->
+        <ellipse cx="40" cy="60" rx="24" ry="12" fill="#4CAF50" transform="rotate(-25 40 60)" id="leaf1"/>
+        <ellipse cx="40" cy="45" rx="20" ry="10" fill="#4CAF50" transform="rotate(25 40 45)" id="leaf2"/>
+        <!-- Top leaf -->
+        <ellipse cx="40" cy="35" rx="16" ry="8" fill="#A8E063" id="leaf3"/>
+        <!-- Flower (hidden initially) -->
+        <g id="flower" opacity="0">
+          <circle cx="40" cy="20" r="10" fill="#FFD166"/>
+          <circle cx="40" cy="20" r="5" fill="#FF9F1C"/>
+        </g>
+        <!-- Wilt overlay -->
+        <g id="wiltOverlay" opacity="0">
+          <ellipse cx="40" cy="65" rx="24" ry="12" fill="#5A4A00" transform="rotate(-25 40 65)"/>
+          <ellipse cx="40" cy="50" rx="20" ry="10" fill="#5A4A00" transform="rotate(25 40 50)"/>
+        </g>
+      </svg>
+    </div>
+    <!-- O2 output -->
+    <div id="o2bubbles" style="position:absolute;top:18px;right:58px;font-size:.9rem;opacity:0;transition:opacity .8s;color:var(--lime)">O₂ ↑<br>O₂ ↑</div>
+    <!-- Food glow -->
+    <div id="foodGlow" style="position:absolute;bottom:38%;left:50%;transform:translateX(-50%);width:90px;height:30px;background:rgba(255,209,102,0);border-radius:50%;transition:background .8s"></div>
+  </div>
+
+  <div class="stage-row" id="stageRow"></div>
+
+  <div class="slots" id="slots">
+    <div class="slot" id="slot-sun" onclick="addIngredient('sun')">
+      <div class="slot-icon">☀️</div>
+      <div class="slot-label">Sunlight</div>
+    </div>
+    <div class="slot" id="slot-water" onclick="addIngredient('water')">
+      <div class="slot-icon">💧</div>
+      <div class="slot-label">Water</div>
+    </div>
+    <div class="slot" id="slot-co2" onclick="addIngredient('co2')">
+      <div class="slot-icon">💨</div>
+      <div class="slot-label">CO₂ gas</div>
+    </div>
+  </div>
+
+  <div class="output-area">
+    <div class="output-chip" id="out-food">🍬 Food (glucose) is made</div>
+    <div class="output-chip" id="out-o2">🫧 O₂ released</div>
+  </div>
+
+  <div class="warning" id="warning"></div>
+</div>
+
+<div class="bottom">
+  <div class="prog" id="prog">Stage 1 of 3</div>
+  <button class="next-btn" id="nextBtn" onclick="nextStage()">Next Stage →</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🌸</div>
+  <div class="ov-title" id="ovTitle">Factory Running!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+
+<script>
+const STAGES=[
+  {
+    title:'Stage 1 — Build the factory',
+    instruction:'The plant needs 3 ingredients to make food. Add them all!',
+    need:['sun','water','co2'],
+    fact:'Sunlight + Water + CO₂ → Food (glucose) + Oxygen. Every green leaf is doing this right now!'
+  },
+  {
+    title:'Stage 2 — Remove the sun',
+    instruction:'What happens if we take away the sunlight? Remove it and see!',
+    need:['water','co2'],
+    removeMissing:'sun',
+    fact:'Without sunlight, the factory stops! The plant cannot make food and slowly weakens.'
+  },
+  {
+    title:'Stage 3 — Only sunlight',
+    instruction:'Add sunlight back but remove water. Will the plant survive?',
+    need:['sun'],
+    removeMissing:'water',
+    fact:'Plants need ALL THREE ingredients — sunlight, water AND CO₂. Miss any one and the factory shuts down!'
+  }
+];
+
+let stage=0,added=new Set(),score=0;
+
+function setupStage(){
+  const s=STAGES[stage];
+  added=new Set();
+  document.getElementById('prog').textContent=`Stage ${stage+1} of ${STAGES.length}`;
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('warning').classList.remove('show');
+  // Reset slots
+  ['sun','water','co2'].forEach(k=>{
+    const sl=document.getElementById(`slot-${k}`);
+    sl.classList.remove('filled');sl.style.pointerEvents='all';
+    sl.style.opacity='1';
+    if(s.removeMissing===k){sl.style.opacity='.3';sl.style.pointerEvents='none';}
+  });
+  // Reset plant
+  resetPlant();
+  resetOutputs();
+  buildStageDots();
+  // Show instruction
+  document.getElementById('warning').textContent=s.instruction;document.getElementById('warning').style.color='var(--lime)';document.getElementById('warning').classList.add('show');
+}
+
+function buildStageDots(){
+  const row=document.getElementById('stageRow');row.innerHTML='';
+  STAGES.forEach((_,i)=>{const d=document.createElement('div');d.className='stage-dot'+(i<stage?' done':i===stage?' active':'');row.appendChild(d);});
+}
+
+function resetPlant(){
+  const pw=document.getElementById('plantWrap');
+  pw.style.animation='sway 3s ease-in-out infinite';
+  document.querySelectorAll('#plantSvg [id]').forEach(el=>el.style.opacity='');
+  document.getElementById('flower').setAttribute('opacity','0');
+  document.getElementById('wiltOverlay').setAttribute('opacity','0');
+  document.getElementById('o2bubbles').style.opacity='0';
+  document.getElementById('foodGlow').style.background='rgba(255,209,102,0)';
+  document.getElementById('sunEl').style.opacity='.3';document.getElementById('sunEl').style.filter='';
+  document.getElementById('waterEl').style.opacity='.3';
+  document.getElementById('co2El').style.opacity='.3';
+}
+function resetOutputs(){
+  document.getElementById('out-food').classList.remove('active');
+  document.getElementById('out-o2').classList.remove('active');
+}
+
+function addIngredient(key){
+  if(added.has(key))return;
+  const sl=document.getElementById(`slot-${key}`);
+  sl.classList.add('filled');sl.style.pointerEvents='none';
+  added.add(key);
+  // Visual feedback
+  if(key==='sun'){document.getElementById('sunEl').style.opacity='1';document.getElementById('sunEl').style.filter='drop-shadow(0 0 14px #FFB700)';}
+  if(key==='water'){document.getElementById('waterEl').style.opacity='1';}
+  if(key==='co2'){document.getElementById('co2El').style.opacity='1';document.getElementById('co2El').style.color='rgba(200,220,255,.9)';}
+  checkComplete();
+}
+
+function checkComplete(){
+  const s=STAGES[stage];
+  const allAdded=s.need.every(k=>added.has(k));
+  const extraAdded=[...added].some(k=>!s.need.includes(k));
+  if(allAdded&&!extraAdded){
+    // Plant thrives or wilts depending on stage
+    if(stage===0){
+      // Full photosynthesis
+      document.getElementById('flower').setAttribute('opacity','1');
+      document.getElementById('o2bubbles').style.opacity='1';
+      document.getElementById('foodGlow').style.background='rgba(255,209,102,.35)';
+      document.getElementById('out-food').classList.add('active');
+      document.getElementById('out-o2').classList.add('active');
+      score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+      showOverlay('🌸 Factory running!',s.fact);confetti();setTimeout(hideOverlay,2800);
+    } else {
+      // Missing an ingredient — plant wilts
+      document.getElementById('wiltOverlay').setAttribute('opacity','1');
+      document.getElementById('plantWrap').style.animation='wilt .8s ease forwards';
+      document.getElementById('warning').textContent=`❌ Missing ingredient! ${s.removeMissing==='sun'?'No sunlight = no energy!':'No water = factory shuts down!'}`;
+      document.getElementById('warning').style.color='var(--coral)';
+      showOverlay('🥀 Factory stopped!',s.fact);setTimeout(hideOverlay,2800);
+      score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+    }
+    document.getElementById('nextBtn').style.display='block';
+  }
+}
+
+function nextStage(){
+  stage++;document.getElementById('nextBtn').style.display='none';
+  if(stage>=STAGES.length){endGame();return;}
+  setupStage();
+}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOverlay('Photosynthesis master! 🌿','You understand how every plant on Earth makes food. That\'s truly amazing!');
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;stage=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Next Stage →';document.getElementById('nextBtn').onclick=nextStage;document.getElementById('ovEmoji').textContent='🌸';document.getElementById('ovTitle').textContent='Factory Running!';hideOverlay();setupStage();};
+}
+function showOverlay(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOverlay(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#A8E063','#FFD166','#06D6A0','#4CAF50','#FF9F1C'];for(let i=0;i<28;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+setupStage();
+</script>
+</body>
+</html>

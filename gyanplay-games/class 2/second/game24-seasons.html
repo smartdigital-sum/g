@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Four Seasons – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,#E8F5E9,#C8E6C9);font-family:'Baloo 2',cursive;display:flex;flex-direction:column;align-items:center;padding:16px}
+  header{width:100%;max-width:700px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .logo{font-size:1.6rem;font-weight:800;color:#1B5E20;letter-spacing:1px}
+  .lang-btns{display:flex;gap:6px}
+  .lang-btn{border:none;background:#43A047;color:#fff;font-family:'Baloo 2',cursive;font-size:0.9rem;font-weight:700;border-radius:20px;padding:5px 14px;cursor:pointer;transition:transform .15s}
+  .lang-btn.active,.lang-btn:hover{background:#1B5E20;transform:scale(1.08)}
+  .progress-bar-wrap{width:100%;max-width:700px;background:#A5D6A7;border-radius:20px;height:14px;margin-bottom:10px;overflow:hidden}
+  .progress-bar{height:100%;background:linear-gradient(90deg,#66BB6A,#1B5E20);border-radius:20px;transition:width .5s}
+  .round-label{font-size:1.1rem;font-weight:700;color:#2E7D32;margin-bottom:6px;text-align:center}
+  .card{background:rgba(255,255,255,0.88);border-radius:28px;box-shadow:0 8px 32px rgba(56,142,60,0.18);padding:24px 20px 20px;max-width:700px;width:100%;text-align:center}
+  .scene{font-size:6.5rem;line-height:1;margin:8px 0;animation:pop .4s cubic-bezier(.36,2,.6,.9)}
+  @keyframes pop{from{transform:scale(0.4)}to{transform:scale(1)}}
+  .activity-text{font-size:1.6rem;font-weight:700;color:#388E3C;margin-bottom:6px}
+  .question-text{font-size:2.5rem;font-weight:800;color:#1B5E20;margin-bottom:18px}
+  .answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .ans-btn{border:none;border-radius:22px;padding:16px 8px;font-family:'Baloo 2',cursive;font-size:1.8rem;font-weight:800;cursor:pointer;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 12px rgba(0,0,0,0.10);line-height:1.2}
+  .ans-btn:hover{transform:scale(1.05)}
+  .ans-btn.correct{background:#A5D6A7;border:4px solid #388E3C;animation:bounce .3s}
+  .ans-btn.wrong{background:#FFCDD2;border:4px solid #E53935;animation:shake .3s}
+  @keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .btn-winter{background:#BBDEFB;}
+  .btn-summer{background:#FFE082;}
+  .btn-spring{background:#F8BBD0;}
+  .btn-autumn{background:#FFCC80;}
+  .season-sub{font-size:1rem;font-weight:700;opacity:0.75}
+  .fun-fact{margin-top:14px;background:#F1F8E9;border-radius:16px;padding:12px 16px;font-size:1.3rem;color:#33691E;font-weight:700;display:none}
+  .next-btn{margin-top:14px;border:none;background:linear-gradient(135deg,#66BB6A,#1B5E20);color:#fff;font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;border-radius:20px;padding:12px 40px;cursor:pointer;display:none;transition:transform .15s}
+  .next-btn:hover{transform:scale(1.06)}
+  .end-screen{display:none;text-align:center}
+  .end-title{font-size:3rem;font-weight:900;color:#1B5E20;margin-bottom:8px}
+  .stars-row{display:flex;justify-content:center;gap:8px;font-size:2.5rem;margin:10px 0}
+  .end-msg{font-size:1.8rem;color:#33691E;margin-bottom:10px}
+  .play-again{border:none;background:linear-gradient(135deg,#66BB6A,#1B5E20);color:#fff;font-family:'Baloo 2',cursive;font-size:1.8rem;font-weight:800;border-radius:24px;padding:14px 48px;cursor:pointer;margin-top:10px;transition:transform .15s}
+  .play-again:hover{transform:scale(1.07)}
+  canvas#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🌿 GyanPlay</div>
+  <div class="lang-btns">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</header>
+<div class="progress-bar-wrap"><div class="progress-bar" id="pbar" style="width:0%"></div></div>
+<div class="round-label" id="roundLabel">Round 1 of 8</div>
+
+<div class="card" id="gameCard">
+  <div class="scene" id="sceneEmoji">❄️</div>
+  <div class="activity-text" id="activityText">Snow is falling!</div>
+  <div class="question-text" id="qText">Which season is this?</div>
+  <div class="answer-grid">
+    <button class="ans-btn btn-winter" onclick="answer('winter')" id="btnWinter"><span>❄️</span><span id="lblWinter">Winter</span><span class="season-sub" id="sub_winter">सर्दी / শীতকাল</span></button>
+    <button class="ans-btn btn-summer" onclick="answer('summer')" id="btnSummer"><span>☀️</span><span id="lblSummer">Summer</span><span class="season-sub" id="sub_summer">गर्मी / গ্ৰীষ্মকাল</span></button>
+    <button class="ans-btn btn-spring" onclick="answer('spring')" id="btnSpring"><span>🌸</span><span id="lblSpring">Spring</span><span class="season-sub" id="sub_spring">बसंत / বসন্তকাল</span></button>
+    <button class="ans-btn btn-autumn" onclick="answer('autumn')" id="btnAutumn"><span>🍂</span><span id="lblAutumn">Autumn</span><span class="season-sub" id="sub_autumn">पतझड़ / শৰৎকাল</span></button>
+  </div>
+  <div class="fun-fact" id="funFact">Fun fact!</div>
+  <button class="next-btn" id="nextBtn" onclick="nextRound()">Next ➡️</button>
+</div>
+
+<div class="end-screen card" id="endScreen">
+  <div class="end-title">🌈 Amazing!</div>
+  <div class="stars-row" id="endStars">⭐⭐⭐</div>
+  <div class="end-msg" id="endMsg"></div>
+  <button class="play-again" onclick="restartGame()">🔄 Play Again</button>
+</div>
+<canvas id="confetti"></canvas>
+
+<script>
+const L={
+  en:{q:"Which season is this?",winter:"Winter",summer:"Summer",spring:"Spring",autumn:"Autumn",
+      sub:{winter:"सर्दी / শীতকাল",summer:"गर्मी / গ্ৰীষ্মকাল",spring:"बसंत / বসন্তকাল",autumn:"पतझड़ / শৰৎকাল"},
+      next:"Next ➡️",playAgain:"🔄 Play Again",rl:(r,t)=>`Round ${r} of ${t}`,
+      stars:["Keep Trying! 💪","Good Try! 😊","Great Job! 🌟","Season Star! 🏆"]},
+  hi:{q:"यह कौन सा मौसम है?",winter:"सर्दी",summer:"गर्मी",spring:"बसंत",autumn:"पतझड़",
+      sub:{winter:"Winter / শীতকাল",summer:"Summer / গ্ৰীষ্মকাল",spring:"Spring / বসন্তকাল",autumn:"Autumn / শৰৎকাল"},
+      next:"अगला ➡️",playAgain:"🔄 फिर खेलें",rl:(r,t)=>`चक्र ${r} / ${t}`,
+      stars:["कोशिश करो! 💪","अच्छा प्रयास! 😊","बहुत अच्छे! 🌟","मौसम विशेषज्ञ! 🏆"]},
+  as:{q:"এইটো কোন ঋতু?",winter:"শীতকাল",summer:"গ্ৰীষ্মকাল",spring:"বসন্তকাল",autumn:"শৰৎকাল",
+      sub:{winter:"Winter / सर्दी",summer:"Summer / गर्मी",spring:"Spring / बसंत",autumn:"Autumn / पतझड़"},
+      next:"পৰৱৰ্তী ➡️",playAgain:"🔄 আকৌ খেলক",rl:(r,t)=>`ৰাউণ্ড ${r} / ${t}`,
+      stars:["চেষ্টা কৰক! 💪","ভাল চেষ্টা! 😊","চমৎকাৰ! 🌟","ঋতু বিশেষজ্ঞ! 🏆"]}
+};
+
+const rounds=[
+  {emoji:"❄️",activity:{en:"Snow is falling! ☃️",hi:"बर्फ गिर रही है! ☃️",as:"বৰফ পৰিছে! ☃️"},correct:"winter",fact:{en:"In winter it is very cold and we wear warm clothes! 🧥",hi:"सर्दी में बहुत ठंड होती है, हम गर्म कपड़े पहनते हैं!",as:"শীতকালত খুব ঠাণ্ডা হয়, আমি গৰম কাপোৰ পিন্ধোঁ!"}},
+  {emoji:"☀️",activity:{en:"It is very hot today! 🌞",hi:"आज बहुत गर्मी है! 🌞",as:"আজি খুব গৰম! 🌞"},correct:"summer",fact:{en:"In summer the sun shines bright and days are long! 🌻",hi:"गर्मी में सूरज चमकता है और दिन बड़े होते हैं!",as:"গ্ৰীষ্মকালত ৰ'দ তেজাল হয় আৰু দিন দীঘল হয়!"}},
+  {emoji:"🌸",activity:{en:"Beautiful flowers are blooming! 🌼",hi:"सुंदर फूल खिल रहे हैं! 🌼",as:"সুন্দৰ ফুল ফুলিছে! 🌼"},correct:"spring",fact:{en:"In spring flowers bloom and birds sing! 🐦",hi:"बसंत में फूल खिलते हैं और पक्षी गाते हैं!",as:"বসন্তত ফুল ফুলে আৰু চৰাই গান গায়!"}},
+  {emoji:"🍂",activity:{en:"Leaves are falling from trees! 🌳",hi:"पेड़ों से पत्तियाँ गिर रही हैं!",as:"গছৰ পাত সৰি পৰিছে!"},correct:"autumn",fact:{en:"In autumn leaves turn orange and red and fall! 🍁",hi:"पतझड़ में पत्तियाँ नारंगी-लाल होकर गिरती हैं!",as:"শৰৎকালত পাত কমলা-ৰঙা হৈ সৰে!"}},
+  {emoji:"🌨️",activity:{en:"We are building a snowman! ⛄",hi:"हम बर्फमान बना रहे हैं! ⛄",as:"আমি স্নোমেন বনাইছোঁ! ⛄"},correct:"winter",fact:{en:"Snowflakes are unique – no two are the same! ❄️",hi:"हर बर्फ का टुकड़ा अनोखा होता है – दो एक जैसे नहीं!",as:"প্ৰতিটো বৰফকণা অনন্য – দুটা একে নহয়!"}},
+  {emoji:"🍦",activity:{en:"We eat ice cream to stay cool! 🍦",hi:"ठंडा रहने के लिए आइसक्रीम खाते हैं! 🍦",as:"ঠাণ্ডা থাকিবলৈ আইচক্ৰিম খাওঁ! 🍦"},correct:"summer",fact:{en:"In summer we swim and drink cold drinks to cool down! 🏊",hi:"गर्मी में हम तैरते हैं और ठंडे पेय पीते हैं!",as:"গ্ৰীষ্মত আমি সাঁতোৰোঁ আৰু ঠাণ্ডা পানীয় পিওঁ!"}},
+  {emoji:"🌷",activity:{en:"Butterflies are flying everywhere! 🦋",hi:"तितलियाँ हर जगह उड़ रही हैं! 🦋",as:"পখিলা সকলোতে উড়িছে! 🦋"},correct:"spring",fact:{en:"Spring comes after winter – nature wakes up! 🌱",hi:"बसंत सर्दी के बाद आता है – प्रकृति जागती है!",as:"শীতৰ পিছত বসন্ত আহে – প্ৰকৃতি জাগি উঠে!"}},
+  {emoji:"🎃",activity:{en:"Pumpkins are ripe and ready! 🎃",hi:"कद्दू पके हुए हैं! 🎃",as:"কুমলীয়া পকিছে! 🎃"},correct:"autumn",fact:{en:"In autumn we harvest crops – farmers are happy! 🌾",hi:"पतझड़ में फसल काटते हैं – किसान खुश होते हैं!",as:"শৰৎত শস্য কাটা হয় – কৃষক সুখী হয়!"}}
+];
+
+let lang='en',cur=0,score=0,answered=false;
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>b.classList.toggle('active',['en','hi','as'][i]===l));
+  renderRound();
+}
+
+function renderRound(){
+  const Lc=L[lang];const r=rounds[cur];
+  document.getElementById('sceneEmoji').textContent=r.emoji;
+  document.getElementById('activityText').textContent=r.activity[lang];
+  document.getElementById('qText').textContent=Lc.q;
+  ['winter','summer','spring','autumn'].forEach(s=>{
+    document.getElementById('lbl'+s.charAt(0).toUpperCase()+s.slice(1)).textContent=Lc[s];
+    document.getElementById('sub_'+s).textContent=Lc.sub[s];
+    const btn=document.getElementById('btn'+s.charAt(0).toUpperCase()+s.slice(1));
+    btn.classList.remove('correct','wrong');btn.disabled=false;
+  });
+  document.getElementById('funFact').style.display='none';
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('roundLabel').textContent=Lc.rl(cur+1,rounds.length);
+  document.getElementById('pbar').style.width=(cur/rounds.length*100)+'%';
+  answered=false;
+  const e=document.getElementById('sceneEmoji');e.style.animation='none';e.offsetHeight;e.style.animation='pop .4s cubic-bezier(.36,2,.6,.9)';
+}
+
+function answer(s){
+  if(answered)return;answered=true;
+  const r=rounds[cur];
+  const cap=s.charAt(0).toUpperCase()+s.slice(1);
+  const btn=document.getElementById('btn'+cap);
+  if(s===r.correct){btn.classList.add('correct');score++;launchConfetti(12);}
+  else{btn.classList.add('wrong');document.getElementById('btn'+r.correct.charAt(0).toUpperCase()+r.correct.slice(1)).classList.add('correct');}
+  ['Winter','Summer','Spring','Autumn'].forEach(n=>document.getElementById('btn'+n).disabled=true);
+  document.getElementById('funFact').textContent='💡 '+r.fact[lang];
+  document.getElementById('funFact').style.display='block';
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextRound(){cur++;if(cur>=rounds.length){showEnd();return;}renderRound();}
+
+function showEnd(){
+  document.getElementById('gameCard').style.display='none';
+  document.getElementById('roundLabel').style.display='none';
+  const end=document.getElementById('endScreen');end.style.display='block';
+  const pct=score/rounds.length;
+  const stars=pct>=0.9?3:pct>=0.7?2:pct>=0.4?1:0;
+  document.getElementById('endStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('endMsg').textContent=`${score}/${rounds.length} — ${L[lang].stars[stars]}`;
+  document.getElementById('pbar').style.width='100%';launchConfetti(40);
+}
+
+function restartGame(){
+  cur=0;score=0;answered=false;
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('gameCard').style.display='block';
+  document.getElementById('roundLabel').style.display='block';
+  renderRound();
+}
+
+function launchConfetti(count){
+  const canvas=document.getElementById('confetti');const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const pieces=Array.from({length:count},()=>({x:Math.random()*canvas.width,y:Math.random()*-100,r:Math.random()*10+5,color:`hsl(${Math.random()*360},90%,60%)`,vx:(Math.random()-0.5)*4,vy:Math.random()*4+2,alpha:1}));
+  let frame;
+  function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);pieces.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.alpha-=0.012;ctx.save();ctx.globalAlpha=Math.max(0,p.alpha);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();ctx.restore();});if(pieces.some(p=>p.alpha>0))frame=requestAnimationFrame(draw);else ctx.clearRect(0,0,canvas.width,canvas.height);}
+  cancelAnimationFrame(frame);draw();
+}
+renderRound();
+</script>
+</body>
+</html>

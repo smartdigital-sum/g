@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Assam Explorer 🌿 — Class 1 Social Studies</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&family=Noto+Sans+Devanagari:wght@700&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--green:#1B5E20;--saffron:#FF6B00;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#E8F5E9,#C8E6C9,#A5D6A7,#81C784);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* ASSAM MAP BG */
+.map-bg{position:fixed;inset:0;z-index:0;opacity:.05;font-size:15rem;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.river-bg{position:fixed;bottom:60px;left:0;right:0;height:28px;background:linear-gradient(180deg,rgba(33,150,243,.4),rgba(33,150,243,.7));z-index:1;border-radius:4px;}
+.river-bg::before{content:'〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️';position:absolute;top:-8px;font-size:1.2rem;opacity:.5;}
+.ground{position:fixed;bottom:0;left:0;right:0;height:62px;background:linear-gradient(180deg,#4CAF50,#2E7D32);z-index:1;}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#1B5E20;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#1B5E20;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#1B5E20;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* FACT REVEAL CARD */
+.reveal-card{
+  position:relative;z-index:20;
+  background:rgba(255,255,255,.88);backdrop-filter:blur(10px);
+  border:4px solid rgba(255,255,255,.95);border-radius:28px;
+  padding:clamp(12px,3vw,20px) clamp(16px,4vw,28px);
+  margin:8px 16px;text-align:center;
+  max-width:660px;width:calc(100% - 32px);
+  box-shadow:0 8px 28px rgba(0,0,0,.1);
+}
+.reveal-icon{font-size:clamp(3.5rem,13vw,6rem);animation:revFloat 2s ease-in-out infinite;display:block;}
+@keyframes revFloat{0%,100%{transform:scale(1) rotate(-2deg);}50%{transform:scale(1.1) rotate(2deg);}}
+.reveal-title{font-family:'Fredoka One',cursive;font-size:clamp(1.2rem,5vw,1.9rem);color:#1B5E20;margin-top:6px;}
+.reveal-question{font-size:clamp(.9rem,3.5vw,1.2rem);color:#333;font-weight:700;margin-top:5px;line-height:1.5;}
+
+/* CHOICES GRID */
+.choices-grid{
+  position:relative;z-index:20;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(8px,2.5vw,16px);
+  padding:0 14px;max-width:660px;width:100%;
+  margin:8px 0;
+}
+.choice-card{
+  background:rgba(255,255,255,.8);backdrop-filter:blur(8px);
+  border:3px solid rgba(255,255,255,.9);border-radius:20px;
+  padding:clamp(12px,3vw,20px) clamp(10px,2.5vw,16px);
+  text-align:center;cursor:pointer;
+  transition:all .2s;
+  box-shadow:0 5px 0 rgba(0,0,0,.1);
+  position:relative;top:0;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+}
+.choice-card:hover{top:-4px;box-shadow:0 9px 0 rgba(0,0,0,.08);border-color:rgba(27,94,32,.4);}
+.cc-emoji{font-size:clamp(2rem,8vw,3.2rem);}
+.cc-text{font-family:'Fredoka One',cursive;font-size:clamp(.82rem,3.2vw,1.15rem);color:#1B5E20;}
+.cc-sub{font-size:clamp(.62rem,2.2vw,.82rem);color:#388E3C;font-weight:700;}
+.choice-card.correct{border-color:#43A047;background:rgba(67,160,71,.2);animation:ccPop .5s ease;}
+@keyframes ccPop{0%{transform:scale(1);}50%{transform:scale(1.12);}100%{transform:scale(1);}}
+.choice-card.wrong{border-color:#E53935;background:rgba(229,57,53,.15);animation:ccShake .35s ease;opacity:.35;pointer-events:none;}
+@keyframes ccShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+
+/* ASSAM FLAG REVEAL */
+.flag-burst{position:fixed;inset:0;z-index:155;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.flag-text{font-family:'Fredoka One',cursive;font-size:clamp(1.2rem,5vw,2rem);color:#FFD700;background:rgba(27,94,32,.92);padding:16px 26px;border-radius:20px;text-align:center;border:3px solid rgba(255,215,0,.5);max-width:90%;animation:fbIn .4s ease both,fbOut .35s 3s ease forwards;line-height:1.6;}
+@keyframes fbIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+@keyframes fbOut{to{transform:scale(1.3);opacity:0;}}
+
+/* FACT */
+.fact-box{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(27,94,32,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:420px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3.5s ease forwards;border:2px solid rgba(255,215,0,.3);line-height:1.55;}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.85rem,3vw,1.05rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:2;}
+.ov-btn{background:linear-gradient(135deg,#1B5E20,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(27,94,32,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="map-bg">🌿</div>
+<div class="river-bg"></div>
+<div class="ground"></div>
+
+<div class="header">
+  <div class="title">🌿 Assam Explorer</div>
+  <div class="lvchip" id="lvChip">Our Beautiful State</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">🌿 Round: <span id="roundVal">1</span>/12</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="reveal-card">
+  <span class="reveal-icon" id="revIcon">🦏</span>
+  <div class="reveal-title" id="revTitle">Assam is famous for...</div>
+  <div class="reveal-question" id="revQuestion">Which animal is special to Assam?</div>
+</div>
+
+<div class="choices-grid" id="choicesGrid"></div>
+
+<script>
+const QUESTIONS=[
+  {
+    icon:'🦏',title:'Special Animal',
+    question:'Which animal is special to Assam and found only here in the world?',
+    choices:[
+      {e:'🦏',t:'One-horned Rhino',s:'Kaziranga, Assam',correct:true},
+      {e:'🐅',t:'Bengal Tiger',s:'Sundarbans, Bengal',correct:false},
+      {e:'🐘',t:'Elephant',s:'Many states',correct:false},
+      {e:'🦁',t:'Asiatic Lion',s:'Gir, Gujarat',correct:false},
+    ],
+    fact:'🦏 The ONE-HORNED RHINOCEROS is found in Kaziranga, Assam! Assam protects 2/3 of the world\'s one-horned rhinos!'
+  },
+  {
+    icon:'🌊',title:'The Great River',
+    question:'Which is the great river that flows through Assam?',
+    choices:[
+      {e:'🌊',t:'Brahmaputra',s:'Brahmaputra Valley',correct:true},
+      {e:'💧',t:'Ganga',s:'North India',correct:false},
+      {e:'🏞️',t:'Yamuna',s:'Delhi, UP',correct:false},
+      {e:'🌀',t:'Godavari',s:'South India',correct:false},
+    ],
+    fact:'🌊 The BRAHMAPUTRA is one of the biggest rivers in the world! It flows through Assam giving water to farmers and fish to fishermen!'
+  },
+  {
+    icon:'💃',title:'Festival of Assam',
+    question:'Which is the most famous festival of Assam?',
+    choices:[
+      {e:'💃',t:'Bihu',s:'April celebration',correct:true},
+      {e:'🎆',t:'Diwali',s:'Festival of lights',correct:false},
+      {e:'🎋',t:'Durga Puja',s:'Bengal festival',correct:false},
+      {e:'🪔',t:'Holi',s:'Festival of colours',correct:false},
+    ],
+    fact:'💃 BIHU is the most important festival of Assam! It is celebrated in April with singing, dancing and traditional foods! Bihu dance is very famous!'
+  },
+  {
+    icon:'🍵',title:'Famous Product',
+    question:'Assam is world-famous for producing which drink?',
+    choices:[
+      {e:'🍵',t:'Tea',s:'Assam tea — world famous!',correct:true},
+      {e:'☕',t:'Coffee',s:'Karnataka, Kerala',correct:false},
+      {e:'🥛',t:'Milk',s:'Many states',correct:false},
+      {e:'🧃',t:'Mango juice',s:'Many states',correct:false},
+    ],
+    fact:'🍵 ASSAM TEA is drunk all over the world! Assam has huge tea gardens. Your morning chai might be from Assam!'
+  },
+  {
+    icon:'🏛️',title:'Capital City',
+    question:'What is the capital city of Assam?',
+    choices:[
+      {e:'🏛️',t:'Dispur',s:'Capital of Assam',correct:true},
+      {e:'🌆',t:'Guwahati',s:'Largest city',correct:false},
+      {e:'🏙️',t:'Jorhat',s:'Tea city',correct:false},
+      {e:'🌇',t:'Dibrugarh',s:'Tea capital',correct:false},
+    ],
+    fact:'🏛️ DISPUR is the capital of Assam! Guwahati is the largest city. Both are in Assam!'
+  },
+  {
+    icon:'🌳',title:'State Tree',
+    question:'Which is the State Tree of Assam?',
+    choices:[
+      {e:'🌳',t:'Hollong Tree',s:'Dipterocarpus macrocarpus',correct:true},
+      {e:'🌴',t:'Coconut Tree',s:'Kerala tree',correct:false},
+      {e:'🌲',t:'Pine Tree',s:'Himalayan tree',correct:false},
+      {e:'🍃',t:'Banyan Tree',s:'National tree of India',correct:false},
+    ],
+    fact:'🌳 The HOLLONG TREE is the State Tree of Assam! It grows in the forests of Assam and is very tall and strong!'
+  },
+  {
+    icon:'🦅',title:'State Bird',
+    question:'Which is the State Bird of Assam?',
+    choices:[
+      {e:'🦢',t:'White-winged Duck',s:'State Bird of Assam',correct:true},
+      {e:'🦚',t:'Peacock',s:'National Bird of India',correct:false},
+      {e:'🦜',t:'Parrot',s:'Tropical bird',correct:false},
+      {e:'🦅',t:'Eagle',s:'Many states',correct:false},
+    ],
+    fact:'🦢 The WHITE-WINGED WOOD DUCK is the State Bird of Assam! It lives near ponds and rivers in Assam!'
+  },
+  {
+    icon:'🏔️',title:'Mountains near Assam',
+    question:'Which mountains are near Assam?',
+    choices:[
+      {e:'🏔️',t:'Himalayas',s:'To the north of Assam',correct:true},
+      {e:'⛰️',t:'Vindhyas',s:'Central India',correct:false},
+      {e:'🗻',t:'Aravallis',s:'Rajasthan',correct:false},
+      {e:'🌋',t:'Western Ghats',s:'West coast',correct:false},
+    ],
+    fact:'🏔️ The great HIMALAYAN mountains are to the north of Assam! They give water to the Brahmaputra river and protect us from cold winds!'
+  },
+  {
+    icon:'🌾',title:'Main Crop',
+    question:'What is the main crop grown by farmers in Assam?',
+    choices:[
+      {e:'🌾',t:'Rice',s:'Main food crop',correct:true},
+      {e:'🌽',t:'Wheat',s:'North India crop',correct:false},
+      {e:'🥜',t:'Groundnut',s:'South India crop',correct:false},
+      {e:'🍬',t:'Sugarcane',s:'UP, Maharashtra',correct:false},
+    ],
+    fact:'🌾 RICE is the main crop of Assam! Assam has many rice fields near the Brahmaputra. Rice is eaten every day in Assam!'
+  },
+  {
+    icon:'🎭',title:'Traditional Dress',
+    question:'What do Assamese women wear on special occasions like Bihu?',
+    choices:[
+      {e:'👗',t:'Mekhela Chador',s:'Traditional Assamese dress',correct:true},
+      {e:'👘',t:'Saree',s:'Worn in many states',correct:false},
+      {e:'🧣',t:'Lehenga',s:'North Indian dress',correct:false},
+      {e:'🪡',t:'Salwar Kameez',s:'Punjabi dress',correct:false},
+    ],
+    fact:'👗 MEKHELA CHADOR is the traditional dress of Assamese women! It is beautiful silk cloth worn during Bihu and festivals!'
+  },
+  {
+    icon:'🐘',title:'Kaziranga',
+    question:'Kaziranga National Park is famous for which animals?',
+    choices:[
+      {e:'🦏',t:'Rhinos & Elephants',s:'Kaziranga, Assam',correct:true},
+      {e:'🐅',t:'Only Tigers',s:'Many parks',correct:false},
+      {e:'🦁',t:'Lions',s:'Gir, Gujarat',correct:false},
+      {e:'🐼',t:'Pandas',s:'China only',correct:false},
+    ],
+    fact:'🦏 Kaziranga National Park has RHINOS, ELEPHANTS, TIGERS and many birds! It is a UNESCO World Heritage Site and the pride of Assam!'
+  },
+  {
+    icon:'🗺️',title:'Location',
+    question:'Assam is in which part of India?',
+    choices:[
+      {e:'🧭',t:'North-East India',s:'One of the 7 sisters!',correct:true},
+      {e:'🌅',t:'South India',s:'Kerala, Tamil Nadu etc.',correct:false},
+      {e:'⬆️',t:'North India',s:'UP, Punjab etc.',correct:false},
+      {e:'🌊',t:'West India',s:'Gujarat, Rajasthan',correct:false},
+    ],
+    fact:'🧭 Assam is in NORTH-EAST INDIA! It is surrounded by the 7 Sister States. Assam is the gateway to North-East India!'
+  },
+];
+
+const TOTAL=12;
+let score=0,round=0,answered=false;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playCorrect(){const c=ac();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*100));}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;window.speechSynthesis.speak(u);}
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#1B5E20','#FFD700','#FF6B00','#1E88E5','#E53935'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showFact(txt){document.querySelector('.fact-box')?.remove();const el=document.createElement('div');el.className='fact-box';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),4200);}
+function showBurst(txt){const el=document.createElement('div');el.className='flag-burst';el.innerHTML=`<div class="flag-text">${txt}</div>`;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+  const q=QUESTIONS[round%QUESTIONS.length];
+  document.getElementById('revIcon').textContent=q.icon;
+  document.getElementById('revTitle').textContent=q.title;
+  document.getElementById('revQuestion').textContent=q.question;
+  const grid=document.getElementById('choicesGrid');grid.innerHTML='';
+  const shuffled=[...q.choices].sort(()=>Math.random()-.5);
+  shuffled.forEach(ch=>{
+    const card=document.createElement('div');card.className='choice-card';
+    card.innerHTML=`<span class="cc-emoji">${ch.e}</span><span class="cc-text">${ch.t}</span><span class="cc-sub">${ch.s}</span>`;
+    card.onclick=()=>checkAnswer(card,ch,q);
+    grid.appendChild(card);
+  });
+  setTimeout(()=>speak(q.question),400);
+}
+
+function checkAnswer(card,choice,q){
+  if(answered)return;
+  if(choice.correct){
+    answered=true;card.classList.add('correct');
+    playCorrect();spawnConf();showFact(q.fact);
+    showBurst(`✅ ${choice.t}!\n${q.fact.split('!')[0]}!`);
+    score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(q.fact.replace(/[🦏🌊💃🍵🏛️🌳🦅🏔️🌾🎭🐘🗺️🧭]/g,''));
+    round++;makeDots();setTimeout(newRound,4000);
+  } else {
+    card.classList.add('wrong');playWrong();
+    const correct=q.choices.find(c=>c.correct);
+    speak(`Not quite! The answer is ${correct.t}! ${q.fact.split('!')[0]}!`);
+  }
+}
+
+function showCelebration(){
+  playChime();spawnConf();speak('Wonderful! You know so much about Assam! You are an Assam expert!');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🌿</div>
+    <div class="ov-title">Assam Expert!</div>
+    <div class="ov-sub">
+      🦏 Kaziranga — One-horned Rhino<br/>
+      🌊 Brahmaputra — Great river of Assam<br/>
+      💃 Bihu — Our festival in April<br/>
+      🍵 Assam Tea — Famous worldwide<br/>
+      🏛️ Dispur — Our capital city<br/>
+      🌾 Rice — Our main crop<br/><br/>
+      Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!
+    </div>
+    <button class="ov-btn" onclick="restart()">Play Again 🌿</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Welcome! Let\'s explore our beautiful state Assam!');setTimeout(newRound,1500);},400);});
+</script>
+</body>
+</html>

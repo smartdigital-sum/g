@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Paint Studio - GyanPlay Class 2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 { color: #fd79a8; font-size: 2rem; }
+        
+        .score-board { display: flex; justify-content: center; gap: 30px; margin-top: 10px; }
+        
+        .score { background: #00b894; color: white; padding: 10px 20px; border-radius: 10px; font-size: 1.2rem; }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text { color: white; font-size: 1.3rem; }
+        
+        .task-box {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            color: #2d3436;
+            font-weight: bold;
+        }
+        
+        .paint-area {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .tools-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 15px;
+            background: #dfe6e9;
+            border-radius: 15px;
+        }
+        
+        .tool-btn {
+            background: white;
+            border: 3px solid #dfe6e9;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tool-btn:hover { transform: scale(1.1); border-color: #fd79a8; }
+        .tool-btn.active { background: #fd79a8; color: white; border-color: #e84393; }
+        
+        .canvas-area {
+            background: #fff;
+            border: 3px solid #dfe6e9;
+            border-radius: 15px;
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        
+        .draw-canvas {
+            width: 100%;
+            height: 100%;
+            background: white;
+        }
+        
+        .shapes-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .shape-target {
+            background: #f1f2f6;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            min-width: 100px;
+            border: 2px dashed #dfe6e9;
+        }
+        
+        .shape-icon { font-size: 3rem; }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(243, 156, 18, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover { transform: scale(1.05); }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        
+        .feedback-content.correct { border: 5px solid #00b894; }
+        .feedback-content.wrong { border: 5px solid #e94560; }
+        
+        .feedback-icon { font-size: 5rem; }
+        .feedback-text { font-size: 1.8rem; margin: 20px 0; color: #2d3436; }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-title { color: white; font-size: 1.1rem; margin-bottom: 10px; }
+        .info-text { color: #dfe6e9; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch3-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🎨 Paint Studio</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Drawing: <span id="drawingNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Select the right tool and draw!</p>
+        </div>
+        
+        <div class="task-box" id="taskBox">Use the 🖌️ Brush to color the flower!</div>
+        
+        <div class="paint-area">
+            <div class="tools-bar">
+                <button class="tool-btn" onclick="selectTool('brush', '🖌️')">🖌️ Brush</button>
+                <button class="tool-btn" onclick="selectTool('eraser', '🧽')">🧽 Eraser</button>
+                <button class="tool-btn" onclick="selectTool('fill', '🪣')">🪣 Fill</button>
+                <button class="tool-btn" onclick="selectTool('line', '📏')">📏 Line</button>
+                <button class="tool-btn" onclick="selectTool('circle', '⭕')">⭕ Circle</button>
+                <button class="tool-btn" onclick="selectTool('rectangle', '⬜')">⬜ Rectangle</button>
+            </div>
+            
+            <div class="canvas-area" id="canvasArea">
+                <div class="shapes-container" id="shapesContainer">
+                    <!-- Shapes will be generated by JS -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <div class="info-title">🎨 Paint Tools:</div>
+            <div class="info-text">🖌️ Brush - Draw lines</div>
+            <div class="info-text">🧽 Eraser - Remove drawings</div>
+            <div class="info-text">🪣 Fill - Color areas</div>
+            <div class="info-text">⭕⬜ Shapes - Draw shapes</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextDrawing()">Next Drawing →</button>
+        </div>
+    </div>
+    
+    <script>
+        const drawings = [
+            { task: 'Use the 🖌️ Brush to draw lines on the paper!', shape: 'paper', tool: 'brush', icon: '📄' },
+            { task: 'Use the 🪣 Fill to color the sky blue!', shape: 'sky', tool: 'fill', icon: '🌅' },
+            { task: 'Use the ⭕ Circle to draw a ball!', shape: 'ball', tool: 'circle', icon: '⚽' },
+            { task: 'Use the 🧽 Eraser to clean the board!', shape: 'board', tool: 'eraser', icon: '📋' },
+            { task: 'Use the ⬜ Rectangle to draw a door!', shape: 'door', tool: 'rectangle', icon: '🚪' },
+            { task: 'Use the 📏 Line to draw a path!', shape: 'path', tool: 'line', icon: '➡️' }
+        ];
+        
+        let currentIndex = 0;
+        let score = 0;
+        let selectedTool = null;
+        
+        function loadDrawing() {
+            const drawing = drawings[currentIndex];
+            
+            document.getElementById('taskBox').textContent = drawing.task;
+            document.getElementById('drawingNum').textContent = currentIndex + 1;
+            
+            const container = document.getElementById('shapesContainer');
+            container.innerHTML = `
+                <div class="shape-target" id="targetShape">
+                    <span class="shape-icon">${drawing.icon}</span>
+                </div>
+            `;
+            
+            // Reset tool selection
+            selectedTool = null;
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+        }
+        
+        function selectTool(tool, icon) {
+            selectedTool = tool;
+            
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function checkAnswer() {
+            if (!selectedTool) {
+                alert('Please select a tool first!');
+                return;
+            }
+            
+            const drawing = drawings[currentIndex];
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            if (selectedTool === drawing.tool) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Great painting!';
+                score += 10;
+                document.getElementById('score').textContent = score;
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = `Use the ${drawing.tool} tool!`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextDrawing() {
+            document.getElementById('feedback').classList.remove('show');
+            currentIndex = (currentIndex + 1) % drawings.length;
+            loadDrawing();
+        }
+        
+        loadDrawing();
+        
+        // Add check button
+        setTimeout(() => {
+            const btn = document.querySelector('.check-btn');
+            if (btn) btn.onclick = checkAnswer;
+        }, 100);
+    </script>
+</body>
+</html>

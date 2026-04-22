@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punctuation Fixer Demo - GyanPlay Class 2</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .demo-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ff9a3c;
+        }
+        
+        .demo-header h1 {
+            color: #ff9a3c;
+            font-size: 2.2rem;
+        }
+        
+        .demo-header .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .sentence-container {
+            background: #fff9f0;
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #ff9a3c;
+            text-align: center;
+            font-size: 1.8rem;
+            line-height: 1.5;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .sentence-part {
+            margin: 0 5px;
+        }
+        
+        .punctuation-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .punctuation-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            background: #ff9a3c;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .punctuation-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        
+        .punctuation-btn.period { background: #4a6fa5; }
+        .punctuation-btn.question { background: #6dbf8d; }
+        .punctuation-btn.exclamation { background: #f72585; }
+        
+        .punctuation-label {
+            text-align: center;
+            font-weight: 500;
+            margin-top: 5px;
+            color: #666;
+        }
+        
+        .feedback {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .score-item {
+            text-align: center;
+        }
+        
+        .score-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff9a3c;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #ff9a3c;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #e68936;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .instructions {
+            background: #fff9f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 4px solid #ff9a3c;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #ff9a3c;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .blank {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            border: 3px dashed #ccc;
+            border-radius: 8px;
+            margin: 0 10px;
+            vertical-align: middle;
+        }
+        
+        .blank.filled {
+            border: 3px solid #4a6fa5;
+            background: #f0f5ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1><i class="fas fa-exclamation-circle"></i> Punctuation Fixer</h1>
+            <p class="subtitle">Full stop, question mark, exclamation mark</p>
+            <p>Sentences shown with blank at end — tap the right punctuation. Context clues to decide which</p>
+        </div>
+        
+        <div class="game-area">
+            <div class="score-board">
+                <div class="score-item">
+                    <div class="score-label">Score</div>
+                    <div class="score-value" id="score">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Question</div>
+                    <div class="score-value" id="questionCount">1/5</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Streak</div>
+                    <div class="score-value" id="streak">0</div>
+                </div>
+            </div>
+            
+            <div class="sentence-container">
+                <div id="sentenceText">Where is my school bag</div>
+                <div class="blank" id="punctuationBlank"></div>
+            </div>
+            
+            <div class="punctuation-options">
+                <div>
+                    <button class="punctuation-btn period" data-punctuation=".">.</button>
+                    <div class="punctuation-label">Full Stop</div>
+                </div>
+                <div>
+                    <button class="punctuation-btn question" data-punctuation="?">?</button>
+                    <div class="punctuation-label">Question Mark</div>
+                </div>
+                <div>
+                    <button class="punctuation-btn exclamation" data-punctuation="!">!</button>
+                    <div class="punctuation-label">Exclamation</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback"></div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" id="nextBtn">
+                    <i class="fas fa-arrow-right"></i> Next Sentence
+                </button>
+                <button class="btn btn-secondary" id="hintBtn">
+                    <i class="fas fa-lightbulb"></i> Get Hint
+                </button>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> How to Play</h3>
+            <p>1. Read the sentence carefully</p>
+            <p>2. Choose the correct punctuation mark that should go at the end</p>
+            <p>3. Click on the punctuation button (. ? or !) to select your answer</p>
+            <p>4. Look for context clues:</p>
+            <ul>
+                <li><strong>Questions</strong> (who, what, where, why, how) usually need <strong>?</strong></li>
+                <li><strong>Exclamations</strong> (surprise, excitement, strong feeling) need <strong>!</strong></li>
+                <li><strong>Statements</strong> (facts, descriptions) need <strong>.</strong></li>
+            </ul>
+            <p><strong>Learning:</strong> This teaches proper punctuation usage in English sentences.</p>
+        </div>
+        
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to GyanPlay Class 2
+        </a>
+    </div>
+    
+    <script>
+        // Game data
+        const sentences = [
+            { text: "Where is my school bag", answer: "?", hint: "This is asking a question" },
+            { text: "I love playing with my friends", answer: ".", hint: "This is a statement of fact" },
+            { text: "Wow, that is a big elephant", answer: "!", hint: "This shows excitement" },
+            { text: "What is your name", answer: "?", hint: "This is asking for information" },
+            { text: "The sun is shining brightly", answer: ".", hint: "This is describing something" },
+            { text: "Help, there is a fire", answer: "!", hint: "This shows urgency" },
+            { text: "My favorite color is blue", answer: ".", hint: "This is a simple statement" },
+            { text: "How old are you", answer: "?", hint: "This is asking about age" }
+        ];
+        
+        // Game state
+        let currentSentenceIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let totalQuestions = 5;
+        let questionsAnswered = 0;
+        
+        // DOM elements
+        const sentenceText = document.getElementById('sentenceText');
+        const punctuationBlank = document.getElementById('punctuationBlank');
+        const feedbackEl = document.getElementById('feedback');
+        const scoreEl = document.getElementById('score');
+        const questionCountEl = document.getElementById('questionCount');
+        const streakEl = document.getElementById('streak');
+        const nextBtn = document.getElementById('nextBtn');
+        const hintBtn = document.getElementById('hintBtn');
+        const punctuationBtns = document.querySelectorAll('.punctuation-btn');
+        
+        // Initialize
+        function init() {
+            loadSentence();
+            updateDisplay();
+            
+            // Punctuation button events
+            punctuationBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const punctuation = btn.dataset.punctuation;
+                    checkAnswer(punctuation);
+                });
+            });
+            
+            // Control button events
+            nextBtn.addEventListener('click', nextSentence);
+            hintBtn.addEventListener('click', showHint);
+        }
+        
+        // Load current sentence
+        function loadSentence() {
+            const sentence = sentences[currentSentenceIndex];
+            sentenceText.textContent = sentence.text;
+            punctuationBlank.textContent = '';
+            punctuationBlank.className = 'blank';
+            feedbackEl.className = 'feedback';
+        }
+        
+        // Update display
+        function updateDisplay() {
+            scoreEl.textContent = score;
+            streakEl.textContent = streak;
+            questionCountEl.textContent = `${questionsAnswered + 1}/${totalQuestions}`;
+        }
+        
+        // Check answer
+        function checkAnswer(selectedPunctuation) {
+            const sentence = sentences[currentSentenceIndex];
+            const correct = selectedPunctuation === sentence.answer;
+            
+            // Show punctuation in blank
+            punctuationBlank.textContent = selectedPunctuation;
+            punctuationBlank.className = 'blank filled';
+            
+            if (correct) {
+                score += 10;
+                streak++;
+                feedbackEl.textContent = `✅ Correct! "${sentence.text}${sentence.answer}" is right.`;
+                feedbackEl.className = 'feedback correct';
+            } else {
+                streak = 0;
+                feedbackEl.textContent = `❌ Try again. The correct punctuation is "${sentence.answer}". ${sentence.hint}`;
+                feedbackEl.className = 'feedback incorrect';
+            }
+            
+            questionsAnswered++;
+            updateDisplay();
+            
+            // Disable buttons after answering
+            punctuationBtns.forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.6';
+            });
+            
+            // Show next button if we have more questions
+            if (questionsAnswered < totalQuestions) {
+                nextBtn.style.display = 'inline-block';
+            } else {
+                nextBtn.textContent = 'Game Complete!';
+                nextBtn.disabled = true;
+            }
+        }
+        
+        // Show hint
+        function showHint() {
+            const sentence = sentences[currentSentenceIndex];
+            feedbackEl.textContent = `💡 Hint: ${sentence.hint}`;
+            feedbackEl.className = 'feedback correct';
+        }
+        
+        // Next sentence
+        function nextSentence() {
+            currentSentenceIndex = (currentSentenceIndex + 1) % sentences.length;
+            loadSentence();
+            updateDisplay();
+            
+            // Re-enable buttons
+            punctuationBtns.forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            });
+            
+            nextBtn.style.display = 'none';
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G8-02: Algebra Identity Forge | GyanPlay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060A10;
+            --card: #0D1428;
+            --gold: #FFD166;
+            --coral: #FF6B6B;
+            --teal: #06D6A0;
+            --purple: #C77DFF;
+            --orange: #FF9F1C;
+            --text: #E8F0FF;
+            --dim: #4A6A8A;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, #180A28 0%, #0F0820 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(199, 125, 255, 0.22);
+            margin-bottom: 20px;
+        }
+        
+        .title-section {
+            flex: 1;
+        }
+        
+        .game-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.35rem;
+            color: var(--gold);
+            font-weight: 800;
+        }
+        
+        .subject-tag {
+            font-size: 0.7rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stars {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .star {
+            font-size: 1.2rem;
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+        
+        .star.lit {
+            opacity: 1;
+            filter: drop-shadow(0 0 8px var(--gold));
+        }
+        
+        /* WOW Hook Card */
+        .hook-card {
+            background: linear-gradient(135deg, rgba(199, 125, 255, 0.15), rgba(199, 125, 255, 0.05));
+            border: 1px solid rgba(199, 125, 255, 0.22);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 24px rgba(199, 125, 255, 0.12);
+        }
+        
+        .hook-text {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text);
+        }
+        
+        .hook-text strong {
+            color: var(--gold);
+            font-weight: 700;
+        }
+        
+        /* Game Area */
+        .game-area {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .stage-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            color: var(--purple);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stage-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--purple);
+            border-radius: 2px;
+        }
+        
+        /* Geometric Proof Stage */
+        .proof-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .square-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 80px);
+            grid-template-rows: repeat(2, 80px);
+            gap: 4px;
+            background: rgba(6, 10, 16, 0.6);
+            padding: 15px;
+            border-radius: 12px;
+            position: relative;
+        }
+        
+        .grid-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Baloo 2', cursive;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .cell-a2 {
+            background: linear-gradient(135deg, rgba(255, 209, 102, 0.4), rgba(255, 209, 102, 0.2));
+            border: 2px solid var(--gold);
+            color: var(--gold);
+        }
+        
+        .cell-ab {
+            background: linear-gradient(135deg, rgba(199, 125, 255, 0.4), rgba(199, 125, 255, 0.2));
+            border: 2px solid var(--purple);
+            color: var(--purple);
+        }
+        
+        .cell-b2 {
+            background: linear-gradient(135deg, rgba(6, 214, 160, 0.4), rgba(6, 214, 160, 0.2));
+            border: 2px solid var(--teal);
+            color: var(--teal);
+        }
+        
+        .tile-palette {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tile {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Baloo 2', cursive;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+        
+        .tile:hover {
+            transform: scale(1.05);
+        }
+        
+        .tile.a2 {
+            background: linear-gradient(135deg, rgba(255, 209, 102, 0.3), rgba(255, 209, 102, 0.1));
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        
+        .tile.ab {
+            background: linear-gradient(135deg, rgba(199, 125, 255, 0.3), rgba(199, 125, 255, 0.1));
+            border-color: var(--purple);
+            color: var(--purple);
+        }
+        
+        .tile.b2 {
+            background: linear-gradient(135deg, rgba(6, 214, 160, 0.3), rgba(6, 214, 160, 0.1));
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+        
+        .tile.placed {
+            border-style: solid;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .formula-reveal {
+            background: rgba(255, 209, 102, 0.1);
+            border: 1px solid rgba(255, 209, 102, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: var(--gold);
+            margin-top: 15px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .formula-reveal.show {
+            opacity: 1;
+        }
+        
+        /* Flashcard Stage */
+        .flashcard {
+            background: linear-gradient(135deg, rgba(199, 125, 255, 0.15), rgba(199, 125, 255, 0.05));
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .flashcard-question {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+        
+        .flashcard-hint {
+            font-size: 0.8rem;
+            color: var(--dim);
+        }
+        
+        .identity-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        
+        .identity-btn {
+            background: rgba(199, 125, 255, 0.1);
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            color: var(--text);
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .identity-btn:hover {
+            background: rgba(199, 125, 255, 0.2);
+            border-color: var(--purple);
+        }
+        
+        .identity-btn.correct {
+            background: rgba(6, 214, 160, 0.2);
+            border-color: var(--teal);
+        }
+        
+        .identity-btn.wrong {
+            background: rgba(255, 71, 87, 0.2);
+            border-color: var(--coral);
+        }
+        
+        /* Substitution Stage */
+        .sub-problem {
+            background: rgba(6, 214, 160, 0.1);
+            border: 1px solid rgba(6, 214, 160, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .sub-formula {
+            font-family: 'Courier New', monospace;
+            font-size: 1.3rem;
+            color: var(--teal);
+            margin-bottom: 10px;
+        }
+        
+        .sub-values {
+            font-size: 1rem;
+            color: var(--dim);
+        }
+        
+        .sub-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .sub-input {
+            width: 120px;
+            background: rgba(6, 10, 16, 0.6);
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text);
+            font-size: 1.1rem;
+            text-align: center;
+            font-family: 'Nunito', sans-serif;
+        }
+        
+        .sub-input:focus {
+            outline: none;
+            border-color: var(--purple);
+        }
+        
+        /* Error Spot Stage */
+        .error-problem {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+        }
+        
+        .error-problem.corrected {
+            background: rgba(6, 214, 160, 0.1);
+            border-color: var(--teal);
+        }
+        
+        .error-input {
+            width: 100%;
+            background: rgba(6, 10, 16, 0.6);
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            margin-top: 10px;
+        }
+        
+        .error-input:focus {
+            outline: none;
+            border-color: var(--purple);
+        }
+        
+        .error-input.correct {
+            border-color: var(--teal);
+            background: rgba(6, 214, 160, 0.1);
+        }
+        
+        /* Bottom Bar */
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 20px;
+        }
+        
+        .progress-info {
+            font-size: 0.85rem;
+            color: var(--dim);
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: #060A10;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 209, 102, 0.4);
+        }
+        
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(6, 10, 16, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .overlay.active {
+            display: flex;
+        }
+        
+        .overlay-content {
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .overlay-emoji {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+        
+        .overlay-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+        
+        .overlay-message {
+            font-size: 1rem;
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+        
+        .overlay-fact {
+            font-size: 0.85rem;
+            color: var(--dim);
+            padding: 15px;
+            background: rgba(199, 125, 255, 0.1);
+            border-radius: 10px;
+            border-left: 3px solid var(--purple);
+        }
+        
+        /* Completion Screen */
+        .completion-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .completion-screen.active {
+            display: block;
+        }
+        
+        .trophy {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+        
+        .completion-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+        
+        .completion-score {
+            font-size: 1.2rem;
+            color: var(--text);
+            margin-bottom: 30px;
+        }
+        
+        .play-again-btn {
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            color: var(--text);
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .play-again-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(199, 125, 255, 0.4);
+        }
+        
+        /* Hidden stages */
+        .stage {
+            display: none;
+        }
+        
+        .stage.active {
+            display: block;
+        }
+        
+        .identity-list {
+            background: rgba(6, 10, 16, 0.4);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .identity-item {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .identity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .identity-name {
+            color: var(--purple);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="title-section">
+                <div class="subject-tag">Mathematics</div>
+                <div class="game-title">Algebra Identity Forge</div>
+            </div>
+            <div class="stars">
+                <span class="star" id="star1">⭐</span>
+                <span class="star" id="star2">⭐</span>
+                <span class="star" id="star3">⭐</span>
+                <span class="star" id="star4">⭐</span>
+                <span class="star" id="star5">⭐</span>
+            </div>
+        </div>
+        
+        <!-- WOW Hook -->
+        <div class="hook-card">
+            <div class="hook-text">
+                The identity <strong>(a+b)² = a²+2ab+b²</strong> was PROVED geometrically by ancient Indian mathematician <strong>Brahmagupta in 628 AD</strong> — using squares and rectangles drawn in sand, not abstract symbols. Every algebraic identity has a picture hiding inside it. <strong>Mathematics is geometry in disguise.</strong>
+            </div>
+        </div>
+        
+        <!-- Stage 1: Geometric Proof -->
+        <div class="stage active" id="stage1">
+            <div class="game-area">
+                <div class="stage-title">Stage 1: Build the Proof</div>
+                
+                <div class="identity-list">
+                    <div class="identity-item"><span class="identity-name">Identity 1:</span> (a+b)² = a² + 2ab + b²</div>
+                    <div class="identity-item"><span class="identity-name">Identity 2:</span> (a-b)² = a² - 2ab + b²</div>
+                    <div class="identity-item"><span class="identity-name">Identity 3:</span> (a+b)(a-b) = a² - b²</div>
+                    <div class="identity-item"><span class="identity-name">Identity 4:</span> (x+a)(x+b) = x² + (a+b)x + ab</div>
+                </div>
+                
+                <div class="proof-container">
+                    <div style="font-size: 0.9rem; color: var(--dim); margin-bottom: 10px;">
+                        Tap tiles to build a square with side (a+b):
+                    </div>
+                    
+                    <div class="square-grid" id="proofGrid">
+                        <div class="grid-cell" id="cell0" onclick="placeTile(0)">?</div>
+                        <div class="grid-cell" id="cell1" onclick="placeTile(1)">?</div>
+                        <div class="grid-cell" id="cell2" onclick="placeTile(2)">?</div>
+                        <div class="grid-cell" id="cell3" onclick="placeTile(3)">?</div>
+                    </div>
+                    
+                    <div class="tile-palette">
+                        <div class="tile a2" id="tile-a2" onclick="selectTile('a2')">a²</div>
+                        <div class="tile ab" id="tile-ab1" onclick="selectTile('ab')">ab</div>
+                        <div class="tile ab" id="tile-ab2" onclick="selectTile('ab')">ab</div>
+                        <div class="tile b2" id="tile-b2" onclick="selectTile('b2')">b²</div>
+                    </div>
+                </div>
+                
+                <div class="formula-reveal" id="formulaReveal">
+                    (a+b)² = a² + 2ab + b² ✓
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 1 of 4</div>
+                <button class="action-btn" id="btn1" onclick="nextStage()" disabled>Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 2: Identity Flashcard -->
+        <div class="stage" id="stage2">
+            <div class="game-area">
+                <div class="stage-title">Stage 2: Identity Detective</div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-question" id="flashcardQ">(2x + 3)² = 4x² + 12x + 9</div>
+                    <div class="flashcard-hint">Which identity was used?</div>
+                </div>
+                
+                <div class="identity-options" id="identityOptions">
+                    <button class="identity-btn" onclick="checkIdentity(this, 0)">(a+b)² = a² + 2ab + b²</button>
+                    <button class="identity-btn" onclick="checkIdentity(this, 1)">(a-b)² = a² - 2ab + b²</button>
+                    <button class="identity-btn" onclick="checkIdentity(this, 2)">(a+b)(a-b) = a² - b²</button>
+                    <button class="identity-btn" onclick="checkIdentity(this, 3)">(x+a)(x+b) = x² + (a+b)x + ab</button>
+                </div>
+                
+                <div style="margin-top: 20px; text-align: center; font-size: 0.9rem; color: var(--dim);">
+                    Question <span id="qNum">1</span> of 3
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 2 of 4</div>
+                <button class="action-btn" id="btn2" onclick="nextStage()" disabled>Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 3: Substitution Speed -->
+        <div class="stage" id="stage3">
+            <div class="game-area">
+                <div class="stage-title">Stage 3: Substitution Sprint</div>
+                
+                <div class="sub-problem">
+                    <div class="sub-formula" id="subFormula">(a+b)²</div>
+                    <div class="sub-values" id="subValues">where a = 4, b = 3</div>
+                </div>
+                
+                <div class="sub-input-row">
+                    <input type="number" class="sub-input" id="subAnswer" placeholder="?">
+                    <button class="action-btn" onclick="checkSubstitution()">Check</button>
+                </div>
+                
+                <div style="margin-top: 20px; text-align: center; font-size: 0.9rem; color: var(--dim);">
+                    Problem <span id="subNum">1</span> of 3
+                </div>
+                
+                <div class="result-text" id="subResult" style="display: none; margin-top: 15px; padding: 15px; background: rgba(6, 214, 160, 0.1); border-radius: 10px; border-left: 3px solid var(--teal);"></div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 3 of 4</div>
+                <button class="action-btn" id="btn3" onclick="nextStage()" disabled>Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 4: Error Spot -->
+        <div class="stage" id="stage4">
+            <div class="game-area">
+                <div class="stage-title">Stage 4: Error Hunter</div>
+                
+                <div style="font-size: 0.9rem; color: var(--dim); margin-bottom: 15px;">
+                    Find and correct the mistakes:
+                </div>
+                
+                <div class="error-problem" id="error1">
+                    (2x + 3)² = 4x² + 9
+                    <input type="text" class="error-input" id="fix1" placeholder="Correct expansion...">
+                </div>
+                
+                <div class="error-problem" id="error2">
+                    (3a - 2b)² = 9a² - 4b²
+                    <input type="text" class="error-input" id="fix2" placeholder="Correct expansion...">
+                </div>
+                
+                <div class="error-problem" id="error3">
+                    (x+5)(x-5) = x² - 25x
+                    <input type="text" class="error-input" id="fix3" placeholder="Correct expansion...">
+                </div>
+                
+                <button class="action-btn" onclick="checkErrors()" style="margin-top: 15px; width: 100%;">Check All</button>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 4 of 4</div>
+                <button class="action-btn" onclick="completeGame()">Complete Game</button>
+            </div>
+        </div>
+        
+        <!-- Completion Screen -->
+        <div class="completion-screen" id="completionScreen">
+            <div class="trophy">🏆</div>
+            <div class="completion-title">Identity Master!</div>
+            <div class="completion-score" id="finalScore">You proved algebra geometrically!</div>
+            <button class="play-again-btn" onclick="playAgain()">Play Again</button>
+        </div>
+    </div>
+    
+    <!-- Overlay -->
+    <div class="overlay" id="overlay">
+        <div class="overlay-content">
+            <div class="overlay-emoji" id="overlayEmoji">✓</div>
+            <div class="overlay-title" id="overlayTitle">Correct!</div>
+            <div class="overlay-message" id="overlayMessage">You found the pattern.</div>
+            <div class="overlay-fact" id="overlayFact">Geometric proof produces 3x better retention than symbolic manipulation alone.</div>
+        </div>
+    </div>
+    
+    <script>
+        let currentStage = 1;
+        let score = 0;
+        let selectedTile = null;
+        let gridState = [null, null, null, null];
+        let flashcardIndex = 0;
+        let subIndex = 0;
+        
+        const flashcards = [
+            { q: '(2x + 3)² = 4x² + 12x + 9', a: 0, name: '(a+b)²' },
+            { q: '(5a - 2b)² = 25a² - 20ab + 4b²', a: 1, name: '(a-b)²' },
+            { q: '(3x + 2)(3x - 2) = 9x² - 4', a: 2, name: '(a+b)(a-b)' }
+        ];
+        
+        const subProblems = [
+            { formula: '(a+b)²', values: 'a = 4, b = 3', answer: 49 },
+            { formula: '(a-b)²', values: 'a = 7, b = 2', answer: 25 },
+            { formula: '(a+b)(a-b)', values: 'a = 5, b = 3', answer: 16 }
+        ];
+        
+        function selectTile(type) {
+            selectedTile = type;
+            document.querySelectorAll('.tile').forEach(t => t.style.transform = 'scale(1)');
+            event.target.style.transform = 'scale(1.1)';
+        }
+        
+        function placeTile(cellIndex) {
+            if (!selectedTile || gridState[cellIndex]) return;
+            
+            const cell = document.getElementById('cell' + cellIndex);
+            
+            if (selectedTile === 'a2') {
+                cell.className = 'grid-cell cell-a2';
+                cell.textContent = 'a²';
+                document.getElementById('tile-a2').classList.add('placed');
+            } else if (selectedTile === 'ab') {
+                cell.className = 'grid-cell cell-ab';
+                cell.textContent = 'ab';
+                if (!document.getElementById('tile-ab1').classList.contains('placed')) {
+                    document.getElementById('tile-ab1').classList.add('placed');
+                } else {
+                    document.getElementById('tile-ab2').classList.add('placed');
+                }
+            } else if (selectedTile === 'b2') {
+                cell.className = 'grid-cell cell-b2';
+                cell.textContent = 'b²';
+                document.getElementById('tile-b2').classList.add('placed');
+            }
+            
+            gridState[cellIndex] = selectedTile;
+            
+            // Check if complete
+            if (gridState.filter(x => x).length === 4) {
+                document.getElementById('formulaReveal').classList.add('show');
+                document.getElementById('btn1').disabled = false;
+                document.getElementById('star1').classList.add('lit');
+                score += 20;
+                showOverlay('✓', 'Proof Complete!', 'You built the geometric proof.', 'The identity emerges from the picture, not before it.');
+            }
+        }
+        
+        function checkIdentity(btn, choice) {
+            const correct = flashcards[flashcardIndex].a;
+            const buttons = document.querySelectorAll('.identity-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            if (choice === correct) {
+                btn.classList.add('correct');
+                document.getElementById('star2').classList.add('lit');
+                score += 10;
+                showOverlay('✓', 'Correct!', 'You identified the identity.', 'Pattern recognition is faster than calculation.');
+                
+                setTimeout(() => {
+                    flashcardIndex++;
+                    if (flashcardIndex < flashcards.length) {
+                        loadFlashcard();
+                        buttons.forEach(b => {
+                            b.classList.remove('correct', 'wrong');
+                            b.disabled = false;
+                        });
+                    } else {
+                        document.getElementById('btn2').disabled = false;
+                        score += 10;
+                    }
+                }, 1500);
+            } else {
+                btn.classList.add('wrong');
+                buttons[correct].classList.add('correct');
+                showOverlay('✗', 'Not quite', 'That\'s not the right identity.', 'Look at the structure: squared term, middle term, constant.');
+            }
+        }
+        
+        function loadFlashcard() {
+            document.getElementById('flashcardQ').textContent = flashcards[flashcardIndex].q;
+            document.getElementById('qNum').textContent = flashcardIndex + 1;
+        }
+        
+        function checkSubstitution() {
+            const answer = parseInt(document.getElementById('subAnswer').value);
+            const correct = subProblems[subIndex].answer;
+            
+            if (answer === correct) {
+                document.getElementById('subResult').innerHTML = `<strong>Correct!</strong> ${subProblems[subIndex].formula} with ${subProblems[subIndex].values} = ${correct}`;
+                document.getElementById('subResult').style.display = 'block';
+                document.getElementById('subAnswer').value = '';
+                
+                subIndex++;
+                if (subIndex < subProblems.length) {
+                    setTimeout(() => {
+                        document.getElementById('subFormula').textContent = subProblems[subIndex].formula;
+                        document.getElementById('subValues').textContent = 'where ' + subProblems[subIndex].values;
+                        document.getElementById('subNum').textContent = subIndex + 1;
+                        document.getElementById('subResult').style.display = 'none';
+                    }, 1500);
+                } else {
+                    document.getElementById('star3').classList.add('lit');
+                    document.getElementById('btn3').disabled = false;
+                    score += 20;
+                }
+            } else {
+                showOverlay('✗', 'Try again', 'Check your calculation.', 'Substitute values first, then simplify.');
+            }
+        }
+        
+        function checkErrors() {
+            const fix1 = document.getElementById('fix1').value.trim().toLowerCase().replace(/\s/g, '');
+            const fix2 = document.getElementById('fix2').value.trim().toLowerCase().replace(/\s/g, '');
+            const fix3 = document.getElementById('fix3').value.trim().toLowerCase().replace(/\s/g, '');
+            
+            let correct = 0;
+            
+            if (fix1 === '4x2+12x+9' || fix1 === '4x²+12x+9') {
+                document.getElementById('fix1').classList.add('correct');
+                document.getElementById('error1').classList.add('corrected');
+                correct++;
+            }
+            
+            if (fix2 === '9a2-12ab+4b2' || fix2 === '9a²-12ab+4b²') {
+                document.getElementById('fix2').classList.add('correct');
+                document.getElementById('error2').classList.add('corrected');
+                correct++;
+            }
+            
+            if (fix3 === 'x2-25' || fix3 === 'x²-25') {
+                document.getElementById('fix3').classList.add('correct');
+                document.getElementById('error3').classList.add('corrected');
+                correct++;
+            }
+            
+            if (correct === 3) {
+                document.getElementById('star4').classList.add('lit');
+                score += 20;
+                showOverlay('✓', 'All Correct!', 'You found all the errors.', 'The middle term is the most commonly missed.');
+            } else {
+                showOverlay('⚠️', `${correct}/3 Correct`, 'Keep trying!', 'Missing middle terms are the #1 algebra mistake.');
+            }
+        }
+        
+        function nextStage() {
+            document.getElementById('stage' + currentStage).classList.remove('active');
+            currentStage++;
+            document.getElementById('stage' + currentStage).classList.add('active');
+        }
+        
+        function completeGame() {
+            document.getElementById('star5').classList.add('lit');
+            score += 20;
+            
+            localStorage.setItem('G8-02', JSON.stringify({
+                visited: true,
+                score: score,
+                date: new Date().toISOString()
+            }));
+            
+            document.querySelectorAll('.stage').forEach(s => s.style.display = 'none');
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.hook-card').style.display = 'none';
+            document.getElementById('completionScreen').classList.add('active');
+            document.getElementById('finalScore').textContent = `You scored ${score}/100!`;
+        }
+        
+        function playAgain() {
+            currentStage = 1;
+            score = 0;
+            flashcardIndex = 0;
+            subIndex = 0;
+            gridState = [null, null, null, null];
+            selectedTile = null;
+            
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+            
+            document.querySelectorAll('.stage').forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'block';
+            });
+            document.getElementById('stage1').classList.add('active');
+            
+            // Reset grid
+            for (let i = 0; i < 4; i++) {
+                document.getElementById('cell' + i).className = 'grid-cell';
+                document.getElementById('cell' + i).textContent = '?';
+            }
+            document.querySelectorAll('.tile').forEach(t => t.classList.remove('placed'));
+            document.getElementById('formulaReveal').classList.remove('show');
+            
+            // Reset flashcards
+            loadFlashcard();
+            document.querySelectorAll('.identity-btn').forEach(b => {
+                b.classList.remove('correct', 'wrong');
+                b.disabled = false;
+            });
+            
+            // Reset substitution
+            document.getElementById('subFormula').textContent = subProblems[0].formula;
+            document.getElementById('subValues').textContent = 'where ' + subProblems[0].values;
+            document.getElementById('subNum').textContent = '1';
+            document.getElementById('subAnswer').value = '';
+            document.getElementById('subResult').style.display = 'none';
+            
+            // Reset errors
+            document.querySelectorAll('.error-input').forEach(i => {
+                i.value = '';
+                i.classList.remove('correct');
+            });
+            document.querySelectorAll('.error-problem').forEach(p => p.classList.remove('corrected'));
+            
+            // Reset buttons
+            document.querySelectorAll('.action-btn').forEach(b => b.disabled = true);
+            
+            document.querySelector('.header').style.display = 'flex';
+            document.querySelector('.hook-card').style.display = 'block';
+            document.getElementById('completionScreen').classList.remove('active');
+        }
+        
+        function showOverlay(emoji, title, message, fact) {
+            document.getElementById('overlayEmoji').textContent = emoji;
+            document.getElementById('overlayTitle').textContent = title;
+            document.getElementById('overlayMessage').textContent = message;
+            document.getElementById('overlayFact').textContent = fact;
+            document.getElementById('overlay').classList.add('active');
+            
+            setTimeout(() => {
+                document.getElementById('overlay').classList.remove('active');
+            }, 2500);
+        }
+        
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('G8-02');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.score > 0) {
+                    const stars = Math.ceil(data.score / 20);
+                    for (let i = 1; i <= stars; i++) {
+                        document.getElementById('star' + i).classList.add('lit');
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

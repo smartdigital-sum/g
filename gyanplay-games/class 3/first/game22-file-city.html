@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗂️ File City — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#060A14;--card:#0C1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--purple:#C77DFF;--orange:#FF9F1C;--text:#D8E8FF;--dim:#3A5A8A}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(76,201,240,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.35rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.2rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+.hook{background:linear-gradient(135deg,rgba(76,201,240,.1),rgba(199,125,255,.07));border:1px solid rgba(76,201,240,.25);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.87rem;line-height:1.65;color:#B0D8FF}
+.hook strong{color:var(--gold)}
+/* Desktop area */
+.desktop{background:linear-gradient(160deg,#0C1428,#060A14);border-radius:14px;width:100%;max-width:460px;border:2px solid rgba(76,201,240,.15);padding:14px;min-height:160px;position:relative}
+.desktop-label{font-size:.68rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin-bottom:10px}
+.file-scatter{display:flex;flex-wrap:wrap;gap:8px}
+.loose-file{padding:8px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(76,201,240,.2);border-radius:8px;cursor:pointer;font-size:.82rem;color:var(--dim);transition:all .2s;display:flex;align-items:center;gap:6px;user-select:none}
+.loose-file:hover{border-color:var(--blue);color:var(--text);transform:scale(1.05)}
+.loose-file.selected{border-color:var(--gold);background:rgba(255,209,102,.1);color:var(--gold)}
+.loose-file.filed{opacity:.35;pointer-events:none;text-decoration:line-through}
+.file-icon{font-size:1.1rem}
+/* Folders */
+.folders-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:460px}
+.folder{background:var(--card);border:2px solid;border-radius:12px;padding:14px 12px;cursor:pointer;transition:all .2s;text-align:center}
+.folder.photos{border-color:rgba(255,107,107,.3)}
+.folder.photos:hover,.folder.photos.active{border-color:var(--coral);background:rgba(255,107,107,.08);box-shadow:0 0 14px rgba(255,107,107,.2)}
+.folder.docs{border-color:rgba(76,201,240,.3)}
+.folder.docs:hover,.folder.docs.active{border-color:var(--blue);background:rgba(76,201,240,.08);box-shadow:0 0 14px rgba(76,201,240,.2)}
+.folder.music{border-color:rgba(199,125,255,.3)}
+.folder.music:hover,.folder.music.active{border-color:var(--purple);background:rgba(199,125,255,.08);box-shadow:0 0 14px rgba(199,125,255,.2)}
+.folder.videos{border-color:rgba(255,159,28,.3)}
+.folder.videos:hover,.folder.videos.active{border-color:var(--orange);background:rgba(255,159,28,.08);box-shadow:0 0 14px rgba(255,159,28,.2)}
+.folder-icon{font-size:2.2rem;display:block;margin-bottom:6px}
+.folder-name{font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700}
+.folder.photos .folder-name{color:var(--coral)}
+.folder.docs .folder-name{color:var(--blue)}
+.folder.music .folder-name{color:var(--purple)}
+.folder.videos .folder-name{color:var(--orange)}
+.folder-count{font-size:.7rem;color:var(--dim);margin-top:2px}
+.feedback{font-size:.85rem;color:var(--dim);text-align:center;min-height:1.2em}
+/* Search challenge */
+.search-card{background:var(--card);border-radius:12px;padding:14px 18px;width:100%;max-width:460px;border:2px solid rgba(255,209,102,.2)}
+.search-title{font-size:.82rem;font-weight:700;color:var(--gold);margin-bottom:8px}
+.search-q{font-size:.88rem;color:var(--dim);margin-bottom:12px;line-height:1.5}
+.search-opts{display:flex;flex-direction:column;gap:6px}
+.search-opt{padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(76,201,240,.18);border-radius:8px;cursor:pointer;font-size:.85rem;color:var(--dim);transition:all .15s;text-align:left}
+.search-opt:hover{border-color:var(--blue);color:var(--text)}
+.search-opt.correct{border-color:var(--teal);background:rgba(6,214,160,.1);color:var(--teal)}
+.search-opt.wrong{border-color:var(--coral);background:rgba(255,107,107,.08);color:var(--coral)}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#060A14;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(6,10,20,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4rem}.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.9rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.88rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🗂️ File City</div><div class="subject-tag">Computer · Files & Folders · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+<div class="game-area">
+  <div class="hook">🗂️ Your computer can store <strong>millions of files</strong>. Without folders, finding one file would be like finding one grain of rice in a bucket. <strong>Folders are how humans make computers manageable!</strong></div>
+  <div id="mainArea"></div>
+</div>
+<div class="bottom">
+  <div class="prog" id="prog">Level 1 of 2</div>
+  <button class="next-btn" id="nextBtn" onclick="nextLevel()">Level 2 →</button>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">Filed!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+<script>
+const FILES=[
+  {name:'birthday.jpg',icon:'🖼️',folder:'photos'},
+  {name:'homework.doc',icon:'📄',folder:'docs'},
+  {name:'song.mp3',icon:'🎵',folder:'music'},
+  {name:'movie.mp4',icon:'🎬',folder:'videos'},
+  {name:'family.png',icon:'🖼️',folder:'photos'},
+  {name:'essay.txt',icon:'📝',folder:'docs'},
+  {name:'bhajan.mp3',icon:'🎵',folder:'music'},
+  {name:'cricket.mp4',icon:'🎬',folder:'videos'},
+  {name:'rhino.jpg',icon:'🖼️',folder:'photos'},
+  {name:'maths.pdf',icon:'📊',folder:'docs'},
+];
+const FOLDERS=[
+  {key:'photos',icon:'📷',name:'Photos',cls:'photos'},
+  {key:'docs',icon:'📁',name:'Documents',cls:'docs'},
+  {key:'music',icon:'🎵',name:'Music',cls:'music'},
+  {key:'videos',icon:'🎬',name:'Videos',cls:'videos'},
+];
+const SEARCH_QS=[
+  {q:'You want to find the photo of the rhino taken at Kaziranga. Which folder do you open?',opts:['Documents','Photos','Music','Videos'],ans:1,exp:'Photos folder stores pictures — rhino.jpg would be there!'},
+  {q:'Your homework essay is missing. Where should you look?',opts:['Videos','Music','Photos','Documents'],ans:3,exp:'homework.doc and essay.txt are in the Documents folder!'},
+  {q:'You want to play the bhajan your grandmother recorded. Which folder?',opts:['Photos','Documents','Music','Videos'],ans:2,exp:'bhajan.mp3 is a music file — it belongs in the Music folder!'},
+  {q:'You saved a cricket match video. Where will you find it?',opts:['Videos','Photos','Documents','Music'],ans:0,exp:'cricket.mp4 is a video file — Videos folder is the right place!'},
+];
+let selectedFile=null,filedCount=new Set(),folderCounts={photos:0,docs:0,music:0,videos:0},level=1,score=0,searchAnswered=0;
+
+function buildLevel1(){
+  level=1;filedCount.clear();folderCounts={photos:0,docs:0,music:0,videos:0};selectedFile=null;
+  const mc=document.getElementById('mainArea');mc.innerHTML='';
+  document.getElementById('prog').textContent='Level 1 of 2';
+  document.getElementById('nextBtn').style.display='none';
+  // Desktop
+  const desk=document.createElement('div');desk.className='desktop';
+  desk.innerHTML='<div class="desktop-label">🖥️ Messy Desktop — tap a file, then tap its folder!</div>';
+  const scatter=document.createElement('div');scatter.className='file-scatter';
+  FILES.forEach((f,i)=>{
+    const el=document.createElement('div');el.className='loose-file';el.id=`file-${i}`;
+    el.innerHTML=`<span class="file-icon">${f.icon}</span>${f.name}`;
+    el.onclick=()=>selectFile(i,f,el);
+    scatter.appendChild(el);
+  });
+  desk.appendChild(scatter);mc.appendChild(desk);
+  // Folders
+  const frow=document.createElement('div');frow.className='folders-row';
+  FOLDERS.forEach(fo=>{
+    const fel=document.createElement('div');fel.className=`folder ${fo.cls}`;fel.id=`folder-${fo.key}`;
+    fel.innerHTML=`<span class="folder-icon">${fo.icon}</span><div class="folder-name">${fo.name}</div><div class="folder-count" id="fc-${fo.key}">0 files</div>`;
+    fel.onclick=()=>placeFile(fo.key);
+    frow.appendChild(fel);
+  });
+  mc.appendChild(frow);
+  const fb=document.createElement('div');fb.className='feedback';fb.id='feedback';fb.textContent='Tap a file to select it, then tap the correct folder.';mc.appendChild(fb);
+}
+
+function selectFile(i,f,el){
+  document.querySelectorAll('.loose-file').forEach(x=>x.classList.remove('selected'));
+  selectedFile={i,f,el};el.classList.add('selected');
+  document.getElementById('feedback').textContent=`"${f.name}" selected — which folder does it belong to?`;
+}
+function placeFile(folderKey){
+  if(!selectedFile)return;
+  const {i,f,el}=selectedFile;
+  if(f.folder===folderKey){
+    el.classList.add('filed');filedCount.add(i);
+    folderCounts[folderKey]++;
+    document.getElementById(`fc-${folderKey}`).textContent=`${folderCounts[folderKey]} file${folderCounts[folderKey]>1?'s':''}`;
+    document.getElementById('feedback').textContent=`✅ "${f.name}" filed in ${FOLDERS.find(x=>x.key===folderKey).name}!`;
+    score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+    selectedFile=null;
+    if(filedCount.size===FILES.length){setTimeout(()=>allFiled(),600);}
+  } else {
+    el.classList.add('selected');
+    document.getElementById('feedback').textContent=`❌ Wrong folder! Hint: look at the file extension (.jpg .mp3 .doc .mp4)`;
+    setTimeout(()=>{el.classList.remove('selected');selectedFile=null;},700);
+  }
+}
+function allFiled(){
+  showOv('Desktop Organised! 🗂️','All files are in the right folders. Finding them is now 100x faster!');confetti();setTimeout(hideOv,2400);
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function buildLevel2(){
+  level=2;searchAnswered=0;
+  const mc=document.getElementById('mainArea');mc.innerHTML='';
+  document.getElementById('prog').textContent='Level 2 of 2';
+  document.getElementById('nextBtn').style.display='none';
+  const intro=document.createElement('div');intro.className='feedback';intro.style.cssText='text-align:center;font-size:.9rem;color:var(--gold);font-weight:700;margin-bottom:4px';intro.textContent='🔍 Search Challenge — which folder contains this file?';mc.appendChild(intro);
+  SEARCH_QS.forEach((q,qi)=>{
+    const card=document.createElement('div');card.className='search-card';
+    card.innerHTML=`<div class="search-title">Question ${qi+1}</div><div class="search-q">${q.q}</div><div class="search-opts" id="sq-${qi}"></div><div class="q-exp" id="se-${qi}" style="font-size:.78rem;color:var(--dim);line-height:1.5;display:none;margin-top:8px;padding:8px;background:rgba(0,0,0,.2);border-radius:6px">${q.exp}</div>`;
+    q.opts.forEach((o,oi)=>{
+      const b=document.createElement('button');b.className='search-opt';b.textContent=o;
+      b.onclick=()=>pickSearch(qi,oi,q.ans,b,q.exp);
+      card.querySelector(`#sq-${qi}`).appendChild(b);
+    });
+    mc.appendChild(card);
+  });
+}
+function pickSearch(qi,oi,correct,btn,exp){
+  const opts=document.getElementById(`sq-${qi}`).querySelectorAll('.search-opt');
+  if(opts[0].style.pointerEvents==='none')return;
+  opts.forEach(b=>b.style.pointerEvents='none');
+  if(oi===correct){btn.classList.add('correct');score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');}
+  else{btn.classList.add('wrong');opts[correct].classList.add('correct');}
+  document.getElementById(`se-${qi}`).style.display='block';
+  searchAnswered++;
+  if(searchAnswered===SEARCH_QS.length){setTimeout(()=>{showOv('File City Champion! 🏆','You can organise files AND find them. A true computer user!');confetti();setTimeout(hideOv,2500);document.getElementById('nextBtn').textContent='Play Again ↺';document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').onclick=()=>{score=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Level 2 →';document.getElementById('nextBtn').onclick=nextLevel;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='Filed!';hideOv();buildLevel1();};},800);}
+}
+function nextLevel(){buildLevel2();}
+function showOv(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOv(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#4CC9F0','#FFD166','#06D6A0','#C77DFF','#FF9F1C'];for(let i=0;i<25;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+buildLevel1();
+</script>
+</body>
+</html>

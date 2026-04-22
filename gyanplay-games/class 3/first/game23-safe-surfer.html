@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛡️ Safe Surfer — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#040A10;--card:#08141E;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--red:#FF4757;--safe:#06D6A0;--danger:#FF4757;--text:#D0E8FF;--dim:#3A6A8A}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(76,201,240,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.35rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.2rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+.hook{background:linear-gradient(135deg,rgba(76,201,240,.1),rgba(255,71,87,.07));border:1px solid rgba(76,201,240,.25);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.87rem;line-height:1.65;color:#B0D8FF}
+.hook strong{color:var(--gold)}
+/* Story card */
+.story-card{background:var(--card);border-radius:16px;padding:18px 20px;width:100%;max-width:460px;border:2px solid rgba(76,201,240,.18)}
+.char-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.char-emoji{font-size:2.2rem}
+.char-info{flex:1}
+.char-name{font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;color:var(--gold)}
+.char-situation{font-size:.75rem;color:var(--dim)}
+.scene-text{font-size:.92rem;color:var(--text);line-height:1.7;margin-bottom:4px}
+.device-screen{background:rgba(76,201,240,.06);border:1px solid rgba(76,201,240,.2);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:.85rem;color:#90C8E8;line-height:1.5;font-family:'Baloo 2',monospace}
+/* Choice buttons */
+.choices{display:flex;flex-direction:column;gap:8px;width:100%;max-width:460px}
+.choice-btn{padding:13px 16px;border-radius:12px;cursor:pointer;font-size:.88rem;transition:all .2s;border:2px solid transparent;text-align:left;line-height:1.4;display:flex;align-items:flex-start;gap:10px}
+.choice-btn .c-icon{font-size:1.2rem;flex-shrink:0;margin-top:2px}
+.choice-btn .c-text{flex:1}
+.choice-safe{background:rgba(6,214,160,.08);border-color:rgba(6,214,160,.3);color:var(--teal)}
+.choice-safe:hover{background:rgba(6,214,160,.15);border-color:var(--safe)}
+.choice-danger{background:rgba(255,71,87,.08);border-color:rgba(255,71,87,.3);color:#FF8A96}
+.choice-danger:hover{background:rgba(255,71,87,.15);border-color:var(--danger)}
+.choice-neutral{background:rgba(76,201,240,.07);border-color:rgba(76,201,240,.25);color:var(--blue)}
+.choice-neutral:hover{background:rgba(76,201,240,.14);border-color:var(--blue)}
+/* Consequence */
+.consequence{border-radius:12px;padding:14px 16px;width:100%;max-width:460px;display:none;line-height:1.6}
+.consequence.show{display:block}
+.consequence.safe{background:rgba(6,214,160,.1);border:2px solid rgba(6,214,160,.35)}
+.consequence.danger{background:rgba(255,71,87,.1);border:2px solid rgba(255,71,87,.35)}
+.conseq-title{font-family:'Baloo 2',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:6px}
+.safe .conseq-title{color:var(--teal)}
+.danger .conseq-title{color:var(--red)}
+.conseq-text{font-size:.85rem;color:var(--dim);line-height:1.6}
+.safety-rule{font-size:.82rem;font-weight:700;margin-top:8px}
+.safe .safety-rule{color:var(--teal)}
+.danger .safety-rule{color:var(--gold)}
+/* Progress dots */
+.scenario-dots{display:flex;gap:8px;justify-content:center}
+.sc-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.12);transition:background .3s}
+.sc-dot.done{background:var(--teal)}.sc-dot.active{background:var(--gold);box-shadow:0 0 8px rgba(255,209,102,.5)}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#040A10;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(4,10,16,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4rem}.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.9rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.88rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🛡️ Safe Surfer</div><div class="subject-tag">Computer · Internet Safety · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+<div class="game-area">
+  <div class="hook">🌐 The internet connects <strong>5 billion people</strong>. Most are wonderful. But just like in real life, you need to know the rules — because online, you <strong>can't always see who you're actually talking to</strong>.</div>
+  <div class="scenario-dots" id="scenarioDots"></div>
+  <div id="mainArea"></div>
+</div>
+<div class="bottom">
+  <div class="prog" id="prog">Scenario 1 of 6</div>
+  <button class="next-btn" id="nextBtn" onclick="nextScenario()">Next Scenario →</button>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">Safe choice!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+<script>
+const SCENARIOS=[
+  {
+    char:'👧',name:'Priya, Age 8',situation:'Priya is using a computer at school',
+    scene:'Priya is chatting on a website. A stranger sends her a message:',
+    screen:'"Hi! I\'m 9 years old just like you. What is your home address? I want to send you a gift 🎁"',
+    choices:[
+      {icon:'🏠',text:'Tell them your home address — they want to send a gift!',type:'danger'},
+      {icon:'🚫',text:'Don\'t share your address. Tell a trusted adult about this message.',type:'safe'},
+      {icon:'🤷',text:'Just ignore the message and keep chatting about other things.',type:'neutral'},
+    ],
+    safeAns:1,
+    safe:{title:'Great choice! 🛡️',text:'Never share your home address online — even with someone who seems friendly and your age. You can\'t verify who they really are.',rule:'✅ Rule: NEVER share home address, school name, or phone number online.'},
+    danger:{title:'Danger! ⚠️',text:'Sharing your address with strangers online is very unsafe. Someone claiming to be 9 years old could be anyone at all.',rule:'✅ Rule: NEVER share your address. Always tell a trusted adult if a stranger asks.'},
+    neutral:{title:'Better to be safe! 🛡️',text:'Ignoring is better than sharing, but you should also tell a trusted adult — they can help keep you safe.',rule:'✅ Rule: When something feels wrong online, always tell an adult you trust.'},
+  },
+  {
+    char:'👦',name:'Arjun, Age 9',situation:'Arjun is on his tablet at home',
+    scene:'Arjun wants to create an account on a learning website. It asks him to create a password.',
+    screen:'Choose a password:\nA) arjun123\nB) Arjun@Guwahati_2024!\nC) 12345678\nD) password',
+    choices:[
+      {icon:'🔑',text:'arjun123 — easy to remember!',type:'danger'},
+      {icon:'🔒',text:'Arjun@Guwahati_2024! — has capitals, numbers, symbols',type:'safe'},
+      {icon:'🔑',text:'12345678 — simple numbers',type:'danger2'},
+    ],
+    safeAns:1,
+    safe:{title:'Strong password! 🔒',text:'A strong password mixes uppercase, lowercase, numbers and symbols. Hackers can crack "12345678" in under a second!',rule:'✅ Rule: Make passwords long, mixed and never share them with anyone except parents.'},
+    danger:{title:'Weak password! ⚠️',text:'"arjun123" uses your own name — the first thing anyone would guess. Never use your name, birthday or simple words.',rule:'✅ Rule: Never use your name, pet\'s name or birthday as a password.'},
+    danger2:{title:'Very weak! ⚠️',text:'"12345678" is the most common password in the world. Hackers try it first every time.',rule:'✅ Rule: Use a mix of letters, numbers and symbols. The longer, the better!'},
+  },
+  {
+    char:'👧',name:'Mia, Age 8',situation:'Mia is using a school computer',
+    scene:'Mia\'s classmate took a funny photo of her at school. Now her classmate wants to post it online.',
+    screen:'Classmate: "Can I post this photo of you on the internet? It\'s really funny 😂"',
+    choices:[
+      {icon:'📸',text:'Sure! It\'s just a funny photo, everyone will laugh.',type:'danger'},
+      {icon:'🛑',text:'No — ask them not to post it. My parents should decide what goes online.',type:'safe'},
+      {icon:'🤷',text:'You don\'t mind either way.',type:'neutral'},
+    ],
+    safeAns:1,
+    safe:{title:'Correct! 🛡️',text:'Once a photo is posted online, it can spread anywhere. Always get permission before posting anyone\'s photo — and tell your parents.',rule:'✅ Rule: Never post photos of yourself or others without a parent\'s permission.'},
+    danger:{title:'Think twice! ⚠️',text:'A funny photo online can spread to thousands of people. Once posted, it is very hard to remove. Always think before you post.',rule:'✅ Rule: Before posting anything online — ask "Would I be okay if everyone in the world saw this?"'},
+    neutral:{title:'Your privacy matters! 🛡️',text:'You have the right to decide what photos of you go online. It\'s always okay to say no.',rule:'✅ Rule: You always have the right to say NO to photos being shared online.'},
+  },
+  {
+    char:'👦',name:'Rajan, Age 9',situation:'Rajan is playing a game online',
+    scene:'In an online game, a player Rajan has never met says:',
+    screen:'"You\'re amazing at this game! Let\'s meet in person. Which park near your school do you play at? Come there tomorrow at 4pm."',
+    choices:[
+      {icon:'🏃',text:'Tell them the park — they seem friendly and like games too!',type:'danger'},
+      {icon:'🚫',text:'Don\'t share the information. Stop talking to this person and tell an adult.',type:'safe'},
+      {icon:'🤔',text:'Say you\'ll think about it.',type:'neutral'},
+    ],
+    safeAns:1,
+    safe:{title:'Exactly right! 🛡️',text:'Never arrange to meet an online stranger in person. Someone who seems friendly in a game could be anyone at all in real life.',rule:'✅ Rule: NEVER agree to meet an online stranger. Always tell a trusted adult immediately.'},
+    danger:{title:'Very dangerous! 🛚',text:'Meeting an online stranger in person is one of the most dangerous things a child can do. Online friends who ask to meet in person must be reported to adults.',rule:'✅ Rule: NEVER meet an online stranger. Tell a parent or teacher right away.'},
+    neutral:{title:'Don\'t wait! 🛡️',text:'Saying "I\'ll think about it" keeps the danger open. The safe choice is to stop the conversation and tell an adult immediately.',rule:'✅ Rule: If something online makes you uncomfortable, tell an adult NOW — not later.'},
+  },
+  {
+    char:'👧',name:'Anaya, Age 8',situation:'Anaya is browsing the internet',
+    scene:'While searching for a science project, a pop-up appears saying:',
+    screen:'"🎉 CONGRATULATIONS! You have won a free phone! Click HERE and enter your name, age and parent\'s phone number to claim your prize!"',
+    choices:[
+      {icon:'🤑',text:'Click it — free phone sounds amazing!',type:'danger'},
+      {icon:'🚫',text:'Don\'t click it. Tell a parent — this looks like a trick.',type:'safe'},
+      {icon:'🔄',text:'Close the tab but don\'t tell anyone.',type:'neutral'},
+    ],
+    safeAns:1,
+    safe:{title:'Smart! 🛡️',text:'Pop-ups saying you\'ve "won" something are almost always scams trying to steal your information or put viruses on the computer.',rule:'✅ Rule: If something looks too good to be true online — it usually is. Tell an adult.'},
+    danger:{title:'Scam alert! ⚠️',text:'This is a phishing scam. Clicking it could install a virus or steal your parents\' information. Real prizes don\'t come in pop-up messages.',rule:'✅ Rule: NEVER click suspicious pop-ups. Close the window and tell an adult.'},
+    neutral:{title:'Almost right! 🛡️',text:'Closing was good, but telling a parent is even better — they can check if the computer is safe and protect the family.',rule:'✅ Rule: When you see something suspicious online, always tell a trusted adult.'},
+  },
+  {
+    char:'👦',name:'Dev, Age 9',situation:'Dev is video calling his cousin',
+    scene:'During the video call, Dev\'s cousin says: "I need to do homework — can I share your screen so you can help me?"',
+    screen:'This is his real cousin he knows in person. They want to share screens to work on homework together.',
+    choices:[
+      {icon:'✅',text:'Yes — this is his real cousin he knows and trusts. Sharing screens to do homework is fine.',type:'safe'},
+      {icon:'🚫',text:'Never share screens with anyone — even family.',type:'neutral'},
+      {icon:'🤷',text:'Share the screen but don\'t tell parents.',type:'danger'},
+    ],
+    safeAns:0,
+    safe:{title:'Good judgement! 🛡️',text:'Sharing a screen with a trusted family member for homework is perfectly fine! Internet safety is about protecting yourself from strangers — not from family.',rule:'✅ Rule: Online safety rules are for strangers. Trusted family and friends you know in real life are different!'},
+    neutral:{title:'Too cautious! 😊',text:'Internet safety is important, but sharing a screen with your real cousin for homework is completely fine! Safety rules protect you from strangers, not family.',rule:'✅ Rule: Know the difference between strangers online and real people you already know and trust.'},
+    danger:{title:'The hiding is the problem! ⚠️',text:'Sharing screens with your cousin is fine — but hiding it from parents is not. Always keep parents informed about what you do online.',rule:'✅ Rule: Never hide your online activities from parents. Transparency keeps you safe!'},
+  },
+];
+let si=0,score=0;
+function buildDots(){
+  const d=document.getElementById('scenarioDots');d.innerHTML='';
+  SCENARIOS.forEach((_,i)=>{const dot=document.createElement('div');dot.className='sc-dot'+(i<si?' done':i===si?' active':'');d.appendChild(dot);});
+}
+function loadScenario(){
+  const s=SCENARIOS[si];
+  document.getElementById('prog').textContent=`Scenario ${si+1} of ${SCENARIOS.length}`;
+  document.getElementById('nextBtn').style.display='none';
+  buildDots();
+  const mc=document.getElementById('mainArea');mc.innerHTML='';
+  // Story card
+  const sc=document.createElement('div');sc.className='story-card';
+  sc.innerHTML=`<div class="char-row"><div class="char-emoji">${s.char}</div><div class="char-info"><div class="char-name">${s.name}</div><div class="char-situation">${s.situation}</div></div></div><div class="scene-text">${s.scene}</div><div class="device-screen">${s.screen.replace(/\n/g,'<br>')}</div>`;
+  mc.appendChild(sc);
+  // Choices
+  const choices=document.createElement('div');choices.className='choices';
+  s.choices.forEach((c,ci)=>{
+    const btn=document.createElement('button');btn.className=`choice-btn choice-${c.type==='danger2'?'danger':c.type}`;
+    btn.innerHTML=`<span class="c-icon">${c.icon}</span><span class="c-text">${c.text}</span>`;
+    btn.onclick=()=>pickChoice(ci,s,btn);
+    choices.appendChild(btn);
+  });
+  mc.appendChild(choices);
+  // Consequence panel
+  const conseq=document.createElement('div');conseq.className='consequence';conseq.id='conseq';mc.appendChild(conseq);
+}
+function pickChoice(ci,s,btn){
+  document.querySelectorAll('.choice-btn').forEach(b=>b.style.pointerEvents='none');
+  const isSafe=ci===s.safeAns;
+  const consequence=ci===s.safeAns?s.safe:(s.choices[ci].type==='danger'||s.choices[ci].type==='danger2')?s.danger:s.neutral;
+  const type=isSafe?'safe':'danger';
+  const conseq=document.getElementById('conseq');
+  conseq.className=`consequence ${type} show`;
+  conseq.innerHTML=`<div class="conseq-title">${consequence.title}</div><div class="conseq-text">${consequence.text}</div><div class="safety-rule">${consequence.rule}</div>`;
+  if(isSafe){score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');showOv('Safe choice! 🛡️',consequence.rule);confetti();setTimeout(hideOv,2200);}
+  else{showOv('Learn this rule! 📚',consequence.rule);setTimeout(hideOv,2500);}
+  document.getElementById('nextBtn').style.display='block';
+}
+function nextScenario(){si++;document.getElementById('nextBtn').style.display='none';if(si>=SCENARIOS.length){endGame();return;}loadScenario();}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOv(`Safe Surfer! ${score}/${SCENARIOS.length}`,'You know how to stay safe online. Remember — when in doubt, always tell a trusted adult!');
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;si=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Next Scenario →';document.getElementById('nextBtn').onclick=nextScenario;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='Safe choice!';hideOv();loadScenario();};
+}
+function showOv(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOv(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#4CC9F0','#FFD166','#06D6A0','#C77DFF','#FF9F1C'];for(let i=0;i<25;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+loadScenario();
+</script>
+</body>
+</html>

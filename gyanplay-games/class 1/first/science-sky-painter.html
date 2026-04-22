@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sky Painter 🌅 — Class 1 Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;transition:background 1.5s ease;}
+body.day-mode{background:linear-gradient(180deg,#87CEEB 0%,#b8e4f9 55%,#c8f4a2 80%,#81C784 100%);}
+body.night-mode{background:linear-gradient(180deg,#0d1b2a 0%,#1a2f4a 40%,#2c3e50 70%,#27ae60 100%);}
+body.dawn-mode{background:linear-gradient(180deg,#FF6B35 0%,#FFB347 30%,#FFE5B4 60%,#c8f4a2 100%);}
+
+/* GROUND */
+.ground{position:fixed;bottom:0;left:0;right:0;height:80px;z-index:1;transition:background 1.5s;}
+.day-mode .ground{background:linear-gradient(180deg,#66BB6A,#388E3C);}
+.night-mode .ground{background:linear-gradient(180deg,#1B5E20,#0D3B1F);}
+.dawn-mode .ground{background:linear-gradient(180deg,#81C784,#4CAF50);}
+
+/* STARS (only visible at night) */
+.star-field{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity 1.5s;}
+.sstar{position:absolute;background:#fff;border-radius:50%;animation:twink 2s infinite;}
+@keyframes twink{0%,100%{opacity:.15;}50%{opacity:.8;}}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);text-shadow:2px 2px 0 rgba(255,255,255,.4);}
+.day-mode .title{color:#1565C0;}
+.night-mode .title{color:#FFD700;}
+.dawn-mode .title{color:#BF360C;}
+.lvchip{display:inline-block;background:rgba(255,255,255,.7);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#333;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.7);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#333;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* QUESTION CARD */
+.q-card{position:relative;z-index:20;background:rgba(255,255,255,.8);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.95);border-radius:24px;padding:10px 22px;margin:8px 16px;text-align:center;max-width:640px;width:calc(100% - 32px);}
+.q-main{font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4.5vw,1.7rem);color:#333;}
+.q-sub{font-size:clamp(.78rem,2.8vw,.98rem);color:#555;font-weight:700;margin-top:3px;}
+
+/* THE SKY SCENE — interactive canvas */
+.sky-scene{
+  position:relative;z-index:10;
+  width:100%;max-width:700px;
+  height:clamp(160px,38vw,240px);
+  margin:6px 14px;
+  overflow:hidden;
+}
+
+/* draggable sky objects */
+.sky-object{
+  position:absolute;
+  font-size:clamp(2.2rem,8vw,3.5rem);
+  cursor:grab;touch-action:none;
+  transition:filter .3s;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.2));
+  animation:skyBob 3s ease-in-out infinite;
+  z-index:15;
+}
+.sky-object:active{cursor:grabbing;}
+@keyframes skyBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+
+/* DROP ZONES */
+.drop-zone{
+  position:absolute;
+  border-radius:50%;
+  border:3px dashed rgba(255,255,255,.5);
+  display:flex;align-items:center;justify-content:center;
+  font-size:clamp(1rem,3.5vw,1.5rem);
+  color:rgba(255,255,255,.6);font-weight:700;
+  transition:all .3s;
+  z-index:12;
+}
+.drop-zone.glow{border-color:rgba(255,215,0,.8);box-shadow:0 0 20px rgba(255,215,0,.5);}
+.drop-zone.filled{border-style:solid;border-color:#43A047;}
+.drop-zone.wrong-zone{animation:zoneShake .35s ease;border-color:#E53935;}
+@keyframes zoneShake{0%,100%{transform:translate(0);}25%{transform:translate(-6px,0);}75%{transform:translate(6px,0);}}
+
+/* SKY ITEMS CHOICES */
+.items-area{position:relative;z-index:20;background:rgba(255,255,255,.72);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.9);border-radius:22px;padding:12px 14px;margin:4px 14px;max-width:680px;width:calc(100% - 28px);}
+.items-label{font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(0,0,0,.35);margin-bottom:8px;text-align:center;}
+.items-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+
+.item-card{
+  padding:clamp(10px,2.5vw,16px) clamp(12px,3vw,20px);
+  border-radius:16px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  border:3px solid rgba(255,255,255,.6);
+  box-shadow:0 4px 0 rgba(0,0,0,.15);
+  transition:all .15s;position:relative;top:0;
+}
+.item-card:hover{top:-3px;box-shadow:0 7px 0 rgba(0,0,0,.12);}
+.item-card:active{top:3px;}
+.item-card.correct-pick{border-color:#43A047;animation:icPop .45s ease;}
+@keyframes icPop{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1);}}
+.item-card.wrong-pick{border-color:#E53935;animation:icShake .35s ease;opacity:.35;pointer-events:none;}
+@keyframes icShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
+.ic-emoji{font-size:clamp(1.8rem,7vw,2.8rem);}
+.ic-name{font-size:clamp(.65rem,2.2vw,.85rem);font-weight:800;color:#333;}
+.ic-when{font-size:clamp(.55rem,1.8vw,.7rem);font-weight:700;color:#666;}
+
+/* FACT */
+.fact-box{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(21,101,192,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:400px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.88rem,3vw,1.1rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:2;}
+.ov-btn{background:linear-gradient(135deg,#1565C0,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(21,101,192,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body class="day-mode">
+<div class="star-field" id="starField" style="opacity:0;"></div>
+<div class="ground"></div>
+
+<div class="header">
+  <div class="title" id="titleEl">🌅 Sky Painter</div>
+  <div class="lvchip" id="lvChip">Day & Night</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">🌍 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="q-card">
+  <div class="q-main" id="qMain">What do we see in the <span id="qTime" style="color:#E53935;">DAY</span> sky?</div>
+  <div class="q-sub" id="qSub">Tap the things that belong in the day sky!</div>
+</div>
+
+<div class="items-area">
+  <div class="items-label">👆 Tap what belongs in the sky!</div>
+  <div class="items-row" id="itemsRow"></div>
+</div>
+
+<script>
+const ROUNDS=[
+  {skyType:'day',   bodyClass:'day-mode',   timeLabel:'DAY',   question:'What do we see in the DAY sky?',
+   correct:['☀️','🌤️','🦅','🌈'],wrong:['🌙','⭐','🦇','🔦'],
+   fact:'☀️ In the DAY, we see the SUN! The sun gives us light and heat! Birds fly in the day sky!'},
+  {skyType:'night', bodyClass:'night-mode', timeLabel:'NIGHT', question:'What do we see in the NIGHT sky?',
+   correct:['🌙','⭐','🌟','🦇'],wrong:['☀️','🌻','🦅','🌂'],
+   fact:'🌙 In the NIGHT, we see the MOON and STARS! It is dark and cool at night!'},
+  {skyType:'day',   bodyClass:'dawn-mode',  timeLabel:'MORNING',question:'What do we see in the MORNING sky?',
+   correct:['☀️','🐦','🌸','🌅'],wrong:['🌙','🔦','🦇','⭐'],
+   fact:'🌅 In the MORNING, the sun RISES in the east! Birds sing and flowers bloom!'},
+  {skyType:'night', bodyClass:'night-mode', timeLabel:'NIGHT', question:'Which animals come OUT at night?',
+   correct:['🦇','🦉','🐺','🌙'],wrong:['🐦','🌸','🦅','☀️'],
+   fact:'🦇 Bats, owls and wolves are NOCTURNAL — they come out at NIGHT!'},
+  {skyType:'day',   bodyClass:'day-mode',   timeLabel:'DAY',   question:'Plants need what from the DAY sky?',
+   correct:['☀️','💧','🌱','🌤️'],wrong:['🌙','⭐','🔦','🦇'],
+   fact:'🌱 Plants need SUNLIGHT and water to make their food! This is called photosynthesis!'},
+  {skyType:'night', bodyClass:'night-mode', timeLabel:'NIGHT', question:'What gives us LIGHT at night?',
+   correct:['🌙','⭐','💡','🕯️'],wrong:['☀️','🌻','🐦','🌈'],
+   fact:'🌙 At night, the MOON reflects the sun\'s light! Stars also shine! We use lamps at home!'},
+  {skyType:'day',   bodyClass:'day-mode',   timeLabel:'DAY',   question:'The sun RISES in which direction?',
+   correct:['🌅','☀️','🧭','🐓'],wrong:['🌙','⭐','🦇','🌃'],
+   fact:'🌅 The sun RISES in the EAST every morning and SETS in the WEST every evening!'},
+  {skyType:'night', bodyClass:'night-mode', timeLabel:'NIGHT', question:'What helps us sleep at night?',
+   correct:['🌙','🌟','🛏️','😴'],wrong:['☀️','📺','🎮','☕'],
+   fact:'😴 At NIGHT we sleep so our body can rest and grow! Sleep is very important for health!'},
+  {skyType:'day',   bodyClass:'day-mode',   timeLabel:'DAY',   question:'What do clouds in the sky mean?',
+   correct:['☁️','🌧️','🌈','💧'],wrong:['🌙','⭐','🦇','🔥'],
+   fact:'☁️ Clouds are made of tiny water drops! Dark clouds bring RAIN which helps plants grow!'},
+  {skyType:'night', bodyClass:'night-mode', timeLabel:'NIGHT', question:'How many stars can we count at night?',
+   correct:['⭐','🌟','💫','🌙'],wrong:['☀️','🌸','🌈','🐦'],
+   fact:'⭐ There are BILLIONS of stars in the sky! The Milky Way is our galaxy!'},
+];
+
+const TOTAL=10;
+let score=0,round=0,answered=false,current=null,selected=[];
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playCorrect(){const c=ac();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*100));}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;window.speechSynthesis.speak(u);}
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#FFD700','#1565C0','#E53935','#43A047','#FF8F00'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showFact(txt){document.querySelector('.fact-box')?.remove();const el=document.createElement('div');el.className='fact-box';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+
+function makeStars(){
+  const sf=document.getElementById('starField');sf.innerHTML='';
+  for(let i=0;i<50;i++){const s=document.createElement('div');s.className='sstar';const sz=Math.random()*2+1;s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*70}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${1.5+Math.random()*2}s;`;sf.appendChild(s);}
+}
+
+function setSkyMode(mode){
+  document.body.className=mode;
+  document.getElementById('starField').style.opacity=mode==='night-mode'?'1':'0';
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;selected=[];
+  current=ROUNDS[round%ROUNDS.length];
+  document.getElementById('roundVal').textContent=round+1;
+  document.getElementById('lvChip').textContent=`${current.skyType==='day'?'☀️':'🌙'} ${current.timeLabel} Sky`;
+  document.getElementById('qTime').textContent=current.timeLabel;
+  document.getElementById('qMain').innerHTML=`What do we see in the <span id="qTime" style="color:${current.skyType==='day'?'#E65100':'#1565C0'};">${current.timeLabel}</span> sky?`;
+  document.getElementById('qMain').innerHTML=current.question;
+  document.getElementById('qSub').textContent=`Tap all the things that belong! Tap wrong ones to deselect.`;
+  makeDots();
+  setSkyMode(current.bodyClass);
+
+  // build items — mix correct + wrong
+  const allItems=[...current.correct.map(e=>({e,correct:true})),...current.wrong.map(e=>({e,correct:false}))].sort(()=>Math.random()-.5);
+  const row=document.getElementById('itemsRow');row.innerHTML='';
+  const bgDay=['linear-gradient(135deg,#FFF9C4,#FFE082)','linear-gradient(135deg,#E3F2FD,#90CAF9)','linear-gradient(135deg,#F3E5F5,#CE93D8)'];
+  const bgNight=['linear-gradient(135deg,#1A237E,#3949AB)','linear-gradient(135deg,#1B5E20,#2E7D32)','linear-gradient(135deg,#4A148C,#7B1FA2)'];
+  const bgs=current.skyType==='day'?bgDay:bgNight;
+  allItems.forEach((item,i)=>{
+    const card=document.createElement('div');card.className='item-card';
+    card.innerHTML=`<span class="ic-emoji">${item.e}</span><span class="ic-name">${getItemName(item.e)}</span><span class="ic-when">${item.correct?'✓ Belongs here':'✗ Doesn\'t belong'}</span>`;
+    card.style.background=bgs[i%bgs.length];card.dataset.correct=item.correct;card.dataset.e=item.e;
+    card.querySelector('.ic-when').style.display='none';// hide until tapped
+    card.onclick=()=>tapItem(card,item);
+    row.appendChild(card);
+  });
+
+  setTimeout(()=>speak(current.question),400);
+}
+
+const ITEM_NAMES={'☀️':'Sun','🌙':'Moon','⭐':'Star','🌟':'Star','🌈':'Rainbow','🦅':'Eagle','🦇':'Bat','🌤️':'Cloud+Sun','☁️':'Cloud','🌧️':'Rain','🌸':'Flower','🐦':'Bird','🌅':'Sunrise','🌻':'Sunflower','🔦':'Torch','💡':'Lamp','🕯️':'Candle','🌃':'Night city','🧭':'Compass','🐓':'Rooster','💫':'Sparkle','🌱':'Plant','💧':'Water','🌺':'Flower','🛏️':'Bed','😴':'Sleep','📺':'TV','🎮':'Game','☕':'Coffee','🦉':'Owl','🐺':'Wolf','💧':'Water','🔥':'Fire'};
+function getItemName(e){return ITEM_NAMES[e]||e;}
+
+function tapItem(card,item){
+  if(answered)return;
+  if(item.correct){
+    card.classList.add('correct-pick');
+    card.querySelector('.ic-when').style.display='';
+    selected.push(item.e);
+    playCorrect();spawnConf();
+    score+=5;document.getElementById('scoreVal').textContent=score;
+    if(selected.length>=current.correct.length){
+      // all correct items found!
+      answered=true;
+      showFact(current.fact);speak(current.fact.replace(/[☀️🌙🌅🌱😴⭐🦇🌟💡🌙☁️]/g,''));
+      round++;makeDots();setTimeout(newRound,3200);
+    }
+  } else {
+    card.classList.add('wrong-pick');playWrong();
+    card.querySelector('.ic-when').style.display='';
+    speak(`${getItemName(item.e)} is not in the ${current.timeLabel} sky! Try another!`);
+  }
+}
+
+function showCelebration(){
+  playChime();spawnConf();speak('You understand Day and Night perfectly! Science superstar!');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🌍</div>
+    <div class="ov-title">Sky Explorer!</div>
+    <div class="ov-sub">
+      ☀️ Day — Sun gives light & heat<br/>
+      🌙 Night — Moon and stars shine<br/>
+      🌅 Morning — Sun rises in the EAST<br/>
+      🌇 Evening — Sun sets in the WEST<br/>
+      🌱 Plants need sunlight to grow!<br/><br/>
+      Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!
+    </div>
+    <button class="ov-btn" onclick="restart()">Play Again 🌅</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;setSkyMode('day-mode');newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{makeStars();window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('What belongs in the day sky and what belongs in the night sky?');setTimeout(newRound,1500);},400);});
+</script>
+</body>
+</html>

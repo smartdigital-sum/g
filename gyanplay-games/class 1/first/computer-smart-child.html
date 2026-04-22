@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Smart Child 🌟 — Class 1 Computer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--green:#2E7D32;--purple:#4A148C;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#F3E5F5,#E1BEE7,#CE93D8,#F3E5F5);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+.stars{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.ss{position:absolute;background:#fff;border-radius:50%;animation:twink 2s infinite;}
+@keyframes twink{0%,100%{opacity:.1;}50%{opacity:.6;}}
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 4px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#4A148C;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#4A148C;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#4A148C;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:#2E7D32;box-shadow:0 0 8px #2E7D32;}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+.scenario-card{position:relative;z-index:20;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border:4px solid rgba(255,255,255,.95);border-radius:28px;padding:clamp(12px,3vw,20px) clamp(16px,4vw,28px);margin:8px 16px;text-align:center;max-width:640px;width:calc(100% - 32px);box-shadow:0 8px 28px rgba(0,0,0,.1);}
+.sc-icon{font-size:clamp(3.5rem,13vw,6rem);animation:scFloat 2s ease-in-out infinite;display:block;}
+@keyframes scFloat{0%,100%{transform:scale(1);}50%{transform:scale(1.1) rotate(-3deg);}}
+.sc-title{font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4.5vw,1.7rem);color:#4A148C;margin-top:6px;}
+.sc-story{font-size:clamp(.85rem,3.2vw,1.1rem);color:#333;font-weight:700;margin-top:5px;line-height:1.6;}
+.sc-question{font-family:'Fredoka One',cursive;font-size:clamp(1rem,4vw,1.4rem);color:#C62828;margin-top:8px;}
+
+.choices-col{position:relative;z-index:20;display:flex;flex-direction:column;gap:clamp(8px,2vw,12px);padding:0 14px;max-width:620px;width:100%;margin:6px 0;}
+.choice-row{background:rgba(255,255,255,.8);backdrop-filter:blur(8px);border:3px solid rgba(255,255,255,.9);border-radius:20px;padding:clamp(12px,3vw,18px) clamp(14px,3.5vw,22px);cursor:pointer;transition:all .2s;box-shadow:0 5px 0 rgba(0,0,0,.1);position:relative;top:0;display:flex;align-items:center;gap:12px;}
+.choice-row:hover{top:-3px;box-shadow:0 8px 0 rgba(0,0,0,.08);}
+.cr-icon{font-size:clamp(1.5rem,6vw,2.2rem);flex-shrink:0;}
+.cr-text{font-family:'Fredoka One',cursive;font-size:clamp(.85rem,3.5vw,1.2rem);color:#4A148C;text-align:left;}
+.choice-row.correct{border-color:#43A047;background:rgba(67,160,71,.2);animation:crPop .5s ease;}
+@keyframes crPop{0%{transform:scale(1);}50%{transform:scale(1.04);}100%{transform:scale(1);}}
+.choice-row.wrong{border-color:#E53935;background:rgba(229,57,53,.1);animation:crShake .35s ease;opacity:.35;pointer-events:none;}
+@keyframes crShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+
+.fact-box{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(46,125,50,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:400px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3.5s ease forwards;border:2px solid rgba(255,215,0,.3);line-height:1.5;}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.85rem,3vw,1.05rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:2;}
+.ov-btn{background:linear-gradient(135deg,#2E7D32,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(46,125,50,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="header">
+  <div class="title">🌟 Smart Child</div>
+  <div class="lvchip" id="lvChip">Safe & Smart Computer Use</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">🌟 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+<div class="scenario-card">
+  <span class="sc-icon" id="scIcon">😴</span>
+  <div class="sc-title" id="scTitle">Bedtime!</div>
+  <div class="sc-story" id="scStory">It is 9pm. Mama says it is time to sleep. But your tablet is still on and you are watching cartoons.</div>
+  <div class="sc-question">What should a SMART CHILD do? 🌟</div>
+</div>
+<div class="choices-col" id="choicesCol"></div>
+
+<script>
+const SCENARIOS=[
+  {icon:'😴',title:'Bedtime!',story:"It is 9pm. Mama says it is time to sleep. But your tablet is still on and you are watching cartoons.",
+   choices:[
+     {icon:'📱',text:'Keep watching — one more cartoon!',correct:false},
+     {icon:'✅',text:'Switch off the tablet and go to sleep!',correct:true},
+     {icon:'😤',text:'Ignore Mama and watch till midnight.',correct:false},
+   ],
+   fact:'🌟 A SMART CHILD turns off the screen at bedtime! Sleep helps our brain grow and learn!'},
+  {icon:'👁️',title:'Eye Care!',story:"Riya has been looking at the computer screen for 2 hours without a break. Her eyes are feeling very tired.",
+   choices:[
+     {icon:'💻',text:'Keep working — eyes will get stronger!',correct:false},
+     {icon:'👁️',text:'Take a 20-minute break and look at trees outside.',correct:true},
+     {icon:'😴',text:'Close eyes and sleep at the desk.',correct:false},
+   ],
+   fact:'👁️ Take a BREAK from screens every 20 minutes! Look at something far away like trees — this rests your eyes!'},
+  {icon:'📏',title:'The Right Distance!',story:"Arjun sits with his nose almost touching the computer screen. His mother says this is not good.",
+   choices:[
+     {icon:'📏',text:"Sit at arm's length from the screen!",correct:true},
+     {icon:'🤏',text:'Sit as close as possible to see better!',correct:false},
+     {icon:'🪑',text:'Stand behind the chair to use the computer.',correct:false},
+   ],
+   fact:"📏 Sit at ARM'S LENGTH from the screen! About 50-60 cm away is healthy for your eyes!"},
+  {icon:'🔒',title:'Stranger Online!',story:"While playing a game online, a stranger asks for your home address and phone number.",
+   choices:[
+     {icon:'🏠',text:'Tell them your home address.',correct:false},
+     {icon:'🚫',text:"Don't share! Tell a parent immediately!",correct:true},
+     {icon:'📞',text:'Share your phone number.',correct:false},
+   ],
+   fact:"🔒 NEVER share your address, name or phone number with strangers online! Always tell a trusted adult!"},
+  {icon:'🤝',title:'Sharing Devices!',story:"Your little sister also wants to use the tablet. You have been using it for one hour.",
+   choices:[
+     {icon:'😤',text:'Say NO — it is your tablet!',correct:false},
+     {icon:'🤝',text:'Share the tablet and take turns!',correct:true},
+     {icon:'🙈',text:'Hide the tablet so sister cannot find it.',correct:false},
+   ],
+   fact:'🤝 SHARING is caring! Taking turns with devices teaches us to be kind and patient!'},
+  {icon:'🧹',title:'Finish Work First!',story:"Anu needs to finish her homework but wants to play a computer game first.",
+   choices:[
+     {icon:'🎮',text:'Play games first, homework later!',correct:false},
+     {icon:'📚',text:'Finish homework first, then play games!',correct:true},
+     {icon:'🙈',text:'Skip homework and play all day.',correct:false},
+   ],
+   fact:'📚 FINISH your work FIRST, then enjoy screen time! This is the habit of a smart child!'},
+  {icon:'🌿',title:'Screen Break = Play Outside!',story:"After using the computer for 30 minutes, what is the best thing to do?",
+   choices:[
+     {icon:'📱',text:'Switch to a phone — not a computer!',correct:false},
+     {icon:'🌿',text:'Go outside and play for 20 minutes!',correct:true},
+     {icon:'📺',text:'Watch TV instead.',correct:false},
+   ],
+   fact:'🌿 After screen time, GO OUTSIDE and PLAY! Running and playing makes your body healthy!'},
+  {icon:'💡',title:'Bright or Dark?',story:"Arjun uses his tablet in a completely dark room. Is this good for his eyes?",
+   choices:[
+     {icon:'🌑',text:"Yes! Dark room is better for screens.",correct:false},
+     {icon:'💡',text:"No! Always use screen in a well-lit room!",correct:true},
+     {icon:'😎',text:"Wear sunglasses in the dark.",correct:false},
+   ],
+   fact:'💡 Always use computers in a WELL-LIT ROOM! Reading in the dark strains your eyes and makes them tired!'},
+  {icon:'🔋',title:'Charging Safely!',story:"Priya wants to use the tablet while it is charging on the bed. Is this safe?",
+   choices:[
+     {icon:'🛏️',text:'Yes, the bed is soft and safe!',correct:false},
+     {icon:'⚡',text:"No! Never use charging devices on bed — fire risk!",correct:true},
+     {icon:'💤',text:'Sleep with the charging phone under the pillow.',correct:false},
+   ],
+   fact:'⚡ NEVER use a charging device on a bed! It can get very hot and cause a fire! Charge on a hard surface!'},
+  {icon:'🎓',title:'Learning vs Gaming!',story:"Riya has free time. She can either play learning games or only watch funny videos all day.",
+   choices:[
+     {icon:'📺',text:'Watch funny videos all day long!',correct:false},
+     {icon:'🎮',text:'Mix learning games WITH fun videos!',correct:true},
+     {icon:'💻',text:'Use the computer for studying only.',correct:false},
+   ],
+   fact:'🎓 Mix LEARNING and FUN on computers! Educational games teach you AND make you happy! Balance is the key!'},
+];
+
+const TOTAL=10;
+let score=0,round=0,answered=false;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playCorrect(){const c=ac();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*100));}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;window.speechSynthesis.speak(u);}
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#2E7D32','#FFD700','#4A148C','#E53935','#0288D1'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showFact(txt){document.querySelector('.fact-box')?.remove();const el=document.createElement('div');el.className='fact-box';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}
+function makeStars(){const bg=document.getElementById('stars');for(let i=0;i<30;i++){const s=document.createElement('div');s.className='ss';const sz=Math.random()*2+1;s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*2.5}s;`;bg.appendChild(s);}}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+  const sc=SCENARIOS[round%SCENARIOS.length];
+  document.getElementById('scIcon').textContent=sc.icon;
+  document.getElementById('scTitle').textContent=sc.title;
+  document.getElementById('scStory').textContent=sc.story;
+  const col=document.getElementById('choicesCol');col.innerHTML='';
+  sc.choices.forEach(ch=>{
+    const row=document.createElement('div');row.className='choice-row';
+    row.innerHTML=`<span class="cr-icon">${ch.icon}</span><span class="cr-text">${ch.text}</span>`;
+    row.onclick=()=>checkChoice(row,ch,sc);
+    col.appendChild(row);
+  });
+  setTimeout(()=>speak(sc.story+' What should a smart child do?'),400);
+}
+
+function checkChoice(row,choice,sc){
+  if(answered)return;
+  if(choice.correct){
+    answered=true;row.classList.add('correct');
+    playCorrect();spawnConf();showFact(sc.fact);
+    score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(sc.fact.replace(/[🌟👁️📏🔒🤝📚🌿💡⚡🎓]/g,''));
+    round++;makeDots();setTimeout(newRound,4000);
+  } else {
+    row.classList.add('wrong');playWrong();
+    speak(`That is not safe! A smart child should: ${sc.choices.find(c=>c.correct).text}`);
+  }
+}
+
+function showCelebration(){
+  playChime();spawnConf();speak('You are a SMART CHILD! You know how to use computers safely!');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🌟</div>
+    <div class="ov-title">Smart Child!</div>
+    <div class="ov-sub">
+      😴 Turn off screens at bedtime<br/>
+      👁️ Take breaks every 20 minutes<br/>
+      📏 Sit at arm's length from screen<br/>
+      🔒 Never share info with strangers<br/>
+      🌿 Go outside after screen time<br/>
+      💡 Use screen in a bright room<br/><br/>
+      Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!
+    </div>
+    <button class="ov-btn" onclick="restart()">Play Again 🌟</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{makeStars();window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Learn to be a smart child with computers!');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

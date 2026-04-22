@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GyanPlay · Class 5 · All 23 Games</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--lime:#A8E063;--orange:#FF9F1C;--purple:#C77DFF;--pink:#FF9CC2;
+  --text:#E8F0FF;--dim:#4A6A8A;--border:rgba(255,255,255,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:#060A10;min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);
+  display:flex;flex-direction:column;align-items:center;padding:0 0 60px;
+}
+
+/* HERO */
+.hero{
+  width:100%;background:linear-gradient(145deg,#0D1428,#060A10);
+  padding:28px 20px 24px;text-align:center;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  position:relative;overflow:hidden;
+}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,209,102,.1),transparent 60%);}
+.hero-logo{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.8rem;color:var(--gold);position:relative;}
+.hero-logo span{color:var(--blue);}
+.hero h1{font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(1.4rem,5vw,2rem);color:#fff;margin:8px 0 6px;position:relative;}
+.hero p{font-size:.9rem;color:rgba(255,255,255,.5);position:relative;}
+.hero p strong{color:var(--gold);}
+
+/* STAT PILLS */
+.stat-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 16px 0;max-width:488px;width:calc(100% - 32px);}
+.stat-pill{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:6px 14px;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.6);}
+.stat-pill strong{color:var(--gold);}
+
+/* SUBJECT FILTER */
+.filter-row{display:flex;gap:6px;margin:16px 16px 0;max-width:488px;width:calc(100% - 32px);flex-wrap:wrap;}
+.filter-btn{
+  padding:6px 14px;border-radius:20px;border:2px solid rgba(255,255,255,.1);
+  background:transparent;color:var(--dim);font-family:'Nunito',sans-serif;
+  font-weight:700;font-size:.75rem;cursor:pointer;transition:all .2s;
+}
+.filter-btn:hover{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.7);}
+.filter-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(255,209,102,.08);}
+.filter-btn.f-maths  .dot{background:var(--purple);}
+.filter-btn.f-english .dot{background:var(--orange);}
+.filter-btn.f-science .dot{background:var(--teal);}
+.filter-btn.f-sst     .dot{background:var(--lime);}
+.filter-btn.f-hindi   .dot{background:var(--pink);}
+.filter-btn.f-comp    .dot{background:var(--blue);}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px;flex-shrink:0;}
+
+/* SECTION */
+.section{width:calc(100% - 32px);max-width:488px;margin:20px 16px 0;}
+.section-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.06);}
+.section-icon{font-size:1.3rem;}
+.section-name{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.05rem;}
+.section-badge{margin-left:auto;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--dim);}
+
+/* GAME ROW */
+.game-row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:13px;padding:12px 14px;
+  text-decoration:none;color:inherit;
+  transition:transform .15s,border-color .15s;
+  margin-bottom:8px;cursor:pointer;
+}
+.game-row:hover{transform:translateX(3px);}
+.game-row.maths:hover  {border-color:rgba(199,125,255,.4);}
+.game-row.english:hover{border-color:rgba(255,159,28,.4);}
+.game-row.science:hover{border-color:rgba(6,214,160,.4);}
+.game-row.sst:hover    {border-color:rgba(168,224,99,.4);}
+.game-row.hindi:hover  {border-color:rgba(255,156,194,.4);}
+.game-row.comp:hover   {border-color:rgba(76,201,240,.4);}
+.gr-num{font-size:.62rem;font-weight:800;color:var(--dim);width:32px;flex-shrink:0;text-align:center;}
+.gr-emoji{font-size:1.5rem;width:36px;text-align:center;flex-shrink:0;}
+.gr-body{flex:1;min-width:0;}
+.gr-title{font-family:'Baloo 2',cursive;font-weight:800;font-size:.88rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gr-title .dev{font-family:'Noto Sans Devanagari',sans-serif;font-size:.85rem;}
+.gr-concept{font-size:.7rem;color:var(--dim);margin-top:1px;}
+.gr-mechanic{
+  font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  padding:2px 8px;border-radius:10px;flex-shrink:0;
+  background:rgba(255,255,255,.05);color:var(--dim);
+}
+
+/* BATCH LABELS */
+.batch-divider{
+  width:calc(100% - 32px);max-width:488px;
+  display:flex;align-items:center;gap:10px;
+  margin:24px 16px 6px;
+}
+.batch-divider .bd-line{flex:1;height:1px;background:rgba(255,255,255,.08);}
+.batch-divider .bd-label{
+  font-size:.62rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);padding:4px 10px;border-radius:20px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  white-space:nowrap;
+}
+
+/* COMPLETE BANNER */
+.complete-banner{
+  width:calc(100% - 32px);max-width:488px;margin:24px 16px 0;
+  background:linear-gradient(135deg,rgba(255,209,102,.15),rgba(6,214,160,.08));
+  border:2px solid rgba(255,209,102,.3);border-radius:18px;
+  padding:20px;text-align:center;
+}
+.cb-trophy{font-size:3rem;margin-bottom:8px;}
+.cb-title{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.3rem;color:var(--gold);margin-bottom:6px;}
+.cb-sub{font-size:.85rem;color:rgba(255,255,255,.55);line-height:1.6;}
+.cb-sub strong{color:var(--teal);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-logo">Gyan<span>Play</span></div>
+  <h1>🎒 Class 5 — Complete</h1>
+  <p><strong>23 games</strong> across 6 subjects · Ages 10–11 · NCERT / Assam Board</p>
+</div>
+
+<div class="stat-row">
+  <div class="stat-pill"><strong>23</strong> Total Games</div>
+  <div class="stat-pill"><strong>6</strong> Subjects</div>
+  <div class="stat-pill"><strong>3</strong> Languages</div>
+  <div class="stat-pill"><strong>5★</strong> Max Score</div>
+  <div class="stat-pill">📴 Offline Ready</div>
+</div>
+
+<!-- BATCH 1 DIVIDER -->
+<div class="batch-divider"><div class="bd-line"></div><div class="bd-label">Batch 1 · G5-01 to G5-08 · Maths + English</div><div class="bd-line"></div></div>
+
+<!-- MATHS -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-icon">🔢</span>
+    <span class="section-name" style="color:var(--purple);">Maths</span>
+    <span class="section-badge">5 Games</span>
+  </div>
+  <a class="game-row maths" href="../gyanplay-class5-batch1/game1-crore-city.html">
+    <span class="gr-num">G5-01</span><span class="gr-emoji">💯</span>
+    <div class="gr-body"><div class="gr-title">Crore City</div><div class="gr-concept">Numbers to 10 crore · Indian & International place value</div></div>
+    <span class="gr-mechanic">DIAL</span>
+  </a>
+  <a class="game-row maths" href="../gyanplay-class5-batch1/game2-decimal-street.html">
+    <span class="gr-num">G5-02</span><span class="gr-emoji">🔢</span>
+    <div class="gr-body"><div class="gr-title">Decimal Street</div><div class="gr-concept">Decimals · Number line · Place value · Comparison</div></div>
+    <span class="gr-mechanic">PLACE</span>
+  </a>
+  <a class="game-row maths" href="../gyanplay-class5-batch1/game3-lcm-hcf-machine.html">
+    <span class="gr-num">G5-03</span><span class="gr-emoji">🔗</span>
+    <div class="gr-body"><div class="gr-title">LCM &amp; HCF Machine</div><div class="gr-concept">Prime factorisation · Venn diagram sorter</div></div>
+    <span class="gr-mechanic">BUILD</span>
+  </a>
+  <a class="game-row maths" href="../gyanplay-class5-batch1/game4-average-academy.html">
+    <span class="gr-num">G5-04</span><span class="gr-emoji">📊</span>
+    <div class="gr-body"><div class="gr-title">Average Academy</div><div class="gr-concept">Mean · Balance scale · Bar graph reading</div></div>
+    <span class="gr-mechanic">BUILD</span>
+  </a>
+  <a class="game-row maths" href="../gyanplay-class5-batch1/game5-area-explorer.html">
+    <span class="gr-num">G5-05</span><span class="gr-emoji">🔺</span>
+    <div class="gr-body"><div class="gr-title">Area Explorer</div><div class="gr-concept">Area of triangles · Compound shapes · Canvas grid</div></div>
+    <span class="gr-mechanic">BUILD</span>
+  </a>
+</div>
+
+<!-- ENGLISH (Batch 1 portion) -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-icon">📝</span>
+    <span class="section-name" style="color:var(--orange);">English</span>
+    <span class="section-badge">4 Games (G5-06–09)</span>
+  </div>
+  <a class="game-row english" href="../gyanplay-class5-batch1/game6-active-passive-voice.html">
+    <span class="gr-num">G5-06</span><span class="gr-emoji">🔊</span>
+    <div class="gr-body"><div class="gr-title">Active &amp; Passive Voice</div><div class="gr-concept">Voice transformation · News headline spotter</div></div>
+    <span class="gr-mechanic">FILL-BLANK</span>
+  </a>
+  <a class="game-row english" href="../gyanplay-class5-batch1/game7-speech-detectives.html">
+    <span class="gr-num">G5-07</span><span class="gr-emoji">💬</span>
+    <div class="gr-body"><div class="gr-title">Speech Detectives</div><div class="gr-concept">Direct to indirect speech · Tense &amp; pronoun shifts</div></div>
+    <span class="gr-mechanic">BUILD</span>
+  </a>
+  <a class="game-row english" href="../gyanplay-class5-batch1/game8-advanced-detectives.html">
+    <span class="gr-num">G5-08</span><span class="gr-emoji">🕵️</span>
+    <div class="gr-body"><div class="gr-title">Advanced Detectives</div><div class="gr-concept">Deep comprehension · Fact vs Opinion sorter</div></div>
+    <span class="gr-mechanic">STORY-CHOICE</span>
+  </a>
+
+  <!-- BATCH 2 DIVIDER -->
+  <div class="batch-divider" style="margin:16px 0 12px;width:100%;max-width:100%;"><div class="bd-line"></div><div class="bd-label">Batch 2 · G5-09 to G5-16</div><div class="bd-line"></div></div>
+
+  <a class="game-row english" href="../gyanplay-class5-batch2/game9-idiom-island.html">
+    <span class="gr-num">G5-09</span><span class="gr-emoji">🌐</span>
+    <div class="gr-body"><div class="gr-title">Idiom Island</div><div class="gr-concept">8 idioms with history origins · 5 proverb completions</div></div>
+    <span class="gr-mechanic">IDENTIFY</span>
+  </a>
+</div>
+
+<!-- SCIENCE -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-icon">🔬</span>
+    <span class="section-name" style="color:var(--teal);">Science</span>
+    <span class="section-badge">4 Games</span>
+  </div>
+  <a class="game-row science" href="../gyanplay-class5-batch2/game10-microbe-world.html">
+    <span class="gr-num">G5-10</span><span class="gr-emoji">🔬</span>
+    <div class="gr-body"><div class="gr-title">Microbe World</div><div class="gr-concept">Bacteria · Fungi · Viruses · Sort helpful/harmful</div></div>
+    <span class="gr-mechanic">SORT</span>
+  </a>
+  <a class="game-row science" href="../gyanplay-class5-batch2/game11-india-physical-map.html">
+    <span class="gr-num">G5-11</span><span class="gr-emoji">🌍</span>
+    <div class="gr-body"><div class="gr-title">India Physical Map</div><div class="gr-concept">Mountains · Rivers · Coasts · Plains — SVG labelling</div></div>
+    <span class="gr-mechanic">SKETCH-LABEL</span>
+  </a>
+  <a class="game-row science" href="../gyanplay-class5-batch2/game12-body-systems.html">
+    <span class="gr-num">G5-12</span><span class="gr-emoji">🫀</span>
+    <div class="gr-body"><div class="gr-title">Body Systems</div><div class="gr-concept">Blood path trace · Respiratory labels · Muscle-bone match</div></div>
+    <span class="gr-mechanic">TRACE-PATH</span>
+  </a>
+  <a class="game-row science" href="../gyanplay-class5-batch2/game13-soil-science-lab.html">
+    <span class="gr-num">G5-13</span><span class="gr-emoji">🌱</span>
+    <div class="gr-body"><div class="gr-title">Soil Science Lab</div><div class="gr-concept">4 soil layers · Crop matching · 1,000 years per cm!</div></div>
+    <span class="gr-mechanic">EXPLORE+QUIZ</span>
+  </a>
+</div>
+
+<!-- SST -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-icon">🌏</span>
+    <span class="section-name" style="color:var(--lime);">Social Studies</span>
+    <span class="section-badge">4 Games</span>
+  </div>
+  <a class="game-row sst" href="../gyanplay-class5-batch2/game14-indias-neighbours.html">
+    <span class="gr-num">G5-14</span><span class="gr-emoji">🗺️</span>
+    <div class="gr-body"><div class="gr-title">India's Neighbours</div><div class="gr-concept">9 neighbours · Capitals · Shared history facts</div></div>
+    <span class="gr-mechanic">PLACE</span>
+  </a>
+  <a class="game-row sst" href="../gyanplay-class5-batch2/game15-freedom-movement-timeline.html">
+    <span class="gr-num">G5-15</span><span class="gr-emoji">⚔️</span>
+    <div class="gr-body"><div class="gr-title">Freedom Movement Timeline</div><div class="gr-concept">1857–1947 · 6 key events · Sequence + identify</div></div>
+    <span class="gr-mechanic">SEQUENCE</span>
+  </a>
+  <a class="game-row sst" href="../gyanplay-class5-batch2/game16-industries-of-india.html">
+    <span class="gr-num">G5-16</span><span class="gr-emoji">🏭</span>
+    <div class="gr-body"><div class="gr-title">Industries of India</div><div class="gr-concept">Primary / Secondary / Tertiary · 18 tiles · State match</div></div>
+    <span class="gr-mechanic">SORT</span>
+  </a>
+
+  <!-- BATCH 3 DIVIDER -->
+  <div class="batch-divider" style="margin:16px 0 12px;width:100%;max-width:100%;"><div class="bd-line"></div><div class="bd-label">Batch 3 · G5-17 to G5-23 · Final</div><div class="bd-line"></div></div>
+
+  <a class="game-row sst" href="game17-biodiversity-hotspot.html">
+    <span class="gr-num">G5-17</span><span class="gr-emoji">🌿</span>
+    <div class="gr-body"><div class="gr-title">Biodiversity Hotspot</div><div class="gr-concept">8 national parks · Threats &amp; solutions · Conservation quiz</div></div>
+    <span class="gr-mechanic">EXPLORE+QUIZ</span>
+  </a>
+</div>
+
+<!-- HINDI -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-icon">🙏</span>
+    <span class="section-name" style="color:var(--pink);">Hindi</span>
+    <span class="section-badge">3 Games</span>
+  </div>
+  <a class="game-row hindi" href="game18-vilom-vishwa.html">
+    <span class="gr-num">G5-18</span><span class="gr-emoji">↔️</span>
+    <div class="gr-body"><div class="gr-title"><span class="dev" style="font-family:'Noto Sans Devanagari',sans-serif;">विलोम-विश्व</span></div><div class="gr-concept">Antonyms &amp; synonyms · Devanagari word scramble · 3 rounds</div></div>
+    <span class="gr-mechanic">WORD-SCRAMBLE</span>
+  </a>
+  <a class="game-row hindi" href="game19-muhavara-mela.html">
+    <span class="gr-num">G5-19</span><span class="gr-emoji">💬</span>
+    <div class="gr-body"><div class="gr-title"><span class="dev" style="font-family:'Noto Sans Devanagari',sans-serif;">मुहावरा मेला</span></div><div class="gr-concept">Idiom identification · Fill blank · Origin stories</div></div>
+    <span class="gr-mechanic">IDENTIFY</span>
+  </a>
+  <a class="game-row hindi" href="game20-patra-ustad.html">
+    <span class="gr-num">G5-20</span><span class="gr-emoji">📝</span>
+    <div class="gr-body"><div class="gr-title"><span class="dev" style="font-family:'Noto Sans Devanagari',sans-serif;">पत्र-उस्ताद</span></div><div class="gr-concept">Formal letter builder · Blanks · Formal vs informal comparison</div></div>
+    <span class="gr-mechanic">BUILD</span>
+  </a>
+</div>
+
+<!-- COMPUTER -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-icon">💻</span>
+    <span class="section-name" style="color:var(--blue);">Computer</span>
+    <span class="section-badge">3 Games</span>
+  </div>
+  <a class="game-row comp" href="game21-spreadsheet-city.html">
+    <span class="gr-num">G5-21</span><span class="gr-emoji">📊</span>
+    <div class="gr-body"><div class="gr-title">Spreadsheet City</div><div class="gr-concept">Cells · SUM &amp; AVERAGE · Bar chart · Fix broken formulas</div></div>
+    <span class="gr-mechanic">BUILD</span>
+  </a>
+  <a class="game-row comp" href="game22-presentation-power.html">
+    <span class="gr-num">G5-22</span><span class="gr-emoji">🎨</span>
+    <div class="gr-body"><div class="gr-title">Presentation Power</div><div class="gr-concept">Slide design · Contrast · Hierarchy · Audience reaction meter</div></div>
+    <span class="gr-mechanic">STORY-CHOICE</span>
+  </a>
+  <a class="game-row comp" href="game23-binary-decoder.html">
+    <span class="gr-num">G5-23</span><span class="gr-emoji">🔢</span>
+    <div class="gr-body"><div class="gr-title">Binary Decoder</div><div class="gr-concept">8-switch byte board · ASCII letters · Spell name in binary</div></div>
+    <span class="gr-mechanic">BUILD</span>
+  </a>
+</div>
+
+<!-- COMPLETE BANNER -->
+<div class="complete-banner">
+  <div class="cb-trophy">🏆</div>
+  <div class="cb-title">Class 5 Complete!</div>
+  <div class="cb-sub"><strong>23 games · 6 subjects · 3 batches.</strong><br/>From crore-level numbers to binary encoding, from Kaziranga's rhinos to letter writing in Hindi — all 23 concepts from the Assam/NCERT Class 5 syllabus covered through play.</div>
+</div>
+
+</body>
+</html>

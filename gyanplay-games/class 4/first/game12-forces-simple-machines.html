@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Forces & Simple Machines — GyanPlay Class 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#071A07,#040E04);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 40px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.h-left{display:flex;flex-direction:column;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.game-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);}
+.subject-tag{font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:1.3rem;opacity:.25;transition:opacity .3s,filter .3s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.wow{background:linear-gradient(135deg,rgba(6,214,160,.15),rgba(6,214,160,.04));
+  border:1px solid rgba(6,214,160,.3);border-radius:16px;padding:16px;margin-bottom:18px;}
+.wow-emoji{font-size:2rem;margin-bottom:6px;}
+.wow p{font-size:.88rem;line-height:1.55;}
+.wow p span{color:var(--gold);font-weight:700;}
+.wow-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-top:6px;}
+/* Phase indicator */
+.phase-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.phase-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.12);transition:background .3s;}
+.phase-dot.done{background:var(--teal);}
+.phase-dot.active{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.phase-label{font-size:.78rem;color:var(--dim);flex:1;}
+/* Explore phase */
+.game-area{background:var(--card);border-radius:20px;padding:20px;margin-bottom:14px;
+  border:1px solid rgba(6,214,160,.15);}
+.explore-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
+.machine-card{background:rgba(6,214,160,.07);border:2px solid rgba(6,214,160,.15);
+  border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;touch-action:manipulation;
+  transition:all .2s;}
+.machine-card:active{transform:scale(.96);}
+.machine-card.explored{border-color:var(--teal);background:rgba(6,214,160,.15);}
+.machine-card.active-explore{border-color:var(--gold);background:rgba(255,209,102,.1);}
+.mc-emoji{font-size:1.8rem;margin-bottom:4px;}
+.mc-name{font-family:'Baloo 2',sans-serif;font-size:.75rem;font-weight:800;color:var(--text);}
+.mc-name-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.6rem;color:var(--dim);}
+.explored-badge{font-size:.6rem;color:var(--teal);margin-top:2px;}
+/* Info panel */
+.info-panel{background:rgba(255,255,255,.03);border:1px solid rgba(6,214,160,.2);border-radius:12px;
+  padding:14px;margin-bottom:14px;display:none;}
+.info-panel.show{display:block;}
+.info-title{font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;color:var(--gold);margin-bottom:4px;}
+.info-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.72rem;color:var(--dim);margin-bottom:8px;}
+.info-text{font-size:.85rem;line-height:1.55;color:var(--text);margin-bottom:6px;}
+.info-fact{font-size:.78rem;color:var(--teal);font-style:italic;}
+.explore-progress{font-size:.72rem;color:var(--dim);text-align:center;margin-bottom:10px;}
+.start-quiz-btn{width:100%;padding:12px;background:var(--gold);color:#040E04;border:none;border-radius:12px;
+  font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;touch-action:manipulation;
+  display:none;transition:transform .1s;}
+.start-quiz-btn:active{transform:scale(.97);}
+.start-quiz-btn.show{display:block;}
+/* Quiz phase */
+.quiz-area{display:none;}
+.quiz-area.show{display:block;}
+.q-progress{font-size:.72rem;color:var(--dim);margin-bottom:10px;}
+.q-text{font-size:.92rem;line-height:1.55;color:var(--text);margin-bottom:8px;}
+.q-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:12px;}
+.q-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:8px;}
+.q-opt{padding:12px 14px;background:rgba(6,214,160,.06);border:2px solid rgba(6,214,160,.15);
+  border-radius:12px;font-size:.88rem;cursor:pointer;touch-action:manipulation;transition:all .15s;}
+.q-opt:active{transform:scale(.98);}
+.q-opt.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal);}
+.q-opt.wrong{background:rgba(255,107,107,.12);border-color:var(--coral);color:var(--coral);}
+.q-opt.disabled{pointer-events:none;}
+.feedback{text-align:center;font-size:.85rem;min-height:1.2em;font-weight:600;margin-top:4px;}
+.feedback.ok{color:var(--teal);}
+.feedback.err{color:var(--coral);}
+.progress-wrap{margin-bottom:14px;}
+.prog-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--teal);border-radius:99px;transition:width .4s;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;
+  justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-card{background:var(--card);border:1px solid rgba(6,214,160,.3);border-radius:22px;
+  padding:28px 24px;text-align:center;max-width:320px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);}to{transform:scale(1) translateY(0);}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px;}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.ov-fact{font-size:.83rem;line-height:1.5;margin-bottom:12px;}
+.ov-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+.ov-btn{padding:12px 28px;background:var(--gold);color:#0F0820;border:none;border-radius:12px;
+  font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:200;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen"><div style="font-size:2.5rem">⚡</div><p>Loading… / লোড হৈছে…</p></div>
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="h-left">
+      <div class="game-title">Forces & Simple Machines</div>
+      <div class="game-title-as">বল আৰু সৰল যন্ত্ৰ</div>
+      <div class="subject-tag">Science · শ্ৰেণী ৪</div>
+    </div>
+    <div class="stars" id="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+      <span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+  <div class="wow">
+    <div class="wow-emoji">💪</div>
+    <p>A pulley lets <span>one person lift a car engine</span>. A lever lets a child lift an adult on a see-saw. <span>Simple machines multiply your strength!</span></p>
+    <div class="wow-as">পুলিয়ে এজন মানুহক গাড়ীৰ ইঞ্জিন তুলিবলৈ দিয়ে। সৰল যন্ত্ৰই তোমাৰ শক্তি বহুগুণ বঢ়ায়!</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="phase-bar">
+    <div class="phase-dot active" id="pd0"></div>
+    <div class="phase-dot" id="pd1"></div>
+    <div class="phase-dot" id="pd2"></div>
+    <div class="phase-dot" id="pd3"></div>
+    <div class="phase-dot" id="pd4"></div>
+    <div class="phase-dot" id="pd5"></div>
+    <div class="phase-dot" id="pd6"></div>
+    <div class="phase-label" id="phaseLabel">Explore all 6 machines first / পোনতে ৬টা যন্ত্ৰ অন্বেষণ কৰক</div>
+  </div>
+  <div class="game-area">
+    <div id="explorePhase">
+      <div class="explore-grid" id="machineGrid"></div>
+      <div class="info-panel" id="infoPanel"></div>
+      <div class="explore-progress" id="exploreProgress">0/6 explored</div>
+      <button class="start-quiz-btn" id="startQuizBtn" onclick="startQuiz()">✓ Explore done — Start Quiz! / প্ৰশ্নোত্তৰ আৰম্ভ কৰক!</button>
+    </div>
+    <div class="quiz-area" id="quizPhase">
+      <div class="q-progress" id="qProgress">Question 1/6</div>
+      <div class="q-text" id="qText"></div>
+      <div class="q-as" id="qAs"></div>
+      <div class="q-opts" id="qOpts"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <div class="ov-as" id="ovAs"></div>
+    <button class="ov-btn" id="ovBtn">Next →</button>
+  </div>
+</div>
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let currentUser=null;
+auth.onAuthStateChanged(u=>{
+  if(!u){window.location.href='/login.html';return;}
+  currentUser=u;
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initGame();
+});
+
+const MACHINES=[
+  {name:'Lever',as:'লিভাৰ',emoji:'⚖️',
+   info:'A rigid bar that rotates around a fixed point (fulcrum). Push down one side — the other goes up!',
+   infoAs:'এটা দৃঢ় দণ্ড যি এটা স্থিৰ বিন্দু (ফুলক্ৰাম)ৰ চাৰিওফালে ঘূৰে।',
+   fact:'See-saw, scissors, bottle opener are all levers! The Ahom warriors used long lever-weapons.',
+   factAs:'দোলনা, কাঁচি, বটলৰ খোলা — সকলো লিভাৰ!'},
+  {name:'Wheel & Axle',as:'চকা আৰু অক্ষ',emoji:'🚲',
+   info:'A circular wheel attached to a central rod (axle). Turning the big wheel makes the axle spin faster.',
+   infoAs:'এটা কেন্দ্ৰীয় দণ্ড (অক্ষ)ত লগোৱা বৃত্তাকাৰ চকা।',
+   fact:'Wheels reduced load-carrying effort by 90%! Bullock carts carried Assam tea using this principle.',
+   factAs:'চকাই বোজা বহন ৯০% কমালে! বলদ গাড়ীয়ে অসমৰ চাহ বহন কৰিছিল।'},
+  {name:'Inclined Plane',as:'হেলনীয়া সমতল',emoji:'📐',
+   info:'A flat surface tilted at an angle. Push something up a ramp — easier than lifting straight up!',
+   infoAs:'কোণত হেলনীয়া সমতল পৃষ্ঠ।',
+   fact:'Ancient Egyptians used inclined planes to build pyramids. Ramps around Assam\'s hills still carry loads!',
+   factAs:'মিছৰৰ পিৰামিড হেলনীয়া সমতলৰে নিৰ্মাণ হৈছিল।'},
+  {name:'Pulley',as:'পুলি',emoji:'🪤',
+   info:'A wheel with a rope around it. The rope redirects force — pull down to lift something up!',
+   infoAs:'এটা চকা যাৰ চাৰিওফালে দড়ি আছে।',
+   fact:'Pulleys are used to lift heavy engines in garages and to pull boats ashore in river ports like Guwahati!',
+   factAs:'গুৱাহাটীৰ নৌবন্দৰত নাও টানিবলৈ পুলি ব্যৱহাৰ হয়!'},
+  {name:'Wedge',as:'শিলাখণ্ড/কীলক',emoji:'🪓',
+   info:'Two inclined planes joined at a point. Push the thin edge in — the wide end forces things apart!',
+   infoAs:'দুটা হেলনীয়া সমতল এটা বিন্দুত সংযুক্ত।',
+   fact:'Axes, knives, needles, and door stoppers are all wedges. Assam\'s bamboo tools use the wedge principle!',
+   factAs:'কুঠাৰ, ছুৰী, বেজী — সকলো কীলক! অসমৰ বাঁহৰ সঁজুলিতো এই নিয়ম।'},
+  {name:'Screw',as:'স্ক্ৰু',emoji:'🔩',
+   info:'An inclined plane wrapped around a cylinder. Turn it — it moves forward or tightens!',
+   infoAs:'এটা চিলিণ্ডাৰৰ চাৰিওফালে মোৰা হেলনীয়া সমতল।',
+   fact:'A screw converts rotational force to linear force. Screw jacks can lift entire cars with one hand!',
+   factAs:'স্ক্ৰু জেকে এটা হাতেৰে গোটেই গাড়ী তুলিব পাৰে!'}
+];
+
+const QUIZ=[
+  {q:"Which machine redirects force using a rope and wheel?",qAs:"কোন যন্ত্ৰে দড়ি আৰু চকা ব্যৱহাৰ কৰি বল পুনৰ নিৰ্দেশ কৰে?",
+   opts:['Lever','Pulley','Wedge','Screw'],ans:1,
+   fact:"Pulleys make lifting feel lighter — compound pulleys can reduce effort by 75%!",factAs:"পুলিয়ে উঠানক লঘু অনুভৱ কৰায় — যৌগিক পুলিয়ে প্ৰচেষ্টা ৭৫% কমাব পাৰে!"},
+  {q:"A see-saw, scissors and bottle opener — all examples of which machine?",qAs:"দোলনা, কাঁচি, বটল খোলনী — কোন যন্ত্ৰৰ উদাহৰণ?",
+   opts:['Pulley','Inclined Plane','Lever','Wheel & Axle'],ans:2,
+   fact:"Levers are everywhere! Your arm is a lever — your elbow is the fulcrum!",factAs:"লিভাৰ সৰ্বত্ৰ! তোমাৰ বাহু এটা লিভাৰ — কিলকোটা হ'ল ফুলক্ৰাম!"},
+  {q:"Which machine is used when building ramps to move heavy objects?",qAs:"ভাৰী বস্তু সৰোৱাৰ বাবে ৰেম্প নিৰ্মাণত কোন যন্ত্ৰ ব্যৱহাৰ হয়?",
+   opts:['Screw','Wedge','Pulley','Inclined Plane'],ans:3,
+   fact:"An inclined plane spreads the work over a longer distance — less force needed at any one point!",factAs:"হেলনীয়া সমতলে কাম দীৰ্ঘ দূৰত্বত বিয়পায় — যিকোনো এটা বিন্দুত কম বল দৰকাৰ!"},
+  {q:"An axe splitting wood uses which type of simple machine?",qAs:"কাঠ কটা কুঠাৰ কোন ধৰণৰ সৰল যন্ত্ৰ?",
+   opts:['Lever','Screw','Wedge','Pulley'],ans:2,
+   fact:"A wedge converts a downward force into outward splitting force — that's why axes work so well!",factAs:"কীলকে তললৈ যোৱা বলক বাহিৰলৈ যোৱা বলত পৰিণত কৰে!"},
+  {q:"Which machine converts rotational motion into forward movement?",qAs:"কোন যন্ত্ৰে ঘূৰ্ণন গতিক আগলৈ যোৱা গতিলৈ ৰূপান্তৰিত কৰে?",
+   opts:['Wheel & Axle','Screw','Lever','Inclined Plane'],ans:1,
+   fact:"Screws are so efficient that bolt tighteners can create thousands of pounds of force with a small turn!",factAs:"স্ক্ৰু ইমান দক্ষ যে এটা সৰু ঘূৰণিয়ে বহু শক্তি সৃষ্টি কৰিব পাৰে!"},
+  {q:"Bullock carts carrying tea in Assam mainly use which simple machine?",qAs:"অসমত চাহ বহন কৰা বলদ গাড়ীত মূলতঃ কোন সৰল যন্ত্ৰ ব্যৱহাৰ হয়?",
+   opts:['Lever','Inclined Plane','Pulley','Wheel & Axle'],ans:3,
+   fact:"Wheels cut transport effort by 90%! Assam's tea gardens still use wheeled carts for harvested leaves.",factAs:"চকাই পৰিবহন প্ৰচেষ্টা ৯০% কমালে! অসমৰ চাহ বাগানত আজিও চকাযুক্ত গাড়ী ব্যৱহাৰ হয়।"}
+];
+
+let explored=new Set(),score=0,quizQ=0;
+
+function initGame(){explored=new Set();score=0;quizQ=0;updateStars(0);buildGrid();updatePhase();}
+
+function buildGrid(){
+  const grid=document.getElementById('machineGrid');
+  grid.innerHTML='';
+  MACHINES.forEach((m,i)=>{
+    const card=document.createElement('div');
+    card.className='machine-card'+(explored.has(i)?' explored':'');
+    card.id='mc-'+i;
+    card.innerHTML=`<div class="mc-emoji">${m.emoji}</div><div class="mc-name">${m.name}</div><div class="mc-name-as">${m.as}</div>${explored.has(i)?'<div class="explored-badge">✓ Read</div>':''}`;
+    card.addEventListener('click',()=>exploreM(i));
+    grid.appendChild(card);
+  });
+}
+
+function exploreM(idx){
+  explored.add(idx);
+  document.querySelectorAll('.machine-card').forEach((c,i)=>{c.classList.toggle('active-explore',i===idx);c.classList.toggle('explored',explored.has(i));});
+  const m=MACHINES[idx];
+  const panel=document.getElementById('infoPanel');
+  panel.innerHTML=`<div class="info-title">${m.emoji} ${m.name}</div><div class="info-title-as">${m.as}</div><div class="info-text">${m.info}<br><span style="font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);">${m.infoAs}</span></div><div class="info-fact">💡 ${m.fact}<br><span style="font-family:'Noto Sans Devanagari',sans-serif;">${m.factAs}</span></div>`;
+  panel.classList.add('show');
+  document.getElementById('exploreProgress').textContent=explored.size+'/6 explored';
+  updatePhase();
+  if(explored.size>=6){document.getElementById('startQuizBtn').classList.add('show');}
+}
+
+function updatePhase(){
+  const n=explored.size;
+  for(let i=0;i<6;i++){const d=document.getElementById('pd'+i);d.className='phase-dot'+(i<n?' done':i===n?' active':'');}
+  document.getElementById('phaseLabel').textContent=n>=6?'All explored! Start quiz →':`${n}/6 explored`;
+  document.getElementById('progFill').style.width=(n/12*100)+'%';
+}
+
+function startQuiz(){
+  document.getElementById('explorePhase').style.display='none';
+  document.getElementById('quizPhase').classList.add('show');
+  document.getElementById('pd6').className='phase-dot active';
+  renderQ(0);
+}
+
+function renderQ(idx){
+  const q=QUIZ[idx];
+  document.getElementById('qProgress').textContent=`Question ${idx+1}/6`;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('qAs').textContent=q.qAs;
+  document.getElementById('feedback').textContent='';
+  document.getElementById('progFill').style.width=((6+idx)/12*100)+'%';
+  const opts=document.getElementById('qOpts');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const btn=document.createElement('div');btn.className='q-opt';btn.textContent=o;
+    btn.addEventListener('click',()=>answerQ(btn,i,q,idx));
+    opts.appendChild(btn);
+  });
+}
+
+function answerQ(btn,chosen,q,idx){
+  document.querySelectorAll('.q-opt').forEach(o=>o.classList.add('disabled'));
+  if(chosen===q.ans){
+    btn.classList.add('correct');score++;updateStars(Math.min(5,Math.ceil(score/1.2)));confetti();
+    document.getElementById('ovEmoji').textContent='⚙️';
+    document.getElementById('ovTitle').textContent=['Excellent!','Brilliant!','Spot on!','Amazing!','Outstanding!'][Math.floor(Math.random()*5)];
+    document.getElementById('ovFact').textContent=q.fact;
+    document.getElementById('ovAs').textContent=q.factAs;
+    const isLast=idx>=5;
+    document.getElementById('ovBtn').textContent=isLast?'Finish! / শেষ!':'Next → / পৰৱৰ্তী';
+    document.getElementById('ovBtn').onclick=()=>{showOverlay(false);if(isLast)endGame();else{quizQ++;renderQ(quizQ);}};
+    setTimeout(()=>showOverlay(true),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.q-opt').forEach((o,i)=>{if(i===q.ans)o.classList.add('correct');});
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent='❌ Not quite! / ঠিক নহয়!';
+    setTimeout(()=>{quizQ++;if(quizQ>=6)endGame();else renderQ(quizQ);},2000);
+  }
+}
+
+function endGame(){
+  trackProgress();
+  document.getElementById('ovEmoji').textContent='🏆';
+  document.getElementById('ovTitle').textContent='Machine Master! / যন্ত্ৰ বিশেষজ্ঞ!';
+  document.getElementById('ovFact').textContent=`Score: ${score}/6! You explored all 6 simple machines and can now identify them everywhere!`;
+  document.getElementById('ovAs').textContent=`স্কোৰ: ${score}/৬! তুমি ৬টা সৰল যন্ত্ৰ অন্বেষণ কৰিলা!`;
+  document.getElementById('ovBtn').textContent='🔄 Play Again / আকৌ খেলক';
+  document.getElementById('ovBtn').onclick=()=>{showOverlay(false);initGame();};
+  showOverlay(true);
+}
+async function trackProgress(){
+  if(!currentUser)return;
+  try{await db.collection('users').doc(currentUser.uid).collection('progress').doc('class4-game12').set(
+    {score,total:6,gameId:'class4-game12',gameName:'Forces & Simple Machines',class:4,subject:'Science',completedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+}
+function updateStars(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function showOverlay(s){document.getElementById('overlay').classList.toggle('show',s);}
+function confetti(){
+  const cols=['#FFD166','#06D6A0','#4CC9F0','#FF6B6B','#C77DFF'];
+  for(let i=0;i<22;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%5]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}
+}
+</script>
+</body>
+</html>

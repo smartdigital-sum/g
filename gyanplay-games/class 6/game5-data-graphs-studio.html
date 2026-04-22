@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data &amp; Graphs Studio — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--purple:#C77DFF;--blue:#4CC9F0;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#180A28 0%,#0F0820 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(199,125,255,.13),rgba(199,125,255,.04));border:1px solid rgba(199,125,255,.3);border-radius:16px;padding:16px;margin-bottom:16px}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(199,125,255,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--purple);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:700}
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.45}
+/* Bar chart */
+.chart-area{background:rgba(199,125,255,.04);border:1px solid rgba(199,125,255,.12);border-radius:14px;padding:14px;margin-bottom:14px}
+.chart-title{font-size:.8rem;color:var(--dim);margin-bottom:10px;text-align:center}
+.bar-chart{display:flex;align-items:flex-end;justify-content:space-around;height:120px;gap:6px;padding:0 4px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.bar{width:100%;border-radius:6px 6px 0 0;transition:height .5s ease,background .3s;min-width:24px;position:relative;cursor:pointer}
+.bar-val{font-family:'Baloo 2',cursive;font-size:.75rem;font-weight:700;color:var(--gold)}
+.bar-lbl{font-size:.65rem;color:var(--dim);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52px}
+/* Pie chart via SVG */
+.pie-wrap{display:flex;justify-content:center;align-items:center;margin-bottom:12px}
+.pie-legend{display:flex;flex-direction:column;gap:6px;font-size:.78rem;margin-left:14px}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+/* Data table */
+.data-table{width:100%;border-collapse:collapse;font-size:.85rem;margin-bottom:14px}
+.data-table th{background:rgba(199,125,255,.12);color:var(--purple);font-family:'Baloo 2',cursive;font-weight:700;padding:8px 10px;text-align:left;font-size:.8rem}
+.data-table td{padding:8px 10px;border-bottom:1px solid rgba(199,125,255,.08);color:var(--text)}
+.data-table tr:last-child td{border-bottom:none}
+/* Options */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(199,125,255,.07);border:2px solid rgba(199,125,255,.2);border-radius:14px;padding:12px 8px;font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--purple);background:rgba(199,125,255,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.92rem;font-weight:600;min-height:26px;margin:10px 0 4px}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+/* Stats row */
+.stats-row{display:flex;gap:8px;margin-bottom:12px}
+.stat-box{flex:1;background:rgba(199,125,255,.07);border:1px solid rgba(199,125,255,.18);border-radius:10px;padding:10px;text-align:center}
+.stat-val{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--gold)}
+.stat-label{font-size:.68rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+/* Sorter beads */
+.sorter{display:flex;flex-wrap:wrap;gap:8px;background:rgba(199,125,255,.05);border:1px solid rgba(199,125,255,.12);border-radius:12px;padding:12px;margin-bottom:12px}
+.bead{background:rgba(199,125,255,.18);border:1px solid rgba(199,125,255,.35);border-radius:8px;padding:6px 12px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;color:var(--text)}
+.bead.sorted-median{background:rgba(255,209,102,.25);border-color:var(--gold);color:var(--gold)}
+.bead.sorted-mean{background:rgba(6,214,160,.18);border-color:var(--teal);color:var(--teal)}
+/* bottom bar */
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#0F0820 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--purple);color:var(--purple);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.play-again-btn:hover{background:rgba(199,125,255,.1)}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(199,125,255,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stage-transition{background:linear-gradient(135deg,rgba(199,125,255,.1),rgba(199,125,255,.03));border:1px solid rgba(199,125,255,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--purple);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">📈 Data &amp; Graphs Studio</div>
+      <span class="subject-tag">Maths · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="wow-emoji">🏥</span>
+    <div class="wow-text">Florence Nightingale <strong>INVENTED the pie chart</strong> in 1858 to convince politicians that soldiers were dying from <em>preventable disease</em>, not battle wounds. She saved thousands of lives — <strong>with a graph!</strong></div>
+  </div>
+
+  <div id="gameArea"></div>
+
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Question 1 of 11</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+const COLORS=['#C77DFF','#FFD166','#06D6A0','#4CC9F0','#FF9F1C','#FF6B6B'];
+/* Stage 1: Read bar chart — 4 questions */
+const S1 = [
+  {
+    title:'Tea Production — Assam Districts (thousand kg)',
+    bars:[{l:'Dibrugarh',v:85},{l:'Tinsukia',v:70},{l:'Jorhat',v:60},{l:'Sivasagar',v:45}],
+    questions:[
+      {q:'Which district produced the MOST tea?', correct:'Dibrugarh', opts:['Dibrugarh','Tinsukia','Jorhat','Sivasagar'], fact:'Dibrugarh produces 85 thousand kg — highest in the chart!'},
+      {q:'How much more did Dibrugarh produce than Jorhat?', correct:'25 thousand kg', opts:['25 thousand kg','15 thousand kg','40 thousand kg','10 thousand kg'], fact:'85 − 60 = 25 thousand kg more!'},
+    ]
+  },
+  {
+    title:'Class 6 Exam Scores (marks out of 100)',
+    bars:[{l:'Maths',v:78},{l:'English',v:65},{l:'Science',v:82},{l:'SST',v:71},{l:'Hindi',v:69}],
+    questions:[
+      {q:'Which subject had the highest average score?', correct:'Science', opts:['Maths','English','Science','Hindi'], fact:'Science scored 82 — the tallest bar in the chart!'},
+      {q:'What is the total of Maths and English combined?', correct:'143', opts:['143','150','138','147'], fact:'78 + 65 = 143 marks total.'},
+    ]
+  },
+];
+/* Stage 2: Mean, Median, Mode — 4 questions */
+const S2 = [
+  {data:[4,7,2,9,3], q:'Find the <strong>mean</strong> (average)',  correct:'5', opts:['5','6','4','7'], fact:'Sum = 4+7+2+9+3 = 25. Mean = 25÷5 = 5', type:'mean'},
+  {data:[3,7,2,9,4,7,1], q:'Find the <strong>mode</strong> (most frequent)', correct:'7', opts:['7','3','4','9'], fact:'7 appears twice — more than any other number. Mode = 7!', type:'mode'},
+  {data:[12,18,5,20,9], q:'Find the <strong>median</strong> (middle value when sorted)', correct:'12', opts:['12','9','18','14'], fact:'Sorted: 5, 9, 12, 18, 20. Middle value = 12. Median = 12!', type:'median'},
+  {data:[10,15,10,20,10,5,30], q:'Find the <strong>mode</strong>', correct:'10', opts:['10','15','20','5'], fact:'10 appears 3 times — the most frequent. Mode = 10!', type:'mode'},
+];
+/* Stage 3: Choose chart type */
+const S3 = [
+  {scenario:'You want to show how a student\'s test scores <strong>changed over 6 months</strong>.', correct:'Line Chart', opts:['Line Chart','Pie Chart','Bar Chart','Tally'], fact:'Line charts are best for showing change over time — they connect the dots to show trends!'},
+  {scenario:'You want to show what <strong>fraction of the day</strong> a student spends on sleep, study, play, and eating.', correct:'Pie Chart', opts:['Bar Chart','Pie Chart','Line Chart','Scatter'], fact:'Pie charts show parts of a whole — perfect for showing how a total is divided!'},
+  {scenario:'You want to <strong>compare rainfall</strong> in 5 different cities for one month.', correct:'Bar Chart', opts:['Line Chart','Pie Chart','Bar Chart','Table'], fact:'Bar charts are ideal for comparing different categories at the same point in time!'},
+];
+
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+const TOTAL=2+2+4+3; // 11
+let qIdx=0, stg=1, dataSet=0, dataQ=0, score=0, answered=false;
+
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  const C=['#FFD166','#C77DFF','#06D6A0','#4CC9F0','#FF9F1C'];
+  for(let i=0;i<28;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
+  }
+}
+function updateStars(){
+  const lit=Math.min(5,Math.ceil(score/(TOTAL/5)));
+  for(let i=1;i<=5;i++) document.getElementById('s'+i).classList.toggle('lit',i<=lit);
+}
+function showOverlay(emoji,title,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;
+  document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovFact').textContent=fact;
+  document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay');ov.classList.add('show');
+  if(!isEnd)setTimeout(()=>ov.classList.remove('show'),2700);
+}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(q){document.getElementById('progressLabel').textContent=`Question ${q} of ${TOTAL}`}
+
+function makeBarChart(bars,title){
+  const maxV=Math.max(...bars.map(b=>b.v));
+  return `<div class="chart-area">
+    <div class="chart-title">${title}</div>
+    <div class="bar-chart">
+      ${bars.map((b,i)=>`
+        <div class="bar-col">
+          <div class="bar-val">${b.v}</div>
+          <div class="bar" style="height:${Math.round(b.v/maxV*90)}px;background:${COLORS[i%COLORS.length]}"></div>
+          <div class="bar-lbl">${b.l}</div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+let globalQ=0;
+function renderS1(){
+  const ds=S1[dataSet];
+  const q=ds.questions[dataQ];
+  setProgress(++globalQ); answered=false; showNext(false);
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">📊 Stage 1 — Read the Bar Chart</div>
+      ${makeBarChart(ds.bars,ds.title)}
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS1('${o}','${q.correct}','${q.fact}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS1(sel,correct,fact,btn){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct'); score++; updateStars();
+    fb.textContent=cheer()+'  '+correct+' — correct!'; fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('📊',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact; fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function makeSorterBeads(data,type){
+  const sorted=[...data].sort((a,b)=>a-b);
+  const midIdx=Math.floor(sorted.length/2);
+  return `<div class="sorter">
+    ${sorted.map((v,i)=>`<div class="bead ${type==='median'&&i===midIdx?'sorted-median':type==='mean'?'sorted-mean':''}">${v}</div>`).join('')}
+  </div>`;
+}
+function renderS2(i){
+  setProgress(++globalQ); answered=false; showNext(false);
+  const q=S2[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  const sorted=[...q.data].sort((a,b)=>a-b);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🔢 Stage 2 — Statistics</div>
+      <div class="question-text">${q.q}</div>
+      <div style="text-align:center;margin-bottom:8px">
+        <div style="font-size:.75rem;color:var(--dim);margin-bottom:6px">Data set: <strong style="color:var(--gold)">${q.data.join(', ')}</strong></div>
+        <div style="font-size:.72rem;color:var(--dim)">Sorted: <strong style="color:var(--blue)">${sorted.join(' , ')}</strong></div>
+      </div>
+      ${makeSorterBeads(q.data,q.type)}
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS2('${o}','${q.correct}','${q.fact}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS2(sel,correct,fact,btn){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct'); score++; updateStars();
+    fb.textContent=cheer()+' '+correct+' is right!'; fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🔢',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact; fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+function renderS3(i){
+  setProgress(++globalQ); answered=false; showNext(false);
+  const q=S3[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🎨 Stage 3 — Pick the Right Chart</div>
+      <div class="question-text">Which chart type should you use?</div>
+      <div style="background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.2);border-radius:12px;padding:12px;margin-bottom:14px;font-size:.88rem;line-height:1.6;color:var(--text)">${q.scenario}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS3('${o}','${q.correct}','${q.fact}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS3(sel,correct,fact,btn){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct'); score++; updateStars();
+    fb.textContent=cheer()+' '+correct+' is the best choice!'; fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('📈',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Best choice: '+correct+'. '+fact; fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function nextQ(){
+  if(stg===1){
+    dataQ++;
+    if(dataQ<S1[dataSet].questions.length) renderS1();
+    else{
+      dataSet++; dataQ=0;
+      if(dataSet<S1.length) renderS1();
+      else{stg=2;qIdx=0;showTrans('🔢','Stage 2: Statistics!','Find the mean (average), median (middle), and mode (most frequent) of data sets.',()=>{renderS2(0)})}
+    }
+  } else if(stg===2){
+    qIdx++;
+    if(qIdx<S2.length) renderS2(qIdx);
+    else{stg=3;qIdx=0;showTrans('🎨','Stage 3: Choose Your Chart!','Different data needs different chart types. Pick the right one!',()=>{renderS3(0)})}
+  } else {
+    qIdx++;
+    if(qIdx<S3.length) renderS3(qIdx);
+    else endGame();
+  }
+}
+function showTrans(emoji,title,desc,cb){
+  showNext(false);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="stage-transition">
+      <div style="font-size:2.5rem">${emoji}</div>
+      <h3>${title}</h3><p>${desc}</p>
+    </div>`;
+  const nb=document.getElementById('nextBtn');
+  nb.textContent='Start →'; nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →';nb.onclick=nextQ;cb()};
+}
+function endGame(){
+  confetti();
+  const medals=['Data Learner 🌱','Graph Reader 🔍','Stats Master 📊','Data Champion 🏆','Data Scientist 🌟'];
+  const medal=medals[Math.min(4,Math.floor(score*5/TOTAL))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--purple);margin:10px 0">${score} / ${TOTAL}</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        Florence Nightingale used graphs to save lives. Scientists use data to track climate. Sports teams use stats to pick players. You just learned their most essential tools!
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  document.getElementById('progressLabel').textContent=`Final Score: ${score}/${TOTAL}`;
+  showNext(false);
+}
+function resetGame(){
+  qIdx=0;stg=1;dataSet=0;dataQ=0;score=0;answered=false;globalQ=0;
+  for(let i=1;i<=5;i++) document.getElementById('s'+i).classList.remove('lit');
+  const nb=document.getElementById('nextBtn');nb.textContent='Next →';nb.onclick=nextQ;
+  renderS1();
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{
+  document.getElementById('overlay').classList.remove('show');resetGame();
+});
+renderS1();
+</script>
+</body>
+</html>

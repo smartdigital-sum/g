@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🚂 Railway Clock — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A0A1A;--card:#14143A;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--orange:#FF9F1C;--purple:#C77DFF;--blue:#4CC9F0;--text:#F0F0FF;--dim:#6A6A9A}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(255,209,102,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.3rem}
+.star{opacity:.3;transition:all .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:18px 16px;gap:16px}
+.hook{background:linear-gradient(135deg,rgba(76,201,240,.12),rgba(255,209,102,.08));border:1px solid rgba(76,201,240,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.88rem;line-height:1.6;color:#C4EEFF}
+.hook strong{color:var(--gold)}
+.scenario{background:var(--card);border-radius:14px;padding:14px 20px;text-align:center;border:2px solid rgba(76,201,240,.2);width:100%;max-width:420px;font-size:.92rem;color:var(--dim);line-height:1.5}
+.scenario strong{color:var(--text)}
+/* Clock face */
+.clock-wrap{display:flex;align-items:center;justify-content:center}
+.clock-svg{filter:drop-shadow(0 6px 24px rgba(76,201,240,.2))}
+/* Options */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:380px}
+.opt-btn{padding:18px 12px;background:var(--card);border:2px solid rgba(76,201,240,.2);border-radius:12px;color:var(--text);font-family:'Baloo 2',sans-serif;font-size:1.5rem;font-weight:700;cursor:pointer;transition:transform .15s,border-color .2s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.opt-btn:hover{transform:scale(1.04);border-color:var(--blue)}
+.opt-btn .time-label{font-size:.7rem;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:400}
+.opt-btn.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.12);border-color:var(--coral);color:var(--coral)}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#1B0A3C;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(10,10,26,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4.5rem}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.9rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🚂 Railway Clock</div><div class="subject-tag">Maths · Telling Time · Class 3</div></div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+
+<div class="game-area">
+  <div class="hook">🚂 Indian trains run on <strong>exact schedules</strong>. The Rajdhani Express leaves at 5:55 PM — miss it by 5 minutes and you wait 24 hours! Reading a clock is a real-life superpower. What time does this clock show?</div>
+
+  <div class="scenario" id="scenario">📍 Guwahati Railway Station</div>
+
+  <div class="clock-wrap">
+    <svg class="clock-svg" width="200" height="200" viewBox="0 0 200 200" id="clockSvg">
+      <!-- Clock face -->
+      <circle cx="100" cy="100" r="95" fill="#14143A" stroke="#4CC9F0" stroke-width="3"/>
+      <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(76,201,240,.2)" stroke-width="1"/>
+      <!-- Hour markers -->
+      <g id="markers"></g>
+      <!-- Hands -->
+      <line id="hourHand" x1="100" y1="100" x2="100" y2="45" stroke="#FFD166" stroke-width="7" stroke-linecap="round"/>
+      <line id="minHand" x1="100" y1="100" x2="100" y2="28" stroke="#06D6A0" stroke-width="4" stroke-linecap="round"/>
+      <!-- Center dot -->
+      <circle cx="100" cy="100" r="6" fill="#FFD166"/>
+      <!-- Numbers -->
+      <g id="nums"></g>
+    </svg>
+  </div>
+
+  <div class="options-grid" id="optGrid"></div>
+</div>
+
+<div class="bottom">
+  <div class="prog" id="prog">Question 1 of 8</div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()">Next Station →</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">On time!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+
+<script>
+// Draw clock numbers and markers
+function initClock(){
+  const m=document.getElementById('markers');const n=document.getElementById('nums');
+  for(let i=0;i<12;i++){
+    const a=(i*30-90)*Math.PI/180;
+    const r1=82,r2=92;
+    m.innerHTML+=`<line x1="${100+r1*Math.cos(a)}" y1="${100+r1*Math.sin(a)}" x2="${100+r2*Math.cos(a)}" y2="${100+r2*Math.sin(a)}" stroke="rgba(76,201,240,.5)" stroke-width="${i%3===0?2.5:1}"/>`;
+  }
+  for(let i=1;i<=12;i++){
+    const a=(i*30-90)*Math.PI/180;const r=72;
+    n.innerHTML+=`<text x="${100+r*Math.cos(a)}" y="${100+r*Math.sin(a)}" text-anchor="middle" dominant-baseline="central" fill="#A0A8CC" font-size="12" font-family="Baloo 2,sans-serif" font-weight="600">${i}</text>`;
+  }
+  // Minute ticks
+  for(let i=0;i<60;i++){
+    if(i%5===0)continue;
+    const a=(i*6-90)*Math.PI/180;
+    m.innerHTML+=`<line x1="${100+85*Math.cos(a)}" y1="${100+85*Math.sin(a)}" x2="${100+90*Math.cos(a)}" y2="${100+90*Math.sin(a)}" stroke="rgba(76,201,240,.25)" stroke-width="0.8"/>`;
+  }
+}
+
+const TIMES=[
+  {h:3,m:0,scenario:'🚂 Train to Jorhat departs at...',label:'o\'clock — the short (gold) hand points straight at the hour!'},
+  {h:6,m:30,scenario:'🍱 Lunch break at the station starts at...',label:'half past — the long hand points straight down at 6!'},
+  {h:9,m:0,scenario:'☕ Morning chai time on the platform...',label:'9 o\'clock — short hand on 9, long hand on 12!'},
+  {h:12,m:0,scenario:'☀️ The noon train arrives at...',label:'12 o\'clock sharp — both hands point straight up!'},
+  {h:4,m:30,scenario:'🎒 School train leaves at...',label:'4:30 — half past 4. Long hand always at 6 for :30!'},
+  {h:7,m:30,scenario:'🌙 Night express departs at...',label:'7:30 — half past 7. Count the hour, add :30!'},
+  {h:2,m:0,scenario:'🏟️ Match train departs at...',label:'2 o\'clock — short hand on 2, long hand on 12!'},
+  {h:11,m:30,scenario:'📦 Goods train passes at...',label:'11:30 — half past 11. Almost noon!'}
+];
+
+let qi=0,score=0,answered=false;
+
+function fmt(h,m){const hh=h===0?12:h;const mm=m<10?'0'+m:m;return `${hh}:${mm}`;}
+
+function loadQ(){
+  const t=TIMES[qi];answered=false;
+  document.getElementById('scenario').textContent=t.scenario;
+  setHands(t.h,t.m);
+  buildOptions(t);
+  document.getElementById('nextBtn').style.display='none';
+}
+
+function setHands(h,m){
+  const hDeg=(h%12)*30+(m/60)*30-90;
+  const mDeg=m*6-90;
+  const hr=document.getElementById('hourHand');
+  const mr=document.getElementById('minHand');
+  // hour hand: shorter, ends at 45 from centre (55px)
+  hr.setAttribute('x2',100+55*Math.cos(hDeg*Math.PI/180));
+  hr.setAttribute('y2',100+55*Math.sin(hDeg*Math.PI/180));
+  // min hand: longer, ends at 28 from centre (72px)
+  mr.setAttribute('x2',100+72*Math.cos(mDeg*Math.PI/180));
+  mr.setAttribute('y2',100+72*Math.sin(mDeg*Math.PI/180));
+}
+
+function buildOptions(t){
+  const correct=fmt(t.h,t.m);
+  const opts=new Set([correct]);
+  const variants=[[t.h+1,t.m],[t.h-1,t.m],[t.h,30],[t.h+2,t.m],[t.h,0]];
+  for(const v of variants){
+    if(opts.size>=4)break;
+    const vh=((v[0]-1+12)%12)+1;const vm=v[1];
+    const s=fmt(vh,vm);if(s!==correct)opts.add(s);
+  }
+  while(opts.size<4){const rh=Math.floor(Math.random()*12)+1;const rm=Math.random()<.5?0:30;const s=fmt(rh,rm);if(s!==correct)opts.add(s);}
+  const arr=Array.from(opts).sort(()=>Math.random()-.5);
+  const g=document.getElementById('optGrid');g.innerHTML='';
+  arr.forEach(v=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';
+    b.innerHTML=`${v}<span class="time-label">${v.endsWith(':00')?'o\'clock':'half past'}</span>`;
+    b.onclick=()=>pick(b,v,correct,t);
+    g.appendChild(b);
+  });
+}
+
+function pick(btn,val,correct,t){
+  if(answered)return;answered=true;
+  if(val===correct){
+    btn.classList.add('correct');score++;
+    if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+    showOverlay('On time! 🚂',t.label);confetti();setTimeout(hideOverlay,2500);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.startsWith(correct))b.classList.add('correct');});
+    showOverlay('Almost!',t.label);setTimeout(hideOverlay,2500);
+  }
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function nextQ(){
+  qi++;document.getElementById('nextBtn').style.display='none';
+  if(qi>=TIMES.length){endGame();return;}
+  document.getElementById('prog').textContent=`Question ${qi+1} of ${TIMES.length}`;
+  loadQ();
+}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOverlay(`Score: ${score}/${TIMES.length}!`,'Railway Clock master — never miss a train!');
+  document.getElementById('nextBtn').textContent='Play Again ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;qi=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='Next Station →';document.getElementById('nextBtn').onclick=nextQ;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='On time!';hideOverlay();loadQ();};
+}
+function showOverlay(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOverlay(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#FFD166','#FF6B6B','#06D6A0','#C77DFF','#FF9F1C'];for(let i=0;i<28;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+initClock();loadQ();
+</script>
+</body>
+</html>

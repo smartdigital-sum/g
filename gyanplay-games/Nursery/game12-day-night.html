@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Day or Night? ☀️🌙 | GyanPlay Nursery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--gold:#FFB800;--green:#00C853;--pink:#FF4081;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    body{
+      font-family:'Nunito',sans-serif;
+      min-height:100vh;
+      display:flex;flex-direction:column;align-items:center;
+      padding:16px;animation:fadeIn .4s ease;
+      transition:background 0.6s ease, color 0.6s ease;
+    }
+    body.day-mode{
+      background:linear-gradient(135deg,#B3E5FC,#81D4FA);
+      color:#01579B;
+    }
+    body.night-mode{
+      background:linear-gradient(135deg,#1A237E,#311B92);
+      color:#E8EAF6;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes floatUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+    @keyframes twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.15)}}
+    @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+    @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+    @keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+
+    /* TOP BAR */
+    .top-bar{
+      width:100%;max-width:680px;
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:14px;flex-wrap:wrap;gap:8px;
+    }
+    .back-btn{
+      background:rgba(255,255,255,.35);border:none;
+      padding:9px 22px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
+      cursor:pointer;transition:background .2s;
+    }
+    body.day-mode .back-btn{color:#01579B}
+    body.night-mode .back-btn{color:#E8EAF6}
+    .back-btn:hover{background:rgba(255,255,255,.55)}
+    .subject-badge{
+      background:rgba(255,255,255,.35);padding:7px 20px;
+      border-radius:999px;font-size:.9rem;font-weight:800;
+      font-family:'Baloo 2',sans-serif;
+    }
+    body.day-mode .subject-badge{color:#01579B}
+    body.night-mode .subject-badge{color:#E8EAF6}
+    .lang-toggle{display:flex;gap:6px}
+    .lang-btn{
+      background:rgba(255,255,255,.25);border:none;
+      padding:7px 14px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;
+      cursor:pointer;transition:all .2s;
+    }
+    body.day-mode .lang-btn{color:#01579B}
+    body.night-mode .lang-btn{color:#E8EAF6}
+    .lang-btn.active{background:#fff;color:#0277BD !important}
+    .lang-btn:hover:not(.active){background:rgba(255,255,255,.45)}
+
+    /* CARD */
+    .game-card{
+      backdrop-filter:blur(14px);
+      border-radius:28px;padding:22px 20px;
+      width:100%;max-width:680px;
+      box-shadow:0 12px 50px rgba(0,0,0,.15);
+      transition:background .6s, border .6s;
+    }
+    body.day-mode .game-card{background:rgba(255,255,255,.4);border:2.5px solid rgba(255,255,255,.55);}
+    body.night-mode .game-card{background:rgba(255,255,255,.08);border:2.5px solid rgba(255,255,255,.18);}
+
+    .game-title{
+      font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;
+      text-align:center;margin-bottom:6px;
+    }
+    .score-bar{display:flex;justify-content:space-between;margin:6px 0;font-size:1rem;font-weight:800}
+    .prog-wrap{background:rgba(255,255,255,.25);border-radius:999px;height:12px;margin-bottom:16px}
+    .prog-fill{
+      height:12px;border-radius:999px;transition:width .4s ease;
+    }
+    body.day-mode .prog-fill{background:linear-gradient(90deg,#FFC107,#81D4FA)}
+    body.night-mode .prog-fill{background:linear-gradient(90deg,#7C4DFF,#3D5AFE)}
+
+    /* INSTRUCTION */
+    .instruction{
+      font-size:1.3rem;font-weight:800;text-align:center;
+      margin-bottom:14px;border-radius:16px;padding:10px 14px;line-height:1.4;
+    }
+    body.day-mode .instruction{background:rgba(255,255,255,.3);color:#01579B}
+    body.night-mode .instruction{background:rgba(255,255,255,.1);color:#E8EAF6}
+
+    /* ACTIVITY DISPLAY */
+    .activity-show{
+      display:flex;flex-direction:column;align-items:center;gap:10px;
+      border-radius:24px;padding:22px 18px;margin-bottom:16px;
+      border:3px solid rgba(255,255,255,.35);transition:background .6s;
+    }
+    body.day-mode .activity-show{background:rgba(255,255,255,.28)}
+    body.night-mode .activity-show{background:rgba(255,255,255,.06)}
+
+    .activity-emoji{
+      font-size:7rem;line-height:1;
+      animation:floatUp 2.2s ease infinite;
+      filter:drop-shadow(0 4px 16px rgba(0,0,0,.15));
+    }
+    body.night-mode .activity-emoji{filter:drop-shadow(0 0 20px rgba(180,130,255,.4))}
+
+    .activity-label{
+      font-family:'Baloo 2',sans-serif;font-size:1.7rem;font-weight:800;
+    }
+    body.day-mode .activity-label{color:#01579B}
+    body.night-mode .activity-label{color:#E8EAF6}
+
+    /* SORT BUTTONS */
+    .sort-buttons{
+      display:grid;grid-template-columns:1fr 1fr;
+      gap:14px;margin-bottom:12px;
+    }
+    .sort-btn{
+      border:3px solid rgba(255,255,255,.4);
+      border-radius:22px;padding:16px 10px;
+      font-family:'Baloo 2',sans-serif;font-size:1.35rem;font-weight:800;
+      cursor:pointer;text-align:center;transition:all .2s;
+      min-height:80px;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:4px;
+    }
+    body.day-mode .sort-btn{background:rgba(255,255,255,.35);color:#01579B}
+    body.night-mode .sort-btn{background:rgba(255,255,255,.1);color:#E8EAF6}
+    .sort-btn span.btn-emoji{font-size:2.2rem;display:block}
+    .sort-btn:hover:not(:disabled){background:rgba(255,255,255,.6);transform:scale(1.04)}
+    .sort-btn.correct{background:rgba(0,200,83,.4);border-color:#00C853;color:#fff;animation:pop .4s ease}
+    .sort-btn.wrong{background:rgba(255,64,129,.3);border-color:#FF4081;animation:shake .4s ease}
+    .sort-btn:disabled{cursor:default}
+
+    /* FEEDBACK */
+    .feedback{
+      font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;
+      text-align:center;min-height:1.8rem;margin:8px 0 6px;
+    }
+    .feedback.correct{color:#00C853}
+    .feedback.wrong{color:#FF4081}
+    body.day-mode .feedback.correct{color:#1B5E20}
+    body.day-mode .feedback.wrong{color:#C62828}
+
+    /* FUN FACT */
+    .fun-fact{
+      font-size:1rem;border-radius:14px;padding:9px 14px;
+      margin-bottom:10px;line-height:1.5;display:none;
+      text-align:center;font-weight:700;
+    }
+    body.day-mode .fun-fact{color:#01579B;background:rgba(255,255,255,.3)}
+    body.night-mode .fun-fact{color:#C5CAE9;background:rgba(255,255,255,.1)}
+    .fun-fact.show{display:block}
+
+    /* NEXT BTN */
+    .next-btn{
+      color:#fff;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.8rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;display:none;transition:transform .15s;
+      width:100%;margin-top:4px;
+    }
+    body.day-mode .next-btn{background:#0288D1}
+    body.night-mode .next-btn{background:#5C6BC0}
+    .next-btn:hover{transform:scale(1.04)}
+
+    /* OVERLAY */
+    .overlay{
+      display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,.6);backdrop-filter:blur(10px);
+      align-items:center;justify-content:center;z-index:100;padding:1.5rem;
+    }
+    .overlay.show{display:flex}
+    .result-box{
+      border-radius:28px;padding:2.5rem 2rem;text-align:center;
+      max-width:400px;width:100%;animation:popIn .35s ease;
+    }
+    body.day-mode .result-box{background:linear-gradient(135deg,#E1F5FE,#B3E5FC);border:3px solid rgba(2,136,209,.4)}
+    body.night-mode .result-box{background:linear-gradient(135deg,#1A237E,#283593);border:3px solid rgba(92,107,192,.5)}
+
+    .res-emoji{font-size:4rem;margin-bottom:.5rem}
+    .res-title{font-family:'Baloo 2',sans-serif;font-size:2.2rem;font-weight:800;margin-bottom:.4rem}
+    body.day-mode .res-title{color:#01579B}
+    body.night-mode .res-title{color:#E8EAF6}
+    .res-score{font-size:1.1rem;margin-bottom:.8rem;font-weight:700}
+    body.day-mode .res-score{color:#0277BD}
+    body.night-mode .res-score{color:#C5CAE9}
+    .res-stars{font-size:3rem;margin-bottom:1.2rem;letter-spacing:6px}
+    .play-again-btn{
+      color:#fff;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.85rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;transition:transform .15s;
+    }
+    body.day-mode .play-again-btn{background:#0288D1}
+    body.night-mode .play-again-btn{background:#5C6BC0}
+    .play-again-btn:hover{transform:scale(1.05)}
+
+    [data-lang]{display:none}
+    [data-lang="en"]{display:inline}
+
+    @media(max-width:480px){
+      .activity-emoji{font-size:5.5rem}
+      .sort-btn{font-size:1.15rem;min-height:70px}
+      .sort-btn span.btn-emoji{font-size:1.8rem}
+      .game-title{font-size:1.65rem}
+    }
+  </style>
+</head>
+<body class="day-mode">
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi">वापस</span><span data-lang="as">পাছে</span></button>
+  <div class="subject-badge">🔬 <span data-lang="en">Science</span><span data-lang="hi">विज्ञान</span><span data-lang="as">বিজ্ঞান</span></div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<!-- GAME CARD -->
+<div class="game-card">
+  <div class="game-title" id="game-title">
+    <span data-lang="en">Day or Night? ☀️🌙</span>
+    <span data-lang="hi">दिन या रात? ☀️🌙</span>
+    <span data-lang="as">দিন নে ৰাতি? ☀️🌙</span>
+  </div>
+  <div class="score-bar">
+    <span><span data-lang="en">Score</span><span data-lang="hi">स्कोर</span><span data-lang="as">স্কোৰ</span>: <b id="score-val">0</b> / 80</span>
+    <span><span data-lang="en">Round</span><span data-lang="hi">दौर</span><span data-lang="as">ৰাউণ্ড</span> <b id="round-num">1</b> / 8</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+
+  <div class="instruction">
+    <span data-lang="en">👆 Do we do this during the Day or Night?</span>
+    <span data-lang="hi">👆 यह काम दिन में होता है या रात में?</span>
+    <span data-lang="as">👆 এইটো কাম দিনত হয় নে ৰাতি হয়?</span>
+  </div>
+
+  <div class="activity-show" id="activity-show">
+    <div class="activity-emoji" id="activity-emoji"></div>
+    <div class="activity-label" id="activity-label"></div>
+  </div>
+
+  <div class="sort-buttons">
+    <button class="sort-btn" id="btn-day" onclick="handleAnswer('day')">
+      <span class="btn-emoji">☀️</span>
+      <span data-lang="en">Day</span><span data-lang="hi">दिन</span><span data-lang="as">দিন</span>
+    </button>
+    <button class="sort-btn" id="btn-night" onclick="handleAnswer('night')">
+      <span class="btn-emoji">🌙</span>
+      <span data-lang="en">Night</span><span data-lang="hi">रात</span><span data-lang="as">ৰাতি</span>
+    </button>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+  <div class="fun-fact" id="fun-fact"></div>
+  <button class="next-btn" id="next-btn" onclick="nextRound()">
+    <span data-lang="en">Next Activity →</span>
+    <span data-lang="hi">अगला काम →</span>
+    <span data-lang="as">পৰৱৰ্তী কাৰ্য →</span>
+  </button>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="result-box">
+    <div class="res-emoji" id="res-emoji"></div>
+    <div class="res-title" id="res-title"></div>
+    <div class="res-score" id="res-score"></div>
+    <div class="res-stars" id="res-stars"></div>
+    <button class="play-again-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again!</span>
+      <span data-lang="hi">🔄 फिर खेलें!</span>
+      <span data-lang="as">🔄 আকৌ খেলক!</span>
+    </button>
+  </div>
+</div>
+
+<script>
+let currentLang='en';
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display=el.dataset.lang===l?'inline':'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((btn,i)=>{
+    btn.classList.toggle('active',['en','hi','as'][i]===l);
+  });
+}
+
+const activities=[
+  {
+    emoji:'☀️',
+    name:{en:'Sunshine! Go play outside',hi:'धूप! बाहर खेलने जाओ',as:'ৰ\'দ! বাহিৰলৈ খেলিবলৈ যাও'},
+    type:'day',
+    fact:{en:'Daytime is when the sun shines bright! We play, eat and go to school. 🏫',
+          hi:'दिन में सूरज चमकता है! हम खेलते हैं, खाते हैं और स्कूल जाते हैं। 🏫',
+          as:'দিনত সূৰ্য উজ্জ্বলভাৱে জিলিকে! আমি খেলো, খাওঁ আৰু বিদ্যালয়লৈ যাওঁ। 🏫'}
+  },
+  {
+    emoji:'😴',
+    name:{en:'Sleeping in bed',hi:'बिस्तर में सोना',as:'বিচনাত শোৱা'},
+    type:'night',
+    fact:{en:'Night time is for sleeping! Our body rests and grows while we sleep. 💤',
+          hi:'रात सोने का समय है! सोते समय हमारा शरीर आराम करता है और बढ़ता है। 💤',
+          as:'ৰাতি শোৱাৰ সময়! শোওঁতে আমাৰ শৰীৰ জিৰণি লয় আৰু বাঢ়ে। 💤'}
+  },
+  {
+    emoji:'🌟',
+    name:{en:'Stars in the sky',hi:'आसमान में तारे',as:'আকাশত তৰা'},
+    type:'night',
+    fact:{en:'Stars come out at night! The sky is dark and beautiful with millions of stars. ✨',
+          hi:'रात में तारे निकलते हैं! आसमान अंधेरा और लाखों तारों से सुंदर होता है। ✨',
+          as:'তৰাবোৰ ৰাতি ওলায়! আকাশ আন্ধাৰ আৰু লক্ষ লক্ষ তৰাৰে সুন্দৰ হয়। ✨'}
+  },
+  {
+    emoji:'🏫',
+    name:{en:'Going to school',hi:'स्कूल जाना',as:'বিদ্যালয়লৈ যোৱা'},
+    type:'day',
+    fact:{en:'We go to school in the daytime! We learn, read, and make friends. 📚',
+          hi:'हम दिन में स्कूल जाते हैं! हम सीखते हैं, पढ़ते हैं और दोस्त बनाते हैं। 📚',
+          as:'আমি দিনত বিদ্যালয়লৈ যাওঁ! আমি শিকো, পঢ়ো আৰু বন্ধু বনাওঁ। 📚'}
+  },
+  {
+    emoji:'🛁',
+    name:{en:'Bath time',hi:'नहाने का समय',as:'গা ধোৱাৰ সময়'},
+    type:'day',
+    fact:{en:'We take a bath in the morning to feel fresh and clean for the day! 🧼',
+          hi:'हम सुबह नहाते हैं ताकि पूरे दिन ताज़ा और साफ रहें! 🧼',
+          as:'দিনৰ বাবে সতেজ আৰু পৰিষ্কাৰ অনুভৱ কৰিবলৈ আমি পুৱাতে গা ধুওঁ! 🧼'}
+  },
+  {
+    emoji:'🍽️',
+    name:{en:'Eating dinner',hi:'रात का खाना',as:'ৰাতিৰ আহাৰ খোৱা'},
+    type:'night',
+    fact:{en:'Dinner is our evening meal! We eat together as a family at night. 👨‍👩‍👧',
+          hi:'रात का खाना शाम का भोजन है! हम रात को परिवार के साथ खाते हैं। 👨‍👩‍👧',
+          as:'ৰাতিৰ আহাৰ আমাৰ সন্ধিয়াৰ খাবাৰ! আমি ৰাতি পৰিয়ালৰ সৈতে খাওঁ। 👨‍👩‍👧'}
+  },
+  {
+    emoji:'🌅',
+    name:{en:'Wake up! Good morning',hi:'जागो! सुप्रभात',as:'সাৰ পাওক! শুভ পুৱা'},
+    type:'day',
+    fact:{en:'We wake up in the morning when the sun rises! A new day begins. 🌄',
+          hi:'हम सुबह जागते हैं जब सूरज उगता है! एक नया दिन शुरू होता है। 🌄',
+          as:'আমি পুৱাতে সাৰ পাওঁ যেতিয়া সূৰ্য উঠে! এটা নতুন দিনৰ আৰম্ভ হয়। 🌄'}
+  },
+  {
+    emoji:'🌙',
+    name:{en:'Moon in the sky',hi:'आसमान में चाँद',as:'আকাশত চন্দ্ৰ'},
+    type:'night',
+    fact:{en:'The moon comes out at night! It glows softly and lights up the dark sky. 🌟',
+          hi:'रात में चाँद निकलता है! यह हल्की रोशनी देता है और अंधेरे आसमान को चमकाता है। 🌟',
+          as:'চন্দ্ৰ ৰাতি ওলায়! ই মৃদুভাৱে জিলিকে আৰু আন্ধাৰ আকাশ পোহৰাই তোলে। 🌟'}
+  }
+];
+
+let order=[],ri=0,score=0,answered=false;
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+
+function setTheme(type){
+  document.body.className=type==='day'?'day-mode':'night-mode';
+}
+
+function startGame(){
+  order=shuffle([...Array(activities.length).keys()]);
+  ri=0;score=0;
+  document.getElementById('overlay').classList.remove('show');
+  loadRound();
+}
+
+function loadRound(){
+  const a=activities[order[ri]];
+  answered=false;
+
+  setTheme(a.type);
+
+  const pct=(ri/activities.length)*100;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('score-val').textContent=score;
+  document.getElementById('round-num').textContent=ri+1;
+  document.getElementById('activity-emoji').textContent=a.emoji;
+  document.getElementById('activity-label').textContent=a.name[currentLang]||a.name['en'];
+
+  document.getElementById('btn-day').disabled=false;
+  document.getElementById('btn-night').disabled=false;
+  document.getElementById('btn-day').className='sort-btn';
+  document.getElementById('btn-night').className='sort-btn';
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('fun-fact').classList.remove('show');
+  document.getElementById('next-btn').style.display='none';
+}
+
+function handleAnswer(chosen){
+  if(answered)return;
+  answered=true;
+  const a=activities[order[ri]];
+  const isCorrect=chosen===a.type;
+
+  document.getElementById('btn-day').disabled=true;
+  document.getElementById('btn-night').disabled=true;
+
+  const correctBtn=document.getElementById(a.type==='day'?'btn-day':'btn-night');
+  const chosenBtn=document.getElementById(chosen==='day'?'btn-day':'btn-night');
+
+  correctBtn.classList.add('correct');
+  if(!isCorrect) chosenBtn.classList.add('wrong');
+
+  const fb=document.getElementById('feedback');
+  const ff=document.getElementById('fun-fact');
+
+  if(isCorrect){
+    score+=10;
+    fb.textContent='✓ '+(a.type==='day'?
+      {en:'Yes! This is a daytime activity!',hi:'हाँ! यह दिन का काम है!',as:'হয়! এইটো দিনৰ কাম!'}[currentLang]:
+      {en:'Yes! This is a night time activity!',hi:'हाँ! यह रात का काम है!',as:'হয়! এইটো ৰাতিৰ কাম!'}[currentLang]
+    );
+    fb.className='feedback correct';
+  } else {
+    fb.textContent='✗ '+(a.type==='day'?
+      {en:'This is a daytime activity!',hi:'यह दिन का काम है!',as:'এইটো দিনৰ কাম!'}[currentLang]:
+      {en:'This is a night time activity!',hi:'यह रात का काम है!',as:'এইটো ৰাতিৰ কাম!'}[currentLang]
+    );
+    fb.className='feedback wrong';
+  }
+
+  ff.textContent=a.fact[currentLang]||a.fact['en'];
+  ff.classList.add('show');
+  document.getElementById('score-val').textContent=score;
+  document.getElementById('next-btn').style.display='block';
+}
+
+function nextRound(){
+  ri++;
+  if(ri>=activities.length){showResult();return;}
+  loadRound();
+}
+
+function showResult(){
+  document.getElementById('prog-fill').style.width='100%';
+  const pct=(score/(activities.length*10))*100;
+  let emoji='😊',title='Good Try!';
+  if(pct>=90){emoji='🏆';title='Day & Night Expert!';}
+  else if(pct>=70){emoji='🎉';title='Well Done!';}
+  else if(pct>=40){emoji='👍';title='Good Job!';}
+
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'';
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-title').textContent=title;
+  document.getElementById('res-score').textContent='Score: '+score+' / '+(activities.length*10);
+  document.getElementById('res-stars').textContent=stars;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function restartGame(){startGame();}
+startGame();
+</script>
+</body>
+</html>

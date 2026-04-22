@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GyanPlay Class 6 — Batch 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#180A28 0%,#0F0820 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);padding:20px 16px 40px;display:flex;justify-content:center}
+.container{width:100%;max-width:480px}
+/* Brand header */
+.brand{text-align:center;padding:24px 0 20px}
+.brand-name{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--gold),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.brand-tagline{font-size:.8rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+.brand-price{display:inline-block;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.3);border-radius:100px;padding:4px 14px;font-size:.8rem;color:var(--gold);margin-top:8px;font-weight:700}
+/* Batch header */
+.batch-header{background:linear-gradient(135deg,rgba(199,125,255,.15),rgba(199,125,255,.05));border:1px solid rgba(199,125,255,.3);border-radius:20px;padding:20px;margin-bottom:20px;text-align:center}
+.batch-title{font-family:'Baloo 2',cursive;font-size:1.4rem;font-weight:800;color:var(--purple)}
+.batch-subtitle{font-size:.85rem;color:var(--dim);margin-top:4px;line-height:1.5}
+.batch-meta{display:flex;justify-content:center;gap:20px;margin-top:12px}
+.meta-item{text-align:center}
+.meta-num{font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold)}
+.meta-label{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+/* Section label */
+.section-label{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;padding:0 4px;margin:16px 0 10px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:rgba(199,125,255,.15)}
+/* Game card */
+.game-card{background:var(--card);border:1px solid rgba(199,125,255,.15);border-radius:18px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .25s;text-decoration:none;color:inherit}
+.game-card:hover{border-color:rgba(199,125,255,.4);background:#131A35;transform:translateY(-3px);box-shadow:0 8px 30px rgba(199,125,255,.12)}
+.game-icon{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;background:linear-gradient(135deg,rgba(199,125,255,.2),rgba(199,125,255,.06));border:1px solid rgba(199,125,255,.25)}
+.game-info{flex:1;min-width:0}
+.game-number{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.game-name{font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.game-concept{font-size:.78rem;color:var(--dim);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.game-mechanic{font-size:.65rem;color:var(--purple);text-transform:uppercase;letter-spacing:.5px;margin-top:4px;font-weight:700}
+.arrow{color:var(--dim);font-size:.9rem;flex-shrink:0}
+/* Progress dots */
+.progress-dots{display:flex;gap:6px;margin-bottom:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(199,125,255,.2)}
+.dot.done{background:var(--teal)}
+/* Footer */
+.footer{text-align:center;margin-top:28px;padding-top:20px;border-top:1px solid rgba(199,125,255,.1)}
+.footer-text{font-size:.78rem;color:var(--dim);line-height:1.6}
+.footer-brand{font-family:'Baloo 2',cursive;font-size:.9rem;color:var(--purple);font-weight:700;margin-bottom:4px}
+/* Batch nav */
+.batch-nav{display:flex;gap:6px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px}
+.batch-pill{background:rgba(199,125,255,.08);border:1px solid rgba(199,125,255,.2);border-radius:100px;padding:6px 14px;font-size:.78rem;color:var(--dim);white-space:nowrap;text-decoration:none;transition:all .2s}
+.batch-pill.active{background:rgba(199,125,255,.2);border-color:var(--purple);color:var(--purple);font-weight:700}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Brand -->
+  <div class="brand">
+    <div class="brand-name">🎓 GyanPlay</div>
+    <div class="brand-tagline">Ignite Curiosity First, Teach Second</div>
+    <div class="brand-price">₹750 / month · Class 6</div>
+  </div>
+
+  <!-- Batch header -->
+  <div class="batch-header">
+    <div class="batch-title">Batch 1 — Maths</div>
+    <div class="batch-subtitle">Integers, Algebra &amp; Ratio · Ages 11–12<br>Abstract thinking · Abstract + evaluative level</div>
+    <div class="batch-meta">
+      <div class="meta-item"><div class="meta-num">3</div><div class="meta-label">Games</div></div>
+      <div class="meta-item"><div class="meta-num">30</div><div class="meta-label">Questions</div></div>
+      <div class="meta-item"><div class="meta-num">~25</div><div class="meta-label">Minutes</div></div>
+    </div>
+  </div>
+
+  <!-- Batch nav -->
+  <div class="batch-nav">
+    <span class="batch-pill active">Batch 1 · Maths</span>
+    <span class="batch-pill">Batch 2 · Maths+Eng</span>
+    <span class="batch-pill">Batch 3 · English</span>
+    <span class="batch-pill">Batch 4 · Science</span>
+    <span class="batch-pill">Batch 5 · Sci+SST</span>
+    <span class="batch-pill">Batch 6 · SST+Hindi</span>
+    <span class="batch-pill">Batch 7 · Hindi+CS</span>
+    <span class="batch-pill">Batch 8 · CS+Index</span>
+  </div>
+
+  <!-- Games -->
+  <div class="section-label">🔢 Mathematics</div>
+
+  <a class="game-card" href="game1-integer-adventures.html">
+    <div class="game-icon">➖</div>
+    <div class="game-info">
+      <div class="game-number">G6 · 01</div>
+      <div class="game-name">Integer Adventures</div>
+      <div class="game-concept">Positive & negative integers · Number line · Operations</div>
+      <div class="game-mechanic">PLACE + BUILD · 2 stages · 10 questions</div>
+    </div>
+    <div class="arrow">›</div>
+  </a>
+
+  <a class="game-card" href="game2-algebra-intro.html">
+    <div class="game-icon">🔤</div>
+    <div class="game-info">
+      <div class="game-number">G6 · 02</div>
+      <div class="game-name">Algebra Intro</div>
+      <div class="game-concept">Variables · Expressions · Simple equations</div>
+      <div class="game-mechanic">BUILD + FILL-BLANK · 2 stages · 10 questions</div>
+    </div>
+    <div class="arrow">›</div>
+  </a>
+
+  <a class="game-card" href="game3-ratio-proportion-lab.html">
+    <div class="game-icon">⚖️</div>
+    <div class="game-info">
+      <div class="game-number">G6 · 03</div>
+      <div class="game-name">Ratio &amp; Proportion Lab</div>
+      <div class="game-concept">Ratio · Proportion · Unitary method</div>
+      <div class="game-mechanic">BUILD · 3 stages · 10 questions</div>
+    </div>
+    <div class="arrow">›</div>
+  </a>
+
+  <!-- WOW fact strip -->
+  <div style="background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.15);border-radius:14px;padding:14px 16px;margin:20px 0;font-size:.82rem;line-height:1.6;color:var(--text)">
+    💡 <strong style="color:var(--gold)">Did you know?</strong> The word <em>Algebra</em> comes from the Arabic word <em>Al-Jabr</em>, written in 820 AD. India's Brahmagupta used similar ideas in 628 AD — Indian mathematicians were among the pioneers of algebra!
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-brand">🎓 GyanPlay</div>
+    <div class="footer-text">
+      Class 6 · Assam / NCERT Board · Ages 11–12<br>
+      Offline capable · No login required · Mobile first<br>
+      Batch 1 of 8 · Games G6-01 to G6-03
+    </div>
+  </div>
+</div>
+</body>
+</html>

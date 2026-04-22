@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Festival Colours - GyanPlay Class 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #fd79a8, #e84393, #a29bfe);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #fd79a8;
+            font-size: 2rem;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .score {
+            background: #00b894;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text {
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        .festival-display {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .festival-name {
+            font-size: 2rem;
+            color: #e84393;
+            font-weight: bold;
+        }
+        
+        .festival-hint {
+            color: #636e72;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+        
+        .rangoli-board {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 300px;
+        }
+        
+        .rangoli-title {
+            text-align: center;
+            color: #2d3436;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+        
+        .festivals-grid {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .festival-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            min-width: 100px;
+        }
+        
+        .festival-card:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .festival-card.correct {
+            border-color: #00b894;
+            background: #55efc4;
+        }
+        
+        .festival-card.wrong {
+            border-color: #e94560;
+            background: #ff7675;
+        }
+        
+        .festival-icon {
+            font-size: 3rem;
+        }
+        
+        .festival-label {
+            font-size: 1rem;
+            color: #2d3436;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .items-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .item-group {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .group-label {
+            font-size: 1.1rem;
+            color: #2d3436;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .group-items {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            min-height: 40px;
+        }
+        
+        .group-item {
+            background: #dfe6e9;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .feedback-content.correct {
+            border: 5px solid #00b894;
+        }
+        
+        .feedback-content.wrong {
+            border: 5px solid #e94560;
+        }
+        
+        .feedback-icon {
+            font-size: 5rem;
+        }
+        
+        .feedback-text {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            color: #2d3436;
+        }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-title {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .info-text {
+            color: #dfe6e9;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch2-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>🎨 Festival Colours</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Festival: <span id="festivalNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Match the festival with its decorations, food, and clothing!</p>
+        </div>
+        
+        <div class="festival-display">
+            <div class="festival-name" id="festivalName">🎆 DIWALI</div>
+            <div class="festival-hint" id="festivalHint">The festival of lights</div>
+        </div>
+        
+        <div class="rangoli-board">
+            <div class="rangoli-title">🧧 Tap the correct festival:</div>
+            <div class="festivals-grid" id="festivalsGrid">
+                <!-- Festivals will be generated by JS -->
+            </div>
+            
+            <div class="items-container">
+                <div class="item-group">
+                    <div class="group-label">🎭 Decorations</div>
+                    <div class="group-items" id="decorations">
+                        <span class="group-item">Diyas</span>
+                    </div>
+                </div>
+                <div class="item-group">
+                    <div class="group-label">🍬 Food</div>
+                    <div class="group-items" id="food">
+                        <span class="group-item">Sweets</span>
+                    </div>
+                </div>
+                <div class="item-group">
+                    <div class="group-label">👕 Clothing</div>
+                    <div class="group-items" id="clothing">
+                        <span class="group-item">New clothes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <div class="info-title">🎉 Indian Festivals:</div>
+            <div class="info-text">🪔 Diwali - Festival of lights, diyas, sweets</div>
+            <div class="info-text">🎨 Holi - Festival of colors, gulal, gujiya</div>
+            <div class="info-text">🪕 Eid - Celebrated with special prayers, biryani</div>
+            <div class="info-text">🎄 Christmas - Trees, cakes, gifts</div>
+            <div class="info-text">🪘 Bihu - Assamese New Year, folk dance</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextFestival()">Next Festival →</button>
+        </div>
+    </div>
+    
+    <script>
+        const festivals = [
+            {
+                name: 'DIWALI',
+                icon: '🪔',
+                hint: 'Festival of lights',
+                decorations: ['Diyas', 'Torans', 'Lights'],
+                food: ['Sweets', 'Ladoo', 'Cakes'],
+                clothing: ['New clothes', 'Saree', 'Kurtas']
+            },
+            {
+                name: 'HOLI',
+                icon: '🎨',
+                hint: 'Festival of colors',
+                decorations: ['Flowers', 'Colors', 'Banner'],
+                food: ['Gujiya', 'Thandai', 'Puranpoli'],
+                clothing: ['White clothes', 'Colorful dupatta', 'Kurta']
+            },
+            {
+                name: 'EID',
+                icon: '🕌',
+                hint: 'Festival of sweets',
+                decorations: ['Moon', 'Lights', 'Torans'],
+                food: ['Biryani', 'Sheermal', 'Haleem'],
+                clothing: ['Kurta', 'Sherwani', 'Eid Mubarak']
+            },
+            {
+                name: 'CHRISTMAS',
+                icon: '🎄',
+                hint: 'Festival of giving',
+                decorations: ['Christmas tree', 'Star', 'Lights'],
+                food: ['Cake', 'Cookies', 'Pudding'],
+                clothing: ['Santa dress', 'Red clothes', 'Party wear']
+            },
+            {
+                name: 'BIHU',
+                icon: '🪘',
+                hint: 'Assamese New Year',
+                decorations: ['Pitha', 'Flowers', 'Folk items'],
+                food: ['Rice', 'Fish', 'Laru'],
+                clothing: ['Mekhela', 'Chador', 'Traditional']
+            }
+        ];
+        
+        let currentIndex = 0;
+        let score = 0;
+        
+        function loadFestival() {
+            const fest = festivals[currentIndex];
+            
+            document.getElementById('festivalName').textContent = `${fest.icon} ${fest.name}`;
+            document.getElementById('festivalHint').textContent = fest.hint;
+            document.getElementById('festivalNum').textContent = currentIndex + 1;
+            
+            // Update display items
+            document.getElementById('decorations').innerHTML = fest.decorations.map(d => 
+                `<span class="group-item">${d}</span>`
+            ).join('');
+            
+            document.getElementById('food').innerHTML = fest.food.map(f => 
+                `<span class="group-item">${f}</span>`
+            ).join('');
+            
+            document.getElementById('clothing').innerHTML = fest.clothing.map(c => 
+                `<span class="group-item">${c}</span>`
+            ).join('');
+            
+            // Show festival options
+            const grid = document.getElementById('festivalsGrid');
+            grid.innerHTML = '';
+            
+            const shuffled = [...festivals].sort(() => Math.random() - 0.5);
+            
+            shuffled.forEach(f => {
+                const div = document.createElement('div');
+                div.className = 'festival-card';
+                div.innerHTML = `
+                    <span class="festival-icon">${f.icon}</span>
+                    <span class="festival-label">${f.name}</span>
+                `;
+                div.onclick = () => selectFestival(div, f.name);
+                grid.appendChild(div);
+            });
+        }
+        
+        function selectFestival(div, name) {
+            const fest = festivals[currentIndex];
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            if (name === fest.name) {
+                div.classList.add('correct');
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = `Correct! It's ${fest.name}!`;
+                score += 20;
+                document.getElementById('score').textContent = score;
+            } else {
+                div.classList.add('wrong');
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = `Not quite! This is ${name}`;
+            }
+            
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                div.classList.remove('correct', 'wrong');
+            }, 1000);
+        }
+        
+        function nextFestival() {
+            document.getElementById('feedback').classList.remove('show');
+            currentIndex = (currentIndex + 1) % festivals.length;
+            loadFestival();
+        }
+        
+        loadFestival();
+    </script>
+</body>
+</html>

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graph World — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A;--border-glow:rgba(199,125,255,.22);--card-glow:rgba(199,125,255,.12);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:linear-gradient(160deg,#180A28,#0F0820);min-height:100vh;color:var(--text);font-family:'Nunito',sans-serif;font-size:20px;display:flex;justify-content:center;padding-bottom:40px;}
+.shell{width:100%;max-width:480px;display:flex;flex-direction:column;}
+.header{padding:18px 20px 12px;border-bottom:2px solid var(--border-glow);background:rgba(13,20,40,.7);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px);}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+.stars{display:flex;gap:4px;margin-top:4px;}
+.star{font-size:1rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.score-display{font-family:'Baloo 2',cursive;font-size:1.1rem;color:var(--gold);}
+.wow-hook{margin:16px 16px 0;background:linear-gradient(135deg,rgba(199,125,255,.18),rgba(13,20,40,.9));border:1px solid var(--border-glow);border-radius:16px;padding:18px;box-shadow:0 4px 24px var(--card-glow);}
+.wow-hook .emoji{font-size:2rem;margin-bottom:8px;display:block;}
+.wow-hook p{font-size:.95rem;line-height:1.6;}
+.wow-hook strong{color:var(--gold);}
+/* fly animation */
+.fly-scene{text-align:center;padding:14px;background:rgba(0,0,0,.3);border-radius:10px;margin:8px 0;position:relative;height:80px;overflow:hidden;}
+.fly-emoji{position:absolute;font-size:1.4rem;animation:flyMove 4s infinite ease-in-out;}
+@keyframes flyMove{0%{top:20px;left:20%}25%{top:10px;left:60%}50%{top:40px;left:75%}75%{top:15px;left:40%}100%{top:20px;left:20%}}
+.coord-lines{position:absolute;inset:0;pointer-events:none;}
+.stage-area{padding:16px;flex:1;}
+.stage{display:none;}
+.stage.active{display:block;animation:fadeIn .35s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.stage-title{font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:600;color:var(--purple);margin-bottom:10px;}
+.card{background:var(--card);border:1px solid var(--border-glow);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 16px var(--card-glow);}
+.info-box{background:rgba(199,125,255,.08);border-left:3px solid var(--purple);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.88rem;color:var(--dim);line-height:1.5;margin:10px 0;}
+.info-box strong{color:var(--text);}
+.result-msg{font-size:.9rem;min-height:22px;padding:4px 0;}
+.result-msg.ok{color:var(--teal);}
+.result-msg.err{color:var(--coral);}
+.bottom-bar{position:sticky;bottom:0;background:rgba(13,20,40,.9);border-top:1px solid var(--border-glow);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(8px);}
+.progress-label{font-size:.85rem;color:var(--dim);}
+.progress-label strong{color:var(--text);}
+.action-btn{background:var(--gold);color:#060A10;border:none;border-radius:24px;padding:10px 26px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;min-height:44px;}
+.action-btn:hover{transform:scale(1.04);box-shadow:0 4px 16px rgba(255,209,102,.4);}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{text-align:center;padding:28px 24px;max-width:340px;}
+.overlay-emoji{font-size:3rem;margin-bottom:12px;}
+.overlay-msg{font-family:'Baloo 2',cursive;font-size:1.25rem;color:var(--gold);margin-bottom:8px;}
+.overlay-fact{font-size:.88rem;color:var(--dim);line-height:1.5;}
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:200;}
+.confetto{position:absolute;width:10px;height:10px;border-radius:2px;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.game-complete{display:none;text-align:center;padding:40px 20px;}
+.game-complete.show{display:block;animation:fadeIn .5s ease;}
+.complete-title{font-family:'Baloo 2',cursive;font-size:2rem;color:var(--gold);margin-bottom:12px;}
+.complete-sub{color:var(--dim);font-size:.95rem;line-height:1.6;margin-bottom:24px;}
+.replay-btn{background:transparent;border:2px solid var(--gold);color:var(--gold);border-radius:24px;padding:10px 28px;font-family:'Baloo 2',cursive;font-size:1rem;cursor:pointer;min-height:44px;}
+/* COORDINATE GRID */
+#coordCanvas{width:100%;height:240px;border-radius:10px;background:#080818;display:block;cursor:crosshair;}
+.quadrant-labels{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;}
+.ql{background:rgba(199,125,255,.08);border:1px solid var(--border-glow);border-radius:8px;padding:8px;text-align:center;font-size:.82rem;color:var(--dim);}
+.ql .name{color:var(--purple);font-family:'Baloo 2',cursive;font-size:.95rem;}
+/* LINEAR EQUATION */
+#lineCanvas{width:100%;height:220px;border-radius:10px;background:#080818;display:block;}
+.eq-controls{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap;align-items:center;}
+.eq-controls label{font-size:.85rem;color:var(--dim);white-space:nowrap;}
+.eq-controls input[type=range]{width:80px;accent-color:var(--purple);}
+.eq-controls span{font-family:'Baloo 2',cursive;color:var(--gold);font-size:.95rem;min-width:24px;}
+.eq-display{font-family:'Baloo 2',cursive;font-size:1.1rem;color:var(--text);text-align:center;padding:8px;background:rgba(0,0,0,.3);border-radius:8px;margin-bottom:10px;}
+/* SOLUTIONS */
+.sol-point{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:8px;cursor:pointer;transition:all .2s;}
+.sol-point:hover{background:rgba(199,125,255,.1);}
+.sol-point.verified{background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.3);}
+.sol-coord{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--gold);min-width:80px;}
+.sol-check{font-size:.82rem;color:var(--dim);flex:1;}
+.sol-point.verified .sol-check{color:var(--teal);}
+/* REAL WORLD */
+.scenario-card{background:rgba(0,0,0,.25);border:1px solid var(--border-glow);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all .2s;}
+.scenario-card:hover{border-color:var(--purple);background:rgba(199,125,255,.06);}
+.scenario-card.selected{border-color:var(--gold);background:rgba(255,209,102,.08);}
+.scenario-card.correct{border-color:var(--teal);background:rgba(6,214,160,.08);}
+.sc-title{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--text);margin-bottom:4px;}
+.sc-desc{font-size:.82rem;color:var(--dim);}
+.eq-opts{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.eq-opt{background:rgba(199,125,255,.08);border:1px solid var(--border-glow);border-radius:8px;padding:8px 12px;cursor:pointer;font-family:'Baloo 2',cursive;font-size:.9rem;color:var(--text);transition:all .2s;min-height:40px;}
+.eq-opt:hover{background:rgba(199,125,255,.2);}
+.eq-opt.correct{background:rgba(6,214,160,.18);border-color:var(--teal);color:var(--teal);}
+.eq-opt.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="game-title">🗺️ Graph World</div>
+        <div class="subject-tag">📐 Mathematics · G9-03 · Ch 3 & 4: Coordinate Geometry + Linear Equations</div>
+      </div>
+      <div class="score-display" id="scoreDisplay">0 pts</div>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="emoji">🪰</span>
+    <p>Every GPS coordinate, every pixel on your screen, every satellite position in space is described using the system <strong>René Descartes invented while lying in bed watching a fly on his ceiling.</strong> He wondered how to describe the fly's position mathematically. The Cartesian plane — the foundation of all modern navigation — was inspired by a fly.</p>
+    <div class="fly-scene">
+      <div class="fly-emoji">🪰</div>
+      <svg class="coord-lines" viewBox="0 0 300 80" xmlns="http://www.w3.org/2000/svg">
+        <line x1="0" y1="40" x2="300" y2="40" stroke="#4A6A8A" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="150" y1="0" x2="150" y2="80" stroke="#4A6A8A" stroke-width="1" stroke-dasharray="4,4"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="stage-area">
+
+    <!-- STAGE 1: COORDINATE DETECTIVE -->
+    <div class="stage active" id="stage1">
+      <div class="stage-title">📍 Stage 1: Coordinate Detective</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--dim);margin-bottom:10px;">Tap on the grid to plot the described locations. Each ordered pair = (x, y).</p>
+        <canvas id="coordCanvas" width="440" height="240" onclick="plotPoint(event)"></canvas>
+        <div id="plotInstructions" style="font-size:.88rem;color:var(--dim);margin-top:8px;min-height:24px;"></div>
+        <div id="plotTargets" style="margin:10px 0;"></div>
+        <div class="result-msg" id="r1"></div>
+      </div>
+      <div class="quadrant-labels">
+        <div class="ql"><div class="name">II</div>x−, y+</div>
+        <div class="ql"><div class="name">I</div>x+, y+</div>
+        <div class="ql"><div class="name">III</div>x−, y−</div>
+        <div class="ql"><div class="name">IV</div>x+, y−</div>
+      </div>
+    </div>
+
+    <!-- STAGE 2: LINEAR EQUATION GRAPHER -->
+    <div class="stage" id="stage2">
+      <div class="stage-title">📏 Stage 2: Linear Equation Grapher</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--dim);margin-bottom:8px;">Adjust a, b, c in ax + by + c = 0. The line redraws live. Explore slope and intercepts!</p>
+        <div class="eq-display" id="eqDisplay">2x + 1y − 4 = 0</div>
+        <canvas id="lineCanvas" width="440" height="220"></canvas>
+        <div class="eq-controls">
+          <label>a:</label><input type="range" id="ea" min="-4" max="4" step="1" value="2" oninput="updateLine()"><span id="va">2</span>
+          <label>b:</label><input type="range" id="eb" min="-4" max="4" step="1" value="1" oninput="updateLine()"><span id="vb">1</span>
+          <label>c:</label><input type="range" id="ec" min="-6" max="6" step="1" value="-4" oninput="updateLine()"><span id="vc">−4</span>
+        </div>
+        <div class="info-box" id="lineInfo">Slope and intercepts will appear here.</div>
+        <div class="result-msg" id="r2"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 3: INFINITE SOLUTIONS EXPLORER -->
+    <div class="stage" id="stage3">
+      <div class="stage-title">♾️ Stage 3: Infinite Solutions Explorer</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--dim);margin-bottom:10px;">The equation <strong style="color:var(--gold)">x + 2y = 6</strong> has infinitely many solutions. Tap each point below to verify — every point on the line satisfies the equation!</p>
+        <canvas id="infCanvas" width="440" height="200"></canvas>
+        <div style="margin-top:12px;">
+          <div class="sol-point" onclick="verifySol(this,2,2)">
+            <div class="sol-coord">(2, 2)</div>
+            <div class="sol-check">Tap to verify: does 2 + 2(2) = 6?</div>
+          </div>
+          <div class="sol-point" onclick="verifySol(this,0,3)">
+            <div class="sol-coord">(0, 3)</div>
+            <div class="sol-check">Tap to verify: does 0 + 2(3) = 6?</div>
+          </div>
+          <div class="sol-point" onclick="verifySol(this,6,0)">
+            <div class="sol-coord">(6, 0)</div>
+            <div class="sol-check">Tap to verify: does 6 + 2(0) = 6?</div>
+          </div>
+          <div class="sol-point" onclick="verifySol(this,-2,4)">
+            <div class="sol-coord">(−2, 4)</div>
+            <div class="sol-check">Tap to verify: does −2 + 2(4) = 6?</div>
+          </div>
+          <div class="sol-point" onclick="verifySol(this,4,1)">
+            <div class="sol-coord">(4, 1)</div>
+            <div class="sol-check">Tap to verify: does 4 + 2(1) = 6?</div>
+          </div>
+        </div>
+        <div class="info-box" style="margin-top:12px;">Every point on the line is a solution. There are <strong>infinitely many</strong> solutions to any linear equation in two variables.</div>
+        <div class="result-msg" id="r3"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 4: REAL WORLD LINES (Assam focus) -->
+    <div class="stage" id="stage4">
+      <div class="stage-title">🚌 Stage 4: Real World Lines — Guwahati</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--dim);margin-bottom:12px;">Match each real-world situation to its linear equation. Identify what the slope and intercept mean in context.</p>
+
+        <div class="scenario-card" id="sc0">
+          <div class="sc-title">🚌 Guwahati Bus Fare</div>
+          <div class="sc-desc">Fixed charge ₹5 + ₹2 per km. Total fare C for distance d km.</div>
+          <div class="eq-opts">
+            <div class="eq-opt" onclick="checkScenario(this,0,'correct')">C = 5 + 2d</div>
+            <div class="eq-opt" onclick="checkScenario(this,0,'wrong')">C = 2 + 5d</div>
+            <div class="eq-opt" onclick="checkScenario(this,0,'wrong')">C = 5d</div>
+          </div>
+          <div class="result-msg" id="sc0r"></div>
+        </div>
+
+        <div class="scenario-card" id="sc1">
+          <div class="sc-title">🌡️ Temperature Conversion</div>
+          <div class="sc-desc">Fahrenheit F related to Celsius C: F = (9/5)C + 32. What is F when C = 0?</div>
+          <div class="eq-opts">
+            <div class="eq-opt" onclick="checkScenario(this,1,'wrong')">F = 0°</div>
+            <div class="eq-opt" onclick="checkScenario(this,1,'correct')">F = 32° (the y-intercept: 0°C = 32°F)</div>
+            <div class="eq-opt" onclick="checkScenario(this,1,'wrong')">F = 9/5°</div>
+          </div>
+          <div class="result-msg" id="sc1r"></div>
+        </div>
+
+        <div class="scenario-card" id="sc2">
+          <div class="sc-title">📱 Mobile Plan</div>
+          <div class="sc-desc">Base cost ₹200 + ₹1.50 per minute. What is the slope of the Cost vs Minutes graph?</div>
+          <div class="eq-opts">
+            <div class="eq-opt" onclick="checkScenario(this,2,'wrong')">Slope = 200 (base cost)</div>
+            <div class="eq-opt" onclick="checkScenario(this,2,'correct')">Slope = 1.50 (cost per additional minute)</div>
+            <div class="eq-opt" onclick="checkScenario(this,2,'wrong')">Slope = 0 (flat rate)</div>
+          </div>
+          <div class="result-msg" id="sc2r"></div>
+        </div>
+        <div class="result-msg" id="r4" style="margin-top:8px;"></div>
+      </div>
+    </div>
+
+    <!-- GAME COMPLETE -->
+    <div class="game-complete" id="gameComplete">
+      <div style="font-size:3rem;margin-bottom:16px;">🗺️</div>
+      <div class="complete-title">Graph World Complete!</div>
+      <div class="complete-sub">You plotted coordinates, graphed linear equations live, verified infinite solutions, and connected algebra to Guwahati bus fares.<br><br><strong style="color:var(--gold);">Descartes' fly</strong> — now you can describe any point in the universe mathematically.</div>
+      <br>
+      <button class="replay-btn" onclick="resetGame()">↺ Play Again</button>
+    </div>
+
+  </div>
+
+  <div class="bottom-bar" id="bottomBar">
+    <div class="progress-label">Stage <strong id="stageNum">1</strong> of 4</div>
+    <button class="action-btn" id="mainBtn" onclick="nextStage()">Continue →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="overlay-emoji" id="ovEmoji">✓</div>
+    <div class="overlay-msg" id="ovMsg">Stage Complete!</div>
+    <div class="overlay-fact" id="ovFact"></div>
+  </div>
+</div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<script>
+let score=0,currentStage=1,stageDone=[false,false,false,false];
+let plotsDone=0,solsVerified=0,scenariosDone=0,lineChanged=false;
+const plotTargets=[
+  {x:2,y:3,label:'Point A (2, 3)'},
+  {x:-1,y:2,label:'Point B (−1, 2)'},
+  {x:3,y:-2,label:'Point C (3, −2)'},
+  {x:-2,y:-1,label:'Point D (−2, −1)'}
+];
+let plotFound=[];
+
+function addScore(p){score+=p;document.getElementById('scoreDisplay').textContent=score+' pts';}
+function lightStar(n){const s=document.getElementById('s'+n);if(s&&!s.classList.contains('lit'))s.classList.add('lit');}
+
+// ===== STAGE 1: COORDINATE GRID =====
+const cc=document.getElementById('coordCanvas');
+const cctx=cc.getContext('2d');
+cc.width=440;cc.height=240;
+
+function toScreenX(v,w){return w/2+v*30;}
+function toScreenY(v,h){return h/2-v*30;}
+function fromScreenX(px,w){return (px-w/2)/30;}
+function fromScreenY(py,h){return (h/2-py)/30;}
+
+function drawCoordGrid(){
+  const w=cc.width,h=cc.height;
+  cctx.clearRect(0,0,w,h);
+  cctx.fillStyle='#080818';cctx.fillRect(0,0,w,h);
+
+  cctx.strokeStyle='#1a1a2a';cctx.lineWidth=1;
+  for(let x=-7;x<=7;x++){cctx.beginPath();cctx.moveTo(toScreenX(x,w),0);cctx.lineTo(toScreenX(x,w),h);cctx.stroke();}
+  for(let y=-4;y<=4;y++){cctx.beginPath();cctx.moveTo(0,toScreenY(y,h));cctx.lineTo(w,toScreenY(y,h));cctx.stroke();}
+
+  cctx.strokeStyle='#4A6A8A';cctx.lineWidth=2;
+  cctx.beginPath();cctx.moveTo(0,h/2);cctx.lineTo(w,h/2);cctx.stroke();
+  cctx.beginPath();cctx.moveTo(w/2,0);cctx.lineTo(w/2,h);cctx.stroke();
+
+  cctx.fillStyle='#4A6A8A';cctx.font='10px Courier New';cctx.textAlign='center';
+  for(let x=-6;x<=6;x++){if(x!==0)cctx.fillText(x,toScreenX(x,w),h/2+14);}
+  cctx.textAlign='right';
+  for(let y=-3;y<=3;y++){if(y!==0)cctx.fillText(y,w/2-4,toScreenY(y,h)+4);}
+
+  // Quadrant labels
+  cctx.font='bold 13px Nunito';cctx.fillStyle='rgba(199,125,255,.2)';
+  cctx.textAlign='center';
+  cctx.fillText('I',toScreenX(4,w),toScreenY(3,h));
+  cctx.fillText('II',toScreenX(-4,w),toScreenY(3,h));
+  cctx.fillText('III',toScreenX(-4,w),toScreenY(-2.5,h));
+  cctx.fillText('IV',toScreenX(4,w),toScreenY(-2.5,h));
+
+  // Plotted points
+  const cols=['#FFD166','#06D6A0','#4CC9F0','#FF9CC2'];
+  plotFound.forEach((p,i)=>{
+    const sx=toScreenX(p.x,w),sy=toScreenY(p.y,h);
+    cctx.fillStyle=cols[i%cols.length];
+    cctx.beginPath();cctx.arc(sx,sy,7,0,Math.PI*2);cctx.fill();
+    cctx.fillStyle='#060A10';cctx.font='bold 9px Nunito';cctx.textAlign='center';cctx.textBaseline='middle';
+    cctx.fillText(p.label.charAt(6),sx,sy);cctx.textBaseline='alphabetic';
+    cctx.fillStyle=cols[i%cols.length];cctx.font='10px Nunito';
+    cctx.fillText(`(${p.x},${p.y})`,sx,sy-14);
+  });
+
+  // Next target
+  const nextIdx=plotFound.length;
+  if(nextIdx<plotTargets.length){
+    const t=plotTargets[nextIdx];
+    const sx=toScreenX(t.x,w),sy=toScreenY(t.y,h);
+    cctx.strokeStyle='rgba(255,209,102,.4)';cctx.lineWidth=1;cctx.setLineDash([4,4]);
+    cctx.beginPath();cctx.arc(sx,sy,14,0,Math.PI*2);cctx.stroke();cctx.setLineDash([]);
+    document.getElementById('plotInstructions').textContent=`Plot: ${t.label} — tap the correct location`;
+  }else{
+    document.getElementById('plotInstructions').textContent='All points plotted! ✓';
+  }
+}
+
+function plotPoint(e){
+  if(plotFound.length>=plotTargets.length)return;
+  const rect=cc.getBoundingClientRect();
+  const scaleX=cc.width/rect.width;
+  const px=(e.clientX-rect.left)*scaleX;
+  const py=(e.clientY-rect.top)*(cc.height/rect.height);
+  const gx=Math.round(fromScreenX(px,cc.width));
+  const gy=Math.round(fromScreenY(py,cc.height));
+  const t=plotTargets[plotFound.length];
+  if(gx===t.x&&gy===t.y){
+    plotFound.push({x:gx,y:gy,label:t.label});
+    addScore(15);plotsDone++;
+    drawCoordGrid();
+    document.getElementById('r1').textContent=`${t.label} placed correctly. ✓`;
+    document.getElementById('r1').className='result-msg ok';
+    if(plotsDone>=3&&!stageDone[0]){stageDone[0]=true;lightStar(1);addScore(20);}
+  }else{
+    document.getElementById('r1').textContent=`Tapped (${gx}, ${gy}) — not the target. Remember: x first (horizontal), then y (vertical).`;
+    document.getElementById('r1').className='result-msg err';
+  }
+}
+
+drawCoordGrid();
+
+// ===== STAGE 2: LINEAR GRAPHER =====
+const lc=document.getElementById('lineCanvas');
+const lctx=lc.getContext('2d');
+lc.width=440;lc.height=220;
+
+function drawLine(a,b,c){
+  const w=lc.width,h=lc.height;
+  lctx.clearRect(0,0,w,h);
+  lctx.fillStyle='#080818';lctx.fillRect(0,0,w,h);
+  const xlo=-6,xhi=6;
+  function toX(v){return (v-xlo)/(xhi-xlo)*w;}
+  function toY(v){return h/2-v*22;}
+
+  lctx.strokeStyle='#1a1a2a';lctx.lineWidth=1;
+  for(let x=xlo;x<=xhi;x++){lctx.beginPath();lctx.moveTo(toX(x),0);lctx.lineTo(toX(x),h);lctx.stroke();}
+  for(let y=-5;y<=5;y++){lctx.beginPath();lctx.moveTo(0,toY(y));lctx.lineTo(w,toY(y));lctx.stroke();}
+  lctx.strokeStyle='#4A6A8A';lctx.lineWidth=2;
+  lctx.beginPath();lctx.moveTo(0,h/2);lctx.lineTo(w,h/2);lctx.stroke();
+  lctx.beginPath();lctx.moveTo(toX(0),0);lctx.lineTo(toX(0),h);lctx.stroke();
+
+  if(b!==0){
+    lctx.strokeStyle='#C77DFF';lctx.lineWidth=2.5;lctx.beginPath();
+    let first=true;
+    for(let px=0;px<=w;px++){
+      const x=xlo+(px/w)*(xhi-xlo);
+      const y=(-a*x-c)/b;
+      const py=toY(y);
+      if(py>-50&&py<h+50){if(first){lctx.moveTo(px,py);first=false;}else lctx.lineTo(px,py);}else first=true;
+    }
+    lctx.stroke();
+
+    // x-intercept dot
+    if(a!==0){
+      const xi=-c/a;
+      if(xi>=xlo&&xi<=xhi){lctx.fillStyle='#FFD166';lctx.beginPath();lctx.arc(toX(xi),h/2,5,0,Math.PI*2);lctx.fill();}
+    }
+    // y-intercept dot
+    const yi=-c/b;
+    if(yi>=-5&&yi<=5){lctx.fillStyle='#06D6A0';lctx.beginPath();lctx.arc(toX(0),toY(yi),5,0,Math.PI*2);lctx.fill();}
+  }
+}
+
+function updateLine(){
+  const a=+document.getElementById('ea').value;
+  const b=+document.getElementById('eb').value;
+  const c=+document.getElementById('ec').value;
+  document.getElementById('va').textContent=a;
+  document.getElementById('vb').textContent=b;
+  document.getElementById('vc').textContent=(c<0?'−':'')+Math.abs(c);
+
+  let eq=[];
+  if(a!==0)eq.push(`${a===1?'':a===-1?'-':a}x`);
+  if(b!==0)eq.push(`${b>0&&eq.length?'+ ':b<0?'− ':''}${Math.abs(b)===1?'':Math.abs(b)}y`);
+  if(c!==0)eq.push(`${c>0&&eq.length?'+ ':c<0?'− ':''}${Math.abs(c)}`);
+  eq.push('= 0');
+  document.getElementById('eqDisplay').textContent=eq.join(' ');
+
+  drawLine(a,b,c);
+
+  let info='';
+  if(b!==0){
+    const slope=(-a/b).toFixed(2);
+    const yi=(-c/b).toFixed(2);
+    info=`Slope = −a/b = ${slope} | y-intercept = −c/b = ${yi}`;
+    if(a===0)info+=' | Horizontal line (zero slope)';
+  }else if(a!==0){
+    info=`Vertical line at x = ${(-c/a).toFixed(2)}`;
+  }
+  document.getElementById('lineInfo').innerHTML=info||'Adjust sliders to see the line';
+
+  if(!lineChanged&&(a!==2||b!==1||c!==-4)){
+    lineChanged=true;addScore(15);
+    document.getElementById('r2').textContent='Live equation plotted. Slope and intercepts observed. ✓';
+    document.getElementById('r2').className='result-msg ok';
+    if(!stageDone[1]){stageDone[1]=true;lightStar(2);addScore(20);}
+  }
+}
+
+updateLine();
+
+// ===== STAGE 3: INFINITE SOLUTIONS =====
+const ic=document.getElementById('infCanvas');
+const ictx=ic.getContext('2d');
+ic.width=440;ic.height=200;
+
+function drawInfLine(){
+  const w=ic.width,h=ic.height;
+  ictx.clearRect(0,0,w,h);ictx.fillStyle='#080818';ictx.fillRect(0,0,w,h);
+  const xlo=-2,xhi=8;
+  function toX(v){return (v-xlo)/(xhi-xlo)*w;}
+  function toY(v){return h/2-v*28;}
+  ictx.strokeStyle='#1a1a2a';ictx.lineWidth=1;
+  for(let x=xlo;x<=xhi;x++){ictx.beginPath();ictx.moveTo(toX(x),0);ictx.lineTo(toX(x),h);ictx.stroke();}
+  ictx.strokeStyle='#4A6A8A';ictx.lineWidth=2;
+  ictx.beginPath();ictx.moveTo(0,h/2);ictx.lineTo(w,h/2);ictx.stroke();
+  ictx.beginPath();ictx.moveTo(toX(0),0);ictx.lineTo(toX(0),h);ictx.stroke();
+  ictx.fillStyle='#4A6A8A';ictx.font='9px Courier New';ictx.textAlign='center';
+  for(let x=xlo;x<=xhi;x++){if(x!==0)ictx.fillText(x,toX(x),h/2+13);}
+
+  // x+2y=6 → y=(6-x)/2
+  ictx.strokeStyle='#FFD166';ictx.lineWidth=2.5;ictx.beginPath();
+  let first=true;
+  for(let px=0;px<=w;px++){
+    const x=xlo+(px/w)*(xhi-xlo);
+    const y=(6-x)/2;const py=toY(y);
+    if(py>-40&&py<h+40){if(first){ictx.moveTo(px,py);first=false;}else ictx.lineTo(px,py);}else first=true;
+  }
+  ictx.stroke();
+
+  // Mark verified points
+  const pts=[[2,2],[0,3],[6,0],[-2,4],[4,1]];
+  pts.forEach(([x,y],i)=>{
+    const sx=toX(x),sy=toY(y);
+    ictx.fillStyle='#06D6A0';ictx.beginPath();ictx.arc(sx,sy,5,0,Math.PI*2);ictx.fill();
+  });
+}
+
+drawInfLine();
+
+let verifiedCount=0;
+function verifySol(el,x,y){
+  if(el.classList.contains('verified'))return;
+  const lhs=x+2*y;
+  if(lhs===6){
+    el.classList.add('verified');
+    el.querySelector('.sol-check').textContent=`${x} + ${2*y} = ${lhs} = 6 ✓ This point IS on the line!`;
+    addScore(12);verifiedCount++;
+    if(verifiedCount>=3){
+      document.getElementById('r3').textContent=`${verifiedCount} points verified. Every point on this line satisfies x + 2y = 6. ✓`;
+      document.getElementById('r3').className='result-msg ok';
+      if(!stageDone[2]){stageDone[2]=true;lightStar(3);lightStar(4);addScore(25);}
+    }
+  }
+}
+
+// ===== STAGE 4: REAL WORLD =====
+let scDone=0;
+function checkScenario(el,idx,status){
+  const parent=el.parentElement;
+  if(parent.querySelector('.correct'))return;
+  if(status==='correct'){
+    el.classList.add('correct');
+    document.getElementById('sc'+idx+'r').textContent='Correct match. ✓';
+    document.getElementById('sc'+idx+'r').className='result-msg ok';
+    addScore(20);scDone++;
+    if(scDone>=3&&!stageDone[3]){stageDone[3]=true;lightStar(5);addScore(30);
+      document.getElementById('r4').textContent='All 3 real-world equations matched. That reasoning demonstrates understanding. ⚖️';}
+    document.getElementById('r4').className='result-msg ok';
+  }else{
+    el.classList.add('wrong');
+    setTimeout(()=>el.classList.remove('wrong'),800);
+  }
+}
+
+// ===== NAVIGATION =====
+const ovData=[
+  {emoji:'📍',msg:'Coordinates Placed!',fact:'The ordered pair (x, y) is always written with x first — horizontal before vertical. This convention comes from Descartes himself.'},
+  {emoji:'📏',msg:'Equations Graphed!',fact:'A linear equation in two variables (ax + by + c = 0) always produces a straight line. "Linear" literally means "of lines" — from the Latin linea.'},
+  {emoji:'♾️',msg:'Infinite Solutions Found!',fact:'A single linear equation in two variables has infinitely many solutions. You need TWO equations (a system) to pin down exactly one solution.'},
+];
+
+function nextStage(){
+  if(currentStage===4&&stageDone[3]){showComplete();return;}
+  if(currentStage>=4)return;
+  const d=ovData[currentStage-1];
+  document.getElementById('ovEmoji').textContent=d.emoji;
+  document.getElementById('ovMsg').textContent=d.msg;
+  document.getElementById('ovFact').textContent=d.fact;
+  document.getElementById('overlay').classList.add('show');
+  setTimeout(()=>{
+    document.getElementById('stage'+currentStage).classList.remove('active');
+    currentStage++;
+    document.getElementById('stage'+currentStage).classList.add('active');
+    document.getElementById('stageNum').textContent=currentStage;
+    document.getElementById('overlay').classList.remove('show');
+    if(currentStage===4)document.getElementById('mainBtn').textContent='Finish →';
+  },2500);
+}
+
+function showComplete(){
+  document.getElementById('bottomBar').style.display='none';
+  document.getElementById('stage4').classList.remove('active');
+  document.getElementById('gameComplete').classList.add('show');
+  fireConfetti();
+}
+
+function fireConfetti(){
+  const wrap=document.getElementById('confettiWrap');wrap.innerHTML='';
+  const colors=['#FFD166','#06D6A0','#4CC9F0','#C77DFF','#FF6B6B'];
+  for(let i=0;i<28;i++){
+    const c=document.createElement('div');c.className='confetto';
+    c.style.left=(Math.random()*100)+'%';c.style.background=colors[Math.floor(Math.random()*colors.length)];
+    c.style.animationDuration=(1.5+Math.random()*2)+'s';c.style.animationDelay=(Math.random()*.8)+'s';
+    wrap.appendChild(c);setTimeout(()=>c.remove(),4000);
+  }
+}
+
+function resetGame(){
+  score=0;currentStage=1;stageDone=[false,false,false,false];
+  plotsDone=0;plotFound=[];solsVerified=0;scDone=0;lineChanged=false;verifiedCount=0;
+  document.getElementById('scoreDisplay').textContent='0 pts';
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('gameComplete').classList.remove('show');
+  document.getElementById('bottomBar').style.display='flex';
+  document.getElementById('stageNum').textContent='1';
+  document.getElementById('mainBtn').textContent='Continue →';
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
+  document.getElementById('stage1').classList.add('active');
+  document.querySelectorAll('.sol-point').forEach(el=>{el.classList.remove('verified');});
+  document.querySelectorAll('.eq-opt').forEach(el=>el.classList.remove('correct','wrong'));
+  drawCoordGrid();drawInfLine();updateLine();
+}
+</script>
+</body>
+</html>

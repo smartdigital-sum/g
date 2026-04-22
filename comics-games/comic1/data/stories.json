@@ -1,0 +1,942 @@
+[
+  {
+    "id": "lion-mouse",
+    "title": "The Lion and the Little Mouse",
+    "grade": "1-3",
+    "category": "fable",
+    "author": "Aesop",
+    "description": "A tiny mouse saves a mighty lion - a tale of friendship!",
+    "emoji": "🦁",
+    "color": "from-yellow-400 to-orange-500",
+    "pages": [
+      {
+        "text": "Once upon a time, in a sunny meadow, there lived a mighty Lion. He was the king of all animals! 🦁",
+        "emoji": "🦁",
+        "bg": "bg-yellow-100",
+        "highlight": ["Lion", "king"]
+      },
+      {
+        "text": "One day, the Lion was sleeping under a big tree. A little Mouse was playing nearby and accidentally ran across the Lion's nose!",
+        "emoji": "🐭",
+        "bg": "bg-orange-100",
+        "highlight": ["sleeping", "nose"]
+      },
+      {
+        "text": "The Lion woke up with a roar! 'How dare you wake me!' he roared. He caught the tiny mouse with his big paw.",
+        "emoji": "😠",
+        "bg": "bg-red-100",
+        "highlight": ["roared", "caught"]
+      },
+      {
+        "text": "The little Mouse was so scared! 'Please, Mr. Lion! Let me go! One day I might help you!' he squeaked.",
+        "emoji": "😰",
+        "bg": "bg-yellow-100",
+        "highlight": ["scared", "help"]
+      },
+      {
+        "text": "The Lion laughed. 'You? Help ME? You're so tiny!' But he thought the mouse was brave, so he let him go. 🐭💨",
+        "emoji": "😊",
+        "bg": "bg-green-100",
+        "highlight": ["brave", "let him go"]
+      },
+      {
+        "text": "Many days later, the Lion was caught in a hunter's net! He roared and struggled but couldn't get free. 🕸️",
+        "emoji": "😣",
+        "bg": "bg-gray-100",
+        "highlight": ["hunter's net", "couldn't get free"]
+      },
+      {
+        "text": "The little Mouse heard the Lion's roar. 'I'm coming to help!' he remembered his promise.",
+        "emoji": "🏃",
+        "bg": "bg-blue-100",
+        "highlight": ["heard", "promise"]
+      },
+      {
+        "text": "The tiny mouse nibbled and gnawed the ropes with his sharp teeth. Nibble, nibble, nibble! 🐭🔓",
+        "emoji": "✨",
+        "bg": "bg-purple-100",
+        "highlight": ["nibbled", "sharp teeth"]
+      },
+      {
+        "text": "Slowly, the net broke! The Lion was free! 'You were right, little friend!' the Lion said. 'Even the smallest can help the mightiest!' 🤝",
+        "emoji": "🎉",
+        "bg": "bg-pink-100",
+        "highlight": ["free", "smallest can help mightiest"]
+      },
+      {
+        "text": "From that day on, the Lion and the Mouse were the best of friends. They proved that no one is too small to make a difference! 🌟",
+        "emoji": "💛",
+        "bg": "bg-yellow-50",
+        "highlight": ["best friends", "make a difference"]
+      }
+    ],
+    "quiz": [
+      {
+        "question": "What did the little Mouse promise the Lion?",
+        "options": ["To bring food", "To help him one day", "To sing a song", "To find his family"],
+        "correct": 1
+      },
+      {
+        "question": "How did the Lion get caught?",
+        "options": ["He fell in a hole", "Hunter's net", "He was sleeping", "A rock fell on him"],
+        "correct": 1
+      },
+      {
+        "question": "What did the Mouse use to free the Lion?",
+        "options": ["His paws", "His sharp teeth", "Magic", "A stick"],
+        "correct": 1
+      }
+    ]
+  },
+  {
+    "id": "tortoise-hare",
+    "title": "The Speedy Hare and the Slow Tortoise",
+    "grade": "1-3",
+    "category": "fable",
+    "author": "Aesop",
+    "description": "The classic race - can slow and steady really win?",
+    "emoji": "🐢",
+    "color": "from-green-400 to-teal-500",
+    "pages": [
+      {
+        "text": "In a sunny meadow, there lived a Hare who was very proud. 'I'm the fastest animal in the world!' he would boast. 🐇",
+        "emoji": "🏃",
+        "bg": "bg-green-100",
+        "highlight": ["fastest", "world"]
+      },
+      {
+        "text": "One day, he saw a Tortoise walking slowly. 'Hey, Tortoise! Why are you so slow?' the Hare laughed. 🐢",
+        "emoji": "😂",
+        "bg": "bg-lime-100",
+        "highlight": ["slow", "laughed"]
+      },
+      {
+        "text": "'I may be slow,' said the Tortoise calmly, 'but I keep going.' The Hare thought this was very funny!",
+        "emoji": "😄",
+        "bg": "bg-emerald-100",
+        "highlight": ["slow", "keep going"]
+      },
+      {
+        "text": "'Let's have a race!' said the Hare. 'I'll win easily!' All the animals gathered to watch. 🏁",
+        "emoji": "🎯",
+        "bg": "bg-yellow-100",
+        "highlight": ["race", "win easily"]
+      },
+      {
+        "text": "'One, two, three, GO!' called the Fox. The Hare zoomed ahead like lightning! The Tortoise started walking slowly. ⚡",
+        "emoji": "💨",
+        "bg": "bg-amber-100",
+        "highlight": ["zoomed", "lightning"]
+      },
+      {
+        "text": "Soon, the Hare was far ahead. He looked back and couldn't even see the Tortoise. 'I have time for a nap!' he thought. 😴",
+        "emoji": "😎",
+        "bg": "bg-orange-100",
+        "highlight": ["time for a nap"]
+      },
+      {
+        "text": "The Hare fell fast asleep under a shady tree. The Tortoise kept walking... step by step... slowly but surely. 🌳",
+        "emoji": "🚶",
+        "bg": "bg-teal-100",
+        "highlight": ["kept walking", "surely"]
+      },
+      {
+        "text": "The Tortoise passed the sleeping Hare. 'Keep going!' cheered the animals. The Hare didn't hear a thing!",
+        "emoji": "👏",
+        "bg": "bg-cyan-100",
+        "highlight": ["passed", "didn't hear"]
+      },
+      {
+        "text": "The Tortoise reached the finish line! 'Winner!' called the animals. Just then, the Hare woke up and ran as fast as he could...",
+        "emoji": "🏆",
+        "bg": "bg-yellow-200",
+        "highlight": ["winner", "woke up"]
+      },
+      {
+        "text": "...but it was too late! The Tortoise had won! 'Slow and steady wins the race,' everyone cheered! 🌟",
+        "emoji": "🎊",
+        "bg": "bg-green-50",
+        "highlight": ["slow and steady", "wins the race"]
+      }
+    ],
+    "quiz": [
+      {
+        "question": "Why was the Hare so proud?",
+        "options": ["He was big", "He was the fastest", "He could fly", "He was the king"],
+        "correct": 1
+      },
+      {
+        "question": "What did the Hare do while the Tortoise kept walking?",
+        "options": ["Ran faster", "Took a nap", "Ate carrots", "Nothing"],
+        "correct": 1
+      },
+      {
+        "question": "What lesson did this story teach?",
+        "options": ["Fast is always best", "Sleep more", "Slow and steady wins the race", "Hares are lazy"],
+        "correct": 2
+      }
+    ]
+  },
+  {
+    "id": "little-red-hen",
+    "title": "The Little Red Hen",
+    "grade": "1-3",
+    "category": "folktale",
+    "author": "Unknown",
+    "description": "A hardworking hen teaches the value of labor!",
+    "emoji": "🐔",
+    "color": "from-red-400 to-rose-500",
+    "pages": [
+      {
+        "text": "Once upon a time, there lived a Little Red Hen in a cozy farmyard. She was always busy! 🐔",
+        "emoji": "🏡",
+        "bg": "bg-red-50",
+        "highlight": ["busy"]
+      },
+      {
+        "text": "One day, she found a grain of wheat. 'Who will help me plant this?' she asked.",
+        "emoji": "🌾",
+        "bg": "bg-yellow-100",
+        "highlight": ["wheat", "plant"]
+      },
+      {
+        "text": "'Not I!' said the Pig. 'Not I!' said the Cat. 'Not I!' said the Dog. The Little Red Hen decided to do it herself. 💪",
+        "emoji": "😤",
+        "bg": "bg-orange-100",
+        "highlight": ["not I", "herself"]
+      },
+      {
+        "text": "She planted the wheat and watered it. Day after day, she worked hard in the sunshine. ☀️",
+        "emoji": "🌱",
+        "bg": "bg-green-100",
+        "highlight": ["planted", "worked hard"]
+      },
+      {
+        "text": "Soon, the wheat grew tall and golden. 'Who will help me harvest this?' asked the Hen.",
+        "emoji": "🌾",
+        "bg": "bg-amber-100",
+        "highlight": ["harvest"]
+      },
+      {
+        "text": "'Not I!' said all the animals again. So the Little Red Hen harvested it all by herself. 🌾",
+        "emoji": "💪",
+        "bg": "bg-yellow-200",
+        "highlight": ["harvested", "herself"]
+      },
+      {
+        "text": "'Now, who will help me grind the wheat into flour?' she asked. The animals all said no again.",
+        "emoji": "🌬️",
+        "bg": "bg-gray-100",
+        "highlight": ["flour"]
+      },
+      {
+        "text": "The Little Red Hen ground the wheat into flour. Then she mixed it with water and baked delicious bread! 🍞",
+        "emoji": "🍞",
+        "bg": "bg-orange-200",
+        "highlight": ["baked", "delicious bread"]
+      },
+      {
+        "text": "'Who will help me eat this bread?' asked the Hen happily. 'I will! I will!' said all the animals.",
+        "emoji": "😋",
+        "bg": "bg-red-100",
+        "highlight": ["eat", "I will"]
+      },
+      {
+        "text": "'No!' said the Little Red Hen. 'I planted it, I grew it, I baked it - I will eat it myself!' And she did! The lazy animals learned an important lesson. 🌟",
+        "emoji": "😉",
+        "bg": "bg-red-200",
+        "highlight": ["I will eat it myself", "important lesson"]
+      }
+    ],
+    "quiz": [
+      {
+        "question": "What did the Little Red Hen find?",
+        "options": ["A egg", "A grain of wheat", "A seed", "A corn"],
+        "correct": 1
+      },
+      {
+        "question": "Who helped the Little Red Hen?",
+        "options": ["The Pig", "The Cat", "No one", "Everyone"],
+        "correct": 2
+      },
+      {
+        "question": "What did the Hen bake at the end?",
+        "options": ["Cake", "Cookies", "Bread", "Pie"],
+        "correct": 2
+      }
+    ]
+  },
+  {
+    "id": "ugly-duckling",
+    "title": "The Ugly Duckling",
+    "grade": "1-3",
+    "category": "fairytale",
+    "author": "Hans Christian Andersen",
+    "description": "A little duck grows into a beautiful swan!",
+    "emoji": "🦆",
+    "color": "from-blue-300 to-indigo-500",
+    "pages": [
+      {
+        "text": "It was summer, and the countryside was beautiful. A Mother Duck sat on her eggs, waiting for her babies to hatch. 🦆",
+        "emoji": "🥚",
+        "bg": "bg-blue-50",
+        "highlight": ["waiting", "hatch"]
+      },
+      {
+        "text": "One by one, the eggs cracked! Quack, quack, quack! Cute yellow ducklings came out. But one egg was still bigger...",
+        "emoji": "🐣",
+        "bg": "bg-yellow-100",
+        "highlight": ["cracked", "bigger"]
+      },
+      {
+        "text": "Finally, the last egg hatched. But this baby was big, gray, and ugly! 'That's strange,' said Mother Duck. 😕",
+        "emoji": "😮",
+        "bg": "bg-gray-100",
+        "highlight": ["gray", "ugly"]
+      },
+      {
+        "text": "The other ducks made fun of him. 'You're so ugly!' they teased. The Ugly Duckling was very sad. 💔",
+        "emoji": "😢",
+        "bg": "bg-slate-100",
+        "highlight": ["teased", "sad"]
+      },
+      {
+        "text": "He ran away from home. He met mean ducks, scary dogs, and a harsh farmer. Life was very hard. 🌧️",
+        "emoji": "🏃",
+        "bg": "bg-stone-200",
+        "highlight": ["ran away", "hard"]
+      },
+      {
+        "text": "Winter came. The lake froze. The Ugly Duckling was so cold and alone. He almost died! ❄️",
+        "emoji": "🥶",
+        "bg": "bg-blue-200",
+        "highlight": ["froze", "alone"]
+      },
+      {
+        "text": "Spring finally arrived! The Ugly Duckling saw three beautiful white swans gliding on the water. They were so graceful! 🦢",
+        "emoji": "💫",
+        "bg": "bg-cyan-100",
+        "highlight": ["beautiful", "graceful"]
+      },
+      {
+        "text": "'I'll go to them,' he thought. 'Maybe they will peck me for being so ugly. But I don't care anymore!' He bowed his head...",
+        "emoji": "😌",
+        "bg": "bg-indigo-100",
+        "highlight": ["bowed"]
+      },
+      {
+        "text": "...and looked at his reflection in the water. Wait - he wasn't ugly at all! He was a beautiful swan! 🌟",
+        "emoji": "🤩",
+        "bg": "bg-white",
+        "highlight": ["beautiful swan"]
+      },
+      {
+        "text": "The other swans welcomed him warmly. Children on the shore cheered, 'Look at the NEW swan! He's the most beautiful of all!' And the Ugly Duckling felt so happy - he had finally found his place! 💖",
+        "emoji": "🎉",
+        "bg": "bg-purple-100",
+        "highlight": ["most beautiful", "found his place"]
+      }
+    ],
+    "quiz": [
+      {
+        "question": "What color was the Ugly Duckling when he was born?",
+        "options": ["Yellow", "White", "Gray", "Brown"],
+        "correct": 2
+      },
+      {
+        "question": "Where did the Ugly Duckling run away to?",
+        "options": ["A city", "The forest", "Various places", "A zoo"],
+        "correct": 2
+      },
+      {
+        "question": "What did the Ugly Duckling actually turn out to be?",
+        "options": ["A duck", "A goose", "A swan", "A bird"],
+        "correct": 2
+      }
+    ]
+  },
+  {
+    "id": "three-little-pigs",
+    "title": "The Three Little Pigs",
+    "grade": "1-3",
+    "category": "fairytale",
+    "author": "Unknown",
+    "description": "Three pig brothers build houses - only one stands strong!",
+    "emoji": "🐷",
+    "color": "from-pink-300 to-rose-400",
+    "pages": [
+      {
+        "text": "Once upon a time, there were three little pig brothers. Their mother said, 'Build your own houses, my dears!' 🐽",
+        "emoji": "🏠",
+        "bg": "bg-pink-50",
+        "highlight": ["build", "houses"]
+      },
+      {
+        "text": "The first little pig was lazy. He built his house of straw in just one day. 'Too easy!' he said. 🌾",
+        "emoji": "😴",
+        "bg": "bg-yellow-100",
+        "highlight": ["straw", "lazy"]
+      },
+      {
+        "text": "The second pig worked a little harder. He built his house of sticks. 'Good enough!' he said. 🪵",
+        "emoji": "😐",
+        "bg": "bg-amber-100",
+        "highlight": ["sticks"]
+      },
+      {
+        "text": "The third pig was wise and hard-working. He built his house of strong bricks. He worked day and night! 🧱",
+        "emoji": "💪",
+        "bg": "bg-red-100",
+        "highlight": ["bricks", "hard-working"]
+      },
+      {
+        "text": "One day, a big bad wolf came to the first pig's straw house. 'Little pig, little pig, let me come in!' he growled. 🐺",
+        "emoji": "😈",
+        "bg": "bg-gray-200",
+        "highlight": ["wolf", "growled"]
+      },
+      {
+        "text": "'Not by the hair of my chinny chin chin!' said the pig. The wolf huffed and puffed and BLEW the house down! 💨🌬️",
+        "emoji": "💨",
+        "bg": "bg-slate-200",
+        "highlight": ["huffed and puffed", "blew down"]
+      },
+      {
+        "text": "The first pig ran to his brother's stick house. But the wolf followed! 'Little pigs, let me come in!' 🏃💨",
+        "emoji": "🏃",
+        "bg": "bg-orange-100",
+        "highlight": ["ran", "followed"]
+      },
+      {
+        "text": "'Not by the hair of our chinny chin chins!' The wolf huffed and puffed even harder - and BLEW that house down too! 🌪️",
+        "emoji": "🌪️",
+        "bg": "bg-stone-300",
+        "highlight": ["blew down too"]
+      },
+      {
+        "text": "Both pigs ran to the brick house. The wolf tried his hardest - huff, huff, PUFF! But the brick house stood strong! 🧱🏰",
+        "emoji": "💪",
+        "bg": "bg-red-200",
+        "highlight": ["stood strong"]
+      },
+      {
+        "text": "The wolf tried to go down the chimney, but the third pig had a pot of hot water ready. The wolf ran away and never came back! The three pigs lived happily ever after - and the third pig was the smartest of all! 🌟",
+        "emoji": "🎊",
+        "bg": "bg-green-100",
+        "highlight": ["smartest", "happily ever after"]
+      }
+    ],
+    "quiz": [
+      {
+        "question": "What material did the first pig use?",
+        "options": ["Sticks", "Straw", "Bricks", "Wood"],
+        "correct": 1
+      },
+      {
+        "question": "What did the wolf have to do to blow down the houses?",
+        "options": ["Jump", "Huff and puff", "Use magic", "Call friends"],
+        "correct": 1
+      },
+      {
+        "question": "Which pig's house stood strong?",
+        "options": ["First pig", "Second pig", "Third pig", "None"],
+        "correct": 2
+      }
+    ]
+  },
+  {
+    "id": "elephants-child",
+    "title": "How the Elephant Got His Trunk",
+    "grade": "4-7",
+    "category": "just-so",
+    "author": "Rudyard Kipling",
+    "description": "A curious young elephant gets a wonderful surprise!",
+    "emoji": "🐘",
+    "color": "from-slate-400 to-zinc-500",
+    "pages": [
+      {
+        "text": "In the early days, when the elephant's nose was just a bump on his face, there lived a curious young elephant. He was always asking questions that made the other animals tired. 🐘",
+        "emoji": "🤔",
+        "bg": "bg-slate-100",
+        "highlight": ["curious", "questions"]
+      },
+      {
+        "text": "'What does the crocodile have for dinner?' he asked the flamingo. 'I don't know!' she said sharply. He asked the python, the zebra, the baboon - everyone was annoyed! 🦓",
+        "emoji": "😕",
+        "bg": "bg-gray-100",
+        "highlight": ["crocodile", "annoyed"]
+      },
+      {
+        "text": "One day, the young elephant went to the great grey river to ask the crocodile. 'Why does the rhino have such a terrible temper?' he asked.",
+        "emoji": "🏞️",
+        "bg": "bg-blue-100",
+        "highlight": ["great grey river", "crocodile"]
+      },
+      {
+        "text": "'Come closer, young one,' said the crocodile with a sneaky smile. 'I'll tell you the secret...'", 
+        "emoji": "😏",
+        "bg": "bg-green-200",
+        "highlight": ["closer", "sneaky smile"]
+      },
+      {
+        "text": "The young elephant leaned down - and SNAP! The crocodile grabbed his nose with his strong jaws! 'Help! He's pulling me in!' cried the elephant. 🐊",
+        "emoji": "😱",
+        "bg": "bg-red-100",
+        "highlight": ["snapped", "pulling me in"]
+      },
+      {
+        "text": "The elephant pulled with all his might! He pulled north, south, east, and west! The other animals came to watch the tremendous tug-of-war! 💪",
+        "emoji": "🔥",
+        "bg": "bg-amber-100",
+        "highlight": ["pulled with all his might"]
+      },
+      {
+        "text": "Pull! Pull! PULL! Suddenly - THUMP! The crocodile let go, and the young elephant went flying backward! But something strange had happened...",
+        "emoji": "🤸",
+        "bg": "bg-orange-100",
+        "highlight": ["went flying", "something strange"]
+      },
+      {
+        "text": "His nose had stretched and stretched from all that pulling! Now it hung down from his face, long and wiggly! 'Oh my!' said the elephant. 'What a useful thing I've got!' 🐘",
+        "emoji": "😲",
+        "bg": "bg-purple-100",
+        "highlight": ["stretched", "long and wiggly"]
+      },
+      {
+        "text": "He could use his new nose as a shower, a fishing rod, a trumpet, and even to pick up peanuts! The other animals were so jealous! 🥜",
+        "emoji": "🥜",
+        "bg": "bg-yellow-100",
+        "highlight": ["shower", "fishing rod"]
+      },
+      {
+        "text": "And that's how the elephant got his trunk - all because one curious young elephant wasn't afraid to ask questions! From that day on, elephants never stopped exploring. 🌟",
+        "emoji": "✨",
+        "bg": "bg-slate-50",
+        "highlight": ["curious", "never stopped exploring"]
+      }
+    ],
+    "quiz": [
+      {
+        "question": "What was the elephant's nose like before?",
+        "options": ["Very long", "A small bump", "Short and curly", "Non-existent"],
+        "correct": 1
+      },
+      {
+        "question": "What did the crocodile actually want?",
+        "options": ["To be friends", "To tell a secret", "To eat the elephant", "To play"],
+        "correct": 2
+      },
+      {
+        "question": "What can the elephant NOT do with his trunk?",
+        "options": ["Shower", "Pick up peanuts", "Fly", "Trumpet"],
+        "correct": 2
+      },
+      {
+        "question": "What lesson does this story teach?",
+        "options": ["Don't ask questions", "Be curious and brave", "Stay away from rivers", "Never trust crocodiles"],
+        "correct": 1
+      },
+      {
+        "question": "Who wrote this story?",
+        "options": ["Aesop", "Hans Christian Andersen", "Rudyard Kipling", "Charles Dickens"],
+        "correct": 2
+      }
+    ]
+  },
+  {
+    "id": "leopard-spots",
+    "title": "How the Leopard Got His Spots",
+    "grade": "4-7",
+    "category": "just-so",
+    "author": "Rudyard Kipling",
+    "description": "A leopard changes in the forest - a colorful adventure!",
+    "emoji": "🐆",
+    "color": "from-amber-500 to-yellow-600",
+    "pages": [
+      {
+        "text": "In the days when the leopard was plain golden-brown, he lived in a place called the High Veldt. There were no trees there - only grass and more grass! 🌾",
+        "emoji": "🌾",
+        "bg": "bg-yellow-100",
+        "highlight": ["golden-brown", "High Veldt"]
+      },
+      {
+        "text": "The Ethiopian lived there too - a tall, dark man. He and the leopard were the best of friends. They went hunting together every day. 🏃",
+        "emoji": "🤝",
+        "bg": "bg-amber-100",
+        "highlight": ["Ethiopian", "best friends"]
+      },
+      {
+        "text": "But the animals they hunted could see them coming from far away! 'We can never catch anything!' complained the Ethiopian. 'We need to be disguised!' 🎭",
+        "emoji": "😤",
+        "bg": "bg-orange-100",
+        "highlight": ["never catch", "disguised"]
+      },
+      {
+        "text": "They decided to go to the forest, where it was shady and dark. There lived an Ethiopian's uncle with a lot of clever ideas. 🦁",
+        "emoji": "🌲",
+        "bg": "bg-green-100",
+        "highlight": ["shady", "clever ideas"]
+      },
+      {
+        "text": "'You're too golden!' said the uncle, looking at the leopard. 'The animals will see you! I'll paint you with spots using my special paint!' 🖌️",
+        "emoji": "🎨",
+        "bg": "bg-red-100",
+        "highlight": ["golden", "paint with spots"]
+      },
+      {
+        "text": "The uncle took mud and berry juice and charcoal, and painted the leopard all over - spots on his back, spots on his legs, spots everywhere! The leopard looked amazing! ✨",
+        "emoji": "😍",
+        "bg": "bg-purple-100",
+        "highlight": ["painted", "amazing"]
+      },
+      {
+        "text": "'Now blend into the shadows!' said the uncle. And when the leopard stood in the forest, the shadows hid his spots perfectly! He could sneak up on any animal! 🌳",
+        "emoji": "🌳",
+        "bg": "bg-green-200",
+        "highlight": ["blend into shadows", "sneak up"]
+      },
+      {
+        "text": "The Ethiopian wanted to blend in too. So his uncle painted him all over with black and brown - now he looked like a forest person! 🖤",
+        "emoji": "🧑",
+        "bg": "bg-stone-200",
+        "highlight": ["painted him", "forest person"]
+      },
+      {
+        "text": "Now they could hunt successfully again! The leopard's spots became part of him forever - and he passed it to all his baby leopards! 👶",
+        "emoji": "👨‍👩‍👧",
+        "bg": "bg-amber-50",
+        "highlight": ["passed to baby leopards"]
+      },
+      {
+        "text": "That's why leopards have spots and forest people have dark skin - a clever solution found long ago! And they all lived happily ever after. 🌟",
+        "emoji": "🎉",
+        "bg": "bg-yellow-50",
+        "highlight": ["clever solution", "happily"]
+      }
+    ],
+    "quiz": [
+      {
+        "question": "Where did the leopard originally live?",
+        "options": ["In a forest", "The High Veldt", "Near a river", "In a cave"],
+        "correct": 1
+      },
+      {
+        "question": "Who painted the leopard's spots?",
+        "options": ["The hunter", "The uncle", "A painter", "He did it himself"],
+        "correct": 1
+      },
+      {
+        "question": "What did the uncle use to paint?",
+        "options": ["Regular paint", "Magic", "Mud, berry juice, and charcoal", "Ink"],
+        "correct": 2
+      },
+      {
+        "question": "What happened to the spots over time?",
+        "options": ["They faded", "Leopards passed them to babies", "They turned brown", "They disappeared"],
+        "correct": 1
+      },
+      {
+        "question": "Why were the spots useful?",
+        "options": ["They looked pretty", "They helped blend into shadows for hunting", "They kept leopards warm", "They scared enemies"],
+        "correct": 1
+      }
+    ]
+  },
+  {
+    "id": "panchatantra-friends",
+    "title": "The Four Clever Friends",
+    "grade": "4-7",
+    "category": "panchatantra",
+    "author": "Unknown (Ancient India)",
+    "description": "A crow, mouse, turtle, and deer - an unlikely team!",
+    "emoji": "🐦",
+    "color": "from-emerald-400 to-teal-600",
+    "pages": [
+      {
+        "text": "Long ago in ancient India, there lived four unlikely friends: Chittaka the Crow, Pingala the Mouse, Labuki the Tortoise, and Mriga the Deer. They were very different, but they helped each other! 🐦🐭🐢🦌",
+        "emoji": "🤝",
+        "bg": "bg-green-50",
+        "highlight": ["unlikely friends", "helped each other"]
+      },
+      {
+        "text": "One hot summer, the four friends sat under a big banyan tree. 'We must always stick together,' said wise Chittaka the Crow. 'Our friendship is our greatest strength!' 🌳",
+        "emoji": "☀️",
+        "bg": "bg-yellow-100",
+        "highlight": ["stick together", "greatest strength"]
+      },
+      {
+        "text": "Just then, a hunter came into the forest! He saw Mriga the Deer and threw his net. 'Run!' cried the deer, but he was trapped! 🕸️",
+        "emoji": "😱",
+        "bg": "bg-red-100",
+        "highlight": ["hunter", "trapped"]
+      },
+      {
+        "text": "But the clever friends didn't panic! Chittaka flew up and pecked at the hunter's eyes! The hunter waved his arms and dropped the net! 🦅",
+        "emoji": "💪",
+        "bg": "bg-blue-100",
+        "highlight": ["flew up", "pecked"]
+      },
+      {
+        "text": "Mriga jumped up and ran! But wait - he got his antlers tangled in the net! The hunter was coming back! 😰",
+        "emoji": "😰",
+        "bg": "bg-orange-100",
+        "highlight": ["antlers tangled", "coming back"]
+      },
+      {
+        "text": "Pingala the Mouse ran to help. With her sharp teeth, she gnawed through the ropes! Nibble, nibble, nibble! 🐭✂️",
+        "emoji": "✨",
+        "bg": "bg-purple-100",
+        "highlight": ["sharp teeth", "nibble nibble"]
+      },
+      {
+        "text": "Mriga was free! But now they needed to escape. The hunter was close behind! How could they all get away? 🏃💨",
+        "emoji": "🏃",
+        "bg": "bg-red-100",
+        "highlight": ["escape", "close behind"]
+      },
+      {
+        "text": "Quick-thinking Labuka the Tortoise said, 'I'll distract him! The hunter can't run as fast as me in the mud!' She crawled slowly toward the hunter. 🐢",
+        "emoji": "😏",
+        "bg": "bg-green-200",
+        "highlight": ["distract", "crawled slowly"]
+      },
+      {
+        "text": "The hunter chased the tortoise, thinking she was easy prey. But Labuka led him around in circles until the others escaped! 🌀",
+        "emoji": "😄",
+        "bg": "bg-cyan-100",
+        "highlight": ["led him in circles", "escaped"]
+      },
+      {
+        "text": "All four friends reunited safely. 'We are stronger together!' they cheered. This story teaches that true friends help each other no matter what - and together, we can overcome any challenge! 🌟",
+        "emoji": "🎊",
+        "bg": "bg-emerald-50",
+        "highlight": ["stronger together", "overcome any challenge"]
+      }
+    ],
+    "quiz": [
+      {
+        "question": "What were the four friends?",
+        "options": ["Lion, Tiger, Bear, Wolf", "Crow, Mouse, Tortoise, Deer", "Eagle, Snake, Monkey, Elephant", "Cat, Dog, Horse, Cow"],
+        "correct": 1
+      },
+      {
+        "question": "Who freed the deer from the net?",
+        "options": ["The crow", "The hunter", "The mouse", "The tortoise"],
+        "correct": 2
+      },
+      {
+        "question": "How did the tortoise distract the hunter?",
+        "options": ["She ran fast", "She flew away", "She led him in circles", "She hid"],
+        "correct": 2
+      },
+      {
+        "question": "What lesson does this story teach?",
+        "options": ["Run fast", "Friends are stronger together", "Be lazy", "Don't help others"],
+        "correct": 1
+      },
+      {
+        "question": "Where does the Panchatantra come from?",
+        "options": ["Greece", "Egypt", "Ancient India", "China"],
+        "correct": 2
+      }
+    ]
+  },
+  {
+    "id": "emperor-new-clothes",
+    "title": "The Emperor's New Clothes",
+    "grade": "4-7",
+    "category": "fairytale",
+    "author": "Hans Christian Andersen",
+    "description": "A emperor gets a very special - and invisible - suit!",
+    "emoji": "👑",
+    "color": "from-purple-400 to-indigo-600",
+    "pages": [
+      {
+        "text": "Many years ago, there lived an Emperor who loved beautiful clothes more than anything else. He spent all his money on new outfits! 'I must see the finest clothes in the world!' he said. 👗",
+        "emoji": "👔",
+        "bg": "bg-purple-100",
+        "highlight": ["loved beautiful clothes", "finest"]
+      },
+      {
+        "text": "One day, two tricky weavers came to the city. They claimed they could make the most magnificent cloth - visible only to intelligent people! 'It will be worth a fortune!' they said. 🧵",
+        "emoji": "😈",
+        "bg": "bg-pink-100",
+        "highlight": ["tricky weavers", "visible only to intelligent"]
+      },
+      {
+        "text": "The Emperor gave them gold and silk. But they pretended to work on empty looms! 'Oh, what a beautiful pattern!' they'd say, pointing at nothing. 🕸️",
+        "emoji": "🤥",
+        "bg": "bg-gray-100",
+        "highlight": ["empty looms", "pointing at nothing"]
+      },
+      {
+        "text": "The Emperor sent his minister to check. The minister was afraid to look stupid, so he said, 'Oh, what lovely colors! What perfect patterns!' But he saw nothing at all! 😰",
+        "emoji": "😰",
+        "bg": "bg-blue-100",
+        "highlight": ["afraid to look stupid", "saw nothing"]
+      },
+      {
+        "text": "Finally, the big day came. The 'weavers' held up the invisible cloth. 'Your Majesty, please put on your new clothes!' Everyone gasped! 👀",
+        "emoji": "😮",
+        "bg": "bg-red-100",
+        "highlight": ["invisible cloth", "gasped"]
+      },
+      {
+        "text": "The Emperor undressed and pretended to put on the magical clothes. 'Your Majesty looks magnificent!' the crowd cheered. But actually, he was wearing nothing! 🙈",
+        "emoji": "🤭",
+        "bg": "bg-yellow-100",
+        "highlight": ["wearing nothing", "cheered"]
+      },
+      {
+        "text": "The Emperor walked through the streets in his 'new clothes.' Everyone said how wonderful he looked - no one wanted to seem foolish! 🚶",
+        "emoji": "🚶",
+        "bg": "bg-orange-100",
+        "highlight": ["no one wanted to seem foolish"]
+      },
+      {
+        "text": "Then, a little child in the crowd shouted, 'But he has no clothes on! I can see his underwear!' 👶",
+        "emoji": "😱",
+        "bg": "bg-green-100",
+        "highlight": ["no clothes on"]
+      },
+      {
+        "text": "'He has no clothes on!' the people whispered. Soon, everyone was saying it! The Emperor realized he had been tricked, but he walked even more proudly - he had to finish the parade! 💪",
+        "emoji": "😅",
+        "bg": "bg-teal-100",
+        "highlight": ["tricked", "walked proudly"]
+      },
+      {
+        "text": "And so, the child told the truth that day. This story teaches us to be honest and not follow the crowd - sometimes the simplest truth is the most important one! 🌟",
+        "emoji": "✨",
+        "bg": "bg-purple-50",
+        "highlight": ["be honest", "simplest truth"]
+      }
+    ],
+    "quiz": [
+      {
+        "question": "What did the Emperor love more than anything?",
+        "options": ["Gold", "Beautiful clothes", "His people", "His castle"],
+        "correct": 1
+      },
+      {
+        "question": "What was special about the magical cloth?",
+        "options": ["It glowed in the dark", "Only intelligent people could see it", "It was made of gold", "It could fly"],
+        "correct": 1
+      },
+      {
+        "question": "Who told the truth at the end?",
+        "options": ["A minister", "The weavers", "A little child", "The queen"],
+        "correct": 2
+      },
+      {
+        "question": "Why didn't anyone say the Emperor was naked earlier?",
+        "options": ["They didn't notice", "They were afraid to seem foolish", "They were asleep", "They couldn't see"],
+        "correct": 1
+      },
+      {
+        "question": "What lesson does this story teach?",
+        "options": ["Buy expensive clothes", "Always follow the crowd", "Be honest and don't be fooled by others", "Never trust weavers"],
+        "correct": 2
+      }
+    ]
+  },
+  {
+    "id": "singing-bones",
+    "title": "The Singing Bones",
+    "grade": "4-7",
+    "category": "fairytale",
+    "author": "Brothers Grimm",
+    "description": "A dark tale of greed and justice in the forest!",
+    "emoji": "💀",
+    "color": "from-gray-500 to-slate-700",
+    "pages": [
+      {
+        "text": "In a faraway kingdom, there lived a merchant who had two children - a kind girl and a lazy, greedy boy. The merchant had to go on a long journey for business. 📦",
+        "emoji": "🛒",
+        "bg": "bg-slate-100",
+        "highlight": ["kind girl", "greedy boy"]
+      },
+      {
+        "text": "'I'll bring you each a gift!' said the father. On his way, he met a little man who asked what he'd bring. 'A pretty ribbon for my daughter!' said the merchant. 'And a nice pebble for my son!' 🪨",
+        "emoji": "👴",
+        "bg": "bg-amber-100",
+        "highlight": ["ribbon", "pebble"]
+      },
+      {
+        "text": "The greedy boy was furious about the pebble! 'That's all I get?!' He secretly followed his father and pushed him into a canyon! Then he took all the valuable goods! 😈",
+        "emoji": "😱",
+        "bg": "bg-red-100",
+        "highlight": ["pushed into canyon", "took goods"]
+      },
+      {
+        "text": "The merchant's body was never found. But years later, a brave knight was traveling through the forest when he heard a strange sound - music coming from under the ground! 🎵",
+        "emoji": "🏰",
+        "bg": "bg-gray-100",
+        "highlight": ["music", "under the ground"]
+      },
+      {
+        "text": "'Dig here!' said a voice from below. The knight dug - and found a skeleton! Suddenly, the bones began to sing: 'A merchant once traveled here, his son pushed him in fear! The son took all his gold - dig deeper, knight so bold!' 💀🎤",
+        "emoji": "⛏️",
+        "bg": "bg-stone-200",
+        "highlight": ["bones began to sing", "son pushed him"]
+      },
+      {
+        "text": "The knight followed the singing bones. They led him to a hidden cave filled with gold and precious gems! 'Take this treasure and bring justice!' sang the bones. 💎",
+        "emoji": "💰",
+        "bg": "bg-yellow-200",
+        "highlight": ["hidden cave", "bring justice"]
+      },
+      {
+        "text": "The knight took the treasure and returned to the kingdom. The greedy brother was living in the merchant's house, spending all the money! But justice was coming... ⚖️",
+        "emoji": "😰",
+        "bg": "bg-red-200",
+        "highlight": ["justice was coming"]
+      },
+      {
+        "text": "The knight told the king everything - about the singing bones and the murder. The greedy brother was arrested and punished for his terrible crime. 👮",
+        "emoji": "👮",
+        "bg": "bg-blue-200",
+        "highlight": ["arrested", "punished"]
+      },
+      {
+        "text": "The kind sister received all the treasure and lived happily. The merchant, though gone, had finally found justice through the power of truth. 🏠",
+        "emoji": "💖",
+        "bg": "bg-pink-100",
+        "highlight": ["justice", "happily"]
+      },
+      {
+        "text": "And the bones in the forest? They never sang again. Peace had finally come. This story shows that bad deeds never stay hidden forever - truth always finds a way! 🌟",
+        "emoji": "✨",
+        "bg": "bg-slate-50",
+        "highlight": ["truth always finds a way"]
+      }
+    ],
+    "quiz": [
+      {
+        "question": "What gift did the merchant bring his son?",
+        "options": ["A diamond", "A pebble", "A coin", "Nothing"],
+        "correct": 1
+      },
+      {
+        "question": "What sound did the knight hear in the forest?",
+        "options": ["Crying", "Singing", "Laughing", "Talking"],
+        "correct": 1
+      },
+      {
+        "question": "Where did the singing bones lead the knight?",
+        "options": ["To a castle", "To a hidden cave with treasure", "To a river", "To a village"],
+        "correct": 1
+      },
+      {
+        "question": "What happened to the greedy brother?",
+        "options": ["He got more money", "He was arrested and punished", "He ran away", "He became king"],
+        "correct": 1
+      },
+      {
+        "question": "What lesson does this story teach?",
+        "options": ["Be greedy", "Bad deeds never stay hidden", "Don't travel", "Gold is everything"],
+        "correct": 1
+      }
+    ]
+  }
+]

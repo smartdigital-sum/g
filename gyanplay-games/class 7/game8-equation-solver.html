@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Equation Solver – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#0F0C29;--dark:#1A1A2E;--gold:#FFB800;--sky:#00AEEF;
+    --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg);color:#fff;font-family:'Nunito',sans-serif;
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    padding:20px;animation:fadeIn .6s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  .topbar{width:100%;max-width:640px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
+  .back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.85rem;}
+  .back-btn:hover{background:rgba(255,255,255,.2);}
+  .badge{background:var(--sky);color:#000;padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:800;letter-spacing:1px;}
+  .lang-bar{display:flex;gap:6px;}
+  .lang-btn{background:rgba(255,255,255,.1);border:none;color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;}
+  .lang-btn.active{background:var(--gold);color:#000;}
+
+  h1{font-family:'Baloo 2',cursive;font-size:2.2rem;color:var(--sky);text-align:center;line-height:1.2;}
+  .subtitle{font-size:.9rem;color:#aaa;margin-top:4px;text-align:center;}
+
+  .stars{display:flex;justify-content:center;gap:10px;margin:14px 0;}
+  .star{font-size:2rem;color:#444;transition:color .4s;}
+  .star.lit{color:var(--gold);}
+
+  .score-bar{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:640px;background:var(--dark);border-radius:12px;padding:10px 20px;margin-bottom:18px;}
+  .score-label{font-size:.85rem;color:#aaa;}
+  .score-val{font-family:'Baloo 2',cursive;font-size:1.6rem;color:var(--gold);}
+  .round-info{font-size:.85rem;color:#aaa;}
+
+  .progress-wrap{width:100%;max-width:640px;background:rgba(255,255,255,.1);border-radius:10px;height:8px;margin-bottom:18px;}
+  .progress-fill{height:8px;border-radius:10px;background:linear-gradient(90deg,var(--sky),var(--green));transition:width .4s;}
+
+  .card{background:var(--dark);border-radius:20px;padding:30px 24px;width:100%;max-width:640px;text-align:center;}
+
+  .q-label{font-size:1rem;color:#ccc;margin-bottom:16px;font-weight:700;}
+
+  /* equation display */
+  .eq-box{
+    background:rgba(0,174,239,.1);border:2px solid var(--sky);
+    border-radius:16px;padding:22px 16px;margin:0 auto 28px;
+    font-family:'Baloo 2',cursive;font-size:3rem;color:#fff;
+    max-width:320px;letter-spacing:2px;
+  }
+  .eq-box .x-highlight{color:var(--gold);}
+
+  /* choices */
+  .choices{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;}
+  .choice-btn{
+    background:linear-gradient(135deg,rgba(0,174,239,.2),rgba(124,58,237,.2));
+    border:2px solid var(--sky);color:#fff;border-radius:14px;
+    padding:16px 28px;cursor:pointer;font-family:'Baloo 2',cursive;font-size:1.8rem;
+    min-width:90px;transition:transform .15s,border-color .15s;
+  }
+  .choice-btn:hover{transform:scale(1.08);border-color:var(--gold);}
+  .choice-btn:disabled{cursor:not-allowed;transform:none;}
+  .choice-btn.correct{border-color:var(--green);background:rgba(0,200,83,.25);}
+  .choice-btn.wrong{border-color:var(--pink);background:rgba(255,64,129,.25);}
+
+  .x-label{font-size:.9rem;color:#bbb;margin-bottom:10px;}
+  .feedback{min-height:36px;font-size:1.1rem;font-weight:800;margin-bottom:14px;}
+  .feedback.correct{color:var(--green);}
+  .feedback.wrong{color:var(--pink);}
+  .explanation{font-size:.85rem;color:#aaa;margin-bottom:14px;min-height:20px;}
+
+  .next-btn{background:linear-gradient(135deg,var(--sky),var(--purple));border:none;color:#fff;padding:12px 36px;border-radius:24px;font-family:'Baloo 2',cursive;font-size:1.1rem;cursor:pointer;display:none;}
+  .next-btn:hover{opacity:.9;}
+
+  .end-screen{display:none;text-align:center;}
+  .end-screen h2{font-family:'Baloo 2',cursive;font-size:2rem;color:var(--sky);margin-bottom:10px;}
+  .end-screen p{font-size:1.1rem;margin-bottom:20px;color:#ddd;}
+  .restart-btn{background:linear-gradient(135deg,var(--gold),var(--pink));border:none;color:#000;padding:12px 36px;border-radius:24px;font-family:'Baloo 2',cursive;font-size:1.1rem;cursor:pointer;font-weight:800;}
+
+  [data-lang]{display:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="badge">MATHS</span>
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<h1>🧮 <span data-lang="en">Equation Solver</span><span data-lang="hi">समीकरण हल करो</span><span data-lang="as">সমীকৰণ সমাধানকাৰী</span></h1>
+<p class="subtitle">NCERT Class 7 · Simple Equations</p>
+
+<div class="stars">
+  <span class="star" id="s1">★</span>
+  <span class="star" id="s2">★</span>
+  <span class="star" id="s3">★</span>
+</div>
+
+<div class="score-bar">
+  <div>
+    <div class="score-label"><span data-lang="en">Score</span><span data-lang="hi">अंक</span><span data-lang="as">নম্বৰ</span></div>
+    <div class="score-val" id="scoreVal">0</div>
+  </div>
+  <div class="round-info" id="roundInfo">Q 1 / 10</div>
+</div>
+
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+<div class="card" id="gameArea">
+  <div class="q-label">
+    <span data-lang="en">Find the value of <span style="color:var(--gold);font-weight:800;">x</span></span>
+    <span data-lang="hi"><span style="color:var(--gold);font-weight:800;">x</span> का मान खोजो</span>
+    <span data-lang="as"><span style="color:var(--gold);font-weight:800;">x</span> ৰ মান বিচাৰক</span>
+  </div>
+
+  <div class="eq-box" id="eqDisplay">2<span class="x-highlight">x</span> + 3 = 11</div>
+
+  <p class="x-label"><span data-lang="en">Choose the correct value of x:</span><span data-lang="hi">x का सही मान चुनो:</span><span data-lang="as">x ৰ শুদ্ধ মান বাছক:</span></p>
+
+  <div class="choices" id="choicesDiv"></div>
+
+  <div class="feedback" id="feedback"></div>
+  <div class="explanation" id="explanation"></div>
+
+  <button class="next-btn" id="nextBtn" onclick="nextRound()">
+    <span data-lang="en">Next →</span><span data-lang="hi">अगला →</span><span data-lang="as">পৰৱৰ্তী →</span>
+  </button>
+</div>
+
+<div class="card end-screen" id="endScreen">
+  <h2 id="endTitle"></h2>
+  <p id="endMsg"></p>
+  <div class="stars" id="endStars">
+    <span class="star" id="es1">★</span>
+    <span class="star" id="es2">★</span>
+    <span class="star" id="es3">★</span>
+  </div>
+  <p style="font-size:1.3rem;color:var(--gold);font-weight:800;margin-bottom:18px;" id="finalScore"></p>
+  <button class="restart-btn" onclick="restart()">
+    <span data-lang="en">Play Again</span><span data-lang="hi">फिर खेलो</span><span data-lang="as">আকৌ খেলক</span>
+  </button>
+</div>
+
+<script>
+const questions=[
+  {eq:'2<span class="x-highlight">x</span> + 3 = 11', ans:4, choices:[3,4,5], exp:'2×4+3=11 ✓'},
+  {eq:'3<span class="x-highlight">x</span> − 5 = 10', ans:5, choices:[4,5,6], exp:'3×5−5=10 ✓'},
+  {eq:'<span class="x-highlight">x</span>/2 + 1 = 4',  ans:6, choices:[5,6,7], exp:'6÷2+1=4 ✓'},
+  {eq:'4<span class="x-highlight">x</span> = 20',       ans:5, choices:[4,5,6], exp:'4×5=20 ✓'},
+  {eq:'2<span class="x-highlight">x</span> − 7 = 3',   ans:5, choices:[4,5,6], exp:'2×5−7=3 ✓'},
+  {eq:'<span class="x-highlight">x</span> + 9 = 15',   ans:6, choices:[5,6,7], exp:'6+9=15 ✓'},
+  {eq:'3<span class="x-highlight">x</span> + 2 = 14',  ans:4, choices:[3,4,5], exp:'3×4+2=14 ✓'},
+  {eq:'5<span class="x-highlight">x</span> − 3 = 22',  ans:5, choices:[4,5,6], exp:'5×5−3=22 ✓'},
+  {eq:'2<span class="x-highlight">x</span> + 8 = 20',  ans:6, choices:[5,6,7], exp:'2×6+8=20 ✓'},
+  {eq:'<span class="x-highlight">x</span>/3 + 2 = 5',  ans:9, choices:[8,9,10], exp:'9÷3+2=5 ✓'}
+];
+
+const msgs={
+  en:{correct:'✅ Correct! Well done!',wrong:'❌ Incorrect!',
+      endWin:'🎉 Well done!',endLose:'Keep practising!',score:'Your score:'},
+  hi:{correct:'✅ सही! शाबाश!',wrong:'❌ गलत!',
+      endWin:'🎉 शाबाश!',endLose:'अभ्यास जारी रखो!',score:'तुम्हारा स्कोर:'},
+  as:{correct:'✅ শুদ্ধ! বাহ!',wrong:'❌ ভুল!',
+      endWin:'🎉 বাহ বাহ!',endLose:'অনুশীলন জাৰি ৰাখক!',score:'তোমাৰ নম্বৰ:'}
+};
+
+let cur=0,score=0,lang='en',answered=false;
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>el.style.display='none');
+  document.querySelectorAll(`[data-lang="${l}"]`).forEach(el=>el.style.display='inline');
+  document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.remove('active');if(b.textContent.trim()===(l==='en'?'EN':l==='hi'?'हि':'অ'))b.classList.add('active');});
+}
+
+function loadQuestion(){
+  const q=questions[cur];
+  document.getElementById('eqDisplay').innerHTML=q.eq;
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('explanation').textContent='';
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('roundInfo').textContent=`Q ${cur+1} / 10`;
+  document.getElementById('progress').style.width=`${cur*10}%`;
+  answered=false;
+
+  const div=document.getElementById('choicesDiv');
+  div.innerHTML='';
+  q.choices.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='choice-btn';
+    b.textContent=c;
+    b.onclick=()=>answer(c,b);
+    div.appendChild(b);
+  });
+}
+
+function answer(val,btn){
+  if(answered)return;
+  answered=true;
+  const q=questions[cur];
+  const fb=document.getElementById('feedback');
+  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+
+  if(val===q.ans){
+    score+=10;
+    fb.textContent=msgs[lang].correct;
+    fb.className='feedback correct';
+    btn.classList.add('correct');
+  } else {
+    fb.textContent=msgs[lang].wrong;
+    fb.className='feedback wrong';
+    btn.classList.add('wrong');
+    document.querySelectorAll('.choice-btn').forEach(b=>{if(+b.textContent===q.ans)b.classList.add('correct');});
+  }
+  document.getElementById('explanation').textContent=q.exp;
+  document.getElementById('scoreVal').textContent=score;
+  updateStars(score);
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextRound(){
+  cur++;
+  if(cur>=questions.length){showEnd();return;}
+  loadQuestion();
+}
+
+function updateStars(s){
+  const pct=s/100*100;
+  document.getElementById('s1').className='star'+(pct>=40?' lit':'');
+  document.getElementById('s2').className='star'+(pct>=70?' lit':'');
+  document.getElementById('s3').className='star'+(pct>=90?' lit':'');
+}
+
+function showEnd(){
+  document.getElementById('gameArea').style.display='none';
+  const pct=score;
+  document.getElementById('endScreen').style.display='block';
+  document.getElementById('endTitle').textContent=pct>=70?msgs[lang].endWin:msgs[lang].endLose;
+  document.getElementById('endMsg').textContent=msgs[lang].score+' '+score+' / 100';
+  document.getElementById('finalScore').textContent=score+' pts';
+  document.getElementById('progress').style.width='100%';
+  ['es1','es2','es3'].forEach((id,i)=>{
+    document.getElementById(id).className='star'+([40,70,90][i]<=pct?' lit':'');
+  });
+  setLang(lang);
+}
+
+function restart(){
+  cur=0;score=0;
+  document.getElementById('gameArea').style.display='block';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('scoreVal').textContent='0';
+  updateStars(0);
+  loadQuestion();
+  setLang(lang);
+}
+
+setLang('en');
+loadQuestion();
+</script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poverty &amp; Food Security — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--pink);color:#fff;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--sky);color:#000;border-color:var(--sky);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--gold),var(--pink));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.55;margin-bottom:18px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;}
+.choice-btn:hover:not(:disabled){background:rgba(255,184,0,.1);border-color:var(--gold);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--gold);color:#000;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Social Studies · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en',event)">EN</button>
+      <button class="lang-btn" onclick="setLang('hi',event)">हि</button>
+      <button class="lang-btn" onclick="setLang('as',event)">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">🌾 Poverty &amp; Food Security</span>
+    <span data-lang="hi" style="display:none">🌾 गरीबी और खाद्य सुरक्षा</span>
+    <span data-lang="as" style="display:none">🌾 দাৰিদ্ৰ্য আৰু খাদ্য সুৰক্ষা</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — Economics Ch 3 &amp; 4 · Poverty + Food Security in India</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — अर्थशास्त्र अध्याय 3 &amp; 4 · गरीबी + भारत में खाद्य सुरक्षा</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — অৰ্থনীতি অধ্যায় 3 &amp; 4 · দাৰিদ্ৰ্য + ভাৰতত খাদ্য সুৰক্ষা</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    en: "🏠 The Poverty Line is used to measure poverty in India. It is defined as the minimum income needed to meet:",
+    hi: "🏠 गरीबी रेखा का उपयोग भारत में गरीबी मापने के लिए होता है। इसे परिभाषित किया जाता है न्यूनतम आय से जो पूरी करे:",
+    as: "🏠 দাৰিদ্ৰ্য ৰেখা ভাৰতত দাৰিদ্ৰ্য জোখিবলৈ ব্যৱহাৰ হয়। ইয়াক সংজ্ঞায়িত কৰা হয় ন্যূনতম আয় হিচাপে যি পূৰণ কৰে:",
+    choices: {
+      en: ["Basic minimum needs — food (2400 kcal rural / 2100 kcal urban), clothing, shelter per month per person","Luxury goods and entertainment","All needs including vehicles and electronics","Only housing needs"],
+      hi: ["बुनियादी न्यूनतम जरूरतें — भोजन (ग्रामीण 2400 कैलोरी / शहरी 2100 कैलोरी), कपड़ा, आश्रय प्रति माह प्रति व्यक्ति","विलासिता की वस्तुएं और मनोरंजन","वाहन और इलेक्ट्रॉनिक्स सहित सभी जरूरतें","केवल आवास जरूरतें"],
+      as: ["মৌলিক ন্যূনতম প্ৰয়োজনীয়তা — খাদ্য (গ্ৰামীণ 2400 কেলৰি / চহৰীয়া 2100 কেলৰি), বস্ত্ৰ, আশ্ৰয় প্ৰতি মাহত প্ৰতি জন","বিলাসিতাৰ সামগ্ৰী আৰু বিনোদন","যানবাহন আৰু ইলেক্ট্ৰনিক্স সহ সকলো প্ৰয়োজনীয়তা","কেৱল আৱাসৰ প্ৰয়োজনীয়তা"]
+    },
+    correct: 0,
+    explain: {
+      en: "Poverty Line (India): minimum monthly per capita expenditure to buy a basket of goods including food (2400 kcal/day rural, 2100 kcal/day urban), clothing, shelter. People below this line are BPL (Below Poverty Line).",
+      hi: "गरीबी रेखा (भारत): खाद्य (ग्रामीण 2400 कैलोरी/दिन, शहरी 2100 कैलोरी/दिन), कपड़ा, आश्रय सहित वस्तुओं की टोकरी खरीदने के लिए न्यूनतम मासिक प्रति व्यक्ति व्यय। इससे नीचे के लोग BPL हैं।",
+      as: "দাৰিদ্ৰ্য ৰেখা (ভাৰত): খাদ্য (গ্ৰামীণ 2400 কেলৰি/দিন, চহৰীয়া 2100 কেলৰি/দিন), বস্ত্ৰ, আশ্ৰয় সহ সামগ্ৰীৰ ঝুৰি কিনিবলৈ ন্যূনতম মাহেকীয়া মাথোন ব্যয়। ইয়াৰ তলত থকাসকল BPL।"
+    }
+  },
+  {
+    en: "🍚 Which Indian state has the HIGHEST proportion of people living below the poverty line (historically)?",
+    hi: "🍚 किस भारतीय राज्य में गरीबी रेखा से नीचे रहने वाले लोगों का सबसे अधिक अनुपात है (ऐतिहासिक रूप से)?",
+    as: "🍚 কোনটো ভাৰতীয় ৰাজ্যত দাৰিদ্ৰ্য ৰেখাৰ তলত বসবাস কৰা লোকৰ অনুপাত সৰ্বাধিক (ঐতিহাসিকভাৱে)?",
+    choices: {
+      en: ["Odisha, Bihar, and Jharkhand have historically had the highest poverty rates in India","Kerala and Goa have the highest poverty","Maharashtra and Gujarat have the most poor","Delhi and Mumbai have the most BPL people"],
+      hi: ["ओडिशा, बिहार और झारखंड में ऐतिहासिक रूप से सबसे अधिक गरीबी दर रही है","केरल और गोवा में सबसे अधिक गरीबी","महाराष्ट्र और गुजरात में सबसे अधिक गरीब","दिल्ली और मुंबई में सबसे अधिक BPL"],
+      as: ["ওডিশা, বিহাৰ আৰু ঝাৰখণ্ডত ঐতিহাসিকভাৱে সৰ্বাধিক দাৰিদ্ৰ্যৰ হাৰ আছে","কেৰালা আৰু গোৱাত সৰ্বাধিক দাৰিদ্ৰ্য","মহাৰাষ্ট্ৰ আৰু গুজৰাটত সৰ্বাধিক গৰীব","দিল্লী আৰু মুম্বাইত সৰ্বাধিক BPL"]
+    },
+    correct: 0,
+    explain: {
+      en: "States with highest poverty rates: Odisha, Bihar, Jharkhand, MP, UP. Kerala has the lowest poverty due to better education, healthcare, and social security. Punjab and Haryana have very low poverty due to Green Revolution benefits.",
+      hi: "सबसे अधिक गरीबी वाले राज्य: ओडिशा, बिहार, झारखंड, MP, UP। केरल में बेहतर शिक्षा, स्वास्थ्य सेवा और सामाजिक सुरक्षा के कारण सबसे कम गरीबी। हरित क्रांति के लाभ से पंजाब-हरियाणा में बहुत कम गरीबी।",
+      as: "সৰ্বাধিক দাৰিদ্ৰ্যৰ ৰাজ্যসমূহ: ওডিশা, বিহাৰ, ঝাৰখণ্ড, MP, UP। কেৰালাত উন্নত শিক্ষা, স্বাস্থ্যসেৱা আৰু সামাজিক সুৰক্ষাৰ কাৰণে সৰ্বনিম্ন দাৰিদ্ৰ্য। সেউজ বিপ্লৱৰ সুবিধাৰ কাৰণে পাঞ্জাৱ-হাৰিয়ানাত অতি কম দাৰিদ্ৰ্য।"
+    }
+  },
+  {
+    en: "🏠 MNREGA (Mahatma Gandhi National Rural Employment Guarantee Act) was passed in 2005. It guarantees:",
+    hi: "🏠 MNREGA (महात्मा गांधी राष्ट्रीय ग्रामीण रोजगार गारंटी अधिनियम) 2005 में पारित हुआ। यह गारंटी देता है:",
+    as: "🏠 MNREGA (মহাত্মা গান্ধী ৰাষ্ট্ৰীয় গ্ৰামীণ নিয়োগ নিশ্চয়তা আইন) 2005 চনত পাছ হৈছিল। এইটো নিশ্চয়তা দিয়ে:",
+    choices: {
+      en: ["100 days of guaranteed wage employment per year to every rural household whose adult members volunteer for unskilled manual work","Free food to all rural families","Education for all rural children","Housing for all BPL families"],
+      hi: ["प्रत्येक ग्रामीण परिवार को प्रति वर्ष 100 दिन का गारंटीकृत मजदूरी रोजगार जिसके वयस्क सदस्य अकुशल काम के लिए स्वेच्छा से आते हैं","सभी ग्रामीण परिवारों को मुफ्त भोजन","सभी ग्रामीण बच्चों के लिए शिक्षा","सभी BPL परिवारों के लिए आवास"],
+      as: ["প্ৰতিটো গ্ৰামীণ পৰিয়ালক প্ৰতি বছৰ 100 দিনৰ নিশ্চিত মজুৰি নিয়োগ যাৰ প্ৰাপ্তবয়স্ক সদস্যসকলে অদক্ষ কামত স্বেচ্ছাকৃতভাৱে আহে","সকলো গ্ৰামীণ পৰিয়ালক বিনামূলীয়া খাদ্য","সকলো গ্ৰামীণ শিশুৰ বাবে শিক্ষা","সকলো BPL পৰিয়ালৰ বাবে আৱাস"]
+    },
+    correct: 0,
+    explain: {
+      en: "MNREGA (2005): guarantees 100 days of paid manual work per year to every rural household. If work is not provided within 15 days, the worker gets an unemployment allowance. Wages are at least minimum wage. Strengthens rural infrastructure too.",
+      hi: "MNREGA (2005): प्रत्येक ग्रामीण परिवार को प्रति वर्ष 100 दिन का भुगतान मैनुअल कार्य गारंटी। 15 दिन में काम न मिलने पर बेरोजगारी भत्ता। मजदूरी कम से कम न्यूनतम मजदूरी। ग्रामीण बुनियादी ढांचा भी मजबूत करती है।",
+      as: "MNREGA (2005): প্ৰতিটো গ্ৰামীণ পৰিয়ালক প্ৰতি বছৰ 100 দিনৰ পৰিশোধিত হস্তচালিত কাৰ্য নিশ্চয়তা। 15 দিনত কাম নাপালে বেকাৰ ভাট্টা। মজুৰি কমেও ন্যূনতম মজুৰি। গ্ৰামীণ আন্তঃগাঁথনিও মজবুত কৰে।"
+    }
+  },
+  {
+    en: "🌾 Food security means ensuring that all people have access to sufficient food at all times. The three dimensions of food security are:",
+    hi: "🌾 खाद्य सुरक्षा का अर्थ है यह सुनिश्चित करना कि सभी लोगों को हर समय पर्याप्त भोजन उपलब्ध हो। खाद्य सुरक्षा के तीन आयाम हैं:",
+    as: "🌾 খাদ্য সুৰক্ষা মানে নিশ্চিত কৰা যে সকলো লোকে সকলো সময়ত পৰ্যাপ্ত খাদ্য পায়। খাদ্য সুৰক্ষাৰ তিনিটা মাত্ৰা হৈছে:",
+    choices: {
+      en: ["Availability (sufficient food production), Accessibility (for all people), Affordability (people can buy it)","Only food production at national level","Only distribution of food","Only price control of food"],
+      hi: ["उपलब्धता (पर्याप्त खाद्य उत्पादन), पहुंच (सभी के लिए), सामर्थ्य (लोग खरीद सकें)","केवल राष्ट्रीय स्तर पर खाद्य उत्पादन","केवल खाद्य वितरण","केवल खाद्य मूल्य नियंत्रण"],
+      as: ["উপলব্ধতা (পৰ্যাপ্ত খাদ্য উৎপাদন), অভিগম্যতা (সকলোৰ বাবে), সামৰ্থ্য (মানুহে কিনিব পৰে)","কেৱল ৰাষ্ট্ৰীয় স্তৰত খাদ্য উৎপাদন","কেৱল খাদ্য বিতৰণ","কেৱল খাদ্যৰ মূল্য নিয়ন্ত্ৰণ"]
+    },
+    correct: 0,
+    explain: {
+      en: "Food Security = 3 dimensions: (1) Availability — enough food produced/stored nationally, (2) Accessibility — food reaches all people (no discrimination), (3) Affordability — poor people can afford to buy food. Lack of any one = food insecurity.",
+      hi: "खाद्य सुरक्षा = 3 आयाम: (1) उपलब्धता — राष्ट्रीय स्तर पर पर्याप्त उत्पादन/भंडारण, (2) पहुंच — भोजन सभी लोगों तक पहुंचे, (3) सामर्थ्य — गरीब लोग भी खाद्य खरीद सकें। किसी एक की कमी = खाद्य असुरक्षा।",
+      as: "খাদ্য সুৰক্ষা = 3 মাত্ৰা: (1) উপলব্ধতা — ৰাষ্ট্ৰীয় স্তৰত পৰ্যাপ্ত উৎপাদন/সঞ্চয়, (2) অভিগম্যতা — খাদ্য সকলো লোকৰ ওচৰত পায়, (3) সামৰ্থ্য — গৰীব মানুহেও খাদ্য কিনিব পাৰে। যিকোনো এটাৰ অভাৱ = খাদ্য অসুৰক্ষা।"
+    }
+  },
+  {
+    en: "🍚 The Buffer Stock of food grains is maintained by the Indian government through which organization?",
+    hi: "🍚 खाद्यान्न का बफर स्टॉक भारत सरकार किस संगठन के माध्यम से बनाए रखती है?",
+    as: "🍚 খাদ্যশস্যৰ বাফাৰ ষ্টক ভাৰত চৰকাৰে কোনটো সংস্থাৰ মাধ্যমেৰে বজায় ৰাখে?",
+    choices: {
+      en: ["Food Corporation of India (FCI) — procures, stores, and distributes food grains","Reserve Bank of India (RBI)","State Bank of India (SBI)","SEBI (Securities and Exchange Board of India)"],
+      hi: ["भारतीय खाद्य निगम (FCI) — खाद्यान्न खरीदता, संग्रहीत और वितरित करता है","भारतीय रिजर्व बैंक (RBI)","भारतीय स्टेट बैंक (SBI)","SEBI (भारतीय प्रतिभूति और विनिमय बोर्ड)"],
+      as: ["ভাৰতীয় খাদ্য নিগম (FCI) — খাদ্যশস্য কয়, সঞ্চয় কৰে আৰু বিতৰণ কৰে","ভাৰতীয় ৰিজাৰ্ভ বেংক (RBI)","ভাৰতীয় ষ্টেট বেংক (SBI)","SEBI (ভাৰতীয় প্ৰতিভূতি আৰু বিনিময় পৰিষদ)"]
+    },
+    correct: 0,
+    explain: {
+      en: "FCI (Food Corporation of India): government buys food grains from farmers at MSP (Minimum Support Price), stores in FCI warehouses as buffer stock. Buffer stock is used in times of shortage, flood, drought, and for PDS distribution.",
+      hi: "FCI: सरकार MSP (न्यूनतम समर्थन मूल्य) पर किसानों से खाद्यान्न खरीदती है, FCI गोदामों में बफर स्टॉक के रूप में संग्रहीत करती है। बफर स्टॉक कमी, बाढ़, सूखे के समय और PDS वितरण के लिए उपयोग।",
+      as: "FCI: চৰকাৰে MSP (ন্যূনতম সমৰ্থন মূল্য)-ত কৃষকৰ পৰা খাদ্যশস্য কয়, FCI গুদামঘৰত বাফাৰ ষ্টক হিচাপে সঞ্চয় কৰে। বাফাৰ ষ্টক অভাৱ, বানপানী, খৰাংৰ সময়ত আৰু PDS বিতৰণৰ বাবে ব্যৱহাৰ হয়।"
+    }
+  },
+  {
+    en: "🏠 The Public Distribution System (PDS) distributes food grains to poor families through:",
+    hi: "🏠 सार्वजनिक वितरण प्रणाली (PDS) गरीब परिवारों को खाद्यान्न के माध्यम से वितरित करती है:",
+    as: "🏠 ৰাজহুৱা বিতৰণ ব্যৱস্থা (PDS) গৰীব পৰিয়ালক খাদ্যশস্য বিতৰণ কৰে:",
+    choices: {
+      en: ["Fair Price Shops (Ration Shops) spread across the country at subsidized prices","Open market at full market price","Only through banks","Only in urban areas"],
+      hi: ["उचित मूल्य दुकानें (राशन दुकानें) सब्सिडी कीमत पर पूरे देश में फैली","पूरी बाजार कीमत पर खुले बाजार में","केवल बैंकों के माध्यम से","केवल शहरी क्षेत्रों में"],
+      as: ["ন্যায্যমূল্যৰ দোকান (ৰেচন দোকান) ভৰ্তুকিৰ মূল্যত সমগ্ৰ দেশত বিস্তৃত","সম্পূৰ্ণ বজাৰ মূল্যত মুক্ত বজাৰত","কেৱল বেংকৰ মাধ্যমেৰে","কেৱল চহৰীয়া অঞ্চলত"]
+    },
+    correct: 0,
+    explain: {
+      en: "PDS: government distributes wheat, rice, sugar, kerosene at subsidized prices through Fair Price Shops (ration shops). Beneficiaries: APL (Above Poverty Line), BPL, and AAY (Antyodaya Anna Yojana — poorest of poor) cardholders.",
+      hi: "PDS: सरकार उचित मूल्य दुकानों (राशन दुकानों) के माध्यम से सब्सिडी कीमत पर गेहूं, चावल, चीनी, मिट्टी का तेल वितरित करती है। लाभार्थी: APL, BPL, और AAY (अंत्योदय अन्न योजना — सबसे गरीब) कार्डधारक।",
+      as: "PDS: চৰকাৰে ন্যায্যমূল্যৰ দোকান (ৰেচন দোকান)-ৰ মাধ্যমেৰে ভৰ্তুকিৰ মূল্যত ঘেঁহু, চাউল, চেনি, কেৰাচিন বিতৰণ কৰে। সুবিধাভোগী: APL, BPL, আৰু AAY (অন্ত্যোদয় আন্না যোজনা — অতি গৰীব) কাৰ্ডধাৰক।"
+    }
+  },
+  {
+    en: "🌾 Antyodaya Anna Yojana (AAY) was launched in December 2000. It targets:",
+    hi: "🌾 अंत्योदय अन्न योजना (AAY) दिसंबर 2000 में शुरू हुई। यह लक्ष्य करती है:",
+    as: "🌾 অন্ত্যোদয় আন্না যোজনা (AAY) ডিচেম্বৰ 2000 চনত আৰম্ভ হৈছিল। এইটো লক্ষ্য কৰে:",
+    choices: {
+      en: ["The poorest of the poor — providing 35 kg of food grain per family per month at highly subsidized rates (₹3/kg rice, ₹2/kg wheat)","All middle-class families","Only farmers","All government employees"],
+      hi: ["सबसे गरीब लोग — प्रति परिवार प्रति माह 35 kg खाद्यान्न अत्यंत सब्सिडी दर पर (₹3/kg चावल, ₹2/kg गेहूं)","सभी मध्यम वर्गीय परिवार","केवल किसान","सभी सरकारी कर्मचारी"],
+      as: ["অতি গৰীব — প্ৰতি পৰিয়ালক প্ৰতি মাহত 35 kg খাদ্যশস্য অতি ভৰ্তুকি দৰত (₹3/kg চাউল, ₹2/kg ঘেঁহু)","সকলো মধ্যবিত্ত পৰিয়াল","কেৱল কৃষক","সকলো চৰকাৰী কৰ্মচাৰী"]
+    },
+    correct: 0,
+    explain: {
+      en: "AAY (2000): targets the 'poorest of the poor' — homeless, destitute, landless, daily wage workers. Provides 35 kg food grain/family/month at highly subsidized prices. Under National Food Security Act 2013, this was further expanded.",
+      hi: "AAY (2000): 'सबसे गरीब' को लक्ष्य — बेघर, असहाय, भूमिहीन, दैनिक मजदूर। 35 kg खाद्यान्न/परिवार/माह अत्यंत सब्सिडी दर पर। राष्ट्रीय खाद्य सुरक्षा अधिनियम 2013 के तहत और विस्तार।",
+      as: "AAY (2000): 'অতি গৰীব'-ক লক্ষ্য — গৃহহীন, অসহায়, ভূমিহীন, দৈনিক মজুৰ। 35 kg খাদ্যশস্য/পৰিয়াল/মাহ অতি ভৰ্তুকিৰ দৰত। ৰাষ্ট্ৰীয় খাদ্য সুৰক্ষা আইন 2013-ৰ অধীনত আৰু বিস্তাৰ।"
+    }
+  },
+  {
+    en: "🌾 The Green Revolution in India (1960s–70s) was associated with increased production of:",
+    hi: "🌾 भारत में हरित क्रांति (1960–70 के दशक) किसके बढ़े हुए उत्पादन से जुड़ी थी?",
+    as: "🌾 ভাৰতত সেউজ বিপ্লৱ (1960–70 দশক) কিহৰ বৰ্ধিত উৎপাদনৰ সৈতে জড়িত আছিল?",
+    choices: {
+      en: ["Wheat and rice using High Yielding Variety (HYV) seeds, fertilizers, and irrigation — mainly benefited Punjab, Haryana, UP","Cotton and jute in eastern India","Tea and coffee in southern India","Fruits and vegetables in Maharashtra"],
+      hi: ["उच्च उपज वाली किस्म (HYV) के बीज, उर्वरक और सिंचाई से गेहूं और चावल — मुख्यतः पंजाब, हरियाणा, UP को लाभ","पूर्वी भारत में कपास और जूट","दक्षिण भारत में चाय और कॉफी","महाराष्ट्र में फल और सब्जियां"],
+      as: ["উচ্চ উৎপাদনশীল জাত (HYV) বীজ, সাৰ আৰু জলসিঞ্চনেৰে ঘেঁহু আৰু চাউল — মূলত পাঞ্জাৱ, হাৰিয়ানা, UP-ক সুবিধা","পূব ভাৰতত কপাহ আৰু পাট","দক্ষিণ ভাৰতত চাহ আৰু কফি","মহাৰাষ্ট্ৰত ফল আৰু শাক-পাচলি"]
+    },
+    correct: 0,
+    explain: {
+      en: "Green Revolution (1960s): introduced HYV seeds (Norman Borlaug, M.S. Swaminathan), chemical fertilizers, pesticides, and irrigation. Wheat production tripled. Punjab, Haryana, UP became food surplus states. But limited to wheat & rice, and to a few states.",
+      hi: "हरित क्रांति (1960): HYV बीज (नॉर्मन बोरलॉग, MS स्वामीनाथन), रासायनिक उर्वरक, कीटनाशक और सिंचाई। गेहूं उत्पादन तीन गुना। पंजाब, हरियाणा, UP खाद्य अधिशेष राज्य बने। लेकिन गेहूं-चावल और कुछ राज्यों तक सीमित।",
+      as: "সেউজ বিপ্লৱ (1960): HYV বীজ (নৰমান বৰলগ, MS স্বামীনাথন), ৰাসায়নিক সাৰ, কীটনাশক আৰু জলসিঞ্চন। ঘেঁহুৰ উৎপাদন তিনিগুণ। পাঞ্জাৱ, হাৰিয়ানা, UP খাদ্য উদ্বৃত্ত ৰাজ্য হ'ল। কিন্তু ঘেঁহু-চাউল আৰু কিছু ৰাজ্যতে সীমাবদ্ধ।"
+    }
+  },
+  {
+    en: "🍚 The National Food Security Act was passed in which year, and what does it ensure?",
+    hi: "🍚 राष्ट्रीय खाद्य सुरक्षा अधिनियम किस वर्ष पारित हुआ, और यह क्या सुनिश्चित करता है?",
+    as: "🍚 ৰাষ্ট্ৰীয় খাদ্য সুৰক্ষা আইন কোনটো বছৰত পাছ হৈছিল, আৰু এইটোৱে কি নিশ্চিত কৰে?",
+    choices: {
+      en: ["2013 — gives legal right to subsidized food grain (5 kg/person/month) to 75% rural and 50% urban population","2000 — free food for all Indians","1991 — privatization of food distribution","1947 — food rationing during partition"],
+      hi: ["2013 — ग्रामीण 75% और शहरी 50% आबादी को सब्सिडी खाद्यान्न (5 kg/व्यक्ति/माह) का कानूनी अधिकार","2000 — सभी भारतीयों को मुफ्त भोजन","1991 — खाद्य वितरण का निजीकरण","1947 — विभाजन के दौरान खाद्य राशनिंग"],
+      as: ["2013 — গ্ৰামীণ 75% আৰু চহৰীয়া 50% জনসংখ্যাক ভৰ্তুকিৰ খাদ্যশস্য (5 kg/ব্যক্তি/মাহ)-ৰ আইনী অধিকাৰ","2000 — সকলো ভাৰতীয়ক বিনামূলীয়া খাদ্য","1991 — খাদ্য বিতৰণৰ বেচৰকাৰীকৰণ","1947 — বিভাজনৰ সময়ত খাদ্য ৰেচনিং"]
+    },
+    correct: 0,
+    explain: {
+      en: "National Food Security Act 2013: provides legal right to food. Covers 75% rural and 50% urban population. Entitled to 5 kg food grain/person/month at ₹1–3/kg. Pregnant women and children get additional benefits. Replaced older TPDS system.",
+      hi: "राष्ट्रीय खाद्य सुरक्षा अधिनियम 2013: भोजन का कानूनी अधिकार। 75% ग्रामीण और 50% शहरी को कवर। 5 kg खाद्यान्न/व्यक्ति/माह ₹1–3/kg पर। गर्भवती महिलाओं और बच्चों को अतिरिक्त लाभ। पुरानी TPDS प्रणाली की जगह।",
+      as: "ৰাষ্ট্ৰীয় খাদ্য সুৰক্ষা আইন 2013: খাদ্যৰ আইনী অধিকাৰ। 75% গ্ৰামীণ আৰু 50% চহৰীয়া আৱৰ। 5 kg খাদ্যশস্য/ব্যক্তি/মাহ ₹1–3/kg-ত। গৰ্ভৱতী মহিলা আৰু শিশুসকলক অতিৰিক্ত সুবিধা। পুৰণি TPDS ব্যৱস্থাৰ ঠাই লৈছে।"
+    }
+  },
+  {
+    en: "🌾 Which of these is a CAUSE of poverty in India, as identified in NCERT Class 9 Economics?",
+    hi: "🌾 NCERT कक्षा 9 अर्थशास्त्र के अनुसार, इनमें से कौन भारत में गरीबी का एक कारण है?",
+    as: "🌾 NCERT শ্ৰেণী 9 অৰ্থনীতিৰ মতে, এইবোৰৰ কোনটো ভাৰতত দাৰিদ্ৰ্যৰ এটা কাৰণ?",
+    choices: {
+      en: ["Low level of economic development under British rule, unequal distribution of land and other assets, lack of proper implementation of land reforms","Too many national parks reducing farmland","India having too many languages","Excess of monsoon rainfall every year"],
+      hi: ["ब्रिटिश शासन में आर्थिक विकास का निम्न स्तर, भूमि और संपत्ति का असमान वितरण, भूमि सुधारों का कमजोर कार्यान्वयन","कृषि भूमि कम करने वाले बहुत से राष्ट्रीय उद्यान","भारत में बहुत सी भाषाएं","हर साल अधिक मानसून वर्षा"],
+      as: ["ব্ৰিটিছ শাসনত অৰ্থনৈতিক উন্নয়নৰ নিম্ন স্তৰ, ভূমি আৰু সম্পদৰ অসমান বিতৰণ, ভূমি সংস্কাৰৰ দুৰ্বল ৰূপায়ণ","কৃষিভূমি হ্ৰাস কৰা অত্যধিক ৰাষ্ট্ৰীয় উদ্যান","ভাৰতত অত্যধিক ভাষা","প্ৰতি বছৰ অত্যধিক মানসুনী বৰষুণ"]
+    },
+    correct: 0,
+    explain: {
+      en: "Causes of poverty in India: (1) colonial exploitation under British rule, (2) unequal distribution of land, (3) high population growth, (4) low literacy and poor healthcare, (5) social discrimination (caste system), (6) poor land reforms implementation.",
+      hi: "भारत में गरीबी के कारण: (1) ब्रिटिश शासन में औपनिवेशिक शोषण, (2) भूमि का असमान वितरण, (3) उच्च जनसंख्या वृद्धि, (4) कम साक्षरता और खराब स्वास्थ्य, (5) सामाजिक भेदभाव (जाति व्यवस्था), (6) खराब भूमि सुधार।",
+      as: "ভাৰতত দাৰিদ্ৰ্যৰ কাৰণসমূহ: (1) ব্ৰিটিছ শাসনত ঔপনিৱেশিক শোষণ, (2) ভূমিৰ অসমান বিতৰণ, (3) উচ্চ জনসংখ্যা বৃদ্ধি, (4) কম সাক্ষৰতা আৰু দুৰ্বল স্বাস্থ্যসেৱা, (5) সামাজিক বৈষম্য (জাতিব্যৱস্থা), (6) দুৰ্বল ভূমি সংস্কাৰ।"
+    }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l, e) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = 'Question ' + (current + 1) + ' of 10';
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+  const choicesArr = q.choices[lang] || q.choices.en;
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars, msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'Economics Champion! You understand India\'s food & poverty policies! 🌾', hi: 'अर्थशास्त्र चैम्पियन! आप भारत की खाद्य और गरीबी नीतियां समझते हैं! 🌾', as: 'অৰ্থনীতিৰ চ্যাম্পিয়ন! তুমি ভাৰতৰ খাদ্য আৰু দাৰিদ্ৰ্য নীতি বুজা! 🌾' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Good work! Keep studying food security schemes! 🍚', hi: 'अच्छा काम! खाद्य सुरक्षा योजनाओं का अध्ययन जारी रखें! 🍚', as: 'ভাল কাম! খাদ্য সুৰক্ষা আঁচলবোৰ অধ্যয়ন জাৰি ৰাখক! 🍚' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Good try! Revise MNREGA, PDS, and the poverty line definition.', hi: 'अच्छी कोशिश! MNREGA, PDS और गरीबी रेखा की परिभाषा दोबारा पढ़ें।', as: 'ভাল প্ৰচেষ্টা! MNREGA, PDS আৰু দাৰিদ্ৰ্য ৰেখাৰ সংজ্ঞা পুনৰায় পঢ়ক।' }; }
+  else { stars = '☆☆☆'; msg = { en: 'Keep going! Understanding poverty helps build a better India! 🏠', hi: 'जारी रखो! गरीबी को समझना बेहतर भारत बनाने में मदद करता है! 🏠', as: 'এগাই যাওক! দাৰিদ্ৰ্য বোধ কৰা ভাৰত গঢ়িবলৈ সহায় কৰে! 🏠' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

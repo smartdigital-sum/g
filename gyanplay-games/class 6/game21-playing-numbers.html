@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GyanPlay – Playing with Numbers</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:#fff;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes zoomIn{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.fadeIn{animation:fadeIn .45s ease both;}
+.zoomIn{animation:zoomIn .5s cubic-bezier(.34,1.56,.64,1) both;}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100;}
+.back-btn{background:none;border:2px solid rgba(255,255,255,.25);color:#fff;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:600;padding:7px 16px;border-radius:30px;cursor:pointer;transition:all .2s;}
+.back-btn:hover{background:rgba(255,255,255,.12);}
+.badge{background:var(--saffron);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.8rem;padding:5px 14px;border-radius:30px;letter-spacing:.5px;}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);color:#fff;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;padding:5px 12px;border-radius:20px;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--saffron);border-color:var(--saffron);}
+
+.score-bar{padding:12px 20px 0;max-width:700px;margin:0 auto;}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.score-label{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.95rem;color:var(--gold);}
+.score-val{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.1rem;color:#fff;}
+.progress-track{height:8px;background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--purple));border-radius:10px;transition:width .5s ease;}
+
+.main{max-width:700px;margin:0 auto;padding:20px;}
+.q-card{background:var(--card);border-radius:20px;padding:28px 28px 24px;box-shadow:0 8px 40px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.06);}
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.q-num{font-family:'Baloo 2',sans-serif;font-size:.85rem;font-weight:700;color:rgba(255,255,255,.45);}
+.q-type{font-family:'Baloo 2',sans-serif;font-size:.8rem;font-weight:700;color:var(--sky);background:rgba(0,174,239,.13);padding:3px 10px;border-radius:20px;}
+
+.num-display{text-align:center;margin:16px 0 22px;padding:22px 18px;background:rgba(0,174,239,.07);border:2px solid rgba(0,174,239,.2);border-radius:16px;}
+.big-num{font-family:'Baloo 2',sans-serif;font-size:4rem;font-weight:800;color:var(--sky);display:block;}
+.pair-nums{font-family:'Baloo 2',sans-serif;font-size:3rem;font-weight:800;color:var(--gold);display:block;}
+.num-tag{font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.4);display:block;margin-top:6px;}
+
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.15rem;font-weight:700;line-height:1.5;margin-bottom:18px;color:#fff;}
+.choices{display:flex;gap:11px;flex-wrap:wrap;}
+.choice{flex:1;min-width:140px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);border-radius:14px;padding:16px 10px;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.4rem;cursor:pointer;text-align:center;color:#fff;transition:all .2s;}
+.choice:hover:not(:disabled){background:rgba(0,174,239,.13);border-color:var(--sky);}
+.choice.correct{background:rgba(0,200,83,.15);border-color:var(--green);}
+.choice.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);}
+.choice:disabled{cursor:default;}
+.choice-label{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.4);display:block;margin-bottom:4px;font-family:'Nunito',sans-serif;}
+
+.step-box{margin-top:18px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 16px;}
+.step-title{font-family:'Baloo 2',sans-serif;font-size:.85rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.step-text{font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;line-height:1.6;color:rgba(255,255,255,.85);}
+
+.next-btn{margin-top:20px;background:linear-gradient(135deg,var(--sky),var(--purple));border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;padding:12px 32px;border-radius:50px;cursor:pointer;display:block;width:100%;transition:transform .18s;}
+.next-btn:hover{transform:scale(1.03);}
+.end-card{background:var(--card);border-radius:24px;padding:40px 28px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.4);}
+.stars{font-size:2.8rem;margin-bottom:10px;}
+.end-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.end-score{font-family:'Baloo 2',sans-serif;font-size:1.2rem;color:rgba(255,255,255,.75);margin-bottom:24px;}
+.play-again{background:linear-gradient(135deg,var(--sky),var(--purple));border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:800;padding:14px 36px;border-radius:50px;cursor:pointer;transition:transform .18s;}
+.play-again:hover{transform:scale(1.06);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="badge">🔢 Mathematics</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="score-bar">
+  <div class="score-row">
+    <span class="score-label">Score</span>
+    <span class="score-val" id="scoreVal">0 / 100</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<div class="main" id="mainArea"></div>
+
+<script>
+const QUESTIONS=[
+  {type:"Factors",display:{kind:"big",val:"12",tag:"Find factors"},
+   en:{q:"Which of these is NOT a factor of 12?",choices:["5","4","6"],ans:0,step:"Step: Factors of 12 are numbers that divide 12 exactly.\n12÷1=12✓, 12÷2=6✓, 12÷3=4✓, 12÷4=3✓, 12÷6=2✓, 12÷12=1✓\n5 does NOT divide 12 exactly (12÷5=2.4), so 5 is NOT a factor."},
+   hi:{q:"निम्न में से कौन 12 का गुणनखंड नहीं है?",choices:["5","4","6"],ans:0,step:"12 के गुणनखंड: 1,2,3,4,6,12। 12÷5=2.4 (पूर्ण नहीं), इसलिए 5 गुणनखंड नहीं है।"},
+   as:{q:"তলৰ কোনটো 12 ৰ উৎপাদক নহয়?",choices:["5","4","6"],ans:0,step:"12 ৰ উৎপাদক: 1,2,3,4,6,12। 12÷5=2.4 (ভাগ নহয়), গতিকে 5 উৎপাদক নহয়।"}},
+  {type:"Prime Numbers",display:{kind:"big",val:"17",tag:"Prime or Composite?"},
+   en:{q:"Is 17 a prime or composite number?",choices:["Prime","Composite","Neither"],ans:0,step:"Step: A prime number has exactly 2 factors: 1 and itself.\n17÷1=17✓, 17÷17=1✓ — No other divisor works. So 17 is PRIME."},
+   hi:{q:"17 अभाज्य है या भाज्य संख्या?",choices:["अभाज्य","भाज्य","दोनों नहीं"],ans:0,step:"अभाज्य संख्या के सिर्फ 2 गुणनखंड होते हैं: 1 और स्वयं। 17 के सिर्फ 2 गुणनखंड हैं, इसलिए यह अभाज्य है।"},
+   as:{q:"17 মৌলিক নে যৌগিক সংখ্যা?",choices:["মৌলিক","যৌগিক","কোনোটোও নহয়"],ans:0,step:"মৌলিক সংখ্যাৰ ঠিক 2 টা উৎপাদক থাকে: 1 আৰু নিজে। 17 ৰ 2 টাহে উৎপাদক, গতিকে ই মৌলিক।"}},
+  {type:"Multiples",display:{kind:"big",val:"7",tag:"Multiples of 7"},
+   en:{q:"Which is NOT a multiple of 7?",choices:["22","21","35"],ans:0,step:"Multiples of 7: 7,14,21,28,35,42...\n21=7×3✓, 35=7×5✓. But 22÷7=3.14... ✗ Not a multiple."},
+   hi:{q:"निम्न में से कौन 7 का गुणज नहीं है?",choices:["22","21","35"],ans:0,step:"7 के गुणज: 7,14,21,28,35...\n21=7×3✓, 35=7×5✓। 22÷7=3.14... ✗ गुणज नहीं।"},
+   as:{q:"তলৰ কোনটো 7 ৰ গুণিতক নহয়?",choices:["22","21","35"],ans:0,step:"7 ৰ গুণিতক: 7,14,21,28,35...\n21=7×3✓, 35=7×5✓। 22÷7=3.14... ✗ গুণিতক নহয়।"}},
+  {type:"Prime Factorisation",display:{kind:"big",val:"36",tag:"Prime Factorisation"},
+   en:{q:"What is the prime factorisation of 36?",choices:["2²× 3²","2×18","4×9"],ans:0,step:"Step by step:\n36÷2=18 → 18÷2=9 → 9÷3=3 → 3÷3=1\nPrime factors: 2×2×3×3 = 2²×3²"},
+   hi:{q:"36 का अभाज्य गुणनखंड क्या है?",choices:["2²× 3²","2×18","4×9"],ans:0,step:"36÷2=18→18÷2=9→9÷3=3→3÷3=1\nअभाज्य गुणनखंड: 2×2×3×3 = 2²×3²"},
+   as:{q:"36 ৰ মৌলিক উৎপাদকীকৰণ কি?",choices:["2²× 3²","2×18","4×9"],ans:0,step:"36÷2=18→18÷2=9→9÷3=3→3÷3=1\nমৌলিক উৎপাদক: 2×2×3×3 = 2²×3²"}},
+  {type:"HCF",display:{kind:"pair",v1:"12",v2:"18",tag:"HCF"},
+   en:{q:"What is the HCF (Highest Common Factor) of 12 and 18?",choices:["6","3","9"],ans:0,step:"Factors of 12: 1,2,3,4,6,12\nFactors of 18: 1,2,3,6,9,18\nCommon factors: 1,2,3,6 → Highest = 6"},
+   hi:{q:"12 और 18 का महत्तम समापवर्तक (HCF) क्या है?",choices:["6","3","9"],ans:0,step:"12 के गुणनखंड: 1,2,3,4,6,12\n18 के गुणनखंड: 1,2,3,6,9,18\nउभयनिष्ठ: 1,2,3,6 → सबसे बड़ा = 6"},
+   as:{q:"12 আৰু 18 ৰ গ.সা.গু কিমান?",choices:["6","3","9"],ans:0,step:"12 ৰ উৎপাদক: 1,2,3,4,6,12\n18 ৰ উৎপাদক: 1,2,3,6,9,18\nসাধাৰণ উৎপাদক: 1,2,3,6 → সৰ্বোচ্চ = 6"}},
+  {type:"LCM",display:{kind:"pair",v1:"4",v2:"6",tag:"LCM"},
+   en:{q:"What is the LCM (Lowest Common Multiple) of 4 and 6?",choices:["12","24","6"],ans:0,step:"Multiples of 4: 4,8,12,16...\nMultiples of 6: 6,12,18...\nFirst common multiple = 12 → LCM = 12"},
+   hi:{q:"4 और 6 का लघुत्तम समापवर्त्य (LCM) क्या है?",choices:["12","24","6"],ans:0,step:"4 के गुणज: 4,8,12,16...\n6 के गुणज: 6,12,18...\nपहला उभयनिष्ठ गुणज = 12 → LCM = 12"},
+   as:{q:"4 আৰু 6 ৰ ল.সা.গু কিমান?",choices:["12","24","6"],ans:0,step:"4 ৰ গুণিতক: 4,8,12,16...\n6 ৰ গুণিতক: 6,12,18...\nপ্ৰথম সাধাৰণ গুণিতক = 12 → ল.সা.গু = 12"}},
+  {type:"Divisibility by 2",display:{kind:"big",val:"348",tag:"Divisibility Test"},
+   en:{q:"Is 348 divisible by 2?",choices:["Yes","No","Can't say"],ans:0,step:"Divisibility rule for 2: If the LAST DIGIT is 0,2,4,6, or 8 → divisible by 2.\nLast digit of 348 = 8 (even) ✓ → YES, divisible by 2."},
+   hi:{q:"क्या 348, 2 से विभाज्य है?",choices:["हाँ","नहीं","नहीं कह सकते"],ans:0,step:"2 से विभाज्यता: अंतिम अंक 0,2,4,6,8 होने पर\n348 का अंतिम अंक = 8 (सम) ✓ → हाँ, 2 से विभाज्य है।"},
+   as:{q:"348 ক 2 ৰে ভাগ যায় নে?",choices:["হয়","নহয়","ক'ব নোৱাৰি"],ans:0,step:"2 ৰ বিভাজ্যতা নিয়ম: শেষ অংক 0,2,4,6,8 হ'লে\n348 ৰ শেষ অংক = 8 (জোৰ) ✓ → হয়, 2 ৰে ভাগ যায়।"}},
+  {type:"Divisibility by 3",display:{kind:"big",val:"153",tag:"Divisibility Test"},
+   en:{q:"Is 153 divisible by 3?",choices:["Yes","No","Maybe"],ans:0,step:"Divisibility rule for 3: Sum of digits divisible by 3.\n1+5+3 = 9. Is 9 divisible by 3? 9÷3=3 ✓ → YES!"},
+   hi:{q:"क्या 153, 3 से विभाज्य है?",choices:["हाँ","नहीं","शायद"],ans:0,step:"3 की विभाज्यता: अंकों का योग 3 से विभाज्य हो।\n1+5+3=9, 9÷3=3 ✓ → हाँ!"},
+   as:{q:"153 ক 3 ৰে ভাগ যায় নে?",choices:["হয়","নহয়","হয়তো"],ans:0,step:"3 ৰ বিভাজ্যতা: অংকবোৰৰ যোগফল 3 ৰে ভাগ হ'লে।\n1+5+3=9, 9÷3=3 ✓ → হয়!"}},
+  {type:"Divisibility by 5",display:{kind:"big",val:"725",tag:"Divisibility Test"},
+   en:{q:"Is 725 divisible by 5?",choices:["Yes","No","Can't say"],ans:0,step:"Divisibility rule for 5: Last digit must be 0 or 5.\nLast digit of 725 = 5 ✓ → YES, divisible by 5!"},
+   hi:{q:"क्या 725, 5 से विभाज्य है?",choices:["हाँ","नहीं","नहीं कह सकते"],ans:0,step:"5 की विभाज्यता: अंतिम अंक 0 या 5 होना चाहिए।\n725 का अंतिम अंक = 5 ✓ → हाँ!"},
+   as:{q:"725 ক 5 ৰে ভাগ যায় নে?",choices:["হয়","নহয়","ক'ব নোৱাৰি"],ans:0,step:"5 ৰ বিভাজ্যতা: শেষ অংক 0 বা 5 হ'ব লাগিব।\n725 ৰ শেষ অংক = 5 ✓ → হয়!"}},
+  {type:"Composite Number",display:{kind:"big",val:"21",tag:"Type of Number"},
+   en:{q:"Is 21 a prime or composite number?",choices:["Composite","Prime","Neither"],ans:0,step:"Factors of 21: 1, 3, 7, 21 (more than 2 factors)\nSince 21 = 3×7, it is a COMPOSITE number."},
+   hi:{q:"21 अभाज्य है या भाज्य?",choices:["भाज्य","अभाज्य","दोनों नहीं"],ans:0,step:"21 के गुणनखंड: 1, 3, 7, 21 (2 से अधिक)\n21=3×7 → भाज्य संख्या है।"},
+   as:{q:"21 মৌলিক নে যৌগিক?",choices:["যৌগিক","মৌলিক","কোনোটোও নহয়"],ans:0,step:"21 ৰ উৎপাদক: 1, 3, 7, 21 (2 তকৈ বেছি)\n21=3×7 → যৌগিক সংখ্যা।"}}
+];
+
+let lang='en',current=0,score=0,answered=false;
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{b.classList.toggle('active',['en','hi','as'][i]===l);});
+  render();
+}
+
+function buildDisplay(d){
+  if(d.kind==='big'){
+    return `<div class="num-display zoomIn"><span class="big-num">${d.val}</span><span class="num-tag">${d.tag}</span></div>`;
+  }else{
+    return `<div class="num-display zoomIn"><span class="pair-nums">${d.v1} &amp; ${d.v2}</span><span class="num-tag">${d.tag}</span></div>`;
+  }
+}
+
+function render(){
+  if(current>=QUESTIONS.length){showEnd();return;}
+  const q=QUESTIONS[current];const d=q[lang];
+  document.getElementById('progressFill').style.width=((current/QUESTIONS.length)*100)+'%';
+  document.getElementById('scoreVal').textContent=score+' / 100';
+  document.getElementById('mainArea').innerHTML=`
+  <div class="q-card fadeIn">
+    <div class="q-meta"><span class="q-num">Q ${current+1} / 10</span><span class="q-type">${q.type}</span></div>
+    ${buildDisplay(q.display)}
+    <div class="q-text">${d.q}</div>
+    <div class="choices">
+      ${d.choices.map((c,i)=>`<button class="choice" onclick="pick(${i})" id="ch${i}"><span class="choice-label">${['A','B','C'][i]}</span>${c}</button>`).join('')}
+    </div>
+  </div>`;
+  answered=false;
+}
+
+function pick(i){
+  if(answered)return;answered=true;
+  const d=QUESTIONS[current][lang];const ans=d.ans;
+  document.querySelectorAll('.choice').forEach((b,j)=>{
+    b.disabled=true;
+    if(j===ans)b.classList.add('correct');
+    else if(j===i&&i!==ans)b.classList.add('wrong');
+  });
+  if(i===ans)score+=10;
+  document.getElementById('scoreVal').textContent=score+' / 100';
+  const step=document.createElement('div');step.className='step-box fadeIn';
+  step.innerHTML=`<div class="step-title">📐 Step-by-Step</div><div class="step-text">${d.step.replace(/\n/g,'<br>')}</div>`;
+  document.querySelector('.q-card').appendChild(step);
+  const btn=document.createElement('button');btn.className='next-btn fadeIn';
+  btn.textContent=current<9?'Next →':'See Results';
+  btn.onclick=()=>{current++;render();};
+  document.querySelector('.q-card').appendChild(btn);
+}
+
+function showEnd(){
+  const pct=score;
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'☆';
+  const msg=pct>=90?'Outstanding! 🎉':pct>=70?'Great job! 👍':pct>=40?'Good effort! 💪':'Keep practising! 📚';
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('mainArea').innerHTML=`
+  <div class="end-card fadeIn">
+    <div class="stars">${stars}</div>
+    <div class="end-title">${msg}</div>
+    <div class="end-score">You scored ${score} out of 100</div>
+    <button class="play-again" onclick="restart()">🔄 Play Again</button>
+  </div>`;
+}
+function restart(){current=0;score=0;render();}
+render();
+</script>
+</body>
+</html>

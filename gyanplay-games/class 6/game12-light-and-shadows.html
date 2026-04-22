@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Light &amp; Shadows — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#071A07 0%,#040E04 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(6,214,160,.13),rgba(6,214,160,.04));border:1px solid rgba(6,214,160,.3);border-radius:16px;padding:16px;margin-bottom:16px}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(6,214,160,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--teal);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:700}
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.45}
+
+/* Interactive optics canvas */
+.optics-canvas-wrap{background:#050d06;border:1.5px solid rgba(6,214,160,.2);border-radius:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.optics-canvas-wrap canvas{display:block;width:100%}
+
+/* Sliders */
+.slider-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.slider-label{font-size:.78rem;color:var(--dim);min-width:88px}
+.slider-val{font-family:'Baloo 2',cursive;font-size:.9rem;font-weight:700;color:var(--teal);min-width:36px;text-align:right}
+input[type=range]{flex:1;accent-color:var(--teal);cursor:pointer}
+
+/* Explore fact cards */
+.explore-card{background:rgba(6,214,160,.06);border:1px solid rgba(6,214,160,.18);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.explore-card:hover{border-color:var(--teal);background:rgba(6,214,160,.1)}
+.explore-card.opened{background:rgba(6,214,160,.08)}
+.ec-header{display:flex;align-items:center;justify-content:space-between}
+.ec-title{font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--text)}
+.ec-arrow{font-size:.85rem;color:var(--teal);transition:transform .25s}
+.ec-arrow.open{transform:rotate(90deg)}
+.ec-body{font-size:.82rem;color:var(--dim);line-height:1.55;margin-top:10px;display:none}
+.ec-body.show{display:block}
+.ec-body strong{color:var(--teal)}
+
+/* Spectrum display */
+.spectrum-bar{height:24px;border-radius:8px;background:linear-gradient(90deg,#FF0000,#FF7700,#FFFF00,#00FF00,#0000FF,#8B00FF);margin-bottom:10px;position:relative;overflow:hidden}
+.spectrum-bar::after{content:'VIBGYOR ▶';position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:.68rem;color:rgba(255,255,255,.6);font-family:Nunito;font-weight:700}
+
+/* Shadow experiment */
+.shadow-experiment{background:#050d06;border:1px solid rgba(255,209,102,.15);border-radius:14px;padding:14px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden}
+.shadow-canvas-wrap canvas{width:100%}
+
+/* Options */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(6,214,160,.07);border:2px solid rgba(6,214,160,.2);border-radius:14px;padding:12px 8px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--teal);background:rgba(6,214,160,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.92rem;font-weight:600;min-height:26px;margin:10px 0 4px}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#040E04 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--teal);color:var(--teal);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(6,214,160,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stage-transition{background:linear-gradient(135deg,rgba(6,214,160,.1),rgba(6,214,160,.03));border:1px solid rgba(6,214,160,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--teal);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+.explore-instruction{font-size:.8rem;color:var(--dim);text-align:center;margin-bottom:12px;background:rgba(6,214,160,.05);border-radius:10px;padding:8px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">💡 Light &amp; Shadows</div>
+      <span class="subject-tag">Science · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+  <div class="wow-hook">
+    <span class="wow-emoji">🌈</span>
+    <div class="wow-text">A rainbow is white light <strong>SHATTERED</strong> into 7 colours by water droplets. You need the sun <strong>BEHIND you</strong> and rain in front. Every rainbow is actually a <strong>full circle</strong> — you just can't see the bottom half!</div>
+  </div>
+  <div id="gameArea"></div>
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Stage 1 of 3</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+<script>
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+let stg=1,qIdx=0,score=0,answered=false,exploredCount=0;
+const EXPLORE_TOPICS=[
+  {title:'Reflection of Light',icon:'🪞',
+   body:'When light hits a <strong>smooth mirror</strong>, it bounces off at the same angle it arrived. This is called <strong>reflection</strong>. The angle of incidence = angle of reflection. Smooth surfaces give clear reflections; rough surfaces scatter light in all directions (diffuse reflection).'},
+  {title:'Refraction of Light',icon:'💎',
+   body:'When light passes from one material to another (air to glass), it <strong>bends</strong> — this is <strong>refraction</strong>. Light bends because it travels at different speeds in different materials. This is why a spoon in water looks bent, and why a swimming pool looks shallower than it is!'},
+  {title:'Dispersion — How Rainbows Form',icon:'🌈',
+   body:'White light is actually a <strong>mixture of all colours</strong>. When it passes through a prism or raindrop, each colour bends at a slightly different angle, splitting white light into VIBGYOR: <strong>Violet, Indigo, Blue, Green, Yellow, Orange, Red</strong>. This is dispersion!'},
+  {title:'Shadows',icon:'🌑',
+   body:'A shadow forms when an <strong>opaque object</strong> blocks light. Transparent objects let all light through (no shadow). Translucent objects let some light through (faint shadow). <strong>The closer to the light source, the larger the shadow.</strong> Moving away from the source shrinks it.'},
+];
+let openedCards=new Set();
+
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  const C=['#FFD166','#06D6A0','#FF9F1C','#C77DFF','#4CC9F0'];
+  for(let i=0;i<28;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+}
+function updateStars(){const lit=Math.min(5,Math.ceil(score/2));for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.toggle('lit',i<=lit)}
+function showOverlay(emoji,title,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovFact').textContent=fact;document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay');ov.classList.add('show');
+  if(!isEnd)setTimeout(()=>ov.classList.remove('show'),2700);
+}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(t){document.getElementById('progressLabel').textContent=t}
+
+/* ── Stage 1: Reflection explorer with slider ── */
+let reflAngle=40;
+function renderStage1(){
+  setProgress('Stage 1 of 3 — Explore Optics');
+  openedCards=new Set();answered=false;showNext(false);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🔍 Stage 1 — Explore Light Topics</div>
+      <div class="explore-instruction">👆 Tap each card to explore it — open all 4 to unlock the quiz!</div>
+      ${EXPLORE_TOPICS.map((t,i)=>`
+        <div class="explore-card" id="ec${i}" onclick="openCard(${i})">
+          <div class="ec-header">
+            <div class="ec-title">${t.icon} ${t.title}</div>
+            <div class="ec-arrow" id="ea${i}">›</div>
+          </div>
+          <div class="ec-body" id="eb${i}">${t.body}
+            ${i===0?`<div style="margin-top:10px">
+              <div class="slider-row">
+                <div class="slider-label">Angle of incidence</div>
+                <input type="range" min="10" max="80" value="40" id="reflSlider" oninput="updateReflection(this.value)">
+                <div class="slider-val" id="reflVal">40°</div>
+              </div>
+              <div class="optics-canvas-wrap" style="height:110px"><canvas id="reflCanvas" width="440" height="110"></canvas></div>
+              <div style="font-size:.72rem;color:var(--dim);text-align:center">Angle in = Angle out (law of reflection)</div>
+            </div>`:''}
+            ${i===2?`<div style="margin-top:10px"><div class="spectrum-bar"></div><div style="font-size:.72rem;color:var(--dim);text-align:center">White light → VIBGYOR when dispersed</div></div>`:''}
+            ${i===3?`<div style="margin-top:10px">
+              <div class="slider-row">
+                <div class="slider-label">Object distance</div>
+                <input type="range" min="20" max="120" value="60" id="shadowSlider" oninput="updateShadow(this.value)">
+                <div class="slider-val" id="shadowVal">60</div>
+              </div>
+              <div class="shadow-experiment"><canvas id="shadowCanvas" width="440" height="90"></canvas></div>
+              <div style="font-size:.72rem;color:var(--dim);text-align:center">Closer to light = larger shadow</div>
+            </div>`:''}
+          </div>
+        </div>`).join('')}
+      <div class="feedback" id="fb"></div>
+    </div>`;
+  drawReflection(40);drawShadow(60);
+}
+
+function openCard(i){
+  const body=document.getElementById('eb'+i);
+  const arrow=document.getElementById('ea'+i);
+  const card=document.getElementById('ec'+i);
+  const isOpen=body.classList.contains('show');
+  body.classList.toggle('show',!isOpen);
+  arrow.classList.toggle('open',!isOpen);
+  card.classList.toggle('opened',!isOpen);
+  if(!isOpen){
+    openedCards.add(i);
+    if(i===0)setTimeout(()=>{drawReflection(parseInt(document.getElementById('reflSlider')?.value||40))},50);
+    if(i===3)setTimeout(()=>{drawShadow(parseInt(document.getElementById('shadowSlider')?.value||60))},50);
+    if(openedCards.size===EXPLORE_TOPICS.length){
+      score++;updateStars();confetti();
+      document.getElementById('fb').textContent='🎉 All topics explored! Press Next for the quiz →';
+      document.getElementById('fb').className='feedback correct';
+      showNext(true);
+    }
+  }
+}
+
+function drawReflection(angle){
+  const c=document.getElementById('reflCanvas');if(!c)return;
+  const ctx=c.getContext('2d');const W=440,H=110;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#050d06';ctx.fillRect(0,0,W,H);
+  // Mirror
+  ctx.strokeStyle='rgba(76,201,240,.6)';ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(220,20);ctx.lineTo(220,100);ctx.stroke();
+  ctx.fillStyle='rgba(76,201,240,.15)';ctx.fillRect(220,20,4,80);
+  ctx.fillStyle='rgba(76,201,240,.4)';ctx.font='10px Nunito';ctx.textAlign='left';ctx.fillText('Mirror',226,60);
+  // Normal line (dashed)
+  ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(220,55);ctx.lineTo(100,55);ctx.stroke();
+  ctx.setLineDash([]);
+  // Incident ray
+  const rad=angle*Math.PI/180;
+  const ix=220-100*Math.cos(rad), iy=55-100*Math.sin(rad);
+  ctx.strokeStyle='#FFD166';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(ix,iy);ctx.lineTo(220,55);ctx.stroke();
+  // Arrow
+  ctx.fillStyle='#FFD166';ctx.beginPath();ctx.arc(ix+6,iy+4,3,0,Math.PI*2);ctx.fill();
+  // Reflected ray
+  const rx=220-100*Math.cos(rad), ry=55+100*Math.sin(rad);
+  ctx.strokeStyle='#06D6A0';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(220,55);ctx.lineTo(rx,ry);ctx.stroke();
+  // Angle labels
+  ctx.fillStyle='#FFD166';ctx.font='bold 10px Nunito';ctx.textAlign='right';
+  ctx.fillText(angle+'°',215,52);
+  ctx.fillStyle='#06D6A0';ctx.textAlign='left';
+  ctx.fillText(angle+'°',225,72);
+}
+function updateReflection(val){
+  document.getElementById('reflVal').textContent=val+'°';
+  drawReflection(parseInt(val));
+}
+
+function drawShadow(dist){
+  const c=document.getElementById('shadowCanvas');if(!c)return;
+  const ctx=c.getContext('2d');const W=440,H=90;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#050d06';ctx.fillRect(0,0,W,H);
+  // Light source
+  ctx.fillStyle='#FFD166';ctx.shadowBlur=15;ctx.shadowColor='#FFD166';
+  ctx.beginPath();ctx.arc(40,45,12,0,Math.PI*2);ctx.fill();
+  ctx.shadowBlur=0;
+  ctx.fillStyle='rgba(255,209,102,.4)';ctx.font='9px Nunito';ctx.textAlign='center';ctx.fillText('Light',40,72);
+  // Object
+  const objX=40+parseInt(dist)*1.5;
+  ctx.fillStyle='rgba(232,240,255,.7)';ctx.fillRect(objX-8,25,16,40);
+  ctx.fillStyle='rgba(232,240,255,.4)';ctx.font='9px Nunito';ctx.fillText('Object',objX,78);
+  // Shadow (larger when closer to source)
+  const shadowScale=Math.max(0.5,(130-parseInt(dist))/60);
+  const shadowH=Math.min(80,Math.round(40*shadowScale));
+  const shadowX=objX+20;
+  ctx.fillStyle='rgba(0,0,0,.6)';
+  ctx.fillRect(shadowX,45-shadowH/2,Math.min(180,Math.round(80*shadowScale)),shadowH);
+  ctx.fillStyle='rgba(74,106,138,.5)';ctx.font='9px Nunito';ctx.fillText('Shadow',shadowX+40,82);
+  // Light rays
+  ctx.strokeStyle='rgba(255,209,102,.25)';ctx.lineWidth=1;
+  for(let y=20;y<=70;y+=10){ctx.beginPath();ctx.moveTo(40,y);ctx.lineTo(objX-8,y);ctx.stroke();}
+}
+function updateShadow(val){
+  document.getElementById('shadowVal').textContent=val;
+  drawShadow(parseInt(val));
+}
+
+/* ── Stage 2: Quiz on light ── */
+const QUIZ=[
+  {q:'The angle of incidence and angle of reflection are always:',correct:'Equal',opts:['Equal','Different','Unrelated','Opposite'],fact:'Law of Reflection: angle in = angle out. This is why mirrors show accurate images!'},
+  {q:'Light bending when it passes from air into water is called:',correct:'Refraction',opts:['Reflection','Refraction','Dispersion','Absorption'],fact:'Refraction = bending of light when it changes speed in different materials.'},
+  {q:'A prism splits white light into VIBGYOR. This is called:',correct:'Dispersion',opts:['Reflection','Refraction','Dispersion','Absorption'],fact:'Dispersion happens because each colour travels at a slightly different speed in glass — so each bends at a different angle!'},
+  {q:'Which material forms NO shadow because all light passes through it?',correct:'Transparent glass',opts:['Transparent glass','Opaque wood','Translucent paper','None of these'],fact:'Transparent = all light passes through (no shadow). Opaque = no light (dark shadow). Translucent = some light (faint shadow).'},
+  {q:'Moving an opaque object CLOSER to a light source makes its shadow:',correct:'Larger',opts:['Smaller','Larger','Same size','Disappear'],fact:'Closer to the source = more light rays blocked = larger shadow. This is why your shadow is huge at sunrise and tiny at noon!'},
+  {q:'The colours of white light separated by dispersion are called:',correct:'Spectrum (VIBGYOR)',opts:['Reflection','Spectrum (VIBGYOR)','Refraction bands','Light waves'],fact:'VIBGYOR: Violet, Indigo, Blue, Green, Yellow, Orange, Red — the visible spectrum. Radio waves and X-rays are also light but invisible!'},
+];
+
+function renderStage2(i){
+  setProgress(`Stage 2 of 3 — Quiz ${i+1} of ${QUIZ.length}`);
+  answered=false;showNext(false);
+  const q=QUIZ[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">❓ Stage 2 — Light Quiz</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkQuiz('${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}','${q.fact.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkQuiz(sel,correct,fact,btn){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct');score++;updateStars();
+    fb.textContent=cheer()+'  Correct!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('💡',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function nextQ(){
+  if(stg===1){stg=2;qIdx=0;showTrans('❓','Stage 2: Light Quiz!','You explored reflection, refraction, dispersion and shadows. Now test what you learned!',()=>renderStage2(0));}
+  else{qIdx++;if(qIdx<QUIZ.length)renderStage2(qIdx);else endGame();}
+}
+function showTrans(emoji,title,desc,cb){
+  showNext(false);
+  document.getElementById('gameArea').innerHTML=`<div class="stage-transition"><div style="font-size:2.5rem">${emoji}</div><h3>${title}</h3><p>${desc}</p></div>`;
+  const nb=document.getElementById('nextBtn');nb.textContent='Start Quiz →';nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →';nb.onclick=nextQ;cb()};
+}
+function endGame(){
+  confetti();
+  const total=1+QUIZ.length;
+  const medals=['Light Learner 🌱','Optics Explorer 🔍','Light Master 💡','Science Champion 🏆','Light Legend 🌟'];
+  const medal=medals[Math.min(4,Math.floor(score*5/total))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--teal);margin:10px 0">${score} pts</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        Every camera, telescope, eye and rainbow uses these exact laws of light. The next time you see a rainbow over the Brahmaputra, you'll know exactly how it forms!
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  setProgress('Complete!');showNext(false);
+}
+function resetGame(){
+  stg=1;qIdx=0;score=0;answered=false;openedCards=new Set();
+  for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.remove('lit');
+  document.getElementById('nextBtn').textContent='Next →';document.getElementById('nextBtn').onclick=nextQ;
+  renderStage1();
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{document.getElementById('overlay').classList.remove('show');resetGame()});
+renderStage1();
+</script>
+</body>
+</html>

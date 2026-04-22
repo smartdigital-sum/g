@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grammar Engine Room — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;--border-glow:rgba(255,159,28,.2);--card-glow:rgba(255,159,28,.1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:linear-gradient(160deg,#1A0F00,#100800);min-height:100vh;color:var(--text);font-family:'Nunito',sans-serif;font-size:18px;display:flex;justify-content:center;padding-bottom:40px;}
+.shell{width:100%;max-width:480px;display:flex;flex-direction:column;}
+.header{padding:16px 20px 10px;border-bottom:2px solid var(--border-glow);background:rgba(13,20,40,.8);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px);}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold);}
+.subject-tag{font-size:.68rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+.stars{display:flex;gap:4px;margin-top:4px;}
+.star{font-size:.95rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.score-display{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--gold);}
+.wow-hook{margin:14px 14px 0;background:linear-gradient(135deg,rgba(255,159,28,.15),rgba(13,20,40,.95));border:1px solid var(--border-glow);border-radius:14px;padding:16px;box-shadow:0 4px 20px var(--card-glow);}
+.wow-hook .emoji{font-size:1.8rem;margin-bottom:6px;display:block;}
+.wow-hook p{font-size:.88rem;line-height:1.6;}
+.wow-hook strong{color:var(--gold);}
+.stage-area{padding:14px;flex:1;}
+.stage{display:none;}
+.stage.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.stage-title{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--orange);margin-bottom:8px;}
+.card{background:var(--card);border:1px solid var(--border-glow);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 2px 14px var(--card-glow);}
+.info-box{background:rgba(255,159,28,.07);border-left:3px solid var(--orange);padding:9px 12px;border-radius:0 7px 7px 0;font-size:.82rem;color:var(--dim);line-height:1.5;margin:8px 0;}
+.info-box strong{color:var(--text);}
+.result-msg{font-size:.85rem;min-height:20px;padding:3px 0;}
+.result-msg.ok{color:var(--teal);}
+.result-msg.err{color:var(--coral);}
+.bottom-bar{position:sticky;bottom:0;background:rgba(13,20,40,.92);border-top:1px solid var(--border-glow);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(8px);}
+.progress-label{font-size:.82rem;color:var(--dim);}
+.progress-label strong{color:var(--text);}
+.action-btn{background:var(--gold);color:#060A10;border:none;border-radius:22px;padding:9px 24px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;min-height:44px;}
+.action-btn:hover{transform:scale(1.04);box-shadow:0 4px 14px rgba(255,209,102,.4);}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.9);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{text-align:center;padding:26px 22px;max-width:320px;}
+.overlay-emoji{font-size:2.8rem;margin-bottom:10px;}
+.overlay-msg{font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--gold);margin-bottom:7px;}
+.overlay-fact{font-size:.82rem;color:var(--dim);line-height:1.5;}
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:200;}
+.confetto{position:absolute;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.game-complete{display:none;text-align:center;padding:36px 18px;}
+.game-complete.show{display:block;animation:fadeIn .5s ease;}
+.complete-title{font-family:'Baloo 2',cursive;font-size:1.9rem;color:var(--gold);margin-bottom:10px;}
+.complete-sub{color:var(--dim);font-size:.9rem;line-height:1.6;margin-bottom:20px;}
+.replay-btn{background:transparent;border:2px solid var(--gold);color:var(--gold);border-radius:22px;padding:9px 26px;font-family:'Baloo 2',cursive;font-size:.95rem;cursor:pointer;min-height:44px;}
+.nf-item{background:rgba(0,0,0,.22);border:1px solid var(--border-glow);border-radius:10px;padding:12px;margin-bottom:10px;}
+.nf-sentence{font-size:.9rem;color:var(--text);margin-bottom:8px;line-height:1.6;}
+.nf-sentence em{color:var(--gold);font-style:normal;font-weight:700;background:rgba(255,209,102,.1);padding:0 3px;border-radius:3px;}
+.nf-opts{display:flex;gap:6px;flex-wrap:wrap;}
+.nf-opt{background:rgba(255,159,28,.1);border:1px solid var(--border-glow);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:.82rem;color:var(--text);transition:all .2s;min-height:38px;}
+.nf-opt:hover{background:rgba(255,159,28,.22);}
+.nf-opt.correct{background:rgba(6,214,160,.18);border-color:var(--teal);color:var(--teal);}
+.nf-opt.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.blank-sentence{font-size:.9rem;color:var(--text);line-height:2;margin-bottom:10px;}
+.blank{display:inline-block;border-bottom:2px solid var(--orange);min-width:56px;text-align:center;cursor:pointer;padding:0 4px;color:var(--gold);font-weight:700;font-family:'Baloo 2',cursive;transition:all .2s;border-radius:3px 3px 0 0;}
+.blank.selected{background:rgba(255,209,102,.12);outline:2px solid var(--gold);}
+.blank.correct-fill{color:var(--teal);border-color:var(--teal);}
+.blank.wrong-fill{color:var(--coral);border-color:var(--coral);}
+.det-choices{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.det-chip{background:rgba(255,159,28,.12);border:1px solid var(--border-glow);border-radius:7px;padding:6px 14px;cursor:pointer;font-family:'Baloo 2',cursive;font-size:.88rem;color:var(--text);transition:all .2s;min-height:38px;}
+.det-chip:hover{background:rgba(255,159,28,.25);}
+.det-chip.used{opacity:.35;pointer-events:none;text-decoration:line-through;}
+.clause-q{background:rgba(0,0,0,.2);border-radius:9px;padding:12px;margin-bottom:10px;}
+.clause-q .q{font-size:.88rem;color:var(--text);margin-bottom:8px;line-height:1.6;}
+.clause-q .q u{color:var(--gold);text-underline-offset:3px;}
+.clause-opts{display:flex;flex-wrap:wrap;gap:6px;}
+.cl-opt{background:rgba(255,159,28,.1);border:1px solid var(--border-glow);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:.82rem;color:var(--text);transition:all .2s;min-height:38px;}
+.cl-opt:hover{background:rgba(255,159,28,.22);}
+.cl-opt.correct{background:rgba(6,214,160,.18);border-color:var(--teal);color:var(--teal);}
+.cl-opt.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);animation:shake .3s;}
+.patient-card{background:rgba(0,0,0,.22);border:1px solid var(--border-glow);border-radius:10px;padding:12px;margin-bottom:10px;transition:all .3s;}
+.patient-label{font-size:.7rem;color:var(--orange);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
+.patient-sent{font-size:.9rem;color:var(--text);line-height:1.7;}
+.error-word{color:var(--coral);text-decoration:underline wavy var(--coral);cursor:pointer;padding:0 2px;border-radius:3px;transition:all .2s;}
+.error-word:hover{background:rgba(255,107,107,.15);}
+.error-word.fixed{color:var(--teal);text-decoration:none;cursor:default;}
+.fix-reveal{font-size:.78rem;color:var(--teal);margin-top:6px;display:none;line-height:1.5;}
+.patient-card.healed{border-color:rgba(6,214,160,.3);background:rgba(6,214,160,.04);}
+.patient-card.healed .fix-reveal{display:block;}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="game-title">⚙️ Grammar Engine Room</div>
+        <div class="subject-tag">📝 English · G9-06 · Non-finites, Determiners, Clauses, Errors</div>
+      </div>
+      <div class="score-display" id="scoreDisplay">0 pts</div>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="emoji">🏛️</span>
+    <p>The difference between <strong>'the government is'</strong> and <strong>'the government are'</strong> is a political statement in English. In British English, collective nouns take plural verbs. In American English, singular. The same grammar rule — applied differently — signals your nationality, your education, and which version of English was dominant in your school. <strong>Grammar is cultural identity.</strong></p>
+  </div>
+
+  <div class="stage-area">
+
+    <!-- STAGE 1: NON-FINITE SORTER -->
+    <div class="stage active" id="stage1">
+      <div class="stage-title">⚙️ Stage 1: Non-Finite Sorter</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">The highlighted word is a non-finite verb form. Classify it: <strong>Infinitive</strong> (to+verb as noun/object), <strong>Gerund</strong> (−ing as noun), or <strong>Participle</strong> (−ing/−ed as adjective).</p>
+        <div class="nf-item" id="nf0">
+          <div class="nf-sentence"><em>Running</em> is the best exercise for the lungs.</div>
+          <div class="nf-opts">
+            <div class="nf-opt" onclick="checkNF(this,0,'gerund')">Gerund</div>
+            <div class="nf-opt" onclick="checkNF(this,0,'inf')">Infinitive</div>
+            <div class="nf-opt" onclick="checkNF(this,0,'part')">Participle</div>
+          </div>
+          <div class="result-msg" id="nfr0"></div>
+        </div>
+        <div class="nf-item" id="nf1">
+          <div class="nf-sentence">The <em>running</em> water is cold.</div>
+          <div class="nf-opts">
+            <div class="nf-opt" onclick="checkNF(this,1,'gerund')">Gerund</div>
+            <div class="nf-opt" onclick="checkNF(this,1,'inf')">Infinitive</div>
+            <div class="nf-opt" onclick="checkNF(this,1,'part')">Participle</div>
+          </div>
+          <div class="result-msg" id="nfr1"></div>
+        </div>
+        <div class="nf-item" id="nf2">
+          <div class="nf-sentence">She wants <em>to read</em> every night before sleeping.</div>
+          <div class="nf-opts">
+            <div class="nf-opt" onclick="checkNF(this,2,'gerund')">Gerund</div>
+            <div class="nf-opt" onclick="checkNF(this,2,'inf')">Infinitive</div>
+            <div class="nf-opt" onclick="checkNF(this,2,'part')">Participle</div>
+          </div>
+          <div class="result-msg" id="nfr2"></div>
+        </div>
+        <div class="nf-item" id="nf3">
+          <div class="nf-sentence">The <em>broken</em> chair was repaired by the carpenter.</div>
+          <div class="nf-opts">
+            <div class="nf-opt" onclick="checkNF(this,3,'gerund')">Gerund</div>
+            <div class="nf-opt" onclick="checkNF(this,3,'inf')">Infinitive</div>
+            <div class="nf-opt" onclick="checkNF(this,3,'part')">Participle</div>
+          </div>
+          <div class="result-msg" id="nfr3"></div>
+        </div>
+        <div class="info-box"><strong>Same word, three roles:</strong> "Swimming is fun" (gerund — noun) · "The swimming pool" (participle — adjective) · "I love to swim" (infinitive — object)</div>
+        <div class="result-msg" id="r1"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 2: DETERMINER PRECISION -->
+    <div class="stage" id="stage2">
+      <div class="stage-title">🎯 Stage 2: Determiner Precision</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">Tap a blank to select it, then tap a determiner to fill it. Watch for the classic traps!</p>
+        <div class="blank-sentence">She waited for <span class="blank" id="b0" onclick="selectBlank(0)">___</span> hour before the doctor arrived.</div>
+        <div class="blank-sentence">There is <span class="blank" id="b1" onclick="selectBlank(1)">___</span> water left in the bottle — almost none.</div>
+        <div class="blank-sentence">I have <span class="blank" id="b2" onclick="selectBlank(2)">___</span> friends in Guwahati — not many, but some.</div>
+        <div class="blank-sentence">He is studying at <span class="blank" id="b3" onclick="selectBlank(3)">___</span> university in Assam.</div>
+        <div class="blank-sentence"><span class="blank" id="b4" onclick="selectBlank(4)">___</span> committee have decided to postpone the event. (British English)</div>
+        <div class="det-choices" id="detBank">
+          <div class="det-chip" onclick="fillBlank(this,'an')">an</div>
+          <div class="det-chip" onclick="fillBlank(this,'little')">little</div>
+          <div class="det-chip" onclick="fillBlank(this,'a few')">a few</div>
+          <div class="det-chip" onclick="fillBlank(this,'a')">a</div>
+          <div class="det-chip" onclick="fillBlank(this,'The')">The</div>
+        </div>
+        <div class="info-box"><strong>Classic traps:</strong> 'an hour' (silent h = vowel sound) · 'a university' (/juː/ = consonant sound) · 'little' = almost none (uncountable) · 'a few' = some (countable)</div>
+        <div class="result-msg" id="r2"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 3: CLAUSE LABORATORY -->
+    <div class="stage" id="stage3">
+      <div class="stage-title">🔬 Stage 3: Clause Laboratory</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">Identify the type of the underlined clause. Ask what question it answers!</p>
+        <div class="clause-q">
+          <div class="q">The book <u>that she recommended</u> was excellent.</div>
+          <div class="clause-opts">
+            <div class="cl-opt" onclick="checkClause(this,0,'adj')">Adjective clause</div>
+            <div class="cl-opt" onclick="checkClause(this,0,'adv')">Adverb clause</div>
+            <div class="cl-opt" onclick="checkClause(this,0,'noun')">Noun clause</div>
+          </div>
+          <div class="result-msg" id="cqr0"></div>
+        </div>
+        <div class="clause-q">
+          <div class="q">She left early <u>because she felt unwell</u>.</div>
+          <div class="clause-opts">
+            <div class="cl-opt" onclick="checkClause(this,1,'adj')">Adjective clause</div>
+            <div class="cl-opt" onclick="checkClause(this,1,'adv')">Adverb clause</div>
+            <div class="cl-opt" onclick="checkClause(this,1,'noun')">Noun clause</div>
+          </div>
+          <div class="result-msg" id="cqr1"></div>
+        </div>
+        <div class="clause-q">
+          <div class="q">I know <u>what she wants</u>.</div>
+          <div class="clause-opts">
+            <div class="cl-opt" onclick="checkClause(this,2,'adj')">Adjective clause</div>
+            <div class="cl-opt" onclick="checkClause(this,2,'adv')">Adverb clause</div>
+            <div class="cl-opt" onclick="checkClause(this,2,'noun')">Noun clause</div>
+          </div>
+          <div class="result-msg" id="cqr2"></div>
+        </div>
+        <div class="clause-q">
+          <div class="q">The student <u>who topped the exam</u> was from Assam.</div>
+          <div class="clause-opts">
+            <div class="cl-opt" onclick="checkClause(this,3,'adj')">Adjective clause</div>
+            <div class="cl-opt" onclick="checkClause(this,3,'adv')">Adverb clause</div>
+            <div class="cl-opt" onclick="checkClause(this,3,'noun')">Noun clause</div>
+          </div>
+          <div class="result-msg" id="cqr3"></div>
+        </div>
+        <div class="info-box"><strong>Quick test:</strong> Adjective clause → "Which one?" · Adverb clause → "Why / When / How?" · Noun clause → "What?"</div>
+        <div class="result-msg" id="r3"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 4: ERROR CORRECTION HOSPITAL -->
+    <div class="stage" id="stage4">
+      <div class="stage-title">🏥 Stage 4: Error Correction Hospital</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">Each sentence has one error (underlined in red). Tap the error word to correct it!</p>
+        <div class="patient-card" id="pc0">
+          <div class="patient-label">Patient 1 — Subject-Verb Agreement</div>
+          <div class="patient-sent">The committee <span class="error-word" onclick="healError(0)">are</span> meeting tomorrow. (American English context)</div>
+          <div class="fix-reveal">✓ Healed: 'are' → 'is' (American English: collective nouns take singular verbs)</div>
+        </div>
+        <div class="patient-card" id="pc1">
+          <div class="patient-label">Patient 2 — Article Error</div>
+          <div class="patient-sent">She is <span class="error-word" onclick="healError(1)">a</span> honest person who never lies.</div>
+          <div class="fix-reveal">✓ Healed: 'a' → 'an' ('honest' starts with a vowel sound /ɒ/, so 'an' is correct)</div>
+        </div>
+        <div class="patient-card" id="pc2">
+          <div class="patient-label">Patient 3 — Tense Error</div>
+          <div class="patient-sent">By the time she arrived, he already <span class="error-word" onclick="healError(2)">left</span>.</div>
+          <div class="fix-reveal">✓ Healed: 'left' → 'had left' (past perfect needed — leaving happened before arriving)</div>
+        </div>
+        <div class="patient-card" id="pc3">
+          <div class="patient-label">Patient 4 — Preposition Error</div>
+          <div class="patient-sent">She is very good <span class="error-word" onclick="healError(3)">in</span> Mathematics.</div>
+          <div class="fix-reveal">✓ Healed: 'in' → 'at' (correct idiom: good at a subject)</div>
+        </div>
+        <div class="patient-card" id="pc4">
+          <div class="patient-label">Patient 5 — Determiner Error</div>
+          <div class="patient-sent">He had <span class="error-word" onclick="healError(4)">little</span> friends, so he was never lonely.</div>
+          <div class="fix-reveal">✓ Healed: 'little' → 'a few' ('little' is for uncountable nouns; 'friends' is countable → 'a few')</div>
+        </div>
+        <div class="result-msg" id="r4" style="margin-top:8px;"></div>
+      </div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="game-complete" id="gameComplete">
+      <div style="font-size:2.8rem;margin-bottom:14px;">⚙️</div>
+      <div class="complete-title">Engine Room Complete!</div>
+      <div class="complete-sub">You classified 4 non-finites, filled 5 determiner blanks precisely, identified 4 clause types, and healed 5 error sentences.<br><br><strong style="color:var(--gold);">Precise identification. ✓</strong> Grammar is how power, identity and meaning are constructed.</div>
+      <br>
+      <button class="replay-btn" onclick="resetGame()">↺ Play Again</button>
+    </div>
+  </div>
+
+  <div class="bottom-bar" id="bottomBar">
+    <div class="progress-label">Stage <strong id="stageNum">1</strong> of 4</div>
+    <button class="action-btn" id="mainBtn" onclick="nextStage()">Continue →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="overlay-emoji" id="ovEmoji">✓</div>
+    <div class="overlay-msg" id="ovMsg">Stage Complete!</div>
+    <div class="overlay-fact" id="ovFact"></div>
+  </div>
+</div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<script>
+let score=0,currentStage=1,stageDone=[false,false,false,false];
+function addScore(p){score+=p;document.getElementById('scoreDisplay').textContent=score+' pts';}
+function lightStar(n){const s=document.getElementById('s'+n);if(s&&!s.classList.contains('lit'))s.classList.add('lit');}
+
+// STAGE 1
+const nfAnswers=['gerund','part','inf','part'];
+const nfExp=['Gerund ✓ — acts as noun (subject of sentence). Replace with "Exercise" → still works.','Participle ✓ — acts as adjective modifying "water". Replace with "cold" → still works.','Infinitive ✓ — follows the verb "wants". Acts as object.','Participle ✓ — past participle acting as adjective modifying "chair".'];
+let nfDone=0;
+function checkNF(el,idx,choice){
+  const item=document.getElementById('nf'+idx);
+  if(item.dataset.done)return;
+  if(choice===nfAnswers[idx]){
+    el.classList.add('correct');item.dataset.done='1';
+    document.getElementById('nfr'+idx).textContent=nfExp[idx];
+    document.getElementById('nfr'+idx).className='result-msg ok';
+    addScore(15);nfDone++;
+    if(nfDone>=3&&!stageDone[0]){stageDone[0]=true;lightStar(1);lightStar(2);addScore(20);
+      document.getElementById('r1').textContent='Non-finite forms correctly identified. ✓';
+      document.getElementById('r1').className='result-msg ok';}
+  }else{
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),600);
+    document.getElementById('nfr'+idx).textContent='Incorrect. Is it acting as a noun, adjective, or completing another verb?';
+    document.getElementById('nfr'+idx).className='result-msg err';
+  }
+}
+
+// STAGE 2
+const detAnswers=['an','little','a few','a','The'];
+const detHints=['\'an hour\' — silent h makes it vowel sound /aʊər/','\'little water\' — almost none (negative, uncountable noun)','\'a few friends\' — some friends (positive, countable noun)','\'a university\' — starts with consonant sound /juː/','\'The committee\' — specific committee being referred to'];
+let selectedBlank=-1,detFilled=0;
+function selectBlank(idx){
+  selectedBlank=idx;
+  document.querySelectorAll('.blank').forEach(b=>b.classList.remove('selected'));
+  const b=document.getElementById('b'+idx);
+  if(!b.classList.contains('correct-fill'))b.classList.add('selected');
+}
+function fillBlank(chip,word){
+  if(selectedBlank<0){document.getElementById('r2').textContent='Tap a blank first, then tap a word to fill it.';document.getElementById('r2').className='result-msg err';return;}
+  const idx=selectedBlank;
+  const b=document.getElementById('b'+idx);
+  if(b.classList.contains('correct-fill'))return;
+  b.classList.remove('selected');
+  b.textContent=word;
+  if(word===detAnswers[idx]){
+    b.classList.add('correct-fill');chip.classList.add('used');
+    addScore(15);detFilled++;
+    document.getElementById('r2').textContent=detHints[idx]+' ✓';
+    document.getElementById('r2').className='result-msg ok';
+    if(detFilled>=4&&!stageDone[1]){stageDone[1]=true;lightStar(3);addScore(20);}
+  }else{
+    b.classList.add('wrong-fill');
+    document.getElementById('r2').textContent='Incorrect. '+detHints[idx];
+    document.getElementById('r2').className='result-msg err';
+    setTimeout(()=>{b.classList.remove('wrong-fill');b.textContent='___';},900);
+  }
+  selectedBlank=-1;
+}
+
+// STAGE 3
+const clAnswers=['adj','adv','noun','adj'];
+const clExp=['Adjective clause ✓ — "that she recommended" modifies "book". Answers: which book?','Adverb clause ✓ — "because she felt unwell" explains why she left. Answers: why?','Noun clause ✓ — "what she wants" is the object of "know". Answers: what do I know?','Adjective clause ✓ — "who topped the exam" modifies "student". Answers: which student?'];
+let clDone=0;
+function checkClause(el,idx,choice){
+  const parent=el.parentElement;
+  if(parent.querySelector('.correct'))return;
+  if(choice===clAnswers[idx]){
+    el.classList.add('correct');
+    document.getElementById('cqr'+idx).textContent=clExp[idx];
+    document.getElementById('cqr'+idx).className='result-msg ok';
+    addScore(15);clDone++;
+    if(clDone>=3&&!stageDone[2]){stageDone[2]=true;lightStar(4);addScore(20);
+      document.getElementById('r3').textContent='All clause types identified. Precise identification. ✓';
+      document.getElementById('r3').className='result-msg ok';}
+  }else{
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),600);
+    document.getElementById('cqr'+idx).textContent='Incorrect. Ask: does it answer "which?", "why/when/how?", or "what?"';
+    document.getElementById('cqr'+idx).className='result-msg err';
+  }
+}
+
+// STAGE 4
+let healed=0;
+function healError(idx){
+  const card=document.getElementById('pc'+idx);
+  if(card.classList.contains('healed'))return;
+  card.classList.add('healed');
+  card.querySelector('.error-word').classList.add('fixed');
+  addScore(18);healed++;
+  document.getElementById('r4').textContent=`${healed} error${healed>1?'s':''} corrected. ✓`;
+  document.getElementById('r4').className='result-msg ok';
+  if(healed>=4&&!stageDone[3]){stageDone[3]=true;lightStar(5);addScore(25);
+    document.getElementById('r4').textContent='All errors corrected. Error-correction is your strongest exam tool. ✓';}
+}
+
+// NAVIGATION
+const ovData=[
+  {emoji:'⚙️',msg:'Non-Finites Sorted!',fact:'Non-finite verbs never show tense or subject. The same "-ing" form can be a noun (gerund), an adjective (participle), or part of another verb — context decides everything.'},
+  {emoji:'🎯',msg:'Determiners Precise!',fact:'"An hour" vs "a hour" — the rule is about SOUND, not spelling. "An" before vowel sounds, "a" before consonant sounds. "An honest man" (silent h) is correct.'},
+  {emoji:'🔬',msg:'Clauses Classified!',fact:'The noun clause "I know what she wants" contains a hidden question. Noun clauses are always derived from questions — "What does she want?" becomes "what she wants" in reported speech.'},
+];
+function nextStage(){
+  if(currentStage===4&&stageDone[3]){showComplete();return;}
+  if(currentStage>=4)return;
+  const d=ovData[currentStage-1];
+  document.getElementById('ovEmoji').textContent=d.emoji;document.getElementById('ovMsg').textContent=d.msg;document.getElementById('ovFact').textContent=d.fact;
+  document.getElementById('overlay').classList.add('show');
+  setTimeout(()=>{
+    document.getElementById('stage'+currentStage).classList.remove('active');currentStage++;
+    document.getElementById('stage'+currentStage).classList.add('active');
+    document.getElementById('stageNum').textContent=currentStage;
+    document.getElementById('overlay').classList.remove('show');
+    if(currentStage===4)document.getElementById('mainBtn').textContent='Finish →';
+  },2500);
+}
+function showComplete(){document.getElementById('bottomBar').style.display='none';document.getElementById('stage4').classList.remove('active');document.getElementById('gameComplete').classList.add('show');fireConfetti();}
+function fireConfetti(){
+  const wrap=document.getElementById('confettiWrap');wrap.innerHTML='';
+  const colors=['#FFD166','#06D6A0','#4CC9F0','#FF9F1C','#FF6B6B'];
+  for(let i=0;i<28;i++){const c=document.createElement('div');c.className='confetto';c.style.left=(Math.random()*100)+'%';c.style.background=colors[~~(Math.random()*colors.length)];c.style.animationDuration=(1.5+Math.random()*2)+'s';c.style.animationDelay=(Math.random()*.8)+'s';wrap.appendChild(c);setTimeout(()=>c.remove(),4000);}
+}
+function resetGame(){
+  score=0;currentStage=1;stageDone=[false,false,false,false];nfDone=0;detFilled=0;selectedBlank=-1;clDone=0;healed=0;
+  document.getElementById('scoreDisplay').textContent='0 pts';
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('gameComplete').classList.remove('show');document.getElementById('bottomBar').style.display='flex';
+  document.getElementById('stageNum').textContent='1';document.getElementById('mainBtn').textContent='Continue →';
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));document.getElementById('stage1').classList.add('active');
+  document.querySelectorAll('.nf-item').forEach(el=>delete el.dataset.done);
+  document.querySelectorAll('.nf-opt').forEach(el=>el.classList.remove('correct','wrong'));
+  for(let i=0;i<5;i++){const b=document.getElementById('b'+i);if(b){b.textContent='___';b.classList.remove('correct-fill','wrong-fill','selected');}}
+  document.querySelectorAll('.det-chip').forEach(el=>el.classList.remove('used'));
+  document.querySelectorAll('.cl-opt').forEach(el=>el.classList.remove('correct','wrong'));
+  document.querySelectorAll('.patient-card').forEach(el=>el.classList.remove('healed'));
+  document.querySelectorAll('.error-word').forEach(el=>el.classList.remove('fixed'));
+  document.querySelectorAll('.result-msg').forEach(el=>{el.textContent='';el.className='result-msg';});
+}
+</script>
+</body>
+</html>

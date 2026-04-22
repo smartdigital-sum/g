@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G8-08: Character & Theme Lab | GyanPlay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Crimson+Pro:wght@400;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060A10;
+            --card: #0D1428;
+            --gold: #FFD166;
+            --coral: #FF6B6B;
+            --teal: #06D6A0;
+            --purple: #C77DFF;
+            --orange: #FF9F1C;
+            --text: #E8F0FF;
+            --dim: #4A6A8A;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, #1A0F00 0%, #100800 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .container { max-width: 480px; margin: 0 auto; }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 159, 28, 0.22);
+            margin-bottom: 20px;
+        }
+        
+        .title-section { flex: 1; }
+        .game-title { font-family: 'Baloo 2', cursive; font-size: 1.35rem; color: var(--gold); font-weight: 800; }
+        .subject-tag { font-size: 0.7rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .stars { display: flex; gap: 4px; }
+        .star { font-size: 1.2rem; opacity: 0.3; transition: all 0.3s ease; }
+        .star.lit { opacity: 1; filter: drop-shadow(0 0 8px var(--gold)); }
+        
+        .hook-card {
+            background: linear-gradient(135deg, rgba(255, 159, 28, 0.15), rgba(255, 159, 28, 0.05));
+            border: 1px solid rgba(255, 159, 28, 0.22);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 24px rgba(255, 159, 28, 0.12);
+        }
+        
+        .hook-text { font-size: 0.95rem; line-height: 1.7; }
+        .hook-text strong { color: var(--gold); font-weight: 700; }
+        
+        .game-area {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .stage-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            color: var(--orange);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stage-title::before { content: ''; width: 4px; height: 20px; background: var(--orange); border-radius: 2px; }
+        
+        /* Story Passage */
+        .story-card {
+            background: rgba(6, 10, 16, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .story-title {
+            font-family: 'Baloo 2', cursive;
+            color: var(--gold);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+        
+        .story-text {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+        
+        /* Character Web */
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .character-node {
+            background: rgba(199, 125, 255, 0.1);
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .character-node:hover { border-color: var(--purple); }
+        .character-node.selected { background: rgba(199, 125, 255, 0.3); border-color: var(--purple); }
+        
+        .char-name { font-family: 'Baloo 2', cursive; color: var(--purple); margin-bottom: 5px; }
+        .char-trait { font-size: 0.8rem; color: var(--dim); }
+        
+        .evidence-box {
+            background: rgba(6, 214, 160, 0.1);
+            border: 1px solid rgba(6, 214, 160, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            display: none;
+        }
+        
+        .evidence-box.show { display: block; }
+        
+        /* Theme Spectrum */
+        .spectrum-container {
+            background: rgba(6, 10, 16, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .spectrum-line {
+            height: 8px;
+            background: linear-gradient(90deg, var(--coral), var(--gold), var(--teal));
+            border-radius: 4px;
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .spectrum-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--dim);
+        }
+        
+        .theme-marker {
+            position: absolute;
+            top: -8px;
+            width: 24px;
+            height: 24px;
+            background: var(--gold);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(255, 209, 102, 0.4);
+        }
+        
+        .theme-marker:hover { transform: scale(1.2); }
+        
+        /* Author's Craft */
+        .craft-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .craft-btn {
+            background: rgba(255, 209, 102, 0.1);
+            border: 2px solid rgba(255, 209, 102, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .craft-btn:hover { border-color: var(--gold); }
+        .craft-btn.correct { background: rgba(6, 214, 160, 0.2); border-color: var(--teal); }
+        .craft-btn.wrong { background: rgba(255, 71, 87, 0.2); border-color: var(--coral); }
+        
+        /* Alternative Ending */
+        .ending-choice {
+            background: rgba(6, 10, 16, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .ending-choice:hover { border-color: var(--orange); }
+        .ending-choice.selected { background: rgba(255, 159, 28, 0.2); border-color: var(--orange); }
+        
+        .ending-text { font-size: 0.9rem; line-height: 1.5; }
+        
+        .consequence-box {
+            background: rgba(255, 209, 102, 0.1);
+            border-left: 3px solid var(--gold);
+            border-radius: 0 10px 10px 0;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .consequence-box.show { display: block; }
+        
+        /* Bottom Bar */
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 20px;
+        }
+        
+        .progress-info { font-size: 0.85rem; color: var(--dim); }
+        
+        .action-btn {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: #060A10;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 209, 102, 0.4); }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(6, 10, 16, 0.95);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px;
+        }
+        .overlay.active { display: flex; }
+        .overlay-content { text-align: center; max-width: 400px; }
+        .overlay-emoji { font-size: 4rem; margin-bottom: 15px; }
+        .overlay-title { font-family: 'Baloo 2', cursive; font-size: 1.5rem; color: var(--gold); margin-bottom: 10px; }
+        .overlay-message { font-size: 1rem; color: var(--text); margin-bottom: 15px; }
+        .overlay-fact { font-size: 0.85rem; color: var(--dim); padding: 15px; background: rgba(255, 159, 28, 0.1); border-radius: 10px; border-left: 3px solid var(--orange); }
+        
+        /* Completion */
+        .completion-screen { display: none; text-align: center; padding: 40px 20px; }
+        .completion-screen.active { display: block; }
+        .trophy { font-size: 5rem; margin-bottom: 20px; }
+        .completion-title { font-family: 'Baloo 2', cursive; font-size: 2rem; color: var(--gold); margin-bottom: 15px; }
+        .completion-score { font-size: 1.2rem; color: var(--text); margin-bottom: 30px; }
+        .play-again-btn {
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border: none; border-radius: 25px; padding: 15px 40px;
+            color: var(--text); font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 1.1rem;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .play-again-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(199, 125, 255, 0.4); }
+        
+        .stage { display: none; }
+        .stage.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title-section">
+                <div class="subject-tag">English</div>
+                <div class="game-title">Character & Theme Lab</div>
+            </div>
+            <div class="stars">
+                <span class="star" id="star1">⭐</span>
+                <span class="star" id="star2">⭐</span>
+                <span class="star" id="star3">⭐</span>
+                <span class="star" id="star4">⭐</span>
+                <span class="star" id="star5">⭐</span>
+            </div>
+        </div>
+        
+        <div class="hook-card">
+            <div class="hook-text">
+                J.K. Rowling was rejected by <strong>12 publishers</strong> before Harry Potter was accepted. Each publisher who rejected her read the SAME words — but interpreted the character of Harry differently. <strong>Character is not written; it is interpreted.</strong> Great literature is a Rorschach test — you see what you bring to it.
+            </div>
+        </div>
+        
+        <!-- Stage 1: Character Analysis -->
+        <div class="stage active" id="stage1">
+            <div class="game-area">
+                <div class="stage-title">Stage 1: Character Web</div>
+                
+                <div class="story-card">
+                    <div class="story-title">From "The Best Christmas Present in the World"</div>
+                    <div class="story-text">
+                        "The narrator finds an old letter describing how enemy soldiers came together on Christmas Day during World War I, sharing food and playing football, before returning to fight each other the next day."
+                    </div>
+                </div>
+                
+                <div style="font-size: 0.9rem; margin-bottom: 10px;">Tap characters to see their traits:</div>
+                
+                <div class="character-grid">
+                    <div class="character-node" onclick="showCharacter(this, 'jim')">
+                        <div class="char-name">Jim</div>
+                        <div class="char-trait">British soldier</div>
+                        <div class="evidence-box" id="jim-evidence">
+                            <strong>Trait:</strong> Compassionate<br>
+                            <strong>Evidence:</strong> Writes about sharing Christmas with enemies, showing humanity amid war.
+                        </div>
+                    </div>
+                    <div class="character-node" onclick="showCharacter(this, 'hans')">
+                        <div class="char-name">Hans</div>
+                        <div class="char-trait">German soldier</div>
+                        <div class="evidence-box" id="hans-evidence">
+                            <strong>Trait:</strong> Peace-loving<br>
+                            <strong>Evidence:</strong> Initiates the truce, brings wine to share with British soldiers.
+                        </div>
+                    </div>
+                    <div class="character-node" onclick="showCharacter(this, 'connie')">
+                        <div class="char-name">Connie</div>
+                        <div class="char-trait">Jim's wife</div>
+                        <div class="evidence-box" id="connie-evidence">
+                            <strong>Trait:</strong> Loyal, loving<br>
+                            <strong>Evidence:</strong> Keeps the letter for years, waiting for Jim's return.
+                        </div>
+                    </div>
+                    <div class="character-node" onclick="showCharacter(this, 'narrator')">
+                        <div class="char-name">Narrator</div>
+                        <div class="char-trait">Story finder</div>
+                        <div class="evidence-box" id="narrator-evidence">
+                            <strong>Trait:</strong> Curious, respectful<br>
+                            <strong>Evidence:</strong> Takes time to understand the letter's significance and returns it.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 1 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 2: Theme Spectrum -->
+        <div class="stage" id="stage2">
+            <div class="game-area">
+                <div class="stage-title">Stage 2: Theme Spectrum</div>
+                
+                <div class="story-card">
+                    <div class="story-title">Theme Analysis</div>
+                    <div class="story-text">
+                        Where would you place "The Best Christmas Present in the World" on these spectrums?
+                    </div>
+                </div>
+                
+                <div class="spectrum-container">
+                    <div style="font-size: 0.9rem; margin-bottom: 10px;">War ←→ Peace</div>
+                    <div class="spectrum-line" onclick="placeMarker(event, this)">
+                        <div class="theme-marker" style="left: 30%;"></div>
+                    </div>
+                    <div class="spectrum-labels">
+                        <span>War</span>
+                        <span>Peace</span>
+                    </div>
+                </div>
+                
+                <div class="spectrum-container">
+                    <div style="font-size: 0.9rem; margin-bottom: 10px;">Despair ←→ Hope</div>
+                    <div class="spectrum-line" onclick="placeMarker(event, this)">
+                        <div class="theme-marker" style="left: 70%;"></div>
+                    </div>
+                    <div class="spectrum-labels">
+                        <span>Despair</span>
+                        <span>Hope</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px; padding: 15px; background: rgba(6, 214, 160, 0.1); border-radius: 10px; font-size: 0.85rem;">
+                    <strong>Analysis:</strong> The story shows that even in war, humanity and peace can emerge momentarily — giving hope amid despair.
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 2 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 3: Author's Craft -->
+        <div class="stage" id="stage3">
+            <div class="game-area">
+                <div class="stage-title">Stage 3: Author's Craft</div>
+                
+                <div class="story-card">
+                    <div class="story-title">Identify the Literary Device</div>
+                    <div class="story-text">
+                        "The letter was found in an old desk, forgotten for decades, its ink faded but its words still alive with emotion."
+                    </div>
+                </div>
+                
+                <div style="font-size: 0.9rem; margin-bottom: 10px;">What technique is the author using?</div>
+                
+                <div class="craft-options">
+                    <button class="craft-btn" onclick="checkCraft(this, 'irony')">Irony</button>
+                    <button class="craft-btn" onclick="checkCraft(this, 'imagery')">Imagery</button>
+                    <button class="craft-btn" onclick="checkCraft(this, 'foreshadowing')">Foreshadowing</button>
+                    <button class="craft-btn" onclick="checkCraft(this, 'symbolism')">Symbolism</button>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(6, 10, 16, 0.4); border-radius: 10px;">
+                    <div style="font-size: 0.85rem; color: var(--dim);">
+                        <strong>More examples to identify:</strong>
+                    </div>
+                </div>
+                
+                <div class="story-card" style="margin-top: 15px;">
+                    <div class="story-text">
+                        "The football match between enemies showed that they were all just boys in uniforms, not soldiers."
+                    </div>
+                </div>
+                
+                <div class="craft-options">
+                    <button class="craft-btn" onclick="checkCraft2(this, 'symbolism')">Symbolism</button>
+                    <button class="craft-btn" onclick="checkCraft2(this, 'metaphor')">Metaphor</button>
+                    <button class="craft-btn" onclick="checkCraft2(this, 'hyperbole')">Hyperbole</button>
+                    <button class="craft-btn" onclick="checkCraft2(this, 'alliteration')">Alliteration</button>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 3 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 4: Alternative Ending -->
+        <div class="stage" id="stage4">
+            <div class="game-area">
+                <div class="stage-title">Stage 4: Alternative Ending</div>
+                
+                <div class="story-card">
+                    <div class="story-title">What if...</div>
+                    <div class="story-text">
+                        What if the soldiers had refused to return to fighting after Christmas? How would the story's message change?
+                    </div>
+                </div>
+                
+                <div style="font-size: 0.9rem; margin-bottom: 15px;">Choose an alternative ending:</div>
+                
+                <div class="ending-choice" onclick="showConsequence(this, 'desert')">
+                    <div class="ending-text">
+                        <strong>A:</strong> The soldiers desert together, refusing to fight anymore. They form a peaceful community in no-man's-land.
+                    </div>
+                </div>
+                
+                <div class="ending-choice" onclick="showConsequence(this, 'continue')">
+                    <div class="ending-text">
+                        <strong>B:</strong> The soldiers return to fighting but with heavy hearts, questioning the war's purpose.
+                    </div>
+                </div>
+                
+                <div class="ending-choice" onclick="showConsequence(this, 'officers')">
+                    <div class="ending-text">
+                        <strong>C:</strong> Officers discover the truce and punish the soldiers, making the Christmas moment even more precious.
+                    </div>
+                </div>
+                
+                <div class="consequence-box" id="consequenceBox">
+                    <div id="consequenceText"></div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 4 of 4</div>
+                <button class="action-btn" onclick="completeGame()">Complete Game</button>
+            </div>
+        </div>
+        
+        <div class="completion-screen" id="completionScreen">
+            <div class="trophy">🏆</div>
+            <div class="completion-title">Literature Analyst!</div>
+            <div class="completion-score" id="finalScore">You understand character & theme!</div>
+            <button class="play-again-btn" onclick="playAgain()">Play Again</button>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay">
+        <div class="overlay-content">
+            <div class="overlay-emoji" id="overlayEmoji">✓</div>
+            <div class="overlay-title" id="overlayTitle">Correct!</div>
+            <div class="overlay-message" id="overlayMessage"></div>
+            <div class="overlay-fact" id="overlayFact"></div>
+        </div>
+    </div>
+    
+    <script>
+        let currentStage = 1;
+        let score = 0;
+        
+        function showCharacter(node, char) {
+            document.querySelectorAll('.character-node').forEach(n => {
+                n.classList.remove('selected');
+                n.querySelector('.evidence-box').classList.remove('show');
+            });
+            node.classList.add('selected');
+            document.getElementById(char + '-evidence').classList.add('show');
+            document.getElementById('star1').classList.add('lit');
+            score += 5;
+        }
+        
+        function placeMarker(event, line) {
+            const rect = line.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const percent = Math.max(0, Math.min(100, (x / rect.width) * 100));
+            line.querySelector('.theme-marker').style.left = percent + '%';
+            document.getElementById('star2').classList.add('lit');
+        }
+        
+        function checkCraft(btn, device) {
+            const buttons = btn.parentElement.querySelectorAll('.craft-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            if (device === 'imagery') {
+                btn.classList.add('correct');
+                score += 10;
+                showOverlay('✓', 'Correct!', 'Imagery creates sensory details.', 'The author paints a picture with words: faded ink, alive emotions.');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Not quite', 'Think about sensory details.', 'Imagery appeals to the senses and creates mental pictures.');
+            }
+        }
+        
+        function checkCraft2(btn, device) {
+            const buttons = btn.parentElement.querySelectorAll('.craft-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            if (device === 'symbolism') {
+                btn.classList.add('correct');
+                score += 10;
+                showOverlay('✓', 'Correct!', 'Symbolism: Football = shared humanity.', 'The football represents peace and common ground.');
+                document.getElementById('star3').classList.add('lit');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Not quite', 'The football represents something deeper.', 'Symbolism uses objects to represent abstract ideas.');
+            }
+        }
+        
+        function showConsequence(choice, type) {
+            document.querySelectorAll('.ending-choice').forEach(c => c.classList.remove('selected'));
+            choice.classList.add('selected');
+            
+            const box = document.getElementById('consequenceBox');
+            const text = document.getElementById('consequenceText');
+            box.classList.add('show');
+            
+            if (type === 'desert') {
+                text.innerHTML = `<strong>Theme Shift:</strong> Individual conscience over duty. The story becomes about moral courage and the power of collective action against war.`;
+            } else if (type === 'continue') {
+                text.innerHTML = `<strong>Theme Shift:</strong> Tragedy of duty. The story emphasizes the internal conflict between humanity and obligation — the original theme.`;
+            } else {
+                text.innerHTML = `<strong>Theme Shift:</strong> Rebellion against authority. The story becomes about the cost of peace and the cruelty of military hierarchy.`;
+            }
+            
+            document.getElementById('star4').classList.add('lit');
+            score += 20;
+        }
+        
+        function nextStage() {
+            document.getElementById('stage' + currentStage).classList.remove('active');
+            currentStage++;
+            document.getElementById('stage' + currentStage).classList.add('active');
+        }
+        
+        function completeGame() {
+            document.getElementById('star5').classList.add('lit');
+            score += 20;
+            
+            localStorage.setItem('G8-08', JSON.stringify({
+                visited: true,
+                score: score,
+                date: new Date().toISOString()
+            }));
+            
+            document.querySelectorAll('.stage').forEach(s => s.style.display = 'none');
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.hook-card').style.display = 'none';
+            document.getElementById('completionScreen').classList.add('active');
+            document.getElementById('finalScore').textContent = `You scored ${score}/100!`;
+        }
+        
+        function playAgain() {
+            currentStage = 1;
+            score = 0;
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+            document.querySelectorAll('.stage').forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'block';
+            });
+            document.getElementById('stage1').classList.add('active');
+            document.querySelector('.header').style.display = 'flex';
+            document.querySelector('.hook-card').style.display = 'block';
+            document.getElementById('completionScreen').classList.remove('active');
+            
+            document.querySelectorAll('.character-node').forEach(n => {
+                n.classList.remove('selected');
+                n.querySelector('.evidence-box').classList.remove('show');
+            });
+            
+            document.querySelectorAll('.craft-btn').forEach(b => {
+                b.disabled = false;
+                b.classList.remove('correct', 'wrong');
+            });
+            
+            document.querySelectorAll('.ending-choice').forEach(c => c.classList.remove('selected'));
+            document.getElementById('consequenceBox').classList.remove('show');
+        }
+        
+        function showOverlay(emoji, title, message, fact) {
+            document.getElementById('overlayEmoji').textContent = emoji;
+            document.getElementById('overlayTitle').textContent = title;
+            document.getElementById('overlayMessage').textContent = message;
+            document.getElementById('overlayFact').textContent = fact;
+            document.getElementById('overlay').classList.add('active');
+            setTimeout(() => document.getElementById('overlay').classList.remove('active'), 2500);
+        }
+        
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('G8-08');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.score > 0) {
+                    const stars = Math.ceil(data.score / 20);
+                    for (let i = 1; i <= stars; i++) document.getElementById('star' + i).classList.add('lit');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

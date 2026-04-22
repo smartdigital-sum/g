@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GyanPlay Nursery — Colour & Shape Match!</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+  .hello-screen { background: linear-gradient(160deg, #FFF8E1, #EDE7F6); }
+
+  /* Match layout */
+  .match-area {
+    background: var(--card);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 16px;
+  }
+  .match-cols {
+    display: grid;
+    grid-template-columns: 1fr 20px 1fr;
+    gap: 0;
+    align-items: start;
+  }
+  .match-col-left, .match-col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .match-svg-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 24px;
+    gap: 10px;
+  }
+
+  .match-card {
+    border-radius: var(--r-md);
+    border: 3px solid rgba(0,0,0,0.07);
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+    touch-action: manipulation;
+    padding: 8px;
+    gap: 6px;
+    flex-direction: column;
+    background: var(--surface);
+  }
+  .match-card:active { transform: scale(0.92); }
+  .match-card.selected {
+    border-color: var(--saffron);
+    box-shadow: 0 0 0 3px rgba(255,107,0,0.25);
+    background: rgba(255,107,0,0.06);
+  }
+  .match-card.matched {
+    border-color: var(--green);
+    opacity: 0.5;
+    pointer-events: none;
+    background: rgba(0,200,83,0.06);
+    animation: matchedFade 0.5s ease;
+  }
+  .match-card.wrong-flash { animation: wobble 0.5s ease; }
+  .match-card.hint-match {
+    border-color: var(--gold);
+    animation: hintGlow 1s ease-in-out infinite alternate;
+  }
+  @keyframes matchedFade {
+    0%   { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 0.5; }
+  }
+
+  .match-card .card-label {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    color: var(--text2);
+    text-align: center;
+  }
+  .match-card .card-swatch {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.9);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Connector SVG lines */
+  .connector-svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .match-container { position: relative; }
+
+  /* Matched count badge */
+  .match-score-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .match-emoji { font-size: 1.3rem; }
+  .match-score-text {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text2);
+  }
+
+  .match-prompt {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="game-topbar">
+  <a class="game-logo" href="batch1-index.html">Gyan<span>Play</span></a>
+  <div class="topbar-center">🎯 Colour & Shape Match!</div>
+  <div class="topbar-right">
+    <div class="lang-toggle">
+      <button onclick="setLang('en')">EN</button>
+      <button onclick="setLang('as')">অস</button>
+      <button onclick="setLang('hi')">हि</button>
+    </div>
+    <button class="sound-toggle" id="soundToggle">🔊</button>
+  </div>
+</nav>
+
+<div class="parent-tip-bar">
+  <span class="tip-icon">👨‍👩‍👧</span>
+  <div class="tip-text">
+    <span class="tip-label">Parent Tip</span>
+    <span data-lang="en" id="tipEn">Point to each item and say both words together: "Red circle! Blue square!" Then let them tap the match.</span>
+    <span data-lang="as" id="tipAs">প্ৰতিটো বস্তু দেখাই দুটা শব্দ একেলগে কওক: "ৰঙা বৃত্ত! নীলা বৰ্গ!" তাৰ পিছত তেওঁলোকক মিলাবলৈ দিয়ক।</span>
+    <span data-lang="hi" id="tipHi">हर चीज़ को दिखाते हुए दोनों शब्द बोलें: "लाल गोला! नीला वर्ग!" फिर उन्हें मिलाने दें।</span>
+  </div>
+</div>
+
+<!-- HELLO SCREEN -->
+<div class="screen hello-screen" id="helloScreen">
+  <div class="hello-emoji">🎯</div>
+  <div class="hello-title">
+    <span data-lang="en">Colour &amp; Shape Match!</span>
+    <span data-lang="as">ৰং আৰু আকৃতি মিলাওক!</span>
+    <span data-lang="hi">रंग और आकार मिलाओ!</span>
+  </div>
+  <div class="hello-subtitle">
+    <span data-lang="en">Tap a shape, then tap its matching colour! 🎯</span>
+    <span data-lang="as">এটা আকৃতি টেপ কৰক, তাৰ পিছত ইয়াৰ মিলোৱা ৰং টেপ কৰক! 🎯</span>
+    <span data-lang="hi">एक आकार tap करो, फिर उसका मिलता रंग tap करो! 🎯</span>
+  </div>
+  <button class="start-btn" onclick="startGame()">
+    <span data-lang="en">▶ Let's Match!</span>
+    <span data-lang="as">▶ মিলাওঁ!</span>
+    <span data-lang="hi">▶ मिलाते हैं!</span>
+  </button>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="screen hidden" id="gameScreen">
+  <div class="game-wrapper">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <span style="background:linear-gradient(90deg,rgba(255,184,0,0.15),rgba(124,58,237,0.1));color:#6a3a8a;padding:3px 10px;border-radius:20px;font-size:0.7rem;font-weight:800;text-transform:uppercase;">🎨 Match</span>
+      <span class="round-indicator" id="roundLabel">Round 1</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="stars-row">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+
+    <div class="match-area">
+      <div class="match-prompt">
+        <span data-lang="en">Tap a shape 👆 then tap its colour!</span>
+        <span data-lang="as">এটা আকৃতি টেপ কৰক 👆 তাৰ পিছত ইয়াৰ ৰং!</span>
+        <span data-lang="hi">एक आकार tap करो 👆 फिर उसका रंग!</span>
+      </div>
+
+      <div class="match-score-badge">
+        <span class="match-emoji">✅</span>
+        <span class="match-score-text" id="matchedLabel">0 / 4 matched</span>
+      </div>
+
+      <div class="match-cols">
+        <div class="match-col-left" id="leftCol"></div>
+        <div></div>
+        <div class="match-col-right" id="rightCol"></div>
+      </div>
+    </div>
+
+    <button class="next-btn" id="nextBtn" onclick="nextRound()">
+      <span data-lang="en">Next Round ➜</span>
+      <span data-lang="as">পৰৱৰ্তী ৰাউণ্ড ➜</span>
+      <span data-lang="hi">अगला राउंड ➜</span>
+    </button>
+  </div>
+</div>
+
+<!-- CELEBRATION -->
+<div class="celebration-overlay" id="celebrationOverlay">
+  <div class="cel-emoji" id="celEmoji">🎉</div>
+  <div class="cel-title" id="celTitle">Well done!</div>
+  <div class="cel-sub" id="celSub"></div>
+  <div class="cel-fact" id="celFact"></div>
+  <button class="play-again-btn" onclick="resetGame()">
+    <span data-lang="en">🔁 Play Again!</span>
+    <span data-lang="as">🔁 আকৌ খেলক!</span>
+    <span data-lang="hi">🔁 फिर खेलें!</span>
+  </button>
+</div>
+
+<script src="audio.js"></script>
+<script src="game-engine.js"></script>
+<script>
+const ALL_PAIRS = [
+  { shape: 'Circle',    shapeAs: 'বৃত্ত',       shapeHi: 'गोला',    shapeSvg: `<svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" fill="#E53935"/></svg>`, colour: 'Red',    hex: '#E53935', colourAs: 'ৰঙা',     colourHi: 'लाल' },
+  { shape: 'Square',    shapeAs: 'বৰ্গক্ষেত্ৰ', shapeHi: 'वर्ग',    shapeSvg: `<svg width="44" height="44" viewBox="0 0 44 44"><rect x="4" y="4" width="36" height="36" rx="5" fill="#1E88E5"/></svg>`, colour: 'Blue',   hex: '#1E88E5', colourAs: 'নীলা',    colourHi: 'नीला' },
+  { shape: 'Triangle',  shapeAs: 'ত্ৰিভুজ',     shapeHi: 'तिकोना', shapeSvg: `<svg width="44" height="44" viewBox="0 0 44 44"><polygon points="22,4 40,40 4,40" fill="#43A047"/></svg>`, colour: 'Green',  hex: '#43A047', colourAs: 'সেউজীয়া',colourHi: 'हरा' },
+  { shape: 'Rectangle', shapeAs: 'আয়তক্ষেত্ৰ', shapeHi: 'आयत',    shapeSvg: `<svg width="44" height="44" viewBox="0 0 44 44"><rect x="2" y="11" width="40" height="22" rx="5" fill="#FB8C00"/></svg>`, colour: 'Orange', hex: '#FB8C00', colourAs: 'কমলা',    colourHi: 'नारंगी' },
+  { shape: 'Circle',    shapeAs: 'বৃত্ত',       shapeHi: 'गोला',   shapeSvg: `<svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" fill="#8E24AA"/></svg>`, colour: 'Purple', hex: '#8E24AA', colourAs: 'বেঙুনীয়া',colourHi: 'बैंगनी' },
+  { shape: 'Triangle',  shapeAs: 'ত্ৰিভুজ',     shapeHi: 'तिकोना', shapeSvg: `<svg width="44" height="44" viewBox="0 0 44 44"><polygon points="22,4 40,40 4,40" fill="#FDD835"/></svg>`, colour: 'Yellow', hex: '#FDD835', colourAs: 'হালধীয়া', colourHi: 'पीला' },
+];
+
+// 2 rounds: round 1 = pairs 0-3, round 2 = pairs 2-5
+const ROUNDS = [
+  [0,1,2,3],
+  [2,3,4,5]
+];
+
+const TIPS = [
+  { en: "Point to each item and say both words: 'Red circle! Blue square!'", as: "প্ৰতিটো দেখাই কওক: 'ৰঙা বৃত্ত! নীলা বৰ্গ!'", hi: "हर चीज़ दिखाते हुए बोलें: 'लाल गोला! नीला वर्ग!'" },
+  { en: "Try harder pairs now! Say: 'Orange rectangle — like a door!'", as: "এতিয়া কঠিন যোৰা! কওক: 'কমলা আয়তক্ষেত্ৰ — দৰজাৰ দৰে!'", hi: "अब मुश्किल जोड़े! बोलें: 'नारंगी आयत — दरवाज़े जैसा!'" },
+];
+
+let roundIdx = 0, selectedLeft = null, selectedRight = null, matchedCount = 0, totalPairs = 4, totalScore = 0;
+
+function startGame() {
+  markVisited('pn-05-colour-shape-match');
+  soundHello();
+  showScreen('gameScreen');
+  initStars();
+  roundIdx = 0; totalScore = 0;
+  loadRound();
+}
+
+function loadRound() {
+  if (roundIdx >= ROUNDS.length) { endGame(); return; }
+  hideNextBtn();
+  selectedLeft = null; selectedRight = null; matchedCount = 0;
+
+  const tip = TIPS[roundIdx] || TIPS[0];
+  document.getElementById('tipEn').textContent = tip.en;
+  document.getElementById('tipAs').textContent = tip.as;
+  document.getElementById('tipHi').textContent = tip.hi;
+  setLang(getLang());
+
+  const pairIndices = ROUNDS[roundIdx];
+  const pairs = pairIndices.map(i => ALL_PAIRS[i]);
+  totalPairs = pairs.length;
+
+  document.getElementById('roundLabel').textContent = `Round ${roundIdx + 1}`;
+  updateProgress(roundIdx, ROUNDS.length);
+  updateMatchedLabel();
+
+  // Left column: shapes (shuffled)
+  const leftPairs = shuffle([...pairs]);
+  // Right column: colours (shuffled differently)
+  const rightPairs = shuffle([...pairs]);
+
+  const leftCol = document.getElementById('leftCol');
+  const rightCol = document.getElementById('rightCol');
+  leftCol.innerHTML = '';
+  rightCol.innerHTML = '';
+
+  leftPairs.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'match-card';
+    el.dataset.id = p.shape + '-' + p.colour;
+    el.dataset.side = 'left';
+    const lang = getLang();
+    el.innerHTML = `
+      ${p.shapeSvg}
+      <span class="card-label" data-lang="en">${p.shape}</span>
+      <span class="card-label" data-lang="as" style="display:none">${p.shapeAs}</span>
+      <span class="card-label" data-lang="hi" style="display:none">${p.shapeHi}</span>
+    `;
+    el.addEventListener('click', () => selectCard(el, 'left'));
+    leftCol.appendChild(el);
+  });
+
+  rightPairs.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'match-card';
+    el.dataset.id = p.shape + '-' + p.colour;
+    el.dataset.side = 'right';
+    el.innerHTML = `
+      <div class="card-swatch" style="background:${p.hex};width:48px;height:48px;border-radius:50%;border:3px solid rgba(255,255,255,0.9);"></div>
+      <span class="card-label" data-lang="en">${p.colour}</span>
+      <span class="card-label" data-lang="as" style="display:none">${p.colourAs}</span>
+      <span class="card-label" data-lang="hi" style="display:none">${p.colourHi}</span>
+    `;
+    el.addEventListener('click', () => selectCard(el, 'right'));
+    rightCol.appendChild(el);
+  });
+}
+
+function selectCard(el, side) {
+  if (el.classList.contains('matched')) return;
+  soundTap();
+
+  if (side === 'left') {
+    // Deselect previous
+    document.querySelectorAll('.match-card[data-side="left"].selected')
+      .forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedLeft = el;
+  } else {
+    document.querySelectorAll('.match-card[data-side="right"].selected')
+      .forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedRight = el;
+  }
+
+  // Try to match
+  if (selectedLeft && selectedRight) {
+    checkMatch();
+  }
+}
+
+function checkMatch() {
+  const leftId  = selectedLeft.dataset.id;
+  const rightId = selectedRight.dataset.id;
+
+  if (leftId === rightId) {
+    // Match!
+    selectedLeft.classList.remove('selected');
+    selectedRight.classList.remove('selected');
+    selectedLeft.classList.add('matched');
+    selectedRight.classList.add('matched');
+    soundMatch();
+    soundCorrect();
+    matchedCount++;
+    totalScore++;
+    updateMatchedLabel();
+
+    if (totalScore === 2) { awardStar(); soundStar(); }
+    if (totalScore === 5) { awardStar(); soundStar(); }
+    if (totalScore === 8) { awardStar(); soundStar(); }
+
+    selectedLeft = null; selectedRight = null;
+
+    if (matchedCount === totalPairs) {
+      setTimeout(showNextBtn, 600);
+    }
+  } else {
+    // No match — friendly wobble
+    selectedLeft.classList.add('wrong-flash');
+    selectedRight.classList.add('wrong-flash');
+    soundWrong();
+    setTimeout(() => {
+      selectedLeft?.classList.remove('wrong-flash', 'selected');
+      selectedRight?.classList.remove('wrong-flash', 'selected');
+      selectedLeft = null; selectedRight = null;
+    }, 550);
+  }
+}
+
+function updateMatchedLabel() {
+  const lang = getLang();
+  const texts = {
+    en: `${matchedCount} / ${totalPairs} matched`,
+    as: `${matchedCount} / ${totalPairs} মিলোৱা হৈছে`,
+    hi: `${matchedCount} / ${totalPairs} मिलाए`
+  };
+  document.getElementById('matchedLabel').textContent = texts[lang] || texts.en;
+}
+
+function nextRound() {
+  roundIdx++;
+  loadRound();
+}
+
+function endGame() {
+  soundComplete();
+  const lang = getLang();
+  const titles = { en: '🎯 Perfect Matcher!', as: '🎯 নিখুঁত মিলোৱা!', hi: '🎯 परफेक्ट मिलाने वाले!' };
+  const subs = {
+    en: "You matched colours AND shapes! That's TWO things at once — amazing!",
+    as: "আপুনি ৰং আৰু আকৃতি মিলালে! একেসময়তে দুটা বস্তু — অসাধাৰণ!",
+    hi: "आपने रंग AND आकार मिलाए! एक साथ दो चीज़ें — शानदार!"
+  };
+  const facts = {
+    en: '🌼 The yellow circle sunflower, orange rectangle door, and red triangle kite — you know them all now!',
+    as: '🌼 হালধীয়া বৃত্তৰ সূৰ্যমুখী, কমলা আয়তক্ষেত্ৰৰ দৰজা, আৰু ৰঙা ত্ৰিভুজৰ পতংগ — এতিয়া আপুনি সকলো জানে!',
+    hi: '🌼 पीले गोले का सूरजमुखी, नारंगी आयत का दरवाज़ा, और लाल तिकोने की पतंग — अब आप सब जानते हो!'
+  };
+  showCelebration({ emoji: '🎯', title: titles[lang], sub: subs[lang], fact: facts[lang] });
+}
+
+function resetGame() {
+  hideCelebration();
+  initStars();
+  roundIdx = 0; totalScore = 0;
+  showScreen('gameScreen');
+  loadRound();
+}
+</script>
+</body>
+</html>

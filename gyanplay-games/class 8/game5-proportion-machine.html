@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G8-05: Proportion Machine | GyanPlay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060A10;
+            --card: #0D1428;
+            --gold: #FFD166;
+            --coral: #FF6B6B;
+            --teal: #06D6A0;
+            --purple: #C77DFF;
+            --orange: #FF9F1C;
+            --text: #E8F0FF;
+            --dim: #4A6A8A;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, #180A28 0%, #0F0820 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .container { max-width: 480px; margin: 0 auto; }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(199, 125, 255, 0.22);
+            margin-bottom: 20px;
+        }
+        
+        .title-section { flex: 1; }
+        .game-title { font-family: 'Baloo 2', cursive; font-size: 1.35rem; color: var(--gold); font-weight: 800; }
+        .subject-tag { font-size: 0.7rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .stars { display: flex; gap: 4px; }
+        .star { font-size: 1.2rem; opacity: 0.3; transition: all 0.3s ease; }
+        .star.lit { opacity: 1; filter: drop-shadow(0 0 8px var(--gold)); }
+        
+        .hook-card {
+            background: linear-gradient(135deg, rgba(199, 125, 255, 0.15), rgba(199, 125, 255, 0.05));
+            border: 1px solid rgba(199, 125, 255, 0.22);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 24px rgba(199, 125, 255, 0.12);
+        }
+        
+        .hook-text { font-size: 0.95rem; line-height: 1.7; }
+        .hook-text strong { color: var(--gold); font-weight: 700; }
+        
+        .game-area {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .stage-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            color: var(--purple);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stage-title::before { content: ''; width: 4px; height: 20px; background: var(--purple); border-radius: 2px; }
+        
+        /* Recipe Scaler */
+        .recipe-card {
+            background: rgba(255, 209, 102, 0.1);
+            border: 1px solid rgba(255, 209, 102, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .recipe-title { font-family: 'Baloo 2', cursive; color: var(--gold); margin-bottom: 10px; }
+        .recipe-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .recipe-item:last-child { border-bottom: none; }
+        
+        .servings-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .serving-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--purple);
+            background: rgba(199, 125, 255, 0.2);
+            color: var(--text);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .servings-display {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.3rem;
+            color: var(--gold);
+        }
+        
+        .scaled-recipe {
+            background: rgba(6, 214, 160, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        /* Speed-Distance-Time */
+        .sdt-visual {
+            background: rgba(6, 10, 16, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .road {
+            height: 60px;
+            background: linear-gradient(90deg, #333 0%, #333 100%);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .road::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, #fff 0px, #fff 20px, transparent 20px, transparent 40px);
+        }
+        
+        .bus {
+            position: absolute;
+            top: 10px;
+            left: 10%;
+            font-size: 2rem;
+            transition: left 0.5s ease;
+        }
+        
+        .sdt-controls { margin-top: 15px; }
+        .sdt-slider { width: 100%; margin: 10px 0; }
+        
+        .sdt-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .sdt-stat {
+            text-align: center;
+            padding: 10px 20px;
+            background: rgba(199, 125, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .sdt-label { font-size: 0.8rem; color: var(--dim); }
+        .sdt-value { font-family: 'Baloo 2', cursive; font-size: 1.2rem; color: var(--gold); }
+        
+        /* Proportion Detective */
+        .case-card {
+            background: rgba(6, 10, 16, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+        
+        .case-number {
+            display: inline-block;
+            background: var(--purple);
+            color: var(--text);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.8rem;
+            margin-right: 8px;
+        }
+        
+        .case-text { font-size: 0.9rem; line-height: 1.5; }
+        
+        .case-options {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .case-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 8px 12px;
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            background: rgba(199, 125, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .case-btn:hover { border-color: var(--purple); }
+        .case-btn.correct { background: rgba(6, 214, 160, 0.2); border-color: var(--teal); }
+        .case-btn.wrong { background: rgba(255, 71, 87, 0.2); border-color: var(--coral); }
+        
+        /* Map Scale */
+        .map-container {
+            background: rgba(6, 214, 160, 0.1);
+            border: 1px solid rgba(6, 214, 160, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .scale-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: var(--teal);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .map-problem {
+            background: rgba(6, 10, 16, 0.4);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .map-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .map-input {
+            flex: 1;
+            background: rgba(6, 10, 16, 0.6);
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            color: var(--text);
+            text-align: center;
+        }
+        
+        /* Bottom Bar */
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 20px;
+        }
+        
+        .progress-info { font-size: 0.85rem; color: var(--dim); }
+        
+        .action-btn {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: #060A10;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 209, 102, 0.4); }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(6, 10, 16, 0.95);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px;
+        }
+        .overlay.active { display: flex; }
+        .overlay-content { text-align: center; max-width: 400px; }
+        .overlay-emoji { font-size: 4rem; margin-bottom: 15px; }
+        .overlay-title { font-family: 'Baloo 2', cursive; font-size: 1.5rem; color: var(--gold); margin-bottom: 10px; }
+        .overlay-message { font-size: 1rem; color: var(--text); margin-bottom: 15px; }
+        .overlay-fact { font-size: 0.85rem; color: var(--dim); padding: 15px; background: rgba(199, 125, 255, 0.1); border-radius: 10px; border-left: 3px solid var(--purple); }
+        
+        /* Completion */
+        .completion-screen { display: none; text-align: center; padding: 40px 20px; }
+        .completion-screen.active { display: block; }
+        .trophy { font-size: 5rem; margin-bottom: 20px; }
+        .completion-title { font-family: 'Baloo 2', cursive; font-size: 2rem; color: var(--gold); margin-bottom: 15px; }
+        .completion-score { font-size: 1.2rem; color: var(--text); margin-bottom: 30px; }
+        .play-again-btn {
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border: none; border-radius: 25px; padding: 15px 40px;
+            color: var(--text); font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 1.1rem;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .play-again-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(199, 125, 255, 0.4); }
+        
+        .stage { display: none; }
+        .stage.active { display: block; }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(74, 106, 138, 0.3);
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title-section">
+                <div class="subject-tag">Mathematics</div>
+                <div class="game-title">Proportion Machine</div>
+            </div>
+            <div class="stars">
+                <span class="star" id="star1">⭐</span>
+                <span class="star" id="star2">⭐</span>
+                <span class="star" id="star3">⭐</span>
+                <span class="star" id="star4">⭐</span>
+                <span class="star" id="star5">⭐</span>
+            </div>
+        </div>
+        
+        <div class="hook-card">
+            <div class="hook-text">
+                Every map in the world uses <strong>DIRECT proportion</strong> — 1 cm represents a fixed distance. Every time you double your car speed, the time to reach your destination <strong>HALVES</strong> — that is inverse proportion. These two simple relationships describe almost everything that changes in the physical world.
+            </div>
+        </div>
+        
+        <!-- Stage 1: Recipe Scaler -->
+        <div class="stage active" id="stage1">
+            <div class="game-area">
+                <div class="stage-title">Stage 1: Recipe Scaler (Direct)</div>
+                
+                <div class="recipe-card">
+                    <div class="recipe-title">🍛 Assam Tea Cake Recipe</div>
+                    <div class="recipe-item"><span>Flour</span><span id="flour">200g</span></div>
+                    <div class="recipe-item"><span>Sugar</span><span id="sugar">100g</span></div>
+                    <div class="recipe-item"><span>Tea powder</span><span id="tea">20g</span></div>
+                    <div class="recipe-item"><span>Milk</span><span id="milk">150ml</span></div>
+                </div>
+                
+                <div class="servings-control">
+                    <button class="serving-btn" onclick="changeServings(-1)">−</button>
+                    <div class="servings-display"><span id="servings">4</span> people</div>
+                    <button class="serving-btn" onclick="changeServings(1)">+</button>
+                </div>
+                
+                <div style="text-align: center; font-size: 0.85rem; color: var(--dim);">
+                    As servings increase, ingredients increase proportionally
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 1 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 2: Speed-Time Inverse -->
+        <div class="stage" id="stage2">
+            <div class="game-area">
+                <div class="stage-title">Stage 2: Speed vs Time (Inverse)</div>
+                
+                <div class="sdt-visual">
+                    <div style="font-size: 0.9rem; margin-bottom: 10px;">Guwahati to Tezpur: 180 km</div>
+                    <div class="road">
+                        <div class="bus" id="bus">🚌</div>
+                    </div>
+                </div>
+                
+                <div class="sdt-controls">
+                    <label style="font-size: 0.9rem;">Speed: <span id="speedVal">60</span> km/h</label>
+                    <input type="range" class="sdt-slider" id="speedSlider" min="30" max="120" value="60" oninput="updateSpeedTime()">
+                </div>
+                
+                <div class="sdt-info">
+                    <div class="sdt-stat">
+                        <div class="sdt-label">Speed</div>
+                        <div class="sdt-value" id="speedDisplay">60 km/h</div>
+                    </div>
+                    <div class="sdt-stat">
+                        <div class="sdt-label">Time</div>
+                        <div class="sdt-value" id="timeDisplay">3 hours</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px; padding: 15px; background: rgba(6, 10, 16, 0.4); border-radius: 10px; font-size: 0.85rem; color: var(--dim);">
+                    <strong>Inverse Proportion:</strong> Speed × Time = Distance (constant)<br>
+                    As speed doubles, time halves!
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 2 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 3: Map Scale -->
+        <div class="stage" id="stage3">
+            <div class="game-area">
+                <div class="stage-title">Stage 3: Map Scale</div>
+                
+                <div class="map-container">
+                    <div class="scale-display">Scale: 1 cm = 50 km</div>
+                    
+                    <div class="map-problem">
+                        <div style="font-size: 0.9rem;">On the map, Guwahati to Shillong measures <strong>2 cm</strong>. What is the actual distance?</div>
+                        <div class="map-input-row">
+                            <input type="number" class="map-input" id="mapAnswer" placeholder="?">
+                            <span>km</span>
+                            <button class="action-btn" onclick="checkMapAnswer()" style="padding: 10px 20px;">Check</button>
+                        </div>
+                    </div>
+                    
+                    <div class="map-problem">
+                        <div style="font-size: 0.9rem;">Actual distance Dibrugarh to Tinsukia is <strong>45 km</strong>. What is the map distance?</div>
+                        <div class="map-input-row">
+                            <input type="number" class="map-input" id="mapAnswer2" placeholder="?">
+                            <span>cm</span>
+                            <button class="action-btn" onclick="checkMapAnswer2()" style="padding: 10px 20px;">Check</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 3 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 4: Proportion Detective -->
+        <div class="stage" id="stage4">
+            <div class="game-area">
+                <div class="stage-title">Stage 4: Proportion Detective</div>
+                
+                <div style="font-size: 0.9rem; margin-bottom: 15px;">Classify each case as Direct, Inverse, or Neither:</div>
+                
+                <div class="case-card">
+                    <div class="case-text"><span class="case-number">1</span>More workers → Less time to complete a job</div>
+                    <div class="case-options">
+                        <button class="case-btn" onclick="checkCase(this, 'inverse', true)">Inverse</button>
+                        <button class="case-btn" onclick="checkCase(this, 'direct', false)">Direct</button>
+                        <button class="case-btn" onclick="checkCase(this, 'neither', false)">Neither</button>
+                    </div>
+                </div>
+                
+                <div class="case-card">
+                    <div class="case-text"><span class="case-number">2</span>More apples → More money to pay</div>
+                    <div class="case-options">
+                        <button class="case-btn" onclick="checkCase(this, 'direct', true)">Direct</button>
+                        <button class="case-btn" onclick="checkCase(this, 'inverse', false)">Inverse</button>
+                        <button class="case-btn" onclick="checkCase(this, 'neither', false)">Neither</button>
+                    </div>
+                </div>
+                
+                <div class="case-card">
+                    <div class="case-text"><span class="case-number">3</span>More study hours → Better exam scores</div>
+                    <div class="case-options">
+                        <button class="case-btn" onclick="checkCase(this, 'neither', true)">Neither</button>
+                        <button class="case-btn" onclick="checkCase(this, 'direct', false)">Direct</button>
+                        <button class="case-btn" onclick="checkCase(this, 'inverse', false)">Inverse</button>
+                    </div>
+                </div>
+                
+                <div class="case-card">
+                    <div class="case-text"><span class="case-number">4</span>Faster typing → Less time to write an essay</div>
+                    <div class="case-options">
+                        <button class="case-btn" onclick="checkCase(this, 'inverse', true)">Inverse</button>
+                        <button class="case-btn" onclick="checkCase(this, 'direct', false)">Direct</button>
+                        <button class="case-btn" onclick="checkCase(this, 'neither', false)">Neither</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 4 of 4</div>
+                <button class="action-btn" onclick="completeGame()">Complete Game</button>
+            </div>
+        </div>
+        
+        <div class="completion-screen" id="completionScreen">
+            <div class="trophy">🏆</div>
+            <div class="completion-title">Proportion Expert!</div>
+            <div class="completion-score" id="finalScore">You mastered proportions!</div>
+            <button class="play-again-btn" onclick="playAgain()">Play Again</button>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay">
+        <div class="overlay-content">
+            <div class="overlay-emoji" id="overlayEmoji">✓</div>
+            <div class="overlay-title" id="overlayTitle">Correct!</div>
+            <div class="overlay-message" id="overlayMessage"></div>
+            <div class="overlay-fact" id="overlayFact"></div>
+        </div>
+    </div>
+    
+    <script>
+        let currentStage = 1;
+        let score = 0;
+        let baseServings = 4;
+        let currentServings = 4;
+        
+        const baseRecipe = { flour: 200, sugar: 100, tea: 20, milk: 150 };
+        
+        function changeServings(delta) {
+            currentServings = Math.max(1, Math.min(12, currentServings + delta));
+            document.getElementById('servings').textContent = currentServings;
+            
+            const ratio = currentServings / baseServings;
+            document.getElementById('flour').textContent = Math.round(baseRecipe.flour * ratio) + 'g';
+            document.getElementById('sugar').textContent = Math.round(baseRecipe.sugar * ratio) + 'g';
+            document.getElementById('tea').textContent = Math.round(baseRecipe.tea * ratio) + 'g';
+            document.getElementById('milk').textContent = Math.round(baseRecipe.milk * ratio) + 'ml';
+            
+            document.getElementById('star1').classList.add('lit');
+        }
+        
+        function updateSpeedTime() {
+            const speed = parseInt(document.getElementById('speedSlider').value);
+            const distance = 180;
+            const time = distance / speed;
+            
+            document.getElementById('speedVal').textContent = speed;
+            document.getElementById('speedDisplay').textContent = speed + ' km/h';
+            document.getElementById('timeDisplay').textContent = time.toFixed(1) + ' hours';
+            
+            const busPosition = 10 + (speed / 120) * 70;
+            document.getElementById('bus').style.left = busPosition + '%';
+            
+            document.getElementById('star2').classList.add('lit');
+        }
+        
+        function checkMapAnswer() {
+            const ans = parseFloat(document.getElementById('mapAnswer').value);
+            if (ans === 100) {
+                document.getElementById('star3').classList.add('lit');
+                score += 10;
+                showOverlay('✓', 'Correct!', '2 cm × 50 km/cm = 100 km', 'Map scale is direct proportion: more cm = more km.');
+            } else {
+                showOverlay('✗', 'Try again', 'Multiply map distance by scale factor.', '1 cm on map = 50 km in reality.');
+            }
+        }
+        
+        function checkMapAnswer2() {
+            const ans = parseFloat(document.getElementById('mapAnswer2').value);
+            if (ans === 0.9) {
+                score += 10;
+                showOverlay('✓', 'Correct!', '45 km ÷ 50 km/cm = 0.9 cm', 'Working backwards: divide actual by scale.');
+            } else {
+                showOverlay('✗', 'Try again', 'Divide actual distance by scale factor.', '45 ÷ 50 = 0.9 cm on map.');
+            }
+        }
+        
+        function checkCase(btn, type, correct) {
+            const card = btn.closest('.case-card');
+            const buttons = card.querySelectorAll('.case-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            if (correct) {
+                btn.classList.add('correct');
+                score += 5;
+                showOverlay('✓', 'Correct!', type.charAt(0).toUpperCase() + type.slice(1) + ' proportion identified.', 'You found the pattern!');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Not quite', 'Think about how the two quantities relate.', 'Does one increase as the other increases (direct) or decreases (inverse)?');
+            }
+            
+            document.getElementById('star4').classList.add('lit');
+        }
+        
+        function nextStage() {
+            document.getElementById('stage' + currentStage).classList.remove('active');
+            currentStage++;
+            document.getElementById('stage' + currentStage).classList.add('active');
+        }
+        
+        function completeGame() {
+            document.getElementById('star5').classList.add('lit');
+            score += 20;
+            
+            localStorage.setItem('G8-05', JSON.stringify({
+                visited: true,
+                score: score,
+                date: new Date().toISOString()
+            }));
+            
+            document.querySelectorAll('.stage').forEach(s => s.style.display = 'none');
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.hook-card').style.display = 'none';
+            document.getElementById('completionScreen').classList.add('active');
+            document.getElementById('finalScore').textContent = `You scored ${score}/100!`;
+        }
+        
+        function playAgain() {
+            currentStage = 1;
+            score = 0;
+            currentServings = 4;
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+            document.querySelectorAll('.stage').forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'block';
+            });
+            document.getElementById('stage1').classList.add('active');
+            document.querySelector('.header').style.display = 'flex';
+            document.querySelector('.hook-card').style.display = 'block';
+            document.getElementById('completionScreen').classList.remove('active');
+            
+            document.querySelectorAll('.case-btn').forEach(b => {
+                b.disabled = false;
+                b.classList.remove('correct', 'wrong');
+            });
+            
+            document.getElementById('mapAnswer').value = '';
+            document.getElementById('mapAnswer2').value = '';
+            changeServings(0);
+        }
+        
+        function showOverlay(emoji, title, message, fact) {
+            document.getElementById('overlayEmoji').textContent = emoji;
+            document.getElementById('overlayTitle').textContent = title;
+            document.getElementById('overlayMessage').textContent = message;
+            document.getElementById('overlayFact').textContent = fact;
+            document.getElementById('overlay').classList.add('active');
+            setTimeout(() => document.getElementById('overlay').classList.remove('active'), 2500);
+        }
+        
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('G8-05');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.score > 0) {
+                    const stars = Math.ceil(data.score / 20);
+                    for (let i = 1; i <= stars; i++) document.getElementById('star' + i).classList.add('lit');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

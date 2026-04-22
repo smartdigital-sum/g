@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Resources &amp; Agriculture — GyanPlay Class 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+  --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+  --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));min-height:100vh;color:#fff;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fadeIn{animation:fadeIn .45s ease both;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:99;}
+.back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:.95rem;padding:7px 16px;border-radius:20px;cursor:pointer;transition:.2s;}
+.back-btn:hover{background:rgba(255,255,255,.22);}
+.badge{background:var(--pink);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.82rem;padding:5px 14px;border-radius:20px;letter-spacing:.5px;}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:.8rem;padding:5px 11px;border-radius:14px;cursor:pointer;transition:.2s;}
+.lang-btn.active,.lang-btn:hover{background:var(--purple);}
+.container{max-width:780px;margin:0 auto;padding:24px 16px 60px;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.65rem;font-weight:800;text-align:center;margin-bottom:4px;background:linear-gradient(90deg,var(--green),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.game-sub{text-align:center;font-size:.88rem;color:#bbb;margin-bottom:22px;}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.prog-bar{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:4px;transition:width .4s ease;}
+.prog-label{font-size:.82rem;color:#aaa;white-space:nowrap;}
+.score-display{text-align:right;font-family:'Baloo 2',sans-serif;font-size:1rem;color:var(--gold);margin-bottom:14px;}
+.q-card{background:var(--card);border-radius:18px;padding:26px 24px;border:1px solid rgba(255,255,255,.09);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.q-num{font-size:.78rem;color:var(--pink);font-weight:700;letter-spacing:1px;margin-bottom:8px;}
+.q-emoji{font-size:1.6rem;margin-bottom:8px;display:block;}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.08rem;font-weight:600;line-height:1.55;margin-bottom:18px;}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.options{grid-template-columns:1fr;}}
+.opt-btn{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);color:#e8e8e8;font-family:'Nunito',sans-serif;font-size:.93rem;padding:13px 16px;border-radius:12px;cursor:pointer;text-align:left;transition:.22s;line-height:1.4;}
+.opt-btn:hover:not(:disabled){background:rgba(255,64,129,.15);border-color:var(--pink);}
+.opt-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);color:#fff;}
+.opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);color:#fff;}
+.opt-btn:disabled{cursor:not-allowed;}
+.feedback{margin-top:16px;padding:12px 16px;border-radius:12px;font-size:.92rem;line-height:1.5;display:none;}
+.feedback.show{display:block;}
+.feedback.correct{background:rgba(0,200,83,.15);border:1px solid var(--green);color:#b9f6ca;}
+.feedback.wrong{background:rgba(255,64,129,.15);border:1px solid var(--pink);color:#ffd0dd;}
+.next-btn{display:block;margin:20px auto 0;background:linear-gradient(135deg,var(--pink),#b5005b);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:13px 36px;border-radius:24px;cursor:pointer;transition:.2s;opacity:0;pointer-events:none;}
+.next-btn.visible{opacity:1;pointer-events:all;}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,64,129,.4);}
+.end-screen{background:var(--card);border-radius:20px;padding:36px 28px;text-align:center;border:1px solid rgba(255,255,255,.09);}
+.stars{font-size:2.8rem;margin-bottom:10px;letter-spacing:4px;}
+.final-score{font-family:'Baloo 2',sans-serif;font-size:2.4rem;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.final-msg{color:#ccc;font-size:1rem;margin-bottom:24px;}
+.play-again{background:linear-gradient(135deg,var(--purple),#5b21b6);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:14px 38px;border-radius:24px;cursor:pointer;transition:.2s;}
+.play-again:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(124,58,237,.5);}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">&#8592; Back</button>
+  <span class="badge">Social Studies</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="game-title">
+    <span data-lang="en">Resources &amp; Agriculture</span>
+    <span data-lang="hi" class="hidden">संसाधन एवं कृषि</span>
+    <span data-lang="as" class="hidden">সম্পদ আৰু কৃষি</span>
+  </div>
+  <div class="game-sub">Class 10 Social Studies &nbsp;|&nbsp; Geography Ch 1 &amp; 4 NCERT &nbsp;|&nbsp; 10 Questions</div>
+
+  <div class="prog-row">
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-label" id="progLabel">0 / 10</div>
+  </div>
+  <div class="score-display">Score: <span id="scoreVal">0</span> / 100</div>
+
+  <div class="q-card fadeIn" id="qCard">
+    <div class="q-num" id="qNum">QUESTION 1 OF 10</div>
+    <div class="q-emoji" id="qEmoji"></div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="optionsGrid"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next &#8594;</button>
+  </div>
+
+  <div class="end-screen fadeIn hidden" id="endScreen">
+    <div class="stars" id="starsDisplay"></div>
+    <div class="final-score" id="finalScore"></div>
+    <div class="final-msg" id="finalMsg"></div>
+    <button class="play-again" onclick="restartGame()">&#9654; Play Again</button>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    emoji:"🌍",
+    en:"Which of the following is a NON-RENEWABLE resource?",
+    hi:"निम्नलिखित में से कौन-सा अनवीकरणीय संसाधन है?",
+    as:"তলৰ কোনটো অনবীকৰণযোগ্য সম্পদ?",
+    opts:{
+      en:["Solar energy","Wind energy","Coal","Forest"],
+      hi:["सौर ऊर्जा","पवन ऊर्जा","कोयला","वन"],
+      as:["সৌৰ শক্তি","বায়ু শক্তি","কয়লা","বন"]
+    },
+    ans:2,
+    exp:{
+      en:"✓ Coal is a NON-RENEWABLE resource — it takes millions of years to form and cannot be replenished at human timescales. Solar and wind energy are renewable (inexhaustible natural forces). Forests are renewable if managed sustainably. Non-renewable resources include coal, petroleum, natural gas, and minerals.",
+      hi:"✓ कोयला अनवीकरणीय संसाधन है — इसे बनने में लाखों वर्ष लगते हैं। सौर और पवन ऊर्जा नवीकरणीय हैं। अनवीकरणीय: कोयला, पेट्रोलियम, प्राकृतिक गैस, खनिज।",
+      as:"✓ কয়লা অনবীকৰণযোগ্য সম্পদ — গঠন হবলৈ লাখ লাখ বছৰ লাগে। সৌৰ আৰু বায়ু শক্তি নবীকৰণযোগ্য। অনবীকৰণযোগ্য: কয়লা, পেট্ৰলিয়াম, খনিজ।"
+    }
+  },
+  {
+    emoji:"🌱",
+    en:"Which type of soil is best suited for growing cotton and is also known as 'Regur soil'?",
+    hi:"कौन-सी मिट्टी कपास उगाने के लिए सबसे उपयुक्त है और 'रेगुड़ मिट्टी' के नाम से भी जानी जाती है?",
+    as:"কোন ধৰণৰ মাটি তুলা খেতিৰ বাবে উপযুক্ত আৰু 'ৰেগুৰ মাটি' নামেও জনা যায়?",
+    opts:{
+      en:["Alluvial soil","Black soil (Regur)","Red and yellow soil","Laterite soil"],
+      hi:["जलोढ़ मिट्टी","काली मिट्टी (रेगुड़)","लाल और पीली मिट्टी","लैटेराइट मिट्टी"],
+      as:["পলসুৱা মাটি","ক'লা মাটি (ৰেগুৰ)","ৰঙা আৰু হালধীয়া মাটি","লেটাৰাইট মাটি"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ Black soil (Regur or Black Cotton Soil) is ideal for cotton — found in Deccan Plateau (Maharashtra, Gujarat, MP). Rich in iron, lime, aluminium. Retains moisture well. Other soils: Alluvial (wheat, rice — Indo-Gangetic Plain), Red (millets — Odisha, Jharkhand), Laterite (tea, coffee — Karnataka, Kerala).",
+      hi:"✓ काली मिट्टी (रेगुड़) कपास के लिए उपयुक्त है। दक्कन पठार (महाराष्ट्र, गुजरात) में मिलती है। लौह, चूना, एल्यूमीनियम से भरपूर। अन्य: जलोढ़ (गेहूँ, चावल), लाल (बाजरा), लैटेराइट (चाय)।",
+      as:"✓ ক'লা মাটি (ৰেগুৰ) তুলা খেতিৰ বাবে উপযুক্ত। দাক্ষিণাত্য মালভূমিত পোৱা যায়। আন মাটি: পলসুৱা (গম, ধান), ৰঙা (বাজৰা), লেটাৰাইট (চাহ)।"
+    }
+  },
+  {
+    emoji:"🌾",
+    en:"Kharif crops are sown in June-July and harvested in ___________.",
+    hi:"खरीफ फसलें जून-जुलाई में बोई जाती हैं और ___________ में काटी जाती हैं।",
+    as:"খৰিফ শস্য জুন-জুলাইত বোৱা হয় আৰু ___________ মাহত চপোৱা হয়।",
+    opts:{
+      en:["March-April","September-October","December-January","May-June"],
+      hi:["मार्च-अप्रैल","सितंबर-अक्तूबर","दिसंबर-जनवरी","मई-जून"],
+      as:["মাৰ্চ-এপ্ৰিল","ছেপ্তেম্বৰ-অক্টোবৰ","ডিচেম্বৰ-জানুৱাৰী","মে-জুন"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ Kharif = monsoon crops: sown June-July, harvested September-October. Examples: Rice, Maize, Cotton, Groundnut, Jute, Bajra. Rabi crops: sown October-November, harvested March-April (Wheat, Mustard, Peas). Zaid crops: summer crops between Rabi and Kharif (Watermelon, Cucumber).",
+      hi:"✓ खरीफ = मानसून फसलें: जून-जुलाई बोई, सितंबर-अक्तूबर काटी। उदाहरण: चावल, मक्का, कपास, जूट। रबी: अक्तूबर-नवंबर बोई, मार्च काटी। जायद: गर्मियों में।",
+      as:"✓ খৰিফ = বৰষুণৰ শস্য: জুন-জুলাইত বোৱা, ছেপ্তেম্বৰ-অক্টোবৰত চপোৱা। উদাহৰণ: ধান, মাকৈ, তুলা, মৰাপাট। ৰবি: অক্টোবৰত বোৱা, মাৰ্চত চপোৱা।"
+    }
+  },
+  {
+    emoji:"🌾",
+    en:"Which state is the LARGEST producer of Jute in India?",
+    hi:"भारत में जूट का सबसे बड़ा उत्पादक राज्य कौन-सा है?",
+    as:"ভাৰতত মৰাপাটৰ সৰ্ববৃহৎ উৎপাদক ৰাজ্য কোনটো?",
+    opts:{
+      en:["Punjab","West Bengal","Bihar","Assam"],
+      hi:["पंजाब","पश्चिम बंगाल","बिहार","असम"],
+      as:["পঞ্জাৱ","পশ্চিমবংগ","বিহাৰ","অসম"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ West Bengal is India's largest jute producer, followed by Bihar and Assam. Jute = 'Golden Fibre', grows in hot humid Ganga-Brahmaputra delta. Key crop-state pairs: Rice→West Bengal/Punjab, Wheat→Punjab/Haryana, Cotton→Gujarat/Maharashtra, Jute→West Bengal/Assam.",
+      hi:"✓ पश्चिम बंगाल सबसे बड़ा जूट उत्पादक है, उसके बाद बिहार और असम। जूट = 'सुनहरा रेशा'। मुख्य फसल-राज्य: चावल→पश्चिम बंगाल, गेहूँ→पंजाब, कपास→गुजरात।",
+      as:"✓ পশ্চিমবংগ সৰ্ববৃহৎ মৰাপাট উৎপাদক, তাৰপিছত বিহাৰ আৰু অসম। মৰাপাট = 'সোণালী আঁহ'। মুখ্য: ধান→পশ্চিমবংগ, গম→পঞ্জাৱ, তুলা→গুজৰাট।"
+    }
+  },
+  {
+    emoji:"🌍",
+    en:"Which of the following BEST describes land degradation?",
+    hi:"निम्नलिखित में से भूमि क्षरण का सबसे उचित वर्णन कौन-सा है?",
+    as:"তলৰ কোনটো ভূমি অৱক্ষয়ৰ সৰ্বোত্তম বিৱৰণ?",
+    opts:{
+      en:["Building new dams on rivers","Decline in quality and fertility of land due to human activities","Adding fertilisers to improve yield","Planting trees on barren land"],
+      hi:["नदियों पर नए बाँध बनाना","मानवीय गतिविधियों से भूमि की उर्वरता में गिरावट","उपज बढ़ाने के लिए खाद डालना","बंजर भूमि पर पेड़ लगाना"],
+      as:["নদীত নতুন বান্ধ নিৰ্মাণ","মানৱীয় কাৰ্যকলাপৰ বাবে ভূমিৰ উৰ্বৰতা হ্ৰাস","উৎপাদন বঢ়াবলৈ সাৰ প্ৰয়োগ","বন্ধ্যা ভূমিত গছ ৰোপণ"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ Land degradation = decline in land quality due to deforestation, overgrazing, mining, and excess chemical fertilisers. Causes: soil erosion, waterlogging, salinisation, desertification. Solutions: afforestation, contour ploughing, shelter belts, crop rotation, controlled grazing.",
+      hi:"✓ भूमि क्षरण = वनों की कटाई, अतिचराई, खनन से भूमि की गुणवत्ता में गिरावट। समाधान: वनरोपण, समोच्च जुताई, फसल चक्र।",
+      as:"✓ ভূমি অৱক্ষয় = বন নিধন, অতিমাত্ৰা চৰণ, খননৰ ফলত ভূমিৰ মান হ্ৰাস। সমাধান: বনায়ন, কন্টুৰ হাল বোৱা, শস্য আৱৰ্তন।"
+    }
+  },
+  {
+    emoji:"🌾",
+    en:"The Green Revolution in India was mainly associated with which crops?",
+    hi:"भारत में हरित क्रांति मुख्य रूप से किन फसलों से संबंधित थी?",
+    as:"ভাৰতত সেউজ বিপ্লৱ মূলতঃ কোনটো শস্যৰ সৈতে জড়িত আছিল?",
+    opts:{
+      en:["Jute and cotton","Rice and wheat","Tea and coffee","Sugarcane and maize"],
+      hi:["जूट और कपास","चावल और गेहूँ","चाय और कॉफी","गन्ना और मक्का"],
+      as:["মৰাপাট আৰু তুলা","ধান আৰু গম","চাহ আৰু কফি","কুঁহিয়াৰ আৰু মাকৈ"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ The Green Revolution (1960s-70s) introduced High Yielding Variety (HYV) seeds for rice and wheat with chemical fertilisers and irrigation. Led by M.S. Swaminathan (Father of Green Revolution in India). Punjab, Haryana, and western UP benefited most. Made India self-sufficient in food grains.",
+      hi:"✓ हरित क्रांति (1960-70 दशक) में HYV बीज चावल और गेहूँ के लिए आए। M.S. स्वामीनाथन — भारत में हरित क्रांति के जनक। पंजाब, हरियाणा को सर्वाधिक लाभ।",
+      as:"✓ সেউজ বিপ্লৱে (1960-70 দশক) ধান আৰু গমৰ HYV বীজ আনিলে। M.S. স্বামীনাথন — ভাৰতত সেউজ বিপ্লৱৰ পিতা।"
+    }
+  },
+  {
+    emoji:"🌍",
+    en:"Which type of farming involves growing crops for personal consumption using simple tools and family labour?",
+    hi:"किस प्रकार की खेती में सरल औजारों और परिवार के श्रम से व्यक्तिगत उपभोग के लिए फसल उगाई जाती है?",
+    as:"কোন ধৰণৰ খেতিত সৰল সঁজুলি আৰু পৰিয়ালৰ শ্ৰমৰে নিজস্ব ব্যৱহাৰৰ বাবে শস্য জন্মোৱা হয়?",
+    opts:{
+      en:["Commercial farming","Plantation agriculture","Subsistence farming","Mixed farming"],
+      hi:["व्यावसायिक खेती","बागान कृषि","निर्वाह खेती","मिश्रित खेती"],
+      as:["বাণিজ্যিক খেতি","বাগান কৃষি","জীৱিকা নিৰ্বাহৰ খেতি","মিশ্ৰিত খেতি"]
+    },
+    ans:2,
+    exp:{
+      en:"✓ Subsistence farming is for self-consumption using simple tools on small plots — low productivity. Types: Primitive (slash & burn = Jhumming) and Intensive subsistence (high labour, small land). Commercial farming: crops for market. Plantation: single crop on large area (tea, coffee, rubber).",
+      hi:"✓ निर्वाह खेती स्वयं उपभोग के लिए। प्रकार: आदिम (झूमिंग) और गहन। व्यावसायिक: बाजार के लिए। बागान: एकल फसल, बड़ा क्षेत्र।",
+      as:"✓ জীৱিকা নিৰ্বাহৰ খেতি নিজস্ব ব্যৱহাৰৰ বাবে। প্ৰকাৰ: আদিম (ঝুমিং) আৰু নিবিড়। বাণিজ্যিক: বজাৰৰ বাবে। বাগান: এক শস্য, ডাঙৰ এলেকা।"
+    }
+  },
+  {
+    emoji:"🌾",
+    en:"Which state is the largest producer of WHEAT in India?",
+    hi:"भारत में गेहूँ का सबसे बड़ा उत्पादक राज्य कौन-सा है?",
+    as:"ভাৰতত গমৰ সৰ্ববৃহৎ উৎপাদক ৰাজ্য কোনটো?",
+    opts:{
+      en:["West Bengal","Uttar Pradesh","Punjab","Maharashtra"],
+      hi:["पश्चिम बंगाल","उत्तर प्रदेश","पंजाब","महाराष्ट्र"],
+      as:["পশ্চিমবংগ","উত্তৰপ্ৰদেশ","পঞ্জাৱ","মহাৰাষ্ট্ৰ"]
+    },
+    ans:2,
+    exp:{
+      en:"✓ Punjab is the largest wheat producer in India, followed by Haryana and Uttar Pradesh. Punjab is called the 'Granary of India' or 'Bread Basket of India'. Wheat is a Rabi crop needing cool climate with moderate rainfall. Key: Rice→West Bengal, Wheat→Punjab, Cotton→Gujarat, Jute→West Bengal.",
+      hi:"✓ पंजाब भारत का सबसे बड़ा गेहूँ उत्पादक है — 'भारत का अन्न भंडार'। उसके बाद हरियाणा और UP। गेहूँ रबी फसल है — ठंडी जलवायु चाहिए।",
+      as:"✓ পঞ্জাৱ ভাৰতৰ সৰ্ববৃহৎ গম উৎপাদক — 'ভাৰতৰ শস্যভাণ্ডাৰ'। ধান→পশ্চিমবংগ, গম→পঞ্জাৱ, তুলা→গুজৰাট।"
+    }
+  },
+  {
+    emoji:"🌍",
+    en:"Alluvial soil covers the Northern Plains and is most fertile for which crops?",
+    hi:"जलोढ़ मिट्टी उत्तरी मैदान में पाई जाती है और किन फसलों के लिए सर्वाधिक उपजाऊ है?",
+    as:"পলসুৱা মাটি উত্তৰীয় সমভূমিত পোৱা যায় আৰু কোন শস্যৰ বাবে সৰ্বাধিক উৰ্বৰ?",
+    opts:{
+      en:["Cotton and tobacco","Wheat, rice and sugarcane","Tea and rubber","Millets and barley"],
+      hi:["कपास और तंबाकू","गेहूँ, चावल और गन्ना","चाय और रबड़","बाजरा और जौ"],
+      as:["তুলা আৰু তামোল","গম, ধান আৰু কুঁহিয়াৰ","চাহ আৰু ৰবৰ","বাজৰা আৰু যৱ"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ Alluvial soil covers the Indo-Gangetic Plains — India's most fertile soil, deposited by rivers (Indus, Ganga, Brahmaputra). Ideal for wheat, rice, sugarcane, and pulses. Old alluvial = Bangar (less fertile), New alluvial = Khadar (more fertile, renewed by floods). Covers about 40% of India's land area.",
+      hi:"✓ जलोढ़ मिट्टी सिंधु-गंगा मैदान में — भारत की सबसे उपजाऊ। नदियों द्वारा जमा। पुरानी = बांगर, नई = खादर (अधिक उपजाऊ)। भारत के 40% भूभाग को कवर करती है।",
+      as:"✓ পলসুৱা মাটি সিন্ধু-গংগা সমভূমিত — ভাৰতৰ সৰ্বাধিক উৰ্বৰ। নদীয়ে জমা কৰে। পুৰণি = বাংগৰ, নতুন = খাদৰ। ভাৰতৰ ৪০% ভূমি আৱৰি আছে।"
+    }
+  },
+  {
+    emoji:"🌾",
+    en:"Food security ensures availability, accessibility and affordability of food. Which government scheme helps this in India?",
+    hi:"खाद्य सुरक्षा भोजन की उपलब्धता, पहुँच और सामर्थ्य सुनिश्चित करती है। भारत में कौन-सी सरकारी योजना इसमें सहायता करती है?",
+    as:"খাদ্য সুৰক্ষা উপলব্ধতা, সহজলভ্যতা আৰু সামৰ্থ্য নিশ্চিত কৰে। ভাৰতত কোনটো চৰকাৰী আঁচনিয়ে ইয়াত সহায় কৰে?",
+    opts:{
+      en:["MNREGA","Public Distribution System (PDS) with Fair Price Shops","Pradhan Mantri Awas Yojana","Atal Pension Yojana"],
+      hi:["मनरेगा","सार्वजनिक वितरण प्रणाली (PDS) उचित मूल्य दुकानों के साथ","प्रधानमंत्री आवास योजना","अटल पेंशन योजना"],
+      as:["মনৰেগা","ৰাজহুৱা বিতৰণ প্ৰণালী (PDS) ন্যায্য মূল্যৰ দোকানৰ সৈতে","প্ৰধানমন্ত্ৰী আৱাস যোজনা","অটল পেনচন যোজনা"]
+    },
+    ans:1,
+    exp:{
+      en:"✓ The Public Distribution System (PDS) with Fair Price Shops (Ration Shops) distributes subsidised food grains to poor families. Buffer Stock maintained by the Food Corporation of India (FCI) ensures food availability. Food security three dimensions: Availability (production), Accessibility (reach all), Affordability (reasonable price).",
+      hi:"✓ सार्वजनिक वितरण प्रणाली (PDS) उचित मूल्य दुकानों के माध्यम से गरीबों को सस्ता अनाज देती है। FCI बफर स्टॉक बनाए रखती है। खाद्य सुरक्षा: उपलब्धता, पहुँच, सामर्थ्य।",
+      as:"✓ ৰাজহুৱা বিতৰণ প্ৰণালী (PDS) ন্যায্য মূল্যৰ দোকানৰ যোগেদি দৰিদ্ৰ পৰিয়াললৈ সস্তা শস্য বিতৰণ কৰে। FCI বাফাৰ ষ্টক ৰক্ষণাবেক্ষণ কৰে।"
+    }
+  }
+];
+
+let currentQ=0,score=0,answered=false,currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(b=>{if(b.textContent.trim()===(l==='en'?'EN':l==='hi'?'हि':'অ'))b.classList.add('active');});
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.classList.toggle('hidden',el.dataset.lang!==l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(currentQ>=questions.length){showEnd();return;}
+  const q=questions[currentQ];
+  const l=currentLang;
+  document.getElementById('qNum').textContent=`QUESTION ${currentQ+1} OF ${questions.length}`;
+  document.getElementById('qEmoji').textContent=q.emoji||'';
+  document.getElementById('qText').textContent=q[l]||q.en;
+  const grid=document.getElementById('optionsGrid');
+  grid.innerHTML='';
+  const opts=q.opts[l]||q.opts.en;
+  opts.forEach((o,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.textContent=o;
+    btn.onclick=()=>selectAnswer(i);
+    grid.appendChild(btn);
+  });
+  const fd=document.getElementById('feedback');
+  fd.className='feedback';
+  fd.textContent='';
+  document.getElementById('nextBtn').classList.remove('visible');
+  document.getElementById('progFill').style.width=(currentQ/questions.length*100)+'%';
+  document.getElementById('progLabel').textContent=`${currentQ} / ${questions.length}`;
+  answered=false;
+}
+
+function selectAnswer(idx){
+  if(answered)return;
+  answered=true;
+  const q=questions[currentQ];
+  const l=currentLang;
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  const correct=idx===q.ans;
+  btns[idx].classList.add(correct?'correct':'wrong');
+  if(!correct)btns[q.ans].classList.add('correct');
+  const fd=document.getElementById('feedback');
+  fd.className='feedback show '+(correct?'correct':'wrong');
+  fd.textContent=(correct?'✓ Correct! ':'✗ Wrong! ')+(q.exp[l]||q.exp.en);
+  if(correct)score+=10;
+  document.getElementById('scoreVal').textContent=score;
+  document.getElementById('nextBtn').classList.add('visible');
+}
+
+function nextQuestion(){
+  currentQ++;
+  const card=document.getElementById('qCard');
+  card.classList.remove('fadeIn');
+  void card.offsetWidth;
+  card.classList.add('fadeIn');
+  renderQuestion();
+}
+
+function showEnd(){
+  document.getElementById('qCard').classList.add('hidden');
+  const end=document.getElementById('endScreen');
+  end.classList.remove('hidden');
+  document.getElementById('finalScore').textContent=`${score} / 100`;
+  const pct=score;
+  let stars='',msg='';
+  if(pct>=90){stars='★★★';msg='Amazing! You know India\'s resources and agriculture really well!';}
+  else if(pct>=70){stars='★★☆';msg='Good job! Review crop seasons and soil types.';}
+  else if(pct>=40){stars='★☆☆';msg='Keep going! Revise Kharif/Rabi crops and resource types.';}
+  else{stars='☆☆☆';msg='Keep studying! Start with types of resources and soil.';}
+  document.getElementById('starsDisplay').textContent=stars;
+  document.getElementById('finalMsg').textContent=msg;
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('progLabel').textContent=`${questions.length} / ${questions.length}`;
+}
+
+function restartGame(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('scoreVal').textContent=0;
+  document.getElementById('endScreen').classList.add('hidden');
+  document.getElementById('qCard').classList.remove('hidden');
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>GyanPlay Class 4 — All 23 Games</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+--blue:#4CC9F0;--lime:#A8E063;--orange:#FF9F1C;--pink:#FF9CC2;--purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);}
+.wrap{max-width:480px;margin:0 auto;padding:0 16px 60px;}
+
+/* Header */
+.master-hero{padding:28px 0 20px;text-align:center;}
+.brand{font-family:'Baloo 2',sans-serif;font-size:2.2rem;font-weight:800;
+  background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;}
+.brand-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.85rem;color:var(--dim);margin-top:4px;}
+.price-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,209,102,.1);
+  border:1px solid rgba(255,209,102,.3);border-radius:99px;padding:6px 16px;
+  font-family:'Baloo 2',sans-serif;font-size:.82rem;font-weight:800;color:var(--gold);margin-top:10px;}
+.class-pill{display:inline-block;margin-left:8px;padding:4px 12px;background:rgba(6,214,160,.1);
+  border:1px solid rgba(6,214,160,.3);border-radius:99px;font-size:.72rem;color:var(--teal);}
+
+/* Overall master progress */
+.master-progress{background:var(--card);border-radius:18px;padding:18px;margin-bottom:20px;
+  border:1px solid rgba(255,209,102,.2);}
+.mp-title{font-family:'Baloo 2',sans-serif;font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:12px;
+  display:flex;align-items:center;justify-content:space-between;}
+.mp-count{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold);}
+.mp-sub{font-size:.7rem;color:var(--dim);}
+.overall-bar-wrap{margin-bottom:14px;}
+.ob-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);margin-bottom:5px;}
+.ob-bar{height:10px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.ob-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:99px;transition:width .8s ease;}
+
+/* Subject mini bars */
+.subject-bars{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.sub-bar-card{background:rgba(255,255,255,.03);border-radius:10px;padding:10px 8px;}
+.sb-label{font-size:.62rem;font-weight:700;margin-bottom:6px;}
+.sb-bar{height:5px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.sb-fill{height:100%;border-radius:99px;transition:width .7s ease;}
+.sb-score{font-size:.6rem;color:var(--dim);margin-top:4px;}
+
+/* Section headers */
+.section-header{display:flex;align-items:center;gap:8px;margin:20px 0 10px;}
+.sh-line{flex:1;height:1px;background:rgba(255,255,255,.06);}
+.sh-label{font-family:'Baloo 2',sans-serif;font-size:.78rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.08em;white-space:nowrap;}
+.sh-count{font-size:.65rem;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;}
+
+/* Batch dividers */
+.batch-label{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;
+  margin-bottom:6px;padding-left:2px;}
+
+/* Game row */
+.game-row{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--card);
+  border-radius:14px;margin-bottom:7px;text-decoration:none;color:inherit;
+  border:1px solid rgba(255,255,255,.05);cursor:pointer;touch-action:manipulation;transition:all .15s;}
+.game-row:active{transform:scale(.98);}
+.gr-emoji{font-size:1.4rem;flex-shrink:0;}
+.gr-info{flex:1;min-width:0;}
+.gr-title{font-family:'Baloo 2',sans-serif;font-size:.88rem;font-weight:800;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gr-concept{font-size:.65rem;color:var(--dim);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gr-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
+.gr-stars{display:flex;gap:1px;}
+.gr-star{font-size:.7rem;opacity:.2;}
+.gr-star.lit{opacity:1;}
+.gr-score{font-size:.6rem;color:var(--dim);}
+.gr-done{font-size:.62rem;background:rgba(6,214,160,.15);color:var(--teal);
+  border:1px solid rgba(6,214,160,.3);border-radius:99px;padding:2px 7px;}
+/* Subject left border */
+.game-row.maths{border-left:3px solid var(--purple);}
+.game-row.english{border-left:3px solid var(--orange);}
+.game-row.science{border-left:3px solid var(--teal);}
+.game-row.sst{border-left:3px solid var(--lime);}
+.game-row.hindi{border-left:3px solid var(--pink);}
+.game-row.computer{border-left:3px solid var(--blue);}
+
+/* Class nav */
+.class-nav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:24px;}
+.cn-btn{padding:12px;background:var(--card);border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;text-align:center;font-family:'Baloo 2',sans-serif;font-size:.82rem;
+  font-weight:700;color:var(--dim);text-decoration:none;display:block;transition:all .2s;}
+.cn-btn.prev{border-color:rgba(6,214,160,.2);color:var(--teal);}
+.footer{text-align:center;margin-top:20px;font-size:.68rem;color:var(--dim);line-height:1.8;}
+
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;
+  justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen">
+  <div style="font-family:'Baloo 2',sans-serif;font-size:1.8rem;color:var(--gold);">GyanPlay</div>
+  <p>Loading all 23 games… / ২৩টা গেম লোড হৈছে…</p>
+</div>
+<div class="wrap" id="mainApp" style="display:none;">
+
+  <!-- Hero -->
+  <div class="master-hero">
+    <div class="brand">GyanPlay</div>
+    <div class="brand-as">জিয়ানপ্লে · গেমৰ মাধ্যমে শিক্ষা</div>
+    <div>
+      <span class="price-pill">₹750/month · Class 4</span>
+      <span class="class-pill">23 Games</span>
+    </div>
+  </div>
+
+  <!-- Master progress -->
+  <div class="master-progress">
+    <div class="mp-title">
+      <span>Overall Progress</span>
+      <div style="text-align:right;">
+        <div class="mp-count" id="masterCount">0<span style="font-size:.9rem;color:var(--dim);">/23</span></div>
+        <div class="mp-sub">games completed</div>
+      </div>
+    </div>
+    <div class="overall-bar-wrap">
+      <div class="ob-label"><span>Class 4 completion</span><span id="masterPct">0%</span></div>
+      <div class="ob-bar"><div class="ob-fill" id="masterFill" style="width:0%"></div></div>
+    </div>
+    <!-- Subject mini bars -->
+    <div class="subject-bars">
+      <div class="sub-bar-card">
+        <div class="sb-label" style="color:var(--purple);">🔢 Maths</div>
+        <div class="sb-bar"><div class="sb-fill" id="sb-maths" style="width:0%;background:var(--purple);"></div></div>
+        <div class="sb-score" id="sbs-maths">0/5</div>
+      </div>
+      <div class="sub-bar-card">
+        <div class="sb-label" style="color:var(--orange);">📖 English</div>
+        <div class="sb-bar"><div class="sb-fill" id="sb-english" style="width:0%;background:var(--orange);"></div></div>
+        <div class="sb-score" id="sbs-english">0/4</div>
+      </div>
+      <div class="sub-bar-card">
+        <div class="sb-label" style="color:var(--teal);">🔬 Science</div>
+        <div class="sb-bar"><div class="sb-fill" id="sb-science" style="width:0%;background:var(--teal);"></div></div>
+        <div class="sb-score" id="sbs-science">0/4</div>
+      </div>
+      <div class="sub-bar-card">
+        <div class="sb-label" style="color:var(--lime);">🗺️ SST</div>
+        <div class="sb-bar"><div class="sb-fill" id="sb-sst" style="width:0%;background:var(--lime);"></div></div>
+        <div class="sb-score" id="sbs-sst">0/4</div>
+      </div>
+      <div class="sub-bar-card">
+        <div class="sb-label" style="color:var(--pink);">📝 Hindi</div>
+        <div class="sb-bar"><div class="sb-fill" id="sb-hindi" style="width:0%;background:var(--pink);"></div></div>
+        <div class="sb-score" id="sbs-hindi">0/3</div>
+      </div>
+      <div class="sub-bar-card">
+        <div class="sb-label" style="color:var(--blue);">💻 Computer</div>
+        <div class="sb-bar"><div class="sb-fill" id="sb-computer" style="width:0%;background:var(--blue);"></div></div>
+        <div class="sb-score" id="sbs-computer">0/3</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BATCH 1 -->
+  <div class="section-header">
+    <div class="sh-line"></div>
+    <div class="sh-label" style="color:var(--purple);">🔢 Maths <span class="sh-count">(5 games)</span></div>
+    <div class="sh-line"></div>
+  </div>
+  <div class="batch-label">Batch 1 · Games 1–5</div>
+  <a class="game-row maths" href="../gyanplay-class4-batch1/game1-million-dollar-numbers.html" id="row-class4-game1"><div class="gr-emoji">🔢</div><div class="gr-info"><div class="gr-title">Million Dollar Numbers</div><div class="gr-concept">Place value to 10 lakhs · 7-digit DIAL</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game1"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game1">—</div></div></a>
+  <a class="game-row maths" href="../gyanplay-class4-batch1/game2-multiplication-maze.html" id="row-class4-game2"><div class="gr-emoji">✖️</div><div class="gr-info"><div class="gr-title">Multiplication Maze</div><div class="gr-concept">2-digit × 2-digit multiplication</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game2"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game2">—</div></div></a>
+  <a class="game-row maths" href="../gyanplay-class4-batch1/game3-area-perimeter-arena.html" id="row-class4-game3"><div class="gr-emoji">📐</div><div class="gr-info"><div class="gr-title">Area &amp; Perimeter Arena</div><div class="gr-concept">Area and perimeter of rectangles</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game3"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game3">—</div></div></a>
+  <a class="game-row maths" href="../gyanplay-class4-batch1/game4-fraction-faceoff.html" id="row-class4-game4"><div class="gr-emoji">➗</div><div class="gr-info"><div class="gr-title">Fraction Faceoff</div><div class="gr-concept">Comparing and ordering fractions</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game4"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game4">—</div></div></a>
+  <a class="game-row maths" href="../gyanplay-class4-batch1/game5-pattern-lab.html" id="row-class4-game5"><div class="gr-emoji">🔄</div><div class="gr-info"><div class="gr-title">Pattern Lab</div><div class="gr-concept">Number patterns · even/odd · multiples</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game5"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game5">—</div></div></a>
+
+  <div class="section-header">
+    <div class="sh-line"></div>
+    <div class="sh-label" style="color:var(--orange);">📖 English <span class="sh-count">(4 games)</span></div>
+    <div class="sh-line"></div>
+  </div>
+  <div class="batch-label">Batch 1 · Games 6–8</div>
+  <a class="game-row english" href="../gyanplay-class4-batch1/game6-noun-spotter.html" id="row-class4-game6"><div class="gr-emoji">🏷️</div><div class="gr-info"><div class="gr-title">Noun Spotter</div><div class="gr-concept">Common · Proper · Collective · Abstract nouns</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game6"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game6">—</div></div></a>
+  <a class="game-row english" href="../gyanplay-class4-batch1/game7-verb-engine.html" id="row-class4-game7"><div class="gr-emoji">⚙️</div><div class="gr-info"><div class="gr-title">Verb Engine</div><div class="gr-concept">Action · State · Linking verbs · subject-verb agreement</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game7"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game7">—</div></div></a>
+  <a class="game-row english" href="../gyanplay-class4-batch1/game8-conjunction-junction.html" id="row-class4-game8"><div class="gr-emoji">🔗</div><div class="gr-info"><div class="gr-title">Conjunction Junction</div><div class="gr-concept">Coordinating &amp; subordinating conjunctions</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game8"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game8">—</div></div></a>
+  <div class="batch-label" style="margin-top:8px;">Batch 2 · Game 9</div>
+  <a class="game-row english" href="../gyanplay-class4-batch2/game9-deep-reader.html" id="row-class4-game9"><div class="gr-emoji">📖</div><div class="gr-info"><div class="gr-title">Deep Reader</div><div class="gr-concept">Comprehension · inference · Assam passages</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game9"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game9">—</div></div></a>
+
+  <div class="section-header">
+    <div class="sh-line"></div>
+    <div class="sh-label" style="color:var(--teal);">🔬 Science <span class="sh-count">(4 games)</span></div>
+    <div class="sh-line"></div>
+  </div>
+  <div class="batch-label">Batch 2 · Games 10–13</div>
+  <a class="game-row science" href="../gyanplay-class4-batch2/game10-digestion-adventure.html" id="row-class4-game10"><div class="gr-emoji">🦷</div><div class="gr-info"><div class="gr-title">Digestion Adventure</div><div class="gr-concept">Teeth · digestive organs · food's path</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game10"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game10">—</div></div></a>
+  <a class="game-row science" href="../gyanplay-class4-batch2/game11-extreme-survivors.html" id="row-class4-game11"><div class="gr-emoji">🌵</div><div class="gr-info"><div class="gr-title">Extreme Survivors</div><div class="gr-concept">Animal adaptations · habitats · features &amp; functions</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game11"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game11">—</div></div></a>
+  <a class="game-row science" href="../gyanplay-class4-batch2/game12-forces-simple-machines.html" id="row-class4-game12"><div class="gr-emoji">⚡</div><div class="gr-info"><div class="gr-title">Forces &amp; Simple Machines</div><div class="gr-concept">Lever · pulley · wheel · inclined plane · wedge · screw</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game12"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game12">—</div></div></a>
+  <a class="game-row science" href="../gyanplay-class4-batch2/game13-states-of-matter-mixer.html" id="row-class4-game13"><div class="gr-emoji">🌡️</div><div class="gr-info"><div class="gr-title">States of Matter Mixer</div><div class="gr-concept">Solid · liquid · gas · changes of state</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game13"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game13">—</div></div></a>
+
+  <div class="section-header">
+    <div class="sh-line"></div>
+    <div class="sh-label" style="color:var(--lime);">🗺️ Social Studies <span class="sh-count">(4 games)</span></div>
+    <div class="sh-line"></div>
+  </div>
+  <div class="batch-label">Batch 2 · Games 14–16</div>
+  <a class="game-row sst" href="../gyanplay-class4-batch2/game14-map-master.html" id="row-class4-game14"><div class="gr-emoji">🧭</div><div class="gr-info"><div class="gr-title">Map Master</div><div class="gr-concept">Cardinal directions · symbols · scale</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game14"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game14">—</div></div></a>
+  <a class="game-row sst" href="../gyanplay-class4-batch2/game15-panchayat-raj-game.html" id="row-class4-game15"><div class="gr-emoji">🏛️</div><div class="gr-info"><div class="gr-title">Panchayat Raj Game</div><div class="gr-concept">Local government · gram sabha · civic decisions</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game15"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game15">—</div></div></a>
+  <a class="game-row sst" href="../gyanplay-class4-batch2/game16-transport-time-machine.html" id="row-class4-game16"><div class="gr-emoji">🚂</div><div class="gr-info"><div class="gr-title">Transport Time Machine</div><div class="gr-concept">Land/water/air · timeline · communication history</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game16"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game16">—</div></div></a>
+  <div class="batch-label" style="margin-top:8px;">Batch 3 · Game 17</div>
+  <a class="game-row sst" href="game17-assam-through-time.html" id="row-class4-game17"><div class="gr-emoji">🏺</div><div class="gr-info"><div class="gr-title">Assam Through Time</div><div class="gr-concept">Ahom kingdom · British era · Independence</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game17"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game17">—</div></div></a>
+
+  <div class="section-header">
+    <div class="sh-line"></div>
+    <div class="sh-label" style="color:var(--pink);">📝 Hindi / हिंदी <span class="sh-count">(3 games)</span></div>
+    <div class="sh-line"></div>
+  </div>
+  <div class="batch-label">Batch 3 · Games 18–20</div>
+  <a class="game-row hindi" href="game18-sangya-ka-bazaar.html" id="row-class4-game18"><div class="gr-emoji">🏷️</div><div class="gr-info"><div class="gr-title">संज्ञा का बाज़ार</div><div class="gr-concept">जातिवाचक · व्यक्तिवाचक · भाववाचक · समूहवाचक</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game18"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game18">—</div></div></a>
+  <a class="game-row hindi" href="game19-sarvanam-jasoos.html" id="row-class4-game19"><div class="gr-emoji">✍️</div><div class="gr-info"><div class="gr-title">सर्वनाम जासूस</div><div class="gr-concept">मैं · तुम · वह · हम · वे · यह — pronouns</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game19"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game19">—</div></div></a>
+  <a class="game-row hindi" href="game20-apatit-khazana.html" id="row-class4-game20"><div class="gr-emoji">📜</div><div class="gr-info"><div class="gr-title">अपठित खज़ाना</div><div class="gr-concept">3 Assam Hindi passages · comprehension</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game20"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game20">—</div></div></a>
+
+  <div class="section-header">
+    <div class="sh-line"></div>
+    <div class="sh-label" style="color:var(--blue);">💻 Computer <span class="sh-count">(3 games)</span></div>
+    <div class="sh-line"></div>
+  </div>
+  <div class="batch-label">Batch 3 · Games 21–23</div>
+  <a class="game-row computer" href="game21-hardware-heroes.html" id="row-class4-game21"><div class="gr-emoji">⌨️</div><div class="gr-info"><div class="gr-title">Hardware Heroes</div><div class="gr-concept">Input · Output · Storage · Processing · data flow</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game21"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game21">—</div></div></a>
+  <a class="game-row computer" href="game22-keyboard-quest.html" id="row-class4-game22"><div class="gr-emoji">🔑</div><div class="gr-info"><div class="gr-title">Keyboard Quest</div><div class="gr-concept">Ctrl+C · Ctrl+V · Undo · @ · F5 Refresh</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game22"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game22">—</div></div></a>
+  <a class="game-row computer" href="game23-internet-explorer.html" id="row-class4-game23"><div class="gr-emoji">🌐</div><div class="gr-info"><div class="gr-title">Internet Explorer</div><div class="gr-concept">Data journey · URL anatomy · browser · intranet</div></div><div class="gr-right"><div class="gr-stars" id="rs-class4-game23"><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span><span class="gr-star">⭐</span></div><div class="gr-score" id="sc-class4-game23">—</div></div></a>
+
+  <div class="class-nav">
+    <a class="cn-btn prev" href="#">← Back to Class 3</a>
+    <a class="cn-btn" href="#" style="color:var(--gold);border-color:rgba(255,209,102,.2);">Class 5 → Coming soon</a>
+  </div>
+  <div class="footer">
+    GyanPlay · 🎓 Ignite Curiosity First, Teach Second<br>
+    Class 4 · Assam / NCERT Board · Ages 9–10<br>
+    ₹750/month · 23 games · Offline-capable · No ads · No login data sold
+  </div>
+</div>
+
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+
+const ALL_GAMES=[
+  {id:'class4-game1',total:5,subj:'maths'},{id:'class4-game2',total:8,subj:'maths'},
+  {id:'class4-game3',total:5,subj:'maths'},{id:'class4-game4',total:7,subj:'maths'},
+  {id:'class4-game5',total:8,subj:'maths'},{id:'class4-game6',total:12,subj:'english'},
+  {id:'class4-game7',total:9,subj:'english'},{id:'class4-game8',total:10,subj:'english'},
+  {id:'class4-game9',total:9,subj:'english'},{id:'class4-game10',total:7,subj:'science'},
+  {id:'class4-game11',total:12,subj:'science'},{id:'class4-game12',total:6,subj:'science'},
+  {id:'class4-game13',total:8,subj:'science'},{id:'class4-game14',total:15,subj:'sst'},
+  {id:'class4-game15',total:5,subj:'sst'},{id:'class4-game16',total:19,subj:'sst'},
+  {id:'class4-game17',total:6,subj:'sst'},{id:'class4-game18',total:20,subj:'hindi'},
+  {id:'class4-game19',total:9,subj:'hindi'},{id:'class4-game20',total:12,subj:'hindi'},
+  {id:'class4-game21',total:17,subj:'computer'},{id:'class4-game22',total:6,subj:'computer'},
+  {id:'class4-game23',total:10,subj:'computer'},
+];
+const SUBJ_TOTALS={maths:5,english:4,science:4,sst:4,hindi:3,computer:3};
+
+auth.onAuthStateChanged(async u=>{
+  if(!u){window.location.href='/login.html';return;}
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  // Mark visited games via localStorage
+  const visited=JSON.parse(localStorage.getItem('gp_c4_visited')||'{}');
+  await loadAllProgress(u.uid,visited);
+});
+
+async function loadAllProgress(uid,visited){
+  let totalCompleted=0;
+  const subjCompleted={maths:0,english:0,science:0,sst:0,hindi:0,computer:0};
+
+  for(const g of ALL_GAMES){
+    // Mark as visited if localStorage says so
+    if(visited[g.id]){
+      const row=document.getElementById('row-'+g.id);
+      if(row&&!row.querySelector('.gr-visited')){
+        const v=document.createElement('span');v.className='gr-visited';v.style.cssText='font-size:.6rem;color:var(--dim);margin-left:4px;';v.textContent='visited';
+        // suppress — visited badge not needed visually, just tracking
+      }
+    }
+    try{
+      const doc=await db.collection('users').doc(uid).collection('progress').doc(g.id).get();
+      if(doc.exists){
+        const d=doc.data(),s=d.score||0,t=g.total;
+        const pct=Math.min(100,Math.round(s/t*100));
+        const stars=Math.min(5,Math.ceil(s/(t/5)));
+        document.querySelectorAll('#rs-'+g.id+' .gr-star').forEach((star,i)=>star.classList.toggle('lit',i<stars));
+        document.getElementById('sc-'+g.id).textContent=s+'/'+t;
+        if(pct>=60){
+          totalCompleted++;subjCompleted[g.subj]++;
+          const row=document.getElementById('row-'+g.id);
+          if(row&&!row.querySelector('.gr-done')){
+            const b=document.createElement('div');b.className='gr-done';b.textContent='✓ Done';
+            document.querySelector('#row-'+g.id+' .gr-right').appendChild(b);
+          }
+        }
+      }
+    }catch(e){}
+  }
+
+  // Update overall
+  document.getElementById('masterCount').innerHTML=totalCompleted+'<span style="font-size:.9rem;color:var(--dim);">/23</span>';
+  const pct=Math.round(totalCompleted/23*100);
+  document.getElementById('masterFill').style.width=pct+'%';
+  document.getElementById('masterPct').textContent=pct+'%';
+
+  // Update subject bars
+  Object.entries(subjCompleted).forEach(([s,c])=>{
+    const total=SUBJ_TOTALS[s];
+    document.getElementById('sb-'+s).style.width=(c/total*100)+'%';
+    document.getElementById('sbs-'+s).textContent=c+'/'+total;
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Civics: Diversity &amp; Government — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-start:#0F0C29;--bg-end:#302B63;
+  --card:#1a1740;
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+  --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+  --text:#EEE8FF;--dim:#8880AA;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:linear-gradient(135deg,var(--bg-start),var(--bg-end));
+  min-height:100vh;font-family:'Nunito',sans-serif;
+  color:var(--text);display:flex;justify-content:center;
+  padding:14px 12px 48px;
+}
+.wrap{width:100%;max-width:480px}
+
+/* ── TOP BAR ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px;gap:8px}
+.back-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
+  color:var(--text);font-family:'Baloo 2',cursive;font-size:.88rem;font-weight:600;
+  border-radius:20px;padding:5px 14px;cursor:pointer;transition:background .2s;white-space:nowrap}
+.back-btn:hover{background:rgba(255,255,255,.15)}
+.badge{background:var(--pink);color:#fff;font-family:'Baloo 2',cursive;
+  font-size:.68rem;font-weight:800;letter-spacing:.8px;text-transform:uppercase;
+  border-radius:20px;padding:4px 12px;white-space:nowrap}
+.lang-toggle{display:flex;gap:4px}
+.lang-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);
+  color:var(--dim);font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:700;
+  border-radius:12px;padding:3px 9px;cursor:pointer;transition:all .2s}
+.lang-btn.active{background:var(--purple);border-color:var(--purple);color:#fff}
+
+/* ── SCORE / PROGRESS ── */
+.meta-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.score-lbl{font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;color:var(--gold)}
+.q-counter{font-size:.78rem;color:var(--dim);font-weight:600}
+.prog-bar{height:6px;background:rgba(255,255,255,.1);border-radius:99px;margin-bottom:16px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:99px;transition:width .4s ease}
+
+/* ── STARS ── */
+.stars-row{display:flex;gap:6px;justify-content:center;margin-bottom:14px}
+.star{font-size:1.4rem;opacity:.25;transition:opacity .35s,filter .35s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 8px var(--gold))}
+
+/* ── QUESTION CARD ── */
+.q-card{background:var(--card);border:1px solid rgba(255,64,129,.22);
+  border-radius:20px;padding:20px;margin-bottom:14px;
+  animation:fadeIn .4s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.q-topic-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.q-emoji{font-size:1.7rem;line-height:1}
+.q-topic-tag{font-size:.65rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  color:var(--pink);background:rgba(255,64,129,.12);border-radius:10px;padding:3px 10px}
+.q-text{font-family:'Baloo 2',cursive;font-size:1.02rem;font-weight:600;
+  line-height:1.5;margin-bottom:16px}
+
+/* ── OPTIONS ── */
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(124,58,237,.1);border:2px solid rgba(124,58,237,.3);
+  border-radius:14px;padding:12px 8px;font-family:'Baloo 2',cursive;
+  font-size:.9rem;font-weight:700;color:var(--text);cursor:pointer;
+  transition:all .2s;text-align:center;line-height:1.3;width:100%}
+.opt-btn:hover:not(:disabled){border-color:var(--purple);background:rgba(124,58,237,.2);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green)}
+.opt-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink)}
+.opt-btn:disabled{pointer-events:none}
+
+/* ── FEEDBACK ── */
+.feedback-box{border-radius:14px;padding:12px 14px;margin-top:12px;font-size:.84rem;line-height:1.55;display:none}
+.feedback-box.show{display:block;animation:fadeIn .3s ease both}
+.feedback-box.correct{background:rgba(0,200,83,.1);border:1px solid rgba(0,200,83,.35)}
+.feedback-box.wrong{background:rgba(255,64,129,.09);border:1px solid rgba(255,64,129,.3)}
+.fb-result{font-family:'Baloo 2',cursive;font-size:.98rem;font-weight:800;margin-bottom:4px}
+.feedback-box.correct .fb-result{color:var(--green)}
+.feedback-box.wrong .fb-result{color:var(--pink)}
+.fb-explain{color:#C8C0E8}
+
+/* ── NEXT BTN ── */
+.next-btn{display:none;width:100%;margin-top:12px;
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  border:none;border-radius:14px;padding:13px;
+  font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;
+  color:#fff;cursor:pointer;transition:opacity .2s;letter-spacing:.4px}
+.next-btn:hover{opacity:.88}
+.next-btn.show{display:block;animation:fadeIn .3s ease both}
+
+/* ── END SCREEN ── */
+.end-screen{display:none;text-align:center;animation:fadeIn .5s ease both}
+.end-screen.show{display:block}
+.end-icon{font-size:3.5rem;margin-bottom:10px}
+.end-title{font-family:'Baloo 2',cursive;font-size:1.6rem;font-weight:800;
+  color:var(--gold);margin-bottom:6px}
+.end-score-big{font-family:'Baloo 2',cursive;font-size:2.8rem;font-weight:800;
+  background:linear-gradient(135deg,var(--gold),var(--saffron));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;line-height:1.1}
+.end-sub{font-size:.88rem;color:var(--dim);margin:6px 0 18px}
+.end-stars{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.end-star{font-size:2rem;opacity:.2;transition:opacity .4s,filter .4s}
+.end-star.lit{opacity:1;filter:drop-shadow(0 0 10px var(--gold))}
+.play-again-btn{background:linear-gradient(135deg,var(--purple),var(--pink));
+  border:none;border-radius:16px;padding:14px 32px;
+  font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:800;
+  color:#fff;cursor:pointer;transition:transform .2s,opacity .2s}
+.play-again-btn:hover{transform:scale(1.04);opacity:.9}
+
+/* ── GAME AREA ── */
+#game-area{animation:fadeIn .4s ease both}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Social Studies</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')" id="lbEN">EN</button>
+      <button class="lang-btn" onclick="setLang('hi')" id="lbHI">हि</button>
+      <button class="lang-btn" onclick="setLang('bn')" id="lbBN">অ</button>
+    </div>
+  </div>
+
+  <!-- STARS ROW -->
+  <div class="stars-row">
+    <span class="star" id="s1">★</span>
+    <span class="star" id="s2">★</span>
+    <span class="star" id="s3">★</span>
+  </div>
+
+  <!-- SCORE / PROGRESS -->
+  <div class="meta-row">
+    <span class="score-lbl" id="scoreLbl">Score: 0 / 100</span>
+    <span class="q-counter" id="qCounter">Question 1 of 10</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+
+  <!-- GAME AREA -->
+  <div id="game-area">
+    <div class="q-card" id="qCard">
+      <div class="q-topic-row">
+        <span class="q-emoji" id="qEmoji">🏛️</span>
+        <span class="q-topic-tag" id="qTopicTag">Government</span>
+      </div>
+      <p class="q-text" id="qText">Loading…</p>
+      <div class="options" id="optionsDiv"></div>
+      <div class="feedback-box" id="feedbackBox">
+        <div class="fb-result" id="fbResult"></div>
+        <div class="fb-explain" id="fbExplain"></div>
+      </div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+        <span data-lang-en="Next Question →" data-lang-hi="अगला सवाल →" data-lang-bn="পরের প্রশ্ন →">Next Question →</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- END SCREEN -->
+  <div class="end-screen" id="endScreen">
+    <div class="end-icon" id="endIcon">🎉</div>
+    <div class="end-title" id="endTitle">Quiz Complete!</div>
+    <div class="end-score-big" id="endScoreBig">0/100</div>
+    <div class="end-sub" id="endSub">You answered 0 of 10 correctly</div>
+    <div class="end-stars">
+      <span class="end-star" id="es1">★</span>
+      <span class="end-star" id="es2">★</span>
+      <span class="end-star" id="es3">★</span>
+    </div>
+    <button class="play-again-btn" onclick="initGame()">
+      <span data-lang-en="▶ Play Again" data-lang-hi="▶ फिर खेलें" data-lang-bn="▶ আবার খেলো">▶ Play Again</span>
+    </button>
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   QUESTION BANK  (12 questions)
+   Each Q has: emoji, topic (en/hi/bn),
+   text (en/hi/bn), options (en/hi/bn) [4 items],
+   answer index (0-based), explanation (en/hi/bn)
+══════════════════════════════════════ */
+const BANK = [
+  // ── DIVERSITY 1 ──
+  {
+    emoji:"🌏",
+    topic:{en:"Diversity",hi:"विविधता",bn:"বৈচিত্র্য"},
+    text:{
+      en:"How many languages are listed in the Eighth Schedule (scheduled languages) of the Indian Constitution?",
+      hi:"भारतीय संविधान की आठवीं अनुसूची (अनुसूचित भाषाएं) में कितनी भाषाएं हैं?",
+      bn:"ভারতীয় সংবিধানের অষ্টম তফসিলে (তফসিলি ভাষা) কতটি ভাষা রয়েছে?"
+    },
+    options:{
+      en:["14","18","22","28"],
+      hi:["14","18","22","28"],
+      bn:["14","18","22","28"]
+    },
+    answer:2,
+    explain:{
+      en:"India's Constitution recognises 22 official scheduled languages in the Eighth Schedule, reflecting the country's remarkable linguistic diversity.",
+      hi:"भारत का संविधान आठवीं अनुसूची में 22 आधिकारिक भाषाओं को मान्यता देता है, जो देश की भाषाई विविधता को दर्शाता है।",
+      bn:"ভারতীয় সংবিধান অষ্টম তফসিলে ২২টি সরকারি ভাষাকে স্বীকৃতি দেয়, যা দেশের অসাধারণ ভাষিক বৈচিত্র্য প্রতিফলিত করে।"
+    }
+  },
+  // ── DIVERSITY 2 ──
+  {
+    emoji:"🤝",
+    topic:{en:"Diversity",hi:"विविधता",bn:"বৈচিত্র্য"},
+    text:{
+      en:"The phrase 'Unity in Diversity' means India is united despite having many —",
+      hi:"'अनेकता में एकता' का अर्थ है कि भारत विभिन्न ___ होने के बावजूद एकजुट है।",
+      bn:"'বৈচিত্র্যের মধ্যে ঐক্য' কথাটির অর্থ হল ভারত বিভিন্ন ___ থাকা সত্ত্বেও একতাবদ্ধ।"
+    },
+    options:{
+      en:["Currencies","Religions & cultures","Prime Ministers","Armies"],
+      hi:["मुद्राएं","धर्म व संस्कृतियां","प्रधानमंत्री","सेनाएं"],
+      bn:["মুদ্রা","ধর্ম ও সংস্কৃতি","প্রধানমন্ত্রী","সেনা"]
+    },
+    answer:1,
+    explain:{
+      en:"India has hundreds of languages, religions, festivals, food habits, and customs, yet people share a common identity as Indians — this is unity in diversity.",
+      hi:"भारत में सैकड़ों भाषाएं, धर्म, त्योहार और रीति-रिवाज हैं, फिर भी लोग एक भारतीय पहचान साझा करते हैं।",
+      bn:"ভারতে শত শত ভাষা, ধর্ম, উৎসব ও রীতিনীতি থাকলেও মানুষ ভারতীয় হিসেবে এক পরিচয় ধারণ করে।"
+    }
+  },
+  // ── DIVERSITY 3 ──
+  {
+    emoji:"⚖️",
+    topic:{en:"Diversity",hi:"विविधता",bn:"বৈচিত্র্য"},
+    text:{
+      en:"Treating someone unfairly because of their religion, caste, or gender is called —",
+      hi:"धर्म, जाति या लिंग के आधार पर किसी के साथ अनुचित व्यवहार करना ___ कहलाता है।",
+      bn:"ধর্ম, বর্ণ বা লিঙ্গের ভিত্তিতে কারো সাথে অন্যায় আচরণ করাকে বলে —"
+    },
+    options:{
+      en:["Diversity","Discrimination","Democracy","Difference"],
+      hi:["विविधता","भेदभाव","लोकतंत्र","अंतर"],
+      bn:["বৈচিত্র্য","বৈষম্য","গণতন্ত্র","পার্থক্য"]
+    },
+    answer:1,
+    explain:{
+      en:"Discrimination means treating people unequally based on characteristics like religion, caste, or gender. The Indian Constitution prohibits discrimination and guarantees equality.",
+      hi:"भेदभाव का मतलब है धर्म, जाति, लिंग जैसी विशेषताओं के आधार पर लोगों के साथ असमान व्यवहार करना। भारतीय संविधान इसे प्रतिबंधित करता है।",
+      bn:"বৈষম্য মানে ধর্ম, বর্ণ বা লিঙ্গের মতো বৈশিষ্ট্যের ভিত্তিতে অসমান আচরণ। ভারতীয় সংবিধান এটি নিষিদ্ধ করে।"
+    }
+  },
+  // ── GOVERNMENT 1 ──
+  {
+    emoji:"🗳️",
+    topic:{en:"Government",hi:"सरकार",bn:"সরকার"},
+    text:{
+      en:"In India, citizens can vote once they reach the age of —",
+      hi:"भारत में नागरिक ___ वर्ष की आयु पूरी करने पर मतदान कर सकते हैं।",
+      bn:"ভারতে নাগরিকরা ___ বছর বয়স পূর্ণ হলে ভোট দিতে পারেন।"
+    },
+    options:{
+      en:["16 years","18 years","21 years","25 years"],
+      hi:["16 वर्ष","18 वर्ष","21 वर्ष","25 वर्ष"],
+      bn:["১৬ বছর","১৮ বছর","২১ বছর","২৫ বছর"]
+    },
+    answer:1,
+    explain:{
+      en:"India follows Universal Adult Franchise — every citizen aged 18 or above has the right to vote, regardless of caste, religion, or economic status.",
+      hi:"भारत में सार्वभौमिक वयस्क मताधिकार है — 18 वर्ष या उससे अधिक आयु के प्रत्येक नागरिक को वोट देने का अधिकार है।",
+      bn:"ভারতে সার্বজনীন প্রাপ্তবয়স্ক ভোটাধিকার আছে — ১৮ বা তার বেশি বয়সের প্রতিটি নাগরিকের ভোট দেওয়ার অধিকার আছে।"
+    }
+  },
+  // ── GOVERNMENT 2 ──
+  {
+    emoji:"🏛️",
+    topic:{en:"Government",hi:"सरकार",bn:"সরকার"},
+    text:{
+      en:"A system of government in which people elect their representatives to make decisions on their behalf is called —",
+      hi:"वह शासन व्यवस्था जिसमें लोग अपनी ओर से निर्णय लेने के लिए प्रतिनिधि चुनते हैं, ___ कहलाती है।",
+      bn:"যে শাসনব্যবস্থায় মানুষ তাদের পক্ষে সিদ্ধান্ত নিতে প্রতিনিধি নির্বাচন করে তাকে বলে —"
+    },
+    options:{
+      en:["Monarchy","Dictatorship","Democracy","Oligarchy"],
+      hi:["राजतंत्र","तानाशाही","लोकतंत्र","कुलीनतंत्र"],
+      bn:["রাজতন্ত্র","একনায়কতন্ত্র","গণতন্ত্র","কুলীনতন্ত্র"]
+    },
+    answer:2,
+    explain:{
+      en:"Democracy literally means 'rule by the people'. In a representative democracy like India, citizens elect leaders who then pass laws and run the government on their behalf.",
+      hi:"लोकतंत्र का शाब्दिक अर्थ है 'जनता का शासन'। भारत जैसे प्रतिनिधि लोकतंत्र में नागरिक नेता चुनते हैं जो उनकी ओर से कानून बनाते हैं।",
+      bn:"গণতন্ত্রের আক্ষরিক অর্থ 'জনগণের শাসন'। ভারতের মতো প্রতিনিধিত্বমূলক গণতন্ত্রে নাগরিকরা নেতা নির্বাচন করে যারা তাদের পক্ষে আইন তৈরি করে।"
+    }
+  },
+  // ── GOVERNMENT 3 ──
+  {
+    emoji:"🏛️",
+    topic:{en:"Government",hi:"सरकार",bn:"সরকার"},
+    text:{
+      en:"The national legislature (Parliament) of India that is elected directly by the people is called the —",
+      hi:"भारत की राष्ट्रीय विधायिका (संसद) जो सीधे लोगों द्वारा चुनी जाती है, उसे ___ कहते हैं।",
+      bn:"ভারতের জাতীয় আইনসভা (সংসদ) যা সরাসরি জনগণের দ্বারা নির্বাচিত হয় তাকে বলে —"
+    },
+    options:{
+      en:["Rajya Sabha","Lok Sabha","Zila Parishad","State Assembly"],
+      hi:["राज्य सभा","लोक सभा","जिला परिषद","राज्य विधानसभा"],
+      bn:["রাজ্যসভা","লোকসভা","জেলা পরিষদ","বিধানসভা"]
+    },
+    answer:1,
+    explain:{
+      en:"The Lok Sabha ('House of the People') is the lower house of India's Parliament, directly elected by adult citizens. Each elected member is called a Member of Parliament (MP).",
+      hi:"लोक सभा ('जनता का सदन') भारतीय संसद का निचला सदन है, जो वयस्क नागरिकों द्वारा सीधे चुना जाता है। प्रत्येक निर्वाचित सदस्य को संसद सदस्य (MP) कहते हैं।",
+      bn:"লোকসভা ('জনগণের সদন') ভারতীয় সংসদের নিম্নকক্ষ, যা প্রাপ্তবয়স্ক নাগরিকদের দ্বারা সরাসরি নির্বাচিত হয়। প্রতিটি নির্বাচিত সদস্যকে সংসদ সদস্য (MP) বলা হয়।"
+    }
+  },
+  // ── RURAL ADMIN 1 ──
+  {
+    emoji:"🌾",
+    topic:{en:"Rural Administration",hi:"ग्रामीण प्रशासन",bn:"গ্রামীণ প্রশাসন"},
+    text:{
+      en:"The village-level elected body that manages local development and welfare is called —",
+      hi:"गांव स्तरीय निर्वाचित निकाय जो स्थानीय विकास और कल्याण का प्रबंधन करती है, वह है —",
+      bn:"গ্রামস্তরের নির্বাচিত সংস্থা যা স্থানীয় উন্নয়ন ও কল্যাণ পরিচালনা করে তাকে বলে —"
+    },
+    options:{
+      en:["Gram Sabha","Gram Panchayat","Panchayat Samiti","Zila Parishad"],
+      hi:["ग्राम सभा","ग्राम पंचायत","पंचायत समिति","जिला परिषद"],
+      bn:["গ্রামসভা","গ্রাম পঞ্চায়েত","পঞ্চায়েত সমিতি","জেলা পরিষদ"]
+    },
+    answer:1,
+    explain:{
+      en:"Gram Panchayat is the elected governing body at the village level. It consists of elected ward members and a Sarpanch (head). It handles roads, sanitation, water, and local development.",
+      hi:"ग्राम पंचायत ग्राम स्तर पर निर्वाचित शासी निकाय है। इसमें निर्वाचित वार्ड सदस्य और एक सरपंच होते हैं। यह सड़क, सफाई, पानी और स्थानीय विकास देखती है।",
+      bn:"গ্রাম পঞ্চায়েত গ্রামস্তরে নির্বাচিত শাসনিক সংস্থা। এতে নির্বাচিত ওয়ার্ড সদস্য এবং একজন সরপঞ্চ (প্রধান) থাকেন। এটি রাস্তা, স্যানিটেশন, জল ও স্থানীয় উন্নয়ন পরিচালনা করে।"
+    }
+  },
+  // ── RURAL ADMIN 2 ──
+  {
+    emoji:"🌾",
+    topic:{en:"Rural Administration",hi:"ग्रामीण प्रशासन",bn:"গ্রামীণ প্রশাসন"},
+    text:{
+      en:"A Patwari's main responsibility in rural administration is to —",
+      hi:"ग्रामीण प्रशासन में पटवारी की मुख्य जिम्मेदारी है —",
+      bn:"গ্রামীণ প্রশাসনে পাটওয়ারির প্রধান দায়িত্ব হল —"
+    },
+    options:{
+      en:["Collect taxes in cities","Maintain land records","Run the local school","Manage the Gram Panchayat"],
+      hi:["शहरों में कर वसूलना","भूमि अभिलेख रखना","स्थानीय विद्यालय चलाना","ग्राम पंचायत चलाना"],
+      bn:["শহরে কর সংগ্রহ করা","ভূমির রেকর্ড রাখা","স্থানীয় বিদ্যালয় পরিচালনা করা","গ্রাম পঞ্চায়েত পরিচালনা করা"]
+    },
+    answer:1,
+    explain:{
+      en:"A Patwari (also called Lekhpal in some states) is a government official who maintains land records, records ownership, measures land, and helps resolve land disputes in rural areas.",
+      hi:"पटवारी (कुछ राज्यों में लेखपाल) एक सरकारी अधिकारी है जो भूमि अभिलेख रखता है, स्वामित्व दर्ज करता है, जमीन नापता है और ग्रामीण क्षेत्रों में भूमि विवाद सुलझाने में मदद करता है।",
+      bn:"পাটওয়ারি (কিছু রাজ্যে লেখপাল) একজন সরকারি কর্মকর্তা যিনি ভূমির রেকর্ড রাখেন, মালিকানা নথিভুক্ত করেন, জমি পরিমাপ করেন এবং গ্রামীণ এলাকায় ভূমি বিরোধ মেটাতে সাহায্য করেন।"
+    }
+  },
+  // ── RURAL ADMIN 3 (bonus Q in bank) ──
+  {
+    emoji:"🌾",
+    topic:{en:"Rural Administration",hi:"ग्रामीण प्रशासन",bn:"গ্রামীণ প্রশাসন"},
+    text:{
+      en:"The Gram Sabha is a meeting of —",
+      hi:"ग्राम सभा किसकी बैठक है?",
+      bn:"গ্রামসভা হল কাদের সভা?"
+    },
+    options:{
+      en:["Sarpanches of many villages","All voters of a village","All District Collectors","Only elected Panchayat members"],
+      hi:["कई गांवों के सरपंचों की","एक गांव के सभी मतदाताओं की","सभी जिला कलेक्टरों की","केवल निर्वाचित पंचायत सदस्यों की"],
+      bn:["অনেক গ্রামের সরপঞ্চদের","একটি গ্রামের সমস্ত ভোটারদের","সমস্ত জেলা কালেক্টরদের","শুধুমাত্র নির্বাচিত পঞ্চায়েত সদস্যদের"]
+    },
+    answer:1,
+    explain:{
+      en:"The Gram Sabha consists of all the registered voters of a village. It meets periodically, reviews the Gram Panchayat's work, approves plans, and is the foundation of grassroots democracy.",
+      hi:"ग्राम सभा में एक गांव के सभी पंजीकृत मतदाता शामिल होते हैं। यह समय-समय पर बैठती है, ग्राम पंचायत का काम देखती है और ग्रामीण लोकतंत्र की नींव है।",
+      bn:"গ্রামসভায় একটি গ্রামের সমস্ত নিবন্ধিত ভোটার অন্তর্ভুক্ত। এটি পর্যায়ক্রমে মিলিত হয়, গ্রাম পঞ্চায়েতের কাজ পর্যালোচনা করে এবং তৃণমূল গণতন্ত্রের ভিত্তি।"
+    }
+  },
+  // ── URBAN ADMIN 1 ──
+  {
+    emoji:"🏙️",
+    topic:{en:"Urban Administration",hi:"नगरीय प्रशासन",bn:"নগর প্রশাসন"},
+    text:{
+      en:"The elected body that governs a large city in India is called a —",
+      hi:"भारत में बड़े शहर का प्रशासन करने वाला निर्वाचित निकाय ___ कहलाता है।",
+      bn:"ভারতে বড় শহর পরিচালনাকারী নির্বাচিত সংস্থাকে বলা হয় —"
+    },
+    options:{
+      en:["Gram Panchayat","Municipal Corporation","Zila Parishad","Legislative Assembly"],
+      hi:["ग्राम पंचायत","नगर निगम","जिला परिषद","विधान सभा"],
+      bn:["গ্রাম পঞ্চায়েত","পৌর কর্পোরেশন","জেলা পরিষদ","বিধানসভা"]
+    },
+    answer:1,
+    explain:{
+      en:"A Municipal Corporation (Nagar Nigam) governs large cities. Smaller towns have Municipal Councils or Nagar Panchayats. They manage roads, water supply, sanitation, parks, and local services.",
+      hi:"नगर निगम बड़े शहरों का प्रशासन करता है। छोटे नगरों में नगर परिषद या नगर पंचायत होती है। ये सड़क, जल आपूर्ति, सफाई, पार्क और स्थानीय सेवाएं संभालते हैं।",
+      bn:"পৌর কর্পোরেশন (নগর নিগম) বড় শহর পরিচালনা করে। ছোট শহরে পৌর পরিষদ বা নগর পঞ্চায়েত থাকে। এরা রাস্তা, জল সরবরাহ, স্যানিটেশন, পার্ক ও স্থানীয় পরিষেবা পরিচালনা করে।"
+    }
+  },
+  // ── URBAN ADMIN 2 ──
+  {
+    emoji:"🏙️",
+    topic:{en:"Urban Administration",hi:"नगरीय प्रशासन",bn:"নগর প্রশাসন"},
+    text:{
+      en:"The head of a Municipal Corporation is known as the —",
+      hi:"नगर निगम का प्रमुख ___ कहलाता है।",
+      bn:"পৌর কর্পোরেশনের প্রধানকে বলা হয় —"
+    },
+    options:{
+      en:["Sarpanch","Mayor","Patwari","Commissioner"],
+      hi:["सरपंच","महापौर","पटवारी","आयुक्त"],
+      bn:["সরপঞ্চ","মেয়র","পাটওয়ারি","কমিশনার"]
+    },
+    answer:1,
+    explain:{
+      en:"The Mayor is the elected head of a Municipal Corporation. The day-to-day administration is handled by a Municipal Commissioner, an IAS officer appointed by the state government.",
+      hi:"महापौर (Mayor) नगर निगम का निर्वाचित प्रमुख होता है। दैनिक प्रशासन एक नगर आयुक्त द्वारा संभाला जाता है, जो राज्य सरकार द्वारा नियुक्त IAS अधिकारी होता है।",
+      bn:"মেয়র পৌর কর্পোরেশনের নির্বাচিত প্রধান। দৈনন্দিন প্রশাসন পরিচালনা করেন মিউনিসিপাল কমিশনার, যিনি রাজ্য সরকার কর্তৃক নিযুক্ত একজন IAS অফিসার।"
+    }
+  },
+  // ── URBAN ADMIN 3 (bonus Q in bank) ──
+  {
+    emoji:"🏙️",
+    topic:{en:"Urban Administration",hi:"नगरीय प्रशासन",bn:"নগর প্রশাসন"},
+    text:{
+      en:"A city is divided into smaller administrative units called —",
+      hi:"एक शहर को छोटी प्रशासनिक इकाइयों में विभाजित किया जाता है जिन्हें ___ कहते हैं।",
+      bn:"একটি শহরকে ছোট প্রশাসনিক ইউনিটে ভাগ করা হয় যেগুলিকে বলা হয় —"
+    },
+    options:{
+      en:["Talukas","Wards","Mandals","Panchayats"],
+      hi:["तालुका","वार्ड","मंडल","पंचायत"],
+      bn:["তালুক","ওয়ার্ড","মণ্ডল","পঞ্চায়েত"]
+    },
+    answer:1,
+    explain:{
+      en:"A city is divided into Wards. Each Ward has a Ward Councillor elected by the people of that ward. Councillors together form the Municipal Corporation and decide on city policies.",
+      hi:"एक शहर को वार्डों में विभाजित किया जाता है। प्रत्येक वार्ड का एक वार्ड पार्षद होता है जो उस वार्ड के लोगों द्वारा चुना जाता है। पार्षद मिलकर नगर निगम बनाते हैं।",
+      bn:"একটি শহরকে ওয়ার্ডে ভাগ করা হয়। প্রতিটি ওয়ার্ডে একজন ওয়ার্ড কাউন্সিলর থাকেন যিনি সেই ওয়ার্ডের মানুষ নির্বাচন করেন। কাউন্সিলররা মিলে পৌর কর্পোরেশন গঠন করেন।"
+    }
+  }
+];
+
+/* ══════════════════════════════════════
+   GAME STATE
+══════════════════════════════════════ */
+let currentLang = "en";
+let session = [];      // 10 drawn questions
+let qIndex = 0;        // current question index (0–9)
+let score = 0;         // raw correct count
+let answered = false;
+
+/* ══════════════════════════════════════
+   LANGUAGE
+══════════════════════════════════════ */
+function setLang(lang){
+  currentLang = lang;
+  ["lbEN","lbHI","lbBN"].forEach(id=>document.getElementById(id).classList.remove("active"));
+  const map={en:"lbEN",hi:"lbHI",bn:"lbBN"};
+  document.getElementById(map[lang]).classList.add("active");
+  // update all data-lang spans
+  document.querySelectorAll("[data-lang-en]").forEach(el=>{
+    el.textContent = el.getAttribute("data-lang-"+lang) || el.getAttribute("data-lang-en");
+  });
+  // re-render current question labels if mid-game
+  if(session.length && !document.getElementById("endScreen").classList.contains("show")){
+    renderQuestion();
+  }
+}
+
+/* ══════════════════════════════════════
+   INIT / SHUFFLE
+══════════════════════════════════════ */
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function initGame(){
+  session = shuffle(BANK).slice(0,10);
+  qIndex = 0;
+  score = 0;
+  answered = false;
+  document.getElementById("endScreen").classList.remove("show");
+  document.getElementById("game-area").style.display = "block";
+  updateStars(0);
+  renderQuestion();
+}
+
+/* ══════════════════════════════════════
+   RENDER QUESTION
+══════════════════════════════════════ */
+function renderQuestion(){
+  const q = session[qIndex];
+  const L = currentLang;
+
+  // meta
+  document.getElementById("qCounter").textContent =
+    L==="hi" ? `प्रश्न ${qIndex+1} / 10` :
+    L==="bn" ? `প্রশ্ন ${qIndex+1} / ১০` :
+    `Question ${qIndex+1} of 10`;
+
+  const pct = Math.round((qIndex/10)*100);
+  document.getElementById("progFill").style.width = pct + "%";
+
+  // score label
+  updateScoreLabel();
+
+  // question card
+  document.getElementById("qEmoji").textContent = q.emoji;
+  document.getElementById("qTopicTag").textContent = q.topic[L];
+  document.getElementById("qText").textContent = q.text[L];
+
+  // options
+  const optsDiv = document.getElementById("optionsDiv");
+  optsDiv.innerHTML = "";
+  q.options[L].forEach((opt,i)=>{
+    const btn = document.createElement("button");
+    btn.className = "opt-btn";
+    btn.textContent = opt;
+    btn.setAttribute("data-idx", i);
+    btn.addEventListener("click", ()=>handleAnswer(i));
+    optsDiv.appendChild(btn);
+  });
+
+  // reset feedback
+  const fb = document.getElementById("feedbackBox");
+  fb.className = "feedback-box";
+  fb.style.display = "none";
+  document.getElementById("nextBtn").className = "next-btn";
+
+  answered = false;
+
+  // animate card
+  const card = document.getElementById("qCard");
+  card.style.animation = "none";
+  void card.offsetWidth;
+  card.style.animation = "fadeIn .4s ease both";
+}
+
+/* ══════════════════════════════════════
+   HANDLE ANSWER
+══════════════════════════════════════ */
+function handleAnswer(chosen){
+  if(answered) return;
+  answered = true;
+  const q = session[qIndex];
+  const L = currentLang;
+  const correct = (chosen === q.answer);
+
+  // style buttons
+  const btns = document.querySelectorAll(".opt-btn");
+  btns.forEach(btn => btn.disabled = true);
+  btns[q.answer].classList.add("correct");
+  if(!correct) btns[chosen].classList.add("wrong");
+
+  if(correct) score++;
+
+  // feedback
+  const fb = document.getElementById("feedbackBox");
+  fb.style.display = "block";
+  fb.className = "feedback-box " + (correct?"correct":"wrong") + " show";
+  document.getElementById("fbResult").textContent =
+    correct
+      ? (L==="hi"?"✓ सही जवाब!":L==="bn"?"✓ সঠিক উত্তর!":"✓ Correct!")
+      : (L==="hi"?"✗ गलत जवाब":L==="bn"?"✗ ভুল উত্তর":"✗ Incorrect");
+  document.getElementById("fbExplain").textContent = q.explain[L];
+
+  // score
+  updateScoreLabel();
+  updateStars(Math.round((score / (qIndex+1)) * 100));
+
+  // next button
+  const nxt = document.getElementById("nextBtn");
+  nxt.className = "next-btn show";
+  const isLast = (qIndex === 9);
+  nxt.querySelector("span").setAttribute("data-lang-en", isLast ? "See Results →" : "Next Question →");
+  nxt.querySelector("span").setAttribute("data-lang-hi", isLast ? "परिणाम देखें →" : "अगला सवाल →");
+  nxt.querySelector("span").setAttribute("data-lang-bn", isLast ? "ফলাফল দেখো →" : "পরের প্রশ্ন →");
+  nxt.querySelector("span").textContent = nxt.querySelector("span").getAttribute("data-lang-"+L);
+}
+
+/* ══════════════════════════════════════
+   NEXT QUESTION
+══════════════════════════════════════ */
+function nextQuestion(){
+  qIndex++;
+  if(qIndex >= 10){
+    showEnd();
+  } else {
+    renderQuestion();
+  }
+}
+
+/* ══════════════════════════════════════
+   SCORE LABEL
+══════════════════════════════════════ */
+function updateScoreLabel(){
+  const L = currentLang;
+  const pts = Math.round((score / Math.max(qIndex + (answered?1:0), 1)) * 100);
+  document.getElementById("scoreLbl").textContent =
+    L==="hi" ? `स्कोर: ${pts} / 100` :
+    L==="bn" ? `স্কোর: ${pts} / ১০০` :
+    `Score: ${pts} / 100`;
+}
+
+/* ══════════════════════════════════════
+   STARS (live + end)
+══════════════════════════════════════ */
+function updateStars(pct){
+  const lit = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
+  for(let i=1;i<=3;i++){
+    document.getElementById("s"+i).className = "star" + (i<=lit?" lit":"");
+  }
+}
+
+function showEndStars(pct){
+  const lit = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
+  // animate with delay
+  for(let i=1;i<=3;i++){
+    setTimeout(()=>{
+      document.getElementById("es"+i).className = "end-star" + (i<=lit?" lit":"");
+    }, i*250);
+  }
+}
+
+/* ══════════════════════════════════════
+   END SCREEN
+══════════════════════════════════════ */
+function showEnd(){
+  document.getElementById("game-area").style.display = "none";
+  const endEl = document.getElementById("endScreen");
+  endEl.classList.add("show");
+
+  const pct = Math.round((score/10)*100);
+  const L = currentLang;
+
+  // icon
+  const icon = pct>=90?"🏆":pct>=70?"🎉":pct>=40?"👍":"📚";
+  document.getElementById("endIcon").textContent = icon;
+
+  // title
+  const titles = {
+    en: pct>=90?"Outstanding!":pct>=70?"Well Done!":pct>=40?"Good Effort!":"Keep Learning!",
+    hi: pct>=90?"शानदार!":pct>=70?"शाबाश!":pct>=40?"अच्छा प्रयास!":"और पढ़ो!",
+    bn: pct>=90?"অসাধারণ!":pct>=70?"চমৎকার!":pct>=40?"ভালো চেষ্টা!":"আরো পড়ো!"
+  };
+  document.getElementById("endTitle").textContent = titles[L];
+
+  // big score
+  document.getElementById("endScoreBig").textContent = pct + "/100";
+
+  // sub text
+  const subs = {
+    en:`You answered ${score} of 10 correctly`,
+    hi:`आपने 10 में से ${score} सही उत्तर दिए`,
+    bn:`আপনি ১০টির মধ্যে ${score}টি সঠিক উত্তর দিয়েছেন`
+  };
+  document.getElementById("endSub").textContent = subs[L];
+
+  // stars
+  document.getElementById("es1").className="end-star";
+  document.getElementById("es2").className="end-star";
+  document.getElementById("es3").className="end-star";
+  showEndStars(pct);
+
+  // progress bar full
+  document.getElementById("progFill").style.width="100%";
+  updateStars(pct);
+}
+
+/* ══════════════════════════════════════
+   BOOT
+══════════════════════════════════════ */
+initGame();
+</script>
+</body>
+</html>

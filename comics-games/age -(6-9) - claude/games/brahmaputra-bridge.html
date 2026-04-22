@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Brahmaputra Bridge Builder — Rongmon's World</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --river-deep: #0077b6;
+    --river-light: #00b4d8;
+    --river-foam: #bde0fe;
+    --wood: #a67c52;
+    --wood-dark: #6f4e37;
+    --wood-light: #d4a373;
+    --jungle: #1a5c2e;
+    --gold: #f5c518;
+    --bihu-red: #e63946;
+    --dark: #1a1a2e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Baloo 2', cursive;
+    background: #111; color: var(--dark);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; overflow: hidden; touch-action: manipulation;
+  }
+  .as { font-family: 'Hind Siliguri', sans-serif; }
+
+  /* ══ APP ══ */
+  #game-wrap {
+    width: 100%; max-width: 800px; height: 100vh; max-height: 700px;
+    background: var(--river-foam); position: relative; overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column;
+  }
+  @media(min-width: 820px) { #game-wrap { height: 90vh; border-radius: 24px; border: 8px solid var(--wood-dark); } }
+
+  /* ══ RIVER BACKGROUND ══ */
+  .river-bg {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(0deg, var(--river-deep), var(--river-light));
+  }
+  .river-wave {
+    position: absolute; width: 200%; height: 100px;
+    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg"><path fill="%23bde0fe" fill-opacity="0.3" d="M0,160L48,144C96,128,192,96,288,106.7C384,117,480,171,576,170.7C672,171,768,117,864,117.3C960,117,1056,171,1152,192C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x;
+    background-size: 50% 100%; animation: scrollRiver 6s linear infinite;
+  }
+  .wave1 { top: 20%; opacity: 0.6; animation-duration: 8s; }
+  .wave2 { top: 50%; opacity: 0.8; animation-duration: 5s; animation-direction: reverse; }
+  .wave3 { bottom: -20px; opacity: 1; height: 150px; background-size: 50% 100%; }
+  @keyframes scrollRiver { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  /* ══ RIVER BANKS ══ */
+  .bank-left { position: absolute; left: -20px; top: 0; bottom: 0; width: 100px; background: #606c38; border-right: 8px solid #283618; border-radius: 0 50% 50% 0; z-index: 2; }
+  .bank-right { position: absolute; right: -20px; top: 0; bottom: 0; width: 100px; background: #606c38; border-left: 8px solid #283618; border-radius: 50% 0 0 50%; z-index: 2; }
+
+  /* ══ HUD ══ */
+  #hud { position: absolute; top: 0; left: 0; right: 0; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); }
+  #hud.hidden { display: none; }
+  .hud-left, .hud-right { display: flex; gap: 12px; align-items: center; }
+  .hud-stat { background: rgba(255,255,255,0.9); padding: 4px 14px; border-radius: 20px; font-weight: 800; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); color: var(--river-deep); display: flex; align-items: center; gap: 6px; }
+  .lang-pill { display: flex; background: rgba(255,255,255,0.9); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+  .lang-pill button { border: none; background: none; padding: 4px 12px; font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 14px; cursor: pointer; color: #888; transition: 0.2s; }
+  .lang-pill button.active { background: var(--gold); color: var(--river-deep); }
+
+  /* ══ SCREENS ══ */
+  .screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; z-index: 50; }
+  .screen.hidden { display: none; }
+  .overlay-box { background: #fff; padding: 40px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); max-width: 420px; width: 90%; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); position: relative; z-index: 60; }
+  @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+  /* BUTTONS */
+  .btn-primary { background: var(--gold); color: #8b5e3c; border: none; padding: 12px 30px; font-size: 20px; font-weight: 800; border-radius: 50px; cursor: pointer; box-shadow: 0 6px 0 #b07d00; transition: transform 0.1s, box-shadow 0.1s; font-family: 'Baloo 2', cursive; margin-top: 15px; }
+  .btn-primary:active { transform: translateY(6px); box-shadow: 0 0px 0 #b07d00; }
+  .btn-home { position: fixed; top: 20px; left: 20px; z-index: 500; width: 44px; height: 44px; border-radius: 50%; background: #fff; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .mute-btn { position: fixed; bottom: 20px; right: 20px; z-index: 500; width: 44px; height: 44px; border-radius: 50%; border: none; background: #fff; font-size: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .title-lg { font-size: 38px; font-weight: 900; color: var(--river-deep); line-height: 1.1; margin-bottom: 10px; }
+  .desc-txt { font-size: 17px; color: #555; font-weight: 600; margin-bottom: 15px; line-height: 1.5; }
+
+  /* ══ GAME SCREEN ══ */
+  #screen-game { justify-content: flex-start; padding: 0; z-index: 10; }
+
+  .game-header {
+    margin-top: 70px; z-index: 20; position: relative;
+    background: rgba(255,255,255,0.9); padding: 8px 30px; border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: inline-block;
+  }
+  .seq-hint { font-size: 20px; font-weight: 800; color: var(--wood-dark); }
+  .timer-bar-wrap { width: 100%; max-width: 300px; height: 10px; background: #ddd; border-radius: 5px; margin-top: 8px; overflow: hidden; }
+  .timer-bar { height: 100%; background: var(--bihu-red); width: 100%; transition: width 0.1s linear; }
+
+  /* ══ BRIDGE & PLANKS ══ */
+  .bridge-container {
+    position: absolute; top: 40%; left: 10px; right: 10px; height: 120px; z-index: 5;
+    display: flex; align-items: center; justify-content: space-between; padding: 0 60px;
+  }
+  /* Rope lines */
+  .bridge-container::before { content: ''; position: absolute; top: 20px; left: 60px; right: 60px; height: 6px; background: #5c4033; border-radius: 3px; z-index: -1; box-shadow: 0 80px 0 #5c4033; }
+
+  .plank {
+    width: 60px; height: 140px; background: var(--wood); border: 2px solid var(--wood-dark);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: 900; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    box-shadow: 0 6px 0 var(--wood-dark), 0 10px 10px rgba(0,0,0,0.3);
+    position: relative; transition: transform 0.2s;
+  }
+  /* Wood texture lines */
+  .plank::after { content:''; position:absolute; inset:5px; background: repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(0,0,0,0.05) 10px, rgba(0,0,0,0.05) 20px); pointer-events:none; }
+  
+  .plank.missing { background: rgba(0,0,0,0.2); border: 3px dashed rgba(255,255,255,0.5); box-shadow: none; color: rgba(255,255,255,0.8); }
+  .plank.wrong-shake { animation: shake 0.4s; }
+
+  /* Character */
+  .rongmon-char {
+    position: absolute; bottom: 100px; left: -10px; width: 70px; height: 80px; z-index: 10;
+    transition: left 0.5s ease-in-out;
+  }
+  .rongmon-char svg { width: 100%; height: 100%; animation: bob 0.5s infinite alternate; }
+
+  /* ══ TRAY ══ */
+  .tray-area {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 20px;
+    background: linear-gradient(to top, rgba(139,94,60,0.9), rgba(139,94,60,0));
+    display: flex; flex-direction: column; align-items: center; z-index: 20;
+  }
+  .tray-title { font-size: 14px; font-weight: 800; color: #fff; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+  .options-container { display: flex; gap: 20px; justify-content: center; }
+  
+  .option-plank {
+    width: 70px; height: 70px; background: var(--wood-light); border: 3px solid var(--wood-dark);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 900; color: var(--dark); cursor: pointer;
+    box-shadow: 0 6px 0 var(--wood-dark), 0 10px 10px rgba(0,0,0,0.3);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .option-plank:active { transform: translateY(6px); box-shadow: 0 0px 0 var(--wood-dark); }
+  .option-plank::after { content:''; position:absolute; inset:4px; border-radius:8px; border:1px solid rgba(255,255,255,0.3); pointer-events:none; }
+
+  /* ══ EFFECTS ══ */
+  @keyframes shake { 20%,60%{ transform: translateX(-5px); } 40%,80%{ transform: translateX(5px); } }
+  @keyframes bob { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
+
+  .confetti-piece { position: absolute; pointer-events: none; z-index: 150; animation: fall 2s linear forwards; }
+  @keyframes fall { 0% { transform: translate(0,0) rotate(0deg); opacity: 1; } 100% { transform: translate(var(--cx), var(--cy)) rotate(var(--cr)); opacity: 0; } }
+
+  /* ══ ONBOARDING ══ */
+  #onboarding { background: rgba(0,0,0,0.8); z-index: 200; backdrop-filter: blur(5px); }
+</style>
+</head>
+<body>
+
+<a href="../index.html#games" class="btn-home" title="Back to Home">🏠</a>
+<button class="mute-btn" id="mute-btn-game" onclick="toggleMuteGame()">🔊</button>
+
+<div id="game-wrap">
+
+  <!-- Background Environment -->
+  <div class="river-bg">
+    <div class="river-wave wave1"></div>
+    <div class="river-wave wave2"></div>
+    <div class="river-wave wave3"></div>
+  </div>
+  <div class="bank-left"></div>
+  <div class="bank-right"></div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-left">
+      <div class="hud-stat" title="Score">⭐ <span id="score-disp">0</span></div>
+      <div class="hud-stat" title="Level">🌉 <span id="level-disp">1</span></div>
+    </div>
+    <div class="hud-right">
+      <div class="lang-pill">
+        <button class="active" onclick="setLang('en')" id="lp-en">EN</button>
+        <button onclick="setLang('as')" id="lp-as">অস</button>
+      </div>
+      <div class="hud-stat" id="lives-disp">❤️❤️❤️</div>
+    </div>
+  </div>
+
+  <!-- SCREEN: INTRO -->
+  <div class="screen" id="screen-intro">
+    <div class="overlay-box" style="background:transparent;box-shadow:none;">
+      <div style="font-size:70px;margin-bottom:10px;">🌊</div>
+      <h1 class="title-lg" style="color:#fff;text-shadow:0 4px 10px rgba(0,0,0,0.4)" id="intro-title">Bridge Builder!</h1>
+      <p class="desc-txt" style="color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.4)" id="intro-desc">Help Rongmon cross the mighty Brahmaputra river by completing the number sequence to fix the bridge!</p>
+      <button class="btn-primary" onclick="startGame()" id="btn-start">🌉 Start Building!</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: GAME -->
+  <div class="screen hidden" id="screen-game">
+    <div class="game-header">
+      <div class="seq-hint" id="seq-hint">Complete the pattern!</div>
+      <div class="timer-bar-wrap"><div class="timer-bar" id="timer-bar"></div></div>
+    </div>
+
+    <div class="bridge-container" id="bridge-container">
+      <!-- Planks injected via JS -->
+    </div>
+
+    <!-- Character holding position -->
+    <div class="rongmon-char" id="rongmon-char">
+      <svg viewBox="0 0 100 100">
+        <ellipse cx="50" cy="55" rx="30" ry="35" fill="#a08060"/>
+        <ellipse cx="50" cy="60" rx="20" ry="25" fill="#c4a882"/>
+        <ellipse cx="50" cy="30" rx="25" ry="20" fill="#b09070"/>
+        <circle cx="42" cy="25" r="3" fill="#3a2a10"/>
+        <circle cx="58" cy="25" r="3" fill="#3a2a10"/>
+        <path d="M45 40 Q50 45 55 40" stroke="#3a2a10" stroke-width="2" fill="none"/>
+        <ellipse cx="50" cy="35" rx="6" ry="4" fill="#8b7355"/>
+      </svg>
+    </div>
+
+    <div class="tray-area">
+      <div class="tray-title" id="tray-title">Select the right plank:</div>
+      <div class="options-container" id="options-container">
+        <!-- Option planks injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: ROUND CLEAR / PERFECT -->
+  <div class="screen hidden" id="screen-roundup">
+    <div class="overlay-box" style="background:transparent;box-shadow:none;">
+      <h2 class="title-lg" id="ru-title" style="color:#fff;text-shadow:0 4px 10px rgba(0,0,0,0.5)">Bridge Fixed! 🌉</h2>
+    </div>
+  </div>
+
+  <!-- SCREEN: GAME OVER -->
+  <div class="screen hidden" id="screen-gameover">
+    <div class="overlay-box">
+      <div style="font-size:60px">💦</div>
+      <h2 class="title-lg" id="go-title" style="color:var(--river-deep)">Splash!</h2>
+      <p class="desc-txt" id="go-desc">The timer ran out or too many wrong planks! Don't worry, Rongmon knows how to swim.</p>
+      <div id="go-score" style="font-size:18px;font-weight:800;color:var(--dark);margin-bottom:10px;">⭐ Final Score: 0</div>
+      <button class="btn-primary" onclick="startGame()" id="btn-retry">🔄 Try Again</button>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div id="onboarding" class="screen hidden">
+    <div class="overlay-box">
+      <h2 class="title-lg" style="font-size:30px">How to Play</h2>
+      <p class="desc-txt" style="text-align:left;font-size:16px;" id="ob-desc">
+        1. Look at the numbers on the bridge. 🌉<br>
+        2. Figure out the pattern! (+1, +2, +5...) 🧠<br>
+        3. Tap the plank below that fills the gap before time runs out! ⏱️<br>
+        <span class="as" style="font-size:14px;">১. দলঙৰ সংখ্যাবোৰ চাওক। ২. ক্ৰমটো বুজি লওক! ৩. সময় শেষ হোৱাৰ আগতে সঠিক কাঠখিলা বাছক!</span>
+      </p>
+      <button class="btn-primary" onclick="dismissOnboarding()">Got it! 👍</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="rongmon-data.js"></script>
+<script src="rongmon-audio.js"></script>
+<script>
+// ══ STATE ══
+let score = 0, lives = 3, level = 1, lang = 'en';
+let sequence = [], missingIdx = 0, correctAnswer = 0;
+let timerObj = null, timeLeft = 100;
+const MAX_TIME = 100; // representing 100% width
+const PLANK_COUNT = 5;
+
+// ══ LANG ══
+const lt = {
+  en: {
+    'intro-title':'Bridge Builder!',
+    'intro-desc':'Help Rongmon cross the mighty Brahmaputra river by completing the number sequence to fix the bridge!',
+    'btn-start':'🌉 Start Building!',
+    'seq-hint':'Complete the pattern!',
+    'tray-title':'Select the right plank:',
+    'ru-title':'Bridge Fixed! 🌉',
+    'go-title':'Splash!',
+    'go-desc':"Too many wrong planks or time ran out! Don't worry, Rongmon knows how to swim.",
+    'btn-retry':'🔄 Try Again'
+  },
+  as: {
+    'intro-title':'দলং নিৰ্মাণ!',
+    'intro-desc':'ৰংমনক ব্ৰহ্মপুত্ৰ পাৰ হ\'বলৈ সহায় কৰক! সংখ্যাৰ ক্ৰমটো সম্পূৰ্ণ কৰক আৰু দলংখন ঠিক কৰক!',
+    'btn-start':'🌉 আৰম্ভ কৰক!',
+    'seq-hint':'ক্ৰমটো সম্পূৰ্ণ কৰক!',
+    'tray-title':'সঠিক কাঠখিলা বাছক:',
+    'ru-title':'দলং ঠিক হ\'ল! 🌉',
+    'go-title':'হায়!',
+    'go-desc':"ভুল কাঠখিলা বা সময় শেষ হ'ল! চিন্তা নাই, ৰংমনে সাঁতুৰিব জানে।",
+    'btn-retry':'🔄 আকৌ চেষ্টা কৰক'
+  }
+};
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('lp-en').classList.toggle('active', l==='en');
+  document.getElementById('lp-as').classList.toggle('active', l==='as');
+  for (const [id,val] of Object.entries(lt[l])) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = val;
+  }
+}
+
+function showScreen(id) {
+  ['screen-intro','screen-game','screen-roundup','screen-gameover'].forEach(s =>
+    document.getElementById(s).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  document.getElementById('hud').classList.toggle('hidden', id==='screen-intro'||id==='screen-gameover');
+}
+
+function updateHUD() {
+  document.getElementById('score-disp').textContent = score;
+  document.getElementById('level-disp').textContent = level;
+  document.getElementById('lives-disp').textContent = '❤️'.repeat(Math.max(0, lives));
+}
+
+// ══ LOGIC ══
+function startGame() {
+  score = 0; lives = 3; level = 1;
+  updateHUD();
+  document.getElementById('rongmon-char').style.left = '-10px';
+  generateRound();
+  showScreen('screen-game');
+}
+
+function generateSequence() {
+  sequence = [];
+  // Determine step based on level
+  let step = 1;
+  let start = 1;
+  if(level <= 2) { step = 1; start = Math.floor(Math.random()*5)+1; }
+  else if(level <= 4) { step = 2; start = Math.floor(Math.random()*10)*2; }
+  else if(level <= 6) { step = 5; start = Math.floor(Math.random()*5)*5; }
+  else if(level <= 8) { step = 10; start = Math.floor(Math.random()*5)*10; }
+  else { step = -2; start = 20 + Math.floor(Math.random()*10)*2; } // backwards math!
+
+  for(let i=0; i<PLANK_COUNT; i++) {
+    sequence.push(start + (i * step));
+  }
+  missingIdx = Math.floor(Math.random() * PLANK_COUNT);
+  correctAnswer = sequence[missingIdx];
+}
+
+function generateRound() {
+  clearInterval(timerObj);
+  generateSequence();
+  
+  // Reset Character pos
+  document.getElementById('rongmon-char').style.left = '-10px';
+  document.getElementById('rongmon-char').style.bottom = '100px';
+
+  // Render Bridge
+  const bridge = document.getElementById('bridge-container');
+  bridge.innerHTML = '';
+  sequence.forEach((num, i) => {
+    const pl = document.createElement('div');
+    pl.className = 'plank';
+    pl.id = `plank-${i}`;
+    if (i === missingIdx) {
+      pl.classList.add('missing');
+      pl.textContent = '?';
+    } else {
+      pl.textContent = num;
+    }
+    bridge.appendChild(pl);
+  });
+
+  // Render Tray Options (3 choices)
+  const tray = document.getElementById('options-container');
+  tray.innerHTML = '';
+  
+  // Generate distractors
+  let options = new Set([correctAnswer]);
+  while(options.size < 3) {
+    let offset = [1, -1, 2, -2, 5, -5, 10, -10][Math.floor(Math.random()*8)];
+    let badAns = correctAnswer + offset;
+    if(badAns >= 0 && !options.has(badAns)) {
+      options.add(badAns);
+    }
+  }
+  const optsArr = Array.from(options).sort(() => Math.random() - 0.5);
+
+  optsArr.forEach(opt => {
+    const btn = document.createElement('div');
+    btn.className = 'option-plank';
+    btn.textContent = opt;
+    btn.onclick = () => selectOption(opt);
+    tray.appendChild(btn);
+  });
+
+  // Start Timer
+  timeLeft = 100;
+  // Faster timer as levels increase, but cap it so it's not impossible
+  const drainRate = Math.min(1.5 + (level * 0.2), 4);
+  
+  timerObj = setInterval(() => {
+    timeLeft -= drainRate;
+    document.getElementById('timer-bar').style.width = Math.max(0, timeLeft) + '%';
+    
+    // Pulse animation when time is low
+    if(timeLeft < 30) {
+      if(typeof RongmonAudio!=='undefined' && timeLeft % 15 < drainRate) RongmonAudio.playTick();
+      document.getElementById('timer-bar').style.background = '#e63946';
+    } else {
+      document.getElementById('timer-bar').style.background = '#4caf50';
+    }
+
+    if(timeLeft <= 0) {
+      clearInterval(timerObj);
+      handleWrong();
+    }
+  }, 100);
+}
+
+function selectOption(opt) {
+  clearInterval(timerObj);
+
+  if (opt === correctAnswer) {
+    // Correct
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playCorrect();
+    const missingPlank = document.getElementById(`plank-${missingIdx}`);
+    missingPlank.classList.remove('missing');
+    missingPlank.textContent = opt;
+    missingPlank.style.transform = 'scale(1.2)';
+    setTimeout(()=> missingPlank.style.transform='scale(1)', 200);
+
+    score += 15 + Math.floor(timeLeft/10);
+    level++;
+    updateHUD();
+
+    // Animate character crossing
+    const char = document.getElementById('rongmon-char');
+    char.style.left = '90%'; // walk across
+
+    setTimeout(() => {
+      if(typeof RongmonAudio!=='undefined') RongmonAudio.playLevelUp();
+      showScreen('screen-roundup');
+      spawnConfetti();
+      
+      setTimeout(() => {
+        showScreen('screen-game');
+        generateRound();
+      }, 1500);
+    }, 600);
+
+  } else {
+    // Wrong
+    handleWrong();
+  }
+}
+
+function handleWrong() {
+  if(typeof RongmonAudio!=='undefined') RongmonAudio.playWrong();
+  
+  // Shake missing plank
+  const p = document.getElementById(`plank-${missingIdx}`);
+  if(p) {
+    p.classList.add('wrong-shake');
+    setTimeout(()=>p.classList.remove('wrong-shake'),400);
+  }
+
+  // Character falls slightly
+  const char = document.getElementById('rongmon-char');
+  char.style.bottom = '80px';
+  setTimeout(()=>char.style.bottom='100px', 300);
+
+  lives--;
+  updateHUD();
+
+  if(lives <= 0) {
+    setTimeout(() => {
+      document.getElementById('go-score').textContent = `⭐ ${lang==='en'?'Final Score':'সৰ্বমুঠ স্কোৰ'}: ${score}`;
+      showScreen('screen-gameover');
+    }, 500);
+  } else {
+    // Reset round
+    setTimeout(() => { generateRound(); }, 1000);
+  }
+}
+
+// ══ EFFECTS ══
+function spawnConfetti(){
+  const wrap=document.getElementById('game-wrap');
+  const cols=['#e63946','#f4a261','#4caf50','#f5c518','#fff'];
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    const cx=(Math.random()-0.5)*400; const cy=200+Math.random()*200;
+    p.style.cssText=`
+      left:${50+(Math.random()-0.5)*20}%; top:30%;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
+      --cx:${cx}px; --cy:${cy}px; --cr:${Math.random()*360}deg;
+      animation-duration:${0.8+Math.random()*0.8}s;
+      width:${8+Math.random()*6}px; height:${8+Math.random()*6}px;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+    `;
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(),2000);
+  }
+}
+
+// ── Shared ──
+window.addEventListener('DOMContentLoaded', () => {
+  if (typeof RongmonData !== 'undefined' && !RongmonData.hasSeenOnboarding('brahmaputra-bridge')) {
+    document.getElementById('onboarding').classList.remove('hidden');
+  }
+  if (typeof RongmonData !== 'undefined') {
+    const m = RongmonData.getSetting('muted');
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+  setLang('en');
+});
+function dismissOnboarding() {
+  document.getElementById('onboarding').classList.add('hidden');
+  if (typeof RongmonData !== 'undefined') RongmonData.markOnboardingSeen('brahmaputra-bridge');
+}
+function toggleMuteGame() {
+  if (typeof RongmonAudio !== 'undefined') {
+    const m = RongmonAudio.toggleMute();
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+}
+</script>
+</body>
+</html>

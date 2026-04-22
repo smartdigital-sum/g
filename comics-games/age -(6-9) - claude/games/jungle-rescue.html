@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rongmon's Jungle Rescue 🦏</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --jungle-dark: #0d3d1a;
+  --jungle: #1a5c2e;
+  --jungle-mid: #2d8a47;
+  --leaf: #4caf50;
+  --leaf-light: #a8e6a3;
+  --gold: #f5c518;
+  --gold-dark: #d4a900;
+  --red: #e63946;
+  --orange: #f4a261;
+  --sky: #48cae4;
+  --cream: #fef9ef;
+  --white: #ffffff;
+  --dark: #1a1a2e;
+  --cage-bar: #8b6914;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; overflow:hidden; }
+body {
+  font-family: 'Baloo 2', cursive;
+  background: var(--jungle-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* ── GAME CONTAINER ── */
+#game-wrap {
+  width: min(520px, 100vw);
+  height: min(700px, 100vh);
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+}
+
+/* ── JUNGLE BG ── */
+.jungle-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    #0a2410 0%,
+    #1a4a22 30%,
+    #2d7a3a 60%,
+    #3d9a4a 80%,
+    #2a6a30 100%
+  );
+  z-index: 0;
+}
+/* stars in sky */
+.jungle-bg::before {
+  content: '✦ ✧ ✦ ✧ ✦ ✧';
+  position: absolute;
+  top: 10px;
+  left: 0; right: 0;
+  text-align: center;
+  color: rgba(255,255,255,0.3);
+  font-size: 14px;
+  letter-spacing: 18px;
+}
+/* ground */
+.jungle-bg::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left:0; right:0;
+  height: 80px;
+  background: radial-gradient(ellipse at 50% 100%, #1a5c2e 0%, #0d3d1a 100%);
+}
+
+/* Animated trees */
+.tree {
+  position: absolute;
+  bottom: 0;
+  font-size: 60px;
+  animation: treeSway 4s ease-in-out infinite;
+  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+  opacity: 0.85;
+}
+.tree:nth-child(1) { left: -8px; animation-delay: 0s; font-size: 75px; }
+.tree:nth-child(2) { left: 40px; animation-delay: 0.5s; font-size: 55px; }
+.tree:nth-child(3) { right: -8px; animation-delay: 1s; font-size: 75px; }
+.tree:nth-child(4) { right: 40px; animation-delay: 1.5s; font-size: 55px; }
+.tree:nth-child(5) { left: 50%; transform: translateX(-50%); animation-delay: 0.8s; font-size: 50px; opacity: 0.4; }
+@keyframes treeSway {
+  0%,100% { transform: rotate(-2deg) scaleX(1); }
+  50%      { transform: rotate(2deg) scaleX(-1); }
+}
+.tree:nth-child(5) {
+  animation: treeSway2 5s ease-in-out infinite;
+}
+@keyframes treeSway2 {
+  0%,100% { transform: translateX(-50%) rotate(-1deg); }
+  50%      { transform: translateX(-50%) rotate(1deg); }
+}
+
+/* Fireflies */
+.firefly {
+  position: absolute;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #ffe066;
+  animation: fireflyMove linear infinite;
+  box-shadow: 0 0 8px 3px rgba(255,224,102,0.6);
+}
+@keyframes fireflyMove {
+  0%   { transform: translate(0,0); opacity:0; }
+  20%  { opacity:1; }
+  80%  { opacity:1; }
+  100% { transform: translate(var(--dx), var(--dy)); opacity:0; }
+}
+
+/* ── SCREENS ── */
+.screen {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px;
+  transition: opacity 0.4s, transform 0.4s;
+}
+.screen.hidden { opacity:0; pointer-events:none; transform: scale(0.96); }
+
+/* ── INTRO SCREEN ── */
+#screen-intro {
+  text-align: center;
+  gap: 16px;
+}
+.intro-title {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--gold);
+  text-shadow: 0 3px 12px rgba(0,0,0,0.6);
+  line-height: 1.1;
+}
+.intro-title .as {
+  font-family: 'Hind Siliguri', sans-serif;
+  display: block;
+  font-size: 20px;
+  color: var(--leaf-light);
+  margin-top: 4px;
+}
+.intro-mascot {
+  width: 160px;
+  animation: bobMascot 2.5s ease-in-out infinite;
+  filter: drop-shadow(0 10px 25px rgba(0,0,0,0.5));
+}
+@keyframes bobMascot {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-14px) rotate(2deg); }
+}
+.speech-bubble {
+  background: var(--white);
+  border-radius: 18px;
+  padding: 14px 20px;
+  position: relative;
+  font-size: 14px;
+  color: var(--dark);
+  font-weight: 600;
+  max-width: 320px;
+  line-height: 1.5;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  top: -12px; left: 50%;
+  transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-bottom-color: var(--white);
+}
+.speech-bubble .as { font-family: 'Hind Siliguri', sans-serif; color: var(--jungle); display:block; font-size:13px; margin-top:4px; }
+.btn-start {
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 900;
+  padding: 14px 44px;
+  border-radius: 50px;
+  border: none;
+  background: var(--gold);
+  color: var(--jungle-dark);
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(245,197,24,0.5);
+  transition: all 0.2s;
+  animation: pulse 2s ease-in-out infinite;
+}
+.btn-start:hover { transform: scale(1.06); }
+@keyframes pulse {
+  0%,100% { box-shadow: 0 6px 24px rgba(245,197,24,0.5); }
+  50%      { box-shadow: 0 6px 40px rgba(245,197,24,0.8); }
+}
+
+/* ── HUD (top bar) ── */
+#hud {
+  position: absolute;
+  top: 0; left:0; right:0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 8px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+}
+.hud-score {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hud-lives {
+  font-size: 20px;
+  letter-spacing: 4px;
+}
+.hud-level {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.15);
+  padding: 3px 12px;
+  border-radius: 20px;
+}
+/* progress bar */
+#progress-bar-wrap {
+  position: absolute;
+  top: 48px; left:16px; right:16px;
+  height: 6px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 3px;
+  z-index: 20;
+  overflow: hidden;
+}
+#progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--leaf), var(--gold));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+/* ── GAME SCREEN ── */
+#screen-game {
+  gap: 18px;
+  padding-top: 70px;
+}
+
+/* Cage scene */
+.cage-scene {
+  position: relative;
+  width: 190px;
+  height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cage-animal {
+  font-size: 80px;
+  z-index: 2;
+  position: relative;
+  transition: transform 0.3s;
+  filter: drop-shadow(0 5px 12px rgba(0,0,0,0.4));
+}
+/* Cage bars SVG overlay */
+.cage-bars {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  transition: opacity 0.5s, transform 0.5s;
+}
+.cage-bars.opened {
+  opacity: 0;
+  transform: translateY(-30px) scale(1.1);
+}
+
+/* Word display */
+.word-display {
+  text-align: center;
+}
+.word-assamese {
+  font-family: 'Hind Siliguri', sans-serif;
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 4px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  line-height: 1;
+}
+.word-assamese .blank {
+  color: var(--gold);
+  font-size: 44px;
+  border-bottom: 3px solid var(--gold);
+  padding: 0 4px;
+  min-width: 36px;
+  display: inline-block;
+  text-align: center;
+}
+.word-english {
+  font-size: 15px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 600;
+  margin-top: 4px;
+}
+.word-hint {
+  font-size: 12px;
+  color: var(--gold);
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+/* Letter buttons */
+.letters-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  width: 100%;
+  max-width: 380px;
+}
+.letter-btn {
+  font-family: 'Hind Siliguri', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  padding: 14px 6px;
+  border-radius: 16px;
+  border: 3px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.1);
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.34,1.56,0.64,1);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+.letter-btn:hover:not(:disabled) {
+  transform: scale(1.12) translateY(-3px);
+  background: rgba(255,255,255,0.2);
+  border-color: var(--gold);
+  box-shadow: 0 8px 24px rgba(245,197,24,0.4);
+}
+.letter-btn.correct {
+  background: var(--leaf) !important;
+  border-color: #2a8a30 !important;
+  transform: scale(1.18) !important;
+  box-shadow: 0 8px 30px rgba(76,175,80,0.7) !important;
+}
+.letter-btn.wrong {
+  background: var(--red) !important;
+  border-color: #a02020 !important;
+  animation: shakeBtn 0.4s ease;
+}
+.letter-btn:disabled { cursor: default; }
+@keyframes shakeBtn {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(8px); }
+  60%      { transform: translateX(-5px); }
+  80%      { transform: translateX(5px); }
+}
+
+/* ── LEVEL COMPLETE ── */
+#screen-levelup {
+  gap: 14px;
+  text-align: center;
+}
+.levelup-animal { font-size: 88px; animation: freeAnimal 0.6s cubic-bezier(0.34,1.8,0.64,1); }
+@keyframes freeAnimal {
+  0% { transform: scale(0.3) rotate(-15deg); opacity:0; }
+  100% { transform: scale(1) rotate(0deg); opacity:1; }
+}
+.levelup-title {
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--gold);
+  text-shadow: 0 3px 12px rgba(0,0,0,0.5);
+}
+.levelup-word {
+  font-family: 'Hind Siliguri', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--white);
+  background: rgba(255,255,255,0.1);
+  padding: 8px 24px;
+  border-radius: 16px;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+.levelup-word .learned { color: var(--gold); }
+.levelup-english { font-size: 16px; color: rgba(255,255,255,0.75); font-weight: 600; }
+.stars-display { font-size: 36px; letter-spacing: 8px; }
+.btn-next {
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px;
+  font-weight: 800;
+  padding: 12px 40px;
+  border-radius: 50px;
+  border: none;
+  background: var(--gold);
+  color: var(--jungle-dark);
+  cursor: pointer;
+  box-shadow: 0 5px 20px rgba(245,197,24,0.5);
+  transition: all 0.2s;
+}
+.btn-next:hover { transform: translateY(-3px) scale(1.05); }
+
+/* ── GAME OVER ── */
+#screen-gameover { text-align:center; gap:16px; }
+.gameover-title { font-size:34px; font-weight:900; color: var(--red); text-shadow: 0 3px 12px rgba(0,0,0,0.6); }
+.gameover-sub { font-size:15px; color:rgba(255,255,255,0.8); font-weight:600; }
+.btn-retry {
+  font-family: 'Baloo 2', cursive;
+  font-size:18px; font-weight:800;
+  padding:12px 36px; border-radius:50px; border:none;
+  background: var(--red); color:#fff;
+  cursor:pointer;
+  box-shadow: 0 5px 20px rgba(230,57,70,0.5);
+  transition: all 0.2s;
+}
+.btn-retry:hover { transform:scale(1.05); }
+
+/* ── VICTORY SCREEN ── */
+#screen-victory { text-align:center; gap:14px; }
+.victory-title { font-size:36px; font-weight:900; color:var(--gold); text-shadow:0 3px 16px rgba(0,0,0,0.6); line-height:1.1; }
+.victory-animals { font-size:34px; letter-spacing:4px; }
+.victory-score { font-size:22px; font-weight:800; color:var(--leaf-light); }
+.victory-as { font-family:'Hind Siliguri',sans-serif; font-size:20px; color:rgba(255,255,255,0.8); }
+.btn-replay {
+  font-family:'Baloo 2',cursive;
+  font-size:17px; font-weight:800;
+  padding:12px 36px; border-radius:50px; border:none;
+  background:var(--leaf); color:#fff;
+  cursor:pointer;
+  box-shadow:0 5px 20px rgba(76,175,80,0.5);
+  transition:all 0.2s;
+}
+.btn-replay:hover { transform:scale(1.05); }
+.btn-home {
+  font-family:'Baloo 2',cursive;
+  font-size:15px; font-weight:700;
+  padding:10px 30px; border-radius:50px;
+  border:2px solid rgba(255,255,255,0.4);
+  background:transparent; color:#fff;
+  cursor:pointer; transition:all 0.2s;
+}
+.btn-home:hover { background:rgba(255,255,255,0.1); }
+
+/* ── CONFETTI ── */
+.confetti-piece {
+  position: absolute;
+  width: 10px; height: 10px;
+  z-index: 50;
+  border-radius: 2px;
+  animation: confettiFall linear forwards;
+  pointer-events: none;
+}
+@keyframes confettiFall {
+  0%   { transform: translate(0,0) rotate(0deg); opacity:1; }
+  100% { transform: translate(var(--cx), var(--cy)) rotate(720deg); opacity:0; }
+}
+
+/* ── LANG PILL ── */
+.lang-pill{position:absolute;top:11px;left:50%;transform:translateX(-50%);
+  z-index: 30;
+  display: flex; gap:4px;
+}
+.lpill {
+  font-size:11px; font-weight:700;
+  padding:3px 10px; border-radius:20px;
+  border:1.5px solid transparent;
+  cursor:pointer; background:transparent; color:rgba(255,255,255,0.5);
+  font-family:'Baloo 2',cursive;
+}
+.lpill.active { background:var(--gold); color:var(--jungle-dark); border-color:var(--gold); }
+.lpill:hover:not(.active) { color:#fff; border-color:rgba(255,255,255,0.3); }
+</style>
+<style>.hidden { display: none !important; }</style>
+</head>
+<body>
+<div id="game-wrap">
+
+  <!-- Jungle Background -->
+  <div class="jungle-bg">
+    <div class="tree">🌴</div>
+    <div class="tree">🌿</div>
+    <div class="tree">🌴</div>
+    <div class="tree">🌿</div>
+    <div class="tree">🍀</div>
+  </div>
+
+  <!-- Fireflies (added by JS) -->
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-score">⭐ <span id="score-display">0</span></div>
+    <div class="hud-level" id="level-display">Level 1/8</div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="lang-pill" style="position:static; transform:none; display:flex; gap:4px; z-index:100;">
+        <button class="lpill active" id="lp-en" onclick="setLang('en')">EN</button>
+        <button class="lpill" id="lp-as" onclick="setLang('as')">অস</button>
+      </div>
+      <div class="hud-lives" id="lives-display">❤️❤️❤️</div>
+    </div>
+  </div>
+  <div id="progress-bar-wrap" class="hidden">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- ── SCREEN: INTRO ── -->
+  <div class="screen" id="screen-intro">
+    <div class="intro-title">
+      Rongmon's Jungle Rescue
+      <span class="as">ৰংমনৰ বনৰীয়া উদ্ধাৰ</span>
+    </div>
+    <svg class="intro-mascot" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+      <!-- shadow -->
+      <ellipse cx="100" cy="212" rx="55" ry="9" fill="rgba(0,0,0,0.3)"/>
+      <!-- body -->
+      <ellipse cx="100" cy="155" rx="60" ry="52" fill="#a08060"/>
+      <ellipse cx="97" cy="168" rx="35" ry="34" fill="#c4a882"/>
+      <!-- legs -->
+      <rect x="62" y="185" width="22" height="35" rx="11" fill="#8b7355"/>
+      <rect x="88" y="190" width="20" height="32" rx="10" fill="#8b7355"/>
+      <rect x="112" y="190" width="20" height="32" rx="10" fill="#8b7355"/>
+      <rect x="136" y="185" width="22" height="35" rx="11" fill="#8b7355"/>
+      <!-- feet -->
+      <ellipse cx="73" cy="218" rx="14" ry="7" fill="#7a6040"/>
+      <ellipse cx="98" cy="220" rx="12" ry="6" fill="#7a6040"/>
+      <ellipse cx="122" cy="220" rx="12" ry="6" fill="#7a6040"/>
+      <ellipse cx="147" cy="218" rx="14" ry="7" fill="#7a6040"/>
+      <!-- neck -->
+      <ellipse cx="88" cy="114" rx="27" ry="22" fill="#a08060"/>
+      <!-- head -->
+      <ellipse cx="88" cy="86" rx="44" ry="38" fill="#b09070"/>
+      <!-- ears -->
+      <ellipse cx="50" cy="66" rx="13" ry="18" fill="#a08060" transform="rotate(-10 50 66)"/>
+      <ellipse cx="50" cy="66" rx="8" ry="11" fill="#e8c0a0" transform="rotate(-10 50 66)"/>
+      <ellipse cx="126" cy="64" rx="13" ry="18" fill="#a08060" transform="rotate(10 126 64)"/>
+      <ellipse cx="126" cy="64" rx="8" ry="11" fill="#e8c0a0" transform="rotate(10 126 64)"/>
+      <!-- snout -->
+      <ellipse cx="88" cy="100" rx="34" ry="24" fill="#c4a882"/>
+      <!-- eyes -->
+      <ellipse cx="72" cy="78" rx="11" ry="11" fill="#fff"/>
+      <ellipse cx="104" cy="78" rx="11" ry="11" fill="#fff"/>
+      <circle cx="72" cy="78" r="7" fill="#3a2a10"/>
+      <circle cx="104" cy="78" r="7" fill="#3a2a10"/>
+      <circle cx="75" cy="75" r="3" fill="#fff"/>
+      <circle cx="107" cy="75" r="3" fill="#fff"/>
+      <!-- nose -->
+      <ellipse cx="88" cy="100" rx="16" ry="11" fill="#8b7355"/>
+      <circle cx="83" cy="98" r="4" fill="#5a4020"/>
+      <circle cx="93" cy="98" r="4" fill="#5a4020"/>
+      <!-- smile -->
+      <path d="M68 112 Q88 126 108 112" stroke="#7a5030" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <!-- horn -->
+      <path d="M82 52 Q88 30 94 52 Z" fill="#b0a060"/>
+      <!-- grad cap -->
+      <rect x="60" y="46" width="55" height="9" rx="3" fill="#1a5c2e"/>
+      <polygon points="87,28 115,46 87,46 59,46" fill="#2d8a47"/>
+      <rect x="110" y="46" width="3" height="12" fill="#1a5c2e"/>
+      <circle cx="111" cy="60" r="4" fill="#f5c518"/>
+    </svg>
+    <div class="speech-bubble">
+      <span id="intro-msg">Oh no! The jungle animals are locked in cages! 🔒<br/>Help me find the right Assamese letters to free them!</span>
+      <span class="as" id="intro-msg-as">জানোৰবোৰ খাচাত বন্দী! সঠিক অসমীয়া আখৰ বিচাৰি তেওঁলোকক মুক্ত কৰক! 🌿</span>
+    </div>
+    <button class="btn-start" onclick="startGame()" id="btn-start-text">▶ Start Rescue!</button>
+  </div>
+
+  <!-- ── SCREEN: GAME ── -->
+  <div class="screen hidden" id="screen-game">
+    <!-- Cage with animal -->
+    <div class="cage-scene">
+      <div class="cage-animal" id="cage-animal">🐘</div>
+      <!-- SVG Cage bars -->
+      <svg class="cage-bars" id="cage-bars" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cage top arch -->
+        <path d="M20 95 Q20 20 95 20 Q170 20 170 95" fill="none" stroke="#c8a030" stroke-width="6" stroke-linecap="round"/>
+        <!-- Vertical bars -->
+        <line x1="40"  y1="25" x2="40"  y2="170" stroke="#c8a030" stroke-width="5" stroke-linecap="round"/>
+        <line x1="65"  y1="20" x2="65"  y2="170" stroke="#c8a030" stroke-width="5" stroke-linecap="round"/>
+        <line x1="95"  y1="20" x2="95"  y2="170" stroke="#c8a030" stroke-width="5" stroke-linecap="round"/>
+        <line x1="125" y1="20" x2="125" y2="170" stroke="#c8a030" stroke-width="5" stroke-linecap="round"/>
+        <line x1="150" y1="25" x2="150" y2="170" stroke="#c8a030" stroke-width="5" stroke-linecap="round"/>
+        <!-- Horizontal bands -->
+        <line x1="22" y1="75"  x2="168" y2="75"  stroke="#a07820" stroke-width="4" stroke-linecap="round"/>
+        <line x1="22" y1="120" x2="168" y2="120" stroke="#a07820" stroke-width="4" stroke-linecap="round"/>
+        <!-- Bottom bar -->
+        <line x1="18" y1="168" x2="172" y2="168" stroke="#a07820" stroke-width="7" stroke-linecap="round"/>
+        <!-- Lock -->
+        <rect x="80" y="130" width="30" height="22" rx="5" fill="#e8a820" stroke="#c08010" stroke-width="2"/>
+        <path d="M87 130 Q87 120 95 120 Q103 120 103 130" fill="none" stroke="#c08010" stroke-width="3.5" stroke-linecap="round"/>
+        <circle cx="95" cy="142" r="5" fill="#c08010"/>
+      </svg>
+    </div>
+
+    <!-- Word to complete -->
+    <div class="word-display">
+      <div class="word-assamese" id="word-assamese">_াতী</div>
+      <div class="word-english" id="word-english">elephant</div>
+      <div class="word-hint" id="word-hint">💡 Pick the first letter!</div>
+    </div>
+
+    <!-- Letter choices -->
+    <div class="letters-grid" id="letters-grid">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <!-- ── SCREEN: LEVEL COMPLETE ── -->
+  <div class="screen hidden" id="screen-levelup">
+    <div class="levelup-title" id="lu-title">🎉 You freed it!</div>
+    <div class="levelup-animal" id="lu-animal">🐘</div>
+    <div class="levelup-word" id="lu-word"><span class="learned">হ</span>াতী</div>
+    <div class="levelup-english" id="lu-english">হাতী = Elephant</div>
+    <div class="stars-display" id="lu-stars">⭐⭐⭐</div>
+    <button class="btn-next" id="btn-next" onclick="nextLevel()">Next Animal ▶</button>
+  </div>
+
+  <!-- ── SCREEN: GAME OVER ── -->
+  <div class="screen hidden" id="screen-gameover">
+    <div style="font-size:64px">😢</div>
+    <div class="gameover-title" id="go-title">Oh No! Game Over</div>
+    <div class="gameover-sub" id="go-sub">Rongmon needs your help! Try again!</div>
+    <div style="font-family:'Hind Siliguri',sans-serif;font-size:16px;color:rgba(255,255,255,0.6)" id="go-sub-as">চিন্তা নকৰিব! আকৌ চেষ্টা কৰক!</div>
+    <button class="btn-retry" onclick="startGame()" id="btn-retry">🔄 Try Again</button>
+  </div>
+
+  <!-- ── SCREEN: VICTORY ── -->
+  <div class="screen hidden" id="screen-victory">
+    <div style="font-size:80px;animation:bobMascot 2s ease-in-out infinite">🦏</div>
+    <div class="victory-title" id="vic-title">🎉 All Animals Freed!<br/>You're Amazing!</div>
+    <div class="victory-animals" id="vic-animals">🐍🐘🕊️🦏🐟🐯🦌🦜</div>
+    <div class="victory-score" id="vic-score">⭐ Score: 0</div>
+    <div class="victory-as" id="vic-as">বাহ! তুমি অসাধাৰণ!</div>
+    <button class="btn-replay" onclick="startGame()" id="btn-replay">🔄 Play Again</button>
+    <button class="btn-home" onclick="shareScore()" style="background:rgba(37,211,102,0.15);border-color:rgba(37,211,102,0.4);color:#25d366;">📤 Share on WhatsApp</button>
+    <button class="btn-home" onclick="window.location.href='../index.html'" id="btn-home-v">🏠 Back to Home</button>
+  </div>
+
+</div><!-- /game-wrap -->
+
+<!-- Onboarding Overlay -->
+<div id="onboarding" class="hidden" style="position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:linear-gradient(135deg,#1a5c2e,#2d8a47);border-radius:24px;padding:32px 24px;max-width:320px;width:100%;text-align:center;border:2px solid rgba(245,197,24,0.4);">
+    <div style="font-size:60px;margin-bottom:8px;">🦏</div>
+    <div style="font-size:22px;font-weight:900;color:#f5c518;margin-bottom:8px;">How to Play</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.8;margin-bottom:20px;">
+      🔒 <strong>Animals are trapped in cages!</strong><br/>
+      👀 Look at the Assamese word below the cage.<br/>
+      ✒️ <strong>Tap the missing first letter</strong> to unlock the cage!<br/>
+      💖 Rescue all 8 animals to win!
+    </div>
+    <button onclick="dismissOnboarding()" style="font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;padding:12px 36px;border-radius:50px;border:none;background:#f5c518;color:#1a5c2e;cursor:pointer;width:100%;">
+      Got it! Let's Go ▶
+    </button>
+  </div>
+</div>
+
+<!-- Mute Toggle -->
+<button id="mute-btn-game" onclick="toggleMuteGame()" style="position:fixed;bottom:20px;right:20px;z-index:500;width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);background:rgba(26,92,46,0.9);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🔊</button>
+
+<script>
+// ── DATA: All 8 levels ──
+const levels = [
+  {
+    animal:'🐍', name:'অজগৰ', rest:'জগৰ', first:'অ',
+    english:'Python', hint_en:'A big jungle snake!', hint_as:'ডাঙৰ সাপ!',
+    wrong:['হ','ক','গ']
+  },
+  {
+    animal:'🐘', name:'হাতী', rest:'াতী', first:'হ',
+    english:'Elephant', hint_en:'The biggest jungle animal!', hint_as:'আটাইতকৈ ডাঙৰ জন্তু!',
+    wrong:['ক','ম','প']
+  },
+  {
+    animal:'🕊️', name:'কপৌ', rest:'পৌ', first:'ক',
+    english:'Dove / Pigeon', hint_en:'A gentle white bird!', hint_as:'কোমল বগা চৰাই!',
+    wrong:['গ','হ','ব']
+  },
+  {
+    animal:'🦏', name:'গঁড়', rest:'ঁড়', first:'গ',
+    english:"Rhino (Rongmon's family!)", hint_en:"Rongmon's cousin! 🦏", hint_as:'ৰংমনৰ আত্মীয়!',
+    wrong:['অ','ম','ন']
+  },
+  {
+    animal:'🐟', name:'মাছ', rest:'াছ', first:'ম',
+    english:'Fish', hint_en:'Swims in the Brahmaputra!', hint_as:'ব্ৰহ্মপুত্ৰত সাঁতুৰে!',
+    wrong:['ব','প','ৰ']
+  },
+  {
+    animal:'🐯', name:'বাঘ', rest:'াঘ', first:'ব',
+    english:'Tiger', hint_en:'The roaring jungle king!', hint_as:'বনৰ ৰজা!',
+    wrong:['ন','ত','স']
+  },
+  {
+    animal:'🦌', name:'পহু', rest:'হু', first:'প',
+    english:'Deer', hint_en:'Graceful forest animal!', hint_as:'সুন্দৰ বনৰীয়া জন্তু!',
+    wrong:['ফ','ভ','ব']
+  },
+  {
+    animal:'🦜', name:'ৰঙীন চৰাই', rest:'ঙীন চৰাই', first:'ৰ',
+    english:'Colourful Bird', hint_en:'A rainbow-coloured bird!', hint_as:'ৰামধেনু ৰঙৰ চৰাই!',
+    wrong:['ল','ৱ','শ']
+  }
+];
+
+// ── STATE ──
+let currentLevel = 0;
+let lives = 3;
+let score = 0;
+let lang = 'en';
+let inputLocked = false;
+
+const text = {
+  en: {
+    'intro-msg': "Oh no! The jungle animals are locked in cages! 🔒<br/>Help me find the right Assamese letters to free them!",
+    'btn-start-text': '▶ Start Rescue!',
+    'word-hint': '💡 Pick the first letter!',
+    'lu-title': '🎉 You freed it!',
+    'btn-next': 'Next Animal ▶',
+    'go-title': 'Oh No! Game Over',
+    'go-sub': "Rongmon needs your help! Try again!",
+    'btn-retry': '🔄 Try Again',
+    'vic-title': '🎉 All Animals Freed!<br/>You\'re Amazing!',
+    'btn-replay': '🔄 Play Again',
+    'btn-home-v': '🏠 Back to Home',
+  },
+  as: {
+    'intro-msg': "হায়! জানোৰবোৰ খাচাত বন্দী! 🔒<br/>সঠিক অসমীয়া আখৰ বিচাৰি তেওঁলোকক মুক্ত কৰক!",
+    'btn-start-text': '▶ উদ্ধাৰ আৰম্ভ কৰক!',
+    'word-hint': '💡 প্ৰথম আখৰটো বাছক!',
+    'lu-title': "🎉 মুক্ত হ'ল!",
+    'btn-next': 'পৰৱৰ্তী জন্তু ▶',
+    'go-title': 'হায় ৰাম! খেল শেষ',
+    'go-sub': "ৰংমনক সহায় কৰক! আকৌ চেষ্টা কৰক!",
+    'btn-retry': '🔄 আকৌ চেষ্টা কৰক',
+    'vic-title': '🎉 সকলো মুক্ত!<br/>তুমি অসাধাৰণ!',
+    'btn-replay': '🔄 আকৌ খেলক',
+    'btn-home-v': '🏠 মূল পৃষ্ঠালৈ',
+  }
+};
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('lp-en').classList.toggle('active', l==='en');
+  document.getElementById('lp-as').classList.toggle('active', l==='as');
+  const t = text[l];
+  for (const [id, val] of Object.entries(t)) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = val;
+  }
+  // update hint if game running
+  if (!document.getElementById('screen-game').classList.contains('hidden')) {
+    document.getElementById('word-hint').textContent = l==='en' ? '💡 Pick the first letter!' : '💡 প্ৰথম আখৰটো বাছক!';
+    const lv = levels[currentLevel];
+    document.getElementById('word-english').textContent = l==='en' ? lv.english : lv.name;
+  }
+}
+
+function showScreen(id) {
+  ['screen-intro','screen-game','screen-levelup','screen-gameover','screen-victory'].forEach(s => {
+    document.getElementById(s).classList.add('hidden');
+  });
+  document.getElementById(id).classList.remove('hidden');
+  const showHud = id === 'screen-game';
+  document.getElementById('hud').classList.toggle('hidden', !showHud);
+  document.getElementById('progress-bar-wrap').classList.toggle('hidden', !showHud);
+}
+
+function updateHUD() {
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('level-display').textContent = `Level ${currentLevel+1}/8`;
+  const heartsArr = ['','❤️','❤️❤️','❤️❤️❤️'];
+  document.getElementById('lives-display').textContent = heartsArr[Math.max(0,lives)] || '';
+  document.getElementById('progress-bar').style.width = (currentLevel / 8 * 100) + '%';
+}
+
+function startGame() {
+  currentLevel = 0;
+  lives = 3;
+  score = 0;
+  loadLevel();
+  showScreen('screen-game');
+  updateHUD();
+}
+
+function loadLevel() {
+  inputLocked = false;
+  const lv = levels[currentLevel];
+  updateHUD();
+
+  // Reset cage
+  document.getElementById('cage-bars').classList.remove('opened');
+  document.getElementById('cage-animal').textContent = lv.animal;
+
+  // Word
+  document.getElementById('word-assamese').innerHTML =
+    `<span class="blank">_</span>${lv.rest}`;
+  document.getElementById('word-english').textContent =
+    lang==='en' ? lv.english : lv.name;
+  document.getElementById('word-hint').textContent =
+    lang==='en' ? `💡 ${lv.hint_en}` : `💡 ${lv.hint_as}`;
+
+  // Shuffle answer choices
+  const choices = [lv.first, ...lv.wrong].sort(() => Math.random()-0.5);
+  const grid = document.getElementById('letters-grid');
+  grid.innerHTML = '';
+  choices.forEach(letter => {
+    const btn = document.createElement('button');
+    btn.className = 'letter-btn';
+    btn.textContent = letter;
+    btn.onclick = () => handleAnswer(btn, letter, lv);
+    grid.appendChild(btn);
+  });
+}
+
+function handleAnswer(btn, chosen, lv) {
+  if (inputLocked) return;
+  inputLocked = true;
+
+  if (chosen === lv.first) {
+    // CORRECT
+    if (typeof RongmonAudio !== 'undefined') RongmonAudio.playCorrect();
+    btn.classList.add('correct');
+    score += 10 + (lives * 5);
+    updateHUD();
+    // Open cage with delay
+    setTimeout(() => {
+      document.getElementById('cage-bars').classList.add('opened');
+      spawnConfetti();
+    }, 300);
+    setTimeout(() => {
+      if (typeof RongmonAudio !== 'undefined') RongmonAudio.playLevelUp();
+      showLevelComplete(lv);
+    }, 1100);
+  } else {
+    // WRONG
+    if (typeof RongmonAudio !== 'undefined') RongmonAudio.playWrong();
+    btn.classList.add('wrong');
+    lives = Math.max(0, lives - 1);
+    updateHUD();
+    setTimeout(() => {
+      btn.classList.remove('wrong');
+      btn.disabled = true;
+      inputLocked = false;
+      if (lives === 0) {
+        setTimeout(() => showScreen('screen-gameover'), 400);
+      }
+    }, 500);
+  }
+}
+
+function showLevelComplete(lv) {
+  document.getElementById('lu-animal').textContent = lv.animal;
+  document.getElementById('lu-word').innerHTML =
+    `<span class="learned">${lv.first}</span>${lv.rest}`;
+  document.getElementById('lu-english').textContent =
+    `${lv.name} = ${lv.english}`;
+  const starsCount = lives === 3 ? '⭐⭐⭐' : lives === 2 ? '⭐⭐' : '⭐';
+  document.getElementById('lu-stars').textContent = starsCount;
+  document.getElementById('lu-title').innerHTML =
+    lang==='en' ? `🎉 You freed the ${lv.english}!` : `🎉 ${lv.name} মুক্ত হ'ল!`;
+  document.getElementById('btn-next').textContent =
+    lang==='en'
+      ? (currentLevel >= levels.length-1 ? '🏆 Finish!' : 'Next Animal ▶')
+      : (currentLevel >= levels.length-1 ? '🏆 শেষ!' : 'পৰৱৰ্তী জন্তু ▶');
+  showScreen('screen-levelup');
+}
+
+function nextLevel() {
+  currentLevel++;
+  if (currentLevel >= levels.length) {
+    showVictory();
+  } else {
+    loadLevel();
+    showScreen('screen-game');
+    updateHUD();
+  }
+}
+
+function showVictory() {
+  document.getElementById('vic-score').textContent = `⭐ Score: ${score}`;
+  document.getElementById('vic-title').innerHTML =
+    lang==='en' ? '🎉 All Animals Freed!<br/>You\'re Amazing!' : '🎉 সকলো মুক্ত!<br/>তুমি অসাধাৰণ!';
+  document.getElementById('progress-bar').style.width = '100%';
+  if (typeof RongmonAudio !== 'undefined') RongmonAudio.playVictory();
+  showScreen('screen-victory');
+  setTimeout(spawnConfetti, 200);
+  setTimeout(spawnConfetti, 600);
+  setTimeout(spawnConfetti, 1000);
+}
+
+// ── CONFETTI ──
+function spawnConfetti() {
+  const colors = ['#f5c518','#4caf50','#e63946','#48cae4','#f4a261','#fff'];
+  const wrap = document.getElementById('game-wrap');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    const x = (Math.random()-0.5)*400;
+    const y = (Math.random())*300 + 200;
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${20+Math.random()*40}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      --cx:${x}px;--cy:${y}px;
+      animation-duration:${1+Math.random()*1}s;
+      animation-delay:${Math.random()*0.3}s;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+      width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;
+    `;
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(), 2000);
+  }
+}
+
+// ── FIREFLIES ──
+function spawnFireflies() {
+  const wrap = document.getElementById('game-wrap');
+  for (let i=0;i<12;i++) {
+    const f = document.createElement('div');
+    f.className = 'firefly';
+    const dx = (Math.random()-0.5)*200;
+    const dy = (Math.random()-0.5)*200;
+    f.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${Math.random()*70}%;
+      --dx:${dx}px; --dy:${dy}px;
+      animation-duration:${4+Math.random()*6}s;
+      animation-delay:${Math.random()*6}s;
+    `;
+    wrap.querySelector('.jungle-bg').appendChild(f);
+  }
+}
+spawnFireflies();
+
+// ── Shared modules: audio & data ───────────────────────────────
+// (loaded via script tags at bottom of file)
+
+// ── Onboarding check ──
+window.addEventListener('load', () => {
+  if (typeof RongmonData !== 'undefined' && !RongmonData.hasSeenOnboarding('jungle-rescue')) {
+    document.getElementById('onboarding').classList.remove('hidden');
+  }
+  if (typeof RongmonData !== 'undefined') {
+    const m = RongmonData.getSetting('muted');
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+});
+
+function dismissOnboarding() {
+  document.getElementById('onboarding').classList.add('hidden');
+  if (typeof RongmonData !== 'undefined') RongmonData.markOnboardingSeen('jungle-rescue');
+}
+
+function toggleMuteGame() {
+  if (typeof RongmonAudio !== 'undefined') {
+    const nowMuted = RongmonAudio.toggleMute();
+    document.getElementById('mute-btn-game').textContent = nowMuted ? '🔇' : '🔊';
+  }
+}
+
+// ── Share score ──
+function shareScore() {
+  const msg = `I scored ${score} stars in Rongmon's Jungle Rescue! 🦏🌿 Try it free at Rongmon's World! #AssamKids`;
+  const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+</script>
+<script src="rongmon-data.js"></script>
+<script src="rongmon-audio.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GyanPlay — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --saffron: #FF6B00;
+      --gold:    #FFB800;
+      --sky:     #00AEEF;
+      --green:   #00C853;
+      --dark:    #1A1A2E;
+      --light:   #FFFDF7;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(160deg, #0f0c29, #1A1A2E, #16213e);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 1.5rem 2rem;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 28px;
+      padding: 2.5rem 2.5rem;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+    }
+
+    .logo {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 2.2rem;
+      color: var(--gold);
+      margin-bottom: 0.25rem;
+    }
+    .logo span { color: var(--sky); }
+
+    .tagline {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 1.75rem;
+    }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      background: rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 1.75rem;
+      gap: 4px;
+    }
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.45);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 9px 0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active { background: var(--saffron); color: #fff; }
+
+    /* ── FORM ── */
+    .form-group {
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 5px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .input-wrap { position: relative; }
+    .input-wrap input {
+      width: 100%;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .input-wrap input::placeholder { color: rgba(255,255,255,0.2); font-weight: 400; }
+    .input-wrap input:focus { border-color: var(--saffron); }
+    .input-wrap input.has-toggle { padding-right: 44px; }
+    .toggle-pw {
+      position: absolute;
+      right: 12px; top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.3);
+      padding: 0;
+      line-height: 1;
+    }
+    .toggle-pw:hover { color: rgba(255,255,255,0.7); }
+
+    /* ── BUTTON ── */
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, var(--saffron), #e55a00);
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 13px 20px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(255,107,0,0.3);
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,107,0,0.4); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* ── SPINNER ── */
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── GOOGLE BUTTON ── */
+    .btn-google {
+      width: 100%;
+      background: #fff;
+      color: #3C4043;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      padding: 11px 20px;
+      border-radius: 12px;
+      border: 1px solid #DADCE0;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+    }
+    .btn-google:hover { background: #F8F9FA; border-color: #BDC1C6; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .btn-google:active { background: #EBEBEB; }
+
+    /* ── TEXT LINKS ── */
+    .text-link {
+      background: none;
+      border: none;
+      color: var(--sky);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+    .text-link:hover { color: #fff; }
+    .link-row {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.4);
+    }
+    .link-row button { vertical-align: baseline; }
+
+    /* ── PASSWORD STRENGTH ── */
+    .pw-hint {
+      font-size: 0.75rem;
+      margin-top: 4px;
+      font-weight: 600;
+      min-height: 18px;
+    }
+    .pw-hint.weak   { color: #ff6b6b; }
+    .pw-hint.medium { color: var(--gold); }
+    .pw-hint.strong { color: var(--green); }
+
+    /* ── MESSAGE BOX ── */
+    .msg {
+      margin-top: 1.1rem;
+      padding: 11px 15px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: none;
+      text-align: left;
+    }
+    .msg.error   { background: rgba(255,70,70,0.15);  border: 1px solid rgba(255,70,70,0.3);  color: #ff8a80; display: block; }
+    .msg.success { background: rgba(0,200,83,0.15);   border: 1px solid rgba(0,200,83,0.3);   color: #69f0ae; display: block; }
+
+    /* ── PANELS ── */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .panel-title {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #fff;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── PAGE TRANSITIONS ── */
+    body { animation: pageIn 0.4s ease; }
+    @keyframes pageIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pageOut { from { opacity: 1; } to { opacity: 0; } }
+    .page-out { animation: pageOut 0.3s ease forwards; }
+
+    /* ── BACK BUTTON ── */
+    .back-btn {
+      position: fixed;
+      top: 16px; left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.65);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 8px 16px;
+      border-radius: 30px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+
+    /* ── LANG TOGGLE ── */
+    .lang-toggle {
+      position: fixed;
+      top: 16px; right: 16px;
+      display: flex;
+      gap: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 30px;
+      padding: 4px;
+    }
+    .lang-toggle button {
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.45);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-toggle button.active { background: var(--gold); color: var(--dark); }
+  </style>
+</head>
+<body>
+
+  <!-- BACK BUTTON -->
+  <a href="index.html" class="back-btn" onclick="event.preventDefault();navTo('index.html')">
+    ← <span data-lang="en">Back to Home</span>
+    <span data-lang="as" style="display:none">হোমলৈ উভতি যাওক</span>
+    <span data-lang="hi" style="display:none">Home पर वापस जाएं</span>
+  </a>
+
+  <!-- LANG TOGGLE -->
+  <div class="lang-toggle">
+    <button id="lbEn" class="active" onclick="setLang('en')">EN</button>
+    <button id="lbHi" onclick="setLang('hi')">हि</button>
+    <button id="lbAs" onclick="setLang('as')">অ</button>
+  </div>
+
+  <div class="card">
+    <div class="logo">Gyan<span>Play</span></div>
+    <div class="tagline">
+      <span data-lang="en">Learn Through Play</span>
+      <span data-lang="as" style="display:none">খেলৰ মাধ্যমেৰে শিকক</span>
+      <span data-lang="hi" style="display:none">खेल के माध्यम से सीखें</span>
+    </div>
+
+    <!-- TAB BAR (hidden in forgot-password panel) -->
+    <div class="tabs" id="tabBar">
+      <button class="tab-btn active" id="tabLogin" onclick="showPanel('login')">
+        <span data-lang="en">Login</span>
+        <span data-lang="as" style="display:none">লগইন</span>
+        <span data-lang="hi" style="display:none">लॉगिन</span>
+      </button>
+      <button class="tab-btn" id="tabRegister" onclick="showPanel('register')">
+        <span data-lang="en">Register</span>
+        <span data-lang="as" style="display:none">পঞ্জীয়ন</span>
+        <span data-lang="hi" style="display:none">रजिस्टर</span>
+      </button>
+    </div>
+
+    <!-- ── LOGIN PANEL ── -->
+    <div class="panel active" id="panelLogin">
+      <div class="form-group">
+        <label>
+          <span data-lang="en">Email or Phone Number</span>
+          <span data-lang="as" style="display:none">ইমেইল বা ফোন নম্বৰ</span>
+          <span data-lang="hi" style="display:none">Email या Phone Number</span>
+        </label>
+        <div class="input-wrap">
+          <input type="text" id="loginIdentifier" placeholder="you@email.com or 9876543210" autocomplete="username"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>
+          <span data-lang="en">Password</span>
+          <span data-lang="as" style="display:none">পাছৱৰ্ড</span>
+          <span data-lang="hi" style="display:none">Password</span>
+        </label>
+        <div class="input-wrap">
+          <input type="password" id="loginPassword" class="has-toggle" placeholder="••••••••" autocomplete="current-password"/>
+          <button class="toggle-pw" type="button" onclick="togglePw('loginPassword',this)">👁</button>
+        </div>
+      </div>
+      <button class="btn-primary" id="loginBtn" onclick="handleLoginSubmit()">
+        <span id="loginBtnText">
+          <span data-lang="en">Login</span>
+          <span data-lang="as" style="display:none">লগইন কৰক</span>
+          <span data-lang="hi" style="display:none">लॉगिन करें</span>
+        </span>
+      </button>
+      <div class="msg" id="loginMsg"></div>
+
+      <!-- Google Sign-In Button -->
+      <div style="display:flex;align-items:center;gap:12px;margin:1.25rem 0;">
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.1);"></div>
+        <span style="font-size:0.75rem;color:rgba(255,255,255,0.35);font-weight:700;">
+          <span data-lang="en">or</span>
+          <span data-lang="as" style="display:none">বা</span>
+          <span data-lang="hi" style="display:none">या</span>
+        </span>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.1);"></div>
+      </div>
+      <button class="btn-google" id="googleBtn" onclick="handleGoogleLogin()">
+        <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          <path fill="none" d="M0 0h48v48H0z"/>
+        </svg>
+        <span data-lang="en">Continue with Google</span>
+        <span data-lang="as" style="display:none">Google-ৰে অব্যাহত ৰাখক</span>
+        <span data-lang="hi" style="display:none">Google से जारी रखें</span>
+      </button>
+
+      <div class="link-row">
+        <button class="text-link" onclick="showPanel('forgot')">
+          <span data-lang="en">Forgot password?</span>
+          <span data-lang="as" style="display:none">পাছৱৰ্ড পাহৰিলে?</span>
+          <span data-lang="hi" style="display:none">Password भूल गए?</span>
+        </button>
+      </div>
+      <div class="link-row">
+        <span data-lang="en">New here?</span>
+        <span data-lang="as" style="display:none">নতুন?</span>
+        <span data-lang="hi" style="display:none">नए हैं?</span>
+        <button class="text-link" onclick="showPanel('register')">
+          &nbsp;<span data-lang="en">Create an account</span>
+          <span data-lang="as" style="display:none">একাউণ্ট তৈয়াৰ কৰক</span>
+          <span data-lang="hi" style="display:none">Account बनाएं</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── REGISTER PANEL ── -->
+    <div class="panel" id="panelRegister">
+      <div class="form-group">
+        <label>
+          <span data-lang="en">Student's Name</span>
+          <span data-lang="as" style="display:none">শিক্ষাৰ্থীৰ নাম</span>
+          <span data-lang="hi" style="display:none">Student का नाम</span>
+        </label>
+        <div class="input-wrap">
+          <input type="text" id="regStudentName" placeholder="Child's full name" autocomplete="off" maxlength="60"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>
+          <span data-lang="en">Father's / Guardian's Name</span>
+          <span data-lang="as" style="display:none">পিতা / অভিভাৱকৰ নাম</span>
+          <span data-lang="hi" style="display:none">पिता / Guardian का नाम</span>
+        </label>
+        <div class="input-wrap">
+          <input type="text" id="regFatherName" placeholder="Guardian's full name" autocomplete="off" maxlength="60"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>
+          <span data-lang="en">Phone Number</span>
+          <span data-lang="as" style="display:none">ফোন নম্বৰ</span>
+          <span data-lang="hi" style="display:none">Phone Number</span>
+        </label>
+        <div class="input-wrap">
+          <input type="tel" id="regPhone" placeholder="10-digit mobile number" autocomplete="tel" maxlength="15"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>
+          <span data-lang="en">Email Address</span>
+          <span data-lang="as" style="display:none">ইমেইল ঠিকনা</span>
+          <span data-lang="hi" style="display:none">Email Address</span>
+        </label>
+        <div class="input-wrap">
+          <input type="email" id="regEmail" placeholder="your@email.com" autocomplete="email"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>
+          <span data-lang="en">Password</span>
+          <span data-lang="as" style="display:none">পাছৱৰ্ড</span>
+          <span data-lang="hi" style="display:none">Password</span>
+        </label>
+        <div class="input-wrap">
+          <input type="password" id="regPassword" class="has-toggle" placeholder="Min 6 characters"
+                 autocomplete="new-password" oninput="checkPwStrength(this.value)"/>
+          <button class="toggle-pw" type="button" onclick="togglePw('regPassword',this)">👁</button>
+        </div>
+        <div class="pw-hint" id="pwHint"></div>
+      </div>
+      <button class="btn-primary" id="registerBtn" onclick="handleRegisterSubmit()">
+        <span id="registerBtnText">
+          <span data-lang="en">Create Account</span>
+          <span data-lang="as" style="display:none">একাউণ্ট তৈয়াৰ কৰক</span>
+          <span data-lang="hi" style="display:none">Account बनाएं</span>
+        </span>
+      </button>
+      <div class="msg" id="registerMsg"></div>
+      <div class="link-row">
+        <span data-lang="en">Already have an account?</span>
+        <span data-lang="as" style="display:none">একাউণ্ট আছে?</span>
+        <span data-lang="hi" style="display:none">पहले से account है?</span>
+        <button class="text-link" onclick="showPanel('login')">
+          &nbsp;<span data-lang="en">Login</span>
+          <span data-lang="as" style="display:none">লগইন কৰক</span>
+          <span data-lang="hi" style="display:none">Login करें</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── FORGOT PASSWORD PANEL ── -->
+    <div class="panel" id="panelForgot">
+      <div class="panel-title">
+        <span data-lang="en">Reset Password</span>
+        <span data-lang="as" style="display:none">পাছৱৰ্ড ৰিছেট</span>
+        <span data-lang="hi" style="display:none">Password Reset</span>
+      </div>
+      <div class="form-group">
+        <label>
+          <span data-lang="en">Registration Email</span>
+          <span data-lang="as" style="display:none">পঞ্জীয়নৰ ইমেইল</span>
+          <span data-lang="hi" style="display:none">Registration Email</span>
+        </label>
+        <div class="input-wrap">
+          <input type="email" id="resetEmail" placeholder="your@email.com" autocomplete="email"/>
+        </div>
+      </div>
+      <button class="btn-primary" id="resetBtn" onclick="handleResetSubmit()">
+        <span id="resetBtnText">
+          <span data-lang="en">Send Reset Link</span>
+          <span data-lang="as" style="display:none">ৰিছেট লিংক পঠাওক</span>
+          <span data-lang="hi" style="display:none">Reset Link भेजें</span>
+        </span>
+      </button>
+      <div class="msg" id="resetMsg"></div>
+      <div class="link-row">
+        <button class="text-link" onclick="showPanel('login')">
+          ← <span data-lang="en">Back to Login</span>
+          <span data-lang="as" style="display:none">লগইনলৈ উভতক</span>
+          <span data-lang="hi" style="display:none">Login पर वापस</span>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /card -->
+
+  <!-- ── Non-module helpers: UI utils, lang, panel switching ── -->
+  <script>
+    function setLang(l) {
+      ['en','hi','as'].forEach(code => {
+        const btn = document.getElementById('lb' + code.charAt(0).toUpperCase() + code.slice(1));
+        if (btn) btn.classList.toggle('active', code === l);
+      });
+      document.querySelectorAll('[data-lang]').forEach(el => {
+        el.style.display = el.getAttribute('data-lang') === l ? 'inline' : 'none';
+      });
+      localStorage.setItem('gyanplay_lang', l);
+    }
+
+    function navTo(href) {
+      document.body.classList.add('page-out');
+      setTimeout(() => { window.location.href = href; }, 300);
+    }
+
+    function showPanel(name) {
+      ['login','register','forgot'].forEach(p => {
+        document.getElementById('panel' + p.charAt(0).toUpperCase() + p.slice(1))
+          .classList.toggle('active', p === name);
+      });
+      document.getElementById('tabBar').style.display = name === 'forgot' ? 'none' : 'flex';
+      document.getElementById('tabLogin').classList.toggle('active', name === 'login');
+      document.getElementById('tabRegister').classList.toggle('active', name === 'register');
+      ['loginMsg','registerMsg','resetMsg'].forEach(id => {
+        const el = document.getElementById(id);
+        el.className = 'msg';
+        el.textContent = '';
+      });
+    }
+
+    function togglePw(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const show  = input.type === 'password';
+      input.type  = show ? 'text' : 'password';
+      btn.textContent = show ? '🙈' : '👁';
+    }
+
+    function checkPwStrength(val) {
+      const hint = document.getElementById('pwHint');
+      if (!val) { hint.textContent = ''; hint.className = 'pw-hint'; return; }
+      if (val.length < 6) {
+        hint.textContent = '⚠ Too short (min 6 characters)';
+        hint.className   = 'pw-hint weak';
+      } else if (val.length < 8) {
+        hint.textContent = '○ Weak — use 8+ characters for better security';
+        hint.className   = 'pw-hint medium';
+      } else {
+        hint.textContent = '✓ Strong password';
+        hint.className   = 'pw-hint strong';
+      }
+    }
+
+    function showMsg(id, type, text) {
+      const el = document.getElementById(id);
+      el.className   = `msg ${type}`;
+      el.textContent = text;
+    }
+
+    function setLoading(btnId, textId, loading) {
+      const btn = document.getElementById(btnId);
+      btn.disabled = loading;
+      document.getElementById(textId).innerHTML = loading
+        ? '<div class="spinner"></div>'
+        : document.getElementById(textId).innerHTML; // kept — lang re-applies on next setLang call
+      if (loading) {
+        document.getElementById(textId).innerHTML = '<div class="spinner"></div>';
+      }
+    }
+
+    function normalizePhone(val) {
+      // Strip non-digits, remove leading 91 country code, keep last 10 digits
+      return val.replace(/\D/g, '').replace(/^91(\d{10})$/, '$1').slice(-10);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setLang(localStorage.getItem('gyanplay_lang') || 'en');
+    });
+  </script>
+
+  <!-- ── Module script: Firebase auth calls ── -->
+  <script type="module">
+    import { registerUser, loginWithEmail, loginWithPhone, sendPasswordReset, loginWithGoogle } from "./src/auth.js";
+    import { auth, googleProvider } from "./src/firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    // ── Google Login Handler ──
+    window.handleGoogleLogin = async function () {
+      const lang = localStorage.getItem('gyanplay_lang') || 'en';
+      const msgs = {
+        en: '✅ Signed in with Google! Redirecting...',
+        hi: '✅ Google से लॉगिन हुआ! Redirecting...',
+        as: '✅ Google-ৰে লগইন হৈছে! Redirecting...'
+      };
+
+      console.log("[Google Login] Attempting Google sign-in...");
+      const result = await loginWithGoogle(googleProvider);
+      console.log("[Google Login] Result:", result);
+      
+      if (result.success) {
+        showMsg('loginMsg', 'success', msgs[lang] || msgs.en);
+        setTimeout(() => navTo('dashboard.html'), 800);
+      } else {
+        if (result.error !== 'popup_closed') {
+          console.error("[Google Login] Failed:", result.error, result.message);
+          showMsg('loginMsg', 'error', result.message || 'Google sign-in failed. Please try again.');
+        } else {
+          console.log("[Google Login] Popup was closed by user");
+        }
+      }
+    };
+
+    // If already logged in, skip the login page
+    onAuthStateChanged(auth, (user) => {
+      if (user) navTo('dashboard.html');
+    });
+
+    window.handleLoginSubmit = async function () {
+      const identifier = document.getElementById('loginIdentifier').value.trim();
+      const password   = document.getElementById('loginPassword').value;
+      const lang       = localStorage.getItem('gyanplay_lang') || 'en';
+
+      if (!identifier || !password) {
+        const msgs = { en: 'Please fill in all fields.', hi: 'सभी fields भरें।', as: 'সকলো তথ্য পূৰণ কৰক।' };
+        return showMsg('loginMsg', 'error', msgs[lang] || msgs.en);
+      }
+
+      document.getElementById('loginBtnText').innerHTML = '<div class="spinner"></div>';
+      document.getElementById('loginBtn').disabled = true;
+      document.getElementById('loginMsg').className = 'msg';
+
+      const phone   = normalizePhone(identifier);
+      const isPhone = /^\d{10}$/.test(phone) && !identifier.includes('@');
+      const result  = isPhone
+        ? await loginWithPhone(phone, password)
+        : await loginWithEmail(identifier, password);
+
+      document.getElementById('loginBtn').disabled = false;
+      setLang(lang); // restores button text
+
+      if (result.success) {
+        const successMsgs = {
+          en: '✅ Logged in! Redirecting...',
+          hi: '✅ लॉगिन हुआ! Redirecting...',
+          as: '✅ লগইন হৈছে! Redirecting...'
+        };
+        showMsg('loginMsg', 'success', successMsgs[lang] || successMsgs.en);
+        setTimeout(() => navTo('dashboard.html'), 800);
+      } else {
+        showMsg('loginMsg', 'error', result.message);
+      }
+    };
+
+    window.handleRegisterSubmit = async function () {
+      const studentName = document.getElementById('regStudentName').value.trim();
+      const fatherName  = document.getElementById('regFatherName').value.trim();
+      const rawPhone    = document.getElementById('regPhone').value.trim();
+      const email       = document.getElementById('regEmail').value.trim();
+      const password    = document.getElementById('regPassword').value;
+      const lang        = localStorage.getItem('gyanplay_lang') || 'en';
+      const phone       = normalizePhone(rawPhone);
+
+      // Client-side validation
+      if (!studentName || !fatherName || !rawPhone || !email || !password) {
+        const msgs = { en: 'Please fill in all fields.', hi: 'सभी fields भरें।', as: 'সকলো তথ্য পূৰণ কৰক।' };
+        return showMsg('registerMsg', 'error', msgs[lang] || msgs.en);
+      }
+      if (!/^\d{10}$/.test(phone)) {
+        const msgs = {
+          en: 'Please enter a valid 10-digit phone number.',
+          hi: '10 अंकों का valid phone number दर्ज करें।',
+          as: '10 অংকৰ বৈধ ফোন নম্বৰ দিয়ক।'
+        };
+        return showMsg('registerMsg', 'error', msgs[lang] || msgs.en);
+      }
+      if (password.length < 6) {
+        const msgs = {
+          en: 'Password must be at least 6 characters.',
+          hi: 'Password कम से कम 6 characters का होना चाहिए।',
+          as: 'পাছৱৰ্ড কমেও ৬টা আখৰৰ হ\'ব লাগিব।'
+        };
+        return showMsg('registerMsg', 'error', msgs[lang] || msgs.en);
+      }
+
+      document.getElementById('registerBtnText').innerHTML = '<div class="spinner"></div>';
+      document.getElementById('registerBtn').disabled = true;
+      document.getElementById('registerMsg').className = 'msg';
+
+      const result = await registerUser(email, password, studentName, fatherName, phone);
+
+      document.getElementById('registerBtn').disabled = false;
+      setLang(lang); // restores button text
+
+      if (result.success) {
+        const successMsgs = {
+          en: '✅ Account created! Redirecting...',
+          hi: '✅ Account बना! Redirecting...',
+          as: '✅ একাউণ্ট হৈছে! Redirecting...'
+        };
+        showMsg('registerMsg', 'success', successMsgs[lang] || successMsgs.en);
+        setTimeout(() => navTo('dashboard.html'), 900);
+      } else {
+        showMsg('registerMsg', 'error', result.message);
+      }
+    };
+
+    window.handleResetSubmit = async function () {
+      const email = document.getElementById('resetEmail').value.trim();
+      const lang  = localStorage.getItem('gyanplay_lang') || 'en';
+
+      if (!email) {
+        const msgs = { en: 'Please enter your email.', hi: 'अपना email दर्ज करें।', as: 'আপোনাৰ ইমেইল দিয়ক।' };
+        return showMsg('resetMsg', 'error', msgs[lang] || msgs.en);
+      }
+
+      document.getElementById('resetBtnText').innerHTML = '<div class="spinner"></div>';
+      document.getElementById('resetBtn').disabled = true;
+      document.getElementById('resetMsg').className = 'msg';
+
+      const result = await sendPasswordReset(email);
+
+      document.getElementById('resetBtn').disabled = false;
+      setLang(lang);
+
+      if (result.success) {
+        const successMsgs = {
+          en: '✅ Reset link sent! Check your inbox.',
+          hi: '✅ Reset link भेजा! Inbox देखें।',
+          as: '✅ ৰিছেট লিংক পঠোৱা হ\'ল! Inbox চাওক।'
+        };
+        showMsg('resetMsg', 'success', successMsgs[lang] || successMsgs.en);
+      } else {
+        showMsg('resetMsg', 'error', result.message);
+      }
+    };
+  </script>
+
+</body>
+</html>

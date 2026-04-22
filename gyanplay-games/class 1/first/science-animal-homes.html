@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Animal Homes 🏠 — Class 1 Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--green:#2E7D32;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#FFF9C4,#FFECB3,#FFE082,#FFF9C4);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* BG DECO */
+.bg-clouds{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.bcloud{position:absolute;font-size:2.5rem;opacity:.25;animation:cloudDrift linear infinite;}
+@keyframes cloudDrift{from{transform:translateX(-200px);}to{transform:translateX(calc(100vw+200px));}}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#E65100;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#E65100;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#E65100;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* QUESTION */
+.question-card{position:relative;z-index:20;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.95);border-radius:24px;padding:12px 22px;margin:8px 16px;text-align:center;max-width:620px;width:calc(100% - 32px);box-shadow:0 6px 20px rgba(0,0,0,.08);}
+.q-animal{font-size:clamp(3.5rem,14vw,6rem);animation:animalBob 1.8s ease-in-out infinite;display:block;}
+@keyframes animalBob{0%,100%{transform:scale(1) rotate(-3deg);}50%{transform:scale(1.1) rotate(3deg);}}
+.q-text{font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4.5vw,1.7rem);color:#E65100;margin-top:6px;}
+.q-sub{font-size:clamp(.8rem,2.8vw,1rem);color:#BF360C;font-weight:700;margin-top:3px;}
+.hear-animal-btn{background:rgba(255,255,255,.5);border:2px solid rgba(230,81,0,.3);color:#E65100;border-radius:50px;padding:5px 14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.82rem;cursor:pointer;margin-top:6px;}
+
+/* HOME CHOICES */
+.homes-grid{position:relative;z-index:20;display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,2.5vw,16px);padding:0 14px;max-width:700px;width:100%;margin:8px 0;}
+.home-card{
+  background:rgba(255,255,255,.72);backdrop-filter:blur(8px);
+  border:3px solid rgba(255,255,255,.8);border-radius:20px;
+  padding:clamp(10px,2.5vw,18px) clamp(8px,2vw,14px);
+  text-align:center;cursor:pointer;
+  transition:all .2s;
+  box-shadow:0 5px 0 rgba(0,0,0,.1);
+  position:relative;top:0;
+}
+.home-card:hover{top:-4px;box-shadow:0 9px 0 rgba(0,0,0,.08);border-color:rgba(255,152,0,.5);}
+.home-card.correct{border-color:#43A047;background:rgba(67,160,71,.2);animation:homePop .5s ease;}
+@keyframes homePop{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1);}}
+.home-card.wrong{border-color:#E53935;background:rgba(229,57,53,.15);animation:homeShake .35s ease;opacity:.45;pointer-events:none;}
+@keyframes homeShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+.home-emoji{font-size:clamp(2rem,8vw,3.5rem);display:block;}
+.home-name{font-family:'Fredoka One',cursive;font-size:clamp(.8rem,3vw,1.1rem);color:#E65100;margin-top:4px;}
+.home-desc{font-size:clamp(.6rem,2vw,.75rem);color:#FF8F00;font-weight:700;}
+
+/* ANIMAL GOING HOME ANIMATION */
+.animal-travel{
+  position:fixed;pointer-events:none;z-index:200;
+  font-size:clamp(2.5rem,8vw,4rem);
+  animation:travelHome .6s ease-out forwards;
+}
+@keyframes travelHome{
+  0%{transform:scale(1);}
+  40%{transform:scale(1.4) rotate(15deg);}
+  70%{transform:scale(.8) rotate(-5deg);}
+  100%{transform:scale(0);opacity:0;}
+}
+
+/* FACT BOX */
+.fact-box{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(230,81,0,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:400px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3.2s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.85rem,3vw,1.1rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:2;}
+.ov-btn{background:linear-gradient(135deg,#E65100,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(230,81,0,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="bg-clouds" id="bgClouds"></div>
+
+<div class="header">
+  <div class="title">🏠 Animal Homes</div>
+  <div class="lvchip">Where do animals live?</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">🏠 Round: <span id="roundVal">1</span>/12</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="question-card">
+  <span class="q-animal" id="qAnimal">🦁</span>
+  <div class="q-text">Where does the <span id="qAnimalName" style="color:#E53935;">LION</span> live?</div>
+  <div class="q-sub" id="qSub">Find the right home!</div>
+  <button class="hear-animal-btn" onclick="hearAnimal()">🔊 Hear more!</button>
+</div>
+
+<div class="homes-grid" id="homesGrid"></div>
+
+<script>
+const ANIMALS=[
+  {emoji:'🦁',name:'LION',    home:'den',    fact:'🦁 Lions live in a DEN! Lions are the kings of the jungle!'},
+  {emoji:'🐦',name:'BIRD',    home:'nest',   fact:'🐦 Birds live in a NEST! They build nests with twigs and leaves!'},
+  {emoji:'🐟',name:'FISH',    home:'water',  fact:'🐟 Fish live in WATER! They breathe through gills!'},
+  {emoji:'🐝',name:'BEE',     home:'hive',   fact:'🐝 Bees live in a HIVE! They make honey inside their hive!'},
+  {emoji:'🐕',name:'DOG',     home:'kennel', fact:'🐕 Dogs live in a KENNEL! They are our home pets!'},
+  {emoji:'🐇',name:'RABBIT',  home:'burrow', fact:'🐇 Rabbits live in a BURROW! They dig holes underground!'},
+  {emoji:'🐍',name:'SNAKE',   home:'hole',   fact:'🐍 Snakes live in a HOLE in the ground! They love hiding!'},
+  {emoji:'🐮',name:'COW',     home:'barn',   fact:'🐮 Cows live in a BARN! Farmers give them hay and grass!'},
+  {emoji:'🐟',name:'FISH',    home:'water',  fact:'🐟 Fish live in WATER — rivers, lakes, and the ocean!'},
+  {emoji:'🐻',name:'BEAR',    home:'cave',   fact:'🐻 Bears live in a CAVE! They sleep all winter inside!'},
+  {emoji:'🦜',name:'PARROT',  home:'nest',   fact:'🦜 Parrots live in tree NESTS in forests!'},
+  {emoji:'🐠',name:'CLOWNFISH',home:'coral', fact:'🐠 Clownfish live in CORAL reefs in the ocean!'},
+];
+
+const ALL_HOMES=[
+  {id:'den',    emoji:'🏔️',name:'Den',    desc:'Lions & big cats'},
+  {id:'nest',   emoji:'🪺',name:'Nest',   desc:'Birds & parrots'},
+  {id:'water',  emoji:'🌊',name:'Water',  desc:'Fish & dolphins'},
+  {id:'hive',   emoji:'🍯',name:'Hive',   desc:'Bees & wasps'},
+  {id:'kennel', emoji:'🏠',name:'Kennel', desc:'Pet dogs'},
+  {id:'burrow', emoji:'🕳️',name:'Burrow', desc:'Rabbits & foxes'},
+  {id:'hole',   emoji:'🫧',name:'Hole',   desc:'Snakes & moles'},
+  {id:'barn',   emoji:'🏚️',name:'Barn',   desc:'Cows & horses'},
+  {id:'cave',   emoji:'🏕️',name:'Cave',   desc:'Bears & bats'},
+  {id:'coral',  emoji:'🪸',name:'Coral',  desc:'Clownfish'},
+];
+const TOTAL=12;
+let score=0,round=0,current=null,answered=false;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playCorrect(){const c=ac();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*100));}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;window.speechSynthesis.speak(u);}
+function hearAnimal(){if(current)speak(current.fact);}
+window.hearAnimal=hearAnimal;
+
+function makeDots(){
+  const p=document.getElementById('progRow');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}
+}
+function spawnConf(){
+  const cols=['#E65100','#FFD700','#43A047','#1E88E5','#FB8C00'];
+  for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}
+}
+function showFact(txt){
+  document.querySelector('.fact-box')?.remove();
+  const el=document.createElement('div');el.className='fact-box';el.textContent=txt;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),3700);
+}
+function animalFlyHome(cx,cy){
+  const el=document.createElement('div');el.className='animal-travel';
+  el.textContent=current.emoji;el.style.cssText=`left:${cx-20}px;top:${cy-20}px;`;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),700);
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+  current=ANIMALS[round%ANIMALS.length];
+  document.getElementById('qAnimal').textContent=current.emoji;
+  document.getElementById('qAnimalName').textContent=current.name;
+  document.getElementById('qSub').textContent=`Where does the ${current.name.toLowerCase()} live?`;
+  buildHomes();
+  setTimeout(()=>speak(`Where does the ${current.name.toLowerCase()} live?`),400);
+}
+
+function buildHomes(){
+  const grid=document.getElementById('homesGrid');grid.innerHTML='';
+  const correct=ALL_HOMES.find(h=>h.id===current.home);
+  const others=ALL_HOMES.filter(h=>h.id!==current.home).sort(()=>Math.random()-.5).slice(0,5);
+  const all=[correct,...others].sort(()=>Math.random()-.5);
+  all.forEach(home=>{
+    const card=document.createElement('div');card.className='home-card';
+    card.innerHTML=`<span class="home-emoji">${home.emoji}</span><div class="home-name">${home.name}</div><div class="home-desc">${home.desc}</div>`;
+    card.onclick=function(){
+      const rect=this.getBoundingClientRect();
+      checkHome(this,home,rect.left+rect.width/2,rect.top);
+    };
+    grid.appendChild(card);
+  });
+}
+
+function checkHome(card,home,cx,cy){
+  if(answered)return;
+  if(home.id===current.home){
+    answered=true;
+    card.classList.add('correct');
+    playCorrect();spawnConf();animalFlyHome(cx,cy);showFact(current.fact);
+    score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(current.fact);
+    round++;makeDots();setTimeout(newRound,3000);
+  } else {
+    card.classList.add('wrong');playWrong();
+    speak(`That is a ${home.name}! The ${current.name.toLowerCase()} lives in a ${current.home}!`);
+  }
+}
+
+function showCelebration(){
+  playChime();spawnConf();
+  const summary=ANIMALS.slice(0,6).map(a=>`${a.emoji} ${a.name} → ${ALL_HOMES.find(h=>h.id===a.home)?.emoji}`).join('  ');
+  speak(`Fantastic! You know where all animals live! What a nature expert!`);
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🏠</div>
+    <div class="ov-title">Nature Expert!</div>
+    <div class="ov-sub">
+      🦁 Lion → Den &nbsp; 🐦 Bird → Nest<br/>
+      🐟 Fish → Water &nbsp; 🐝 Bee → Hive<br/>
+      🐻 Bear → Cave &nbsp; 🐮 Cow → Barn<br/><br/>
+      Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!
+    </div>
+    <button class="ov-btn" onclick="restart()">Play Again 🏠</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+// bg clouds
+function makeClouds(){
+  const bg=document.getElementById('bgClouds');
+  ['☁️','⛅','🌤️'].forEach((e,i)=>{
+    const c=document.createElement('div');c.className='bcloud';c.textContent=e;
+    c.style.cssText=`top:${5+i*8}%;animation-duration:${20+i*5}s;animation-delay:${i*6}s;`;
+    bg.appendChild(c);
+  });
+}
+
+window.addEventListener('load',()=>{makeClouds();window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Welcome! Find the right home for each animal!');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

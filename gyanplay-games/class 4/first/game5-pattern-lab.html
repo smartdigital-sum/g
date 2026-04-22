@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Pattern Lab — GyanPlay Class 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#180A28,#0F0820);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 40px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.h-left{display:flex;flex-direction:column;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.game-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--dim);}
+.subject-tag{font-size:0.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:1.3rem;opacity:.25;transition:opacity .3s,filter .3s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.wow{background:linear-gradient(135deg,rgba(199,125,255,.15),rgba(199,125,255,.04));
+  border:1px solid rgba(199,125,255,.3);border-radius:16px;padding:16px;margin-bottom:18px;}
+.wow-emoji{font-size:2rem;margin-bottom:6px;}
+.wow p{font-size:0.88rem;line-height:1.55;}
+.wow p span{color:var(--gold);font-weight:700;}
+.wow-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--dim);margin-top:6px;}
+.game-area{background:var(--card);border-radius:20px;padding:20px;margin-bottom:16px;
+  border:1px solid rgba(199,125,255,.15);}
+.rule-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(199,125,255,.12);
+  border:1px solid rgba(199,125,255,.25);border-radius:99px;padding:5px 12px;margin-bottom:14px;}
+.rule-label{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;}
+.rule-val{font-family:'Baloo 2',sans-serif;font-size:.9rem;font-weight:800;color:var(--purple);}
+
+/* Sequence display */
+.seq-row{display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:18px;}
+.seq-tile{min-width:46px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;position:relative;}
+.seq-tile.known{background:rgba(199,125,255,.12);border:1px solid rgba(199,125,255,.25);color:var(--text);}
+.seq-tile.blank{background:rgba(255,209,102,.1);border:2px dashed rgba(255,209,102,.4);color:var(--gold);}
+.seq-tile.blank.filled{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal);}
+.seq-arrow{color:var(--dim);font-size:.9rem;}
+
+/* Rule selector */
+.rule-q{font-size:.82rem;color:var(--dim);margin-bottom:8px;}
+.rule-q .as{font-family:'Noto Sans Devanagari',sans-serif;display:block;font-size:.75rem;}
+.rule-opts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.rule-opt{padding:8px 14px;background:rgba(199,125,255,.08);border:2px solid rgba(199,125,255,.2);
+  border-radius:10px;font-family:'Baloo 2',sans-serif;font-size:.9rem;font-weight:700;
+  color:var(--text);cursor:pointer;touch-action:manipulation;transition:background .15s,transform .1s;}
+.rule-opt:active{transform:scale(.96);}
+.rule-opt.selected{background:rgba(199,125,255,.25);border-color:var(--purple);color:var(--purple);}
+.rule-opt.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal);}
+.rule-opt.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral);}
+
+/* Answer options */
+.ans-q{font-size:.82rem;color:var(--dim);margin-bottom:8px;}
+.ans-q .as{font-family:'Noto Sans Devanagari',sans-serif;display:block;font-size:.75rem;}
+.ans-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.ans-opt{padding:12px;background:rgba(255,209,102,.07);border:2px solid rgba(255,209,102,.2);
+  border-radius:12px;font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;
+  color:var(--text);text-align:center;cursor:pointer;touch-action:manipulation;transition:background .15s,transform .1s;}
+.ans-opt:active{transform:scale(.96);}
+.ans-opt.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal);}
+.ans-opt.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral);}
+.ans-opt.disabled{pointer-events:none;}
+
+.feedback{text-align:center;font-size:.88rem;min-height:1.2em;font-weight:600;}
+.feedback.ok{color:var(--teal);}
+.feedback.err{color:var(--coral);}
+.progress-wrap{margin-bottom:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);margin-bottom:5px;}
+.prog-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--purple);border-radius:99px;transition:width .4s;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;
+  justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-card{background:var(--card);border:1px solid rgba(199,125,255,.3);border-radius:22px;
+  padding:28px 24px;text-align:center;max-width:320px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);}to{transform:scale(1) translateY(0);}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px;}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.ov-fact{font-size:.83rem;line-height:1.5;margin-bottom:12px;}
+.ov-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+.ov-btn{padding:12px 28px;background:var(--gold);color:#0F0820;border:none;border-radius:12px;
+  font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:200;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen"><div style="font-size:2.5rem">🔄</div><p>Loading… / লোড হৈছে…</p></div>
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="h-left">
+      <div class="game-title">Pattern Lab</div>
+      <div class="game-title-as">আৰ্হিৰ পৰীক্ষাগাৰ</div>
+      <div class="subject-tag">Maths · শ্ৰেণী ৪</div>
+    </div>
+    <div class="stars" id="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+      <span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+  <div class="wow">
+    <div class="wow-emoji">🌻</div>
+    <p><span>Fibonacci numbers</span> appear in sunflowers, pineapples, and galaxies. The universe seems to run on patterns. <span>Find the rule — predict the universe!</span></p>
+    <div class="wow-as">ফিবোনাচি সংখ্যা সূৰ্যমুখী, আনাৰস আৰু গেলাক্সিত দেখা যায়। সৃষ্টিকর্তা আৰ্হি ব্যৱহাৰ কৰে!</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-label"><span>Pattern <span id="qNum">1</span>/8</span><span style="font-family:'Noto Sans Devanagari',sans-serif;">আৰ্হি <span id="qNumAs">১</span>/৮</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="game-area">
+    <!-- Sequence -->
+    <div class="seq-row" id="seqRow"></div>
+    <!-- Step 1: choose rule -->
+    <div id="step1">
+      <div class="rule-q">What is the rule? / <span class="as">নিয়মটো কি?</span></div>
+      <div class="rule-opts" id="ruleOpts"></div>
+    </div>
+    <!-- Step 2: fill blank -->
+    <div id="step2" style="display:none;">
+      <div class="ans-q">What is the missing number? / <span class="as">হেৰুওৱা সংখ্যাটো কি?</span></div>
+      <div class="ans-opts" id="ansOpts"></div>
+    </div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <div class="ov-as" id="ovAs"></div>
+    <button class="ov-btn" id="ovBtn" onclick="nextRound()">Next →</button>
+  </div>
+</div>
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",
+  projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let currentUser=null;
+auth.onAuthStateChanged(u=>{
+  if(!u){window.location.href='/login.html';return;}
+  currentUser=u;
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initGame();
+});
+
+// seq: full sequence, gapIdx: which index is hidden, rule: display string, ruleOpts: [correct, ...wrong]
+const PATTERNS=[
+  {seq:[2,4,8,16,32,64],gapIdx:4,rule:'×2',ruleOpts:['×2','+4','×3','+10'],fact:"×2 pattern = exponential growth. Rice on chessboard uses this — doubles every square!",factAs:"×২ আৰ্হি = ঘাতীয় বৃদ্ধি। দবা খেলৰ চাউলৰ সমস্যাত এই একে আৰ্হি!"},
+  {seq:[3,6,9,12,15,18],gapIdx:3,rule:'+3',ruleOpts:['+3','×3','+6','−3'],fact:"+3 = multiples of 3. Assam has 3 seasons — Brahmaputra floods in multiples of 3 years!",factAs:"+৩ = ৩ৰ গুণিতক। অসমৰ বানপানীও এই আৰ্হি মানে!"},
+  {seq:[1,1,2,3,5,8,13],gapIdx:5,rule:'Fibonacci',ruleOpts:['Fibonacci','+3','×2','+5'],fact:"Fibonacci! Each number = sum of two before it. Found in sunflowers in Assam!",factAs:"ফিবোনাচি! প্ৰতিটো সংখ্যা = আগৰ দুটাৰ যোগফল। অসমৰ ফুলতো পোৱা যায়!"},
+  {seq:[100,90,80,70,60,50],gapIdx:2,rule:'−10',ruleOpts:['−10','÷10','−20','+10'],fact:"−10 each step. Countdown patterns appear in cricket — 10 overs, 9 overs, 8...",factAs:"প্ৰতিটোত −১০। ক্ৰিকেটৰ ওভাৰ গণনাত এই আৰ্হি!"},
+  {seq:[1,4,9,16,25,36],gapIdx:4,rule:'Square',ruleOpts:['Square numbers','+5','×4','Fibonacci'],fact:"1,4,9,16,25 = 1²,2²,3²,4²,5². Perfect squares! Used in area calculations.",factAs:"বর্গ সংখ্যা! কালি গণনাত ব্যৱহাৰ হয়।"},
+  {seq:[5,10,20,40,80,160],gapIdx:3,rule:'×2',ruleOpts:['×2','+10','×3','×5'],fact:"Double each time — this is how bank compound interest grows your savings!",factAs:"প্ৰতিবাৰ দ্বিগুণ — বেংকৰ সুদো এইদৰে বাঢ়ে!"},
+  {seq:[2,5,10,17,26,37],gapIdx:2,rule:'+odd numbers',ruleOpts:['+odd numbers','+3','×2','Square+1'],fact:"+3,+5,+7,+9... adding consecutive odd numbers! Gaps follow a pattern too.",factAs:"+৩,+৫,+৭,+৯... বিজোড় সংখ্যা যোগ। এয়াও এটা আৰ্হি!"},
+  {seq:[3,9,27,81,243,729],gapIdx:3,rule:'×3',ruleOpts:['×3','+6','+3','×9'],fact:"×3 each step — powers of 3. Used in Fibonacci spirals of nature!",factAs:"প্ৰতিবাৰ ×৩। প্ৰকৃতিৰ সর্পিল আৰ্হিত ব্যৱহাৰ!"}
+];
+const MSG=["Excellent!","Brilliant!","Spot on!","Amazing!","Outstanding!","You got it!","Pattern Pro!","Champion!"];
+let round=0,score=0,ruleChosen=false;
+
+function initGame(){round=0;score=0;updateStars(0);loadRound();}
+
+function loadRound(){
+  ruleChosen=false;
+  const p=PATTERNS[round];
+  document.getElementById('qNum').textContent=round+1;
+  document.getElementById('qNumAs').textContent=['১','২','৩','৪','৫','৬','৭','৮'][round];
+  document.getElementById('progFill').style.width=(round/8*100)+'%';
+  document.getElementById('feedback').textContent='';
+  document.getElementById('step1').style.display='block';
+  document.getElementById('step2').style.display='none';
+  // Sequence row
+  const row=document.getElementById('seqRow');
+  row.innerHTML='';
+  p.seq.forEach((v,i)=>{
+    if(i>0){const a=document.createElement('span');a.className='seq-arrow';a.textContent='→';row.appendChild(a);}
+    const tile=document.createElement('div');
+    if(i===p.gapIdx){
+      tile.className='seq-tile blank';tile.textContent='?';tile.id='blankTile';
+    } else {
+      tile.className='seq-tile known';tile.textContent=v;
+    }
+    row.appendChild(tile);
+  });
+  // Rule options
+  const rOpts=document.getElementById('ruleOpts');
+  rOpts.innerHTML='';
+  // Shuffle
+  const opts=[...p.ruleOpts].sort(()=>Math.random()-.5);
+  opts.forEach(o=>{
+    const btn=document.createElement('div');
+    btn.className='rule-opt';btn.textContent=o;
+    btn.addEventListener('click',()=>chooseRule(btn,o,p));
+    rOpts.appendChild(btn);
+  });
+}
+
+function chooseRule(btn,chosen,p){
+  document.querySelectorAll('.rule-opt').forEach(b=>b.style.pointerEvents='none');
+  const fb=document.getElementById('feedback');
+  if(chosen===p.rule){
+    btn.classList.add('correct');
+    fb.className='feedback ok';fb.textContent='✓ Correct rule! Now find the missing number! / সঠিক নিয়ম! এতিয়া হেৰুওৱা সংখ্যা বিচাৰক!';
+    setTimeout(()=>{
+      document.getElementById('step2').style.display='block';
+      document.getElementById('feedback').textContent='';
+      buildAnsOpts(p);
+    },700);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.rule-opt').forEach(b=>{if(b.textContent===p.rule)b.classList.add('correct');});
+    fb.className='feedback err';fb.textContent='❌ That\'s not the rule. Watch the pattern! / নিয়মটো মিলেনি!';
+    setTimeout(()=>nextRound(),2000);
+  }
+}
+
+function buildAnsOpts(p){
+  const correct=p.seq[p.gapIdx];
+  const opts=new Set([correct]);
+  while(opts.size<4){const v=correct+Math.floor(Math.random()*20)-10;if(v>0&&v!==correct)opts.add(v);}
+  const sortedOpts=[...opts].sort((a,b)=>a-b);
+  const container=document.getElementById('ansOpts');
+  container.innerHTML='';
+  sortedOpts.forEach(v=>{
+    const btn=document.createElement('div');
+    btn.className='ans-opt';btn.textContent=v;
+    btn.addEventListener('click',()=>chooseAns(btn,v,correct,p));
+    container.appendChild(btn);
+  });
+}
+
+function chooseAns(btn,chosen,correct,p){
+  document.querySelectorAll('.ans-opt').forEach(b=>b.classList.add('disabled'));
+  const fb=document.getElementById('feedback');
+  if(chosen===correct){
+    btn.classList.add('correct');
+    document.getElementById('blankTile').textContent=correct;
+    document.getElementById('blankTile').classList.add('filled');
+    score++;updateStars(Math.min(5,score));confetti();
+    const msg=MSG[Math.floor(Math.random()*MSG.length)];
+    document.getElementById('ovEmoji').textContent='🌻';
+    document.getElementById('ovTitle').textContent=msg;
+    document.getElementById('ovFact').textContent=p.fact;
+    document.getElementById('ovAs').textContent=p.factAs;
+    document.getElementById('ovBtn').textContent=round<7?'Next → / পৰৱৰ্তী':'Finish! / শেষ!';
+    setTimeout(()=>showOverlay(true),500);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.ans-opt').forEach(b=>{if(parseInt(b.textContent)===correct)b.classList.add('correct');});
+    fb.className='feedback err';fb.textContent='❌ Not quite! / ঠিক নহয়!';
+    setTimeout(()=>nextRound(),2000);
+  }
+}
+
+function nextRound(){showOverlay(false);round++;if(round>=8){endGame();}else{loadRound();}}
+
+function endGame(){
+  trackProgress();
+  document.getElementById('ovEmoji').textContent='🏆';
+  document.getElementById('ovTitle').textContent='Pattern Master! / আৰ্হিৰ ওস্তাদ!';
+  document.getElementById('ovFact').textContent=`Score: ${score}/8! You can now see hidden rules that most people miss!`;
+  document.getElementById('ovAs').textContent=`স্কোৰ: ${score}/৮! তুমি এতিয়া লুকাই থকা নিয়মও দেখিব পাৰা!`;
+  document.getElementById('ovBtn').textContent='🔄 Play Again / আকৌ খেলক';
+  document.getElementById('ovBtn').onclick=()=>{showOverlay(false);initGame();};
+  showOverlay(true);
+}
+async function trackProgress(){
+  if(!currentUser)return;
+  try{await db.collection('users').doc(currentUser.uid).collection('progress').doc('class4-game5').set(
+    {score,total:8,gameId:'class4-game5',gameName:'Pattern Lab',class:4,subject:'Maths',
+     completedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+}
+function updateStars(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function showOverlay(s){document.getElementById('overlay').classList.toggle('show',s);}
+function confetti(){
+  const cols=['#FFD166','#C77DFF','#06D6A0','#FF6B6B','#4CC9F0'];
+  for(let i=0;i<28;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%5]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);
+  }
+}
+</script>
+</body>
+</html>

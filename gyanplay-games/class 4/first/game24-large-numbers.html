@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Large Numbers – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;--text:#e8e0ff;--muted:#9b8ec4}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes barGrow{from{width:0}to{width:var(--w)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(26,23,64,.85);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,107,0,.2)}
+.back-btn{background:none;border:1.5px solid rgba(255,107,0,.4);color:var(--saffron);padding:6px 14px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:.2s}
+.back-btn:hover{background:rgba(255,107,0,.15)}
+.badge{background:linear-gradient(90deg,var(--saffron),var(--gold));color:#000;font-weight:800;font-family:'Baloo 2',sans-serif;padding:5px 14px;border-radius:20px;font-size:.8rem;letter-spacing:.5px}
+.lang-toggle{display:flex;gap:6px}
+.lang-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);padding:5px 11px;border-radius:14px;font-size:.78rem;font-weight:700;cursor:pointer;transition:.2s;font-family:'Nunito',sans-serif}
+.lang-btn.active{background:rgba(255,107,0,.25);border-color:var(--saffron);color:var(--saffron)}
+.wrap{max-width:700px;margin:0 auto;padding:24px 16px 60px}
+.score-bar-wrap{display:flex;align-items:center;gap:12px;margin-bottom:22px;animation:fadeIn .5s ease}
+.score-label{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;color:var(--gold);min-width:90px}
+.prog-track{flex:1;height:10px;background:rgba(255,255,255,.1);border-radius:10px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--saffron),var(--gold));border-radius:10px;transition:width .5s ease}
+.q-card{background:var(--card);border-radius:20px;padding:28px 24px;animation:fadeIn .4s ease;border:1px solid rgba(255,107,0,.12);box-shadow:0 8px 40px rgba(0,0,0,.4)}
+.q-number{font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.big-number{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:3rem;color:var(--gold);text-align:center;margin:16px 0;text-shadow:0 0 30px rgba(255,184,0,.35);letter-spacing:2px}
+.q-text{font-size:1.05rem;font-weight:600;line-height:1.55;margin-bottom:20px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);color:var(--text);padding:13px 16px;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:.2s;text-align:left;line-height:1.4}
+.opt-btn:hover:not(:disabled){background:rgba(255,107,0,.15);border-color:var(--saffron);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);animation:pop .3s ease}
+.opt-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);animation:shake .3s ease}
+.opt-btn.reveal{background:rgba(0,200,83,.1);border-color:rgba(0,200,83,.4);color:rgba(0,200,83,.7)}
+.opt-btn:disabled{cursor:default}
+.feedback{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:.9rem;font-weight:600;line-height:1.5;animation:fadeIn .3s ease}
+.feedback.correct{background:rgba(0,200,83,.12);border:1px solid rgba(0,200,83,.3);color:#6effa5}
+.feedback.wrong{background:rgba(255,64,129,.1);border:1px solid rgba(255,64,129,.3);color:#ff9ebf}
+.next-btn{margin-top:18px;width:100%;background:linear-gradient(90deg,var(--saffron),var(--gold));color:#000;border:none;padding:14px;border-radius:12px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:.2s;letter-spacing:.5px}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,107,0,.4)}
+.end-card{background:var(--card);border-radius:24px;padding:40px 28px;text-align:center;animation:fadeIn .6s ease;border:1px solid rgba(255,184,0,.2);box-shadow:0 8px 50px rgba(0,0,0,.5)}
+.stars{font-size:2.8rem;margin:12px 0;letter-spacing:4px}
+.end-score{font-family:'Baloo 2',sans-serif;font-size:3.5rem;font-weight:800;color:var(--gold);text-shadow:0 0 30px rgba(255,184,0,.4)}
+.end-label{font-size:1rem;color:var(--muted);margin-top:4px}
+.end-msg{font-size:1.1rem;font-weight:700;margin:16px 0 24px;color:var(--text)}
+.play-again{background:linear-gradient(90deg,var(--saffron),var(--gold));color:#000;border:none;padding:14px 32px;border-radius:14px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:.2s}
+.play-again:hover{transform:scale(1.04);box-shadow:0 6px 24px rgba(255,107,0,.4)}
+[data-en],[data-hi],[data-as]{display:none}
+.lang-en [data-en]{display:inline}
+.lang-hi [data-hi]{display:inline}
+.lang-as [data-as]{display:inline}
+body{--lang:en}
+.lang-switch .opt-btn{font-size:.88rem}
+</style>
+</head>
+<body class="lang-en">
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-en>Back</span><span data-hi>वापस</span><span data-as>পিছলৈ</span></button>
+  <span class="badge">📐 Maths</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+<div class="wrap">
+  <div class="score-bar-wrap">
+    <div class="score-label"><span data-en>Score:</span><span data-hi>अंक:</span><span data-as>নম্বৰ:</span> <span id="scoreDisplay">0</span>/100</div>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div style="font-size:.85rem;color:var(--muted)" id="qCounter">1/10</div>
+  </div>
+  <div id="gameArea"></div>
+</div>
+<script>
+const questions=[
+{num:"47,835",q:{en:"What is the place value of 7 in 47,835?",hi:"47,835 में 7 का स्थानीय मान क्या है?",as:"47,835-ত 7-ৰ স্থানীয় মান কি?"},opts:{en:["7,000","700","70","7"],hi:["7,000","700","70","7"],as:["7,000","700","70","7"]},ans:0,exp:{en:"7 is in the thousands place, so its place value is 7,000.",hi:"7 हज़ारों के स्थान पर है, इसलिए उसका स्थानीय मान 7,000 है।",as:"7 হাজাৰৰ স্থানত আছে, গতিকে ইয়াৰ স্থানীয় মান 7,000।"}},
+{num:"3,04,256",q:{en:"How do you read 3,04,256 in the Indian system?",hi:"भारतीय प्रणाली में 3,04,256 को कैसे पढ़ेंगे?",as:"ভাৰতীয় পদ্ধতিত 3,04,256 কেনেকৈ পঢ়িব?"},opts:{en:["Three lakh four thousand two hundred fifty-six","Thirty four thousand two hundred fifty-six","Three hundred four thousand two hundred fifty-six","Three lakh forty-two thousand fifty-six"],hi:["तीन लाख चार हज़ार दो सौ छप्पन","चौंतीस हज़ार दो सौ छप्पन","तीन लाख बयालीस हज़ार छप्पन","तीन सौ चार हज़ार"],as:["তিন লাখ চাৰি হাজাৰ দুশ ছাপান্ন","চৌত্ৰিছ হাজাৰ দুশ ছাপান্ন","তিন লাখ বিয়াল্লিছ হাজাৰ ছাপান্ন","তিনশ চাৰি হাজাৰ"]},ans:0,exp:{en:"In the Indian system: 3,04,256 = 3 lakh + 4 thousand + 2 hundred + 56.",hi:"भारतीय प्रणाली: 3,04,256 = 3 लाख + 4 हज़ार + 200 + 56।",as:"ভাৰতীয় পদ্ধতিত: 3,04,256 = 3 লাখ + 4 হাজাৰ + 200 + 56।"}},
+{num:"4,352",q:{en:"What is the expanded form of 4,352?",hi:"4,352 का विस्तारित रूप क्या है?",as:"4,352-ৰ বিস্তাৰিত ৰূপ কি?"},opts:{en:["4000+300+50+2","400+300+50+2","4000+350+2","4000+30+52"],hi:["4000+300+50+2","400+300+50+2","4000+350+2","4000+30+52"],as:["4000+300+50+2","400+300+50+2","4000+350+2","4000+30+52"]},ans:0,exp:{en:"4 thousands + 3 hundreds + 5 tens + 2 ones = 4000+300+50+2.",hi:"4 हज़ार + 3 सौ + 5 दहाई + 2 इकाई = 4000+300+50+2।",as:"4 হাজাৰ + 3 শত + 5 দহ + 2 এক = 4000+300+50+2।"}},
+{num:"85,000 vs 58,000",q:{en:"Which is correct?",hi:"कौन सा सही है?",as:"কোনটো শুদ্ধ?"},opts:{en:["85,000 > 58,000","85,000 < 58,000","85,000 = 58,000","Cannot compare"],hi:["85,000 > 58,000","85,000 < 58,000","85,000 = 58,000","तुलना नहीं हो सकती"],as:["85,000 > 58,000","85,000 < 58,000","85,000 = 58,000","তুলনা কৰিব নোৱাৰি"]},ans:0,exp:{en:"85,000 has 8 in ten-thousands place while 58,000 has 5, so 85,000 is greater.",hi:"85,000 के दस हज़ार के स्थान पर 8 है, 58,000 में 5 है, इसलिए 85,000 बड़ा है।",as:"85,000-ৰ দহ-হাজাৰৰ স্থানত 8 আছে, 58,000-ত 5, গতিকে 85,000 বৰ।"}},
+{num:"1,00,000",q:{en:"1,00,000 in the Indian system is called:",hi:"भारतीय प्रणाली में 1,00,000 को कहते हैं:",as:"ভাৰতীয় পদ্ধতিত 1,00,000-ক কোৱা হয়:"},opts:{en:["One Lakh","Ten Thousand","One Million","One Hundred Thousand"],hi:["एक लाख","दस हज़ार","दस लाख","एक मिलियन"],as:["এক লাখ","দহ হাজাৰ","দহ লাখ","এক মিলিয়ন"]},ans:0,exp:{en:"1,00,000 = One Lakh in the Indian numbering system.",hi:"भारतीय प्रणाली में 1,00,000 = एक लाख।",as:"ভাৰতীয় পদ্ধতিত 1,00,000 = এক লাখ।"}},
+{num:"67,843",q:{en:"Round 67,843 to the nearest hundred:",hi:"67,843 को निकटतम सौ तक पूर्णांकित करें:",as:"67,843-ক নিকটতম শতকত ঘূৰাওক:"},opts:{en:["67,800","67,900","68,000","67,000"],hi:["67,800","67,900","68,000","67,000"],as:["67,800","67,900","68,000","67,000"]},ans:0,exp:{en:"The tens digit is 4 (less than 5), so we round down: 67,800.",hi:"दहाई का अंक 4 है (5 से कम), इसलिए नीचे: 67,800।",as:"দহৰ স্থানৰ অংক 4 (5-তকৈ কম), গতিকে তলফালে: 67,800।"}},
+{num:"50,000 + 6,000 + 400 + 20 + 9",q:{en:"The standard form is:",hi:"मानक रूप है:",as:"মানক ৰূপ হ'ব:"},opts:{en:["56,429","50,6429","5,64,29","506,429"],hi:["56,429","50,6429","5,64,29","506,429"],as:["56,429","50,6429","5,64,29","506,429"]},ans:0,exp:{en:"50,000+6,000+400+20+9 = 56,429.",hi:"50,000+6,000+400+20+9 = 56,429।",as:"50,000+6,000+400+20+9 = 56,429।"}},
+{num:"100,000 (International)",q:{en:"100,000 in the International system is:",hi:"अंतर्राष्ट्रीय प्रणाली में 100,000 है:",as:"আন্তৰ্জাতিক পদ্ধতিত 100,000 হ'ল:"},opts:{en:["One Hundred Thousand","One Lakh","Ten Thousand","One Million"],hi:["एक लाख","एक सौ हज़ार","दस लाख","दस हज़ार"],as:["এক লাখ","এক লাখ হাজাৰ","দহ লাখ","দহ হাজাৰ"]},ans:0,exp:{en:"In the International system, 100,000 = One Hundred Thousand (= 1 Lakh in Indian).",hi:"अंतर्राष्ट्रीय प्रणाली में 100,000 = एक सौ हज़ार (भारतीय: 1 लाख)।",as:"আন্তৰ্জাতিক পদ্ধতিত 100,000 = এক লাখ হাজাৰ (ভাৰতীয়: 1 লাখ)।"}},
+{num:"23,567",q:{en:"The digit in the ten-thousands place of 23,567 is:",hi:"23,567 में दस हज़ार के स्थान का अंक है:",as:"23,567-ত দহ-হাজাৰৰ স্থানৰ অংক:"},opts:{en:["2","3","5","6"],hi:["2","3","5","6"],as:["2","3","5","6"]},ans:0,exp:{en:"In 23,567: 2 is in ten-thousands, 3 is in thousands place.",hi:"23,567 में: 2 दस हज़ार के स्थान पर, 3 हज़ार के स्थान पर।",as:"23,567-ত: 2 দহ-হাজাৰৰ স্থানত, 3 হাজাৰৰ স্থানত।"}},
+{num:"39,999 + 1",q:{en:"39,999 + 1 = ?",hi:"39,999 + 1 = ?",as:"39,999 + 1 = ?"},opts:{en:["40,000","39,000","40,001","30,000"],hi:["40,000","39,000","40,001","30,000"],as:["40,000","39,000","40,001","30,000"]},ans:0,exp:{en:"39,999 + 1 = 40,000. Adding 1 to 39,999 gives the next round number: forty thousand.",hi:"39,999 + 1 = 40,000। 39,999 में 1 जोड़ने पर अगला गोल संख्या मिलती है।",as:"39,999 + 1 = 40,000। 39,999-ত 1 যোগ কৰিলে পৰৱৰ্তী গোল সংখ্যা পোৱা যায়।"}}
+];
+
+let cur=0,score=0,answered=false,lang='en';
+const scores=new Array(10).fill(0);
+
+function setLang(l){
+  lang=l;
+  document.body.className='lang-'+l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+  renderQ();
+}
+
+function renderQ(){
+  const q=questions[cur];
+  const pct=((cur)/10)*100;
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('qCounter').textContent=(cur+1)+'/10';
+  document.getElementById('scoreDisplay').textContent=score;
+  const opts=q.opts[lang].map((o,i)=>`<button class="opt-btn" onclick="answer(${i})">${o}</button>`).join('');
+  document.getElementById('gameArea').innerHTML=`
+    <div class="q-card">
+      <div class="q-number">Question ${cur+1} of 10</div>
+      <div class="big-number">${q.num}</div>
+      <div class="q-text">${q.q[lang]}</div>
+      <div class="options">${opts}</div>
+      <div id="feedback"></div>
+      <div id="nextWrap"></div>
+    </div>`;
+  answered=false;
+}
+
+function answer(i){
+  if(answered)return;
+  answered=true;
+  const q=questions[cur];
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  const correct=i===q.ans;
+  btns[i].classList.add(correct?'correct':'wrong');
+  if(!correct) btns[q.ans].classList.add('reveal');
+  const pts=correct?10:0;
+  score+=pts;
+  scores[cur]=pts;
+  document.getElementById('feedback').innerHTML=`<div class="feedback ${correct?'correct':'wrong'}">${correct?'✓':'✗'} ${q.exp[lang]}</div>`;
+  document.getElementById('nextWrap').innerHTML=`<button class="next-btn" onclick="next()">${cur<9?'Next →':'See Results'}</button>`;
+}
+
+function next(){
+  cur++;
+  if(cur>=10){showEnd();return;}
+  renderQ();
+}
+
+function showEnd(){
+  const pct=(score/100)*100;
+  const stars=pct>=90?3:pct>=70?2:pct>=40?1:0;
+  const starStr='★'.repeat(stars)+'☆'.repeat(3-stars);
+  const msgs={en:["Keep practising, you'll get there!","Good effort! Review place values.","Great job! Almost perfect!","Outstanding! Number master!"],hi:["अभ्यास जारी रखें!","अच्छा प्रयास! स्थानीय मान दोहराएं।","शाबाश! लगभग परफेक्ट!","उत्कृष्ट! नंबर मास्टर!"],as:["অভ্যাস কৰি থাকক!","ভাল প্ৰচেষ্টা! স্থানীয় মান পুনৰাই চাওক।","অসাধাৰণ! প্ৰায় নিখুঁত!","অতুলনীয়! সংখ্যা বিশেষজ্ঞ!"]};
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('qCounter').textContent='10/10';
+  document.getElementById('scoreDisplay').textContent=score;
+  document.getElementById('gameArea').innerHTML=`
+    <div class="end-card">
+      <div style="font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold)">Large Numbers</div>
+      <div class="stars">${starStr}</div>
+      <div class="end-score">${score}<span style="font-size:1.5rem;color:var(--muted)">/100</span></div>
+      <div class="end-label">${stars} Star${stars!==1?'s':''}</div>
+      <div class="end-msg">${msgs[lang][stars]}</div>
+      <button class="play-again" onclick="restart()">🔄 Play Again</button>
+    </div>`;
+}
+
+function restart(){cur=0;score=0;answered=false;renderQ();}
+renderQ();
+</script>
+</body>
+</html>

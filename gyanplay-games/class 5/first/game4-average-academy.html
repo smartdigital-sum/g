@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>G5-04 · Average Academy · GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A;
+  --grad-from:#180A28;--grad-to:#0F0820;--accent:var(--purple);
+  --border:rgba(199,125,255,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(145deg,var(--grad-from),var(--grad-to));min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;padding:0 0 40px;}
+.header{width:100%;max-width:480px;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;}
+.subject-tag{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);}
+.stars{display:flex;gap:3px;}
+.star{font-size:1rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+
+.wow-card{width:calc(100% - 32px);max-width:448px;background:linear-gradient(135deg,rgba(199,125,255,.18),rgba(76,201,240,.12));border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin:8px 16px 16px;text-align:center;}
+.wow-card .wow-label{font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.wow-card p{font-size:.95rem;line-height:1.6;}
+.wow-card strong{color:var(--gold);}
+
+.stage-tabs{width:calc(100% - 32px);max-width:448px;margin:0 16px 14px;display:flex;gap:6px;}
+.tab-btn{flex:1;padding:8px 4px;border-radius:10px;border:2px solid transparent;font-family:'Baloo 2',cursive;font-weight:700;font-size:.78rem;background:var(--card);color:var(--dim);cursor:pointer;transition:all .2s;}
+.tab-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(199,125,255,.1);}
+
+.section{width:calc(100% - 32px);max-width:448px;margin:0 16px;}
+
+/* SCORE INPUT */
+.scoreboard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px;}
+.sb-title{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px;text-align:center;}
+.score-rows{display:flex;flex-direction:column;gap:8px;}
+.score-row{display:flex;align-items:center;gap:10px;}
+.score-label{font-size:.85rem;font-weight:700;color:var(--text);width:80px;flex-shrink:0;}
+.score-input{
+  flex:1;background:rgba(199,125,255,.08);border:2px solid var(--border);
+  border-radius:8px;padding:8px 12px;color:var(--gold);
+  font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;
+  text-align:center;outline:none;transition:border-color .2s;
+}
+.score-input:focus{border-color:var(--accent);}
+.score-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+
+/* BALANCE SCALE */
+.scale-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center;}
+.scale-title{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:12px;}
+.scale-vis{position:relative;height:100px;margin:0 auto;max-width:280px;}
+.scale-beam{position:absolute;top:40px;left:10%;width:80%;height:4px;background:var(--dim);border-radius:2px;transform-origin:50% 50%;transition:transform .6s ease;}
+.scale-pivot{position:absolute;top:36px;left:50%;transform:translateX(-50%);width:12px;height:12px;background:var(--gold);border-radius:50%;}
+.scale-pole{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:3px;height:60px;background:var(--dim);}
+.scale-pan{
+  position:absolute;bottom:0;
+  background:rgba(199,125,255,.15);border:2px solid var(--accent);
+  border-radius:50%;width:60px;height:30px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Baloo 2',cursive;font-size:.85rem;font-weight:800;color:var(--gold);
+  transition:bottom .6s ease;
+}
+.pan-left{left:5%;transform:translateX(0);}
+.pan-right{right:5%;}
+.scale-avg{margin-top:12px;font-size:.9rem;color:var(--dim);}
+.scale-avg .avg-val{font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--gold);}
+
+/* BAR GRAPH */
+.bargraph-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px;}
+.bg-title{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px;text-align:center;}
+.bargraph{display:flex;align-items:flex-end;gap:6px;height:140px;border-bottom:2px solid rgba(255,255,255,.1);padding:0 4px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.bar-fill{width:100%;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--accent),rgba(199,125,255,.4));transition:height .8s cubic-bezier(.34,1.56,.64,1);min-height:2px;}
+.bar-label{font-size:.62rem;color:var(--dim);font-weight:700;text-align:center;}
+.bar-val{font-size:.65rem;color:var(--gold);font-weight:800;}
+.avg-line{position:relative;margin-top:4px;width:100%;height:2px;background:rgba(255,209,102,.4);}
+.avg-line-label{font-size:.7rem;color:var(--gold);font-weight:700;text-align:center;margin-top:3px;}
+
+/* QUIZ */
+.quiz-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;}
+.quiz-q{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:10px;line-height:1.5;}
+.quiz-opts{display:flex;flex-wrap:wrap;gap:8px;}
+.quiz-opt{
+  background:rgba(199,125,255,.1);border:2px solid var(--border);
+  color:var(--text);font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;
+  padding:8px 16px;border-radius:10px;cursor:pointer;transition:all .2s;
+}
+.quiz-opt:hover{border-color:var(--accent);color:var(--accent);}
+.quiz-opt.selected{border-color:var(--accent);background:rgba(199,125,255,.2);color:var(--accent);}
+.quiz-opt.correct-ans{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal);}
+.quiz-opt.wrong-ans{border-color:var(--coral);background:rgba(255,107,107,.1);color:var(--coral);}
+
+.check-btn{width:100%;padding:14px;border-radius:14px;border:none;font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--accent),#8B5CF6);color:#fff;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(199,125,255,.35);}
+.check-btn:hover{opacity:.9;}
+.check-btn:disabled{opacity:.4;cursor:not-allowed;}
+.feedback{margin-top:12px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.9rem;text-align:center;display:none;}
+.feedback.correct{background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.4);color:var(--teal);}
+.feedback.wrong{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:var(--coral);}
+
+.progress-row{width:calc(100% - 32px);max-width:448px;margin:16px 16px 0;display:flex;align-items:center;justify-content:space-between;}
+.progress-text{font-size:.8rem;font-weight:700;color:var(--dim);}
+.next-btn{background:var(--gold);color:#1A0F00;font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;border:none;border-radius:50px;padding:8px 22px;cursor:pointer;display:none;}
+
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:30px 28px;max-width:360px;width:90%;text-align:center;}
+.overlay-box .o-emoji{font-size:3rem;margin-bottom:12px;}
+.overlay-box h3{font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--gold);margin-bottom:8px;}
+.overlay-box p{font-size:.9rem;color:var(--text);line-height:1.6;}
+.overlay-box strong{color:var(--teal);}
+
+.complete-screen{width:calc(100% - 32px);max-width:448px;margin:20px 16px;background:var(--card);border:2px solid rgba(6,214,160,.3);border-radius:22px;padding:32px 24px;text-align:center;display:none;}
+.complete-screen .big{font-size:4rem;margin-bottom:12px;}
+.complete-screen h2{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--gold);margin-bottom:8px;}
+.complete-screen p{color:var(--text);font-size:.95rem;line-height:1.6;margin-bottom:20px;}
+.play-again{background:var(--teal);color:#040E04;font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;border:none;border-radius:50px;padding:12px 28px;cursor:pointer;}
+
+.confetti-piece{position:fixed;width:10px;height:10px;opacity:0;animation:confFall 1.8s ease-in forwards;pointer-events:none;z-index:200;}
+@keyframes confFall{0%{opacity:1;transform:translateY(0) rotate(0deg);}100%{opacity:0;transform:translateY(80vh) rotate(720deg);}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="subject-tag">Maths</div>
+  <div class="game-title">📊 Average Academy</div>
+  <div class="stars">
+    <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+    <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+  </div>
+</div>
+
+<div class="wow-card">
+  <div class="wow-label">🤯 Did You Know?</div>
+  <p>Cricket batting averages have been calculated since <strong>1877!</strong> Average tells you the <strong>STORY of a player's whole career</strong> in a single number. One number can summarise hundreds of games!</p>
+</div>
+
+<div class="stage-tabs">
+  <button class="tab-btn active" id="tab1">1. Enter Scores</button>
+  <button class="tab-btn" id="tab2">2. Balance Scale</button>
+  <button class="tab-btn" id="tab3">3. Bar Graph Quiz</button>
+</div>
+
+<!-- STAGE 1: Enter scores & calculate average -->
+<div class="section" id="stage1">
+  <div class="scoreboard">
+    <div class="sb-title">🏏 Cricket Scorecard — Enter 5 Innings Scores</div>
+    <div class="score-rows" id="scoreRows"></div>
+  </div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;text-align:center;">
+    <div style="font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;">Your Calculated Average</div>
+    <div style="font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;" id="calcAvg">—</div>
+    <div style="font-size:.8rem;color:var(--dim);margin-top:4px;" id="calcFormula">Enter scores above to see average</div>
+  </div>
+  <button class="check-btn" id="stage1Check" onclick="checkStage1()">Calculate Average ✓</button>
+  <div class="feedback" id="s1Feedback"></div>
+</div>
+
+<!-- STAGE 2: Balance scale visualization -->
+<div class="section" id="stage2" style="display:none;">
+  <div class="scale-wrap">
+    <div class="scale-title">⚖️ The Balance Scale finds the "Fair Share"</div>
+    <div class="scale-vis" id="scaleVis">
+      <div class="scale-pole"></div>
+      <div class="scale-pivot"></div>
+      <div class="scale-beam" id="scaleBeam"></div>
+      <div class="scale-pan pan-left" id="panLeft">Sum</div>
+      <div class="scale-pan pan-right" id="panRight">Avg×n</div>
+    </div>
+    <div class="scale-avg" id="scaleAvgText"></div>
+  </div>
+  <div id="s2Quiz"></div>
+  <button class="check-btn" id="s2Check" onclick="checkStage2()">Verify ✓</button>
+  <div class="feedback" id="s2Feedback"></div>
+</div>
+
+<!-- STAGE 3: Read a bar graph -->
+<div class="section" id="stage3" style="display:none;">
+  <div class="bargraph-wrap">
+    <div class="bg-title">📊 Read This Player's Scores</div>
+    <div class="bargraph" id="barGraph"></div>
+    <div class="avg-line-label" id="avgLineLabel"></div>
+  </div>
+  <div id="s3Quiz"></div>
+  <button class="check-btn" id="s3Check" onclick="checkStage3()">Check Answer ✓</button>
+  <div class="feedback" id="s3Feedback"></div>
+</div>
+
+<div class="progress-row">
+  <span class="progress-text" id="progressText">Stage 1 of 3</span>
+  <button class="next-btn" id="nextBtn" onclick="nextStage()">Next Stage →</button>
+</div>
+
+<div class="complete-screen" id="completeScreen">
+  <div class="big">🏏</div>
+  <h2>Average Academy Graduate!</h2>
+  <p>You can calculate mean, visualise it on a balance scale, and read bar graphs. A batting average of <strong>50+</strong> is considered world-class — now you know exactly what that means!</p>
+  <button class="play-again" onclick="restartGame()">Play Again 🔄</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="o-emoji" id="oEmoji">🎉</div>
+    <h3 id="oTitle">Correct!</h3>
+    <p id="oFact"></p>
+  </div>
+</div>
+
+<script>
+let stage=1, score=0;
+let userScores=[], calculatedAvg=0;
+const SCORE_NAMES=['Innings 1','Innings 2','Innings 3','Innings 4','Innings 5'];
+const PRESET_SCORES=[45,72,38,56,89]; // default demo
+
+// BAR GRAPH DATA (pre-set for stage 3)
+const BG_DATA={
+  scores:[30,55,20,70,45],
+  labels:['M1','M2','M3','M4','M5'],
+  avg:44
+};
+
+function buildScoreInputs(){
+  const rows=document.getElementById('scoreRows');
+  rows.innerHTML='';
+  SCORE_NAMES.forEach((name,i)=>{
+    const row=document.createElement('div');
+    row.className='score-row';
+    row.innerHTML=`<span class="score-label">${name}</span><input class="score-input" type="number" id="inp${i}" min="0" max="200" placeholder="0-200" value="${PRESET_SCORES[i]}" oninput="updateLiveAvg()"/>`;
+    rows.appendChild(row);
+  });
+  updateLiveAvg();
+}
+
+function updateLiveAvg(){
+  const vals=[];
+  for(let i=0;i<5;i++){
+    const v=parseInt(document.getElementById(`inp${i}`).value)||0;
+    vals.push(v);
+  }
+  const sum=vals.reduce((a,b)=>a+b,0);
+  const avg=(sum/5).toFixed(1);
+  document.getElementById('calcAvg').textContent=avg;
+  document.getElementById('calcFormula').textContent=`(${vals.join(' + ')}) ÷ 5 = ${sum} ÷ 5`;
+  userScores=vals; calculatedAvg=parseFloat(avg);
+}
+
+function checkStage1(){
+  const vals=[];
+  for(let i=0;i<5;i++) vals.push(parseInt(document.getElementById(`inp${i}`).value)||0);
+  if(vals.some(v=>v<0||v>200)){
+    showFeedback('s1Feedback','wrong','⚠️ Keep scores between 0 and 200!'); return;
+  }
+  const sum=vals.reduce((a,b)=>a+b,0);
+  userScores=vals; calculatedAvg=sum/5;
+  score++;updateStars();
+  showFeedback('s1Feedback','correct',`✅ Average = ${calculatedAvg.toFixed(1)} runs per innings! That's ${calculatedAvg>50?'world-class!':'good cricket!'}`);
+  document.getElementById('nextBtn').style.display='block';
+  document.getElementById('stage1Check').disabled=true;
+  spawnConfetti();
+  showOverlay('📊','Average Calculated!',`Sum = <strong>${sum}</strong>, divide by <strong>5</strong> innings = <strong>${calculatedAvg.toFixed(1)}</strong>. The average is the "fair share" across all games!`);
+}
+
+function buildStage2(){
+  const sum=userScores.reduce((a,b)=>a+b,0);
+  const avg=calculatedAvg;
+  document.getElementById('panLeft').textContent=sum;
+  document.getElementById('panRight').textContent=(avg*5).toFixed(0);
+  document.getElementById('scaleAvgText').innerHTML=`Average = <span class="avg-val">${avg.toFixed(1)}</span> — the "fair share" if all innings were equal`;
+  // balance animation
+  setTimeout(()=>{document.getElementById('scaleBeam').style.transform='rotate(0deg)';},300);
+
+  // Quiz: which score is above average?
+  const aboveAvg=userScores.filter(s=>s>avg);
+  const opts=userScores.slice().sort(()=>Math.random()-.5).slice(0,4);
+  if(!opts.includes(aboveAvg[0])) opts[0]=aboveAvg[0];
+  const quiz=document.getElementById('s2Quiz');
+  quiz.innerHTML=`
+    <div class="quiz-card">
+      <div class="quiz-q">Which of these scores is <strong style="color:var(--gold)">above the average</strong> of ${avg.toFixed(1)}?</div>
+      <div class="quiz-opts">${opts.map(o=>`<button class="quiz-opt" onclick="selectOpt(this,'${o}','s2')">${o}</button>`).join('')}</div>
+    </div>`;
+}
+
+let s2Selected=null, s3Selected=null;
+window.selectOpt=function(el,val,stage){
+  if(stage==='s2'){
+    s2Selected=val;
+    document.querySelectorAll('#s2Quiz .quiz-opt').forEach(b=>b.classList.toggle('selected',b===el));
+  } else {
+    s3Selected=val;
+    document.querySelectorAll('#s3Quiz .quiz-opt').forEach(b=>b.classList.toggle('selected',b===el));
+  }
+}
+
+function checkStage2(){
+  const avg=calculatedAvg;
+  if(!s2Selected){showFeedback('s2Feedback','wrong','⚠️ Pick a score first!');return;}
+  if(parseFloat(s2Selected)>avg){
+    score++;updateStars();
+    showFeedback('s2Feedback','correct',`✅ Correct! ${s2Selected} > ${avg.toFixed(1)} — it's above average!`);
+    document.getElementById('nextBtn').style.display='block';
+    document.getElementById('s2Check').disabled=true;
+    spawnConfetti();
+    showOverlay('⚖️','Balance Found!',`Any score <strong>above ${avg.toFixed(1)}</strong> contributes MORE than the fair share. Below it contributes less. The scale balances perfectly at the average!`);
+  } else {
+    showFeedback('s2Feedback','wrong',`❌ ${s2Selected} is NOT above the average of ${avg.toFixed(1)}. Look for a score larger than that!`);
+  }
+}
+
+function buildStage3(){
+  const graph=document.getElementById('barGraph');
+  const maxVal=Math.max(...BG_DATA.scores);
+  graph.innerHTML='';
+  BG_DATA.scores.forEach((val,i)=>{
+    const col=document.createElement('div');
+    col.className='bar-col';
+    const heightPct=(val/maxVal)*100;
+    col.innerHTML=`
+      <div class="bar-val">${val}</div>
+      <div class="bar-fill" style="height:0%"></div>
+      <div class="bar-label">${BG_DATA.labels[i]}</div>`;
+    graph.appendChild(col);
+    setTimeout(()=>{col.querySelector('.bar-fill').style.height=heightPct+'%';},i*100+200);
+  });
+  document.getElementById('avgLineLabel').innerHTML=`── Average = <span style="color:var(--gold);font-weight:800">${BG_DATA.avg}</span> runs`;
+
+  const opts=[BG_DATA.avg, BG_DATA.avg+10, BG_DATA.avg-5, BG_DATA.avg+15].sort(()=>Math.random()-.5);
+  document.getElementById('s3Quiz').innerHTML=`
+    <div class="quiz-card">
+      <div class="quiz-q">What is the <strong style="color:var(--gold)">average (mean)</strong> score across all 5 matches?</div>
+      <div class="quiz-opts">${opts.map(o=>`<button class="quiz-opt" onclick="selectOpt(this,'${o}','s3')">${o}</button>`).join('')}</div>
+    </div>`;
+}
+
+function checkStage3(){
+  if(!s3Selected){showFeedback('s3Feedback','wrong','⚠️ Pick an answer!');return;}
+  if(parseInt(s3Selected)===BG_DATA.avg){
+    score++;updateStars();
+    showFeedback('s3Feedback','correct',`✅ Mean = ${BG_DATA.avg}! (${BG_DATA.scores.join('+')}=${BG_DATA.scores.reduce((a,b)=>a+b,0)} ÷ 5)`);
+    document.getElementById('nextBtn').style.display='block';
+    document.getElementById('s3Check').disabled=true;
+    spawnConfetti();
+    showOverlay('📊','Bar Graph Read!',`The mean is the horizontal line where the bar graph would <strong>balance</strong>. You can estimate it visually!`);
+  } else {
+    showFeedback('s3Feedback','wrong',`❌ Add all bars: ${BG_DATA.scores.join('+')} = ${BG_DATA.scores.reduce((a,b)=>a+b,0)}, then divide by 5!`);
+  }
+}
+
+function setStage(n){
+  stage=n;
+  [1,2,3].forEach(i=>{
+    document.getElementById('stage'+i).style.display=i===n?'block':'none';
+    document.getElementById('tab'+(i)).classList.toggle('active',i===n);
+  });
+  document.getElementById('progressText').textContent=`Stage ${n} of 3`;
+  document.getElementById('nextBtn').style.display='none';
+  if(n===2) buildStage2();
+  if(n===3) buildStage3();
+}
+
+function nextStage(){
+  if(stage<3){setStage(stage+1);}
+  else{
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+    document.querySelector('.stage-tabs').style.display='none';
+    document.querySelector('.progress-row').style.display='none';
+    document.getElementById('completeScreen').style.display='block';
+    spawnConfetti();
+  }
+}
+
+function showFeedback(id,type,msg){
+  const el=document.getElementById(id);
+  el.textContent=msg;el.className=`feedback ${type}`;el.style.display='block';
+}
+
+function updateStars(){const c=Math.min(5,Math.ceil(score*5/3));for(let i=1;i<=c;i++) document.getElementById('s'+i).classList.add('lit');}
+
+function showOverlay(emoji,title,fact){
+  document.getElementById('oEmoji').textContent=emoji;
+  document.getElementById('oTitle').textContent=title;
+  document.getElementById('oFact').innerHTML=fact;
+  const ov=document.getElementById('overlay');ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),2600);
+}
+
+function spawnConfetti(){
+  const colors=['#FFD166','#FF6B6B','#06D6A0','#4CC9F0','#C77DFF'];
+  for(let i=0;i<28;i++){
+    const c=document.createElement('div');c.className='confetti-piece';
+    c.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[i%5]};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()*2}s;`;
+    document.body.appendChild(c);setTimeout(()=>c.remove(),3500);
+  }
+}
+
+function restartGame(){
+  stage=1;score=0;s2Selected=null;s3Selected=null;
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('completeScreen').style.display='none';
+  document.querySelectorAll('.section').forEach(s=>s.style.display='block');
+  document.querySelector('.stage-tabs').style.display='flex';
+  document.querySelector('.progress-row').style.display='flex';
+  buildScoreInputs();
+  setStage(1);
+}
+
+buildScoreInputs();
+</script>
+</body>
+</html>

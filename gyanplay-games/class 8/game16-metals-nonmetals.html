@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metals & Non-metals — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:#fff;padding-bottom:40px}
+  h1,h2,h3{font-family:'Baloo 2',sans-serif}
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);position:sticky;top:0;z-index:99}
+  .back-btn{background:rgba(255,255,255,0.12);border:none;color:#fff;padding:7px 16px;border-radius:20px;cursor:pointer;font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;transition:background .2s}
+  .back-btn:hover{background:rgba(255,255,255,0.22)}
+  .badge{background:var(--green);color:#fff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;font-family:'Baloo 2',sans-serif}
+  .lang-toggle{margin-left:auto;display:flex;gap:6px}
+  .lang-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s}
+  .lang-btn.active{background:var(--green);border-color:var(--green)}
+  .progress-wrap{padding:16px 20px 0}
+  .progress-info{display:flex;justify-content:space-between;font-size:13px;opacity:.8;margin-bottom:6px}
+  .progress-bar{height:8px;background:rgba(255,255,255,0.12);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--purple));border-radius:4px;transition:width .5s ease}
+  .card{background:var(--card);border-radius:20px;padding:28px 24px;margin:20px auto;max-width:680px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:fadeIn .4s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .q-meta{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;opacity:.7}
+  .q-num{background:var(--sky);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;font-family:'Baloo 2',sans-serif;flex-shrink:0}
+  .scene-emoji{font-size:40px;text-align:center;margin-bottom:10px}
+  .question{font-size:18px;font-weight:700;line-height:1.5;margin-bottom:20px;font-family:'Baloo 2',sans-serif}
+  .options{display:grid;gap:12px}
+  .opt-btn{background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);color:#fff;padding:14px 18px;border-radius:14px;cursor:pointer;text-align:left;font-size:15px;font-family:'Nunito',sans-serif;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:10px}
+  .opt-btn:hover:not(:disabled){background:rgba(0,168,239,0.15);border-color:var(--sky)}
+  .opt-btn.correct{background:rgba(0,200,83,0.2);border-color:var(--green)}
+  .opt-btn.wrong{background:rgba(255,64,129,0.18);border-color:var(--pink)}
+  .opt-btn:disabled{cursor:default}
+  .opt-label{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:14px;line-height:1.6;display:none;animation:fadeIn .3s ease}
+  .feedback.show{display:block}
+  .feedback.correct-fb{background:rgba(0,200,83,0.15);border:1px solid var(--green)}
+  .feedback.wrong-fb{background:rgba(255,64,129,0.12);border:1px solid var(--pink)}
+  .fb-icon{font-size:18px;margin-right:6px}
+  .score-live{background:rgba(0,174,239,0.15);border:1px solid var(--sky);padding:4px 12px;border-radius:12px;font-size:13px;font-weight:700;color:var(--sky)}
+  .next-btn{display:none;margin:20px auto 0;background:linear-gradient(135deg,var(--sky),#0090c4);border:none;color:#fff;padding:13px 36px;border-radius:24px;font-size:16px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 18px rgba(0,174,239,0.4)}
+  .next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,174,239,0.55)}
+  .next-btn.show{display:block}
+  .end-screen{display:none;text-align:center;padding:30px 20px;max-width:520px;margin:40px auto}
+  .end-screen.show{display:block;animation:fadeIn .5s ease}
+  .stars{font-size:44px;letter-spacing:4px;margin:10px 0}
+  .final-score{font-size:54px;font-weight:800;color:var(--gold);line-height:1;font-family:'Baloo 2',sans-serif}
+  .score-label{font-size:15px;opacity:.7;margin-bottom:20px}
+  .play-again{background:linear-gradient(135deg,var(--sky),var(--purple));border:none;color:#fff;padding:14px 40px;border-radius:28px;font-size:17px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s;box-shadow:0 4px 20px rgba(0,174,239,0.4)}
+  .play-again:hover{transform:scale(1.05)}
+  .end-title{font-size:26px;font-weight:800;margin-bottom:8px;font-family:'Baloo 2',sans-serif}
+  /* property tag */
+  .prop-tag{display:inline-block;background:rgba(124,58,237,0.25);border:1px solid var(--purple);color:#c4b5fd;padding:2px 9px;border-radius:8px;font-size:12px;font-weight:700;margin-right:4px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">উভতি যাওক</span></button>
+  <span class="badge">Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-info">
+    <span data-lang="en">Question <span id="qNum">1</span>/10</span>
+    <span data-lang="hi" style="display:none">प्रश्न <span id="qNumHi">1</span>/10</span>
+    <span data-lang="as" style="display:none">প্ৰশ্ন <span id="qNumAs">1</span>/10</span>
+    <span class="score-live">Score: <span id="scoreLive">0</span>/100</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+</div>
+
+<div class="card" id="questionCard">
+  <div class="q-meta">
+    <div class="q-num" id="qBadge">1</div>
+    <span data-lang="en">Metals &amp; Non-metals</span>
+    <span data-lang="hi" style="display:none">धातु और अधातु</span>
+    <span data-lang="as" style="display:none">ধাতু আৰু অধাতু</span>
+  </div>
+  <div class="scene-emoji" id="sceneEmoji">⚗️</div>
+  <div class="question" id="questionText"></div>
+  <div class="options" id="optionsDiv"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+    <span data-lang="en">Next Question →</span>
+    <span data-lang="hi" style="display:none">अगला प्रश्न →</span>
+    <span data-lang="as" style="display:none">পৰৱৰ্তী প্ৰশ্ন →</span>
+  </button>
+</div>
+
+<div class="end-screen" id="endScreen">
+  <div class="end-title" data-lang="en">Quiz Complete! 🎉</div>
+  <div class="end-title" data-lang="hi" style="display:none">क्विज़ पूर्ण! 🎉</div>
+  <div class="end-title" data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ! 🎉</div>
+  <div class="stars" id="starsDisplay">⭐⭐⭐</div>
+  <div class="final-score" id="finalScore">0</div>
+  <div class="score-label">/100</div>
+  <button class="play-again" onclick="restartGame()">
+    <span data-lang="en">Play Again 🔄</span>
+    <span data-lang="hi" style="display:none">फिर खेलें 🔄</span>
+    <span data-lang="as" style="display:none">আকৌ খেলক 🔄</span>
+  </button>
+</div>
+
+<script>
+const questions = [
+  {
+    emoji:"🌡️",
+    en:"Which metal is liquid at room temperature?",
+    hi:"कौन सी धातु कमरे के तापमान पर तरल होती है?",
+    as:"কোন ধাতু সাধাৰণ তাপমাত্ৰাত তৰল অৱস্থাত থাকে?",
+    options:{en:["Mercury","Iron","Sodium","Aluminium"],hi:["पारा","लोहा","सोडियम","एल्युमिनियम"],as:["পাৰা","লোহা","ছডিয়াম","এলুমিনিয়াম"]},
+    correct:0,
+    explanation:{en:"Mercury (Hg) is the only metal that is liquid at room temperature (25°C). It is used in thermometers and barometers.",hi:"पारा (Hg) एकमात्र धातु है जो कमरे के तापमान (25°C) पर तरल होती है। इसका उपयोग थर्मामीटर में होता है।",as:"পাৰা (Hg) হৈছে একমাত্ৰ ধাতু যি সাধাৰণ তাপমাত্ৰাত তৰল। ইয়াক থাৰমোমিটাৰত ব্যৱহাৰ কৰা হয়।"}
+  },
+  {
+    emoji:"✏️",
+    en:"Which non-metal is used in pencils?",
+    hi:"पेंसिल में कौन सी अधातु उपयोग की जाती है?",
+    as:"পেঞ্চিলত কোন অধাতু ব্যৱহাৰ হয়?",
+    options:{en:["Graphite (Carbon)","Sulphur","Phosphorus","Nitrogen"],hi:["ग्रेफाइट (कार्बन)","सल्फर","फास्फोरस","नाइट्रोजन"],as:["গ্ৰেফাইট (কাৰ্বন)","গন্ধক","ফচফৰাছ","নাইট্ৰজেন"]},
+    correct:0,
+    explanation:{en:"The 'lead' in pencils is actually graphite, an allotrope of carbon (a non-metal). Graphite is a good conductor of electricity and is also used in electrodes.",hi:"पेंसिल की 'लेड' वास्तव में ग्रेफाइट है जो कार्बन का अपरूप है। यह विद्युत का सुचालक है।",as:"পেঞ্চিলৰ 'লেড' আচলতে গ্ৰেফাইট, কাৰ্বনৰ এটা ৰূপ। ই বিদ্যুতৰ সুপৰিবাহী।"}
+  },
+  {
+    emoji:"🔨",
+    en:"The property of metals to be beaten into thin sheets is called:",
+    hi:"धातुओं को पतली चादरों में पीटने की क्षमता को कहते हैं:",
+    as:"ধাতুক পাতল পাতত পিটিব পৰা গুণটো কোৱা হয়:",
+    options:{en:["Malleability","Ductility","Sonority","Conductivity"],hi:["आघातवर्धनीयता","तन्यता","ध्वानिकता","चालकता"],as:["মেলিয়েবিলিটি","ডাক্টিলিটি","ছনৰিটি","পৰিবাহিতা"]},
+    correct:0,
+    explanation:{en:"Malleability is the property of metals to be hammered into thin sheets without breaking. Gold is the most malleable metal. Ductility is the ability to be drawn into wires.",hi:"आघातवर्धनीयता धातुओं की वह क्षमता है जिससे उन्हें बिना टूटे पतली चादरों में पीटा जा सकता है। सोना सर्वाधिक आघातवर्धनीय है।",as:"মেলিয়েবিলিটি হৈছে ধাতুক ভাঙি নিদিয়াকৈ পাতল পাতত পিটিব পৰা গুণ। সোণ আটাইতকৈ বেছি মেলিয়েবল।"}
+  },
+  {
+    emoji:"⚡",
+    en:"Which of the following non-metals conducts electricity?",
+    hi:"निम्नलिखित में से कौन सी अधातु विद्युत का संचालन करती है?",
+    as:"তলত দিয়াবোৰৰ মাজত কোন অধাতু বিদ্যুৎ পৰিবহন কৰে?",
+    options:{en:["Graphite","Sulphur","Phosphorus","Silicon"],hi:["ग्रेफाइट","सल्फर","फास्फोरस","सिलिकॉन"],as:["গ্ৰেফাইট","গন্ধক","ফচফৰাছ","চিলিকন"]},
+    correct:0,
+    explanation:{en:"Graphite is the only non-metal that is a good conductor of electricity due to its free electrons. This makes it useful in electrodes and batteries.",hi:"ग्रेफाइट एकमात्र अधातु है जो विद्युत का सुचालक है क्योंकि इसमें मुक्त इलेक्ट्रॉन होते हैं।",as:"গ্ৰেফাইট একমাত্ৰ অধাতু যি বিদ্যুতৰ সুপৰিবাহী কাৰণ ইয়াত মুক্ত ইলেক্ট্ৰন থাকে।"}
+  },
+  {
+    emoji:"🧪",
+    en:"When iron reacts with dilute sulphuric acid, which gas is released?",
+    hi:"जब लोहा तनु सल्फ्यूरिक अम्ल से क्रिया करता है, तो कौन सी गैस निकलती है?",
+    as:"যেতিয়া লোহা তনু ছালফিউৰিক এচিডৰ সৈতে বিক্ৰিয়া কৰে, কোন গেছ নিৰ্গত হয়?",
+    options:{en:["Hydrogen","Oxygen","Carbon dioxide","Sulphur dioxide"],hi:["हाइड्रोजन","ऑक्सीजन","कार्बन डाइऑक्साइड","सल्फर डाइऑक्साइड"],as:["হাইড্ৰজেন","অক্সিজেন","কাৰ্বন ডাই অক্সাইড","ছালফাৰ ডাই অক্সাইড"]},
+    correct:0,
+    explanation:{en:"Fe + H₂SO₄ → FeSO₄ + H₂↑. When metals react with dilute acids, hydrogen gas is released. This is a characteristic reaction of metals.",hi:"Fe + H₂SO₄ → FeSO₄ + H₂↑. जब धातु तनु अम्ल से क्रिया करती है तो हाइड्रोजन गैस निकलती है।",as:"Fe + H₂SO₄ → FeSO₄ + H₂↑। ধাতু তনু এচিডৰ সৈতে বিক্ৰিয়া কৰিলে হাইড্ৰজেন গেছ নিৰ্গত হয়।"}
+  },
+  {
+    emoji:"🔔",
+    en:"The property of metals to produce a ringing sound when struck is called:",
+    hi:"आघात करने पर धातुओं द्वारा घंटी जैसी ध्वनि उत्पन्न करने की क्षमता को कहते हैं:",
+    as:"আঘাত কৰিলে ধাতুৱে ঘণ্টাৰ নিচিনা শব্দ উৎপন্ন কৰাৰ গুণটো কোৱা হয়:",
+    options:{en:["Sonority","Malleability","Ductility","Lustrous"],hi:["ध्वानिकता","आघातवर्धनीयता","तन्यता","चमक"],as:["ছনৰিটি","মেলিয়েবিলিটি","ডাক্টিলিটি","দীপ্তি"]},
+    correct:0,
+    explanation:{en:"Sonority is the ability of metals to produce a ringing sound when struck. This is why metals are used in bells, musical instruments and gongs.",hi:"ध्वानिकता धातुओं की वह क्षमता है जिससे वे आघात करने पर घंटी जैसी ध्वनि उत्पन्न करती हैं। इसीलिए घंटी धातु से बनती है।",as:"ছনৰিটি হৈছে ধাতুৰ সেই গুণ যাৰ বাবে আঘাত কৰিলে ঘণ্টাৰ নিচিনা শব্দ হয়।"}
+  },
+  {
+    emoji:"🌊",
+    en:"Metal oxides are generally:",
+    hi:"धातु ऑक्साइड सामान्यतः होते हैं:",
+    as:"ধাতু অক্সাইডসমূহ সাধাৰণতে:",
+    options:{en:["Basic in nature","Acidic in nature","Neutral","Amphoteric always"],hi:["क्षारकीय प्रकृति के","अम्लीय प्रकृति के","उदासीन","सदा उभयधर्मी"],as:["ক্ষাৰকীয় প্ৰকৃতিৰ","অম্লীয় প্ৰকৃতিৰ","নিৰপেক্ষ","সদায় উভধর্মী"]},
+    correct:0,
+    explanation:{en:"Metal oxides (e.g., CaO, MgO, Na₂O) are basic in nature because they react with water to form bases/alkalis. Non-metal oxides (CO₂, SO₂) are acidic.",hi:"धातु ऑक्साइड (जैसे CaO, MgO) क्षारकीय प्रकृति के होते हैं क्योंकि वे जल से क्रिया कर क्षार बनाते हैं।",as:"ধাতু অক্সাইডসমূহ (যেনে CaO, MgO) ক্ষাৰকীয় প্ৰকৃতিৰ কাৰণ এইবোৰ পানীৰ সৈতে বিক্ৰিয়া কৰি ক্ষাৰ গঠন কৰে।"}
+  },
+  {
+    emoji:"🥇",
+    en:"Which metal is most ductile (can be drawn into the thinnest wire)?",
+    hi:"कौन सी धातु सर्वाधिक तन्य (सबसे पतले तार में खींची जा सकती) है?",
+    as:"কোন ধাতু আটাইতকৈ বেছি তন্য (আটাইতকৈ পাতল তাঁৰলৈ টানিব পাৰি)?",
+    options:{en:["Gold","Copper","Aluminium","Iron"],hi:["सोना","तांबा","एल्युमिनियम","लोहा"],as:["সোণ","তামৰ","এলুমিনিয়াম","লোহা"]},
+    correct:0,
+    explanation:{en:"Gold is the most ductile metal. 1 gram of gold can be drawn into a wire about 2 km long! Gold is also the most malleable metal.",hi:"सोना सर्वाधिक तन्य धातु है। 1 ग्राम सोने से लगभग 2 किमी लंबा तार खींचा जा सकता है!",as:"সোণ আটাইতকৈ বেছি তন্য ধাতু। ১ গ্ৰাম সোণৰ পৰা প্ৰায় ২ কিলোমিটাৰ দীঘল তাঁৰ তৈয়াৰ কৰিব পাৰি!"}
+  },
+  {
+    emoji:"💡",
+    en:"Which gas is used in electric bulbs to prevent the tungsten filament from burning?",
+    hi:"टंगस्टन तंतु को जलने से बचाने के लिए विद्युत बल्ब में कौन सी गैस भरी जाती है?",
+    as:"টাংষ্টেন ফিলামেণ্টক জ্বলিবৰ পৰা বাচাবলৈ বৈদ্যুতিক বাল্বত কোন গেছ ভৰোৱা হয়?",
+    options:{en:["Argon (inert gas)","Oxygen","Nitrogen","Hydrogen"],hi:["आर्गन (अक्रिय गैस)","ऑक्सीजन","नाइट्रोजन","हाइड्रोजन"],as:["আৰ্গন (নিষ্ক্ৰিয় গেছ)","অক্সিজেন","নাইট্ৰজেন","হাইড্ৰজেন"]},
+    correct:0,
+    explanation:{en:"Argon, an inert (noble) gas, is filled in electric bulbs. It prevents the tungsten filament from oxidising/burning. Nitrogen is used in some cheaper bulbs.",hi:"आर्गन, एक अक्रिय (उत्कृष्ट) गैस, बल्ब में भरी जाती है। यह टंगस्टन तंतु को ऑक्सीकरण से बचाती है।",as:"আৰ্গন, এটা নিষ্ক্ৰিয় (নোবল) গেছ, বৈদ্যুতিক বাল্বত ভৰোৱা হয়। ই টাংষ্টেন ফিলামেণ্টক জাৰণৰ পৰা ৰক্ষা কৰে।"}
+  },
+  {
+    emoji:"🧂",
+    en:"When a metal reacts with oxygen, what product is formed?",
+    hi:"जब धातु ऑक्सीजन से क्रिया करती है तो क्या उत्पाद बनता है?",
+    as:"ধাতু অক্সিজেনৰ সৈতে বিক্ৰিয়া কৰিলে কি উৎপাদ গঠন হয়?",
+    options:{en:["Metal oxide","Metal hydroxide","Metal salt","Metal carbonate"],hi:["धातु ऑक्साइड","धातु हाइड्रॉक्साइड","धातु लवण","धातु कार्बोनेट"],as:["ধাতু অক্সাইড","ধাতু হাইড্ৰক্সাইড","ধাতু লৱণ","ধাতু কাৰ্বনেট"]},
+    correct:0,
+    explanation:{en:"Metal + Oxygen → Metal Oxide. For example: 4Na + O₂ → 2Na₂O (Sodium oxide). Metal oxides are basic in nature.",hi:"धातु + ऑक्सीजन → धातु ऑक्साइड। उदाहरण: 4Na + O₂ → 2Na₂O (सोडियम ऑक्साइड)। धातु ऑक्साइड क्षारकीय होते हैं।",as:"ধাতু + অক্সিজেন → ধাতু অক্সাইড। উদাহৰণ: 4Na + O₂ → 2Na₂O (ছডিয়াম অক্সাইড)।"}
+  }
+];
+
+let current=0,score=0,answered=false,lang='en';
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{b.classList.toggle('active',['en','hi','as'][i]===l)});
+  document.querySelectorAll('[data-lang]').forEach(el=>{el.style.display=el.dataset.lang===l?'':'none'});
+  updateQNum();
+}
+function updateQNum(){
+  const n=current+1;
+  ['qNum','qNumHi','qNumAs'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n});
+  document.getElementById('qBadge').textContent=n;
+}
+function renderQuestion(){
+  if(current>=questions.length){showEnd();return}
+  answered=false;
+  const q=questions[current];
+  document.getElementById('progressFill').style.width=((current+1)/questions.length*100)+'%';
+  updateQNum();
+  document.getElementById('sceneEmoji').textContent=q.emoji;
+  document.getElementById('questionText').textContent=q[lang]||q.en;
+  const opts=q.options[lang]||q.options.en;
+  const labels=['A','B','C','D'];
+  document.getElementById('optionsDiv').innerHTML=opts.map((o,i)=>`<button class="opt-btn" onclick="answer(${i})" id="opt${i}"><span class="opt-label">${labels[i]}</span>${o}</button>`).join('');
+  const fb=document.getElementById('feedback');
+  fb.className='feedback';fb.textContent='';
+  document.getElementById('nextBtn').classList.remove('show');
+}
+function answer(idx){
+  if(answered)return;
+  answered=true;
+  const q=questions[current];
+  const isCorrect=idx===q.correct;
+  if(isCorrect)score+=10;
+  document.getElementById('scoreLive').textContent=score;
+  document.querySelectorAll('.opt-btn').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.correct)b.classList.add('correct');
+    else if(i===idx&&!isCorrect)b.classList.add('wrong');
+  });
+  const fb=document.getElementById('feedback');
+  fb.className='feedback show '+(isCorrect?'correct-fb':'wrong-fb');
+  const exp=(q.explanation&&q.explanation[lang])||q.explanation.en;
+  fb.innerHTML=`<span class="fb-icon">${isCorrect?'✓':'✗'}</span> ${exp}`;
+  document.getElementById('nextBtn').classList.add('show');
+}
+function nextQuestion(){current++;if(current>=questions.length){showEnd();return}renderQuestion()}
+function showEnd(){
+  document.getElementById('questionCard').style.display='none';
+  document.getElementById('progressWrap').style.display='none';
+  const es=document.getElementById('endScreen');es.classList.add('show');
+  document.getElementById('finalScore').textContent=score;
+  const p=score;
+  document.getElementById('starsDisplay').textContent=p>=90?'⭐⭐⭐':p>=70?'⭐⭐':p>=40?'⭐':'☆☆☆';
+}
+function restartGame(){
+  current=0;score=0;answered=false;
+  document.getElementById('scoreLive').textContent=0;
+  document.getElementById('endScreen').classList.remove('show');
+  document.getElementById('questionCard').style.display='';
+  document.getElementById('progressWrap').style.display='';
+  renderQuestion();
+}
+setLang('en');renderQuestion();
+</script>
+</body>
+</html>

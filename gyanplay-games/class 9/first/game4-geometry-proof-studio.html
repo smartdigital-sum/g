@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geometry Proof Studio — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A;--border-glow:rgba(199,125,255,.22);--card-glow:rgba(199,125,255,.12);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:linear-gradient(160deg,#180A28,#0F0820);min-height:100vh;color:var(--text);font-family:'Nunito',sans-serif;font-size:18px;display:flex;justify-content:center;padding-bottom:40px;}
+.shell{width:100%;max-width:480px;display:flex;flex-direction:column;}
+.header{padding:16px 20px 10px;border-bottom:2px solid var(--border-glow);background:rgba(13,20,40,.8);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px);}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold);}
+.subject-tag{font-size:.68rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+.stars{display:flex;gap:4px;margin-top:4px;}
+.star{font-size:.95rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.score-display{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--gold);}
+.wow-hook{margin:14px 14px 0;background:linear-gradient(135deg,rgba(199,125,255,.15),rgba(13,20,40,.95));border:1px solid var(--border-glow);border-radius:14px;padding:16px;box-shadow:0 4px 20px var(--card-glow);}
+.wow-hook .emoji{font-size:1.8rem;margin-bottom:6px;display:block;}
+.wow-hook p{font-size:.88rem;line-height:1.6;}
+.wow-hook strong{color:var(--gold);}
+.stage-area{padding:14px;flex:1;}
+.stage{display:none;}
+.stage.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.stage-title{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--purple);margin-bottom:8px;}
+.card{background:var(--card);border:1px solid var(--border-glow);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 2px 14px var(--card-glow);}
+.info-box{background:rgba(199,125,255,.07);border-left:3px solid var(--purple);padding:9px 12px;border-radius:0 7px 7px 0;font-size:.82rem;color:var(--dim);line-height:1.5;margin:8px 0;}
+.info-box strong{color:var(--text);}
+.result-msg{font-size:.85rem;min-height:20px;padding:3px 0;}
+.result-msg.ok{color:var(--teal);}
+.result-msg.err{color:var(--coral);}
+.bottom-bar{position:sticky;bottom:0;background:rgba(13,20,40,.92);border-top:1px solid var(--border-glow);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(8px);}
+.progress-label{font-size:.82rem;color:var(--dim);}
+.progress-label strong{color:var(--text);}
+.action-btn{background:var(--gold);color:#060A10;border:none;border-radius:22px;padding:9px 24px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;min-height:44px;}
+.action-btn:hover{transform:scale(1.04);box-shadow:0 4px 14px rgba(255,209,102,.4);}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.9);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{text-align:center;padding:26px 22px;max-width:320px;}
+.overlay-emoji{font-size:2.8rem;margin-bottom:10px;}
+.overlay-msg{font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--gold);margin-bottom:7px;}
+.overlay-fact{font-size:.82rem;color:var(--dim);line-height:1.5;}
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:200;}
+.confetto{position:absolute;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.game-complete{display:none;text-align:center;padding:36px 18px;}
+.game-complete.show{display:block;animation:fadeIn .5s ease;}
+.complete-title{font-family:'Baloo 2',cursive;font-size:1.9rem;color:var(--gold);margin-bottom:10px;}
+.complete-sub{color:var(--dim);font-size:.9rem;line-height:1.6;margin-bottom:20px;}
+.replay-btn{background:transparent;border:2px solid var(--gold);color:var(--gold);border-radius:22px;padding:9px 26px;font-family:'Baloo 2',cursive;font-size:.95rem;cursor:pointer;min-height:44px;}
+
+/* PROOF BUILDER */
+.proof-goal{background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.3);border-radius:10px;padding:12px;margin-bottom:12px;text-align:center;}
+.proof-goal .given{font-size:.82rem;color:var(--dim);margin-bottom:4px;}
+.proof-goal .toprove{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--gold);}
+.step-pool{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.step-card{background:rgba(199,125,255,.1);border:1px solid var(--border-glow);border-radius:9px;padding:10px 12px;cursor:pointer;transition:all .2s;user-select:none;}
+.step-card:hover{background:rgba(199,125,255,.2);border-color:var(--purple);}
+.step-card.dragging{opacity:.5;}
+.step-card.placed{background:rgba(6,214,160,.12);border-color:var(--teal);cursor:default;}
+.step-card.wrong-step{animation:shake .35s;background:rgba(255,107,107,.15);border-color:var(--coral);}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.step-stmt{font-size:.85rem;color:var(--text);font-weight:600;}
+.step-reason{font-size:.75rem;color:var(--dim);margin-top:2px;}
+.proof-sequence{min-height:60px;border:2px dashed rgba(199,125,255,.3);border-radius:9px;padding:10px;margin-bottom:10px;display:flex;flex-direction:column;gap:6px;}
+.proof-sequence .step-card{cursor:pointer;}
+.seq-label{font-size:.75rem;color:var(--dim);text-align:center;margin-bottom:4px;}
+.qed-banner{background:linear-gradient(135deg,rgba(6,214,160,.2),rgba(199,125,255,.2));border:2px solid var(--teal);border-radius:10px;padding:14px;text-align:center;display:none;}
+.qed-banner.show{display:block;animation:fadeIn .4s ease;}
+.qed-text{font-family:'Baloo 2',cursive;font-size:1.3rem;color:var(--teal);}
+/* CONGRUENCE */
+.congruence-scenario{background:rgba(0,0,0,.25);border-radius:10px;padding:12px;margin-bottom:10px;}
+.tri-info{font-size:.82rem;color:var(--dim);margin-bottom:8px;line-height:1.5;}
+.tri-info strong{color:var(--text);}
+.criteria-opts{display:flex;flex-wrap:wrap;gap:6px;}
+.crit-btn{background:rgba(199,125,255,.1);border:1px solid var(--border-glow);border-radius:7px;padding:7px 12px;cursor:pointer;font-family:'Baloo 2',cursive;font-size:.85rem;color:var(--text);transition:all .2s;min-height:40px;}
+.crit-btn:hover{background:rgba(199,125,255,.22);}
+.crit-btn.correct{background:rgba(6,214,160,.18);border-color:var(--teal);color:var(--teal);}
+.crit-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);animation:shake .3s;}
+/* PARALLELOGRAM */
+#paraCanvas{width:100%;height:200px;border-radius:10px;display:block;cursor:crosshair;}
+.para-props{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;}
+.prop-badge{background:rgba(199,125,255,.08);border:1px solid var(--border-glow);border-radius:8px;padding:8px;text-align:center;font-size:.78rem;}
+.prop-badge .val{font-family:'Baloo 2',cursive;color:var(--gold);font-size:.95rem;}
+.prop-badge .lbl{color:var(--dim);margin-top:2px;}
+/* MIDPOINT */
+#midCanvas{width:100%;height:200px;border-radius:10px;display:block;}
+.mid-result{background:rgba(6,214,160,.08);border:1px solid rgba(6,214,160,.25);border-radius:9px;padding:12px;text-align:center;margin-top:10px;}
+.mid-result .big{font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--teal);}
+.mid-result .sub{font-size:.78rem;color:var(--dim);margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="game-title">🔺 Geometry Proof Studio</div>
+        <div class="subject-tag">📐 Maths · G9-04 · Ch 6,7,8: Lines, Triangles, Quadrilaterals</div>
+      </div>
+      <div class="score-display" id="scoreDisplay">0 pts</div>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="emoji">📜</span>
+    <p>Euclid wrote 13 books of geometry around 300 BC. These books were the standard mathematics textbook for over <strong>2,000 YEARS</strong> — longer than any other textbook in history. The way Euclid proved things — starting from self-evident axioms and building step by step — is still how all mathematics is done today. <strong>Every proof you write follows his method.</strong></p>
+  </div>
+
+  <div class="stage-area">
+
+    <!-- STAGE 1: PROOF BUILDER - Vertically opposite angles -->
+    <div class="stage active" id="stage1">
+      <div class="stage-title">⊢ Stage 1: Proof Builder</div>
+      <div class="proof-goal">
+        <div class="given">Given: Lines AB and CD intersect at O</div>
+        <div class="toprove">To Prove: ∠AOC = ∠BOD (Vertically opposite angles are equal)</div>
+      </div>
+      <p style="font-size:.82rem;color:var(--dim);margin-bottom:8px;">Tap steps in the correct logical order to build the proof:</p>
+      <div class="step-pool" id="stepPool1">
+        <div class="step-card" onclick="placeStep(this,0,1)" data-order="1">
+          <div class="step-stmt">∠AOC + ∠AOD = 180°</div>
+          <div class="step-reason">Reason: Linear pair axiom (AOD is a straight line)</div>
+        </div>
+        <div class="step-card" onclick="placeStep(this,0,3)" data-order="3">
+          <div class="step-stmt">∴ ∠AOC = ∠BOD &nbsp; QED ✓</div>
+          <div class="step-reason">Reason: From steps 1 and 2 (both equal 180° − ∠AOD)</div>
+        </div>
+        <div class="step-card" onclick="placeStep(this,0,2)" data-order="2">
+          <div class="step-stmt">∠BOD + ∠AOD = 180°</div>
+          <div class="step-reason">Reason: Linear pair axiom (BOD is a straight line)</div>
+        </div>
+      </div>
+      <div class="proof-sequence" id="seq1">
+        <div class="seq-label">→ Your proof sequence appears here (tap in order)</div>
+      </div>
+      <div class="qed-banner" id="qed1">
+        <div class="qed-text">⊢ QED — Proof Valid!</div>
+        <div style="font-size:.78rem;color:var(--dim);margin-top:6px;">Every step follows logically from the previous. This is how all mathematical proofs work.</div>
+      </div>
+      <div class="result-msg" id="r1"></div>
+    </div>
+
+    <!-- STAGE 2: PROOF BUILDER - Angle sum of triangle -->
+    <div class="stage" id="stage2">
+      <div class="stage-title">⊢ Stage 2: Triangle Angle Sum Proof</div>
+      <div class="proof-goal">
+        <div class="given">Given: Triangle ABC, line DE ∥ AB through C</div>
+        <div class="toprove">To Prove: ∠A + ∠B + ∠C = 180°</div>
+      </div>
+      <p style="font-size:.82rem;color:var(--dim);margin-bottom:8px;">Arrange all 5 steps in correct order:</p>
+      <div class="step-pool" id="stepPool2">
+        <div class="step-card" onclick="placeStep2(this,4)" data-order="4">
+          <div class="step-stmt">∴ ∠A + ∠B + ∠ACB = 180° &nbsp; QED ✓</div>
+          <div class="step-reason">Reason: Substituting into step 3 (DCE is straight line)</div>
+        </div>
+        <div class="step-card" onclick="placeStep2(this,1)" data-order="1">
+          <div class="step-stmt">Draw DE ∥ AB through vertex C</div>
+          <div class="step-reason">Reason: By construction (parallel line exists through any external point)</div>
+        </div>
+        <div class="step-card" onclick="placeStep2(this,3)" data-order="3">
+          <div class="step-stmt">∠DCE = 180° (∠DCA + ∠ACB + ∠BCE = 180°)</div>
+          <div class="step-reason">Reason: DCE is a straight line</div>
+        </div>
+        <div class="step-card" onclick="placeStep2(this,2)" data-order="2">
+          <div class="step-stmt">∠DCA = ∠A and ∠BCE = ∠B</div>
+          <div class="step-reason">Reason: Alternate interior angles (DE ∥ AB, transversal AC and BC)</div>
+        </div>
+      </div>
+      <div class="proof-sequence" id="seq2">
+        <div class="seq-label">→ Your proof sequence (tap in order 1→4)</div>
+      </div>
+      <div class="qed-banner" id="qed2">
+        <div class="qed-text">⊢ QED — Angle Sum Proved!</div>
+        <div style="font-size:.78rem;color:var(--dim);margin-top:6px;">The angle sum of any triangle = 180°. Proved using parallel lines and alternate angles.</div>
+      </div>
+      <div class="result-msg" id="r2"></div>
+    </div>
+
+    <!-- STAGE 3: CONGRUENCE CLASSIFIER -->
+    <div class="stage" id="stage3">
+      <div class="stage-title">🔷 Stage 3: Congruence Classifier</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:12px;">For each triangle pair, select the correct congruence criterion. Justify your choice!</p>
+
+        <div class="congruence-scenario" id="con0">
+          <div class="tri-info"><strong>Triangle 1:</strong> AB = PQ = 5cm, BC = QR = 7cm, CA = RP = 4cm</div>
+          <div class="tri-info">All three sides are equal.</div>
+          <div class="criteria-opts">
+            <div class="crit-btn" onclick="checkCrit(this,0,'SSS')">SSS</div>
+            <div class="crit-btn" onclick="checkCrit(this,0,'SAS')">SAS</div>
+            <div class="crit-btn" onclick="checkCrit(this,0,'ASA')">ASA</div>
+            <div class="crit-btn" onclick="checkCrit(this,0,'RHS')">RHS</div>
+          </div>
+          <div class="result-msg" id="conR0"></div>
+        </div>
+
+        <div class="congruence-scenario" id="con1">
+          <div class="tri-info"><strong>Triangle 2:</strong> AB = PQ = 6cm, ∠B = ∠Q = 70°, BC = QR = 4cm</div>
+          <div class="tri-info">Two sides and the included angle.</div>
+          <div class="criteria-opts">
+            <div class="crit-btn" onclick="checkCrit(this,1,'SSS')">SSS</div>
+            <div class="crit-btn" onclick="checkCrit(this,1,'SAS')">SAS</div>
+            <div class="crit-btn" onclick="checkCrit(this,1,'ASA')">ASA</div>
+            <div class="crit-btn" onclick="checkCrit(this,1,'AAS')">AAS</div>
+          </div>
+          <div class="result-msg" id="conR1"></div>
+        </div>
+
+        <div class="congruence-scenario" id="con2">
+          <div class="tri-info"><strong>Triangle 3:</strong> Right triangles. Hypotenuse AB = PQ = 10cm, Side BC = QR = 6cm</div>
+          <div class="tri-info">Right angle + hypotenuse + one side.</div>
+          <div class="criteria-opts">
+            <div class="crit-btn" onclick="checkCrit(this,2,'SSS')">SSS</div>
+            <div class="crit-btn" onclick="checkCrit(this,2,'SAS')">SAS</div>
+            <div class="crit-btn" onclick="checkCrit(this,2,'ASA')">ASA</div>
+            <div class="crit-btn" onclick="checkCrit(this,2,'RHS')">RHS</div>
+          </div>
+          <div class="result-msg" id="conR2"></div>
+        </div>
+
+        <div class="info-box"><strong>SSA is NOT valid!</strong> Two sides + a non-included angle does NOT guarantee congruence — two different triangles can have the same SSA.</div>
+        <div class="result-msg" id="r3"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 4: PARALLELOGRAM EXPLORER -->
+    <div class="stage" id="stage4">
+      <div class="stage-title">▱ Stage 4: Parallelogram Property Explorer</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:8px;">Drag the vertex (yellow dot) to reshape the parallelogram. All properties update live!</p>
+        <canvas id="paraCanvas" width="440" height="200"></canvas>
+        <div class="para-props" id="paraProps">
+          <div class="prop-badge"><div class="val" id="ppAB">—</div><div class="lbl">AB = CD (opp. sides)</div></div>
+          <div class="prop-badge"><div class="val" id="ppAD">—</div><div class="lbl">AD = BC (opp. sides)</div></div>
+          <div class="prop-badge"><div class="val" id="ppDiag">—</div><div class="lbl">Diagonals bisect each other</div></div>
+          <div class="prop-badge"><div class="val" id="ppAngle">—</div><div class="lbl">∠A + ∠B = 180°</div></div>
+        </div>
+        <div class="result-msg" id="r4"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 5: MIDPOINT THEOREM -->
+    <div class="stage" id="stage5">
+      <div class="stage-title">📐 Stage 5: Midpoint Theorem Visualiser</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:8px;">Drag the slider to change the triangle. The midpoint segment is always exactly <strong style="color:var(--gold)">half</strong> the third side!</p>
+        <canvas id="midCanvas" width="440" height="200"></canvas>
+        <div style="padding:6px 0;">
+          <input type="range" id="midSlider" min="0" max="100" value="40" oninput="updateMid()" style="width:100%;accent-color:var(--purple);">
+        </div>
+        <div class="mid-result">
+          <div class="big" id="midBig">MN = ? | BC = ?</div>
+          <div class="sub" id="midSub">MN (midpoint segment) = BC/2 always holds</div>
+        </div>
+        <div class="info-box"><strong>Midpoint Theorem:</strong> The line segment joining the midpoints of two sides of a triangle is parallel to the third side and half its length.</div>
+        <div class="result-msg" id="r5"></div>
+      </div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="game-complete" id="gameComplete">
+      <div style="font-size:2.8rem;margin-bottom:14px;">⊢</div>
+      <div class="complete-title">Proof Studio Complete!</div>
+      <div class="complete-sub">You proved vertically opposite angles, the triangle angle sum, classified 3 congruence criteria, explored parallelogram properties, and verified the midpoint theorem.<br><br><strong style="color:var(--gold);">Your proof structure is valid.</strong> Euclid would approve.</div>
+      <br>
+      <button class="replay-btn" onclick="resetGame()">↺ Play Again</button>
+    </div>
+  </div>
+
+  <div class="bottom-bar" id="bottomBar">
+    <div class="progress-label">Stage <strong id="stageNum">1</strong> of 5</div>
+    <button class="action-btn" id="mainBtn" onclick="nextStage()">Continue →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="overlay-emoji" id="ovEmoji">⊢</div>
+    <div class="overlay-msg" id="ovMsg">Proof Valid!</div>
+    <div class="overlay-fact" id="ovFact"></div>
+  </div>
+</div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<script>
+let score=0,currentStage=1,stageDone=[false,false,false,false,false];
+function addScore(p){score+=p;document.getElementById('scoreDisplay').textContent=score+' pts';}
+function lightStar(n){const s=document.getElementById('s'+n);if(s&&!s.classList.contains('lit'))s.classList.add('lit');}
+
+// ===== STAGE 1: PROOF BUILDER 1 =====
+let seq1=[],expectedOrder1=[1,2,3],seq1Complete=false;
+function placeStep(el,proofId,order){
+  if(el.classList.contains('placed')||seq1Complete)return;
+  const expected=expectedOrder1[seq1.length];
+  if(order===expected){
+    el.classList.add('placed');
+    seq1.push(order);
+    const seq=document.getElementById('seq1');
+    const clone=el.cloneNode(true);clone.classList.remove('placed');clone.classList.add('placed');clone.onclick=null;
+    if(seq.querySelector('.seq-label'))seq.querySelector('.seq-label').remove();
+    seq.appendChild(clone);
+    addScore(15);
+    if(seq1.length===3){
+      seq1Complete=true;
+      document.getElementById('qed1').classList.add('show');
+      document.getElementById('r1').textContent='Your proof structure is valid. ⊢';
+      document.getElementById('r1').className='result-msg ok';
+      if(!stageDone[0]){stageDone[0]=true;lightStar(1);addScore(20);}
+    }
+  }else{
+    el.classList.add('wrong-step');
+    setTimeout(()=>el.classList.remove('wrong-step'),500);
+    document.getElementById('r1').textContent='Incorrect step order. Proof is ORDER-DEPENDENT — each step must follow from the previous.';
+    document.getElementById('r1').className='result-msg err';
+  }
+}
+
+// ===== STAGE 2: PROOF BUILDER 2 =====
+let seq2=[],expectedOrder2=[1,2,3,4],seq2Complete=false;
+function placeStep2(el,order){
+  if(el.classList.contains('placed')||seq2Complete)return;
+  const expected=expectedOrder2[seq2.length];
+  if(order===expected){
+    el.classList.add('placed');seq2.push(order);
+    const seq=document.getElementById('seq2');
+    const clone=el.cloneNode(true);clone.classList.add('placed');clone.onclick=null;
+    if(seq.querySelector('.seq-label'))seq.querySelector('.seq-label').remove();
+    seq.appendChild(clone);
+    addScore(15);
+    if(seq2.length===4){
+      seq2Complete=true;
+      document.getElementById('qed2').classList.add('show');
+      document.getElementById('r2').textContent='Your proof structure is valid. ⊢';
+      document.getElementById('r2').className='result-msg ok';
+      if(!stageDone[1]){stageDone[1]=true;lightStar(2);addScore(20);}
+    }
+  }else{
+    el.classList.add('wrong-step');
+    setTimeout(()=>el.classList.remove('wrong-step'),500);
+    document.getElementById('r2').textContent='Wrong order. You cannot use alternate angles before constructing the parallel line.';
+    document.getElementById('r2').className='result-msg err';
+  }
+}
+
+// ===== STAGE 3: CONGRUENCE =====
+const correctCrit=['SSS','SAS','RHS'];
+const critExplain=['SSS: All three sides equal → triangles are congruent. ✓','SAS: Two sides and the INCLUDED angle → congruent. ✓','RHS: Right angle + Hypotenuse + Side → congruent (specific to right triangles). ✓'];
+let critDone=0;
+function checkCrit(el,idx,crit){
+  const parent=el.parentElement;
+  if(parent.querySelector('.correct'))return;
+  if(crit===correctCrit[idx]){
+    el.classList.add('correct');
+    document.getElementById('conR'+idx).textContent=critExplain[idx];
+    document.getElementById('conR'+idx).className='result-msg ok';
+    addScore(18);critDone++;
+    if(critDone>=3&&!stageDone[2]){
+      stageDone[2]=true;lightStar(3);addScore(25);
+      document.getElementById('r3').textContent='All congruence criteria correctly identified. ✓';
+      document.getElementById('r3').className='result-msg ok';
+    }
+  }else{
+    el.classList.add('wrong');
+    setTimeout(()=>el.classList.remove('wrong'),700);
+    document.getElementById('conR'+idx).textContent='Incorrect. Check what information is given.';
+    document.getElementById('conR'+idx).className='result-msg err';
+  }
+}
+
+// ===== STAGE 4: PARALLELOGRAM =====
+const pc=document.getElementById('paraCanvas');
+const pctx=pc.getContext('2d');
+pc.width=440;pc.height=200;
+let dragVertex=false;
+let vA={x:60,y:140},vB={x:200,y:140},vC={x:260,y:60};
+let dragging=false,paraInteracted=false;
+
+function getVD(){return {x:vA.x+(vC.x-vB.x),y:vA.y+(vC.y-vB.y)};}
+function dist(a,b){return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2);}
+
+function drawPara(){
+  const w=pc.width,h=pc.height;
+  pctx.clearRect(0,0,w,h);
+  pctx.fillStyle='#080818';pctx.fillRect(0,0,w,h);
+  const vD=getVD();
+
+  // Fill
+  pctx.fillStyle='rgba(199,125,255,.06)';
+  pctx.beginPath();pctx.moveTo(vA.x,vA.y);pctx.lineTo(vB.x,vB.y);pctx.lineTo(vC.x,vC.y);pctx.lineTo(vD.x,vD.y);pctx.closePath();pctx.fill();
+
+  // Sides
+  pctx.strokeStyle='#C77DFF';pctx.lineWidth=2;
+  pctx.beginPath();pctx.moveTo(vA.x,vA.y);pctx.lineTo(vB.x,vB.y);pctx.lineTo(vC.x,vC.y);pctx.lineTo(vD.x,vD.y);pctx.closePath();pctx.stroke();
+
+  // Diagonals
+  pctx.strokeStyle='rgba(255,209,102,.35)';pctx.lineWidth=1;pctx.setLineDash([4,4]);
+  pctx.beginPath();pctx.moveTo(vA.x,vA.y);pctx.lineTo(vC.x,vC.y);pctx.stroke();
+  pctx.beginPath();pctx.moveTo(vB.x,vB.y);pctx.lineTo(vD.x,vD.y);pctx.stroke();
+  pctx.setLineDash([]);
+
+  // Midpoint of diagonals (should coincide)
+  const mid1={x:(vA.x+vC.x)/2,y:(vA.y+vC.y)/2};
+  pctx.fillStyle='#06D6A0';pctx.beginPath();pctx.arc(mid1.x,mid1.y,5,0,Math.PI*2);pctx.fill();
+
+  // Vertices
+  const verts=[vA,vB,vC,vD];
+  const labels=['A','B','C','D'];
+  const cols=['#FFD166','#4CC9F0','#FF9CC2','#06D6A0'];
+  verts.forEach((v,i)=>{
+    pctx.fillStyle=cols[i];pctx.beginPath();pctx.arc(v.x,v.y,i===2?9:6,0,Math.PI*2);pctx.fill();
+    pctx.fillStyle=cols[i];pctx.font='bold 11px Nunito';pctx.textAlign='center';
+    const off=i===0?{x:-14,y:0}:i===1?{x:14,y:0}:i===2?{x:0,y:-14}:{x:0,y:14};
+    pctx.fillText(labels[i],v.x+off.x,v.y+off.y);
+  });
+  if(vC.x>10&&vC.x<w-10){
+    pctx.fillStyle='rgba(255,209,102,.5)';pctx.font='10px Nunito';pctx.textAlign='center';
+    pctx.fillText('drag C →',vC.x,vC.y-22);
+  }
+
+  // Update properties
+  const AB=dist(vA,vB),CD=dist(vC,vD),AD=dist(vA,vD),BC=dist(vB,vC);
+  document.getElementById('ppAB').textContent=`${AB.toFixed(1)} = ${CD.toFixed(1)}`;
+  document.getElementById('ppAD').textContent=`${AD.toFixed(1)} = ${BC.toFixed(1)}`;
+  const diagOK=dist(mid1,{x:(vB.x+vD.x)/2,y:(vB.y+vD.y)/2})<1;
+  document.getElementById('ppDiag').textContent=diagOK?'✓ Always bisect':'Checking...';
+  // Angle A + Angle B
+  const ang=Math.abs(Math.atan2(vB.y-vA.y,vB.x-vA.x)-Math.atan2(vD.y-vA.y,vD.x-vA.x))*180/Math.PI;
+  const angA=Math.min(ang,360-ang);const angB=180-angA;
+  document.getElementById('ppAngle').textContent=`${angA.toFixed(0)}°+${angB.toFixed(0)}°=180°`;
+}
+
+pc.addEventListener('mousedown',e=>{
+  const r=pc.getBoundingClientRect();
+  const mx=(e.clientX-r.left)*(pc.width/r.width);
+  const my=(e.clientY-r.top)*(pc.height/r.height);
+  if(dist({x:mx,y:my},vC)<14)dragging=true;
+});
+pc.addEventListener('mousemove',e=>{
+  if(!dragging)return;
+  const r=pc.getBoundingClientRect();
+  vC.x=Math.max(80,Math.min(pc.width-20,(e.clientX-r.left)*(pc.width/r.width)));
+  vC.y=Math.max(20,Math.min(pc.height-60,(e.clientY-r.top)*(pc.height/r.height)));
+  drawPara();
+  if(!paraInteracted){paraInteracted=true;addScore(15);
+    document.getElementById('r4').textContent='Parallelogram reshaped. Properties hold for all shapes! ✓';
+    document.getElementById('r4').className='result-msg ok';
+    if(!stageDone[3]){stageDone[3]=true;lightStar(4);addScore(20);}}
+});
+pc.addEventListener('mouseup',()=>dragging=false);
+pc.addEventListener('touchstart',e=>{
+  e.preventDefault();const t=e.touches[0];
+  const r=pc.getBoundingClientRect();
+  const mx=(t.clientX-r.left)*(pc.width/r.width);const my=(t.clientY-r.top)*(pc.height/r.height);
+  if(dist({x:mx,y:my},vC)<18)dragging=true;
+},{passive:false});
+pc.addEventListener('touchmove',e=>{
+  e.preventDefault();if(!dragging)return;
+  const t=e.touches[0];const r=pc.getBoundingClientRect();
+  vC.x=Math.max(80,Math.min(pc.width-20,(t.clientX-r.left)*(pc.width/r.width)));
+  vC.y=Math.max(20,Math.min(pc.height-60,(t.clientY-r.top)*(pc.height/r.height)));
+  drawPara();
+  if(!paraInteracted){paraInteracted=true;addScore(15);
+    document.getElementById('r4').textContent='Parallelogram reshaped. Properties hold for all shapes! ✓';
+    document.getElementById('r4').className='result-msg ok';
+    if(!stageDone[3]){stageDone[3]=true;lightStar(4);addScore(20);}}
+},{passive:false});
+pc.addEventListener('touchend',()=>dragging=false);
+drawPara();
+
+// ===== STAGE 5: MIDPOINT THEOREM =====
+const mc=document.getElementById('midCanvas');
+const mctx=mc.getContext('2d');
+mc.width=440;mc.height=200;
+let midInteracted=false;
+
+function updateMid(){
+  const t=+document.getElementById('midSlider').value;
+  const w=mc.width,h=mc.height;
+  mctx.clearRect(0,0,w,h);mctx.fillStyle='#080818';mctx.fillRect(0,0,w,h);
+
+  const A={x:40+t*1.2,y:160};
+  const B={x:380-t*.8,y:160};
+  const C={x:120+t*1.5,y:40};
+  const M={x:(A.x+C.x)/2,y:(A.y+C.y)/2};
+  const N={x:(B.x+C.x)/2,y:(B.y+C.y)/2};
+
+  // Triangle
+  mctx.strokeStyle='#4A6A8A';mctx.lineWidth=1.5;
+  mctx.beginPath();mctx.moveTo(A.x,A.y);mctx.lineTo(B.x,B.y);mctx.lineTo(C.x,C.y);mctx.closePath();mctx.stroke();
+
+  // Midpoint segment MN (gold)
+  mctx.strokeStyle='#FFD166';mctx.lineWidth=3;
+  mctx.beginPath();mctx.moveTo(M.x,M.y);mctx.lineTo(N.x,N.y);mctx.stroke();
+
+  // BC (teal)
+  mctx.strokeStyle='rgba(6,214,160,.5)';mctx.lineWidth=2;
+  mctx.beginPath();mctx.moveTo(B.x,B.y);mctx.lineTo(A.x,A.y);mctx.stroke();
+
+  // Points
+  [[A,'A'],[B,'B'],[C,'C'],[M,'M'],[N,'N']].forEach(([p,l])=>{
+    mctx.fillStyle=l==='M'||l==='N'?'#FFD166':'#C77DFF';
+    mctx.beginPath();mctx.arc(p.x,p.y,5,0,Math.PI*2);mctx.fill();
+    mctx.fillStyle=mctx.fillStyle;mctx.font='bold 11px Nunito';mctx.textAlign='center';
+    mctx.fillText(l,p.x,p.y-(l==='A'||l==='B'?14:-14));
+  });
+
+  const MN=dist(M,N);const BC=dist(A,B);
+  document.getElementById('midBig').textContent=`MN = ${MN.toFixed(1)} | BC = ${BC.toFixed(1)}`;
+  document.getElementById('midSub').textContent=`MN/BC = ${(MN/BC).toFixed(3)} ≈ 0.500 — Always exactly half! ✓`;
+
+  if(!midInteracted){midInteracted=true;addScore(15);
+    document.getElementById('r5').textContent='Midpoint theorem verified dynamically. ✓';
+    document.getElementById('r5').className='result-msg ok';
+    if(!stageDone[4]){stageDone[4]=true;lightStar(5);addScore(25);}}
+}
+updateMid();
+
+// ===== NAVIGATION =====
+const ovData=[
+  {emoji:'⊢',msg:'Proof 1 Valid!',fact:'Vertically opposite angles are equal — this simple theorem is used in hundreds of more complex proofs. Euclid proved it in Book I, Proposition 15.'},
+  {emoji:'📐',msg:'Angle Sum Proved!',fact:'The angle sum of a triangle = 180° ONLY in flat (Euclidean) geometry. On a sphere, triangle angles sum to MORE than 180°. GPS satellites must account for this!'},
+  {emoji:'🔷',msg:'Congruence Classified!',fact:'SSA is not a valid congruence rule — this is the "ambiguous case". Two different triangles can have the same two sides and a non-included angle.'},
+  {emoji:'▱',msg:'Properties Verified!',fact:'The diagonals of a parallelogram bisect each other — this is the basis of the midpoint connector theorem and many coordinate geometry proofs.'},
+];
+function nextStage(){
+  if(currentStage===5&&stageDone[4]){showComplete();return;}
+  if(currentStage>=5)return;
+  const d=ovData[currentStage-1];
+  document.getElementById('ovEmoji').textContent=d.emoji;
+  document.getElementById('ovMsg').textContent=d.msg;
+  document.getElementById('ovFact').textContent=d.fact;
+  document.getElementById('overlay').classList.add('show');
+  setTimeout(()=>{
+    document.getElementById('stage'+currentStage).classList.remove('active');
+    currentStage++;
+    document.getElementById('stage'+currentStage).classList.add('active');
+    document.getElementById('stageNum').textContent=currentStage;
+    document.getElementById('overlay').classList.remove('show');
+    if(currentStage===5)document.getElementById('mainBtn').textContent='Finish →';
+  },2500);
+}
+
+function showComplete(){
+  document.getElementById('bottomBar').style.display='none';
+  document.getElementById('stage5').classList.remove('active');
+  document.getElementById('gameComplete').classList.add('show');
+  fireConfetti();
+}
+function fireConfetti(){
+  const wrap=document.getElementById('confettiWrap');wrap.innerHTML='';
+  const colors=['#FFD166','#06D6A0','#4CC9F0','#C77DFF','#FF6B6B'];
+  for(let i=0;i<28;i++){
+    const c=document.createElement('div');c.className='confetto';
+    c.style.left=(Math.random()*100)+'%';c.style.background=colors[~~(Math.random()*colors.length)];
+    c.style.animationDuration=(1.5+Math.random()*2)+'s';c.style.animationDelay=(Math.random()*.8)+'s';
+    wrap.appendChild(c);setTimeout(()=>c.remove(),4000);
+  }
+}
+function resetGame(){
+  score=0;currentStage=1;stageDone=[false,false,false,false,false];
+  seq1=[];seq2=[];seq1Complete=false;seq2Complete=false;critDone=0;paraInteracted=false;midInteracted=false;
+  document.getElementById('scoreDisplay').textContent='0 pts';
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('gameComplete').classList.remove('show');
+  document.getElementById('bottomBar').style.display='flex';
+  document.getElementById('stageNum').textContent='1';document.getElementById('mainBtn').textContent='Continue →';
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
+  document.getElementById('stage1').classList.add('active');
+  document.querySelectorAll('.step-card').forEach(c=>{c.classList.remove('placed','wrong-step');c.onclick=c.getAttribute('data-reset-fn')||null;});
+  document.getElementById('seq1').innerHTML='<div class="seq-label">→ Your proof sequence appears here (tap in order)</div>';
+  document.getElementById('seq2').innerHTML='<div class="seq-label">→ Your proof sequence (tap in order 1→4)</div>';
+  document.getElementById('qed1').classList.remove('show');document.getElementById('qed2').classList.remove('show');
+  document.querySelectorAll('.crit-btn').forEach(b=>b.classList.remove('correct','wrong'));
+  // Re-bind step functions
+  document.querySelectorAll('#stepPool1 .step-card').forEach(el=>{
+    const o=+el.dataset.order;el.onclick=()=>placeStep(el,0,o);el.classList.remove('placed');
+  });
+  document.querySelectorAll('#stepPool2 .step-card').forEach(el=>{
+    const o=+el.dataset.order;el.onclick=()=>placeStep2(el,o);el.classList.remove('placed');
+  });
+  vC={x:260,y:60};drawPara();
+  document.getElementById('midSlider').value=40;updateMid();
+}
+</script>
+</body>
+</html>

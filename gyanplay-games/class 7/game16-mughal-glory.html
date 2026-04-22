@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mughal Glory — Class 7 History</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#0F0C29;--dark:#1A1A2E;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Nunito',sans-serif;background:var(--bg);color:#fff;min-height:100vh;
+         display:flex;flex-direction:column;align-items:center;padding:1rem;animation:fadeIn .4s ease}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    .topbar{width:100%;max-width:700px;display:flex;align-items:center;
+            justify-content:space-between;padding:.75rem 0;margin-bottom:.5rem}
+    .back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:.85rem;
+              font-weight:700;padding:6px 14px;border-radius:20px;cursor:pointer;
+              text-decoration:none;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.18)}
+    .subject-tag{background:#7B1FA2;color:#fff;font-size:.75rem;font-weight:800;
+                 padding:4px 12px;border-radius:20px;letter-spacing:.5px}
+    .stars{display:flex;gap:4px;font-size:1.3rem}
+    .star{opacity:.3;transition:all .3s}
+    .star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+
+    .lang-row{display:flex;gap:6px;margin-bottom:1rem}
+    .lang-btn{background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);
+              font-weight:700;font-size:.75rem;padding:4px 10px;border-radius:16px;
+              cursor:pointer;transition:all .2s}
+    .lang-btn.active{background:var(--gold);color:var(--dark)}
+
+    .game-card{width:100%;max-width:680px;background:rgba(255,255,255,.05);
+               border:1px solid rgba(255,255,255,.1);border-radius:24px;
+               padding:2rem 1.5rem;text-align:center}
+
+    /* Mughal arch decoration */
+    .mughal-arch{display:flex;justify-content:center;margin-bottom:1rem}
+    .arch-inner{position:relative;width:120px;height:70px}
+    .arch-inner svg{width:120px;height:70px}
+    .ruler-emoji{font-size:1.8rem;text-align:center;position:absolute;top:50%;left:50%;
+                 transform:translate(-50%,-58%)}
+
+    /* Score scrolls */
+    .scroll-track{display:flex;justify-content:center;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap}
+    .scroll-dot{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.1);
+                border:2px solid rgba(255,255,255,.15);transition:all .3s;font-size:.7rem;
+                display:flex;align-items:center;justify-content:center}
+    .scroll-dot.done-correct{background:var(--gold);border-color:var(--gold)}
+    .scroll-dot.done-wrong{background:rgba(255,64,129,.4);border-color:var(--pink)}
+
+    .q-header{font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:1rem;font-style:italic}
+    .progress-bar{width:100%;background:rgba(255,255,255,.08);border-radius:20px;
+                  height:7px;margin-bottom:.4rem;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,#7B1FA2,var(--gold));
+                   border-radius:20px;transition:width .4s}
+    .progress-text{font-size:.78rem;color:rgba(255,255,255,.4);text-align:right;margin-bottom:1.2rem}
+    .q-number{font-size:.75rem;font-weight:800;color:var(--gold);letter-spacing:1px;
+              text-transform:uppercase;margin-bottom:.5rem}
+    .q-text{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.2rem;
+             line-height:1.4;margin-bottom:1.5rem;color:#fff}
+
+    .choices{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1rem}
+    .choice-btn{background:rgba(255,255,255,.07);border:2px solid rgba(255,184,0,.15);
+                border-radius:14px;padding:.75rem 1.2rem;font-family:'Nunito',sans-serif;
+                font-size:.9rem;font-weight:700;color:#fff;cursor:pointer;
+                text-align:left;transition:all .2s}
+    .choice-btn:hover:not(:disabled){background:rgba(255,184,0,.12);
+                                      border-color:rgba(255,184,0,.4);transform:translateX(4px)}
+    .choice-btn.correct{background:rgba(255,184,0,.2);border-color:var(--gold)}
+    .choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink)}
+    .choice-btn:disabled{cursor:default}
+
+    .feedback{font-size:.85rem;font-weight:700;min-height:1.4rem;margin-bottom:.5rem}
+    .feedback.correct{color:var(--gold)}
+    .feedback.wrong{color:var(--pink)}
+    .next-btn{background:var(--gold);color:var(--dark);font-family:'Baloo 2',cursive;
+              font-weight:800;font-size:1rem;padding:.7rem 2rem;border:none;
+              border-radius:50px;cursor:pointer;display:none;transition:transform .15s}
+    .next-btn:hover{transform:scale(1.04)}
+
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);
+             backdrop-filter:blur(8px);align-items:center;justify-content:center;
+             z-index:100;padding:1.5rem}
+    .overlay.show{display:flex}
+    .result-box{background:linear-gradient(135deg,#1a0a2a,#0F0C29);
+                border:1px solid rgba(255,184,0,.2);border-radius:28px;
+                padding:2.5rem 2rem;text-align:center;max-width:420px;width:100%;
+                animation:popIn .35s ease}
+    @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+    .result-emoji{font-size:3.5rem;margin-bottom:.75rem}
+    .result-title{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.8rem;color:#fff;margin-bottom:.5rem}
+    .result-score{font-size:1rem;color:rgba(255,255,255,.6);margin-bottom:.75rem}
+    .result-stars{font-size:2rem;margin-bottom:.75rem}
+    .result-fact{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.25);
+                 border-radius:14px;padding:.75rem 1rem;font-size:.82rem;
+                 color:rgba(255,255,255,.8);line-height:1.6;margin-bottom:1.5rem;text-align:left}
+    .btn-play-again{background:var(--gold);color:var(--dark);font-family:'Baloo 2',cursive;
+                    font-weight:800;font-size:1rem;padding:.8rem 2rem;border:none;
+                    border-radius:50px;cursor:pointer;width:100%;transition:transform .15s}
+    .btn-play-again:hover{transform:scale(1.03)}
+    .confetti-piece{position:fixed;width:8px;height:8px;pointer-events:none;
+                    animation:fall var(--dur,1.8s) ease-in forwards}
+    @keyframes fall{0%{transform:translateY(0) rotate(0)}
+                    100%{transform:translateY(100vh) rotate(720deg) translateX(var(--dx));opacity:0}}
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="subject-tag">🏰 History · Class 7</span>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span>
+      <span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span>
+    </div>
+  </div>
+
+  <div class="lang-row">
+    <button class="lang-btn active" onclick="setLang('en')" id="lbEn">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')" id="lbHi">हि</button>
+    <button class="lang-btn" onclick="setLang('as')" id="lbAs">অ</button>
+  </div>
+
+  <div class="game-card">
+    <!-- Mughal arch decoration -->
+    <div class="mughal-arch">
+      <div class="arch-inner">
+        <svg viewBox="0 0 120 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 70 L10 35 Q10 5 60 5 Q110 5 110 35 L110 70" stroke="rgba(255,184,0,0.4)" stroke-width="2" fill="rgba(255,184,0,0.06)"/>
+          <circle cx="60" cy="5" r="4" fill="rgba(255,184,0,0.5)"/>
+          <circle cx="10" cy="35" r="3" fill="rgba(255,184,0,0.3)"/>
+          <circle cx="110" cy="35" r="3" fill="rgba(255,184,0,0.3)"/>
+        </svg>
+        <div class="ruler-emoji" id="rulerEmoji">👑</div>
+      </div>
+    </div>
+
+    <div class="q-header" id="qHeader">Explore the glorious Mughal Empire!</div>
+
+    <!-- Score scrolls tracker -->
+    <div class="scroll-track" id="scrollTrack"></div>
+
+    <div class="progress-bar"><div class="progress-fill" id="pFill" style="width:0%"></div></div>
+    <div class="progress-text" id="pText">1 / 10</div>
+    <div class="q-number" id="qNum">Question 1</div>
+    <div class="q-text" id="qText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQ()">Next →</button>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="result-box">
+      <div class="result-emoji" id="rEmoji">👑</div>
+      <div class="result-title" id="rTitle"></div>
+      <div class="result-score" id="rScore"></div>
+      <div class="result-stars" id="rStars"></div>
+      <div class="result-fact" id="rFact"></div>
+      <button class="btn-play-again" onclick="restartGame()" id="rBtn">Restart</button>
+    </div>
+  </div>
+
+<script>
+const QUESTIONS = [
+  {
+    en:"Akbar's policy of tolerance towards all religions was called",
+    hi:"अकबर की सभी धर्मों के प्रति सहिष्णुता की नीति को कहते थे",
+    as:"আকবৰৰ সকলো ধৰ্মৰ প্ৰতি সহিষ্ণুতাৰ নীতিক কোৱা হৈছিল",
+    choices:["Sulh-i-kul","Din-i-Ilahi","Jizyah"],
+    choicesHi:["सुल्ह-ए-कुल","दीन-ए-इलाही","जज़िया"],
+    choicesAs:["ছুলহ-ই-কুল","দীন-ই-ইলাহী","জিজিয়া"],
+    answer:0, emoji:'🕊️'
+  },
+  {
+    en:"Who was Akbar's famous advisor and wit?",
+    hi:"अकबर का प्रसिद्ध सलाहकार कौन था?",
+    as:"আকবৰৰ বিখ্যাত উপদেষ্টা কোন আছিল?",
+    choices:["Birbal","Todar Mal","Abul Fazl"],
+    choicesHi:["बीरबल","टोडर मल","अबुल फज़ल"],
+    choicesAs:["বীৰবল","টোডৰ মল","আবুল ফজল"],
+    answer:0, emoji:'🧠'
+  },
+  {
+    en:"Fatehpur Sikri was built by",
+    hi:"फतेहपुर सीकरी किसने बनवाई?",
+    as:"ফতেহপুৰ ছিক্ৰী কোনে নিৰ্মাণ কৰিছিল?",
+    choices:["Akbar","Humayun","Jahangir"],
+    choicesHi:["अकबर","हुमायूँ","जहाँगीर"],
+    choicesAs:["আকবৰ","হুমায়ুন","জাহাঙ্গীৰ"],
+    answer:0, emoji:'🏰'
+  },
+  {
+    en:"The Ain-i-Akbari was written by",
+    hi:"आइन-ए-अकबरी किसने लिखा?",
+    as:"আইন-ই-আকবৰী কোনে লিখিছিল?",
+    choices:["Abul Fazl","Birbal","Tansen"],
+    choicesHi:["अबुल फज़ल","बीरबल","तानसेन"],
+    choicesAs:["আবুল ফজল","বীৰবল","তানসেন"],
+    answer:0, emoji:'📜'
+  },
+  {
+    en:"Which battle did Babur win in 1526?",
+    hi:"बाबर ने 1526 में कौन सी लड़ाई जीती?",
+    as:"বাবুৰে ১৫২৬ চনত কোনটো যুদ্ধ জিকিছিল?",
+    choices:["Battle of Plassey","First Battle of Panipat","Battle of Haldighati"],
+    choicesHi:["प्लासी का युद्ध","पानीपत का पहला युद्ध","हल्दीघाटी का युद्ध"],
+    choicesAs:["পলাশীৰ যুদ্ধ","পানিপথৰ প্ৰথম যুদ্ধ","হলদীঘাটিৰ যুদ্ধ"],
+    answer:1, emoji:'⚔️'
+  },
+  {
+    en:"Humayun was defeated by",
+    hi:"हुमायूँ को किसने हराया?",
+    as:"হুমায়ুনক কোনে পৰাজিত কৰিছিল?",
+    choices:["Rana Pratap","Sher Shah Suri","Ibrahim Lodi"],
+    choicesHi:["राणा प्रताप","शेर शाह सूरी","इब्राहिम लोदी"],
+    choicesAs:["ৰাণা প্ৰতাপ","শেৰ শ্বাহ ছুৰী","ইব্ৰাহিম লোদী"],
+    answer:1, emoji:'🛡️'
+  },
+  {
+    en:"The Mughal Empire reached its greatest extent under",
+    hi:"मुगल साम्राज्य किसके काल में सबसे बड़ा था?",
+    as:"মোগল সাম্ৰাজ্য কাৰ শাসনত সৰ্বোচ্চ বিস্তৃতি পাইছিল?",
+    choices:["Akbar","Aurangzeb","Shah Jahan"],
+    choicesHi:["अकबर","औरंगज़ेब","शाहजहाँ"],
+    choicesAs:["আকবৰ","ঔৰংজেব","শ্বাহজাহান"],
+    answer:1, emoji:'🗺️'
+  },
+  {
+    en:"Tansen was a famous",
+    hi:"तानसेन प्रसिद्ध थे",
+    as:"তানসেন বিখ্যাত আছিল",
+    choices:["Poet","Musician","Painter"],
+    choicesHi:["कवि","संगीतकार","चित्रकार"],
+    choicesAs:["কবি","সংগীতজ্ঞ","চিত্ৰশিল্পী"],
+    answer:1, emoji:'🎵'
+  },
+  {
+    en:"The word 'Mughal' comes from",
+    hi:"'मुगल' शब्द किससे आया है?",
+    as:"'মোগল' শব্দটো কোনটো শব্দৰ পৰা আহিছে?",
+    choices:["Mongol","Arabic","Persian"],
+    choicesHi:["मंगोल","अरबी","फ़ारसी"],
+    choicesAs:["মঙ্গোল","আৰৱী","পাৰ্চী"],
+    answer:0, emoji:'🌏'
+  },
+  {
+    en:"Shah Jahan built the",
+    hi:"शाहजहाँ ने क्या बनवाया?",
+    as:"শ্বাহজাহানে কি নিৰ্মাণ কৰিছিল?",
+    choices:["Red Fort","Taj Mahal","Qutub Minar"],
+    choicesHi:["लाल किला","ताज महल","कुतुब मीनार"],
+    choicesAs:["লাল দুৰ্গ","তাজমহল","কুতুব মিনাৰ"],
+    answer:1, emoji:'🕌'
+  }
+];
+
+const RULER_EMOJIS = ['👑','🗡️','📜','🏰','⚔️','🛡️','🕌','🎵','🌏','🕊️'];
+
+const T = {
+  en:{
+    header:"Explore the glorious Mughal Empire!",
+    qLabel:"Question",
+    feedback_correct:["Correct! 👑","Imperial knowledge! ✅","Brilliant! 🌟","Well done! 👏","Splendid! 🎯"],
+    feedback_wrong:"Not quite — the answer is",
+    next:"Next →",restart:"Restart",
+    result_title:["Mughal Scholar! 👑","Great Work! 🎉","Good Effort! 👏","Keep Studying! 💪"],
+    result_score:(c)=>`You scored ${c} out of 10`,
+    fact:"🏰 Fun Fact: Akbar never learned to read or write, yet he built one of the greatest empires in history! His policy of Sulh-i-kul (peace with all) meant he respected all religions equally. Fatehpur Sikri was built in honour of Sufi saint Salim Chishti."
+  },
+  hi:{
+    header:"शानदार मुगल साम्राज्य की खोज करें!",
+    qLabel:"प्रश्न",
+    feedback_correct:["सही! 👑","शाही जानकारी! ✅","शानदार! 🌟","शाबाश! 👏","बेहतरीन! 🎯"],
+    feedback_wrong:"सही उत्तर है",
+    next:"अगला →",restart:"दोबारा खेलें",
+    result_title:["मुगल विद्वान! 👑","बहुत अच्छा! 🎉","अच्छा प्रयास! 👏","पढ़ते रहो! 💪"],
+    result_score:(c)=>`आपने 10 में से ${c} अंक पाए`,
+    fact:"🏰 मज़ेदार तथ्य: अकबर कभी पढ़ना-लिखना नहीं सीखे, फिर भी उन्होंने इतिहास के महानतम साम्राज्यों में से एक बनाया! उनकी 'सुल्ह-ए-कुल' नीति का अर्थ था सभी धर्मों का सम्मान। फतेहपुर सीकरी सूफी संत सलीम चिश्ती के सम्मान में बनाया गया था।"
+  },
+  as:{
+    header:"গৌৰৱময় মোগল সাম্ৰাজ্য অন্বেষণ কৰক!",
+    qLabel:"প্ৰশ্ন",
+    feedback_correct:["শুদ্ধ! 👑","ৰাজকীয় জ্ঞান! ✅","চমৎকাৰ! 🌟","শাবাশ! 👏","অসাধাৰণ! 🎯"],
+    feedback_wrong:"শুদ্ধ উত্তৰ হ'ল",
+    next:"পৰৱৰ্তী →",restart:"পুনৰ খেলক",
+    result_title:["মোগল পণ্ডিত! 👑","বহুত ভাল! 🎉","ভাল প্ৰচেষ্টা! 👏","পঢ়ি থাকক! 💪"],
+    result_score:(c)=>`আপুনি ১০ৰ মাজত ${c} পাইছে`,
+    fact:"🏰 মজাৰ তথ্য: আকবৰে কেতিয়াও পঢ়া-লিখা শিকা নাছিল, তথাপি তেওঁ ইতিহাসৰ অন্যতম মহান সাম্ৰাজ্য গঢ়িছিল! তেওঁৰ 'ছুলহ-ই-কুল' নীতিৰ অৰ্থ আছিল সকলো ধৰ্মক সমান সন্মান দিয়া। ফতেহপুৰ ছিক্ৰী ছুফী সাধু ছেলিম চিস্তিৰ সন্মানত নিৰ্মিত হৈছিল।"
+  }
+};
+
+let lang='en', cur=0, score=0, answered=false, litStars=0;
+let dotResults = [];
+
+function buildScrollTrack(){
+  const track=document.getElementById('scrollTrack');
+  track.innerHTML=Array(10).fill(0).map((_,i)=>`<div class="scroll-dot" id="dot${i}"></div>`).join('');
+}
+
+function setLang(l){
+  lang=l;
+  ['en','hi','as'].forEach(x=>{
+    document.getElementById('lb'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('active',x===l);
+  });
+  document.getElementById('qHeader').textContent=T[l].header;
+  renderQ();
+}
+
+function renderQ(){
+  const t=T[lang], q=QUESTIONS[cur];
+  answered=false;
+  document.getElementById('qHeader').textContent=t.header;
+  document.getElementById('pFill').style.width=(cur/10*100)+'%';
+  document.getElementById('pText').textContent=`${cur+1} / 10`;
+  document.getElementById('qNum').textContent=`${t.qLabel} ${cur+1}`;
+  document.getElementById('qText').textContent=q[lang];
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('rulerEmoji').textContent=RULER_EMOJIS[cur];
+
+  const choiceKey = lang==='en' ? 'choices' : lang==='hi' ? 'choicesHi' : 'choicesAs';
+  const ch=document.getElementById('choices');
+  ch.innerHTML=q[choiceKey].map((c,i)=>
+    `<button class="choice-btn" onclick="pick(${i})">${c}</button>`
+  ).join('');
+}
+
+function pick(idx){
+  if(answered) return;
+  answered=true;
+  const q=QUESTIONS[cur], t=T[lang];
+  const choiceKey = lang==='en' ? 'choices' : lang==='hi' ? 'choicesHi' : 'choicesAs';
+  const btns=document.querySelectorAll('.choice-btn');
+  btns.forEach(b=>b.disabled=true);
+  const correct=idx===q.answer;
+  btns[idx].classList.add(correct?'correct':'wrong');
+  if(!correct) btns[q.answer].classList.add('correct');
+
+  // Update scroll dot
+  const dot=document.getElementById('dot'+cur);
+  dot.classList.add(correct?'done-correct':'done-wrong');
+  dot.textContent=correct?'✓':'✗';
+
+  const fb=document.getElementById('feedback');
+  if(correct){
+    score++;
+    const msgs=t.feedback_correct;
+    fb.textContent=msgs[Math.floor(Math.random()*msgs.length)];
+    fb.className='feedback correct';
+    playTone(660,'sine',.15);playTone(880,'sine',.2,.25,.12);
+    updateStars();
+  } else {
+    fb.textContent=`${t.feedback_wrong}: ${q[choiceKey][q.answer]}`;
+    fb.className='feedback wrong';
+    playTone(280,'sawtooth',.18);
+  }
+  document.getElementById('nextBtn').style.display='inline-block';
+  document.getElementById('nextBtn').textContent=cur<9?t.next:t.restart;
+  if(cur>=9) document.getElementById('nextBtn').onclick=showResult;
+}
+
+function nextQ(){cur++;if(cur>=10){showResult();return;}renderQ();}
+
+function updateStars(){
+  const pct=score/10;
+  if(pct>=.4&&litStars<1){litStars=1;litStar(1);}
+  if(pct>=.7&&litStars<2){litStars=2;litStar(2);}
+  if(pct>=.9&&litStars<3){litStars=3;litStar(3);}
+}
+function litStar(n){
+  const el=document.getElementById('s'+n);
+  el.classList.add('lit');
+  el.animate([{transform:'scale(1.6)'},{transform:'scale(1)'}],{duration:400});
+}
+
+function showResult(){
+  const t=T[lang], pct=score/10;
+  const idx=pct>=.9?0:pct>=.7?1:pct>=.4?2:3;
+  document.getElementById('rEmoji').textContent=['👑','🎉','👏','💪'][idx];
+  document.getElementById('rTitle').textContent=t.result_title[idx];
+  document.getElementById('rScore').textContent=t.result_score(score);
+  document.getElementById('rStars').textContent='⭐'.repeat(litStars)+'☆'.repeat(3-litStars);
+  document.getElementById('rFact').textContent=t.fact;
+  document.getElementById('rBtn').textContent=t.restart;
+  document.getElementById('overlay').classList.add('show');
+  if(pct>=.4) launchConfetti();
+}
+
+function restartGame(){
+  cur=score=litStars=0;answered=false;
+  ['s1','s2','s3'].forEach(id=>document.getElementById(id).classList.remove('lit'));
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('nextBtn').onclick=nextQ;
+  buildScrollTrack();
+  renderQ();
+}
+
+let _ctx;
+function getCtx(){return _ctx||(_ctx=new(window.AudioContext||window.webkitAudioContext)());}
+function playTone(f,t,d,g,dl){
+  try{const c=getCtx(),dly=dl||0,o=c.createOscillator(),gn=c.createGain();
+  o.type=t;o.frequency.setValueAtTime(f,c.currentTime+dly);
+  gn.gain.setValueAtTime(0,c.currentTime+dly);
+  gn.gain.linearRampToValueAtTime(g||.22,c.currentTime+dly+.01);
+  gn.gain.exponentialRampToValueAtTime(.001,c.currentTime+dly+d);
+  o.connect(gn);gn.connect(c.destination);
+  o.start(c.currentTime+dly);o.stop(c.currentTime+dly+d+.05);}catch(e){}
+}
+document.addEventListener('click',()=>{try{getCtx().resume();}catch(e){}},{once:true});
+function launchConfetti(){
+  const cols=['#FFB800','#7B1FA2','#FF4081','#00C853','#00AEEF'];
+  for(let i=0;i<35;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%cols.length]};--dur:${1.4+Math.random()*1.2}s;--dx:${(Math.random()-.5)*160}px;border-radius:${Math.random()>.5?'50%':'3px'}`;
+    document.body.appendChild(el);el.addEventListener('animationend',()=>el.remove());
+  }
+}
+
+buildScrollTrack();
+setLang('en');
+</script>
+</body>
+</html>

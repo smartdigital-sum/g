@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>G5-05 · Area Explorer · GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A;
+  --grad-from:#180A28;--grad-to:#0F0820;--accent:var(--purple);
+  --border:rgba(199,125,255,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(145deg,var(--grad-from),var(--grad-to));min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;padding:0 0 40px;}
+.header{width:100%;max-width:480px;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;}
+.subject-tag{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);}
+.stars{display:flex;gap:3px;}
+.star{font-size:1rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+
+.wow-card{width:calc(100% - 32px);max-width:448px;background:linear-gradient(135deg,rgba(199,125,255,.18),rgba(76,201,240,.12));border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin:8px 16px 16px;text-align:center;}
+.wow-label{font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.wow-card p{font-size:.95rem;line-height:1.6;}
+.wow-card strong{color:var(--gold);}
+
+.section{width:calc(100% - 32px);max-width:448px;margin:0 16px;}
+
+/* STAGE INDICATOR */
+.stage-indicator{display:flex;gap:6px;margin-bottom:14px;width:calc(100% - 32px);max-width:448px;}
+.stage-dot{flex:1;height:4px;border-radius:2px;background:var(--border);transition:background .4s;}
+.stage-dot.active{background:var(--accent);}
+.stage-dot.done{background:var(--teal);}
+
+/* FORMULA CARD */
+.formula-card{background:rgba(199,125,255,.1);border:1.5px solid var(--accent);border-radius:14px;padding:14px 18px;margin-bottom:14px;text-align:center;}
+.formula-title{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:6px;}
+.formula-text{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.formula-sub{font-size:.8rem;color:var(--text);margin-top:4px;opacity:.8;}
+
+/* GRID CANVAS */
+.grid-canvas-wrap{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:14px;margin-bottom:14px;
+}
+.grid-title{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px;text-align:center;}
+.canvas-area{display:flex;justify-content:center;}
+canvas{border-radius:8px;touch-action:none;}
+
+/* MEASUREMENT INPUTS */
+.measure-row{display:flex;gap:10px;margin-bottom:14px;}
+.measure-box{flex:1;background:var(--card);border:2px solid var(--border);border-radius:12px;padding:10px 12px;text-align:center;transition:border-color .3s;}
+.measure-box.active-input{border-color:var(--accent);}
+.measure-box label{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--dim);display:block;margin-bottom:6px;}
+.measure-box input{
+  background:transparent;border:none;
+  font-family:'Baloo 2',cursive;font-size:1.4rem;font-weight:800;
+  color:var(--gold);text-align:center;width:100%;outline:none;
+}
+.measure-box span{font-size:.75rem;color:var(--dim);}
+
+/* AREA DISPLAY */
+.area-display{
+  background:linear-gradient(135deg,rgba(6,214,160,.15),rgba(76,201,240,.1));
+  border:2px solid rgba(6,214,160,.3);border-radius:14px;
+  padding:14px 18px;margin-bottom:14px;text-align:center;
+}
+.area-label{font-size:.75rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:4px;}
+.area-value{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--teal);}
+.area-steps{font-size:.8rem;color:var(--text);margin-top:4px;opacity:.7;}
+
+/* CHALLENGE TARGETS */
+.challenge-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:14px;}
+.ch-title{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;}
+.ch-target{font-family:'Baloo 2',cursive;font-size:1.1rem;color:var(--gold);margin-bottom:6px;}
+.ch-options{display:flex;flex-wrap:wrap;gap:8px;}
+.ch-opt{
+  background:rgba(199,125,255,.1);border:2px solid var(--border);
+  color:var(--text);font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;
+  padding:8px 14px;border-radius:10px;cursor:pointer;transition:all .2s;
+}
+.ch-opt:hover{border-color:var(--accent);}
+.ch-opt.selected{border-color:var(--accent);background:rgba(199,125,255,.2);color:var(--accent);}
+.ch-opt.correct-ans{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal);}
+.ch-opt.wrong-ans{border-color:var(--coral);background:rgba(255,107,107,.1);color:var(--coral);}
+
+.check-btn{width:100%;padding:14px;border-radius:14px;border:none;font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--accent),#8B5CF6);color:#fff;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(199,125,255,.35);}
+.check-btn:hover{opacity:.9;}
+.check-btn:disabled{opacity:.4;cursor:not-allowed;}
+.feedback{margin-top:12px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.9rem;text-align:center;display:none;}
+.feedback.correct{background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.4);color:var(--teal);}
+.feedback.wrong{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:var(--coral);}
+
+.progress-row{width:calc(100% - 32px);max-width:448px;margin:16px 16px 0;display:flex;align-items:center;justify-content:space-between;}
+.progress-text{font-size:.8rem;font-weight:700;color:var(--dim);}
+.next-btn{background:var(--gold);color:#1A0F00;font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;border:none;border-radius:50px;padding:8px 22px;cursor:pointer;display:none;}
+
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:30px 28px;max-width:360px;width:90%;text-align:center;}
+.overlay-box .o-emoji{font-size:3rem;margin-bottom:12px;}
+.overlay-box h3{font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--gold);margin-bottom:8px;}
+.overlay-box p{font-size:.9rem;color:var(--text);line-height:1.6;}
+.overlay-box strong{color:var(--teal);}
+
+.complete-screen{width:calc(100% - 32px);max-width:448px;margin:20px 16px;background:var(--card);border:2px solid rgba(6,214,160,.3);border-radius:22px;padding:32px 24px;text-align:center;display:none;}
+.complete-screen .big{font-size:4rem;margin-bottom:12px;}
+.complete-screen h2{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--gold);margin-bottom:8px;}
+.complete-screen p{color:var(--text);font-size:.95rem;line-height:1.6;margin-bottom:20px;}
+.play-again{background:var(--teal);color:#040E04;font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;border:none;border-radius:50px;padding:12px 28px;cursor:pointer;}
+
+.confetti-piece{position:fixed;width:10px;height:10px;opacity:0;animation:confFall 1.8s ease-in forwards;pointer-events:none;z-index:200;}
+@keyframes confFall{0%{opacity:1;transform:translateY(0) rotate(0deg);}100%{opacity:0;transform:translateY(80vh) rotate(720deg);}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="subject-tag">Maths</div>
+  <div class="game-title">🔺 Area Explorer</div>
+  <div class="stars">
+    <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+    <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+  </div>
+</div>
+
+<div class="wow-card">
+  <div class="wow-label">🤯 Did You Know?</div>
+  <p>Every <strong>SAIL on a boat</strong> is a triangle. Boat designers calculate triangle areas exactly — the wrong area means the boat <strong>won't catch enough wind</strong> and you drift in the ocean!</p>
+</div>
+
+<div class="stage-indicator">
+  <div class="stage-dot active" id="dot1"></div>
+  <div class="stage-dot" id="dot2"></div>
+  <div class="stage-dot" id="dot3"></div>
+  <div class="stage-dot" id="dot4"></div>
+</div>
+
+<!-- STAGE 1: Triangle formula reveal -->
+<div class="section" id="stage1">
+  <div class="formula-card">
+    <div class="formula-title">🔺 Triangle Area Formula</div>
+    <div class="formula-text">Area = (Base × Height) ÷ 2</div>
+    <div class="formula-sub">A triangle is HALF a rectangle with the same base and height</div>
+  </div>
+  <div class="grid-canvas-wrap">
+    <div class="grid-title">🎨 Triangle on Grid — See Why We Divide by 2</div>
+    <div class="canvas-area"><canvas id="gridCanvas" width="300" height="220"></canvas></div>
+  </div>
+  <div class="measure-row">
+    <div class="measure-box active-input">
+      <label>Base (units)</label>
+      <input type="number" id="baseInp" value="6" min="1" max="10" oninput="updateCanvas()"/>
+      <span>units</span>
+    </div>
+    <div class="measure-box">
+      <label>Height (units)</label>
+      <input type="number" id="heightInp" value="4" min="1" max="8" oninput="updateCanvas()"/>
+      <span>units</span>
+    </div>
+  </div>
+  <div class="area-display">
+    <div class="area-label">Calculated Area</div>
+    <div class="area-value" id="areaVal">12 sq units</div>
+    <div class="area-steps" id="areaSteps">(6 × 4) ÷ 2 = 24 ÷ 2 = 12</div>
+  </div>
+  <div class="challenge-card">
+    <div class="ch-title">📐 Challenge: A sail has base 8m and height 5m. What is its area?</div>
+    <div class="ch-options">
+      <button class="ch-opt" onclick="selectQ1(this,'40')">40 m²</button>
+      <button class="ch-opt" onclick="selectQ1(this,'20')">20 m²</button>
+      <button class="ch-opt" onclick="selectQ1(this,'13')">13 m²</button>
+      <button class="ch-opt" onclick="selectQ1(this,'80')">80 m²</button>
+    </div>
+  </div>
+  <button class="check-btn" id="s1Check" onclick="checkStage1()">Check Answer ✓</button>
+  <div class="feedback" id="s1FB"></div>
+</div>
+
+<!-- STAGE 2: Compound shapes -->
+<div class="section" id="stage2" style="display:none;">
+  <div class="formula-card" style="background:rgba(6,214,160,.1);border-color:rgba(6,214,160,.4);">
+    <div class="formula-title" style="color:var(--teal);">🏠 Compound Shapes</div>
+    <div class="formula-text" style="color:var(--teal);">Area = Rectangle + Triangle</div>
+    <div class="formula-sub">Split complex shapes into simpler ones, then add!</div>
+  </div>
+  <div class="grid-canvas-wrap">
+    <div class="grid-title">🏠 House Shape = Rectangle + Triangle Roof</div>
+    <div class="canvas-area"><canvas id="houseCanvas" width="300" height="220"></canvas></div>
+  </div>
+  <div class="challenge-card">
+    <div class="ch-title">📐 House: rectangle 6×4, triangle roof base 6, height 3. Total area?</div>
+    <div class="ch-options">
+      <button class="ch-opt" onclick="selectQ2(this,'33')">33 m²</button>
+      <button class="ch-opt" onclick="selectQ2(this,'24')">24 m²</button>
+      <button class="ch-opt" onclick="selectQ2(this,'42')">42 m²</button>
+      <button class="ch-opt" onclick="selectQ2(this,'27')">27 m²</button>
+    </div>
+  </div>
+  <button class="check-btn" id="s2Check" onclick="checkStage2()">Calculate ✓</button>
+  <div class="feedback" id="s2FB"></div>
+</div>
+
+<!-- STAGE 3: Kite design challenge -->
+<div class="section" id="stage3" style="display:none;">
+  <div class="formula-card" style="background:rgba(255,209,102,.08);border-color:rgba(255,209,102,.3);">
+    <div class="formula-title" style="color:var(--gold);">🪁 Design Challenge</div>
+    <div class="formula-text">Kite Area = 2 Triangles</div>
+    <div class="formula-sub">A kite shape is two back-to-back triangles!</div>
+  </div>
+  <div class="grid-canvas-wrap">
+    <div class="grid-title">🪁 Kite Shape — Two Triangles</div>
+    <div class="canvas-area"><canvas id="kiteCanvas" width="300" height="220"></canvas></div>
+  </div>
+  <div class="challenge-card">
+    <div class="ch-title">🪁 Kite: each triangle has base 4m and height 6m. Total kite area?</div>
+    <div class="ch-options">
+      <button class="ch-opt" onclick="selectQ3(this,'24')">24 m²</button>
+      <button class="ch-opt" onclick="selectQ3(this,'48')">48 m²</button>
+      <button class="ch-opt" onclick="selectQ3(this,'12')">12 m²</button>
+      <button class="ch-opt" onclick="selectQ3(this,'36')">36 m²</button>
+    </div>
+  </div>
+  <button class="check-btn" id="s3Check" onclick="checkStage3()">Verify Design ✓</button>
+  <div class="feedback" id="s3FB"></div>
+</div>
+
+<!-- STAGE 4: Final quiz -->
+<div class="section" id="stage4" style="display:none;">
+  <div class="challenge-card">
+    <div class="ch-title">🏆 Final: A sail for a model boat has base 10cm and height 8cm. How many <strong style="color:var(--gold)">square centimetres</strong> of cloth is needed?</div>
+    <div class="ch-options">
+      <button class="ch-opt" onclick="selectQ4(this,'40')">40 cm²</button>
+      <button class="ch-opt" onclick="selectQ4(this,'80')">80 cm²</button>
+      <button class="ch-opt" onclick="selectQ4(this,'18')">18 cm²</button>
+      <button class="ch-opt" onclick="selectQ4(this,'20')">20 cm²</button>
+    </div>
+  </div>
+  <button class="check-btn" id="s4Check" onclick="checkStage4()">Set Sail! ⛵</button>
+  <div class="feedback" id="s4FB"></div>
+</div>
+
+<div class="progress-row">
+  <span class="progress-text" id="progressText">Stage 1 of 4</span>
+  <button class="next-btn" id="nextBtn" onclick="nextStage()">Next Stage →</button>
+</div>
+
+<div class="complete-screen" id="completeScreen">
+  <div class="big">⛵</div>
+  <h2>Expert Area Explorer!</h2>
+  <p>You can find the area of triangles and compound shapes. Every boat sail, kite, and roof uses this formula. <strong>Now you can design them too!</strong></p>
+  <button class="play-again" onclick="restartGame()">Play Again 🔄</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="o-emoji" id="oEmoji">🎉</div>
+    <h3 id="oTitle">Correct!</h3>
+    <p id="oFact"></p>
+  </div>
+</div>
+
+<script>
+let stage=1, score=0;
+let q1Sel=null, q2Sel=null, q3Sel=null, q4Sel=null;
+
+// ── CANVAS DRAWING ──
+function drawGrid(ctx, w, h, cellSize){
+  ctx.strokeStyle='rgba(199,125,255,.15)';ctx.lineWidth=1;
+  for(let x=0;x<=w;x+=cellSize){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=0;y<=h;y+=cellSize){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+}
+
+function updateCanvas(){
+  const base=Math.min(10,Math.max(1,parseInt(document.getElementById('baseInp').value)||6));
+  const height=Math.min(8,Math.max(1,parseInt(document.getElementById('heightInp').value)||4));
+  const area=(base*height)/2;
+  document.getElementById('areaVal').textContent=`${area} sq units`;
+  document.getElementById('areaSteps').textContent=`(${base} × ${height}) ÷ 2 = ${base*height} ÷ 2 = ${area}`;
+  drawTriangleCanvas(base,height);
+}
+
+function drawTriangleCanvas(base,height){
+  const canvas=document.getElementById('gridCanvas');
+  const ctx=canvas.getContext('2d');
+  const cell=28; const pad=16;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawGrid(ctx,canvas.width,canvas.height,cell);
+  // Draw rectangle ghost
+  const rx=pad, ry=canvas.height-pad-height*cell;
+  const rw=base*cell, rh=height*cell;
+  ctx.fillStyle='rgba(199,125,255,.08)';ctx.fillRect(rx,ry,rw,rh);
+  ctx.strokeStyle='rgba(199,125,255,.3)';ctx.setLineDash([4,4]);ctx.strokeRect(rx,ry,rw,rh);ctx.setLineDash([]);
+  // Draw triangle
+  ctx.beginPath();ctx.moveTo(rx,ry+rh);ctx.lineTo(rx+rw,ry+rh);ctx.lineTo(rx+rw/2,ry);ctx.closePath();
+  ctx.fillStyle='rgba(199,125,255,.35)';ctx.fill();
+  ctx.strokeStyle='#C77DFF';ctx.lineWidth=2;ctx.stroke();
+  // Labels
+  ctx.fillStyle='var(--gold)';ctx.font='bold 12px Baloo 2';ctx.textAlign='center';
+  ctx.fillStyle='#FFD166';ctx.fillText(`Base = ${base}`,rx+rw/2,canvas.height-2);
+  ctx.save();ctx.translate(rx-8,ry+rh/2);ctx.rotate(-Math.PI/2);ctx.fillText(`h=${height}`,0,0);ctx.restore();
+}
+
+function drawHouseCanvas(){
+  const canvas=document.getElementById('houseCanvas');
+  const ctx=canvas.getContext('2d');
+  const cell=24; const pad=20;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawGrid(ctx,canvas.width,canvas.height,cell);
+  const bw=6*cell, bh=4*cell;
+  const bx=pad, by=canvas.height-pad-bh-3*cell;
+  // Rectangle body
+  ctx.fillStyle='rgba(76,201,240,.15)';ctx.fillRect(bx,by+3*cell,bw,bh);
+  ctx.strokeStyle='#4CC9F0';ctx.lineWidth=2;ctx.strokeRect(bx,by+3*cell,bw,bh);
+  // Triangle roof
+  ctx.beginPath();ctx.moveTo(bx,by+3*cell);ctx.lineTo(bx+bw,by+3*cell);ctx.lineTo(bx+bw/2,by);ctx.closePath();
+  ctx.fillStyle='rgba(199,125,255,.25)';ctx.fill();
+  ctx.strokeStyle='#C77DFF';ctx.stroke();
+  // Labels
+  ctx.fillStyle='#FFD166';ctx.font='bold 11px Baloo 2';ctx.textAlign='center';
+  ctx.fillText('6m',bx+bw/2,by+3*cell+bh+14);
+  ctx.fillText('4m',bx-10,by+3*cell+bh/2);
+  ctx.fillText('Roof h=3m',bx+bw/2,by+10);
+  // Area breakdown
+  ctx.fillStyle='#4CC9F0';ctx.fillText('Rect: 6×4=24',bx+bw/2,by+3*cell+bh/2+6);
+  ctx.fillStyle='#C77DFF';ctx.fillText('Tri: (6×3)÷2=9',bx+bw/2,by+3*cell-bh/2-6);
+}
+
+function drawKiteCanvas(){
+  const canvas=document.getElementById('kiteCanvas');
+  const ctx=canvas.getContext('2d');
+  const cell=24;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawGrid(ctx,canvas.width,canvas.height,cell);
+  const cx=canvas.width/2, cy=canvas.height/2;
+  const hw=4*cell/2, hh=6*cell;
+  // Top triangle
+  ctx.beginPath();ctx.moveTo(cx,cy-hh/2);ctx.lineTo(cx-hw,cy);ctx.lineTo(cx+hw,cy);ctx.closePath();
+  ctx.fillStyle='rgba(199,125,255,.3)';ctx.fill();ctx.strokeStyle='#C77DFF';ctx.lineWidth=2;ctx.stroke();
+  // Bottom triangle
+  ctx.beginPath();ctx.moveTo(cx,cy+hh/2);ctx.lineTo(cx-hw,cy);ctx.lineTo(cx+hw,cy);ctx.closePath();
+  ctx.fillStyle='rgba(6,214,160,.2)';ctx.fill();ctx.strokeStyle='#06D6A0';ctx.stroke();
+  ctx.fillStyle='#FFD166';ctx.font='bold 11px Baloo 2';ctx.textAlign='center';
+  ctx.fillText('base=4m',cx,cy-hh/2-6);
+  ctx.fillText('h=6m',cx+hw+18,cy);
+}
+
+// ── QUIZ SELECTION ──
+function selectQ(el,val,num){
+  window['q'+num+'Sel']=val;
+  el.closest('.ch-options').querySelectorAll('.ch-opt').forEach(b=>{
+    b.classList.toggle('selected',b===el);
+  });
+}
+window.selectQ1=(el,v)=>selectQ(el,v,'1');
+window.selectQ2=(el,v)=>selectQ(el,v,'2');
+window.selectQ3=(el,v)=>selectQ(el,v,'3');
+window.selectQ4=(el,v)=>selectQ(el,v,'4');
+
+function checkStage1(){
+  if(!q1Sel){showFB('s1FB','wrong','⚠️ Pick an answer!');return;}
+  if(q1Sel==='20'){
+    ok(1,'s1FB','✅ 20 m²! (8×5)÷2 = 40÷2 = 20. Perfect sail area!');
+    showOverlay('⛵','Sail Calculated!','(8 × 5) ÷ 2 = <strong>20 m²</strong>. That\'s the exact area of sail fabric needed! Boat designers use this every day.');
+  } else {
+    showFB('s1FB','wrong',`❌ Remember: (Base × Height) ÷ 2. Try: (8 × 5) ÷ 2 = ?`);
+  }
+}
+function checkStage2(){
+  if(!q2Sel){showFB('s2FB','wrong','⚠️ Pick an answer!');return;}
+  if(q2Sel==='33'){
+    ok(2,'s2FB','✅ 33 m²! Rectangle (6×4=24) + Triangle ((6×3)÷2=9) = 33!');
+    showOverlay('🏠','House Area Found!','Rectangle + Triangle = <strong>24 + 9 = 33 m²</strong>. Split any complex shape into simple ones!');
+  } else {
+    showFB('s2FB','wrong','❌ Rectangle = 6×4 = 24. Triangle roof = (6×3)÷2 = 9. Add them!');
+  }
+}
+function checkStage3(){
+  if(!q3Sel){showFB('s3FB','wrong','⚠️ Pick an answer!');return;}
+  if(q3Sel==='24'){
+    ok(3,'s3FB','✅ 24 m²! Each triangle = (4×6)÷2 = 12, two triangles = 24!');
+    showOverlay('🪁','Kite Designed!','2 × (4×6÷2) = 2 × 12 = <strong>24 m²</strong>. Your kite is perfectly calculated!');
+  } else {
+    showFB('s3FB','wrong','❌ Each triangle: (4×6)÷2 = 12. There are 2 triangles. Add them!');
+  }
+}
+function checkStage4(){
+  if(!q4Sel){showFB('s4FB','wrong','⚠️ Pick an answer!');return;}
+  if(q4Sel==='40'){
+    ok(4,'s4FB','✅ 40 cm²! (10×8)÷2 = 80÷2 = 40. Perfect sail!');
+    showOverlay('⛵','Boat Sails Away!','(10 × 8) ÷ 2 = <strong>40 cm²</strong>. Your model boat will catch the wind perfectly!');
+  } else {
+    showFB('s4FB','wrong','❌ (10 × 8) ÷ 2 = 80 ÷ 2 = ?');
+  }
+}
+
+function ok(stageNum, fbId, msg){
+  score++;updateStars();
+  showFB(fbId,'correct',msg);
+  document.getElementById('nextBtn').style.display='block';
+  document.getElementById(`s${stageNum}Check`).disabled=true;
+  spawnConfetti();
+}
+
+function nextStage(){
+  stage++;
+  if(stage>4){
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+    document.querySelector('.stage-indicator').style.display='none';
+    document.querySelector('.progress-row').style.display='none';
+    document.getElementById('completeScreen').style.display='block';
+    spawnConfetti();return;
+  }
+  [1,2,3,4].forEach(i=>{
+    document.getElementById('stage'+i).style.display=i===stage?'block':'none';
+    document.getElementById('dot'+i).className='stage-dot'+(i<stage?' done':i===stage?' active':'');
+  });
+  document.getElementById('progressText').textContent=`Stage ${stage} of 4`;
+  document.getElementById('nextBtn').style.display='none';
+  if(stage===2){setTimeout(drawHouseCanvas,100);}
+  if(stage===3){setTimeout(drawKiteCanvas,100);}
+}
+
+function updateStars(){const c=Math.min(5,score+1);for(let i=1;i<=c;i++) document.getElementById('s'+i).classList.add('lit');}
+function showFB(id,type,msg){const el=document.getElementById(id);el.textContent=msg;el.className=`feedback ${type}`;el.style.display='block';}
+function showOverlay(emoji,title,fact){
+  document.getElementById('oEmoji').textContent=emoji;document.getElementById('oTitle').textContent=title;document.getElementById('oFact').innerHTML=fact;
+  const ov=document.getElementById('overlay');ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),2600);
+}
+function spawnConfetti(){
+  const colors=['#FFD166','#FF6B6B','#06D6A0','#4CC9F0','#C77DFF'];
+  for(let i=0;i<28;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[i%5]};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()*2}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),3500);}
+}
+function restartGame(){
+  stage=1;score=0;q1Sel=q2Sel=q3Sel=q4Sel=null;
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('completeScreen').style.display='none';
+  document.querySelectorAll('.section').forEach(s=>s.style.display='block');
+  document.querySelector('.stage-indicator').style.display='flex';
+  document.querySelector('.progress-row').style.display='flex';
+  [1,2,3,4].forEach(i=>{document.getElementById('stage'+i).style.display=i===1?'block':'none';document.getElementById('dot'+i).className='stage-dot'+(i===1?' active':'');});
+  document.getElementById('progressText').textContent='Stage 1 of 4';
+  document.getElementById('nextBtn').style.display='none';
+  updateCanvas();
+}
+
+// INIT
+updateCanvas();
+</script>
+</body>
+</html>

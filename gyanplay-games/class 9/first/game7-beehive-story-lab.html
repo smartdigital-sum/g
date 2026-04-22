@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beehive Story Lab — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;--border-glow:rgba(255,159,28,.2);--card-glow:rgba(255,159,28,.1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:linear-gradient(160deg,#1A0F00,#100800);min-height:100vh;color:var(--text);font-family:'Nunito',sans-serif;font-size:18px;display:flex;justify-content:center;padding-bottom:40px;}
+.shell{width:100%;max-width:480px;display:flex;flex-direction:column;}
+.header{padding:16px 20px 10px;border-bottom:2px solid var(--border-glow);background:rgba(13,20,40,.8);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px);}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold);}
+.subject-tag{font-size:.68rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+.stars{display:flex;gap:4px;margin-top:4px;}
+.star{font-size:.95rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.score-display{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--gold);}
+.wow-hook{margin:14px 14px 0;background:linear-gradient(135deg,rgba(255,159,28,.15),rgba(13,20,40,.95));border:1px solid var(--border-glow);border-radius:14px;padding:16px;box-shadow:0 4px 20px var(--card-glow);}
+.wow-hook .emoji{font-size:1.8rem;margin-bottom:6px;display:block;}
+.wow-hook p{font-size:.88rem;line-height:1.6;}
+.wow-hook strong{color:var(--gold);}
+.stage-area{padding:14px;flex:1;}
+.stage{display:none;}
+.stage.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.stage-title{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--orange);margin-bottom:8px;}
+.card{background:var(--card);border:1px solid var(--border-glow);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 2px 14px var(--card-glow);}
+.info-box{background:rgba(255,159,28,.07);border-left:3px solid var(--orange);padding:9px 12px;border-radius:0 7px 7px 0;font-size:.82rem;color:var(--dim);line-height:1.5;margin:8px 0;}
+.info-box strong{color:var(--text);}
+.result-msg{font-size:.85rem;min-height:20px;padding:3px 0;}
+.result-msg.ok{color:var(--teal);}
+.result-msg.err{color:var(--coral);}
+.bottom-bar{position:sticky;bottom:0;background:rgba(13,8,0,.92);border-top:1px solid var(--border-glow);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(8px);}
+.progress-label{font-size:.82rem;color:var(--dim);}
+.progress-label strong{color:var(--text);}
+.action-btn{background:var(--gold);color:#060A10;border:none;border-radius:22px;padding:9px 24px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;min-height:44px;}
+.action-btn:hover{transform:scale(1.04);box-shadow:0 4px 14px rgba(255,209,102,.4);}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.9);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{text-align:center;padding:26px 22px;max-width:320px;}
+.overlay-emoji{font-size:2.8rem;margin-bottom:10px;}
+.overlay-msg{font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--gold);margin-bottom:7px;}
+.overlay-fact{font-size:.82rem;color:var(--dim);line-height:1.5;}
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:200;}
+.confetto{position:absolute;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.game-complete{display:none;text-align:center;padding:36px 18px;}
+.game-complete.show{display:block;animation:fadeIn .5s ease;}
+.complete-title{font-family:'Baloo 2',cursive;font-size:1.9rem;color:var(--gold);margin-bottom:10px;}
+.complete-sub{color:var(--dim);font-size:.9rem;line-height:1.6;margin-bottom:20px;}
+.replay-btn{background:transparent;border:2px solid var(--gold);color:var(--gold);border-radius:22px;padding:9px 26px;font-family:'Baloo 2',cursive;font-size:.95rem;cursor:pointer;min-height:44px;}
+
+/* STORY CARDS */
+.story-card{background:rgba(0,0,0,.3);border:1px solid var(--border-glow);border-radius:12px;padding:14px;margin-bottom:12px;cursor:pointer;transition:all .2s;}
+.story-card:hover{border-color:var(--orange);background:rgba(255,159,28,.05);}
+.story-card.expanded{border-color:var(--gold);background:rgba(255,209,102,.04);}
+.story-title{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--gold);margin-bottom:4px;}
+.story-author{font-size:.75rem;color:var(--dim);margin-bottom:8px;}
+.story-excerpt{font-family:'Crimson Pro',serif;font-size:.92rem;line-height:1.7;color:var(--text);display:none;}
+.story-card.expanded .story-excerpt{display:block;}
+.story-annotation{background:rgba(255,159,28,.1);border-radius:8px;padding:8px;margin-top:8px;display:none;}
+.story-card.expanded .story-annotation{display:block;}
+.annot-device{font-size:.75rem;color:var(--orange);font-weight:700;margin-bottom:3px;}
+.annot-text{font-size:.8rem;color:var(--dim);line-height:1.4;}
+.story-q{background:rgba(0,0,0,.2);border-radius:8px;padding:10px;margin-top:8px;display:none;}
+.story-card.expanded .story-q{display:block;}
+.sq-label{font-size:.78rem;color:var(--orange);margin-bottom:6px;}
+.sq-opts{display:flex;flex-direction:column;gap:5px;}
+.sq-opt{background:rgba(255,159,28,.08);border:1px solid rgba(255,159,28,.2);border-radius:7px;padding:7px 10px;cursor:pointer;font-size:.82rem;color:var(--text);transition:all .2s;min-height:38px;}
+.sq-opt:hover{background:rgba(255,159,28,.18);}
+.sq-opt.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal);}
+.sq-opt.wrong{background:rgba(255,107,107,.12);border-color:var(--coral);}
+
+/* CHARACTER MOTIVATION MAP */
+.char-row{background:rgba(0,0,0,.2);border-radius:10px;padding:12px;margin-bottom:10px;}
+.char-name{font-family:'Baloo 2',cursive;font-size:.95rem;color:var(--gold);margin-bottom:6px;}
+.char-action{font-size:.85rem;color:var(--text);margin-bottom:6px;}
+.char-prompt{font-size:.78rem;color:var(--dim);margin-bottom:6px;}
+.mot-opts{display:flex;flex-direction:column;gap:5px;}
+.mot-opt{background:rgba(255,159,28,.08);border:1px solid rgba(255,159,28,.2);border-radius:7px;padding:7px 10px;cursor:pointer;font-size:.82rem;color:var(--text);transition:all .2s;min-height:36px;}
+.mot-opt:hover{background:rgba(255,159,28,.18);}
+.mot-opt.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal);}
+.mot-opt.wrong{background:rgba(255,107,107,.12);border-color:var(--coral);animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* POEM ANALYSIS */
+.poem-text{font-family:'Crimson Pro',serif;font-style:italic;font-size:.95rem;line-height:2;background:rgba(0,0,0,.3);padding:14px;border-radius:10px;border-left:3px solid var(--orange);margin-bottom:12px;color:var(--text);}
+.poem-q{background:rgba(0,0,0,.2);border-radius:9px;padding:11px;margin-bottom:9px;}
+.pq-text{font-size:.85rem;color:var(--text);margin-bottom:7px;}
+.pq-opts{display:flex;flex-direction:column;gap:5px;}
+.pq-opt{background:rgba(255,159,28,.08);border:1px solid rgba(255,159,28,.2);border-radius:7px;padding:7px 10px;cursor:pointer;font-size:.82rem;color:var(--text);transition:all .2s;min-height:36px;}
+.pq-opt:hover{background:rgba(255,159,28,.18);}
+.pq-opt.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal);}
+.pq-opt.wrong{background:rgba(255,107,107,.12);border-color:var(--coral);animation:shake .3s;}
+
+/* EXAM ANSWER BUILDER */
+.answer-level{background:rgba(0,0,0,.2);border-radius:10px;padding:12px;margin-bottom:10px;border:2px solid transparent;transition:border-color .3s;}
+.answer-level.selected{border-color:var(--orange);}
+.answer-level.correct{border-color:var(--teal);background:rgba(6,214,160,.06);}
+.al-label{font-family:'Baloo 2',cursive;font-size:.88rem;margin-bottom:6px;}
+.al-text{font-family:'Crimson Pro',serif;font-size:.88rem;color:var(--dim);line-height:1.5;}
+.al-mark{font-size:.75rem;color:var(--orange);margin-top:4px;}
+.exam-q{background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.2);border-radius:10px;padding:12px;margin-bottom:12px;}
+.eq-text{font-size:.88rem;color:var(--text);font-family:'Crimson Pro',serif;font-style:italic;}
+.eq-marks{font-size:.78rem;color:var(--gold);margin-top:4px;}
+.component-builder{display:flex;flex-direction:column;gap:7px;margin-top:10px;}
+.comp-item{background:rgba(255,159,28,.08);border:1px solid rgba(255,159,28,.2);border-radius:8px;padding:9px;cursor:pointer;transition:all .2s;}
+.comp-item:hover{background:rgba(255,159,28,.18);}
+.comp-item.selected{background:rgba(255,209,102,.12);border-color:var(--gold);}
+.comp-item.correct-pick{background:rgba(6,214,160,.15);border-color:var(--teal);}
+.comp-item.wrong-pick{background:rgba(255,107,107,.12);border-color:var(--coral);}
+.comp-label{font-size:.75rem;color:var(--orange);font-weight:700;margin-bottom:3px;}
+.comp-text{font-size:.82rem;color:var(--text);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="game-title">🌊 Beehive Story Lab</div>
+        <div class="subject-tag">📝 English · G9-07 · Beehive Reader: Stories & Poems</div>
+      </div>
+      <div class="score-display" id="scoreDisplay">0 pts</div>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="emoji">🤖</span>
+    <p>Isaac Asimov's 1954 story 'The Fun They Had' imagined a world where children go to 'mechanical teachers' in their homes — all learning is digital, no school buildings, no human teachers. <strong>He wrote it as a dystopia.</strong> Today, millions of children around the world live his 'dystopia.' His prediction was so accurate that <strong>reading it feels like reading the news.</strong></p>
+  </div>
+
+  <div class="stage-area">
+
+    <!-- STAGE 1: STORY ECOSYSTEM -->
+    <div class="stage active" id="stage1">
+      <div class="stage-title">📖 Stage 1: Story Ecosystem — Tap to Explore</div>
+
+      <div class="story-card" id="sc0" onclick="expandStory(0)">
+        <div class="story-title">The Fun They Had</div>
+        <div class="story-author">Isaac Asimov · Beehive Ch 1</div>
+        <div class="story-excerpt">"Margie even wrote about it that night in her diary. On the page headed 17 May 2157, she wrote, 'Today Tommy found a real book!'"</div>
+        <div class="story-annotation">
+          <div class="annot-device">📌 Literary Device: Dramatic Irony</div>
+          <div class="annot-text">The reader understands that Margie's "mechanical teacher" is a dystopian nightmare — but Margie doesn't know any different. This gap between character knowledge and reader knowledge creates the story's power.</div>
+        </div>
+        <div class="story-q">
+          <div class="sq-label">What does Tommy finding a "real book" suggest about the year 2157?</div>
+          <div class="sq-opts">
+            <div class="sq-opt" onclick="checkStoryQ(event,0,'Books have become extremely rare — digital learning has replaced them entirely')">Books have become extremely rare — digital learning has replaced them entirely</div>
+            <div class="sq-opt" onclick="checkStoryQ(event,0,'wrong')">Books are still common but Tommy found a special one</div>
+            <div class="sq-opt" onclick="checkStoryQ(event,0,'wrong')">Tommy found the book in a library</div>
+          </div>
+          <div class="result-msg" id="sqr0"></div>
+        </div>
+      </div>
+
+      <div class="story-card" id="sc1" onclick="expandStory(1)">
+        <div class="story-title">The Little Girl</div>
+        <div class="story-author">Katherine Mansfield · Beehive Ch 3</div>
+        <div class="story-excerpt">"To the little girl he was a figure to be dreaded — and avoided. Every morning before going to school she kissed her hand to her mother but to him she dared not even look."</div>
+        <div class="story-annotation">
+          <div class="annot-device">📌 Literary Device: Contrast</div>
+          <div class="annot-text">Kezia's warm relationship with her mother contrasts sharply with her fear of her father. The contrast reveals that her fear stems from unfamiliarity — she doesn't know him as a person, only as an authority.</div>
+        </div>
+        <div class="story-q">
+          <div class="sq-label">Kezia's fear of her father is rooted in…</div>
+          <div class="sq-opts">
+            <div class="sq-opt" onclick="checkStoryQ(event,1,'wrong')">Her father is genuinely cruel and abusive</div>
+            <div class="sq-opt" onclick="checkStoryQ(event,1,'Distance and lack of understanding — she sees only his strictness, not his love')">Distance and lack of understanding — she sees only his strictness, not his love</div>
+            <div class="sq-opt" onclick="checkStoryQ(event,1,'wrong')">Her mother told her to be afraid</div>
+          </div>
+          <div class="result-msg" id="sqr1"></div>
+        </div>
+      </div>
+
+      <div class="story-card" id="sc2" onclick="expandStory(2)">
+        <div class="story-title">A Truly Beautiful Mind</div>
+        <div class="story-author">Albert Einstein profile · Beehive Ch 4</div>
+        <div class="story-excerpt">"Einstein was deeply shaken by the bomb's use. He wrote a letter along with other scientists to the United Nations, proposing the formation of a world government."</div>
+        <div class="story-annotation">
+          <div class="annot-device">📌 Literary Device: Paradox</div>
+          <div class="annot-text">Einstein's work on energy (E=mc²) contributed to the atomic bomb — yet he campaigned against its use. The chapter's title "A Truly Beautiful Mind" refers to moral beauty, not just intellectual brilliance.</div>
+        </div>
+        <div class="story-q">
+          <div class="sq-label">Why is the chapter title "A Truly Beautiful Mind" significant beyond Einstein's intelligence?</div>
+          <div class="sq-opts">
+            <div class="sq-opt" onclick="checkStoryQ(event,2,'wrong')">It refers to his mathematical genius only</div>
+            <div class="sq-opt" onclick="checkStoryQ(event,2,'wrong')">It is a reference to the film about John Nash</div>
+            <div class="sq-opt" onclick="checkStoryQ(event,2,'It highlights his moral conscience — he used his fame to advocate for peace, showing true greatness includes ethical responsibility')">It highlights his moral conscience — he used his fame to advocate for peace, showing true greatness includes ethical responsibility</div>
+          </div>
+          <div class="result-msg" id="sqr2"></div>
+        </div>
+      </div>
+
+      <div class="result-msg" id="r1"></div>
+    </div>
+
+    <!-- STAGE 2: CHARACTER MOTIVATION MAP -->
+    <div class="stage" id="stage2">
+      <div class="stage-title">🗺️ Stage 2: Character Motivation Map</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">Surface action → deeper motivation. Match each character's behaviour to their real reason.</p>
+
+        <div class="char-row">
+          <div class="char-name">Margie (The Fun They Had)</div>
+          <div class="char-action">Action: Writes in her diary about the old book with great wonder.</div>
+          <div class="char-prompt">Her REAL underlying motivation:</div>
+          <div class="mot-opts">
+            <div class="mot-opt" onclick="checkMot(this,0,'wrong')">She wants to show off to her friends</div>
+            <div class="mot-opt" onclick="checkMot(this,0,'She senses something important is missing from her education — human connection and shared learning')">She senses something important is missing from her education — human connection and shared learning</div>
+            <div class="mot-opt" onclick="checkMot(this,0,'wrong')">She is bored and has nothing better to do</div>
+          </div>
+          <div class="result-msg" id="motr0"></div>
+        </div>
+
+        <div class="char-row">
+          <div class="char-name">Kezia's Father (The Little Girl)</div>
+          <div class="char-action">Action: Punishes Kezia for tearing up his speech notes.</div>
+          <div class="char-prompt">What does this reveal about him BENEATH the punishment?</div>
+          <div class="mot-opts">
+            <div class="mot-opt" onclick="checkMot(this,1,'wrong')">He does not love his daughter at all</div>
+            <div class="mot-opt" onclick="checkMot(this,1,'wrong')">He is simply following Victorian parenting norms</div>
+            <div class="mot-opt" onclick="checkMot(this,1,'He is exhausted by work and has not learned to express warmth — the punishment is a failure of communication, not absence of love')">He is exhausted by work and has not learned to express warmth — it is a failure of communication, not absence of love</div>
+          </div>
+          <div class="result-msg" id="motr1"></div>
+        </div>
+
+        <div class="result-msg" id="r2"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 3: POEM CORNER -->
+    <div class="stage" id="stage3">
+      <div class="stage-title">🌿 Stage 3: Poem Corner</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:8px;"><strong style="color:var(--gold)">The Road Not Taken</strong> — Robert Frost. Read carefully before answering.</p>
+        <div class="poem-text">
+          Two roads diverged in a yellow wood,<br>
+          And sorry I could not travel both<br>
+          And be one traveller, long I stood<br>
+          And looked down one as far as I could<br>
+          To where it bent in the undergrowth;<br><br>
+          ...And having perhaps the better claim,<br>
+          Because it was grassy and wanted wear;<br>
+          Though as for that the passing there<br>
+          Had worn them really about the same,
+        </div>
+
+        <div class="poem-q" id="pq0">
+          <div class="pq-text">The poem is commonly misread as celebrating independent choice. The actual close reading reveals…</div>
+          <div class="pq-opts">
+            <div class="pq-opt" onclick="checkPoem(this,0,'The paths are described as equally worn — the speaker rationalises their choice after the fact, showing human tendency to construct meaning retrospectively')">The paths are equally worn — the speaker rationalises their choice after the fact (human tendency to construct meaning retrospectively)</div>
+            <div class="pq-opt" onclick="checkPoem(this,0,'wrong')">The speaker clearly chose the better, less travelled road</div>
+            <div class="pq-opt" onclick="checkPoem(this,0,'wrong')">The poem is about autumn walks, not life choices</div>
+          </div>
+          <div class="result-msg" id="pqr0"></div>
+        </div>
+
+        <div class="poem-q" id="pq1" style="margin-top:8px;">
+          <div class="pq-text">"Wind" (Subramania Bharati) — The poet addresses the wind directly. This technique is called…</div>
+          <div class="pq-opts">
+            <div class="pq-opt" onclick="checkPoem(this,1,'wrong')">Metaphor</div>
+            <div class="pq-opt" onclick="checkPoem(this,1,'wrong')">Simile</div>
+            <div class="pq-opt" onclick="checkPoem(this,1,'Apostrophe — addressing an absent or non-human entity directly. The wind represents challenges; befriending it represents developing resilience')">Apostrophe — addressing a non-human entity directly. Wind = challenges; befriending it = resilience</div>
+          </div>
+          <div class="result-msg" id="pqr1"></div>
+        </div>
+        <div class="result-msg" id="r3" style="margin-top:6px;"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 4: EXAM ANSWER BUILDER -->
+    <div class="stage" id="stage4">
+      <div class="stage-title">✍️ Stage 4: Exam Answer Builder</div>
+      <div class="card">
+        <div class="exam-q">
+          <div class="eq-text">"What does 'The Fun They Had' reveal about the author's attitude toward traditional education?" </div>
+          <div class="eq-marks">[5 marks — identify the components of a strong answer]</div>
+        </div>
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">Tap the components that belong in a <strong style="color:var(--gold)">strong 5-mark answer</strong>. Reject the weak components.</p>
+
+        <div class="component-builder" id="compBuilder">
+          <div class="comp-item" onclick="checkComp(this,'correct')" id="comp0">
+            <div class="comp-label">✦ AUTHOR'S ATTITUDE</div>
+            <div class="comp-text">Asimov values the social, emotional dimension of traditional schooling — the shared experience that mechanical teaching cannot replicate.</div>
+          </div>
+          <div class="comp-item" onclick="checkComp(this,'wrong')" id="comp1">
+            <div class="comp-label">✗ PLOT SUMMARY (weak)</div>
+            <div class="comp-text">The story is about Margie and Tommy who find an old book in the year 2157.</div>
+          </div>
+          <div class="comp-item" onclick="checkComp(this,'correct')" id="comp2">
+            <div class="comp-label">✦ TEXTUAL EVIDENCE</div>
+            <div class="comp-text">Margie "thought about the old schools they had when her grandfather's grandfather was a little boy… how the kids must have loved it!" — this longing reveals what digital education lacks.</div>
+          </div>
+          <div class="comp-item" onclick="checkComp(this,'correct')" id="comp3">
+            <div class="comp-label">✦ INFERENCE / DEEPER MEANING</div>
+            <div class="comp-text">Asimov wrote this as a warning — efficiency without humanity produces learning that is technically effective but emotionally impoverished.</div>
+          </div>
+          <div class="comp-item" onclick="checkComp(this,'wrong')" id="comp4">
+            <div class="comp-label">✗ IRRELEVANT FACT (weak)</div>
+            <div class="comp-text">Isaac Asimov wrote over 500 books in his lifetime and was a professor at Boston University.</div>
+          </div>
+        </div>
+        <div class="result-msg" id="r4" style="margin-top:8px;"></div>
+      </div>
+    </div>
+
+    <!-- GAME COMPLETE -->
+    <div class="game-complete" id="gameComplete">
+      <div style="font-size:2.8rem;margin-bottom:14px;">🌊</div>
+      <div class="complete-title">Beehive Story Lab Complete!</div>
+      <div class="complete-sub">You annotated 3 stories, mapped character motivations, analysed The Road Not Taken closely, and built a 5-mark exam answer.<br><br><strong style="color:var(--gold);">Strong inference — well supported.</strong> 🔍</div>
+      <br>
+      <button class="replay-btn" onclick="resetGame()">↺ Play Again</button>
+    </div>
+  </div>
+
+  <div class="bottom-bar" id="bottomBar">
+    <div class="progress-label">Stage <strong id="stageNum">1</strong> of 4</div>
+    <button class="action-btn" id="mainBtn" onclick="nextStage()">Continue →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="overlay-emoji" id="ovEmoji">📖</div>
+    <div class="overlay-msg" id="ovMsg">Stage Complete!</div>
+    <div class="overlay-fact" id="ovFact"></div>
+  </div>
+</div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<script>
+let score=0,currentStage=1,stageDone=[false,false,false,false];
+let storyQDone=0,motDone=0,poemDone=0,compCorrect=0,compWrong=0;
+function addScore(p){score+=p;document.getElementById('scoreDisplay').textContent=score+' pts';}
+function lightStar(n){const s=document.getElementById('s'+n);if(s&&!s.classList.contains('lit'))s.classList.add('lit');}
+
+// ===== STAGE 1: STORY CARDS =====
+function expandStory(idx){
+  const card=document.getElementById('sc'+idx);
+  card.classList.toggle('expanded');
+}
+
+function checkStoryQ(e,idx,answer){
+  e.stopPropagation();
+  const btn=e.target;
+  const parent=btn.parentElement;
+  if(parent.querySelector('.correct'))return;
+  if(answer!=='wrong'){
+    btn.classList.add('correct');
+    document.getElementById('sqr'+idx).textContent='Strong inference — well supported. 🔍';
+    document.getElementById('sqr'+idx).className='result-msg ok';
+    addScore(18);storyQDone++;
+    if(storyQDone>=2&&!stageDone[0]){stageDone[0]=true;lightStar(1);lightStar(2);addScore(20);
+      document.getElementById('r1').textContent='Literary analysis: accurate. ✓';
+      document.getElementById('r1').className='result-msg ok';}
+  }else{
+    btn.classList.add('wrong');setTimeout(()=>btn.classList.remove('wrong'),700);
+    document.getElementById('sqr'+idx).textContent='Look more carefully at the text. What does the evidence actually say?';
+    document.getElementById('sqr'+idx).className='result-msg err';
+  }
+}
+
+// ===== STAGE 2: CHARACTER MOTIVATION =====
+function checkMot(el,idx,answer){
+  const parent=el.parentElement;
+  if(parent.querySelector('.correct'))return;
+  if(answer!=='wrong'){
+    el.classList.add('correct');
+    document.getElementById('motr'+idx).textContent='Accurate motivation analysis. ✓';
+    document.getElementById('motr'+idx).className='result-msg ok';
+    addScore(20);motDone++;
+    if(motDone>=2&&!stageDone[1]){stageDone[1]=true;lightStar(3);addScore(20);
+      document.getElementById('r2').textContent='Character motivation mapped correctly. ✓';
+      document.getElementById('r2').className='result-msg ok';}
+  }else{
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),700);
+    document.getElementById('motr'+idx).textContent='Surface-level reading. Go deeper — what does this character really want or feel?';
+    document.getElementById('motr'+idx).className='result-msg err';
+  }
+}
+
+// ===== STAGE 3: POEMS =====
+const poemAnswers=[
+  'The paths are equally worn — the speaker rationalises their choice after the fact (human tendency to construct meaning retrospectively)',
+  'Apostrophe — addressing a non-human entity directly. Wind = challenges; befriending it = resilience'
+];
+function checkPoem(el,idx,answer){
+  const parent=el.parentElement;
+  if(parent.querySelector('.correct'))return;
+  if(answer===poemAnswers[idx]){
+    el.classList.add('correct');
+    document.getElementById('pqr'+idx).textContent='Correct close reading. ✓';
+    document.getElementById('pqr'+idx).className='result-msg ok';
+    addScore(20);poemDone++;
+    if(poemDone>=2&&!stageDone[2]){stageDone[2]=true;lightStar(4);addScore(20);
+      document.getElementById('r3').textContent='Poetic devices and nuanced reading — both correct. ✓';
+      document.getElementById('r3').className='result-msg ok';}
+  }else{
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),700);
+    document.getElementById('pqr'+idx).textContent='Incorrect. Re-read the lines carefully — what is the poem actually saying vs what we assume it says?';
+    document.getElementById('pqr'+idx).className='result-msg err';
+  }
+}
+
+// ===== STAGE 4: EXAM ANSWER BUILDER =====
+// correct: 0,2,3 | wrong: 1,4
+const compType=['correct','wrong','correct','correct','wrong'];
+function checkComp(el,type){
+  if(el.classList.contains('correct-pick')||el.classList.contains('wrong-pick'))return;
+  if(type==='correct'){
+    el.classList.add('correct-pick');addScore(15);compCorrect++;
+    document.getElementById('r4').textContent=`✓ Good — this component strengthens the answer. ${compCorrect}/3 key components found.`;
+    document.getElementById('r4').className='result-msg ok';
+    if(compCorrect>=3&&!stageDone[3]){stageDone[3]=true;lightStar(5);addScore(25);
+      document.getElementById('r4').textContent='Complete answer structure identified: Attitude + Textual Evidence + Inference. This is exam-ready. ✓';}
+  }else{
+    el.classList.add('wrong-pick');
+    document.getElementById('r4').textContent='That weakens the answer. Plot summary and author biography do not earn marks for literary analysis.';
+    document.getElementById('r4').className='result-msg err';
+    setTimeout(()=>el.classList.remove('wrong-pick'),800);
+  }
+}
+
+// ===== NAVIGATION =====
+const ovData=[
+  {emoji:'📖',msg:'Stories Explored!',fact:'Asimov wrote "The Fun They Had" in 1954 — before computers existed as consumer devices. His dystopian imagination predicted e-learning with remarkable accuracy.'},
+  {emoji:'🗺️',msg:'Motivations Mapped!',fact:'Great literature is about the gap between what characters DO and what they FEEL. Understanding motivation is the key to understanding any text — and any person.'},
+  {emoji:'🌿',msg:'Poems Analysed!',fact:'"The Road Not Taken" is one of the most misread poems in English. Frost deliberately made the paths identical — the speaker invents the difference in retrospect. The poem is about self-deception, not bold choice.'},
+];
+function nextStage(){
+  if(currentStage===4&&stageDone[3]){showComplete();return;}
+  if(currentStage>=4)return;
+  const d=ovData[currentStage-1];
+  document.getElementById('ovEmoji').textContent=d.emoji;document.getElementById('ovMsg').textContent=d.msg;
+  document.getElementById('ovFact').textContent=d.fact;document.getElementById('overlay').classList.add('show');
+  setTimeout(()=>{
+    document.getElementById('stage'+currentStage).classList.remove('active');currentStage++;
+    document.getElementById('stage'+currentStage).classList.add('active');
+    document.getElementById('stageNum').textContent=currentStage;document.getElementById('overlay').classList.remove('show');
+    if(currentStage===4)document.getElementById('mainBtn').textContent='Finish →';
+  },2500);
+}
+function showComplete(){
+  document.getElementById('bottomBar').style.display='none';
+  document.getElementById('stage4').classList.remove('active');
+  document.getElementById('gameComplete').classList.add('show');fireConfetti();
+}
+function fireConfetti(){
+  const wrap=document.getElementById('confettiWrap');wrap.innerHTML='';
+  const colors=['#FFD166','#06D6A0','#4CC9F0','#FF9F1C','#FF6B6B'];
+  for(let i=0;i<28;i++){
+    const c=document.createElement('div');c.className='confetto';
+    c.style.left=(Math.random()*100)+'%';c.style.background=colors[~~(Math.random()*colors.length)];
+    c.style.animationDuration=(1.5+Math.random()*2)+'s';c.style.animationDelay=(Math.random()*.8)+'s';
+    wrap.appendChild(c);setTimeout(()=>c.remove(),4000);
+  }
+}
+function resetGame(){
+  score=0;currentStage=1;stageDone=[false,false,false,false];storyQDone=0;motDone=0;poemDone=0;compCorrect=0;
+  document.getElementById('scoreDisplay').textContent='0 pts';
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('gameComplete').classList.remove('show');document.getElementById('bottomBar').style.display='flex';
+  document.getElementById('stageNum').textContent='1';document.getElementById('mainBtn').textContent='Continue →';
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));document.getElementById('stage1').classList.add('active');
+  document.querySelectorAll('.story-card').forEach(c=>c.classList.remove('expanded'));
+  document.querySelectorAll('.sq-opt,.mot-opt,.pq-opt').forEach(b=>b.classList.remove('correct','wrong'));
+  document.querySelectorAll('.comp-item').forEach(c=>c.classList.remove('correct-pick','wrong-pick','selected'));
+  document.querySelectorAll('.result-msg').forEach(el=>{el.textContent='';el.className='result-msg';});
+}
+</script>
+</body>
+</html>

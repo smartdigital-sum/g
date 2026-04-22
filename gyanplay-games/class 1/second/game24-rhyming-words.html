@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rhyming Words – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,#FCE4EC,#F8BBD0);font-family:'Baloo 2',cursive;display:flex;flex-direction:column;align-items:center;padding:16px}
+  header{width:100%;max-width:720px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .logo{font-size:1.6rem;font-weight:800;color:#880E4F}
+  .lang-btns{display:flex;gap:6px}
+  .lang-btn{border:none;background:#E91E63;color:#fff;font-family:'Baloo 2',cursive;font-size:0.9rem;font-weight:700;border-radius:20px;padding:5px 14px;cursor:pointer;transition:transform .15s}
+  .lang-btn.active,.lang-btn:hover{background:#880E4F;transform:scale(1.08)}
+  .progress-bar-wrap{width:100%;max-width:720px;background:#F48FB1;border-radius:20px;height:14px;margin-bottom:10px;overflow:hidden}
+  .progress-bar{height:100%;background:linear-gradient(90deg,#F06292,#880E4F);border-radius:20px;transition:width .5s}
+  .round-label{font-size:1.1rem;font-weight:700;color:#AD1457;margin-bottom:6px;text-align:center}
+  .card{background:rgba(255,255,255,0.92);border-radius:28px;box-shadow:0 8px 32px rgba(233,30,99,0.18);padding:24px 20px 20px;max-width:720px;width:100%;text-align:center}
+  .word-display{margin:10px 0 8px;display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap}
+  .word-box{background:linear-gradient(135deg,#F8BBD0,#FCE4EC);border:3px solid #F06292;border-radius:18px;padding:10px 28px;font-size:3rem;font-weight:900;color:#880E4F;letter-spacing:3px;min-width:130px;display:inline-block;animation:wordPop .4s cubic-bezier(.36,2,.6,.9)}
+  @keyframes wordPop{from{transform:scale(0.5) rotate(-6deg)}to{transform:scale(1) rotate(0deg)}}
+  .rhyme-match{font-size:2.8rem;font-weight:900;color:#E91E63;display:none;animation:wordPop .4s cubic-bezier(.36,2,.6,.9)}
+  .rhyme-sep{font-size:2rem;color:#AD1457;font-weight:800}
+  .question-text{font-size:2rem;font-weight:800;color:#AD1457;margin:12px 0 16px}
+  .ans-grid{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .ans-btn{border:3px solid #F48FB1;border-radius:20px;padding:14px 22px;font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:900;cursor:pointer;min-height:70px;min-width:110px;background:#FFF0F5;color:#880E4F;box-shadow:0 4px 12px rgba(233,30,99,0.12);transition:transform .15s}
+  .ans-btn:hover{transform:scale(1.08);background:#FFDDE7}
+  .ans-btn.correct{background:#A5D6A7;border-color:#388E3C;color:#1B5E20;animation:bounce .4s}
+  .ans-btn.wrong{background:#FFCDD2;border-color:#E53935;color:#B71C1C;animation:shake .3s}
+  @keyframes bounce{0%{transform:scale(1)}40%{transform:scale(1.18)}70%{transform:scale(0.95)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+  .fun-fact{margin-top:12px;background:#FCE4EC;border-radius:14px;padding:10px 16px;font-size:1.25rem;color:#880E4F;font-weight:700;display:none}
+  .next-btn{margin-top:12px;border:none;background:linear-gradient(135deg,#F06292,#880E4F);color:#fff;font-family:'Baloo 2',cursive;font-size:1.4rem;font-weight:800;border-radius:20px;padding:12px 40px;cursor:pointer;display:none;transition:transform .15s}
+  .next-btn:hover{transform:scale(1.06)}
+  .end-screen{display:none;text-align:center}
+  .end-title{font-size:3rem;font-weight:900;color:#880E4F;margin-bottom:8px}
+  .stars-row{font-size:2.5rem;margin:10px 0}
+  .end-msg{font-size:1.8rem;color:#AD1457;margin-bottom:10px}
+  .play-again{border:none;background:linear-gradient(135deg,#F06292,#880E4F);color:#fff;font-family:'Baloo 2',cursive;font-size:1.8rem;font-weight:800;border-radius:24px;padding:14px 48px;cursor:pointer;margin-top:10px;transition:transform .15s}
+  .play-again:hover{transform:scale(1.07)}
+  canvas#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🎵 GyanPlay</div>
+  <div class="lang-btns">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</header>
+<div class="progress-bar-wrap"><div class="progress-bar" id="pbar"></div></div>
+<div class="round-label" id="roundLabel">Round 1 of 10</div>
+
+<div class="card" id="gameCard">
+  <div class="word-display">
+    <div class="word-box" id="mainWord">CAT</div>
+    <span class="rhyme-sep" id="rhymeSep" style="display:none">🔗</span>
+    <div class="rhyme-match" id="rhymeMatch">BAT</div>
+  </div>
+  <div class="question-text" id="qText">Which word rhymes with this?</div>
+  <div class="ans-grid" id="ansGrid"></div>
+  <div class="fun-fact" id="funFact"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextRound()">Next ➡️</button>
+</div>
+<div class="end-screen card" id="endScreen">
+  <div class="end-title">🎶 Rhyme Master!</div>
+  <div class="stars-row" id="endStars"></div>
+  <div class="end-msg" id="endMsg"></div>
+  <button class="play-again" onclick="restartGame()">🔄 Play Again</button>
+</div>
+<canvas id="confetti"></canvas>
+
+<script>
+const L={
+  en:{q:"Which word rhymes with this?",next:"Next ➡️",rl:(r,t)=>`Round ${r} of ${t}`,
+      stars:["Keep Trying! 💪","Good Try! 😊","Great Job! 🌟","Rhyme Master! 🏆"]},
+  hi:{q:"कौन सा शब्द तुकबंदी करता है?",next:"अगला ➡️",rl:(r,t)=>`चक्र ${r} / ${t}`,
+      stars:["कोशिश करो! 💪","अच्छा प्रयास! 😊","बहुत अच्छे! 🌟","तुकबंदी उस्ताद! 🏆"]},
+  as:{q:"কোনটো শব্দ মিল খায়?",next:"পৰৱৰ্তী ➡️",rl:(r,t)=>`ৰাউণ্ড ${r} / ${t}`,
+      stars:["চেষ্টা কৰক! 💪","ভাল চেষ্টা! 😊","চমৎকাৰ! 🌟","ছড়া বিশেষজ্ঞ! 🏆"]}
+};
+
+const rounds=[
+  {word:"CAT",emoji:"🐱",correct:"BAT",wrong:["BED","CUP"],fact:{en:"CAT 🐱 and BAT 🦇 both end in '-AT'! They rhyme!",hi:"CAT और BAT दोनों '-AT' से खत्म होते हैं!",as:"CAT আৰু BAT দুয়োটাই '-AT' ৰে শেষ হয়!"}},
+  {word:"SUN",emoji:"☀️",correct:"FUN",wrong:["DOG","HAT"],fact:{en:"SUN ☀️ and FUN 🎉 both end in '-UN'! They rhyme!",hi:"SUN और FUN दोनों '-UN' से खत्म होते हैं!",as:"SUN আৰু FUN দুয়োটাই '-UN' ৰে শেষ হয়!"}},
+  {word:"PLAY",emoji:"🎮",correct:"DAY",wrong:["TOP","BIG"],fact:{en:"PLAY 🎮 and DAY ☀️ both end in '-AY'! They rhyme!",hi:"PLAY और DAY दोनों '-AY' से खत्म होते हैं!",as:"PLAY আৰু DAY দুয়োটাই '-AY' ৰে শেষ হয়!"}},
+  {word:"CAKE",emoji:"🎂",correct:"LAKE",wrong:["CAR","BOX"],fact:{en:"CAKE 🎂 and LAKE 🏞️ both end in '-AKE'! They rhyme!",hi:"CAKE और LAKE दोनों '-AKE' से खत्म होते हैं!",as:"CAKE আৰু LAKE দুয়োটাই '-AKE' ৰে শেষ হয়!"}},
+  {word:"TREE",emoji:"🌳",correct:"BEE",wrong:["LOG","PAN"],fact:{en:"TREE 🌳 and BEE 🐝 both end in '-EE'! They rhyme!",hi:"TREE और BEE दोनों '-EE' से खत्म होते हैं!",as:"TREE আৰু BEE দুয়োটাই '-EE' ৰে শেষ হয়!"}},
+  {word:"RING",emoji:"💍",correct:"SING",wrong:["RUN","MAP"],fact:{en:"RING 💍 and SING 🎤 both end in '-ING'! They rhyme!",hi:"RING और SING दोनों '-ING' से खत्म होते हैं!",as:"RING আৰু SING দুয়োটাই '-ING' ৰে শেষ হয়!"}},
+  {word:"BALL",emoji:"⚽",correct:"TALL",wrong:["RED","PIG"],fact:{en:"BALL ⚽ and TALL 🏀 both end in '-ALL'! They rhyme!",hi:"BALL और TALL दोनों '-ALL' से खत्म होते हैं!",as:"BALL আৰু TALL দুয়োটাই '-ALL' ৰে শেষ হয়!"}},
+  {word:"MOON",emoji:"🌙",correct:"SOON",wrong:["JAM","HIT"],fact:{en:"MOON 🌙 and SOON ⏰ both end in '-OON'! They rhyme!",hi:"MOON और SOON दोनों '-OON' से खत्म होते हैं!",as:"MOON আৰু SOON দুয়োটাই '-OON' ৰে শেষ হয়!"}},
+  {word:"DOG",emoji:"🐶",correct:"LOG",wrong:["CAP","WIN"],fact:{en:"DOG 🐶 and LOG 🪵 both end in '-OG'! They rhyme!",hi:"DOG और LOG दोनों '-OG' से खत्म होते हैं!",as:"DOG আৰু LOG দুয়োটাই '-OG' ৰে শেষ হয়!"}},
+  {word:"FISH",emoji:"🐟",correct:"DISH",wrong:["RUN","HAT"],fact:{en:"FISH 🐟 and DISH 🍽️ both end in '-ISH'! They rhyme!",hi:"FISH और DISH दोनों '-ISH' से खत्म होते हैं!",as:"FISH আৰু DISH দুয়োটাই '-ISH' ৰে শেষ হয়!"}}
+];
+
+let lang='en',cur=0,score=0,answered=false;
+
+function setLang(l){lang=l;document.querySelectorAll('.lang-btn').forEach((b,i)=>b.classList.toggle('active',['en','hi','as'][i]===l));renderRound();}
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function renderRound(){
+  const Lc=L[lang];const r=rounds[cur];
+  document.getElementById('roundLabel').textContent=Lc.rl(cur+1,rounds.length);
+  document.getElementById('pbar').style.width=(cur/rounds.length*100)+'%';
+  document.getElementById('qText').textContent=Lc.q;
+  const mw=document.getElementById('mainWord');
+  mw.textContent=r.word+' '+r.emoji;
+  mw.style.animation='none';mw.offsetHeight;mw.style.animation='wordPop .4s cubic-bezier(.36,2,.6,.9)';
+  document.getElementById('rhymeSep').style.display='none';
+  document.getElementById('rhymeMatch').style.display='none';
+  document.getElementById('funFact').style.display='none';
+  document.getElementById('nextBtn').style.display='none';
+  const opts=shuffle([r.correct,...r.wrong]);
+  const ag=document.getElementById('ansGrid');ag.innerHTML='';
+  opts.forEach(opt=>{
+    const btn=document.createElement('button');btn.className='ans-btn';btn.textContent=opt;
+    btn.onclick=()=>answer(opt);ag.appendChild(btn);
+  });
+  answered=false;
+}
+
+function answer(val){
+  if(answered)return;answered=true;
+  const r=rounds[cur];
+  document.querySelectorAll('.ans-btn').forEach(b=>{
+    if(b.textContent===r.correct)b.classList.add('correct');
+    else if(b.textContent===val&&val!==r.correct)b.classList.add('wrong');
+    b.disabled=true;
+  });
+  if(val===r.correct){score++;launchConfetti(12);}
+  // show rhyme pair
+  const rm=document.getElementById('rhymeMatch');
+  rm.textContent=r.correct;rm.style.display='inline-block';
+  document.getElementById('rhymeSep').style.display='inline';
+  rm.style.animation='none';rm.offsetHeight;rm.style.animation='wordPop .4s cubic-bezier(.36,2,.6,.9)';
+  document.getElementById('funFact').textContent='🎵 '+r.fact[lang];
+  document.getElementById('funFact').style.display='block';
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextRound(){cur++;if(cur>=rounds.length){showEnd();return;}renderRound();}
+
+function showEnd(){
+  document.getElementById('gameCard').style.display='none';
+  document.getElementById('roundLabel').style.display='none';
+  const end=document.getElementById('endScreen');end.style.display='block';
+  const pct=score/rounds.length;const stars=pct>=0.9?3:pct>=0.7?2:pct>=0.4?1:0;
+  document.getElementById('endStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('endMsg').textContent=`${score}/${rounds.length} — ${L[lang].stars[stars]}`;
+  document.getElementById('pbar').style.width='100%';launchConfetti(50);
+}
+
+function restartGame(){
+  cur=0;score=0;answered=false;
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('gameCard').style.display='block';
+  document.getElementById('roundLabel').style.display='block';
+  renderRound();
+}
+
+function launchConfetti(count){
+  const canvas=document.getElementById('confetti');const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const p=Array.from({length:count},()=>({x:Math.random()*canvas.width,y:-50,r:Math.random()*9+4,color:`hsl(${Math.random()*360},90%,60%)`,vx:(Math.random()-0.5)*4,vy:Math.random()*4+2,alpha:1}));
+  let f;function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);p.forEach(i=>{i.x+=i.vx;i.y+=i.vy;i.alpha-=0.013;ctx.save();ctx.globalAlpha=Math.max(0,i.alpha);ctx.fillStyle=i.color;ctx.beginPath();ctx.arc(i.x,i.y,i.r,0,Math.PI*2);ctx.fill();ctx.restore();});if(p.some(i=>i.alpha>0))f=requestAnimationFrame(draw);else ctx.clearRect(0,0,canvas.width,canvas.height);}
+  cancelAnimationFrame(f);draw();
+}
+renderRound();
+</script>
+</body>
+</html>

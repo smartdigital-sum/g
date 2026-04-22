@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Animal Sounds 🐾 | GyanPlay Nursery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--gold:#FFB800;--green:#00C853;--pink:#FF4081;--sky:#00AEEF;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Nunito',sans-serif;
+      background:linear-gradient(135deg,#FFF9C4,#FFD54F);
+      color:#5D4037;min-height:100vh;
+      display:flex;flex-direction:column;align-items:center;
+      padding:16px;animation:fadeIn .4s ease;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+    @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+    @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+    @keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+
+    /* TOP BAR */
+    .top-bar{
+      width:100%;max-width:680px;
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:14px;flex-wrap:wrap;gap:8px;
+    }
+    .back-btn{
+      background:rgba(255,255,255,.45);border:none;color:#5D4037;
+      padding:9px 22px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
+      cursor:pointer;transition:background .2s;
+    }
+    .back-btn:hover{background:rgba(255,255,255,.65)}
+    .subject-badge{
+      background:rgba(255,255,255,.45);padding:7px 20px;
+      border-radius:999px;font-size:.9rem;font-weight:800;
+      font-family:'Baloo 2',sans-serif;color:#5D4037;
+    }
+    .lang-toggle{display:flex;gap:6px}
+    .lang-btn{
+      background:rgba(255,255,255,.3);border:none;color:#5D4037;
+      padding:7px 14px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;
+      cursor:pointer;transition:all .2s;
+    }
+    .lang-btn.active{background:#fff;color:#FF8F00}
+    .lang-btn:hover:not(.active){background:rgba(255,255,255,.5)}
+
+    /* CARD */
+    .game-card{
+      background:rgba(255,255,255,.35);
+      backdrop-filter:blur(14px);
+      border:2.5px solid rgba(255,255,255,.5);
+      border-radius:28px;padding:24px 20px;
+      width:100%;max-width:680px;
+      box-shadow:0 12px 50px rgba(0,0,0,.12);
+    }
+    .game-title{
+      font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;
+      text-align:center;color:#5D4037;margin-bottom:6px;
+    }
+    .score-bar{display:flex;justify-content:space-between;margin:6px 0;font-size:1rem;font-weight:800;color:#5D4037}
+    .prog-wrap{background:rgba(255,255,255,.3);border-radius:999px;height:12px;margin-bottom:18px}
+    .prog-fill{height:12px;border-radius:999px;background:linear-gradient(90deg,#FF8F00,#FFD54F);transition:width .4s ease}
+
+    /* INSTRUCTION */
+    .instruction{
+      font-size:1.3rem;font-weight:800;text-align:center;
+      margin-bottom:14px;background:rgba(255,255,255,.3);
+      border-radius:16px;padding:10px 14px;color:#4E342E;
+      line-height:1.4;
+    }
+
+    /* ANIMAL DISPLAY */
+    .animal-show{
+      display:flex;flex-direction:column;align-items:center;gap:8px;
+      background:rgba(255,255,255,.25);border-radius:24px;
+      padding:20px;margin-bottom:18px;
+      border:3px solid rgba(255,255,255,.45);
+    }
+    .animal-emoji{
+      font-size:6.5rem;line-height:1;
+      animation:bounce 1.8s ease infinite;
+    }
+    .animal-label{
+      font-family:'Baloo 2',sans-serif;font-size:1.8rem;font-weight:800;
+      color:#5D4037;
+    }
+
+    /* CHOICES */
+    .choices{display:flex;flex-direction:column;gap:12px}
+    .sound-btn{
+      background:rgba(255,255,255,.35);
+      border:3px solid rgba(255,255,255,.55);
+      border-radius:20px;padding:16px 20px;
+      font-family:'Baloo 2',sans-serif;font-size:1.6rem;font-weight:800;
+      color:#4E342E;cursor:pointer;text-align:center;
+      transition:all .2s;min-height:68px;
+    }
+    .sound-btn:hover:not(:disabled){
+      background:rgba(255,255,255,.55);transform:scale(1.03);
+    }
+    .sound-btn.correct{
+      background:rgba(0,200,83,.3);border-color:#00C853;
+      animation:pop .4s ease;
+    }
+    .sound-btn.wrong{
+      background:rgba(255,64,129,.2);border-color:#FF4081;
+      animation:shake .4s ease;
+    }
+    .sound-btn:disabled{cursor:default}
+
+    /* FEEDBACK */
+    .feedback{
+      font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;
+      text-align:center;min-height:1.8rem;margin:10px 0 6px;
+    }
+    .feedback.correct{color:#1B5E20}
+    .feedback.wrong{color:#C62828}
+
+    /* FUN FACT */
+    .fun-fact{
+      font-size:1rem;color:#5D4037;background:rgba(255,255,255,.25);
+      border-radius:14px;padding:9px 14px;margin-bottom:10px;
+      line-height:1.5;display:none;text-align:center;font-weight:700;
+    }
+    .fun-fact.show{display:block}
+
+    /* NEXT BTN */
+    .next-btn{
+      background:#FF8F00;color:#fff;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.75rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;display:none;transition:transform .15s;
+      width:100%;margin-top:6px;
+    }
+    .next-btn:hover{transform:scale(1.04)}
+
+    /* OVERLAY */
+    .overlay{
+      display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,.6);backdrop-filter:blur(10px);
+      align-items:center;justify-content:center;z-index:100;padding:1.5rem;
+    }
+    .overlay.show{display:flex}
+    .result-box{
+      background:linear-gradient(135deg,#FFFDE7,#FFF9C4);
+      border:3px solid rgba(255,193,7,.5);border-radius:28px;
+      padding:2.5rem 2rem;text-align:center;max-width:400px;width:100%;
+      animation:popIn .35s ease;
+    }
+    .res-emoji{font-size:4rem;margin-bottom:.5rem}
+    .res-title{font-family:'Baloo 2',sans-serif;font-size:2.2rem;font-weight:800;color:#4E342E;margin-bottom:.4rem}
+    .res-score{font-size:1.1rem;color:#6D4C41;margin-bottom:.8rem;font-weight:700}
+    .res-stars{font-size:3rem;margin-bottom:1.2rem;letter-spacing:6px}
+    .play-again-btn{
+      background:#FF8F00;color:#fff;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.85rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;transition:transform .15s;
+    }
+    .play-again-btn:hover{transform:scale(1.05)}
+
+    [data-lang]{display:none}
+    [data-lang="en"]{display:inline}
+
+    @media(max-width:480px){
+      .animal-emoji{font-size:5rem}
+      .sound-btn{font-size:1.35rem;padding:14px 16px}
+      .game-title{font-size:1.6rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi">वापस</span><span data-lang="as">পাছে</span></button>
+  <div class="subject-badge">🐾 <span data-lang="en">Animals</span><span data-lang="hi">जानवर</span><span data-lang="as">জন্তু</span></div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<!-- GAME CARD -->
+<div class="game-card">
+  <div class="game-title">
+    <span data-lang="en">Animal Sounds 🎵</span>
+    <span data-lang="hi">जानवरों की आवाज़ें 🎵</span>
+    <span data-lang="as">জন্তুৰ শব্দ 🎵</span>
+  </div>
+  <div class="score-bar">
+    <span><span data-lang="en">Score</span><span data-lang="hi">स्कोर</span><span data-lang="as">স্কোৰ</span>: <b id="score-val">0</b> / 80</span>
+    <span id="round-label"><span data-lang="en">Round</span><span data-lang="hi">दौर</span><span data-lang="as">ৰাউণ্ড</span> <b id="round-num">1</b> / 8</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+
+  <div class="instruction">
+    <span data-lang="en">🔊 What sound does this animal make?</span>
+    <span data-lang="hi">🔊 यह जानवर कौन सी आवाज़ निकालता है?</span>
+    <span data-lang="as">🔊 এই জন্তুটোৱে কি শব্দ কৰে?</span>
+  </div>
+
+  <div class="animal-show" id="animal-show">
+    <div class="animal-emoji" id="animal-emoji"></div>
+    <div class="animal-label" id="animal-label"></div>
+  </div>
+
+  <div class="choices" id="choices"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="fun-fact" id="fun-fact"></div>
+  <button class="next-btn" id="next-btn" onclick="nextRound()">
+    <span data-lang="en">Next Animal →</span>
+    <span data-lang="hi">अगला जानवर →</span>
+    <span data-lang="as">পৰৱৰ্তী জন্তু →</span>
+  </button>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="result-box">
+    <div class="res-emoji" id="res-emoji"></div>
+    <div class="res-title" id="res-title"></div>
+    <div class="res-score" id="res-score"></div>
+    <div class="res-stars" id="res-stars"></div>
+    <button class="play-again-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again!</span>
+      <span data-lang="hi">🔄 फिर खेलें!</span>
+      <span data-lang="as">🔄 আকৌ খেলক!</span>
+    </button>
+  </div>
+</div>
+
+<script>
+let currentLang = 'en';
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display=el.dataset.lang===l?'inline':'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((btn,i)=>{
+    btn.classList.toggle('active',['en','hi','as'][i]===l);
+  });
+}
+
+const animals = [
+  {
+    emoji:'🐄',
+    name:{en:'Cow',hi:'गाय',as:'গৰু'},
+    correctSound:'MOO',
+    sounds:['MOO','WOOF','MEOW'],
+    fact:{en:'Cows say "Moo"! They are gentle animals that give us milk. 🥛',
+          hi:'गाय "मूं-मूं" बोलती है! वह हमें दूध देती है। 🥛',
+          as:'গৰুৱে "মউ" শব্দ কৰে! ই আমাক গাখীৰ দিয়ে। 🥛'}
+  },
+  {
+    emoji:'🐕',
+    name:{en:'Dog',hi:'कुत्ता',as:'কুকুৰ'},
+    correctSound:'WOOF',
+    sounds:['WOOF','MOO','CLUCK'],
+    fact:{en:'Dogs say "Woof"! They are our best friends. 🦴',
+          hi:'कुत्ते "भौं-भौं" बोलते हैं! वे हमारे सबसे अच्छे दोस्त हैं। 🦴',
+          as:'কুকুৰে "ভউ ভউ" শব্দ কৰে! ইহঁত আমাৰ সৰ্বোত্তম বন্ধু। 🦴'}
+  },
+  {
+    emoji:'🐈',
+    name:{en:'Cat',hi:'बिल्ली',as:'মেকুৰী'},
+    correctSound:'MEOW',
+    sounds:['MEOW','ROAR','BAA'],
+    fact:{en:'Cats say "Meow"! They love to sleep and play. 😸',
+          hi:'बिल्ली "म्याऊँ" बोलती है! उन्हें सोना और खेलना पसंद है। 😸',
+          as:'মেকুৰীয়ে "মিউ" শব্দ কৰে! ইহঁতে শুব আৰু খেলিব ভাল পায়। 😸'}
+  },
+  {
+    emoji:'🐸',
+    name:{en:'Frog',hi:'मेंढक',as:'ভেকুলী'},
+    correctSound:'CROAK',
+    sounds:['CROAK','MEOW','MOO'],
+    fact:{en:'Frogs say "Croak"! They love jumping in ponds. 🌿',
+          hi:'मेंढक "क्रोआक" बोलता है! उसे तालाब में कूदना पसंद है। 🌿',
+          as:'ভেকুলীয়ে "ক্ৰোক" শব্দ কৰে! ই পুখুৰীত জাঁপিয়াব ভাল পায়। 🌿'}
+  },
+  {
+    emoji:'🦁',
+    name:{en:'Lion',hi:'शेर',as:'সিংহ'},
+    correctSound:'ROAR',
+    sounds:['ROAR','WOOF','CLUCK'],
+    fact:{en:'Lions say "Roar"! They are the kings of the jungle. 👑',
+          hi:'शेर "दहाड़ता" है! वह जंगल का राजा है। 👑',
+          as:'সিংহই "গৰ্জন" কৰে! ই জংঘলৰ ৰজা। 👑'}
+  },
+  {
+    emoji:'🐓',
+    name:{en:'Rooster',hi:'मुर्गा',as:'কুকুৰা'},
+    correctSound:'CLUCK',
+    sounds:['CLUCK','MOO','ROAR'],
+    fact:{en:'Roosters say "Cluck"! They wake us up in the morning. 🌅',
+          hi:'मुर्गा "कू-कूं" बोलता है! वह सुबह जगाता है। 🌅',
+          as:'কুকুৰাই "কক-ডুডল" শব্দ কৰে! ই আমাক পুৱাতে জগায়। 🌅'}
+  },
+  {
+    emoji:'🐑',
+    name:{en:'Sheep',hi:'भेड़',as:'ভেড়া'},
+    correctSound:'BAA',
+    sounds:['BAA','MEOW','CROAK'],
+    fact:{en:'Sheep say "Baa"! They give us soft woolly sweaters. 🧶',
+          hi:'भेड़ "म्याँ-म्याँ" बोलती है! वह हमें ऊन देती है। 🧶',
+          as:'ভেড়াই "বাআ" শব্দ কৰে! ই আমাক নৰম উল দিয়ে। 🧶'}
+  },
+  {
+    emoji:'🦆',
+    name:{en:'Duck',hi:'बतख',as:'হাঁহ'},
+    correctSound:'QUACK',
+    sounds:['QUACK','ROAR','BAA'],
+    fact:{en:'Ducks say "Quack"! They love splashing in water. 💦',
+          hi:'बतख "क्वैक" बोलती है! उसे पानी में छपाका मारना पसंद है। 💦',
+          as:'হাঁহে "কোৱাক" শব্দ কৰে! ই পানীত পানী ছটিয়াব ভাল পায়। 💦'}
+  }
+];
+
+let order=[], ri=0, score=0, answered=false;
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+
+function startGame(){
+  order=shuffle([...Array(animals.length).keys()]);
+  ri=0;score=0;
+  document.getElementById('overlay').classList.remove('show');
+  loadRound();
+}
+
+function loadRound(){
+  const a=animals[order[ri]];
+  answered=false;
+
+  const pct=(ri/animals.length)*100;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('score-val').textContent=score;
+  document.getElementById('round-num').textContent=ri+1;
+
+  document.getElementById('animal-emoji').textContent=a.emoji;
+  document.getElementById('animal-label').textContent=a.name[currentLang]||a.name['en'];
+
+  // choices
+  const shuffled=shuffle([...a.sounds]);
+  const container=document.getElementById('choices');
+  container.innerHTML='';
+  shuffled.forEach(s=>{
+    const btn=document.createElement('button');
+    btn.className='sound-btn';
+    btn.textContent=s;
+    btn.onclick=()=>handleAnswer(btn,s,a);
+    container.appendChild(btn);
+  });
+
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('fun-fact').classList.remove('show');
+  document.getElementById('fun-fact').textContent='';
+  document.getElementById('next-btn').style.display='none';
+}
+
+function handleAnswer(btn,chosen,a){
+  if(answered)return;
+  answered=true;
+  const allBtns=document.querySelectorAll('.sound-btn');
+  allBtns.forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===a.correctSound)b.classList.add('correct');
+  });
+
+  const fb=document.getElementById('feedback');
+  const ff=document.getElementById('fun-fact');
+
+  if(chosen===a.correctSound){
+    btn.classList.add('correct');
+    score+=10;
+    fb.textContent='✓ Yes! '+a.correctSound+'!';
+    fb.className='feedback correct';
+  } else {
+    btn.classList.add('wrong');
+    fb.textContent='✗ Try again next time!';
+    fb.className='feedback wrong';
+  }
+
+  ff.textContent=a.fact[currentLang]||a.fact['en'];
+  ff.classList.add('show');
+  document.getElementById('score-val').textContent=score;
+  document.getElementById('next-btn').style.display='block';
+}
+
+function nextRound(){
+  ri++;
+  if(ri>=animals.length){showResult();return;}
+  loadRound();
+}
+
+function showResult(){
+  document.getElementById('prog-fill').style.width='100%';
+  const pct=(score/(animals.length*10))*100;
+  let emoji='😊',title='Good Try!';
+  if(pct>=90){emoji='🏆';title='Amazing!';}
+  else if(pct>=70){emoji='🎉';title='Well Done!';}
+  else if(pct>=40){emoji='👍';title='Good Job!';}
+
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'';
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-title').textContent=title;
+  document.getElementById('res-score').textContent='Score: '+score+' / '+(animals.length*10);
+  document.getElementById('res-stars').textContent=stars;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function restartGame(){startGame();}
+startGame();
+</script>
+</body>
+</html>

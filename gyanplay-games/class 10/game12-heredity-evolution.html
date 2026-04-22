@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Heredity & Evolution | GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;
+    --pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;
+    --card:#1a1740;--text:#E8E4FF;--muted:#9B97CC;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    font-family:'Nunito',sans-serif;color:var(--text);}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .fadeIn{animation:fadeIn .45s ease both;}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;
+    padding:14px 20px;background:rgba(15,12,41,.6);backdrop-filter:blur(8px);
+    position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,.07);}
+  .back-btn{background:none;border:1px solid rgba(255,255,255,.2);color:var(--text);
+    padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-size:.85rem;transition:all .2s;}
+  .back-btn:hover{background:rgba(255,255,255,.1);}
+  .subject-badge{background:var(--green);color:#fff;padding:4px 14px;
+    border-radius:20px;font-family:'Baloo 2',sans-serif;font-size:.8rem;font-weight:700;}
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{background:none;border:1px solid rgba(255,255,255,.2);color:var(--muted);
+    padding:4px 10px;border-radius:14px;cursor:pointer;font-size:.8rem;
+    font-family:'Nunito',sans-serif;transition:all .2s;}
+  .lang-btn.active{background:var(--purple);border-color:var(--purple);color:#fff;}
+
+  .container{max-width:760px;margin:0 auto;padding:24px 16px 40px;}
+  .game-title{font-family:'Baloo 2',sans-serif;font-size:1.7rem;font-weight:800;
+    text-align:center;margin-bottom:4px;color:var(--gold);}
+  .game-subtitle{text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:20px;}
+
+  .progress-row{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  .progress-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;}
+  .progress-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--saffron));
+    transition:width .4s ease;}
+  .q-count{font-size:.82rem;color:var(--muted);white-space:nowrap;}
+
+  .card{background:var(--card);border-radius:18px;padding:24px;
+    border:1px solid rgba(255,255,255,.07);margin-bottom:16px;}
+  .q-number{font-size:.78rem;color:var(--gold);font-weight:700;
+    text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+  .q-text{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:600;
+    line-height:1.5;margin-bottom:4px;}
+
+  /* Punnett square styled box */
+  .punnett-box{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.3);
+    border-radius:10px;padding:12px 16px;margin:10px 0;
+    font-family:'Baloo 2',sans-serif;font-size:.95rem;color:var(--gold);line-height:1.7;}
+  .punnett-grid{display:inline-grid;grid-template-columns:auto auto auto;
+    gap:2px;margin:6px auto;border:1px solid rgba(255,184,0,.4);border-radius:6px;overflow:hidden;}
+  .pg-cell{padding:6px 14px;text-align:center;font-size:.9rem;}
+  .pg-header{background:rgba(255,184,0,.2);font-weight:700;}
+  .pg-body{background:rgba(255,184,0,.06);}
+
+  .options{display:grid;gap:10px;margin-top:14px;}
+  .opt-btn{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);
+    color:var(--text);padding:12px 16px;border-radius:12px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.95rem;text-align:left;
+    transition:all .2s;line-height:1.4;}
+  .opt-btn:hover:not(:disabled){background:rgba(255,184,0,.15);border-color:var(--gold);}
+  .opt-btn.correct{background:rgba(0,200,83,.15);border-color:var(--green);color:#fff;}
+  .opt-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);}
+  .opt-btn:disabled{cursor:default;}
+
+  .feedback{border-radius:12px;padding:14px 16px;margin-top:12px;font-size:.9rem;
+    line-height:1.5;display:none;}
+  .feedback.show{display:block;animation:fadeIn .3s ease;}
+  .feedback.correct{background:rgba(0,200,83,.12);border:1px solid rgba(0,200,83,.3);color:#a8ffd0;}
+  .feedback.wrong{background:rgba(255,64,129,.12);border:1px solid rgba(255,64,129,.3);color:#ffb3c8;}
+  .feedback-icon{font-size:1.1rem;margin-right:6px;}
+
+  .next-btn{display:none;width:100%;padding:14px;border:none;border-radius:14px;
+    background:linear-gradient(135deg,var(--gold),var(--saffron));color:#fff;
+    font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;
+    cursor:pointer;margin-top:14px;transition:opacity .2s;}
+  .next-btn:hover{opacity:.88;}
+  .next-btn.visible{display:block;}
+
+  .end-screen{display:none;text-align:center;}
+  .end-screen.show{display:block;animation:fadeIn .5s ease;}
+  .score-big{font-family:'Baloo 2',sans-serif;font-size:3.2rem;font-weight:800;color:var(--gold);}
+  .score-label{color:var(--muted);margin-bottom:18px;}
+  .stars{font-size:2.4rem;margin:10px 0 20px;}
+  .result-msg{font-size:1rem;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+  .play-again-btn{background:linear-gradient(135deg,var(--saffron),var(--gold));
+    border:none;color:#fff;padding:14px 36px;border-radius:14px;
+    font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;
+    cursor:pointer;transition:opacity .2s;}
+  .play-again-btn:hover{opacity:.88;}
+  .score-breakdown{background:var(--card);border-radius:14px;padding:16px;margin:20px 0;
+    border:1px solid rgba(255,255,255,.07);}
+  .breakdown-row{display:flex;justify-content:space-between;padding:6px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);font-size:.9rem;}
+  .breakdown-row:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="subject-badge">Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+    <button class="lang-btn" onclick="setLang('hi',this)">हि</button>
+    <button class="lang-btn" onclick="setLang('bn',this)">অ</button>
+  </div>
+</div>
+
+<div class="container">
+  <div id="quiz-section" class="fadeIn">
+    <div class="game-title">
+      <span data-lang-en="🧬 Heredity & Evolution" data-lang-hi="🧬 आनुवंशिकता और जैव विकास" data-lang-bn="🧬 বংশগতি ও বিবর্তন">🧬 Heredity & Evolution</span>
+    </div>
+    <div class="game-subtitle">
+      <span data-lang-en="Class 10 Science · Ch 9 · 10 Questions" data-lang-hi="कक्षा 10 विज्ञान · अध्याय 9 · 10 प्रश्न" data-lang-bn="দশম শ্রেণী বিজ্ঞান · অধ্যায় 9 · 10 প্রশ্ন">Class 10 Science · Ch 9 · 10 Questions</span>
+    </div>
+
+    <div class="progress-row">
+      <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+      <div class="q-count" id="q-count">0 / 10</div>
+    </div>
+
+    <div class="card fadeIn" id="question-card">
+      <div class="q-number" id="q-number">Question 1 of 10</div>
+      <div class="q-text" id="q-text"></div>
+      <div id="punnett-area"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+      <span data-lang-en="Next Question →" data-lang-hi="अगला प्रश्न →" data-lang-bn="পরবর্তী প্রশ্ন →">Next Question →</span>
+    </button>
+  </div>
+
+  <div class="end-screen" id="end-screen">
+    <div class="card">
+      <div class="score-big" id="final-score">0/100</div>
+      <div class="score-label" data-lang-en="Your Score" data-lang-hi="आपका स्कोर" data-lang-bn="আপনার স্কোর">Your Score</div>
+      <div class="stars" id="stars">☆☆☆</div>
+      <div class="result-msg" id="result-msg"></div>
+      <div class="score-breakdown">
+        <div class="breakdown-row"><span data-lang-en="Correct" data-lang-hi="सही" data-lang-bn="সঠিক">Correct</span><span id="bd-correct" style="color:var(--green)"></span></div>
+        <div class="breakdown-row"><span data-lang-en="Wrong" data-lang-hi="गलत" data-lang-bn="ভুল">Wrong</span><span id="bd-wrong" style="color:var(--pink)"></span></div>
+        <div class="breakdown-row"><span data-lang-en="Score" data-lang-hi="स्कोर" data-lang-bn="স্কোর">Score</span><span id="bd-score" style="color:var(--gold)"></span></div>
+      </div>
+      <button class="play-again-btn" onclick="restartGame()">
+        <span data-lang-en="🔄 Play Again" data-lang-hi="🔄 फिर खेलें" data-lang-bn="🔄 আবার খেলুন">🔄 Play Again</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// punnett: HTML string or null
+const questions=[
+  {
+    punnett:`<div class="punnett-box">
+      <strong>Monohybrid Cross (Tt × Tt):</strong><br>
+      <div style="display:flex;justify-content:center;margin-top:8px">
+      <div class="punnett-grid">
+        <div class="pg-cell pg-header"></div><div class="pg-cell pg-header">T</div><div class="pg-cell pg-header">t</div>
+        <div class="pg-cell pg-header">T</div><div class="pg-cell pg-body">TT</div><div class="pg-cell pg-body">Tt</div>
+        <div class="pg-cell pg-header">t</div><div class="pg-cell pg-body">Tt</div><div class="pg-cell pg-body">tt</div>
+      </div></div>
+      <div style="margin-top:6px;font-size:.85rem;color:var(--muted)">Phenotype ratio → 3 Tall : 1 Short</div>
+    </div>`,
+    en:{q:"In Mendel's monohybrid cross between two hybrid tall pea plants (Tt × Tt), what is the expected phenotype ratio in the F2 generation?",
+        opts:["1:1","1:2:1","3:1","9:3:3:1"],
+        ans:2,
+        exp:"Monohybrid cross Tt × Tt gives genotypes TT : Tt : tt = 1:2:1. Phenotypically, TT and Tt are both tall (T is dominant over t). So 3 tall : 1 short. This is Mendel's Law of Segregation — alleles separate during gamete formation."},
+    hi:{q:"मेंडल के एकसंकर संकरण (Tt × Tt) में F2 पीढ़ी में फीनोटाइप अनुपात क्या होगा?",
+        opts:["1:1","1:2:1","3:1","9:3:3:1"],
+        ans:2,
+        exp:"Tt × Tt संकरण से TT:Tt:tt = 1:2:1 जीनोटाइप अनुपात मिलता है। फीनोटाइप अनुपात 3 लम्बा : 1 बौना होता है। यह मेंडल के पृथक्करण नियम का परिणाम है।"},
+    bn:{q:"মেন্ডেলের একসংকর সংকরণে (Tt × Tt) F2 প্রজন্মে ফিনোটাইপ অনুপাত কত হবে?",
+        opts:["1:1","1:2:1","3:1","9:3:3:1"],
+        ans:2,
+        exp:"Tt × Tt সংকরণে TT:Tt:tt = 1:2:1 জিনোটাইপ অনুপাত। ফিনোটাইপ অনুপাত 3 লম্বা : 1 খাটো। এটি মেন্ডেলের পৃথকীভবন সূত্রের ফলাফল।"}
+  },
+  {
+    punnett:`<div class="punnett-box">
+      <strong>Dihybrid Cross (RrYy × RrYy) — F2 ratio:</strong><br>
+      <div style="margin-top:4px;font-size:.9rem">9 Round Yellow : 3 Round Green : 3 Wrinkled Yellow : 1 Wrinkled Green</div>
+    </div>`,
+    en:{q:"In Mendel's dihybrid cross (RrYy × RrYy), what is the phenotype ratio in F2 generation?",
+        opts:["3:1","1:2:1","9:3:3:1","1:1:1:1"],
+        ans:2,
+        exp:"Dihybrid cross gives a 9:3:3:1 ratio: 9 Round Yellow : 3 Round Green : 3 Wrinkled Yellow : 1 Wrinkled Green. This demonstrates Mendel's Law of Independent Assortment — genes for different traits assort independently during gamete formation."},
+    hi:{q:"मेंडल के द्विसंकर संकरण (RrYy × RrYy) में F2 पीढ़ी में फीनोटाइप अनुपात क्या होगा?",
+        opts:["3:1","1:2:1","9:3:3:1","1:1:1:1"],
+        ans:2,
+        exp:"द्विसंकर संकरण से 9:3:3:1 फीनोटाइप अनुपात मिलता है। यह मेंडल के स्वतंत्र अपव्यूहन के नियम को दर्शाता है।"},
+    bn:{q:"মেন্ডেলের দ্বিসংকর সংকরণে (RrYy × RrYy) F2 প্রজন্মে ফিনোটাইপ অনুপাত কত?",
+        opts:["3:1","1:2:1","9:3:3:1","1:1:1:1"],
+        ans:2,
+        exp:"দ্বিসংকর সংকরণে 9:3:3:1 ফিনোটাইপ অনুপাত পাওয়া যায়। এটি মেন্ডেলের স্বাধীন সমবিন্যাস সূত্র প্রমাণ করে।"}
+  },
+  {
+    punnett:null,
+    en:{q:"Which of the following traits is DOMINANT in Mendel's pea plant experiments?",
+        opts:["Wrinkled seeds","Yellow seed colour","Green pod colour is recessive","Short plant height"],
+        ans:1,
+        exp:"In Mendel's experiments with pea plants, Yellow seed colour is dominant over green. Other dominant traits: Round seeds (over wrinkled), Tall plant (over short), Axial flower position, Green pod, Inflated pod, Red flower."},
+    hi:{q:"मेंडल के मटर के पौधे के प्रयोगों में निम्न में से कौन सा लक्षण प्रभावी (dominant) है?",
+        opts:["झुर्रीदार बीज","पीले बीज का रंग","हरी फली का रंग अप्रभावी है","बौना पौधा"],
+        ans:1,
+        exp:"मेंडल के प्रयोगों में पीला बीज रंग हरे पर प्रभावी है। अन्य प्रभावी लक्षण: गोल बीज, लम्बा पौधा, अक्षीय फूल स्थिति, हरी फली।"},
+    bn:{q:"মেন্ডেলের মটর গাছের পরীক্ষায় নিচের কোন বৈশিষ্ট্যটি প্রকট (dominant)?",
+        opts:["কুঞ্চিত বীজ","হলুদ বীজের রং","সবুজ শুঁটির রং অপ্রকট","খাটো গাছ"],
+        ans:1,
+        exp:"মেন্ডেলের পরীক্ষায় হলুদ বীজের রং সবুজের উপর প্রকট। অন্যান্য প্রকট বৈশিষ্ট্য: গোল বীজ, লম্বা গাছ, অক্ষীয় ফুলের অবস্থান।"}
+  },
+  {
+    punnett:`<div class="punnett-box">
+      <strong>Sex Determination in Humans:</strong><br>
+      <div style="margin-top:4px;font-size:.9rem">
+        Mother (XX) provides only X<br>
+        Father (XY) provides X or Y<br>
+        XX = Daughter &nbsp;|&nbsp; XY = Son
+      </div>
+    </div>`,
+    en:{q:"In humans, sex determination depends on chromosomes. Which parent determines the sex of the child?",
+        opts:["The mother, because she provides the X chromosome","The father, because he provides either X or Y chromosome","Both parents equally","Neither parent — it is random"],
+        ans:1,
+        exp:"The father determines the child's sex. Mothers have XX chromosomes and can only contribute X. Fathers have XY chromosomes — if the sperm carries X, the child is female (XX); if it carries Y, the child is male (XY). This is why blaming the mother for the child's sex is scientifically wrong."},
+    hi:{q:"मनुष्यों में लिंग निर्धारण गुणसूत्रों पर निर्भर करता है। बच्चे का लिंग कौन सा माता-पिता निर्धारित करता है?",
+        opts:["माँ, क्योंकि वह X गुणसूत्र देती है","पिता, क्योंकि वह X या Y गुणसूत्र देता है","दोनों माता-पिता समान रूप से","कोई नहीं — यह यादृच्छिक है"],
+        ans:1,
+        exp:"पिता बच्चे का लिंग निर्धारित करता है। माँ केवल X दे सकती है। पिता X या Y दे सकता है। XX = बेटी, XY = बेटा।"},
+    bn:{q:"মানুষে লিঙ্গ নির্ধারণ ক্রোমোজোমের উপর নির্ভর করে। সন্তানের লিঙ্গ কোন অভিভাবক নির্ধারণ করেন?",
+        opts:["মা, কারণ তিনি X ক্রোমোজোম দেন","বাবা, কারণ তিনি X বা Y ক্রোমোজোম দেন","উভয় অভিভাবক সমানভাবে","কেউ না — এটি এলোমেলো"],
+        ans:1,
+        exp:"বাবা সন্তানের লিঙ্গ নির্ধারণ করেন। মা শুধু X দিতে পারেন। বাবা X বা Y দিতে পারেন। XX = মেয়ে, XY = ছেলে।"}
+  },
+  {
+    punnett:null,
+    en:{q:"What is the difference between 'acquired traits' and 'inherited traits'? Which type can be passed to offspring?",
+        opts:["Acquired traits are passed to offspring; inherited traits are not",
+              "Inherited traits are passed to offspring; acquired traits are not",
+              "Both types are equally passed to offspring",
+              "Neither type is passed to offspring"],
+        ans:1,
+        exp:"Inherited traits are encoded in DNA (genes) and are passed from parents to offspring. Acquired traits develop during an individual's lifetime due to environment or experience (e.g., a bodybuilder's muscles, a cut on the skin) — these are NOT encoded in genes and cannot be passed on. This distinction disproved Lamarck's theory."},
+    hi:{q:"'अर्जित लक्षणों' और 'वंशानुगत लक्षणों' में क्या अंतर है? कौन से लक्षण संतान को मिल सकते हैं?",
+        opts:["अर्जित लक्षण संतान को मिलते हैं; वंशानुगत नहीं",
+              "वंशानुगत लक्षण संतान को मिलते हैं; अर्जित नहीं",
+              "दोनों प्रकार समान रूप से संतान को मिलते हैं",
+              "कोई भी संतान को नहीं मिलता"],
+        ans:1,
+        exp:"वंशानुगत लक्षण DNA में कूटबद्ध होते हैं और माता-पिता से संतान को मिलते हैं। अर्जित लक्षण जीवनकाल में विकसित होते हैं और DNA में नहीं होते, इसलिए संतान को नहीं मिलते।"},
+    bn:{q:"'অর্জিত বৈশিষ্ট্য' ও 'বংশগত বৈশিষ্ট্য'-এর মধ্যে পার্থক্য কী? কোনটি সন্তানের মধ্যে যায়?",
+        opts:["অর্জিত বৈশিষ্ট্য সন্তানে যায়; বংশগত যায় না",
+              "বংশগত বৈশিষ্ট্য সন্তানে যায়; অর্জিত যায় না",
+              "উভয়ই সমানভাবে সন্তানে যায়",
+              "কোনোটিই সন্তানে যায় না"],
+        ans:1,
+        exp:"বংশগত বৈশিষ্ট্য DNA-তে কোডবদ্ধ এবং পিতামাতা থেকে সন্তানে যায়। অর্জিত বৈশিষ্ট্য জীবদ্দশায় তৈরি হয়, DNA-তে থাকে না, তাই সন্তানে যায় না।"}
+  },
+  {
+    punnett:null,
+    en:{q:"Charles Darwin's theory of evolution is based on which key concept?",
+        opts:["Inheritance of acquired characteristics","Use and disuse of organs","Natural selection and survival of the fittest","Spontaneous generation"],
+        ans:2,
+        exp:"Darwin's theory: organisms with favourable variations survive and reproduce ('survival of the fittest'), passing advantageous traits to offspring. Over generations, this leads to evolution of new species. This is called Natural Selection. Darwin published 'On the Origin of Species' in 1859."},
+    hi:{q:"चार्ल्स डार्विन का विकास का सिद्धांत किस मुख्य अवधारणा पर आधारित है?",
+        opts:["अर्जित लक्षणों का वंशानुक्रम","अंगों का उपयोग और अनुपयोग","प्राकृतिक चयन और योग्यतम की उत्तरजीविता","स्वतःजनन"],
+        ans:2,
+        exp:"डार्विन का सिद्धांत: अनुकूल विभिन्नताओं वाले जीव जीवित रहते हैं और प्रजनन करते हैं। धीरे-धीरे नई प्रजातियाँ विकसित होती हैं। इसे प्राकृतिक चयन कहते हैं।"},
+    bn:{q:"চার্লস ডারউইনের বিবর্তন তত্ত্ব কোন মূল ধারণার উপর প্রতিষ্ঠিত?",
+        opts:["অর্জিত বৈশিষ্ট্যের বংশানুক্রম","অঙ্গের ব্যবহার ও অব্যবহার","প্রাকৃতিক নির্বাচন ও যোগ্যতমের টিকে থাকা","স্বতঃজন্ম"],
+        ans:2,
+        exp:"ডারউইনের তত্ত্ব: অনুকূল বৈচিত্র্যের জীব বেঁচে থাকে ও প্রজনন করে। ক্রমে নতুন প্রজাতি বিকশিত হয়। একে প্রাকৃতিক নির্বাচন বলে।"}
+  },
+  {
+    punnett:null,
+    en:{q:"Homologous organs are organs that have the same basic structural plan and origin but different functions. Which is the best example?",
+        opts:["Wings of butterfly and wings of bird (analogous)","Forelimbs of whale, bat, horse, and human","Eyes of octopus and vertebrates","Thorns of cacti and tendrils of pea plant"],
+        ans:1,
+        exp:"Homologous organs: forelimbs of whale (flipper), bat (wing), horse (leg), and human (arm) share the same basic bone structure (humerus, radius, ulna, carpals, phalanges) but perform different functions. They show divergent evolution from a common ancestor. Analogous organs (butterfly and bird wings) have similar function but different origin."},
+    hi:{q:"समजात अंग वे अंग हैं जिनकी मूल संरचना और उत्पत्ति समान है लेकिन कार्य अलग-अलग हैं। सबसे अच्छा उदाहरण कौन सा है?",
+        opts:["तितली के पंख और पक्षी के पंख (समवृत्ति)","व्हेल, चमगादड़, घोड़े और मानव के अग्रपाद","ऑक्टोपस और कशेरुकी जंतुओं की आँखें","कैक्टस के काँटे और मटर के प्रतान"],
+        ans:1,
+        exp:"व्हेल, चमगादड़, घोड़े और मानव के अग्रपादों की मूल हड्डी संरचना (ह्यूमरस, रेडियस, अल्ना) एक जैसी है लेकिन कार्य अलग-अलग हैं। ये समजात अंग हैं।"},
+    bn:{q:"সমসংস্থ অঙ্গ হল যেগুলোর গঠনগত পরিকল্পনা ও উৎপত্তি একই কিন্তু কাজ আলাদা। সেরা উদাহরণ কোনটি?",
+        opts:["প্রজাপতির ডানা ও পাখির ডানা (সমবৃত্তি)","তিমি, বাদুড়, ঘোড়া ও মানুষের অগ্রপদ","অক্টোপাস ও মেরুদণ্ডী প্রাণীর চোখ","ক্যাকটাসের কাঁটা ও মটরের আকর্ষী"],
+        ans:1,
+        exp:"তিমি, বাদুড়, ঘোড়া ও মানুষের অগ্রপদের হাড়ের গঠন একই (হিউমেরাস, রেডিয়াস, আলনা) কিন্তু কাজ আলাদা। এগুলো সমসংস্থ অঙ্গ।"}
+  },
+  {
+    punnett:null,
+    en:{q:"Fossils provide evidence for evolution. Which statement about fossils is most accurate?",
+        opts:["Fossils are only found in igneous rocks","Older fossils are found in deeper rock layers; newer fossils in shallower layers","All extinct species have fossil records","Fossils can only be studied through carbon dating"],
+        ans:1,
+        exp:"In sedimentary rocks, older layers are deeper (formed first) and newer layers are near the surface. Fossils in deeper layers are older species, fossils near the surface are more recent. This stratigraphic record shows evolutionary progression over time. Not all extinct organisms leave fossils (soft bodies rarely fossilise)."},
+    hi:{q:"जीवाश्म विकास के प्रमाण प्रदान करते हैं। जीवाश्मों के बारे में कौन सा कथन सबसे सटीक है?",
+        opts:["जीवाश्म केवल आग्नेय चट्टानों में मिलते हैं","पुराने जीवाश्म गहरी चट्टान परतों में; नए उथली परतों में","सभी विलुप्त प्रजातियों के जीवाश्म रिकॉर्ड हैं","जीवाश्मों का अध्ययन केवल कार्बन डेटिंग से किया जा सकता है"],
+        ans:1,
+        exp:"तलछटी चट्टानों में गहरी परतें पुरानी और उथली परतें नई होती हैं। गहरी परतों में पुरानी प्रजातियाँ और ऊपरी परतों में नई प्रजातियों के जीवाश्म मिलते हैं।"},
+    bn:{q:"জীবাশ্ম বিবর্তনের প্রমাণ দেয়। জীবাশ্ম সম্পর্কে কোন বক্তব্যটি সবচেয়ে সঠিক?",
+        opts:["জীবাশ্ম কেবল আগ্নেয় শিলায় পাওয়া যায়","পুরনো জীবাশ্ম গভীর শিলাস্তরে; নতুন জীবাশ্ম উপরের স্তরে","সব বিলুপ্ত প্রজাতির জীবাশ্ম রেকর্ড আছে","জীবাশ্ম শুধু কার্বন ডেটিং দিয়ে অধ্যয়ন করা যায়"],
+        ans:1,
+        exp:"পলল শিলায় গভীরতর স্তর পুরনো এবং উপরের স্তর নতুন। গভীর স্তরে পুরনো প্রজাতির এবং উপরের স্তরে সাম্প্রতিক প্রজাতির জীবাশ্ম মেলে।"}
+  },
+  {
+    punnett:null,
+    en:{q:"Who proposed the theory that evolution occurs due to 'use and disuse of organs' and 'inheritance of acquired characters'?",
+        opts:["Charles Darwin","Gregor Mendel","Jean-Baptiste Lamarck","Hugo de Vries"],
+        ans:2,
+        exp:"Lamarck proposed that organisms develop new features through use/disuse of organs (e.g., giraffe stretching its neck) and these acquired features are inherited. This was later disproved — acquired traits are not encoded in DNA and cannot be inherited. Darwin's Natural Selection theory replaced Lamarck's theory."},
+    hi:{q:"किसने प्रस्तावित किया कि विकास 'अंगों के उपयोग और अनुपयोग' और 'अर्जित लक्षणों की वंशानुगति' के कारण होता है?",
+        opts:["चार्ल्स डार्विन","ग्रेगर मेंडल","जीन-बाप्तिस्त लामार्क","ह्यूगो डी व्रीज़"],
+        ans:2,
+        exp:"लामार्क ने कहा कि जीव अंगों के उपयोग/अनुपयोग से नए लक्षण विकसित करते हैं और ये अर्जित लक्षण संतान को मिलते हैं। यह सिद्धांत बाद में गलत साबित हुआ। डार्विन के प्राकृतिक चयन ने इसे बदल दिया।"},
+    bn:{q:"কে প্রস্তাব করেছিলেন যে বিবর্তন 'অঙ্গের ব্যবহার ও অব্যবহার' এবং 'অর্জিত বৈশিষ্ট্যের বংশানুক্রম'-এর কারণে হয়?",
+        opts:["চার্লস ডারউইন","গ্রেগর মেন্ডেল","জ্যাঁ-বাপটিস্ট ল্যামার্ক","হুগো ডি ভ্রিস"],
+        ans:2,
+        exp:"ল্যামার্ক বলেছিলেন যে জীব অঙ্গ ব্যবহার/অব্যবহারে নতুন বৈশিষ্ট্য তৈরি করে এবং সেগুলো সন্তানে যায়। এটি পরে ভুল প্রমাণিত হয়েছে। ডারউইনের প্রাকৃতিক নির্বাচন তত্ত্ব এটি প্রতিস্থাপন করে।"}
+  },
+  {
+    punnett:null,
+    en:{q:"DNA carries genetic information. Where is most of the DNA found in a eukaryotic cell?",
+        opts:["In the mitochondria","In the cell membrane","In the nucleus (on chromosomes)","In the ribosomes"],
+        ans:2,
+        exp:"In eukaryotic cells (like human cells), most DNA is found in the nucleus, organised into chromosomes. Humans have 46 chromosomes (23 pairs) in most body cells. A small amount of DNA also exists in mitochondria (mitochondrial DNA). Genes are specific segments of DNA that code for proteins and determine traits."},
+    hi:{q:"DNA आनुवंशिक जानकारी रखता है। यूकेरियोटिक कोशिका में अधिकांश DNA कहाँ होता है?",
+        opts:["माइटोकॉन्ड्रिया में","कोशिका झिल्ली में","केंद्रक में (गुणसूत्रों पर)","राइबोसोम में"],
+        ans:2,
+        exp:"यूकेरियोटिक कोशिकाओं में अधिकांश DNA केंद्रक में गुणसूत्रों पर होता है। मानव में 46 गुणसूत्र होते हैं। थोड़ा DNA माइटोकॉन्ड्रिया में भी होता है। जीन DNA के वे खंड हैं जो प्रोटीन बनाने का कोड रखते हैं।"},
+    bn:{q:"DNA জিনগত তথ্য বহন করে। ইউক্যারিওটিক কোষে বেশিরভাগ DNA কোথায় থাকে?",
+        opts:["মাইটোকন্ড্রিয়ায়","কোষ ঝিল্লিতে","নিউক্লিয়াসে (ক্রোমোজোমে)","রাইবোসোমে"],
+        ans:2,
+        exp:"ইউক্যারিওটিক কোষে বেশিরভাগ DNA নিউক্লিয়াসে ক্রোমোজোমে থাকে। মানুষের ৪৬টি ক্রোমোজোম আছে। কিছু DNA মাইটোকন্ড্রিয়াতেও থাকে। জিন হল DNA-র সেই অংশ যা প্রোটিন সংশ্লেষণের কোড রাখে।"}
+  }
+];
+
+let currentQ=0,score=0,answered=false,currentLang='en';
+
+function setLang(lang,btn){
+  currentLang=lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[data-lang-en]').forEach(el=>{
+    const val=el.getAttribute('data-lang-'+lang)||el.getAttribute('data-lang-en');
+    el.textContent=val;
+  });
+  loadQuestion();
+}
+
+function loadQuestion(){
+  if(currentQ>=questions.length){showEnd();return;}
+  answered=false;
+  const qObj=questions[currentQ];
+  const q=qObj[currentLang]||qObj['en'];
+  document.getElementById('q-number').textContent=
+    currentLang==='hi'?`प्रश्न ${currentQ+1} / 10`:
+    currentLang==='bn'?`প্রশ্ন ${currentQ+1} / 10`:`Question ${currentQ+1} of 10`;
+  document.getElementById('q-text').textContent=q.q;
+  const pa=document.getElementById('punnett-area');
+  pa.innerHTML=qObj.punnett||'';
+  const opts=document.getElementById('options');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';b.textContent=o;
+    b.onclick=()=>selectAnswer(i,q.ans,q.exp);
+    opts.appendChild(b);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('feedback').innerHTML='';
+  document.getElementById('next-btn').classList.remove('visible');
+  document.getElementById('progress-bar').style.width=(currentQ/10*100)+'%';
+  document.getElementById('q-count').textContent=currentQ+' / 10';
+  document.getElementById('question-card').classList.remove('fadeIn');
+  void document.getElementById('question-card').offsetWidth;
+  document.getElementById('question-card').classList.add('fadeIn');
+}
+
+function selectAnswer(idx,correct,exp){
+  if(answered)return;
+  answered=true;
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===correct)b.classList.add('correct');
+    else if(i===idx&&idx!==correct)b.classList.add('wrong');
+  });
+  const fb=document.getElementById('feedback');
+  if(idx===correct){
+    score+=10;
+    fb.className='feedback correct show';
+    fb.innerHTML=`<span class="feedback-icon">✓</span>${exp}`;
+  }else{
+    fb.className='feedback wrong show';
+    fb.innerHTML=`<span class="feedback-icon">✗</span>${exp}`;
+  }
+  document.getElementById('next-btn').classList.add('visible');
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ>=questions.length){showEnd();}
+  else{loadQuestion();}
+}
+
+function showEnd(){
+  document.getElementById('quiz-section').style.display='none';
+  const es=document.getElementById('end-screen');
+  es.className='end-screen show';
+  document.getElementById('final-score').textContent=score+'/100';
+  const pct=score;
+  let stars='☆☆☆',msg='';
+  if(pct>=90){stars='★★★';msg=currentLang==='hi'?'शानदार! आप विकास के विशेषज्ञ हैं! 🎉':currentLang==='bn'?'অসাধারণ! বংশগতি বিশেষজ্ঞ! 🎉':'Outstanding! You\'re a genetics & evolution expert! 🎉';}
+  else if(pct>=70){stars='★★☆';msg=currentLang==='hi'?'बहुत अच्छा! थोड़ा और अभ्यास करें।':currentLang==='bn'?'খুব ভালো! একটু আরও অনুশীলন করুন।':'Great job! Review Mendel\'s laws once more.';}
+  else if(pct>=40){stars='★☆☆';msg=currentLang==='hi'?'ठीक है! अध्याय दोबारा पढ़ें।':currentLang==='bn'?'ঠিক আছে! অধ্যায়টি পুনরায় পড়ুন।':'Keep going! Re-read the chapter carefully.';}
+  else{stars='☆☆☆';msg=currentLang==='hi'?'हार मत मानो! फिर से प्रयास करें।':currentLang==='bn'?'হাল ছেড়ো না! আবার চেষ্টা করো।':'Don\'t give up! Study the concepts and try again.';}
+  document.getElementById('stars').textContent=stars;
+  document.getElementById('result-msg').textContent=msg;
+  const correct=score/10,wrong=10-correct;
+  document.getElementById('bd-correct').textContent=correct+' / 10';
+  document.getElementById('bd-wrong').textContent=wrong+' / 10';
+  document.getElementById('bd-score').textContent=score+' / 100';
+}
+
+function restartGame(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('end-screen').className='end-screen';
+  document.getElementById('quiz-section').style.display='block';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

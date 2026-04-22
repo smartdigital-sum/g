@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Circles &amp; Areas – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;
+  --gold:#FFB800;
+  --sky:#00AEEF;
+  --green:#00C853;
+  --pink:#FF4081;
+  --purple:#7C3AED;
+  --card:#1a1740;
+  --text:#E8E6FF;
+  --muted:#9990CC;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  min-height:100vh;
+  background:linear-gradient(135deg,#0F0C29,#302B63);
+  font-family:'Nunito',sans-serif;
+  color:var(--text);
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.fade{animation:fadeIn 0.45s ease both;}
+
+/* TOP BAR */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;
+  background:rgba(10,8,40,0.65);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  position:sticky;top:0;z-index:100;
+}
+.back-btn{
+  background:none;border:none;color:var(--text);
+  font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:8px;transition:background 0.2s;
+}
+.back-btn:hover{background:rgba(255,255,255,0.08);}
+.badge{
+  background:var(--saffron);color:#fff;
+  font-family:'Baloo 2',sans-serif;font-weight:700;font-size:0.82rem;
+  padding:4px 14px;border-radius:20px;letter-spacing:0.5px;
+}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);
+  color:var(--text);border-radius:20px;padding:4px 12px;
+  font-size:0.82rem;cursor:pointer;transition:all 0.2s;
+  font-family:'Nunito',sans-serif;
+}
+.lang-btn.active,.lang-btn:hover{background:var(--purple);border-color:var(--purple);color:#fff;}
+
+/* MAIN */
+.main{max-width:700px;margin:0 auto;padding:24px 16px 60px;}
+
+/* SCORE */
+.score-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.score-label{font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;color:var(--gold);}
+.score-val{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.progress-wrap{width:100%;background:rgba(255,255,255,0.08);border-radius:10px;height:10px;margin-bottom:22px;overflow:hidden;}
+.progress-bar{height:10px;border-radius:10px;background:linear-gradient(90deg,var(--saffron),var(--gold));transition:width 0.5s ease;}
+
+/* ROUND INFO */
+.round-info{font-family:'Baloo 2',sans-serif;font-size:0.85rem;color:var(--muted);margin-bottom:16px;}
+
+/* QUESTION CARD */
+.q-card{
+  background:var(--card);border-radius:18px;padding:28px 24px;
+  border:1px solid rgba(255,255,255,0.07);
+  box-shadow:0 8px 32px rgba(0,0,0,0.35);margin-bottom:20px;
+}
+.q-type-tag{
+  display:inline-block;font-size:0.75rem;font-weight:700;
+  letter-spacing:0.8px;text-transform:uppercase;
+  padding:3px 11px;border-radius:12px;margin-bottom:14px;
+}
+.tag-theorem{background:rgba(0,174,239,0.18);color:var(--sky);}
+.tag-calc{background:rgba(255,184,0,0.18);color:var(--gold);}
+.q-text{
+  font-family:'Baloo 2',sans-serif;font-size:1.13rem;font-weight:600;
+  line-height:1.55;margin-bottom:18px;
+}
+
+/* FORMULA BOX */
+.formula-box{
+  background:#FFB800;color:#1a1200;
+  border-radius:12px;padding:12px 18px;margin-bottom:18px;
+  font-family:'Baloo 2',sans-serif;font-weight:700;font-size:0.97rem;
+  line-height:1.6;white-space:pre-line;
+}
+.formula-label{font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;opacity:0.6;margin-bottom:4px;}
+
+/* DIAGRAM HINT */
+.diagram-hint{
+  background:rgba(0,174,239,0.09);border:1px solid rgba(0,174,239,0.22);
+  border-radius:10px;padding:10px 14px;margin-bottom:14px;
+  font-size:0.88rem;color:var(--sky);line-height:1.5;
+}
+
+/* ANSWER BUTTONS */
+.answers{display:flex;flex-direction:column;gap:10px;}
+.ans-btn{
+  background:rgba(255,255,255,0.05);
+  border:1.5px solid rgba(255,255,255,0.12);
+  color:var(--text);border-radius:12px;padding:13px 18px;
+  font-family:'Nunito',sans-serif;font-size:1rem;font-weight:600;
+  cursor:pointer;text-align:left;transition:all 0.2s;
+}
+.ans-btn:hover:not(:disabled){background:rgba(124,58,237,0.22);border-color:var(--purple);}
+.ans-btn.correct{background:rgba(0,200,83,0.18);border-color:var(--green);color:var(--green);}
+.ans-btn.wrong{background:rgba(255,64,129,0.16);border-color:var(--pink);color:var(--pink);}
+.ans-btn:disabled{cursor:default;}
+
+/* FEEDBACK */
+.feedback{
+  border-radius:12px;padding:14px 18px;margin-top:14px;
+  font-size:0.95rem;line-height:1.55;display:none;
+}
+.feedback.correct{background:rgba(0,200,83,0.12);border:1px solid rgba(0,200,83,0.3);color:#80FFB0;}
+.feedback.wrong{background:rgba(255,64,129,0.10);border:1px solid rgba(255,64,129,0.3);color:#FF99BB;}
+.fb-icon{font-size:1.15rem;margin-right:5px;}
+
+/* NEXT BTN */
+.next-btn{
+  display:none;width:100%;
+  background:linear-gradient(90deg,var(--saffron),var(--gold));
+  border:none;border-radius:12px;padding:14px;
+  font-family:'Baloo 2',sans-serif;font-size:1.05rem;font-weight:700;
+  color:#fff;cursor:pointer;margin-top:14px;
+  transition:opacity 0.2s,transform 0.15s;
+}
+.next-btn:hover{opacity:0.9;transform:scale(1.01);}
+
+/* END SCREEN */
+.end-screen{display:none;text-align:center;}
+.end-card{
+  background:var(--card);border-radius:22px;padding:40px 28px;
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 12px 40px rgba(0,0,0,0.4);
+}
+.stars{font-size:2.8rem;margin-bottom:10px;min-height:3.2rem;}
+.end-score{font-family:'Baloo 2',sans-serif;font-size:3rem;font-weight:800;color:var(--gold);margin-bottom:4px;}
+.end-label{color:var(--muted);font-size:1rem;margin-bottom:22px;}
+.end-msg{font-family:'Baloo 2',sans-serif;font-size:1.15rem;font-weight:700;margin-bottom:28px;}
+.play-again{
+  background:linear-gradient(90deg,var(--saffron),var(--gold));
+  border:none;border-radius:14px;padding:14px 40px;
+  font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;
+  color:#fff;cursor:pointer;transition:opacity 0.2s,transform 0.15s;
+}
+.play-again:hover{opacity:0.9;transform:scale(1.03);}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">
+    &#8592; <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">উভতি যাওক</span>
+  </button>
+  <span class="badge">Maths</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="score-row">
+    <span class="score-label">
+      <span data-lang="en">Score</span><span data-lang="hi" style="display:none">स्कोर</span><span data-lang="as" style="display:none">স্কোৰ</span>
+    </span>
+    <span class="score-val" id="scoreDisplay">0 / 100</span>
+  </div>
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+
+  <!-- GAME AREA -->
+  <div id="gameArea">
+    <div class="round-info" id="roundInfo"></div>
+    <div class="q-card fade" id="qCard">
+      <span class="q-type-tag" id="qTag"></span>
+      <div class="q-text" id="qText"></div>
+      <div class="diagram-hint" id="diagramHint" style="display:none"></div>
+      <div class="formula-box" id="formulaBox" style="display:none">
+        <div class="formula-label">
+          <span data-lang="en">Formula</span><span data-lang="hi" style="display:none">सूत्र</span><span data-lang="as" style="display:none">সূত্ৰ</span>
+        </div>
+        <div id="formulaText"></div>
+      </div>
+      <div class="answers" id="answersDiv"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextRound()">
+        <span data-lang="en">Next &#8594;</span><span data-lang="hi" style="display:none">आगे &#8594;</span><span data-lang="as" style="display:none">পৰৱৰ্তী &#8594;</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- END SCREEN -->
+  <div id="endScreen" class="end-screen">
+    <div class="end-card fade">
+      <div class="stars" id="endStars"></div>
+      <div class="end-score" id="endScore">0</div>
+      <div class="end-label">/ 100</div>
+      <div class="end-msg" id="endMsg"></div>
+      <button class="play-again" onclick="restartGame()">
+        <span data-lang="en">Play Again</span><span data-lang="hi" style="display:none">फिर खेलें</span><span data-lang="as" style="display:none">আকৌ খেলক</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── QUESTION BANK ───────────────────────────────────────────────────────────
+const QUESTIONS = [
+  // 1 – Tangent-Radius theorem
+  {
+    tag:'theorem',
+    en:{q:'A tangent to a circle meets the radius drawn to the point of tangency. What angle do they form?',
+        opts:['45°','90°','60°','180°'],correct:1,
+        exp:'A tangent is always perpendicular to the radius at the point of contact. This is the Tangent–Radius theorem: ∠OPT = 90°.'},
+    hi:{q:'वृत्त की स्पर्शरेखा, स्पर्श बिंदु पर त्रिज्या के साथ क्या कोण बनाती है?',
+        opts:['45°','90°','60°','180°'],correct:1,
+        exp:'स्पर्शरेखा, स्पर्श बिंदु पर त्रिज्या के लंबवत होती है (∠OPT = 90°)।'},
+    as:{q:'এটা স্পৰ্শক স্পৰ্শ বিন্দুত ব্যাসাৰ্ধৰ সৈতে কি কোণ গঠন কৰে?',
+        opts:['45°','90°','60°','180°'],correct:1,
+        exp:'স্পৰ্শক স্পৰ্শ বিন্দুত ব্যাসাৰ্ধৰ লম্বীয় (∠OPT = 90°)।'},
+    hint:'Tangent ⊥ Radius at point of contact.',formula:null
+  },
+  // 2 – Two tangents from external point
+  {
+    tag:'theorem',
+    en:{q:'From external point T, tangents TP and TQ touch a circle. Which is always true?',
+        opts:['TP > TQ','TP = TQ','TP + TQ = 2r','TP < TQ'],correct:1,
+        exp:'Tangents drawn from the same external point are equal in length (TP = TQ). Proved using congruent triangles OTP ≅ OTQ.'},
+    hi:{q:'बाहरी बिंदु T से स्पर्शरेखाएं TP और TQ खींची गई हैं। कौन-सा सत्य है?',
+        opts:['TP > TQ','TP = TQ','TP + TQ = 2r','TP < TQ'],correct:1,
+        exp:'एक ही बाहरी बिंदु से खींची गई स्पर्शरेखाएं बराबर होती हैं (TP = TQ)।'},
+    as:{q:'বাহ্যিক বিন্দু T ৰ পৰা স্পৰ্শক TP আৰু TQ অঁকা হৈছে। কোনটো সত্য?',
+        opts:['TP > TQ','TP = TQ','TP + TQ = 2r','TP < TQ'],correct:1,
+        exp:'একে বাহ্যিক বিন্দুৰ পৰা অঁকা স্পৰ্শক সমান (TP = TQ)।'},
+    hint:'Use congruent triangles OTP and OTQ (RHS).',formula:null
+  },
+  // 3 – Angle in semicircle
+  {
+    tag:'theorem',
+    en:{q:'AB is a diameter of a circle. C is a point on the circle. What is ∠ACB?',
+        opts:['45°','60°','90°','120°'],correct:2,
+        exp:'Angle in a semicircle theorem: any angle inscribed in a semicircle equals 90°. ∠ACB = 90° always.'},
+    hi:{q:'AB वृत्त का व्यास है, C वृत्त पर है। ∠ACB का मान क्या है?',
+        opts:['45°','60°','90°','120°'],correct:2,
+        exp:'अर्धवृत्त में कोण प्रमेय: व्यास द्वारा परिधि पर बना कोण = 90°।'},
+    as:{q:'AB বৃত্তৰ ব্যাস, C বৃত্তৰ ওপৰত। ∠ACB ৰ মান কি?',
+        opts:['45°','60°','90°','120°'],correct:2,
+        exp:'অৰ্ধবৃত্তত কোণ উপপাদ্য: ব্যাসে অন্তৰ্লিখিত কোণ সদায় 90°।'},
+    hint:'The angle at the circumference subtended by a diameter.',formula:null
+  },
+  // 4 – Chord distance
+  {
+    tag:'theorem',
+    en:{q:'A chord PQ = 10 cm. The radius = 13 cm. How far is the chord from the centre?',
+        opts:['5 cm','12 cm','7 cm','8 cm'],correct:1,
+        exp:'The perpendicular from centre bisects the chord: half = 5 cm. Distance = √(13²−5²) = √(169−25) = √144 = 12 cm.'},
+    hi:{q:'जीवा PQ = 10 cm, त्रिज्या = 13 cm। केंद्र से जीवा की दूरी?',
+        opts:['5 cm','12 cm','7 cm','8 cm'],correct:1,
+        exp:'केंद्र का लंब जीवा को दो भागों में बाँटता है। दूरी = √(13²−5²) = √144 = 12 cm।'},
+    as:{q:'জ্যা PQ = 10 cm, ব্যাসাৰ্ধ = 13 cm। কেন্দ্ৰৰ পৰা জ্যাৰ দূৰত্ব?',
+        opts:['5 cm','12 cm','7 cm','8 cm'],correct:1,
+        exp:'কেন্দ্ৰৰ লম্ব জ্যাক দুভাগ কৰে। দূৰত্ব = √(13²−5²) = 12 cm।'},
+    hint:'Pythagoras: d² + (half-chord)² = r²',formula:null
+  },
+  // 5 – Sector area 90°
+  {
+    tag:'calc',
+    en:{q:'A sector has radius 7 cm and central angle 90°. Find its area. (Use π = 22/7)',
+        opts:['38.5 cm²','77 cm²','19.25 cm²','154 cm²'],correct:0,
+        exp:'Sector area = (θ/360) × πr² = (90/360) × (22/7) × 49 = (1/4) × 154 = 38.5 cm².'},
+    hi:{q:'त्रिज्या 7 cm, केंद्रीय कोण 90° वाले त्रिज्यखंड का क्षेत्रफल ज्ञात करें। (π = 22/7)',
+        opts:['38.5 cm²','77 cm²','19.25 cm²','154 cm²'],correct:0,
+        exp:'त्रिज्यखंड क्षेत्रफल = (90/360) × (22/7) × 49 = 38.5 cm²।'},
+    as:{q:'ব্যাসাৰ্ধ 7 cm, কেন্দ্ৰীয় কোণ 90° থকা ছেক্টৰৰ কালি বিচাৰক। (π = 22/7)',
+        opts:['38.5 cm²','77 cm²','19.25 cm²','154 cm²'],correct:0,
+        exp:'ছেক্টৰৰ কালি = (90/360) × (22/7) × 49 = 38.5 cm²।'},
+    hint:null,formula:'Area of Sector = (θ ÷ 360) × π × r²'
+  },
+  // 6 – Arc length 60°
+  {
+    tag:'calc',
+    en:{q:'Find the arc length of a sector: radius = 14 cm, angle = 60°. (π = 22/7)',
+        opts:['44/3 cm ≈ 14.67 cm','44 cm','88/7 cm','28 cm'],correct:0,
+        exp:'Arc length = (θ/360) × 2πr = (60/360) × 2 × (22/7) × 14 = (1/6) × 88 = 44/3 ≈ 14.67 cm.'},
+    hi:{q:'त्रिज्या 14 cm, कोण 60° वाले त्रिज्यखंड की चाप लंबाई। (π = 22/7)',
+        opts:['44/3 cm ≈ 14.67 cm','44 cm','88/7 cm','28 cm'],correct:0,
+        exp:'चाप लंबाई = (60/360) × 2 × (22/7) × 14 = (1/6) × 88 ≈ 14.67 cm।'},
+    as:{q:'ব্যাসাৰ্ধ 14 cm, কোণ 60° থকা ছেক্টৰৰ চাপৰ দৈৰ্ঘ্য। (π = 22/7)',
+        opts:['44/3 cm ≈ 14.67 cm','44 cm','88/7 cm','28 cm'],correct:0,
+        exp:'চাপৰ দৈৰ্ঘ্য = (60/360) × 2 × (22/7) × 14 ≈ 14.67 cm।'},
+    hint:null,formula:'Arc Length = (θ ÷ 360) × 2 × π × r'
+  },
+  // 7 – Annulus area
+  {
+    tag:'calc',
+    en:{q:'An annulus has outer radius R = 10 cm, inner radius r = 6 cm. Find its area. (π = 3.14)',
+        opts:['200.96 cm²','314 cm²','113.04 cm²','401.92 cm²'],correct:0,
+        exp:'Annulus area = π(R²−r²) = 3.14 × (100−36) = 3.14 × 64 = 200.96 cm².'},
+    hi:{q:'वलय की बाहरी त्रिज्या R = 10 cm, भीतरी त्रिज्या r = 6 cm। क्षेत्रफल ज्ञात करें। (π = 3.14)',
+        opts:['200.96 cm²','314 cm²','113.04 cm²','401.92 cm²'],correct:0,
+        exp:'वलय क्षेत्रफल = π(R²−r²) = 3.14 × 64 = 200.96 cm²।'},
+    as:{q:'এনুলাছৰ বাহ্যিক ব্যাসাৰ্ধ R = 10 cm, আভ্যন্তৰীণ r = 6 cm। কালি বিচাৰক। (π = 3.14)',
+        opts:['200.96 cm²','314 cm²','113.04 cm²','401.92 cm²'],correct:0,
+        exp:'এনুলাছৰ কালি = π(R²−r²) = 3.14 × 64 = 200.96 cm²।'},
+    hint:null,formula:'Area of Annulus = π × (R² − r²)'
+  },
+  // 8 – Segment area
+  {
+    tag:'calc',
+    en:{q:'A sector has radius 7 cm and angle 60°. The triangle area is 21.22 cm². Sector area ≈ 25.67 cm². Find the segment area.',
+        opts:['4.45 cm²','25.67 cm²','21.22 cm²','46.89 cm²'],correct:0,
+        exp:'Segment area = Sector area − Triangle area = 25.67 − 21.22 = 4.45 cm².'},
+    hi:{q:'एक त्रिज्यखंड: त्रिज्या 7 cm, कोण 60°। त्रिभुज का क्षेत्रफल 21.22 cm², त्रिज्यखंड का क्षेत्रफल ≈ 25.67 cm²। वृत्तखंड का क्षेत्रफल?',
+        opts:['4.45 cm²','25.67 cm²','21.22 cm²','46.89 cm²'],correct:0,
+        exp:'वृत्तखंड क्षेत्रफल = त्रिज्यखंड − त्रिभुज = 25.67 − 21.22 = 4.45 cm²।'},
+    as:{q:'ছেক্টৰৰ ব্যাসাৰ্ধ 7 cm, কোণ 60°। ত্ৰিভুজৰ কালি 21.22 cm², ছেক্টৰৰ কালি ≈ 25.67 cm²। খণ্ডাংশৰ কালি?',
+        opts:['4.45 cm²','25.67 cm²','21.22 cm²','46.89 cm²'],correct:0,
+        exp:'খণ্ডাংশৰ কালি = ছেক্টৰ − ত্ৰিভুজ = 25.67 − 21.22 = 4.45 cm²।'},
+    hint:null,
+    formula:'Segment Area = Sector Area − Triangle Area\nTriangle Area = ½ × r² × sin(θ)'
+  },
+  // 9 – Full circle area
+  {
+    tag:'calc',
+    en:{q:'A circle has radius 5 cm. What is its area? (π = 3.14)',
+        opts:['78.5 cm²','31.4 cm²','15.7 cm²','50 cm²'],correct:0,
+        exp:'Area = πr² = 3.14 × 5² = 3.14 × 25 = 78.5 cm².'},
+    hi:{q:'एक वृत्त की त्रिज्या 5 cm। इसका क्षेत्रफल क्या है? (π = 3.14)',
+        opts:['78.5 cm²','31.4 cm²','15.7 cm²','50 cm²'],correct:0,
+        exp:'क्षेत्रफल = πr² = 3.14 × 25 = 78.5 cm²।'},
+    as:{q:'এটা বৃত্তৰ ব্যাসাৰ্ধ 5 cm। ইয়াৰ কালি কি? (π = 3.14)',
+        opts:['78.5 cm²','31.4 cm²','15.7 cm²','50 cm²'],correct:0,
+        exp:'কালি = πr² = 3.14 × 25 = 78.5 cm²।'},
+    hint:null,formula:'Area of Circle = π × r²'
+  },
+  // 10 – Externally tangent circles
+  {
+    tag:'theorem',
+    en:{q:'Two circles touch externally. Distance between centres = 13 cm. One radius = 5 cm. What is the other radius?',
+        opts:['8 cm','18 cm','7 cm','6 cm'],correct:0,
+        exp:'For externally tangent circles, distance between centres = r₁ + r₂. So r₂ = 13 − 5 = 8 cm.'},
+    hi:{q:'दो वृत्त बाहरी रूप से स्पर्श करते हैं। केंद्रों की दूरी = 13 cm, एक त्रिज्या = 5 cm। दूसरी त्रिज्या?',
+        opts:['8 cm','18 cm','7 cm','6 cm'],correct:0,
+        exp:'बाह्य स्पर्श वाले वृत्तों के लिए: दूरी = r₁ + r₂। r₂ = 13 − 5 = 8 cm।'},
+    as:{q:'দুটা বৃত্ত বাহ্যিকভাৱে স্পৰ্শ কৰে। কেন্দ্ৰৰ দূৰত্ব = 13 cm, এটা ব্যাসাৰ্ধ = 5 cm। আনটো ব্যাসাৰ্ধ?',
+        opts:['8 cm','18 cm','7 cm','6 cm'],correct:0,
+        exp:'বাহ্যিক স্পৰ্শৰ বাবে: দূৰত্ব = r₁ + r₂। r₂ = 13 − 5 = 8 cm।'},
+    hint:'Externally tangent: distance = r₁ + r₂.',formula:null
+  },
+  // 11 – Sector area 180°
+  {
+    tag:'calc',
+    en:{q:'A sector has radius 21 cm and angle 180°. What is its area? (π = 22/7)',
+        opts:['693 cm²','1386 cm²','346.5 cm²','441 cm²'],correct:0,
+        exp:'Sector area = (180/360) × (22/7) × 21² = (1/2) × (22/7) × 441 = (1/2) × 1386 = 693 cm².'},
+    hi:{q:'त्रिज्या 21 cm, कोण 180° वाले त्रिज्यखंड का क्षेत्रफल? (π = 22/7)',
+        opts:['693 cm²','1386 cm²','346.5 cm²','441 cm²'],correct:0,
+        exp:'= (180/360) × (22/7) × 441 = (1/2) × 1386 = 693 cm²।'},
+    as:{q:'ব্যাসাৰ্ধ 21 cm, কোণ 180° থকা ছেক্টৰৰ কালি? (π = 22/7)',
+        opts:['693 cm²','1386 cm²','346.5 cm²','441 cm²'],correct:0,
+        exp:'= (180/360) × (22/7) × 441 = 693 cm²।'},
+    hint:null,formula:'Area of Sector = (θ ÷ 360) × π × r²'
+  },
+  // 12 – Arc length for circumference
+  {
+    tag:'calc',
+    en:{q:'What is the circumference (full arc) of a circle with radius 7 cm? (π = 22/7)',
+        opts:['44 cm','22 cm','154 cm','88 cm'],correct:0,
+        exp:'Circumference = 2πr = 2 × (22/7) × 7 = 2 × 22 = 44 cm. (This is arc length for θ = 360°.)'},
+    hi:{q:'त्रिज्या 7 cm वाले वृत्त की परिधि क्या है? (π = 22/7)',
+        opts:['44 cm','22 cm','154 cm','88 cm'],correct:0,
+        exp:'परिधि = 2πr = 2 × (22/7) × 7 = 44 cm।'},
+    as:{q:'ব্যাসাৰ্ধ 7 cm থকা বৃত্তৰ পৰিধি কি? (π = 22/7)',
+        opts:['44 cm','22 cm','154 cm','88 cm'],correct:0,
+        exp:'পৰিধি = 2πr = 2 × (22/7) × 7 = 44 cm।'},
+    hint:null,formula:'Circumference = 2 × π × r'
+  }
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let deck=[], round=0, score=0, answered=false, lang='en';
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function restartGame(){
+  deck=shuffle([...QUESTIONS]).slice(0,10);
+  round=0;score=0;answered=false;
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  document.getElementById('progressBar').style.width='0%';
+  document.getElementById('scoreDisplay').textContent='0 / 100';
+  renderQ();
+}
+
+function renderQ(){
+  const q=deck[round], d=q[lang]||q['en'];
+  answered=false;
+  // round info
+  const riText={en:`Round ${round+1} of 10`,hi:`राउंड ${round+1} / 10`,as:`ৰাউণ্ড ${round+1} / 10`};
+  document.getElementById('roundInfo').textContent=riText[lang];
+  // tag
+  const tagEl=document.getElementById('qTag');
+  if(q.tag==='theorem'){
+    tagEl.className='q-type-tag tag-theorem';
+    tagEl.textContent={en:'Theorem',hi:'प्रमेय',as:'উপপাদ্য'}[lang];
+  } else {
+    tagEl.className='q-type-tag tag-calc';
+    tagEl.textContent={en:'Calculation',hi:'गणना',as:'গণনা'}[lang];
+  }
+  document.getElementById('qText').textContent=d.q;
+  // diagram hint
+  const dh=document.getElementById('diagramHint');
+  if(q.hint){dh.style.display='block';dh.textContent='Hint: '+q.hint;}
+  else dh.style.display='none';
+  // formula
+  const fb=document.getElementById('formulaBox');
+  if(q.formula){fb.style.display='block';document.getElementById('formulaText').textContent=q.formula;}
+  else fb.style.display='none';
+  // answers
+  const ad=document.getElementById('answersDiv');
+  ad.innerHTML='';
+  d.opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='ans-btn';btn.textContent=opt;
+    btn.onclick=()=>checkAns(i,d.correct,d.exp,d.opts);
+    ad.appendChild(btn);
+  });
+  // reset feedback/next
+  const fEl=document.getElementById('feedback');
+  fEl.style.display='none';fEl.className='feedback';fEl.innerHTML='';
+  document.getElementById('nextBtn').style.display='none';
+  // animate card
+  const card=document.getElementById('qCard');
+  card.classList.remove('fade');void card.offsetWidth;card.classList.add('fade');
+}
+
+function checkAns(chosen,correct,exp,opts){
+  if(answered)return;answered=true;
+  const btns=document.querySelectorAll('.ans-btn');
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===correct)b.classList.add('correct');
+    else if(i===chosen&&chosen!==correct)b.classList.add('wrong');
+  });
+  const fEl=document.getElementById('feedback');
+  if(chosen===correct){
+    score+=10;
+    fEl.className='feedback correct';
+    fEl.innerHTML='<span class="fb-icon">✓</span>'+exp;
+  } else {
+    fEl.className='feedback wrong';
+    fEl.innerHTML='<span class="fb-icon">✗</span><strong>Correct: '+opts[correct]+'.</strong> '+exp;
+  }
+  fEl.style.display='block';
+  document.getElementById('scoreDisplay').textContent=score+' / 100';
+  const pct=((round+1)/10)*100;
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function nextRound(){
+  round++;
+  if(round>=10)showEnd();
+  else renderQ();
+}
+
+function showEnd(){
+  document.getElementById('gameArea').style.display='none';
+  const es=document.getElementById('endScreen');
+  es.style.display='block';
+  document.getElementById('endScore').textContent=score;
+  let stars='',msg='';
+  if(score>=90){stars='⭐⭐⭐';msg={en:'Excellent! Master level!',hi:'शानदार! उत्कृष्ट!',as:'অসাধাৰণ! মাষ্টাৰ!'}[lang];}
+  else if(score>=70){stars='⭐⭐';msg={en:'Great work!',hi:'बहुत अच्छा!',as:'অতি ভাল!'}[lang];}
+  else if(score>=40){stars='⭐';msg={en:'Good effort, keep going!',hi:'अच्छा प्रयास!',as:'ভাল প্ৰচেষ্টা!'}[lang];}
+  else{stars='';msg={en:'Keep practising!',hi:'और अभ्यास करें!',as:'আৰু অনুশীলন কৰক!'}[lang];}
+  document.getElementById('endStars').textContent=stars;
+  document.getElementById('endMsg').textContent=msg;
+}
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display=(el.getAttribute('data-lang')===l)?'':'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    b.classList.toggle('active',b.textContent.trim()==={en:'EN',hi:'हि',as:'অ'}[l]);
+  });
+  if(deck.length)renderQ();
+}
+
+window.addEventListener('DOMContentLoaded',()=>{setLang('en');restartGame();});
+</script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coordinate Geometry &amp; Euclid — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--saffron);color:#fff;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--sky);color:#000;border-color:var(--sky);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--saffron);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--saffron),var(--gold));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.grid-hint{background:rgba(255,107,0,.1);border:1px solid rgba(255,107,0,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.88rem;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:700;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.55;margin-bottom:18px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;}
+.choice-btn:hover:not(:disabled){background:rgba(255,107,0,.1);border-color:var(--saffron);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--saffron);color:#fff;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--saffron);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Maths · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en',event)">EN</button>
+      <button class="lang-btn" onclick="setLang('hi',event)">हि</button>
+      <button class="lang-btn" onclick="setLang('as',event)">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">📐 Coordinate Geometry &amp; Euclid</span>
+    <span data-lang="hi" style="display:none">📐 निर्देशांक ज्यामिति और यूक्लिड</span>
+    <span data-lang="as" style="display:none">📐 স্থানাংক জ্যামিতি আৰু ইউক্লিড</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — Maths Ch 3 &amp; 5 · Coordinate Geometry + Euclid's Geometry</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — गणित अध्याय 3 &amp; 5 · निर्देशांक ज्यामिति + यूक्लिड की ज्यामिति</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — গণিত অধ্যায় 3 &amp; 5 · স্থানাংক জ্যামিতি + ইউক্লিডৰ জ্যামিতি</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="grid-hint" id="gridHint"></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    grid: "Grid: x-axis (horizontal) ↔  y-axis (vertical) ↕  Origin O = (0, 0)",
+    en: "📐 In the Cartesian plane, the point where the x-axis and y-axis intersect is called:",
+    hi: "📐 कार्तीय तल में, वह बिंदु जहाँ x-अक्ष और y-अक्ष मिलते हैं, कहलाता है:",
+    as: "📐 কাৰ্টেছিয়ান সমতলত, x-অক্ষ আৰু y-অক্ষ মিলা বিন্দুটোক কোৱা হয়:",
+    choices: {
+      en: ["The Origin — coordinates (0, 0)","The Midpoint — coordinates (1, 1)","The Centre — coordinates (2, 2)","The Vertex — coordinates (0, 1)"],
+      hi: ["मूल बिंदु — निर्देशांक (0, 0)","मध्य बिंदु — निर्देशांक (1, 1)","केंद्र — निर्देशांक (2, 2)","शीर्ष — निर्देशांक (0, 1)"],
+      as: ["মূলবিন্দু — স্থানাংক (0, 0)","মধ্যবিন্দু — স্থানাংক (1, 1)","কেন্দ্ৰ — স্থানাংক (2, 2)","শীৰ্ষবিন্দু — স্থানাংক (0, 1)"]
+    },
+    correct: 0,
+    explain: {
+      en: "The Origin is where x-axis (horizontal) meets y-axis (vertical). Its coordinates are always (0, 0). The x-axis and y-axis divide the plane into 4 quadrants.",
+      hi: "मूल बिंदु वह है जहाँ x-अक्ष (क्षैतिज) y-अक्ष (ऊर्ध्वाधर) से मिलता है। इसके निर्देशांक हमेशा (0, 0) होते हैं। x-अक्ष और y-अक्ष तल को 4 चतुर्थांशों में बाँटते हैं।",
+      as: "মূলবিন্দু হৈছে য'ত x-অক্ষ (অনুভূমিক) y-অক্ষ (উলম্ব)-ৰ সৈতে মিলে। ইয়াৰ স্থানাংক সদায় (0, 0)। x-অক্ষ আৰু y-অক্ষে সমতলক 4 টা চতুৰ্ভাগত বিভক্ত কৰে।"
+    }
+  },
+  {
+    grid: "Grid: Quadrant I (+x, +y) | Quadrant II (−x, +y) | Quadrant III (−x, −y) | Quadrant IV (+x, −y)",
+    en: "📐 The point P(−3, 5) lies in which quadrant of the Cartesian plane?",
+    hi: "📐 बिंदु P(−3, 5) कार्तीय तल के किस चतुर्थांश में है?",
+    as: "📐 বিন্দু P(−3, 5) কাৰ্টেছিয়ান সমতলৰ কোনটো চতুৰ্ভাগত আছে?",
+    choices: {
+      en: ["Quadrant II — x is negative, y is positive","Quadrant I — both positive","Quadrant III — both negative","Quadrant IV — x positive, y negative"],
+      hi: ["चतुर्थांश II — x ऋणात्मक, y धनात्मक","चतुर्थांश I — दोनों धनात्मक","चतुर्थांश III — दोनों ऋणात्मक","चतुर्थांश IV — x धनात्मक, y ऋणात्मक"],
+      as: ["চতুৰ্ভাগ II — x ঋণাত্মক, y ধনাত্মক","চতুৰ্ভাগ I — দুয়োটা ধনাত্মক","চতুৰ্ভাগ III — দুয়োটা ঋণাত্মক","চতুৰ্ভাগ IV — x ধনাত্মক, y ঋণাত্মক"]
+    },
+    correct: 0,
+    explain: {
+      en: "Quadrant rules: I (+,+), II (−,+), III (−,−), IV (+,−). P(−3, 5): x = −3 (negative), y = 5 (positive) → Quadrant II. The first coordinate is x (abscissa), second is y (ordinate).",
+      hi: "चतुर्थांश नियम: I (+,+), II (−,+), III (−,−), IV (+,−)। P(−3, 5): x = −3 (ऋणात्मक), y = 5 (धनात्मक) → चतुर्थांश II। पहला निर्देशांक x (भुज), दूसरा y (कोटि)।",
+      as: "চতুৰ্ভাগৰ নিয়ম: I (+,+), II (−,+), III (−,−), IV (+,−)। P(−3, 5): x = −3 (ঋণাত্মক), y = 5 (ধনাত্মক) → চতুৰ্ভাগ II। প্ৰথম স্থানাংক x (ভুজ), দ্বিতীয় y (কোটি)।"
+    }
+  },
+  {
+    grid: "Grid: Point (x, y) → x = distance from y-axis | y = distance from x-axis",
+    en: "📐 What is the distance of the point Q(4, −6) from the x-axis?",
+    hi: "📐 बिंदु Q(4, −6) की x-अक्ष से दूरी क्या है?",
+    as: "📐 বিন্দু Q(4, −6)-ৰ x-অক্ষৰ পৰা দূৰত্ব কিমান?",
+    choices: {
+      en: ["6 units (the absolute value of the y-coordinate)","4 units","10 units","2 units"],
+      hi: ["6 इकाई (y-निर्देशांक का निरपेक्ष मान)","4 इकाई","10 इकाई","2 इकाई"],
+      as: ["6 এককৰ (y-স্থানাংকৰ পৰম মান)","4 একক","10 একক","2 একক"]
+    },
+    correct: 0,
+    explain: {
+      en: "Distance from x-axis = |y-coordinate| = |−6| = 6 units. Distance from y-axis = |x-coordinate| = |4| = 4 units. A point on the x-axis has y = 0; on the y-axis has x = 0.",
+      hi: "x-अक्ष से दूरी = |y-निर्देशांक| = |−6| = 6 इकाई। y-अक्ष से दूरी = |x-निर्देशांक| = |4| = 4 इकाई। x-अक्ष पर बिंदु का y = 0; y-अक्ष पर x = 0।",
+      as: "x-অক্ষৰ পৰা দূৰত্ব = |y-স্থানাংক| = |−6| = 6 একক। y-অক্ষৰ পৰা দূৰত্ব = |x-স্থানাংক| = |4| = 4 একক। x-অক্ষত বিন্দুৰ y = 0; y-অক্ষত x = 0।"
+    }
+  },
+  {
+    grid: "Grid: x-axis is horizontal, y-axis is vertical. Abscissa = x-value, Ordinate = y-value.",
+    en: "📐 A point lies on the y-axis. Which of the following can be its coordinates?",
+    hi: "📐 एक बिंदु y-अक्ष पर है। इसके निर्देशांक निम्नलिखित में से कौन से हो सकते हैं?",
+    as: "📐 এটা বিন্দু y-অক্ষত আছে। তলৰ কোনটো ইয়াৰ স্থানাংক হ'ব পাৰে?",
+    choices: {
+      en: ["(0, −7) — x = 0 means it lies on y-axis","(3, 0) — this lies on x-axis","(5, 5) — this is in Quadrant I","(−4, −4) — this is in Quadrant III"],
+      hi: ["(0, −7) — x = 0 अर्थात y-अक्ष पर","(3, 0) — यह x-अक्ष पर है","(5, 5) — यह चतुर्थांश I में है","(−4, −4) — यह चतुर्थांश III में है"],
+      as: ["(0, −7) — x = 0 মানে y-অক্ষত আছে","(3, 0) — এইটো x-অক্ষত আছে","(5, 5) — এইটো চতুৰ্ভাগ I-ত আছে","(−4, −4) — এইটো চতুৰ্ভাগ III-ত আছে"]
+    },
+    correct: 0,
+    explain: {
+      en: "Any point on the y-axis has x-coordinate = 0. So (0, −7) lies on the y-axis. Any point on the x-axis has y-coordinate = 0. The origin (0, 0) lies on both axes.",
+      hi: "y-अक्ष पर किसी भी बिंदु का x-निर्देशांक = 0। इसलिए (0, −7) y-अक्ष पर है। x-अक्ष पर बिंदु का y-निर्देशांक = 0। मूल बिंदु (0, 0) दोनों अक्षों पर है।",
+      as: "y-অক্ষত যিকোনো বিন্দুৰ x-স্থানাংক = 0। গতিকে (0, −7) y-অক্ষত আছে। x-অক্ষত বিন্দুৰ y-স্থানাংক = 0। মূলবিন্দু (0, 0) দুয়োটা অক্ষত আছে।"
+    }
+  },
+  {
+    grid: "Grid: Quadrant I(+,+) top-right | II(−,+) top-left | III(−,−) bottom-left | IV(+,−) bottom-right",
+    en: "📐 Plot the point R(2, −3). In which quadrant does it lie, and what is its distance from the y-axis?",
+    hi: "📐 बिंदु R(2, −3) को आलेखित करें। यह किस चतुर्थांश में है और y-अक्ष से इसकी दूरी क्या है?",
+    as: "📐 বিন্দু R(2, −3) অংকন কৰক। এইটো কোনটো চতুৰ্ভাগত আছে আৰু y-অক্ষৰ পৰা ইয়াৰ দূৰত্ব কিমান?",
+    choices: {
+      en: ["Quadrant IV (+x, −y) — distance from y-axis = 2 units","Quadrant II — distance = 3 units","Quadrant I — distance = 2 units","Quadrant III — distance = 3 units"],
+      hi: ["चतुर्थांश IV (+x, −y) — y-अक्ष से दूरी = 2 इकाई","चतुर्थांश II — दूरी = 3 इकाई","चतुर्थांश I — दूरी = 2 इकाई","चतुर्थांश III — दूरी = 3 इकाई"],
+      as: ["চতুৰ্ভাগ IV (+x, −y) — y-অক্ষৰ পৰা দূৰত্ব = 2 একক","চতুৰ্ভাগ II — দূৰত্ব = 3 একক","চতুৰ্ভাগ I — দূৰত্ব = 2 একক","চতুৰ্ভাগ III — দূৰত্ব = 3 একক"]
+    },
+    correct: 0,
+    explain: {
+      en: "R(2, −3): x = +2 (right of y-axis), y = −3 (below x-axis) → Quadrant IV. Distance from y-axis = |x| = |2| = 2 units. Distance from x-axis = |y| = |−3| = 3 units.",
+      hi: "R(2, −3): x = +2 (y-अक्ष के दाईं), y = −3 (x-अक्ष के नीचे) → चतुर्थांश IV। y-अक्ष से दूरी = |x| = |2| = 2 इकाई। x-अक्ष से दूरी = |y| = |−3| = 3 इकाई।",
+      as: "R(2, −3): x = +2 (y-অক্ষৰ সোঁফালে), y = −3 (x-অক্ষৰ তলত) → চতুৰ্ভাগ IV। y-অক্ষৰ পৰা দূৰত্ব = |x| = |2| = 2 একক। x-অক্ষৰ পৰা দূৰত্ব = |y| = |−3| = 3 একক।"
+    }
+  },
+  {
+    grid: "Euclid's Geometry (300 BC) — based on undefined terms, definitions, postulates, and axioms",
+    en: "📐 Euclid defined a point as 'that which has no part'. Euclid's geometry is based on how many basic postulates?",
+    hi: "📐 यूक्लिड ने बिंदु को 'वह जिसका कोई भाग नहीं' के रूप में परिभाषित किया। यूक्लिड की ज्यामिति कितने मूल अभिधारणाओं पर आधारित है?",
+    as: "📐 ইউক্লিডে বিন্দুক 'যাৰ কোনো অংশ নাই' বুলি সংজ্ঞায়িত কৰিছিল। ইউক্লিডৰ জ্যামিতি কেইটা মৌলিক অনুমানস্বীকাৰৰ ওপৰত প্ৰতিষ্ঠিত?",
+    choices: {
+      en: ["5 Postulates — Euclid's 5 basic postulates form the foundation of Euclidean geometry","3 Postulates","10 Postulates","7 Postulates"],
+      hi: ["5 अभिधारणाएं — यूक्लिड की 5 मूल अभिधारणाएं यूक्लिडीय ज्यामिति की नींव","3 अभिधारणाएं","10 अभिधारणाएं","7 अभिधारणाएं"],
+      as: ["5 টা অনুমানস্বীকাৰ — ইউক্লিডৰ 5 টা মৌলিক অনুমানস্বীকাৰে ইউক্লিডীয় জ্যামিতিৰ ভেটি গঠন কৰে","3 টা অনুমানস্বীকাৰ","10 টা অনুমানস্বীকাৰ","7 টা অনুমানস্বীকাৰ"]
+    },
+    correct: 0,
+    explain: {
+      en: "Euclid's 5 Postulates: (1) A line can be drawn between any two points. (2) A line segment can be extended indefinitely. (3) A circle can be drawn with any centre and radius. (4) All right angles are equal. (5) Parallel postulate (5th postulate).",
+      hi: "यूक्लिड की 5 अभिधारणाएं: (1) दो बिंदुओं के बीच रेखा खींची जा सकती है। (2) रेखाखंड को अनिश्चित काल तक बढ़ाया जा सकता है। (3) किसी केंद्र और त्रिज्या से वृत्त खींचा जा सकता है। (4) सभी समकोण बराबर। (5) समानांतर अभिधारणा।",
+      as: "ইউক্লিডৰ 5 টা অনুমানস্বীকাৰ: (1) যিকোনো দুটা বিন্দুৰ মাজত ৰেখা আঁকিব পাৰি। (2) ৰেখাংশ অনিৰ্দিষ্টভাৱে বঢ়াব পাৰি। (3) যিকোনো কেন্দ্ৰ আৰু ব্যাসাৰ্ধেৰে বৃত্ত আঁকিব পাৰি। (4) সকলো সমকোণ সমান। (5) সমান্তৰাল অনুমানস্বীকাৰ।"
+    }
+  },
+  {
+    grid: "Euclid: Axioms = universal truths | Postulates = geometric assumptions",
+    en: "📐 What is the difference between Euclid's Axioms and Postulates?",
+    hi: "📐 यूक्लिड के स्वयंसिद्धों और अभिधारणाओं में क्या अंतर है?",
+    as: "📐 ইউক্লিডৰ স্বতঃসিদ্ধ আৰু অনুমানস্বীকাৰৰ মাজৰ পাৰ্থক্য কি?",
+    choices: {
+      en: ["Axioms are universal truths applicable to all sciences; Postulates are assumptions specific to geometry","Axioms are only about triangles; Postulates are about circles","They are the same thing","Postulates are universal; Axioms are specific to geometry"],
+      hi: ["स्वयंसिद्ध सभी विज्ञानों पर लागू सार्वभौमिक सत्य हैं; अभिधारणाएं ज्यामिति के लिए विशिष्ट मान्यताएं","स्वयंसिद्ध केवल त्रिभुजों के बारे में; अभिधारणाएं वृत्तों के बारे में","वे एक ही हैं","अभिधारणाएं सार्वभौमिक; स्वयंसिद्ध ज्यामिति के लिए"],
+      as: ["স্বতঃসিদ্ধ সকলো বিজ্ঞানত প্ৰযোজ্য সাৰ্বজনীন সত্য; অনুমানস্বীকাৰ জ্যামিতিৰ বাবে নিৰ্দিষ্ট অনুমান","স্বতঃসিদ্ধ কেৱল ত্ৰিভুজৰ বিষয়ে; অনুমানস্বীকাৰ বৃত্তৰ বিষয়ে","এইবোৰ একেই","অনুমানস্বীকাৰ সাৰ্বজনীন; স্বতঃসিদ্ধ জ্যামিতিৰ বাবে"]
+    },
+    correct: 0,
+    explain: {
+      en: "Axioms: universal truths used throughout mathematics (e.g., 'Things equal to the same thing are equal to each other'). Postulates: assumptions specific to geometry (e.g., 'A straight line may be drawn from any one point to any other point').",
+      hi: "स्वयंसिद्ध: गणित में सर्वत्र उपयोग होने वाले सार्वभौमिक सत्य (जैसे 'समान वस्तुएं परस्पर बराबर')। अभिधारणाएं: ज्यामिति के लिए विशिष्ट मान्यताएं (जैसे 'किसी भी दो बिंदुओं से रेखा खींची जा सकती है')।",
+      as: "স্বতঃসিদ্ধ: গণিতত সৰ্বত্ৰ ব্যৱহৃত সাৰ্বজনীন সত্য (যেনে 'সমান বস্তুবোৰ পৰস্পৰ সমান')। অনুমানস্বীকাৰ: জ্যামিতিৰ বাবে নিৰ্দিষ্ট অনুমান (যেনে 'যিকোনো দুটা বিন্দুৰ মাজৰ পৰা ৰেখা আঁকিব পাৰি')।"
+    }
+  },
+  {
+    grid: "Euclid's 5th Postulate (Parallel Postulate): basis for Euclidean geometry",
+    en: "📐 Euclid's 5th Postulate (Parallel Lines Postulate) states: if a line intersects two lines and the sum of interior angles on one side is less than 180°, then:",
+    hi: "📐 यूक्लिड की 5वीं अभिधारणा (समानांतर रेखा) कहती है: यदि एक रेखा दो रेखाओं को काटती है और एक तरफ के अंतःकोणों का योग 180° से कम है, तो:",
+    as: "📐 ইউক্লিডৰ 5ম অনুমানস্বীকাৰ (সমান্তৰাল ৰেখা) কয়: যদি এটা ৰেখায়ে দুটা ৰেখা কাটে আৰু এফালৰ অন্তস্থ কোণৰ যোগ 180°-তকৈ কম হয়, তেন্তে:",
+    choices: {
+      en: ["The two lines will meet on the side where the sum of angles is less than 180°","The two lines will never meet (are parallel)","The two lines are perpendicular","The angles are supplementary"],
+      hi: ["दो रेखाएं उस तरफ मिलेंगी जहाँ कोणों का योग 180° से कम है","दो रेखाएं कभी नहीं मिलेंगी (समानांतर हैं)","दो रेखाएं लंबवत हैं","कोण पूरक हैं"],
+      as: ["দুটা ৰেখা সেইফালে মিলিব য'ত কোণৰ যোগ 180°-তকৈ কম","দুটা ৰেখা কেতিয়াও মিলিব নহয় (সমান্তৰাল)","দুটা ৰেখা লম্ব","কোণবোৰ পূৰক"]
+    },
+    correct: 0,
+    explain: {
+      en: "Euclid's 5th Postulate: If a transversal cuts two lines and the sum of co-interior angles < 180°, the two lines will meet on that side. If sum = 180°, the lines are parallel. This postulate led to non-Euclidean geometries.",
+      hi: "यूक्लिड की 5वीं अभिधारणा: यदि तिर्यक रेखा दो रेखाओं को काटे और सह-अंतःकोणों का योग < 180°, तो रेखाएं उस तरफ मिलेंगी। योग = 180° हो तो रेखाएं समानांतर। इस अभिधारणा ने गैर-यूक्लिडीय ज्यामिति को जन्म दिया।",
+      as: "ইউক্লিডৰ 5ম অনুমানস্বীকাৰ: যদি ছেদক ৰেখাই দুটা ৰেখা কাটে আৰু সহ-অন্তস্থ কোণৰ যোগ < 180°, তেন্তে ৰেখাবোৰ সেইফালে মিলিব। যোগ = 180° হ'লে ৰেখাবোৰ সমান্তৰাল। এই অনুমানস্বীকাৰে অ-ইউক্লিডীয় জ্যামিতিৰ জন্ম দিছিল।"
+    }
+  },
+  {
+    grid: "Grid: Abscissa = x-coordinate (horizontal distance from y-axis)",
+    en: "📐 The abscissa of a point is its x-coordinate. The ordinate is its y-coordinate. What are the abscissa and ordinate of the point (−5, 8)?",
+    hi: "📐 किसी बिंदु का भुज उसका x-निर्देशांक है। कोटि उसका y-निर्देशांक है। बिंदु (−5, 8) का भुज और कोटि क्या है?",
+    as: "📐 কোনো বিন্দুৰ ভুজ হৈছে ইয়াৰ x-স্থানাংক। কোটি হৈছে ইয়াৰ y-স্থানাংক। বিন্দু (−5, 8)-ৰ ভুজ আৰু কোটি কি?",
+    choices: {
+      en: ["Abscissa = −5, Ordinate = 8","Abscissa = 8, Ordinate = −5","Abscissa = 5, Ordinate = 8","Abscissa = −5, Ordinate = −8"],
+      hi: ["भुज = −5, कोटि = 8","भुज = 8, कोटि = −5","भुज = 5, कोटि = 8","भुज = −5, कोटि = −8"],
+      as: ["ভুজ = −5, কোটি = 8","ভুজ = 8, কোটি = −5","ভুজ = 5, কোটি = 8","ভুজ = −5, কোটি = −8"]
+    },
+    correct: 0,
+    explain: {
+      en: "For any point (x, y): Abscissa = x-coordinate = −5 (distance from y-axis, negative = left). Ordinate = y-coordinate = 8 (distance from x-axis, positive = above). The point is in Quadrant II.",
+      hi: "किसी बिंदु (x, y) के लिए: भुज = x-निर्देशांक = −5 (y-अक्ष से दूरी, ऋणात्मक = बाईं)। कोटि = y-निर्देशांक = 8 (x-अक्ष से दूरी, धनात्मक = ऊपर)। बिंदु चतुर्थांश II में है।",
+      as: "যিকোনো বিন্দু (x, y)-ৰ বাবে: ভুজ = x-স্থানাংক = −5 (y-অক্ষৰ পৰা দূৰত্ব, ঋণাত্মক = বাঁওফালে)। কোটি = y-স্থানাংক = 8 (x-অক্ষৰ পৰা দূৰত্ব, ধনাত্মক = ওপৰত)। বিন্দুটো চতুৰ্ভাগ II-ত আছে।"
+    }
+  },
+  {
+    grid: "Euclid's Definitions: Point (no part), Line (breadthless length), Surface (length + breadth only)",
+    en: "📐 According to Euclid, a line has:",
+    hi: "📐 यूक्लिड के अनुसार, एक रेखा में है:",
+    as: "📐 ইউক্লিডৰ মতে, এটা ৰেখাত আছে:",
+    choices: {
+      en: ["Breadthless length — it extends in only one dimension (length), has no width","Length, breadth, and height — all three dimensions","Only breadth, no length","No dimensions at all"],
+      hi: ["बिना चौड़ाई की लंबाई — केवल एक आयाम (लंबाई) में फैलती है, कोई चौड़ाई नहीं","लंबाई, चौड़ाई और ऊंचाई — तीनों आयाम","केवल चौड़ाई, कोई लंबाई नहीं","कोई आयाम नहीं"],
+      as: ["প্ৰস্থবিহীন দৈৰ্ঘ্য — কেৱল এটা মাত্ৰাত (দৈৰ্ঘ্য) বিস্তৃত, কোনো প্ৰস্থ নাই","দৈৰ্ঘ্য, প্ৰস্থ আৰু উচ্চতা — তিনিটা মাত্ৰা","কেৱল প্ৰস্থ, কোনো দৈৰ্ঘ্য নাই","কোনো মাত্ৰা নাই"]
+    },
+    correct: 0,
+    explain: {
+      en: "Euclid's Definitions: Point = that which has no part (0 dimensions). Line = breadthless length (1 dimension). Surface = length and breadth only (2 dimensions, no thickness). These are foundational undefined terms in geometry.",
+      hi: "यूक्लिड की परिभाषाएं: बिंदु = वह जिसका कोई भाग नहीं (0 आयाम)। रेखा = बिना चौड़ाई की लंबाई (1 आयाम)। सतह = केवल लंबाई और चौड़ाई (2 आयाम, कोई मोटाई नहीं)।",
+      as: "ইউক্লিডৰ সংজ্ঞাসমূহ: বিন্দু = যাৰ কোনো অংশ নাই (0 মাত্ৰা)। ৰেখা = প্ৰস্থবিহীন দৈৰ্ঘ্য (1 মাত্ৰা)। পৃষ্ঠ = কেৱল দৈৰ্ঘ্য আৰু প্ৰস্থ (2 মাত্ৰা, কোনো পুৰুত্ব নাই)।"
+    }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l, e) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = 'Question ' + (current + 1) + ' of 10';
+  document.getElementById('gridHint').textContent = '🗺️ ' + q.grid;
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+  const choicesArr = q.choices[lang] || q.choices.en;
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars, msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'Maths Genius! Euclid himself would approve! 📐', hi: 'गणित प्रतिभा! यूक्लिड खुद मंजूरी देते! 📐', as: 'গণিতৰ প্ৰতিভা! ইউক্লিড নিজে অনুমোদন দিত! 📐' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Great coordinates! Keep plotting your success! 📊', hi: 'शानदार निर्देशांक! सफलता का आलेख जारी रखें! 📊', as: 'চমৎকাৰ স্থানাংক! সাফল্যৰ গ্ৰাফ জাৰি ৰাখক! 📊' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Good try! Revise quadrants, plotting points, and Euclid\'s postulates.', hi: 'अच्छी कोशिश! चतुर्थांश, बिंदु आलेखन और यूक्लिड की अभिधारणाएं दोबारा पढ़ें।', as: 'ভাল প্ৰচেষ্টা! চতুৰ্ভাগ, বিন্দু অংকন আৰু ইউক্লিডৰ অনুমানস্বীকাৰ পুনৰায় পঢ়ক।' }; }
+  else { stars = '☆☆☆'; msg = { en: 'Keep going! Every point on your journey counts! 📐', hi: 'जारी रखो! आपकी यात्रा का हर बिंदु मायने रखता है! 📐', as: 'এগাই যাওক! তোমাৰ যাত্ৰাৰ প্ৰতিটো বিন্দু গুৰুত্বপূৰ্ণ! 📐' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

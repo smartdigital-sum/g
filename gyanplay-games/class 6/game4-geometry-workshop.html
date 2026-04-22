@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geometry Workshop — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#180A28 0%,#0F0820 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(199,125,255,.13),rgba(199,125,255,.04));border:1px solid rgba(199,125,255,.3);border-radius:16px;padding:16px;margin-bottom:16px}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(199,125,255,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--purple);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:700}
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:16px;line-height:1.45}
+/* SVG angle display */
+.angle-display{background:rgba(199,125,255,.05);border:1px solid rgba(199,125,255,.15);border-radius:14px;padding:12px;margin-bottom:14px;display:flex;justify-content:center;align-items:center;min-height:160px}
+/* Options */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(199,125,255,.07);border:2px solid rgba(199,125,255,.2);border-radius:14px;padding:13px 8px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--purple);background:rgba(199,125,255,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:600;min-height:26px;margin:12px 0 4px}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+/* Triangle options */
+.tri-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.tri-opt{background:rgba(199,125,255,.07);border:2px solid rgba(199,125,255,.2);border-radius:14px;padding:12px 8px;cursor:pointer;transition:all .2s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.tri-opt:hover{border-color:var(--purple);background:rgba(199,125,255,.15);transform:translateY(-2px)}
+.tri-opt.correct{background:rgba(6,214,160,.15);border-color:var(--teal)}
+.tri-opt.wrong{background:rgba(255,107,107,.15);border-color:var(--coral)}
+.tri-opt:disabled,.tri-opt.disabled{pointer-events:none}
+.tri-label{font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--text)}
+.tri-desc{font-size:.72rem;color:var(--dim);line-height:1.3}
+/* Protractor */
+.protractor-wrap{position:relative;width:240px;height:140px;margin:0 auto 14px}
+.prot-svg{width:240px;height:140px}
+.angle-readout{text-align:center;font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--purple);margin-bottom:8px}
+.prot-slider{width:100%;accent-color:var(--purple);margin-bottom:6px;cursor:pointer}
+.prot-hint{font-size:.78rem;color:var(--dim);text-align:center;margin-bottom:8px}
+.confirm-btn{background:var(--purple);color:#060A10;border:none;border-radius:100px;padding:10px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;width:100%;margin-top:4px}
+.confirm-btn:hover{opacity:.85;transform:scale(1.03)}
+/* bottom bar */
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#0F0820 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--purple);color:var(--purple);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.play-again-btn:hover{background:rgba(199,125,255,.1)}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(199,125,255,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stage-transition{background:linear-gradient(135deg,rgba(199,125,255,.1),rgba(199,125,255,.03));border:1px solid rgba(199,125,255,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--purple);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">📐 Geometry Workshop</div>
+      <span class="subject-tag">Maths · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="wow-emoji">🏛️</span>
+    <div class="wow-text">The Egyptian pyramids were built with angles so precise that, even today, the difference from <strong>90°</strong> is less than <strong>0.05°</strong>. Ancient builders had no laser tools — only <strong>geometry!</strong></div>
+  </div>
+
+  <div id="gameArea"></div>
+
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Question 1 of 11</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+/* ── Stage 1: Identify angle type from SVG ── */
+const S1 = [
+  {deg:35, correct:'Acute', opts:['Acute','Right','Obtuse','Straight'], fact:'Acute angles are less than 90°. 35° is a sharp, pointed angle.'},
+  {deg:90, correct:'Right', opts:['Acute','Right','Obtuse','Reflex'], fact:'A right angle is exactly 90° — like the corner of a book or a room.'},
+  {deg:120, correct:'Obtuse', opts:['Acute','Right','Obtuse','Reflex'], fact:'Obtuse angles are between 90° and 180°. 120° opens wider than a right angle.'},
+  {deg:180, correct:'Straight', opts:['Right','Obtuse','Straight','Reflex'], fact:'A straight angle is exactly 180° — it looks like a straight line!'},
+  {deg:230, correct:'Reflex', opts:['Obtuse','Straight','Reflex','Right'], fact:'A reflex angle is greater than 180°. It "bends back" more than a straight line.'},
+];
+/* ── Stage 2: Identify triangle type ── */
+const S2 = [
+  {sides:[3,4,5], angles:[37,53,90], correct:'Right-angled', desc:'One angle is exactly 90°',
+   opts:[{l:'Equilateral',d:'All 3 sides equal'},{l:'Isosceles',d:'2 sides equal'},{l:'Scalene',d:'All sides different'},{l:'Right-angled',d:'One angle = 90°'}],
+   fact:'A 3-4-5 triangle is a famous right-angled triangle — used by builders to check square corners!'},
+  {sides:[5,5,5], angles:[60,60,60], correct:'Equilateral', desc:'All 3 sides equal, all angles 60°',
+   opts:[{l:'Equilateral',d:'All 3 sides equal'},{l:'Isosceles',d:'2 sides equal'},{l:'Scalene',d:'All sides different'},{l:'Right-angled',d:'One angle = 90°'}],
+   fact:'An equilateral triangle has 3 equal angles of 60° each. The sum is always 60+60+60 = 180°!'},
+  {sides:[4,4,7], angles:[29,29,122], correct:'Isosceles', desc:'Two sides are equal',
+   opts:[{l:'Equilateral',d:'All 3 sides equal'},{l:'Isosceles',d:'2 sides equal'},{l:'Scalene',d:'All sides different'},{l:'Right-angled',d:'One angle = 90°'}],
+   fact:'An isosceles triangle has two equal sides AND two equal base angles — always!'},
+  {sides:[3,5,7], angles:[22,38,120], correct:'Scalene', desc:'All three sides are different',
+   opts:[{l:'Equilateral',d:'All 3 sides equal'},{l:'Isosceles',d:'2 sides equal'},{l:'Scalene',d:'All sides different'},{l:'Obtuse',d:'One angle > 90°'}],
+   fact:'A scalene triangle has no equal sides and no equal angles. It\'s the most "irregular" triangle!'},
+];
+/* ── Stage 3: Protractor read ── */
+const S3 = [
+  {target:65, label:'65°', range:10, fact:'Protractors measure angles in degrees. Always start from 0° along the base line!'},
+  {target:110, label:'110°', range:10, fact:'For obtuse angles (>90°), read from the outer scale if your protractor shows two scales.'},
+  {target:45, label:'45°', range:8, fact:'45° is half of a right angle. Two 45° angles make one right angle!'},
+];
+
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+let qIdx=0, stg=1, score=0, answered=false;
+const TOTAL = S1.length + S2.length + S3.length;
+
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  ['#FFD166','#C77DFF','#06D6A0','#4CC9F0','#FF9F1C'].forEach((c,ci)=>{
+    for(let i=ci;i<28;i+=5){
+      const el=document.createElement('div');el.className='confetti-piece';
+      el.style.cssText=`left:${Math.random()*100}%;top:0;background:${c};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+      document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
+    }
+  });
+}
+function updateStars(){
+  const lit=Math.min(5,Math.ceil(score/(TOTAL/5)));
+  for(let i=1;i<=5;i++) document.getElementById('s'+i).classList.toggle('lit',i<=lit);
+}
+function showOverlay(emoji,title,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;
+  document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovFact').textContent=fact;
+  document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay'); ov.classList.add('show');
+  if(!isEnd) setTimeout(()=>ov.classList.remove('show'),2700);
+}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(q,t){document.getElementById('progressLabel').textContent=`Question ${q} of ${t}`}
+
+/* Draw angle SVG */
+function drawAngle(deg){
+  const r=80, cx=100, cy=110;
+  const rad=(deg<=180?deg:(360-deg))*Math.PI/180;
+  const x2=cx+r, y2=cy;
+  let x3,y3;
+  if(deg<=180){x3=cx+r*Math.cos(-rad);y3=cy+r*Math.sin(-rad);}
+  else{x3=cx+r*Math.cos(-(2*Math.PI-(deg*Math.PI/180)));y3=cy+r*Math.sin(-(2*Math.PI-(deg*Math.PI/180)));}
+  const isReflex=deg>180;
+  let arcPath;
+  if(!isReflex){
+    arcPath=`M${cx+20},${cy} A20,20,0,${deg>180?1:0},0,${cx+20*Math.cos(-rad)},${cy+20*Math.sin(-rad)}`;
+  } else {
+    arcPath=`M${cx+20},${cy} A20,20,0,1,1,${cx+20*Math.cos(-(360-deg)*Math.PI/180)},${cy+20*Math.sin(-(360-deg)*Math.PI/180)}`;
+  }
+  return `<svg viewBox="0 0 200 130" width="200" height="130" xmlns="http://www.w3.org/2000/svg">
+    <line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="#C77DFF" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="${cx}" y1="${cy}" x2="${x3}" y2="${y3}" stroke="#C77DFF" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="${arcPath}" fill="none" stroke="#FFD166" stroke-width="1.8"/>
+    <text x="${cx+26}" y="${cy-6}" font-size="13" fill="#FFD166" font-family="Baloo 2">${deg}°</text>
+    <circle cx="${cx}" cy="${cy}" r="3" fill="#C77DFF"/>
+  </svg>`;
+}
+
+/* Draw triangle SVG */
+function drawTriangle(sides,angles){
+  const a=angles[0],b=angles[1],c=angles[2];
+  const aRad=a*Math.PI/180, bRad=b*Math.PI/180;
+  const base=130;
+  const ax=35,ay=105,bx=ax+base,by=105;
+  const cx2=ax+sides[0]/sides[0]*base*Math.cos(aRad)*(base/(sides[0]||1));
+  const cy2=ay-base*Math.sin(aRad);
+  return `<svg viewBox="0 0 200 130" width="200" height="130" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="${ax},${ay} ${bx},${by} ${cx2+20},${Math.max(cy2,10)}" fill="rgba(199,125,255,.1)" stroke="#C77DFF" stroke-width="2"/>
+    <text x="${ax-10}" y="${ay+16}" font-size="11" fill="#4CC9F0" font-family="Nunito">${sides[0]}</text>
+    <text x="${(bx+ax)/2-4}" y="${ay+18}" font-size="11" fill="#4CC9F0" font-family="Nunito">${sides[1]}</text>
+    <text x="${bx+4}" y="${ay+16}" font-size="11" fill="#4CC9F0" font-family="Nunito">${sides[2]}</text>
+  </svg>`;
+}
+
+function renderS1(i){
+  setProgress(i+1, TOTAL); answered=false; showNext(false);
+  const q=S1[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">📏 Stage 1 — Name that Angle</div>
+      <div class="question-text">What type of angle is this?</div>
+      <div class="angle-display">${drawAngle(q.deg)}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS1('${o}','${q.correct}','${q.fact}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS1(sel,correct,fact,btn){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct'); score++; updateStars();
+    fb.textContent=cheer()+' '+correct+' angle — correct!'; fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('📐',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct')});
+    fb.textContent='It\'s a '+correct+' angle. '+fact; fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function renderS2(i){
+  setProgress(S1.length+i+1, TOTAL); answered=false; showNext(false);
+  const q=S2[i];
+  const shuffled=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🔺 Stage 2 — Triangle Types</div>
+      <div class="question-text">Identify this triangle. Sides: <strong style="color:var(--gold)">${q.sides.join(', ')}</strong> · Angles: <strong style="color:var(--purple)">${q.angles.join('°, ')}°</strong></div>
+      <div class="angle-display">${drawTriangle(q.sides,q.angles)}</div>
+      <div class="tri-options" id="triOpts">
+        ${shuffled.map(o=>`<div class="tri-opt" onclick="checkS2('${o.l}','${q.correct}','${q.fact}',this)">
+          <div class="tri-label">${o.l}</div><div class="tri-desc">${o.d}</div>
+        </div>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS2(sel,correct,fact,el){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.tri-opt').forEach(b=>b.classList.add('disabled'));
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    el.classList.add('correct'); score++; updateStars();
+    fb.textContent=cheer()+' It\'s '+correct+'!'; fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🔺',cheer(),fact,false),300);
+  } else {
+    el.classList.add('wrong');
+    document.querySelectorAll('.tri-opt').forEach(b=>{if(b.querySelector('.tri-label').textContent===correct)b.classList.add('correct')});
+    fb.textContent='It\'s '+correct+'. '+fact; fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function renderS3(i){
+  setProgress(S1.length+S2.length+i+1, TOTAL); answered=false; showNext(false);
+  const q=S3[i];
+  let currentAngle=45;
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🔵 Stage 3 — Protractor Practice</div>
+      <div class="question-text">Drag the arm to measure: <strong style="color:var(--gold)">${q.label}</strong></div>
+      <div class="angle-readout" id="angleReadout">${currentAngle}°</div>
+      <div class="protractor-wrap">
+        <svg class="prot-svg" viewBox="0 0 240 140" xmlns="http://www.w3.org/2000/svg" id="protSVG">
+          <path d="M20,120 A100,100,0,0,1,220,120" fill="rgba(199,125,255,.08)" stroke="#C77DFF" stroke-width="1.5"/>
+          <line x1="20" y1="120" x2="220" y2="120" stroke="rgba(199,125,255,.3)" stroke-width="1"/>
+          ${Array.from({length:19},(_,k)=>{
+            const a=(k*10)*Math.PI/180;
+            const ix=120-100*Math.cos(a), iy=120-100*Math.sin(a);
+            const ox=120-88*Math.cos(a), oy=120-88*Math.sin(a);
+            const tx=120-75*Math.cos(a), ty=120-75*Math.sin(a);
+            return `<line x1="${ix}" y1="${iy}" x2="${ox}" y2="${oy}" stroke="rgba(199,125,255,.4)" stroke-width="1"/>
+                    <text x="${tx}" y="${ty+3}" font-size="7" fill="rgba(232,240,255,.5)" text-anchor="middle" font-family="Nunito">${k*10}</text>`;
+          }).join('')}
+          <line id="armLine" x1="120" y1="120" x2="${120-100*Math.cos(45*Math.PI/180)}" y2="${120-100*Math.sin(45*Math.PI/180)}" stroke="#FFD166" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="120" cy="120" r="4" fill="#C77DFF"/>
+        </svg>
+      </div>
+      <input type="range" class="prot-slider" id="protSlider" min="0" max="180" value="45">
+      <div class="prot-hint">Slide to rotate the arm · Target: <strong style="color:var(--gold)">${q.label}</strong></div>
+      <button class="confirm-btn" id="confirmBtn" onclick="checkS3(${q.target},${q.range},'${q.fact}')">Confirm Angle</button>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+  document.getElementById('protSlider').addEventListener('input',function(){
+    currentAngle=parseInt(this.value);
+    document.getElementById('angleReadout').textContent=currentAngle+'°';
+    const rad=currentAngle*Math.PI/180;
+    const x2=120-100*Math.cos(rad), y2=120-100*Math.sin(rad);
+    document.getElementById('armLine').setAttribute('x2',x2);
+    document.getElementById('armLine').setAttribute('y2',y2);
+  });
+}
+function checkS3(target,range,fact){
+  if(answered)return; answered=true;
+  const val=parseInt(document.getElementById('protSlider').value);
+  document.getElementById('confirmBtn').disabled=true;
+  document.getElementById('protSlider').disabled=true;
+  const fb=document.getElementById('fb');
+  const diff=Math.abs(val-target);
+  if(diff<=range){
+    score++; updateStars();
+    fb.textContent=cheer()+' You measured '+val+'° — within range of '+target+'°!'; fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('📏',cheer(),fact,false),300);
+  } else {
+    fb.textContent='Target was '+target+'°. You set '+val+'°. Difference: '+diff+'°'; fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function nextQ(){
+  qIdx++;
+  if(stg===1){
+    if(qIdx<S1.length) renderS1(qIdx);
+    else{stg=2;qIdx=0;showTrans('🔺','Stage 2: Triangle Types!','Identify triangles by their sides and angles.',()=>renderS2(0))}
+  } else if(stg===2){
+    if(qIdx<S2.length) renderS2(qIdx);
+    else{stg=3;qIdx=0;showTrans('🔵','Stage 3: Protractor!','Drag the arm to measure the target angle. Get within range to score!',()=>renderS3(0))}
+  } else {
+    if(qIdx<S3.length) renderS3(qIdx);
+    else endGame();
+  }
+}
+function showTrans(emoji,title,desc,cb){
+  showNext(false);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="stage-transition">
+      <div style="font-size:2.5rem">${emoji}</div>
+      <h3>${title}</h3><p>${desc}</p>
+    </div>`;
+  const nb=document.getElementById('nextBtn');
+  nb.textContent='Start →'; nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →';nb.onclick=nextQ;cb()};
+}
+function endGame(){
+  confetti();
+  const medals=['Geometry Learner 🌱','Shape Spotter 🔍','Geometry Master 📐','Angle Champion 🏆','Geometry Legend 🌟'];
+  const medal=medals[Math.min(4,Math.floor(score*5/TOTAL))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--purple);margin:10px 0">${score} / ${TOTAL}</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        Ancient Egyptians, Islamic architects, and modern engineers all rely on the geometry you just mastered. Every building around you uses these exact angles!
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  document.getElementById('progressLabel').textContent=`Final Score: ${score}/${TOTAL}`;
+  showNext(false);
+}
+function resetGame(){
+  qIdx=0;stg=1;score=0;answered=false;
+  for(let i=1;i<=5;i++) document.getElementById('s'+i).classList.remove('lit');
+  const nb=document.getElementById('nextBtn');nb.textContent='Next →';nb.onclick=nextQ;
+  renderS1(0);
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{
+  document.getElementById('overlay').classList.remove('show');resetGame();
+});
+renderS1(0);
+</script>
+</body>
+</html>

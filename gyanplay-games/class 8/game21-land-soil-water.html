@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Land, Soil, Water & Natural Resources — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:#fff;padding-bottom:40px}
+  h1,h2,h3{font-family:'Baloo 2',sans-serif}
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);position:sticky;top:0;z-index:99}
+  .back-btn{background:rgba(255,255,255,0.12);border:none;color:#fff;padding:7px 16px;border-radius:20px;cursor:pointer;font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;transition:background .2s}
+  .back-btn:hover{background:rgba(255,255,255,0.22)}
+  .badge{background:var(--pink);color:#fff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;font-family:'Baloo 2',sans-serif}
+  .lang-toggle{margin-left:auto;display:flex;gap:6px}
+  .lang-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s}
+  .lang-btn.active{background:var(--pink);border-color:var(--pink)}
+  .progress-wrap{padding:16px 20px 0}
+  .progress-info{display:flex;justify-content:space-between;font-size:13px;opacity:.8;margin-bottom:6px}
+  .progress-bar{height:8px;background:rgba(255,255,255,0.12);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--saffron));border-radius:4px;transition:width .5s ease}
+  .card{background:var(--card);border-radius:20px;padding:28px 24px;margin:20px auto;max-width:680px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:fadeIn .4s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .q-meta{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;opacity:.7}
+  .q-num{background:var(--pink);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;font-family:'Baloo 2',sans-serif;flex-shrink:0}
+  .scene-emoji{font-size:40px;text-align:center;margin-bottom:10px}
+  .question{font-size:18px;font-weight:700;line-height:1.5;margin-bottom:20px;font-family:'Baloo 2',sans-serif}
+  .options{display:grid;gap:12px}
+  .opt-btn{background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);color:#fff;padding:14px 18px;border-radius:14px;cursor:pointer;text-align:left;font-size:15px;font-family:'Nunito',sans-serif;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:10px}
+  .opt-btn:hover:not(:disabled){background:rgba(255,64,129,0.15);border-color:var(--pink)}
+  .opt-btn.correct{background:rgba(0,200,83,0.2);border-color:var(--green)}
+  .opt-btn.wrong{background:rgba(255,64,129,0.18);border-color:var(--pink)}
+  .opt-btn:disabled{cursor:default}
+  .opt-label{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:14px;line-height:1.6;display:none;animation:fadeIn .3s ease}
+  .feedback.show{display:block}
+  .feedback.correct-fb{background:rgba(0,200,83,0.15);border:1px solid var(--green)}
+  .feedback.wrong-fb{background:rgba(255,64,129,0.12);border:1px solid var(--pink)}
+  .score-live{background:rgba(255,64,129,0.18);border:1px solid var(--pink);padding:4px 12px;border-radius:12px;font-size:13px;font-weight:700;color:var(--pink)}
+  .next-btn{display:none;margin:20px auto 0;background:linear-gradient(135deg,var(--pink),#c73663);border:none;color:#fff;padding:13px 36px;border-radius:24px;font-size:16px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 18px rgba(255,64,129,0.4)}
+  .next-btn:hover{transform:translateY(-2px)}
+  .next-btn.show{display:block}
+  .end-screen{display:none;text-align:center;padding:30px 20px;max-width:520px;margin:40px auto}
+  .end-screen.show{display:block;animation:fadeIn .5s ease}
+  .stars{font-size:44px;letter-spacing:4px;margin:10px 0}
+  .final-score{font-size:54px;font-weight:800;color:var(--gold);line-height:1;font-family:'Baloo 2',sans-serif}
+  .score-label{font-size:15px;opacity:.7;margin-bottom:20px}
+  .play-again{background:linear-gradient(135deg,var(--pink),var(--saffron));border:none;color:#fff;padding:14px 40px;border-radius:28px;font-size:17px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s;box-shadow:0 4px 20px rgba(255,64,129,0.4)}
+  .play-again:hover{transform:scale(1.05)}
+  .end-title{font-size:26px;font-weight:800;margin-bottom:8px;font-family:'Baloo 2',sans-serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">উভতি যাওক</span></button>
+  <span class="badge">Geography</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-info">
+    <span data-lang="en">Question <span id="qNum">1</span>/10</span>
+    <span data-lang="hi" style="display:none">प्रश्न <span id="qNumHi">1</span>/10</span>
+    <span data-lang="as" style="display:none">প্ৰশ্ন <span id="qNumAs">1</span>/10</span>
+    <span class="score-live">Score: <span id="scoreLive">0</span>/100</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+</div>
+
+<div id="quizArea"></div>
+
+<div class="end-screen" id="endScreen">
+  <div class="scene-emoji">🌿</div>
+  <div class="end-title" data-lang="en">Quiz Complete!</div>
+  <div class="end-title" data-lang="hi" style="display:none">क्विज़ पूरा हुआ!</div>
+  <div class="end-title" data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</div>
+  <div class="stars" id="starsDisplay">⭐⭐⭐</div>
+  <div class="final-score" id="finalScore">0</div>
+  <div class="score-label" data-lang="en">out of 100</div>
+  <div class="score-label" data-lang="hi" style="display:none">100 में से</div>
+  <div class="score-label" data-lang="as" style="display:none">100ৰ মাজত</div>
+  <br>
+  <button class="play-again" onclick="restartQuiz()">
+    <span data-lang="en">Play Again</span>
+    <span data-lang="hi" style="display:none">फिर खेलें</span>
+    <span data-lang="as" style="display:none">আকৌ খেলক</span>
+  </button>
+</div>
+
+<script>
+const questions = [
+  {
+    emoji: "🌿",
+    en: { q: "Which type of land use refers to land used for growing crops?", opts: ["Fallow land", "Cultivated land", "Wasteland", "Forest land"], ans: 1, exp: "Cultivated land is land on which crops are grown. It includes both net sown area and land used for other crops." },
+    hi: { q: "फसल उगाने के लिए उपयोग की जाने वाली भूमि को क्या कहते हैं?", opts: ["परती भूमि", "कृषि भूमि", "बंजर भूमि", "वन भूमि"], ans: 1, exp: "कृषि भूमि वह होती है जिस पर फसलें उगाई जाती हैं।" },
+    as: { q: "শস্য খেতিৰ বাবে ব্যৱহৃত মাটিক কি বোলা হয়?", opts: ["পৰতি মাটি", "কৃষি মাটি", "অনুৰ্বৰ মাটি", "বনভূমি"], ans: 1, exp: "শস্য খেতিৰ বাবে ব্যৱহৃত মাটিক কৃষি মাটি বোলা হয়।" }
+  },
+  {
+    emoji: "🏔️",
+    en: { q: "Which soil type is known as 'Regur' and is best suited for cotton cultivation?", opts: ["Alluvial soil", "Red soil", "Black soil", "Laterite soil"], ans: 2, exp: "Black soil, also called Regur soil, is rich in clay and retains moisture well. It is found in the Deccan Plateau and is ideal for cotton cultivation." },
+    hi: { q: "किस मिट्टी को 'रेगुर' कहा जाता है और यह कपास की खेती के लिए सबसे उपयुक्त है?", opts: ["जलोढ़ मिट्टी", "लाल मिट्टी", "काली मिट्टी", "लेटराइट मिट्टी"], ans: 2, exp: "काली मिट्टी को रेगुर मिट्टी भी कहते हैं। यह कपास की खेती के लिए आदर्श है।" },
+    as: { q: "কোন মাটিক 'ৰেগুৰ' বোলা হয় আৰু কপাহ খেতিৰ বাবে উপযুক্ত?", opts: ["পলসুৱা মাটি", "ৰঙা মাটি", "ক'লা মাটি", "লেটেৰাইট মাটি"], ans: 2, exp: "ক'লা মাটিক ৰেগুৰ মাটি বোলা হয়। এই মাটি কপাহ খেতিৰ বাবে আদৰ্শ।" }
+  },
+  {
+    emoji: "💧",
+    en: { q: "Which type of soil is most widely distributed across India and is formed by river deposits?", opts: ["Black soil", "Alluvial soil", "Laterite soil", "Desert soil"], ans: 1, exp: "Alluvial soil covers the largest area in India. It is deposited by rivers like the Ganga, Yamuna and Brahmaputra and is very fertile, supporting most of India's agriculture." },
+    hi: { q: "भारत में सबसे अधिक फैली मिट्टी कौन सी है जो नदियों द्वारा जमा की जाती है?", opts: ["काली मिट्टी", "जलोढ़ मिट्टी", "लेटराइट मिट्टी", "रेगिस्तानी मिट्टी"], ans: 1, exp: "जलोढ़ मिट्टी भारत में सबसे बड़े क्षेत्र में फैली है। यह गंगा जैसी नदियों द्वारा जमा की जाती है।" },
+    as: { q: "ভাৰতত সৰ্বাধিক বিস্তৃত মাটি কোনটো যি নদীৰ পলসেৰে গঠিত?", opts: ["ক'লা মাটি", "পলসুৱা মাটি", "লেটেৰাইট মাটি", "মৰুভূমিৰ মাটি"], ans: 1, exp: "পলসুৱা মাটি ভাৰতত সৰ্বাধিক এলেকাত বিস্তৃত। গংগা, ব্ৰহ্মপুত্ৰ নদীৰ পলসেৰে এই মাটি গঠিত।" }
+  },
+  {
+    emoji: "🌊",
+    en: { q: "What is the main cause of soil erosion in hilly regions?", opts: ["Overgrazing only", "Running water and wind", "Frost action only", "Volcanic activity"], ans: 1, exp: "Running water and wind are the major agents of soil erosion. In hilly areas, running water causes sheet erosion and gully erosion, washing away the topsoil." },
+    hi: { q: "पहाड़ी क्षेत्रों में मृदा अपरदन का मुख्य कारण क्या है?", opts: ["केवल अत्यधिक चराई", "बहता पानी और हवा", "केवल पाला", "ज्वालामुखी गतिविधि"], ans: 1, exp: "बहता पानी और हवा मृदा अपरदन के मुख्य कारण हैं। पहाड़ी क्षेत्रों में बहते पानी से परत अपरदन होता है।" },
+    as: { q: "পাহাৰীয়া অঞ্চলত মাটি ক্ষয়ৰ মূল কাৰণ কি?", opts: ["কেৱল অতিৰিক্ত চৰণি", "বোৱা পানী আৰু বতাহ", "কেৱল হিম", "আগ্নেয়গিৰিৰ কাৰ্যকলাপ"], ans: 1, exp: "বোৱা পানী আৰু বতাহ মাটি ক্ষয়ৰ মূল কাৰণ।" }
+  },
+  {
+    emoji: "💧",
+    en: { q: "When does water scarcity occur even in areas of high rainfall?", opts: ["When water is wasted or polluted", "When it rains too much", "When groundwater is very deep", "When glaciers melt"], ans: 0, exp: "Water scarcity occurs even in high-rainfall areas when water is overused, wasted, or heavily polluted. Poor water management and uneven distribution also cause scarcity." },
+    hi: { q: "अधिक वर्षा वाले क्षेत्रों में भी जल की कमी कब होती है?", opts: ["जब पानी बर्बाद या प्रदूषित हो", "जब बहुत अधिक बारिश हो", "जब भूजल बहुत गहरा हो", "जब ग्लेशियर पिघलें"], ans: 0, exp: "जल की अत्यधिक खपत, बर्बादी या प्रदूषण के कारण अधिक वर्षा वाले क्षेत्रों में भी जल की कमी हो सकती है।" },
+    as: { q: "অধিক বৰষুণ হোৱা অঞ্চলতো কেতিয়া পানীৰ অভাৱ হয়?", opts: ["পানী অপচয় বা প্ৰদূষণ হ'লে", "অতি বেছি বৰষুণ হ'লে", "ভূগৰ্ভৰ পানী গভীৰ হ'লে", "হিমবাহ গলিলে"], ans: 0, exp: "পানীৰ অতিৰিক্ত ব্যৱহাৰ, অপচয় বা প্ৰদূষণৰ ফলত অধিক বৰষুণৰ অঞ্চলতো পানীৰ অভাৱ হ'ব পাৰে।" }
+  },
+  {
+    emoji: "🌿",
+    en: { q: "Which type of natural vegetation is found in areas with annual rainfall above 200 cm?", opts: ["Tropical grasslands", "Tropical evergreen forests", "Temperate deciduous forests", "Thorny bushes"], ans: 1, exp: "Tropical evergreen forests are found in regions with high rainfall (over 200 cm) and high temperatures throughout the year. They are found in the Western Ghats and Andaman Islands." },
+    hi: { q: "200 cm से अधिक वार्षिक वर्षा वाले क्षेत्रों में कौन-सी प्राकृतिक वनस्पति पाई जाती है?", opts: ["उष्णकटिबंधीय घासभूमि", "उष्णकटिबंधीय सदाबहार वन", "शीतोष्ण पर्णपाती वन", "कँटीली झाड़ियाँ"], ans: 1, exp: "उष्णकटिबंधीय सदाबहार वन 200 cm से अधिक वर्षा वाले क्षेत्रों में पाए जाते हैं।" },
+    as: { q: "বছৰি ২০০ চে.মি.তকৈ অধিক বৰষুণৰ অঞ্চলত কোন প্ৰাকৃতিক উদ্ভিদ পোৱা যায়?", opts: ["ক্ৰান্তীয় তৃণভূমি", "ক্ৰান্তীয় চিৰসেউজ বন", "নাতিশীতোষ্ণ পৰ্ণপাতী বন", "কাঁইটীয়া জোপোহা"], ans: 1, exp: "বছৰি ২০০ চে.মি.তকৈ অধিক বৰষুণৰ অঞ্চলত ক্ৰান্তীয় চিৰসেউজ বন পোৱা যায়।" }
+  },
+  {
+    emoji: "🏔️",
+    en: { q: "Which type of forest sheds its leaves in the dry season each year?", opts: ["Tropical evergreen forests", "Tropical deciduous forests", "Mangrove forests", "Alpine forests"], ans: 1, exp: "Tropical deciduous (monsoon) forests shed their leaves during the dry season to conserve water. They cover the largest area under forests in India. Teak, sal, and bamboo are common trees." },
+    hi: { q: "कौन-से वन हर साल शुष्क मौसम में अपने पत्ते गिरा देते हैं?", opts: ["उष्णकटिबंधीय सदाबहार", "उष्णकटिबंधीय पर्णपाती", "मैंग्रोव", "अल्पाइन"], ans: 1, exp: "उष्णकटिबंधीय पर्णपाती वन शुष्क मौसम में पत्ते गिराते हैं। भारत में ये सबसे अधिक क्षेत्र में हैं।" },
+    as: { q: "কোন বন প্ৰতি বছৰ শুষ্ক ঋতুত পাত সৰায়?", opts: ["ক্ৰান্তীয় চিৰসেউজ বন", "ক্ৰান্তীয় পৰ্ণপাতী বন", "মেনগ্ৰোভ বন", "আল্পাইন বন"], ans: 1, exp: "ক্ৰান্তীয় পৰ্ণপাতী বনে শুষ্ক ঋতুত পাত সৰায়। ভাৰতত এই বন সৰ্বাধিক এলেকাত বিস্তৃত।" }
+  },
+  {
+    emoji: "🌿",
+    en: { q: "The one-horned rhinoceros is mainly found in which Indian state?", opts: ["Kerala", "Assam", "Uttarakhand", "Rajasthan"], ans: 1, exp: "The Indian one-horned rhinoceros (Great Indian Rhinoceros) is found mainly in Kaziranga National Park in Assam. It is an endangered species and protected under Project Rhino." },
+    hi: { q: "एक सींग वाला गैंडा मुख्य रूप से किस भारतीय राज्य में पाया जाता है?", opts: ["केरल", "असम", "उत्तराखंड", "राजस्थान"], ans: 1, exp: "एक सींग वाला गैंडा (महान भारतीय गैंडा) मुख्यतः असम के काजीरंगा राष्ट्रीय उद्यान में पाया जाता है।" },
+    as: { q: "এক-শিঙীয়া গঁড় মূলতঃ ভাৰতৰ কোন ৰাজ্যত পোৱা যায়?", opts: ["কেৰালা", "অসম", "উত্তৰাখণ্ড", "ৰাজস্থান"], ans: 1, exp: "এক-শিঙীয়া গঁড় মূলতঃ অসমৰ কাজিৰঙা ৰাষ্ট্ৰীয় উদ্যানত পোৱা যায়।" }
+  },
+  {
+    emoji: "🌊",
+    en: { q: "Which endangered big cat of India is found in the high altitude cold deserts of the Himalayas?", opts: ["Bengal tiger", "Snow leopard", "Asiatic lion", "Clouded leopard"], ans: 1, exp: "The snow leopard lives in the high-altitude cold deserts and rocky mountains of the Himalayas. It is found in states like Himachal Pradesh, Jammu & Kashmir, and Uttarakhand. It is critically endangered." },
+    hi: { q: "भारत का कौन-सा लुप्तप्राय बड़ा बिल्ला हिमालय के ऊँचे ठंडे रेगिस्तान में पाया जाता है?", opts: ["बंगाल बाघ", "हिम तेंदुआ", "एशियाई शेर", "धूमिल तेंदुआ"], ans: 1, exp: "हिम तेंदुआ हिमालय के ऊँचे पर्वतीय क्षेत्रों में पाया जाता है। यह लुप्तप्राय प्रजाति है।" },
+    as: { q: "ভাৰতৰ কোন বিপন্ন বৃহৎ বিড়াল হিমালয়ৰ উচ্চ উচ্চতাৰ ঠাণ্ডা মৰুত পোৱা যায়?", opts: ["বংগ বাঘ", "তুষাৰ চিতা", "এছিয়াৰ সিংহ", "মেঘাচ্ছন্ন চিতা"], ans: 1, exp: "তুষাৰ চিতা হিমালয়ৰ উচ্চ পৰ্বতীয় অঞ্চলত পোৱা যায়। এয়া এক বিপন্ন প্ৰজাতি।" }
+  },
+  {
+    emoji: "🏔️",
+    en: { q: "What is the term for underground water that fills spaces in rocks and soil, which can be accessed through wells?", opts: ["Surface water", "Groundwater (water table)", "Rainwater", "Ocean water"], ans: 1, exp: "Groundwater is the water stored below the earth's surface in rock and soil spaces. The upper level of this saturated zone is called the water table. It can be accessed through wells and tube wells." },
+    hi: { q: "चट्टानों और मिट्टी के रिक्त स्थानों में भरे भूमिगत जल को क्या कहते हैं, जिसे कुओं से प्राप्त किया जा सकता है?", opts: ["सतही जल", "भूजल (जल तालिका)", "वर्षा जल", "समुद्री जल"], ans: 1, exp: "भूजल पृथ्वी की सतह के नीचे चट्टानों और मिट्टी में संचित जल है। इसकी ऊपरी सीमा को जल तालिका कहते हैं।" },
+    as: { q: "শিল আৰু মাটিৰ ফাঁকত জমা হোৱা ভূগৰ্ভৰ পানীক কি বোলা হয় যা কুঁৱাৰে পাব পাৰি?", opts: ["ভূপৃষ্ঠৰ পানী", "ভূগৰ্ভৰ পানী (পানীৰ তল)", "বৰষুণৰ পানী", "সমুদ্ৰৰ পানী"], ans: 1, exp: "ভূগৰ্ভৰ পানী পৃথিৱীৰ তলত শিল আৰু মাটিৰ ফাঁকত জমা থাকে। ইয়াৰ উপৰিভাগক পানীৰ তল বোলা হয়।" }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.trim() === (l==='en'?'EN':l==='hi'?'हि':'অ'));
+  });
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (current >= questions.length) { showEnd(); return; }
+  const q = questions[current];
+  const d = q[lang];
+  const pct = ((current + 1) / questions.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('qNum').textContent = current + 1;
+  document.getElementById('qNumHi').textContent = current + 1;
+  document.getElementById('qNumAs').textContent = current + 1;
+
+  const labels = ['A','B','C','D'];
+  let optsHTML = d.opts.map((o, i) => `
+    <button class="opt-btn" onclick="selectAnswer(${i})" id="opt${i}">
+      <span class="opt-label">${labels[i]}</span>${o}
+    </button>`).join('');
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="card">
+      <div class="q-meta"><span class="q-num">${current+1}</span><span data-lang="en" ${lang!=='en'?'style="display:none"':''}>Question ${current+1} of 10</span><span data-lang="hi" ${lang!=='hi'?'style="display:none"':''}>प्रश्न ${current+1}/10</span><span data-lang="as" ${lang!=='as'?'style="display:none"':''}>প্ৰশ্ন ${current+1}/10</span></div>
+      <div class="scene-emoji">${q.emoji}</div>
+      <div class="question">${d.q}</div>
+      <div class="options">${optsHTML}</div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+        ${lang==='en'?'Next →':lang==='hi'?'आगे →':'পৰৱৰ্তী →'}
+      </button>
+    </div>`;
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const d = q[lang];
+  const correct = d.ans;
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === correct) {
+    btns[idx].classList.add('correct');
+    score += 10;
+    document.getElementById('scoreLive').textContent = score;
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = `<span class="fb-icon">✅</span>${d.exp}`;
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[correct].classList.add('correct');
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = `<span class="fb-icon">❌</span>${d.exp}`;
+  }
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQuestion() {
+  current++;
+  renderQuestion();
+}
+
+function showEnd() {
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'none';
+  const end = document.getElementById('endScreen');
+  end.classList.add('show');
+  document.getElementById('finalScore').textContent = score;
+  const pct = score;
+  let stars = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : pct >= 40 ? '⭐' : '☆☆☆';
+  document.getElementById('starsDisplay').textContent = stars;
+}
+
+function restartQuiz() {
+  current = 0; score = 0;
+  document.getElementById('scoreLive').textContent = 0;
+  document.getElementById('progressWrap').style.display = '';
+  document.getElementById('quizArea').style.display = '';
+  document.getElementById('endScreen').classList.remove('show');
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

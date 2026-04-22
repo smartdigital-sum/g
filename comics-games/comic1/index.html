@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magic Story Forest - Interactive Tales for Little Ones</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&family=Comic
++Neue:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* {
+font-family: 'Fredoka', sans-serif;
+}
+body {
+overflow-x: hidden;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c
+75%, #ffa95c 100%);
+min-height: 100vh;
+}
+/* Floating Animation */
+@keyframes float {
+0%, 100% { transform: translateY(0px) rotate(0deg); }
+50% { transform: translateY(-20px) rotate(5deg); }
+}
+@keyframes float-delayed {
+0%, 100% { transform: translateY(0px) rotate(0deg); }
+50% { transform: translateY(-15px) rotate(-5deg); }
+}
+@keyframes wiggle {
+0%, 100% { transform: rotate(-3deg); }
+50% { transform: rotate(3deg); }
+}
+@keyframes bounce-soft {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-10px); }
+}
+@keyframes twinkle {
+0%, 100% { opacity: 1; transform: scale(1); }
+50% { opacity: 0.5; transform: scale(0.8); }
+}
+@keyframes slide-in {
+from { transform: translateX(-100%); opacity: 0; }
+to { transform: translateX(0); opacity: 1; }
+}
+@keyframes pop {
+0% { transform: scale(0); }
+80% { transform: scale(1.1); }
+100% { transform: scale(1); }
+}
+.pop-anim {
+animation: pop 0.3s ease-out forwards;
+}
+.float-anim { animation: float 3s ease-in-out infinite; }
+.float-anim-delayed { animation: float-delayed 3.5s ease-in-out infinite; }
+.wiggle-anim { animation: wiggle 2s ease-in-out infinite; }
+.bounce-soft { animation: bounce-soft 2s ease-in-out infinite; }
+.twinkle { animation: twinkle 1.5s ease-in-out infinite; }
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+width: 12px;
+}
+::-webkit-scrollbar-track {
+background: #f1f1f1;
+border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+background: #888;
+border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #555;
+}
+/* Story Cards */
+.story-card {
+transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+transform-style: preserve-3d;
+}
+.story-card:hover {
+transform: translateY(-10px) scale(1.05) rotateX(5deg);
+box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+.story-card:active {
+transform: scale(0.95);
+}
+/* Interactive Hotspots */
+.hotspot {
+position: relative;
+cursor: pointer;
+transition: all 0.3s;
+}
+.hotspot::after {
+content: '';
+position: absolute;
+width: 100%;
+height: 100%;
+top: 0;
+left: 0;
+border-radius: 50%;
+background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+opacity: 0;
+transform: scale(0);
+transition: all 0.3s;
+}
+.hotspot:hover::after {
+opacity: 1;
+transform: scale(1.5);
+animation: pulse 1s infinite;
+}
+@keyframes pulse {
+0%, 100% { transform: scale(1.5); opacity: 0.8; }
+50% { transform: scale(2); opacity: 0; }
+}
+/* Speech Bubble */
+.speech-bubble {
+position: relative;
+background: white;
+border-radius: 30px;
+padding: 20px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.speech-bubble::after {
+content: '';
+position: absolute;
+bottom: -20px;
+left: 30px;
+border-width: 20px 20px 0;
+border-style: solid;
+border-color: white transparent transparent transparent;
+}
+/* Confetti */
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: #f0f;
+  animation: fall linear forwards;
+}
+@keyframes fall {
+to { transform: translateY(100vh) rotate(360deg); }
+}
+/* Character Animations */
+.character-bounce {
+animation: bounce-soft 1s infinite;
+}
+.character-wave {
+transform-origin: bottom center;
+animation: wiggle 1s ease-in-out infinite;
+}
+/* Page Transition */
+.page {
+display: none;
+position: relative;
+}
+.page.active {
+display: block !important;
+opacity: 1 !important;
+visibility: visible !important;
+z-index: 10 !important;
+}
+/* Sound Wave Animation */
+.sound-wave {
+display: flex;
+align-items: center;
+gap: 3px;
+height: 20px;
+}
+.sound-bar {
+width: 4px;
+background: #fff;
+border-radius: 2px;
+animation: sound 1s ease-in-out infinite;
+}
+.sound-bar:nth-child(1) { animation-delay: 0s; height: 10px; }
+.sound-bar:nth-child(2) { animation-delay: 0.1s; height: 15px; }
+.sound-bar:nth-child(3) { animation-delay: 0.2s; height: 20px; }
+.sound-bar:nth-child(4) { animation-delay: 0.3s; height: 15px; }
+.sound-bar:nth-child(5) { animation-delay: 0.4s; height: 10px; }
+@keyframes sound {
+0%, 100% { transform: scaleY(1); }
+50% { transform: scaleY(0.5); }
+}
+/* Choice Buttons */
+.choice-btn {
+transition: all 0.3s;
+position: relative;
+overflow: hidden;
+}
+.choice-btn::before {
+content: '';
+position: absolute;
+top: 50%;
+left: 50%;
+width: 0;
+height: 0;
+border-radius: 50%;
+background: rgba(255,255,255,0.5);
+transform: translate(-50%, -50%);
+transition: width 0.6s, height 0.6s;
+}
+.choice-btn:hover::before {
+width: 300px;
+height: 300px;
+}
+.choice-btn:hover {
+transform: translateY(-5px);
+box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+/* Progress Bar */
+.progress-fill {
+transition: width 0.5s ease-out;
+}
+/* Star Rating */
+.star {
+cursor: pointer;
+transition: transform 0.2s;
+}
+.star:hover {
+transform: scale(1.3) rotate(15deg);
+}
+/* Hide scrollbar for story content */
+.story-scroll::-webkit-scrollbar {
+display: none;
+}
+.story-scroll {
+-ms-overflow-style: none;
+scrollbar-width: none;
+}
+/* Responsive Typography */
+.text-responsive {
+font-size: clamp(1.5rem, 4vw, 3rem);
+}
+.text-responsive-sm {
+font-size: clamp(1rem, 2vw, 1.5rem);
+}
+/* Magic Dust Effect */
+.magic-dust {
+position: absolute;
+width: 4px;
+height: 4px;
+background: gold;
+border-radius: 50%;
+pointer-events: none;
+animation: dust 1s ease-out forwards;
+}
+@keyframes dust {
+0% { transform: translate(0, 0) scale(1); opacity: 1; }
+100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+</style>
+</head>
+<body class="text-gray-800">
+
+  <!-- GyanPlay Back Button -->
+  <a href="../../index.html" style="position:fixed;top:12px;left:12px;z-index:99999;display:inline-flex;align-items:center;gap:8px;background:#1A1A2E;color:#FFB800;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.85rem;padding:8px 16px;border-radius:50px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.3);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+    ← <span>Gyan<span style="color:#00AEEF">Play</span></span>
+  </a>
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="fixed inset-0 bg-white bg-opacity-90 z-[100] flex flex-col items-center justify-center hidden">
+<div class="text-8xl mb-4 float-anim">📖</div>
+<div class="text-2xl font-bold text-purple-600 animate-bounce">Opening Magic Book...</div>
+<div class="mt-4 w-48 bg-gray-200 h-2 rounded-full overflow-hidden">
+<div class="bg-purple-600 h-full w-1/2 animate-[shimmer_1.5s_infinite]"></div>
+</div>
+</div>
+<style>
+@keyframes shimmer {
+0% { transform: translateX(-100%); }
+100% { transform: translateX(200%); }
+}
+</style>
+<!-- Audio Warning -->
+<div id="audio-warning" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center
+justify-center hidden">
+<div class="bg-white rounded-3xl p-8 max-w-md text-center m-4">
+<div class="text-6xl mb-4">🔊</div>
+<h2 class="text-2xl font-bold mb-4 text-purple-600">Turn Up Your Volume!</h2>
+<p class="text-lg mb-6">This story has sounds and music. Make sure your volume is
+up!</p>
+<button onclick="closeAudioWarning()" class="bg-gradient-to-r from-purple-500
+to-pink-500 text-white px-8 py-3 rounded-full text-xl font-bold hover:scale-105
+transition-transform">
+Let's Go! 🚀
+</button>
+</div>
+</div>
+<!-- Navigation -->
+<nav class="fixed top-0 w-full bg-white bg-opacity-95 backdrop-blur-md shadow-lg z-40 px-4
+py-3">
+<div class="max-w-6xl mx-auto flex justify-between items-center">
+<div class="flex items-center gap-2 cursor-pointer" onclick="showPage('home')">
+<span class="text-4xl float-anim">🌲</span>
+<h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600
+bg-clip-text text-transparent">
+Magic Forest
+</h1>
+</div>
+<div class="flex gap-4 items-center">
+<button onclick="toggleMusic()" class="bg-yellow-400 hover:bg-yellow-500
+text-yellow-900 p-3 rounded-full transition-all hover:scale-110" id="music-btn">
+🎵
+</button>
+<div class="hidden md:flex gap-2">
+<button onclick="showPage('library')" class="px-4 py-2 rounded-full bg-purple-100
+hover:bg-purple-200 text-purple-700 font-bold transition-colors">
+📚 Stories
+</button>
+<button onclick="showPage('favorites')" class="px-4 py-2 rounded-full bg-pink-100
+hover:bg-pink-200 text-pink-700 font-bold transition-colors">
+❤️ Favorites
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- HOME PAGE -->
+<div id="home" class="page active pt-24 pb-12 px-4">
+<div class="max-w-6xl mx-auto">
+<!-- Hero Section -->
+<div class="text-center mb-16 relative">
+<div class="absolute top-0 left-10 text-6xl float-anim opacity-50">☁️</div>
+<div class="absolute top-20 right-10 text-6xl float-anim-delayed opacity-50">🦋</div>
+<div class="absolute bottom-0 left-1/4 text-4xl twinkle">✨</div>
+<div class="absolute bottom-10 right-1/4 text-4xl
+twinkle" style="animation-delay: 0.5s">⭐</div>
+<h2 class="text-responsive font-bold text-white mb-6 drop-shadow-lg">
+Where Stories Come Alive! 🌟
+</h2>
+<p class="text-xl md:text-2xl text-white mb-8 font-comic">
+Tap, swipe, and play with magical tales for brave little explorers
+</p>
+<button onclick="showPage('library')" class="bg-white text-purple-600 px-8 py-4
+rounded-full text-2xl font-bold shadow-2xl hover:scale-110 transition-transform bounce-soft">
+Start Adventure 🚀
+</button>
+</div>
+<!-- Character Selection -->
+<div class="bg-white bg-opacity-90 rounded-3xl p-8 mb-12 shadow-2xl">
+<h3 class="text-2xl font-bold text-center mb-6 text-purple-700">Choose Your Reading
+Buddy!</h3>
+<div class="flex justify-center gap-4 md:gap-8 flex-wrap">
+<div class="character-card cursor-pointer group" onclick="selectCharacter('bear', event)">
+<div class="text-6xl md:text-8xl transition-transform group-hover:scale-125
+group-hover:rotate-12">🐻</div>
+<p class="text-center mt-2 font-bold text-brown-600">Benny Bear</p>
+</div>
+<div class="character-card cursor-pointer group"
+onclick="selectCharacter('rabbit', event)">
+<div class="text-6xl md:text-8xl transition-transform group-hover:scale-125
+group-hover:-rotate-12">🐰</div>
+<p class="text-center mt-2 font-bold text-pink-600">Ruby Rabbit</p>
+</div>
+<div class="character-card cursor-pointer group"
+onclick="selectCharacter('dragon', event)">
+<div class="text-6xl md:text-8xl transition-transform group-hover:scale-125
+group-hover:rotate-12">🐲</div>
+<p class="text-center mt-2 font-bold text-green-600">Danny Dragon</p>
+</div>
+<div class="character-card cursor-pointer group"
+onclick="selectCharacter('unicorn', event)">
+<div class="text-6xl md:text-8xl transition-transform group-hover:scale-125
+group-hover:-rotate-12">🦄</div>
+<p class="text-center mt-2 font-bold text-purple-600">Uma Unicorn</p>
+</div>
+</div>
+<div id="selected-buddy" class="text-center mt-4 text-lg font-bold text-purple-600
+hidden">
+Reading with: <span id="buddy-name"></span> <span id="buddy-emoji"></span>
+</div>
+</div>
+<!-- Featured Stories Preview -->
+<h3 class="text-3xl font-bold text-white text-center mb-8 drop-shadow-md">Today's
+Magical Stories</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="story-card bg-white rounded-3xl overflow-hidden shadow-xl
+cursor-pointer" onclick="startStory('lion-mouse')">
+<div class="h-48 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center
+justify-center text-6xl">
+🦁🐭
+</div>
+<div class="p-6">
+<h4 class="text-xl font-bold text-orange-700 mb-2">The Lion and the Little Mouse</h4>
+<p class="text-gray-600 text-sm">A tiny mouse saves a mighty lion - a tale of friendship!</p>
+<div class="flex gap-2 mt-3">
+<span class="px-3 py-1 bg-yellow-100
+text-yellow-700 rounded-full text-xs font-bold">⭐ 4.8</span>
+<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs
+font-bold">10 pages</span>
+</div>
+</div>
+</div>
+<div class="story-card bg-white rounded-3xl overflow-hidden shadow-xl
+cursor-pointer" onclick="startStory('tortoise-hare')">
+<div class="h-48 bg-gradient-to-br from-green-400 to-teal-500 flex items-center
+justify-center text-6xl">
+🐢🐇
+</div>
+<div class="p-6">
+<h4 class="text-xl font-bold text-green-700 mb-2">The Speedy Hare and the Slow Tortoise</h4>
+<p class="text-gray-600 text-sm">The classic race - can slow and steady really win?</p>
+<div class="flex gap-2 mt-3">
+<span class="px-3 py-1 bg-yellow-100
+text-yellow-700 rounded-full text-xs font-bold">⭐ 4.9</span>
+<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs
+font-bold">10 pages</span>
+</div>
+</div>
+</div>
+<div class="story-card bg-white rounded-3xl overflow-hidden shadow-xl
+cursor-pointer" onclick="startStory('little-red-hen')">
+<div class="h-48 bg-gradient-to-br from-red-400 to-rose-500 flex items-center
+justify-center text-6xl">
+🐔🌾
+</div>
+<div class="p-6">
+<h4 class="text-xl font-bold text-red-700 mb-2">The Little Red Hen</h4>
+<p class="text-gray-600 text-sm">A hardworking hen teaches the value of labor!</p>
+<div class="flex gap-2 mt-3">
+<span class="px-3 py-1 bg-yellow-100
+text-yellow-700 rounded-full text-xs font-bold">⭐ 4.7</span>
+<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs
+font-bold">8 pages</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- STORY LIBRARY PAGE -->
+<div id="library" class="page pt-24 pb-12 px-4">
+<div class="max-w-6xl mx-auto">
+<h2 class="text-4xl font-bold text-white text-center mb-8 drop-shadow-lg">📚 Story
+Library</h2>
+<!-- Filters -->
+<div class="flex justify-center gap-4 mb-8 flex-wrap">
+<button onclick="filterStories('all', event)" class="filter-btn active px-6 py-2 rounded-full
+bg-white text-purple-600 font-bold shadow-lg hover:scale-105 transition-transform">All</button>
+<button onclick="filterStories('fable', event)" class="filter-btn px-6 py-2 rounded-full
+bg-white bg-opacity-80 text-purple-600 font-bold hover:bg-opacity-100
+transition-all">Fables</button>
+<button onclick="filterStories('folktale', event)" class="filter-btn px-6 py-2 rounded-full
+bg-white bg-opacity-80 text-purple-600 font-bold hover:bg-opacity-100
+transition-all">Folktales</button>
+<button onclick="filterStories('fairytale', event)" class="filter-btn px-6 py-2 rounded-full
+bg-white bg-opacity-80 text-purple-600 font-bold hover:bg-opacity-100
+transition-all">Fairy Tales</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="story-grid">
+<!-- Stories will be populated by JS -->
+</div>
+</div>
+</div>
+<!-- ACTIVE STORY PAGE -->
+<div id="story" class="page pt-20 pb-12 min-h-screen bg-gradient-to-b from-indigo-900
+via-purple-900 to-pink-800">
+<div class="max-w-4xl mx-auto px-4">
+<!-- Story Header -->
+<div class="flex justify-between items-center mb-6">
+<button onclick="showPage('library')" class="bg-white bg-opacity-20 backdrop-blur
+text-white px-4 py-2 rounded-full hover:bg-opacity-30 transition-all">
+← Back
+</button>
+<div class="flex items-center gap-2">
+<div class="sound-wave">
+<div class="sound-bar"></div>
+<div class="sound-bar"></div>
+<div class="sound-bar"></div>
+<div class="sound-bar"></div>
+<div class="sound-bar"></div>
+</div>
+<button onclick="toggleNarration()" class="bg-yellow-400 text-yellow-900 p-3
+rounded-full hover:scale-110 transition-transform" id="narrate-btn">
+🔊
+</button>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="bg-white bg-opacity-20 rounded-full h-4 mb-8 overflow-hidden">
+<div id="progress-bar" class="progress-fill bg-gradient-to-r from-yellow-400
+to-orange-500 h-full rounded-full" style="width: 0%"></div>
+</div>
+<!-- Story Content -->
+<div id="story-content" class="bg-white rounded-3xl shadow-2xl overflow-hidden
+min-h-[600px] relative">
+<!-- Dynamic story content loads here -->
+</div>
+<!-- Navigation Controls -->
+<div class="flex justify-between mt-6">
+<button onclick="previousPage()" class="bg-white text-purple-600 px-6 py-3
+rounded-full font-bold shadow-lg hover:scale-105 transition-transform disabled:opacity-50"
+id="prev-btn">
+← Previous
+</button>
+<span id="page-indicator" class="text-white font-bold text-xl self-center">Page 1 of
+5</span>
+<button onclick="nextPage()" class="bg-gradient-to-r from-yellow-400 to-orange-500
+text-white px-6 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition-transform"
+id="next-btn">
+Next →
+</button>
+</div>
+</div>
+</div>
+<!-- FAVORITES PAGE -->
+<div id="favorites" class="page pt-24 pb-12 px-4">
+<div class="max-w-4xl mx-auto text-center">
+<h2 class="text-4xl font-bold text-white mb-8">❤️ Your Favorite Stories</h2>
+<div id="favorites-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<p class="text-white text-xl col-span-2">No favorites yet! Start reading to add some!
+🌟</p>
+</div>
+</div>
+</div>
+<script>
+// State
+let stories = [];
+let currentStory = null;
+let currentPage = 0;
+let selectedBuddy = null;
+let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+let musicPlaying = false;
+let narrationEnabled = true;
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+fetchStories();
+checkAudioContext();
+});
+// Fetch from API, with a fallback for common dev-server setups.
+// This app's Express API defaults to port 3000, but the HTML might be served from a different port.
+async function fetchApi(relativePath) {
+  const fallbackOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+  const candidates = [relativePath, ...fallbackOrigins.map(o => `${o}${relativePath}`)];
+  let lastError = null;
+
+  for (const url of candidates) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) return response;
+      lastError = new Error(`HTTP ${response.status} (${url})`);
+    } catch (e) {
+      lastError = e;
+    }
+  }
+
+  throw lastError || new Error('Failed to connect to the API server');
+}
+async function fetchStories() {
+  try {
+    const response = await fetchApi('/api/stories');
+    const data = await response.json();
+    if (Array.isArray(data)) {
+        stories = data;
+        console.log('Stories loaded successfully:', stories.length);
+        renderStoryLibrary();
+    }
+  } catch (error) {
+    console.error('Failed to load stories:', error);
+    const grid = document.getElementById('story-grid');
+    if (grid) {
+      grid.innerHTML = `
+        <div class="col-span-full text-center py-12 bg-white bg-opacity-20 rounded-3xl backdrop-blur-md">
+            <p class="text-white text-xl mb-4">Could not connect to the magic forest server.</p>
+            <p class="text-purple-200 text-sm mb-6">Make sure you are running <code class="bg-purple-900 px-2 py-1 rounded">node server.js</code></p>
+            <button onclick="fetchStories()" class="bg-white text-purple-600 px-6 py-2 rounded-full font-bold hover:scale-105 transition-transform">
+                Try Again 🔄
+            </button>
+        </div>`;
+    }
+  }
+}
+function checkAudioContext() {
+// Show audio warning on first visit
+if (!localStorage.getItem('audio-enabled')) {
+document.getElementById('audio-warning').classList.remove('hidden');
+}
+}
+function closeAudioWarning() {
+localStorage.setItem('audio-enabled', 'true');
+document.getElementById('audio-warning').classList.add('hidden');
+// Play welcome sound
+playSound('welcome');
+}
+function showPage(pageId) {
+// Hide all pages
+document.querySelectorAll('.page').forEach(page => {
+page.classList.remove('active');
+// REMOVE inline styles so CSS classes work correctly
+page.style.removeProperty('display');
+});
+// Show selected page
+const targetPage = document.getElementById(pageId);
+targetPage.classList.add('active');
+// Special handling for specific pages
+if (pageId === 'library') {
+renderStoryLibrary();
+} else if (pageId === 'favorites') {
+renderFavorites();
+}
+// Scroll to top
+window.scrollTo(0, 0);
+}
+function selectCharacter(character, event) {
+selectedBuddy = character;
+const names = {
+'bear': 'Benny Bear',
+'rabbit': 'Ruby Rabbit',
+'dragon': 'Danny Dragon',
+'unicorn': 'Uma Unicorn'
+};
+const emojis = {
+'bear': '🐻',
+'rabbit': '🐰',
+'dragon': '🐲',
+'unicorn': '🦄'
+};
+document.getElementById('buddy-name').textContent = names[character];
+document.getElementById('buddy-emoji').textContent = emojis[character];
+document.getElementById('selected-buddy').classList.remove('hidden');
+// Animation feedback
+playSound('pop');
+if (event) createMagicDust(event.clientX, event.clientY);
+}
+function renderStoryLibrary() {
+const grid = document.getElementById('story-grid');
+grid.innerHTML = stories.map(story => `
+<div class="story-card bg-white rounded-3xl overflow-hidden shadow-xl cursor-pointer
+transform transition-all hover:scale-105" onclick="startStory('${story.id}')">
+<div class="h-48 bg-gradient-to-br ${story.color} flex items-center justify-center
+text-6xl relative overflow-hidden">
+<div class="absolute inset-0 bg-white opacity-10"></div>
+<span class="relative z-10 float-anim">${story.emoji}</span>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-xl font-bold text-gray-800">${story.title}</h4>
+<button onclick="event.stopPropagation(); toggleFavorite('${story.id}')"
+class="text-2xl hover:scale-125 transition-transform">
+${favorites.includes(story.id) ? '❤️' : '🤍'}
+</button>
+</div>
+<p class="text-gray-600 text-sm mb-3">${story.description}</p>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs
+font-bold capitalize">${story.category}</span>
+<span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs
+font-bold">${story.pages.length} pages</span>
+</div>
+</div>
+</div>
+`).join('');
+}
+function filterStories(category, event) {
+// Update active button
+document.querySelectorAll('.filter-btn').forEach(btn => {
+btn.classList.remove('bg-white', 'shadow-lg');
+btn.classList.add('bg-white', 'bg-opacity-80');
+});
+if (event) {
+event.target.classList.remove('bg-opacity-80');
+event.target.classList.add('shadow-lg');
+}
+const filtered = category === 'all' ? stories : stories.filter(s => s.category === category);
+const grid = document.getElementById('story-grid');
+// Animate out
+grid.style.opacity = '0';
+setTimeout(() => {
+grid.innerHTML = filtered.map(story => `
+<div class="story-card bg-white rounded-3xl overflow-hidden shadow-xl
+cursor-pointer" onclick="startStory('${story.id}')">
+<div class="h-48 bg-gradient-to-br ${story.color} flex items-center justify-center
+text-6xl">
+${story.emoji}
+</div>
+<div class="p-6">
+<h4 class="text-xl font-bold text-gray-800 mb-2">${story.title}</h4>
+<p class="text-gray-600 text-sm">${story.description}</p>
+</div>
+</div>
+`).join('');
+grid.style.opacity = '1';
+}, 300);
+}
+async function startStory(storyId) {
+  // Show loading indicator
+  const loader = document.getElementById('loading-overlay');
+  if (loader) loader.classList.remove('hidden');
+
+  try {
+    console.log('Starting story:', storyId);
+    // Check if we already have the story in our cache
+    currentStory = stories.find(s => String(s.id) === String(storyId));
+
+    // If not in cache, try to fetch it directly from the API
+    if (!currentStory) {
+      console.log(`Story ${storyId} not in cache, fetching from API...`);
+      const response = await fetchApi(`/api/stories/${storyId}`);
+      currentStory = await response.json();
+    }
+
+    if (!currentStory || !currentStory.pages) {
+      throw new Error('Invalid story data received');
+    }
+
+    currentPage = 0;
+    // Force dismiss all overlays
+    const audioWarn = document.getElementById('audio-warning');
+    if (loader) loader.classList.add('hidden');
+    if (audioWarn) audioWarn.classList.add('hidden');
+    
+    console.log('Switching to story page...');
+    showPage('story');
+    renderStoryPage();
+    updateProgress();
+    
+    // Attempt play sound (might be blocked by browser)
+    try { playSound('start'); } catch(e) { console.warn('Sound blocked'); }
+
+  } catch (error) {
+    console.error('Error starting story:', error);
+    alert(`Oops! The magic book is stuck. Please check if the server is running and try again!\n\n${error?.message || error} 🌲✨`);
+  } finally {
+    if (loader) {
+      setTimeout(() => loader.classList.add('hidden'), 500);
+    }
+  }
+}
+function renderStoryPage() {
+if (!currentStory || !currentStory.pages || currentStory.pages.length === 0) {
+console.error('No story data available');
+return;
+}
+const page = currentStory.pages[currentPage];
+if (!page) {
+console.error('Page not found');
+return;
+}
+const content = document.getElementById('story-content');
+if (!content) {
+console.error('Story content element not found');
+return;
+}
+// Handle both interaction/instruction (hardcoded) and highlight (JSON) formats
+const interaction = page.interaction || 'tap';
+const instruction = page.instruction || (page.highlight ? `Look for: ${page.highlight.join(', ')}!` : 'Tap to interact!');
+content.innerHTML = `
+<div class="${page.bg} min-h-[600px] p-8 flex flex-col items-center justify-center
+relative overflow-hidden transition-all duration-500">
+<!-- Background decorations -->
+<div class="absolute top-10 left-10 text-4xl opacity-30 float-anim">✨</div>
+<div class="absolute bottom-10 right-10 text-4xl
+opacity-30 float-anim-delayed">⭐</div>
+<!-- Character Buddy -->
+${selectedBuddy ? `
+<div class="absolute top-4 right-4 bg-white bg-opacity-90 rounded-full p-3
+shadow-lg">
+<span class="text-3xl">${getBuddyEmoji()}</span>
+</div>
+` : ''}
+<!-- Main Content -->
+<div class="text-center z-10 max-w-2xl">
+<div class="text-8xl mb-6 cursor-pointer transform transition-transform
+hover:scale-110 active:scale-95"
+onclick="interactWithPage('${interaction}')"
+id="main-emoji">
+${page.emoji}
+</div>
+<div class="speech-bubble mb-6">
+<p class="text-2xl md:text-3xl font-bold text-gray-800 leading-relaxed"
+id="story-text">
+${page.text}
+</p>
+</div>
+<div class="bg-white bg-opacity-90 rounded-2xl p-4 inline-block shadow-lg
+animate-bounce">
+<p class="text-lg font-bold text-purple-600">👆 ${instruction}</p>
+</div>
+<!-- Interaction Zone -->
+<div id="interaction-zone" class="mt-8 min-h-[100px] flex items-center
+justify-center">
+<!-- Dynamic interactions appear here -->
+</div>
+</div>
+</div>
+`;
+// Add narration if enabled
+if (narrationEnabled) {
+speakText(page.text);
+}
+updatePageIndicator();
+updateButtons();
+}
+function getBuddyEmoji() {
+const emojis = {
+'bear': '🐻',
+'rabbit': '🐰',
+'dragon': '🐲',
+'unicorn': '🦄'
+};
+return emojis[selectedBuddy] || '📖';
+}
+function interactWithPage(type, event) {
+const zone = document.getElementById('interaction-zone');
+const emoji = document.getElementById('main-emoji');
+// Visual feedback
+if (event) createMagicDust(event.clientX, event.clientY);
+emoji.style.transform = 'scale(1.3) rotate(10deg)';
+setTimeout(() => {
+emoji.style.transform = 'scale(1) rotate(0deg)';
+}, 300);
+playSound('interact');
+switch(type) {
+case 'tap':
+case 'count':
+// Create counting stars
+for(let i = 0; i < 3; i++) {
+setTimeout(() => {
+const star = document.createElement('div');
+star.className = 'text-4xl absolute';
+star.style.left = Math.random() * 100 + '%';
+star.style.top = Math.random() * 100 + '%';
+star.textContent = '⭐';
+star.classList.add('pop-anim');
+zone.appendChild(star);
+}, i * 300);
+}
+break;
+case 'wave':
+emoji.classList.add('character-wave');
+setTimeout(() => emoji.classList.remove('character-wave'), 1000);
+break;
+case 'finish':
+celebrate();
+break;
+case 'rhythm':
+// Create rhythm game effect
+zone.innerHTML = '<div class="flex gap-2 text-4xl">🎵 🎶 🎵</div>';
+break;
+case 'dance':
+document.body.style.animation = 'wiggle 0.5s 3';
+setTimeout(() => {
+document.body.style.animation = '';
+}, 1500);
+break;
+}
+// Auto advance after interaction
+setTimeout(() => {
+if (currentPage < currentStory.pages.length - 1) {
+nextPage();
+}
+}, 2000);
+}
+function nextPage() {
+if (currentPage < currentStory.pages.length - 1) {
+currentPage++;
+renderStoryPage();
+updateProgress();
+playSound('page-turn');
+} else {
+finishStory();
+}
+}
+function previousPage() {
+if (currentPage > 0) {
+currentPage--;
+renderStoryPage();
+updateProgress();
+playSound('page-turn');
+}
+}
+function updateProgress() {
+const progress = ((currentPage + 1) / currentStory.pages.length) * 100;
+document.getElementById('progress-bar').style.width = progress + '%';
+}
+function updatePageIndicator() {
+document.getElementById('page-indicator').textContent =
+`Page ${currentPage + 1} of ${currentStory.pages.length}`;
+}
+function updateButtons() {
+document.getElementById('prev-btn').disabled = currentPage === 0;
+document.getElementById('next-btn').textContent =
+currentPage === currentStory.pages.length - 1 ? 'Finish! 🎉' : 'Next →';
+}
+function finishStory() {
+celebrate();
+setTimeout(() => {
+if (!favorites.includes(currentStory.id)) {
+if (confirm('Did you like this story? Add it to your favorites! ❤️')) {
+toggleFavorite(currentStory.id);
+}
+}
+showPage('library');
+}, 2000);
+}
+function celebrate() {
+// Create confetti
+for (let i = 0; i < 50; i++) {
+setTimeout(() => {
+const confetti = document.createElement('div');
+confetti.className = 'confetti';
+confetti.style.left = Math.random() * 100 + 'vw';
+confetti.style.backgroundColor = ['#ff0', '#f0f', '#0ff', '#0f0', '#fa0'][Math.floor(Math.random() * 5)];
+confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+document.body.appendChild(confetti);
+setTimeout(() => confetti.remove(), 5000);
+}, i * 50);
+}
+playSound('celebrate');
+}
+function createMagicDust(x, y) {
+for (let i = 0; i < 8; i++) {
+const dust = document.createElement('div');
+dust.className = 'magic-dust';
+dust.style.left = x + 'px';
+dust.style.top = y + 'px';
+dust.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
+dust.style.setProperty('--ty', (Math.random() - 0.5) * 100 + 'px');
+document.body.appendChild(dust);
+setTimeout(() => dust.remove(), 1000);
+}
+}
+function toggleFavorite(storyId) {
+const index = favorites.indexOf(storyId);
+if (index > -1) {
+favorites.splice(index, 1);
+} else {
+favorites.push(storyId);
+playSound('pop');
+}
+localStorage.setItem('favorites', JSON.stringify(favorites));
+renderStoryLibrary();
+}
+function renderFavorites() {
+const list = document.getElementById('favorites-list');
+if (favorites.length === 0) {
+list.innerHTML = '<p class="text-white text-xl col-span-2">No favorites yet! Start reading to add some! 🌟</p>';
+return;
+}
+const favoriteStories = stories.filter(s => favorites.includes(s.id));
+list.innerHTML = favoriteStories.map(story => `
+<div class="bg-white rounded-3xl p-6 shadow-xl flex items-center gap-4 cursor-pointer
+hover:scale-105 transition-transform" onclick="startStory('${story.id}')">
+<span class="text-5xl">${story.emoji}</span>
+<div>
+<h3 class="text-xl font-bold text-gray-800">${story.title}</h3>
+<p class="text-gray-600 text-sm">${story.description}</p>
+</div>
+<button onclick="event.stopPropagation(); toggleFavorite('${story.id}')"
+class="ml-auto text-2xl text-red-500 hover:scale-125 transition-transform">
+❤️
+</button>
+</div>
+`).join('');
+}
+function toggleMusic() {
+musicPlaying = !musicPlaying;
+document.getElementById('music-btn').textContent = musicPlaying ? '🎵' : '🔇';
+// In a real implementation, this would toggle background music
+}
+function toggleNarration() {
+narrationEnabled = !narrationEnabled;
+document.getElementById('narrate-btn').style.opacity = narrationEnabled ? '1' : '0.5';
+}
+function speakText(text) {
+if ('speechSynthesis' in window && narrationEnabled) {
+// Remove emojis for speech
+const cleanText = text.replace(/[\u{1F300}-\u{1F9FF}]/gu, '');
+const utterance = new SpeechSynthesisUtterance(cleanText);
+utterance.rate = 0.8; // Slower for kids
+utterance.pitch = 1.2; // Higher pitch, friendlier
+speechSynthesis.speak(utterance);
+}
+}
+let _audioContext = null;
+function getAudioContext() {
+if (!_audioContext) {
+_audioContext = new (window.AudioContext || window.webkitAudioContext)();
+}
+if (_audioContext.state === 'suspended') {
+_audioContext.resume();
+}
+return _audioContext;
+}
+function playSound(type) {
+const audioContext = getAudioContext();
+const oscillator = audioContext.createOscillator();
+const gainNode = audioContext.createGain();
+oscillator.connect(gainNode);
+gainNode.connect(audioContext.destination);
+switch(type) {
+case 'pop':
+oscillator.frequency.value = 600;
+gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime +
+0.1);
+oscillator.start(audioContext.currentTime);
+oscillator.stop(audioContext.currentTime + 0.1);
+break;
+case 'celebrate':
+// Play a happy chord
+[523.25, 659.25, 783.99].forEach((freq, i) => {
+const osc = audioContext.createOscillator();
+const gain = audioContext.createGain();
+osc.connect(gain);
+gain.connect(audioContext.destination);
+osc.frequency.value = freq;
+gain.gain.setValueAtTime(0.2, audioContext.currentTime + i * 0.1);
+gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5 + i * 0.1);
+osc.start(audioContext.currentTime + i * 0.1);
+osc.stop(audioContext.currentTime + 0.5 + i * 0.1);
+});
+break;
+default:
+// Handle other sound types: welcome, start, page-turn, interact
+oscillator.frequency.value = 440;
+gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+oscillator.start(audioContext.currentTime);
+oscillator.stop(audioContext.currentTime + 0.2);
+break;
+}
+}
+// Keyboard navigation for accessibility
+document.addEventListener('keydown', (e) => {
+if (document.getElementById('story').classList.contains('active')) {
+if (e.key === 'ArrowRight') nextPage();
+if (e.key === 'ArrowLeft') previousPage();
+}
+});
+// Touch gestures for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+document.addEventListener('touchstart', (e) => {
+touchStartX = e.changedTouches[0].screenX;
+});
+document.addEventListener('touchend', (e) => {
+touchEndX = e.changedTouches[0].screenX;
+handleSwipe();
+});
+function handleSwipe() {
+if (document.getElementById('story').classList.contains('active')) {
+if (touchEndX < touchStartX - 50) nextPage();
+if (touchEndX > touchStartX + 50) previousPage();
+}
+}
+</script>
+</body>
+</html>
+

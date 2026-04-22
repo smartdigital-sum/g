@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G8-01: Compound Interest Casino | GyanPlay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060A10;
+            --card: #0D1428;
+            --gold: #FFD166;
+            --coral: #FF6B6B;
+            --teal: #06D6A0;
+            --purple: #C77DFF;
+            --orange: #FF9F1C;
+            --text: #E8F0FF;
+            --dim: #4A6A8A;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, #180A28 0%, #0F0820 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(199, 125, 255, 0.22);
+            margin-bottom: 20px;
+        }
+        
+        .title-section {
+            flex: 1;
+        }
+        
+        .game-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.35rem;
+            color: var(--gold);
+            font-weight: 800;
+        }
+        
+        .subject-tag {
+            font-size: 0.7rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stars {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .star {
+            font-size: 1.2rem;
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+        
+        .star.lit {
+            opacity: 1;
+            filter: drop-shadow(0 0 8px var(--gold));
+        }
+        
+        /* WOW Hook Card */
+        .hook-card {
+            background: linear-gradient(135deg, rgba(199, 125, 255, 0.15), rgba(199, 125, 255, 0.05));
+            border: 1px solid rgba(199, 125, 255, 0.22);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 24px rgba(199, 125, 255, 0.12);
+        }
+        
+        .hook-text {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text);
+        }
+        
+        .hook-text strong {
+            color: var(--gold);
+            font-weight: 700;
+        }
+        
+        /* Game Area */
+        .game-area {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .stage-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            color: var(--purple);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stage-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--purple);
+            border-radius: 2px;
+        }
+        
+        /* Stage 1: SI vs CI Simulator */
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-label {
+            font-size: 0.85rem;
+            color: var(--dim);
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .input-field {
+            flex: 1;
+            min-width: 100px;
+            background: rgba(6, 10, 16, 0.6);
+            border: 1px solid rgba(199, 125, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: 'Nunito', sans-serif;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--purple);
+            box-shadow: 0 0 12px rgba(199, 125, 255, 0.3);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: #060A10;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 209, 102, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .chart-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(6, 10, 16, 0.4);
+            border-radius: 12px;
+        }
+        
+        .bar-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .bar-label {
+            width: 80px;
+            font-size: 0.85rem;
+            color: var(--dim);
+        }
+        
+        .bar-track {
+            flex: 1;
+            height: 30px;
+            background: rgba(74, 106, 138, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            border-radius: 15px;
+            transition: width 1.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        
+        .bar-fill.si {
+            background: linear-gradient(90deg, var(--dim), #6A8AAA);
+        }
+        
+        .bar-fill.ci {
+            background: linear-gradient(90deg, var(--gold), var(--orange));
+        }
+        
+        .result-text {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 209, 102, 0.1);
+            border-radius: 10px;
+            border-left: 3px solid var(--gold);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .result-text strong {
+            color: var(--gold);
+        }
+        
+        /* Stage 2: Loan Trap */
+        .loan-scenario {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .scenario-title {
+            font-family: 'Baloo 2', cursive;
+            color: var(--coral);
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        
+        .scenario-text {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        
+        .debt-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .debt-year {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            background: rgba(6, 10, 16, 0.4);
+            border-radius: 10px;
+        }
+        
+        .year-label {
+            width: 60px;
+            font-size: 0.85rem;
+            color: var(--dim);
+        }
+        
+        .debt-amount {
+            flex: 1;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            color: var(--coral);
+        }
+        
+        .debt-bar {
+            width: 100px;
+            height: 20px;
+            background: rgba(255, 71, 87, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .debt-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--coral), var(--red));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        /* Stage 3: Reverse Percentage */
+        .problem-box {
+            background: rgba(6, 214, 160, 0.1);
+            border: 1px solid rgba(6, 214, 160, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .problem-text {
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .option-btn {
+            background: rgba(199, 125, 255, 0.1);
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            color: var(--text);
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-btn:hover {
+            background: rgba(199, 125, 255, 0.2);
+            border-color: var(--purple);
+        }
+        
+        .option-btn.correct {
+            background: rgba(6, 214, 160, 0.2);
+            border-color: var(--teal);
+        }
+        
+        .option-btn.wrong {
+            background: rgba(255, 71, 87, 0.2);
+            border-color: var(--coral);
+        }
+        
+        /* Stage 4: Moral Dilemma */
+        .dilemma-card {
+            background: linear-gradient(135deg, rgba(255, 159, 28, 0.1), rgba(255, 159, 28, 0.05));
+            border: 1px solid rgba(255, 159, 28, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .dilemma-title {
+            font-family: 'Baloo 2', cursive;
+            color: var(--orange);
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+        
+        .choice-card {
+            background: rgba(6, 10, 16, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .choice-card:hover {
+            border-color: var(--purple);
+            background: rgba(199, 125, 255, 0.1);
+        }
+        
+        .choice-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .choice-icon {
+            font-size: 1.3rem;
+        }
+        
+        .choice-name {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1rem;
+            color: var(--text);
+        }
+        
+        .choice-rate {
+            font-size: 0.85rem;
+            color: var(--dim);
+        }
+        
+        .choice-desc {
+            font-size: 0.85rem;
+            color: var(--dim);
+            line-height: 1.5;
+        }
+        
+        .consequence-box {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(6, 10, 16, 0.6);
+            border-radius: 10px;
+            border-left: 3px solid var(--gold);
+        }
+        
+        /* Bottom Bar */
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 20px;
+        }
+        
+        .progress-info {
+            font-size: 0.85rem;
+            color: var(--dim);
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: #060A10;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 209, 102, 0.4);
+        }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(6, 10, 16, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .overlay.active {
+            display: flex;
+        }
+        
+        .overlay-content {
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .overlay-emoji {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+        
+        .overlay-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+        
+        .overlay-message {
+            font-size: 1rem;
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+        
+        .overlay-fact {
+            font-size: 0.85rem;
+            color: var(--dim);
+            padding: 15px;
+            background: rgba(199, 125, 255, 0.1);
+            border-radius: 10px;
+            border-left: 3px solid var(--purple);
+        }
+        
+        /* Completion Screen */
+        .completion-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .completion-screen.active {
+            display: block;
+        }
+        
+        .trophy {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+        
+        .completion-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+        
+        .completion-score {
+            font-size: 1.2rem;
+            color: var(--text);
+            margin-bottom: 30px;
+        }
+        
+        .play-again-btn {
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            color: var(--text);
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .play-again-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(199, 125, 255, 0.4);
+        }
+        
+        /* Hidden stages */
+        .stage {
+            display: none;
+        }
+        
+        .stage.active {
+            display: block;
+        }
+        
+        /* Formula display */
+        .formula-box {
+            background: rgba(6, 10, 16, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            color: var(--gold);
+            border: 1px solid rgba(255, 209, 102, 0.2);
+        }
+        
+        .slider-container {
+            margin: 15px 0;
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--dim);
+            margin-bottom: 8px;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(74, 106, 138, 0.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(255, 209, 102, 0.4);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 10px rgba(255, 209, 102, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="title-section">
+                <div class="subject-tag">Mathematics</div>
+                <div class="game-title">Compound Interest Casino</div>
+            </div>
+            <div class="stars">
+                <span class="star" id="star1">⭐</span>
+                <span class="star" id="star2">⭐</span>
+                <span class="star" id="star3">⭐</span>
+                <span class="star" id="star4">⭐</span>
+                <span class="star" id="star5">⭐</span>
+            </div>
+        </div>
+        
+        <!-- WOW Hook -->
+        <div class="hook-card">
+            <div class="hook-text">
+                A <strong>₹10,000</strong> investment at 10% simple interest gives <strong>₹30,000</strong> in 20 years. The SAME investment at 10% compound interest gives <strong>₹67,275</strong>. Double the money — from the SAME rate, the SAME time, just a different type of interest. <strong>Compound interest is why the rich keep getting richer.</strong>
+            </div>
+        </div>
+        
+        <!-- Stage 1: SI vs CI Simulator -->
+        <div class="stage active" id="stage1">
+            <div class="game-area">
+                <div class="stage-title">Stage 1: The Money Race</div>
+                
+                <div class="input-group">
+                    <label class="input-label">Principal Amount (₹)</label>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>₹1,000</span>
+                            <span id="principalValue">₹10,000</span>
+                            <span>₹100,000</span>
+                        </div>
+                        <input type="range" class="slider" id="principalSlider" min="1000" max="100000" value="10000" step="1000">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Interest Rate (% per year)</label>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>1%</span>
+                            <span id="rateValue">10%</span>
+                            <span>20%</span>
+                        </div>
+                        <input type="range" class="slider" id="rateSlider" min="1" max="20" value="10" step="0.5">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Time Period (years)</label>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>1 year</span>
+                            <span id="timeValue">20 years</span>
+                            <span>30 years</span>
+                        </div>
+                        <input type="range" class="slider" id="timeSlider" min="1" max="30" value="20" step="1">
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="calculateInterest()">Run the Race!</button>
+                
+                <div class="chart-container" id="chartContainer" style="display: none;">
+                    <div class="bar-row">
+                        <div class="bar-label">Simple Int.</div>
+                        <div class="bar-track">
+                            <div class="bar-fill si" id="siBar" style="width: 0%">₹0</div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">Compound Int.</div>
+                        <div class="bar-track">
+                            <div class="bar-fill ci" id="ciBar" style="width: 0%">₹0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-text" id="resultText" style="display: none;"></div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 1 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 2: Loan Trap -->
+        <div class="stage" id="stage2">
+            <div class="game-area">
+                <div class="stage-title">Stage 2: The Loan Trap</div>
+                
+                <div class="loan-scenario">
+                    <div class="scenario-title">⚠️ Real-World Scenario</div>
+                    <div class="scenario-text">
+                        Ramesh, a tea garden worker in Assam, takes a <strong>₹50,000</strong> loan from a local moneylender at <strong>18% compound interest</strong> to pay for his daughter's medical treatment. Watch how the debt grows if he cannot repay.
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="showDebtTimeline()">Show Debt Timeline</button>
+                
+                <div class="debt-timeline" id="debtTimeline" style="display: none;">
+                    <div class="debt-year">
+                        <div class="year-label">Year 1</div>
+                        <div class="debt-amount">₹59,000</div>
+                        <div class="debt-bar">
+                            <div class="debt-bar-fill" style="width: 20%"></div>
+                        </div>
+                    </div>
+                    <div class="debt-year">
+                        <div class="year-label">Year 2</div>
+                        <div class="debt-amount">₹69,620</div>
+                        <div class="debt-bar">
+                            <div class="debt-bar-fill" style="width: 35%"></div>
+                        </div>
+                    </div>
+                    <div class="debt-year">
+                        <div class="year-label">Year 5</div>
+                        <div class="debt-amount">₹1,14,248</div>
+                        <div class="debt-bar">
+                            <div class="debt-bar-fill" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="debt-year">
+                        <div class="year-label">Year 10</div>
+                        <div class="debt-amount">₹2,61,058</div>
+                        <div class="debt-bar">
+                            <div class="debt-bar-fill" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="debt-year">
+                        <div class="year-label">Year 20</div>
+                        <div class="debt-amount">₹13,63,023</div>
+                        <div class="debt-bar">
+                            <div class="debt-bar-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-text" id="loanResult" style="display: none; margin-top: 15px;">
+                    <strong>Debt Doubles Every 4 Years!</strong> At 18% compound interest, debt grows exponentially. This is why microfinance with fair interest rates (8-12%) is so important for rural communities.
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 2 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 3: Reverse Percentage -->
+        <div class="stage" id="stage3">
+            <div class="game-area">
+                <div class="stage-title">Stage 3: Reverse Percentage</div>
+                
+                <div class="problem-box">
+                    <div class="problem-text">
+                        <strong>Problem:</strong> A shopkeeper sells an item for <strong>₹1,200</strong> and makes a profit of <strong>20%</strong>. What was the cost price?
+                    </div>
+                </div>
+                
+                <div class="formula-box">
+                    CP = SP × 100/(100 + Profit%)
+                </div>
+                
+                <div class="problem-text" style="margin-bottom: 15px;">
+                    Select the correct cost price:
+                </div>
+                
+                <div class="options-grid">
+                    <button class="option-btn" onclick="checkAnswer(this, false)">₹960</button>
+                    <button class="option-btn" onclick="checkAnswer(this, true)">₹1,000</button>
+                    <button class="option-btn" onclick="checkAnswer(this, false)">₹1,440</button>
+                    <button class="option-btn" onclick="checkAnswer(this, false)">₹1,000</button>
+                </div>
+                
+                <div class="result-text" id="reverseResult" style="display: none; margin-top: 15px;"></div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(255, 71, 87, 0.1); border-radius: 10px; border-left: 3px solid var(--coral);">
+                    <div style="font-size: 0.85rem; color: var(--coral); margin-bottom: 8px;">⚠️ Common Mistake</div>
+                    <div style="font-size: 0.85rem; color: var(--dim);">
+                        Many students subtract 20% from ₹1,200: ₹1,200 - ₹240 = ₹960 ❌<br>
+                        This is wrong because 20% profit is calculated on COST PRICE, not selling price!
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 3 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 4: Moral Dilemma -->
+        <div class="stage" id="stage4">
+            <div class="game-area">
+                <div class="stage-title">Stage 4: The Farmer's Dilemma</div>
+                
+                <div class="dilemma-card">
+                    <div class="dilemma-title">🌾 Drought in Assam</div>
+                    <div style="font-size: 0.9rem; line-height: 1.6;">
+                        Farmer Lakhi needs ₹20,000 urgently to buy seeds before the planting season ends. Two options:
+                    </div>
+                </div>
+                
+                <div class="choice-card" onclick="showConsequence('bank')">
+                    <div class="choice-header">
+                        <span class="choice-icon">🏦</span>
+                        <span class="choice-name">Bank Loan</span>
+                        <span class="choice-rate" style="margin-left: auto; color: var(--teal);">9% Simple Interest</span>
+                    </div>
+                    <div class="choice-desc">
+                        Slow process (2-3 weeks), lots of paperwork, requires collateral. But fair rates.
+                    </div>
+                </div>
+                
+                <div class="choice-card" onclick="showConsequence('moneylender')">
+                    <div class="choice-header">
+                        <span class="choice-icon">💰</span>
+                        <span class="choice-name">Moneylender</span>
+                        <span class="choice-rate" style="margin-left: auto; color: var(--coral);">36% Compound Interest</span>
+                    </div>
+                    <div class="choice-desc">
+                        Fast (same day), no paperwork, no collateral. But extremely high rates.
+                    </div>
+                </div>
+                
+                <div class="consequence-box" id="consequenceBox" style="display: none;">
+                    <div id="consequenceText"></div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 4 of 4</div>
+                <button class="action-btn" onclick="completeGame()">Complete Game</button>
+            </div>
+        </div>
+        
+        <!-- Completion Screen -->
+        <div class="completion-screen" id="completionScreen">
+            <div class="trophy">🏆</div>
+            <div class="completion-title">Game Complete!</div>
+            <div class="completion-score" id="finalScore">You mastered compound interest!</div>
+            <button class="play-again-btn" onclick="playAgain()">Play Again</button>
+        </div>
+    </div>
+    
+    <!-- Overlay -->
+    <div class="overlay" id="overlay">
+        <div class="overlay-content">
+            <div class="overlay-emoji" id="overlayEmoji">✓</div>
+            <div class="overlay-title" id="overlayTitle">Correct!</div>
+            <div class="overlay-message" id="overlayMessage">Your calculation is right.</div>
+            <div class="overlay-fact" id="overlayFact">Compound interest grows exponentially, not linearly.</div>
+        </div>
+    </div>
+    
+    <script>
+        let currentStage = 1;
+        let score = 0;
+        
+        // Slider updates
+        document.getElementById('principalSlider').addEventListener('input', function() {
+            document.getElementById('principalValue').textContent = '₹' + parseInt(this.value).toLocaleString();
+        });
+        
+        document.getElementById('rateSlider').addEventListener('input', function() {
+            document.getElementById('rateValue').textContent = this.value + '%';
+        });
+        
+        document.getElementById('timeSlider').addEventListener('input', function() {
+            document.getElementById('timeValue').textContent = this.value + ' years';
+        });
+        
+        function calculateInterest() {
+            const P = parseFloat(document.getElementById('principalSlider').value);
+            const r = parseFloat(document.getElementById('rateSlider').value) / 100;
+            const t = parseFloat(document.getElementById('timeSlider').value);
+            
+            // Simple Interest: A = P(1 + rt)
+            const siAmount = P * (1 + r * t);
+            
+            // Compound Interest: A = P(1 + r)^t
+            const ciAmount = P * Math.pow(1 + r, t);
+            
+            const maxAmount = Math.max(siAmount, ciAmount);
+            const siPercent = (siAmount / maxAmount) * 100;
+            const ciPercent = (ciAmount / maxAmount) * 100;
+            
+            document.getElementById('chartContainer').style.display = 'block';
+            document.getElementById('resultText').style.display = 'block';
+            
+            setTimeout(() => {
+                document.getElementById('siBar').style.width = siPercent + '%';
+                document.getElementById('siBar').textContent = '₹' + Math.round(siAmount).toLocaleString();
+                document.getElementById('ciBar').style.width = ciPercent + '%';
+                document.getElementById('ciBar').textContent = '₹' + Math.round(ciAmount).toLocaleString();
+            }, 100);
+            
+            const difference = ciAmount - siAmount;
+            const times = (ciAmount / siAmount).toFixed(1);
+            
+            document.getElementById('resultText').innerHTML = `
+                <strong>Compound Interest wins by ₹${Math.round(difference).toLocaleString()}!</strong><br>
+                That's <strong>${times}x</strong> more than Simple Interest — from the same principal, same rate, same time.
+                The longer you invest, the bigger the gap becomes.
+            `;
+            
+            // Light up first star
+            document.getElementById('star1').classList.add('lit');
+            score += 20;
+        }
+        
+        function showDebtTimeline() {
+            document.getElementById('debtTimeline').style.display = 'flex';
+            document.getElementById('loanResult').style.display = 'block';
+            
+            // Animate debt bars
+            setTimeout(() => {
+                const bars = document.querySelectorAll('.debt-bar-fill');
+                bars.forEach((bar, index) => {
+                    setTimeout(() => {
+                        bar.style.width = bar.style.width;
+                    }, index * 200);
+                });
+            }, 100);
+            
+            document.getElementById('star2').classList.add('lit');
+            score += 20;
+        }
+        
+        function checkAnswer(btn, isCorrect) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            if (isCorrect) {
+                btn.classList.add('correct');
+                document.getElementById('reverseResult').innerHTML = `
+                    <strong>Correct! ₹1,000</strong><br>
+                    CP = ₹1,200 × 100/(100 + 20) = ₹1,200 × 100/120 = <strong>₹1,000</strong>
+                `;
+                document.getElementById('reverseResult').style.display = 'block';
+                document.getElementById('star3').classList.add('lit');
+                score += 20;
+                showOverlay('✓', 'Correct!', 'Your calculation is right.', 'Cost price is always calculated backwards from selling price using the formula.');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Not quite', 'That\'s a common mistake!', 'Remember: 20% profit is on cost price, not selling price. Use CP = SP × 100/(100+Profit%)');
+            }
+        }
+        
+        function showConsequence(choice) {
+            const box = document.getElementById('consequenceBox');
+            const text = document.getElementById('consequenceText');
+            
+            box.style.display = 'block';
+            
+            if (choice === 'bank') {
+                text.innerHTML = `
+                    <div style="color: var(--teal); font-weight: 700; margin-bottom: 10px;">🏦 Bank Loan: The Patient Path</div>
+                    <div style="font-size: 0.9rem; line-height: 1.6; margin-bottom: 10px;">
+                        After 5 years at 9% Simple Interest:<br>
+                        Total repayment = ₹20,000 + ₹9,000 = <strong>₹29,000</strong>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--dim);">
+                        The paperwork takes time, but Lakhi's debt stays manageable. He can plan his finances.
+                    </div>
+                `;
+            } else {
+                text.innerHTML = `
+                    <div style="color: var(--coral); font-weight: 700; margin-bottom: 10px;">💰 Moneylender: The Debt Trap</div>
+                    <div style="font-size: 0.9rem; line-height: 1.6; margin-bottom: 10px;">
+                        After 5 years at 36% Compound Interest:<br>
+                        Total repayment = ₹20,000 × (1.36)⁵ = <strong>₹92,632</strong>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--dim);">
+                        Lakhi gets money fast, but his debt grows catastrophically. Many farmers in this trap lose their land.
+                    </div>
+                `;
+            }
+            
+            document.getElementById('star4').classList.add('lit');
+            score += 20;
+        }
+        
+        function nextStage() {
+            document.getElementById('stage' + currentStage).classList.remove('active');
+            currentStage++;
+            document.getElementById('stage' + currentStage).classList.add('active');
+        }
+        
+        function completeGame() {
+            document.getElementById('star5').classList.add('lit');
+            score += 20;
+            
+            // Save progress
+            localStorage.setItem('G8-01', JSON.stringify({
+                visited: true,
+                score: score,
+                date: new Date().toISOString()
+            }));
+            
+            document.querySelectorAll('.stage').forEach(s => s.style.display = 'none');
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.hook-card').style.display = 'none';
+            document.getElementById('completionScreen').classList.add('active');
+            document.getElementById('finalScore').textContent = `You scored ${score}/100!`;
+        }
+        
+        function playAgain() {
+            currentStage = 1;
+            score = 0;
+            
+            // Reset stars
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+            
+            // Reset stages
+            document.querySelectorAll('.stage').forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'block';
+            });
+            document.getElementById('stage1').classList.add('active');
+            
+            // Reset inputs
+            document.getElementById('chartContainer').style.display = 'none';
+            document.getElementById('resultText').style.display = 'none';
+            document.getElementById('debtTimeline').style.display = 'none';
+            document.getElementById('loanResult').style.display = 'none';
+            document.getElementById('consequenceBox').style.display = 'none';
+            document.getElementById('reverseResult').style.display = 'none';
+            
+            // Reset buttons
+            document.querySelectorAll('.option-btn').forEach(b => {
+                b.classList.remove('correct', 'wrong');
+                b.disabled = false;
+            });
+            
+            document.querySelector('.header').style.display = 'flex';
+            document.querySelector('.hook-card').style.display = 'block';
+            document.getElementById('completionScreen').classList.remove('active');
+        }
+        
+        function showOverlay(emoji, title, message, fact) {
+            document.getElementById('overlayEmoji').textContent = emoji;
+            document.getElementById('overlayTitle').textContent = title;
+            document.getElementById('overlayMessage').textContent = message;
+            document.getElementById('overlayFact').textContent = fact;
+            document.getElementById('overlay').classList.add('active');
+            
+            setTimeout(() => {
+                document.getElementById('overlay').classList.remove('active');
+            }, 2500);
+        }
+        
+        // Load saved progress
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('G8-01');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.score > 0) {
+                    const stars = Math.ceil(data.score / 20);
+                    for (let i = 1; i <= stars; i++) {
+                        document.getElementById('star' + i).classList.add('lit');
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

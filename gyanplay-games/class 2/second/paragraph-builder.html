@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Paragraph Builder - GyanPlay Class 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #74b9ff;
+            font-size: 2rem;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .score {
+            background: #e94560;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text {
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        .stage-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stage {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: #636e72;
+            font-weight: bold;
+        }
+        
+        .stage.active {
+            background: #0984e3;
+            color: white;
+        }
+        
+        .stage.completed {
+            background: #00b894;
+            color: white;
+        }
+        
+        .paragraph-area {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            min-height: 150px;
+        }
+        
+        .area-title {
+            color: #636e72;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        
+        .scrambled-sentences {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .sentence-card {
+            background: #dfe6e9;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: grab;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            font-size: 1.1rem;
+        }
+        
+        .sentence-card:hover {
+            background: #ffeaa7;
+            border-color: #f39c12;
+        }
+        
+        .sentence-card.dragging {
+            opacity: 0.5;
+        }
+        
+        .built-paragraph {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 100px;
+        }
+        
+        .paragraph-slot {
+            background: #dfe6e9;
+            border-radius: 10px;
+            padding: 15px;
+            min-height: 50px;
+            border: 2px dashed #b2bec3;
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+        
+        .paragraph-slot.filled {
+            background: #55efc4;
+            border-color: #00b894;
+            border-style: solid;
+        }
+        
+        .questions-area {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .question-card {
+            margin-bottom: 20px;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+        
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0;
+            background: #dfe6e9;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+        }
+        
+        .option-btn:hover {
+            background: #74b9ff;
+            color: white;
+        }
+        
+        .option-btn.correct {
+            background: #00b894;
+            color: white;
+        }
+        
+        .option-btn.wrong {
+            background: #ff7675;
+            color: white;
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #e17055, #fab1a0);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(225, 112, 85, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+            max-width: 500px;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .feedback-content.correct {
+            border: 5px solid #00b894;
+        }
+        
+        .feedback-content.wrong {
+            border: 5px solid #e94560;
+        }
+        
+        .feedback-icon {
+            font-size: 5rem;
+        }
+        
+        .feedback-text {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            color: #2d3436;
+        }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch2-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>📝 Paragraph Builder</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Paragraph: <span id="paraNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Arrange the sentences in the correct order to make a paragraph!</p>
+        </div>
+        
+        <div class="stage-indicator">
+            <div class="stage active" id="stage1">1. Arrange</div>
+            <div class="stage" id="stage2">2. Answer</div>
+        </div>
+        
+        <div id="arrangeStage">
+            <div class="paragraph-area">
+                <div class="area-title">📋 Scrambled Sentences - Drag to reorder:</div>
+                <div class="scrambled-sentences" id="scrambledSentences">
+                    <!-- Sentences will be generated by JS -->
+                </div>
+            </div>
+            
+            <div class="paragraph-area">
+                <div class="area-title">📖 Your Paragraph:</div>
+                <div class="built-paragraph" id="builtParagraph">
+                    <div class="paragraph-slot" id="slot1">Sentence 1</div>
+                    <div class="paragraph-slot" id="slot2">Sentence 2</div>
+                    <div class="paragraph-slot" id="slot3">Sentence 3</div>
+                    <div class="paragraph-slot" id="slot4">Sentence 4</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="questions-area" id="questionsArea">
+            <div class="area-title">❓ Answer the questions:</div>
+            <div id="questionsContainer">
+                <!-- Questions will be generated by JS -->
+            </div>
+        </div>
+        
+        <button class="check-btn" id="checkBtn" onclick="checkAnswer()">✓ Check Answer</button>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextParagraph()">Next Paragraph →</button>
+        </div>
+    </div>
+    
+    <script>
+        const paragraphs = [
+            {
+                sentences: [
+                    'Ramu wakes up early every morning.',
+                    'He brushes his teeth and washes his face.',
+                    'Then he goes to school with his friends.',
+                    'Ramu likes to learn new things in class.'
+                ],
+                correctOrder: [0, 1, 2, 3],
+                questions: [
+                    {
+                        question: 'What does Ramu do every morning?',
+                        options: ['Wakes up early', 'Sleeps late', 'Plays games', 'Watches TV'],
+                        correct: 0
+                    },
+                    {
+                        question: 'Where does Ramu go with his friends?',
+                        options: ['To school', 'To the park', 'To the market', 'To the zoo'],
+                        correct: 0
+                    }
+                ]
+            },
+            {
+                sentences: [
+                    'The sun rises in the east.',
+                    'Birds fly in the blue sky.',
+                    'Children play in the garden.',
+                    'The day begins with joy.'
+                ],
+                correctOrder: [0, 1, 2, 3],
+                questions: [
+                    {
+                        question: 'Where does the sun rise?',
+                        options: ['In the east', 'In the west', 'In the south', 'In the north'],
+                        correct: 0
+                    },
+                    {
+                        question: 'Where do children play?',
+                        options: ['In the garden', 'In the kitchen', 'In the bedroom', 'In the school'],
+                        correct: 0
+                    }
+                ]
+            },
+            {
+                sentences: [
+                    'The cat is sleeping on the mat.',
+                    'It wakes up when it hears a sound.',
+                    'The cat sees a mouse near the door.',
+                    'The cat runs after the mouse.'
+                ],
+                correctOrder: [0, 1, 2, 3],
+                questions: [
+                    {
+                        question: 'Where is the cat sleeping?',
+                        options: ['On the mat', 'On the bed', 'In the box', 'On the chair'],
+                        correct: 0
+                    },
+                    {
+                        question: 'What does the cat see?',
+                        options: ['A mouse', 'A dog', 'A bird', 'A fish'],
+                        correct: 0
+                    }
+                ]
+            }
+        ];
+        
+        let currentIndex = 0;
+        let score = 0;
+        let stage = 1;
+        let userOrder = [];
+        let paragraphData = null;
+        
+        function loadParagraph() {
+            paragraphData = paragraphs[currentIndex];
+            stage = 1;
+            userOrder = [];
+            
+            // Update stages
+            document.getElementById('stage1').className = 'stage active';
+            document.getElementById('stage2').className = 'stage';
+            
+            document.getElementById('arrangeStage').style.display = 'block';
+            document.getElementById('questionsArea').style.display = 'none';
+            document.getElementById('checkBtn').textContent = '✓ Check Order';
+            
+            // Scramble sentences
+            const scrambled = [...paragraphData.sentences].map((s, i) => ({ text: s, original: i }));
+            const shuffled = scrambled.sort(() => Math.random() - 0.5);
+            
+            const container = document.getElementById('scrambledSentences');
+            container.innerHTML = '';
+            
+            shuffled.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'sentence-card';
+                div.textContent = item.text;
+                div.draggable = true;
+                div.dataset.original = item.original;
+                
+                div.ondragstart = (e) => {
+                    e.dataTransfer.setData('text', index);
+                    div.classList.add('dragging');
+                };
+                div.ondragend = () => {
+                    div.classList.remove('dragging');
+                };
+                
+                container.appendChild(div);
+            });
+            
+            // Reset paragraph slots
+            for (let i = 1; i <= 4; i++) {
+                const slot = document.getElementById('slot' + i);
+                slot.textContent = 'Sentence ' + i;
+                slot.classList.remove('filled');
+            }
+            
+            // Setup drop zones
+            const builtPara = document.getElementById('builtParagraph');
+            builtPara.ondragover = (e) => e.preventDefault();
+            builtPara.ondrop = (e) => {
+                e.preventDefault();
+                const draggedIndex = e.dataTransfer.getData('text');
+                const cards = document.querySelectorAll('.sentence-card');
+                if (cards[draggedIndex]) {
+                    addToParagraph(cards[draggedIndex].textContent, cards[draggedIndex].dataset.original);
+                }
+            };
+            
+            document.getElementById('paraNum').textContent = currentIndex + 1;
+        }
+        
+        function addToParagraph(text, original) {
+            // Find first empty slot
+            for (let i = 1; i <= 4; i++) {
+                const slot = document.getElementById('slot' + i);
+                if (!slot.classList.contains('filled')) {
+                    slot.textContent = text;
+                    slot.classList.add('filled');
+                    userOrder.push(parseInt(original));
+                    break;
+                }
+            }
+        }
+        
+        function checkAnswer() {
+            if (stage === 1) {
+                // Check sentence order
+                const feedback = document.getElementById('feedback');
+                const content = document.getElementById('feedbackContent');
+                const icon = document.getElementById('feedbackIcon');
+                const text = document.getElementById('feedbackText');
+                
+                if (userOrder.length !== 4) {
+                    alert('Please arrange all 4 sentences first!');
+                    return;
+                }
+                
+                let correct = true;
+                for (let i = 0; i < 4; i++) {
+                    if (userOrder[i] !== paragraphData.correctOrder[i]) {
+                        correct = false;
+                        break;
+                    }
+                }
+                
+                if (correct) {
+                    content.className = 'feedback-content correct';
+                    icon.textContent = '🎉';
+                    text.textContent = 'Perfect! Now answer some questions.';
+                    score += 20;
+                    document.getElementById('score').textContent = score;
+                } else {
+                    content.className = 'feedback-content wrong';
+                    icon.textContent = '😢';
+                    text.textContent = 'Not quite right. Try again!';
+                }
+                
+                feedback.classList.add('show');
+                
+                // If correct, move to question stage
+                if (correct) {
+                    setTimeout(() => {
+                        feedback.classList.remove('show');
+                        showQuestions();
+                    }, 1500);
+                }
+            } else {
+                // Check questions
+                checkQuestions();
+            }
+        }
+        
+        function showQuestions() {
+            stage = 2;
+            
+            document.getElementById('stage1').className = 'stage completed';
+            document.getElementById('stage2').className = 'stage active';
+            
+            document.getElementById('arrangeStage').style.display = 'none';
+            document.getElementById('questionsArea').style.display = 'block';
+            document.getElementById('checkBtn').textContent = '✓ Check Answers';
+            
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            paragraphData.questions.forEach((q, qIndex) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-card';
+                
+                let html = `<div class="question-text">${qIndex + 1}. ${q.question}</div>`;
+                
+                q.options.forEach((opt, oIndex) => {
+                    html += `<button class="option-btn" onclick="selectOption(${qIndex}, ${oIndex})" id="q${qIndex}o${oIndex}">${opt}</button>`;
+                });
+                
+                qDiv.innerHTML = html;
+                container.appendChild(qDiv);
+            });
+        }
+        
+        let selectedAnswers = {};
+        
+        function selectOption(qIndex, oIndex) {
+            selectedAnswers[qIndex] = oIndex;
+            
+            // Update UI
+            const buttons = document.querySelectorAll(`#questionsContainer .question-card:nth-child(${qIndex + 1}) .option-btn`);
+            buttons.forEach(btn => btn.classList.remove('correct', 'wrong'));
+            document.getElementById('q' + qIndex + 'o' + oIndex).classList.add('selected');
+        }
+        
+        function checkQuestions() {
+            let correct = 0;
+            const questions = paragraphData.questions;
+            
+            questions.forEach((q, qIndex) => {
+                const userAnswer = selectedAnswers[qIndex];
+                const btn = document.getElementById('q' + qIndex + 'o' + userAnswer);
+                
+                if (userAnswer === q.correct) {
+                    btn.classList.add('correct');
+                    correct++;
+                } else {
+                    btn.classList.add('wrong');
+                    // Show correct answer
+                    document.getElementById('q' + qIndex + 'o' + q.correct).classList.add('correct');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            if (correct === questions.length) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Excellent! You got all answers right!';
+                score += 20;
+                document.getElementById('score').textContent = score;
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '👍';
+                text.textContent = `You got ${correct} out of ${questions.length} correct`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextParagraph() {
+            document.getElementById('feedback').classList.remove('show');
+            currentIndex = (currentIndex + 1) % paragraphs.length;
+            selectedAnswers = {};
+            loadParagraph();
+        }
+        
+        loadParagraph();
+    </script>
+</body>
+</html>

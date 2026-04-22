@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GyanPlay — Learn Through Play</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --saffron: #FF6B00;
+      --gold: #FFB800;
+      --sky: #00AEEF;
+      --green: #00C853;
+      --pink: #FF4081;
+      --dark: #1A1A2E;
+      --light: #FFFDF7;
+      --card-bg: #ffffff;
+      --shadow: 0 8px 32px rgba(26,26,46,0.12);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      overflow-x: hidden;
+      animation: pageIn 0.4s ease;
+    }
+    @keyframes pageIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ── LANGUAGE TOGGLE ── */
+    .lang-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
+      height: 56px;
+      background: var(--dark);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+
+    .logo-small {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--gold);
+      letter-spacing: -0.5px;
+    }
+    .logo-small span { color: var(--sky); }
+
+    .lang-toggle {
+      display: flex;
+      gap: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 30px;
+      padding: 4px;
+    }
+    .lang-toggle button {
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.5);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .lang-toggle button.active {
+      background: var(--gold);
+      color: var(--dark);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      padding-top: 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(160deg, #0f0c29 0%, #1A1A2E 50%, #16213e 100%);
+    }
+
+    /* floating blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.25;
+      animation: float 8s ease-in-out infinite;
+    }
+    .blob1 { width: 420px; height: 420px; background: var(--saffron); top: -100px; left: -100px; animation-delay: 0s; }
+    .blob2 { width: 350px; height: 350px; background: var(--sky); bottom: -80px; right: -80px; animation-delay: 2s; }
+    .blob3 { width: 280px; height: 280px; background: var(--pink); top: 40%; left: 60%; animation-delay: 4s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-30px) scale(1.05); }
+    }
+
+    /* stars */
+    .stars {
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 15%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 80% 50%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 10% 85%, rgba(255,255,255,0.5) 0%, transparent 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 2rem 1.5rem;
+      max-width: 700px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255,184,0,0.15);
+      border: 1.5px solid var(--gold);
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 16px;
+      border-radius: 30px;
+      margin-bottom: 1.5rem;
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .hero-title {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: clamp(2.8rem, 8vw, 5rem);
+      line-height: 1.05;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      animation: fadeDown 0.7s 0.1s ease both;
+    }
+    .hero-title .accent { color: var(--gold); }
+    .hero-title .accent2 { color: var(--sky); }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+      animation: fadeDown 0.7s 0.2s ease both;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeDown 0.7s 0.3s ease both;
+    }
+
+    .btn-primary {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--saffron);
+      color: #fff;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 14px 28px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 6px 24px rgba(255,107,0,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,107,0,0.5); }
+
+    .btn-secondary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: #fff;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 14px 28px;
+      border-radius: 50px;
+      border: 2px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.6); }
+
+    .google-icon {
+      width: 20px; height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .google-icon svg { width: 14px; height: 14px; }
+
+    /* floating emoji kids */
+    .floaters {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .floater {
+      position: absolute;
+      font-size: 2rem;
+      animation: floatUp 10s ease-in-out infinite;
+      opacity: 0.5;
+    }
+    .floater:nth-child(1) { left: 5%; top: 20%; animation-delay: 0s; font-size: 2.5rem; }
+    .floater:nth-child(2) { left: 15%; top: 65%; animation-delay: 1.5s; font-size: 1.8rem; }
+    .floater:nth-child(3) { right: 8%; top: 25%; animation-delay: 3s; font-size: 2.2rem; }
+    .floater:nth-child(4) { right: 18%; top: 70%; animation-delay: 4.5s; font-size: 1.6rem; }
+    .floater:nth-child(5) { left: 45%; top: 10%; animation-delay: 2s; font-size: 1.5rem; }
+
+    @keyframes floatUp {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(8deg); }
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SCROLL ARROW ── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.4);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      animation: bounce 2s infinite;
+      z-index: 2;
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ── CLASSES STRIP ── */
+    .classes-section {
+      padding: 5rem 1.5rem;
+      text-align: center;
+      background: var(--light);
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--saffron);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-sub {
+      color: #666;
+      font-size: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .classes-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .class-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 1.2rem 1rem;
+      width: 130px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid transparent;
+    }
+    .class-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.15); border-color: var(--saffron); }
+
+    .class-card .emoji { font-size: 2rem; margin-bottom: 0.4rem; }
+    .class-card .name {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--dark);
+      margin-bottom: 0.3rem;
+    }
+    .class-card .price {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .class-card.free .price { color: var(--green); }
+    .class-card:not(.free) .price { color: var(--saffron); }
+
+    .free-badge {
+      position: absolute;
+      top: 8px; right: -12px;
+      background: var(--green);
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 2px 20px 2px 8px;
+      transform: rotate(12deg);
+      border-radius: 4px;
+    }
+
+    /* ── FEATURES ── */
+    .features-section {
+      padding: 5rem 1.5rem;
+      background: var(--dark);
+      text-align: center;
+    }
+    .features-section .section-title { color: #fff; }
+    .features-section .section-sub { color: rgba(255,255,255,0.5); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 2rem 1.5rem;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .feature-card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.09); }
+    .feature-card .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .feature-card h3 {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      color: #fff;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    .feature-card p { color: rgba(255,255,255,0.5); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ── SUBJECTS ── */
+    .subjects-section {
+      padding: 5rem 1.5rem;
+      text-align: center;
+      background: #FFF8F0;
+    }
+
+    .subjects-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .subject-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: default;
+    }
+    .s1 { background: #FFF3E0; color: #E65100; }
+    .s2 { background: #E3F2FD; color: #0D47A1; }
+    .s3 { background: #E8F5E9; color: #1B5E20; }
+    .s4 { background: #FCE4EC; color: #880E4F; }
+    .s5 { background: #F3E5F5; color: #4A148C; }
+
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      padding: 5rem 1.5rem;
+      text-align: center;
+      background: var(--light);
+    }
+
+    .steps {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      width: 180px;
+    }
+    .step-num {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: var(--saffron);
+      color: #fff;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 1.4rem;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 20px rgba(255,107,0,0.35);
+    }
+    .step h4 {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--dark);
+    }
+    .step p { font-size: 0.85rem; color: #777; line-height: 1.5; }
+
+    /* ── FREE GAMES & COMICS ── */
+    .freezone-section {
+      padding: 5rem 1.5rem;
+      text-align: center;
+      background: linear-gradient(160deg, #FFF8F0 0%, #F0FFF4 100%);
+    }
+
+    .freezone-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .fz-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 2rem 1.5rem 1.5rem;
+      width: 160px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.09);
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      transition: transform 0.22s, box-shadow 0.22s;
+      border: 2.5px solid transparent;
+      position: relative;
+    }
+    .fz-card:hover { transform: translateY(-7px); box-shadow: 0 18px 48px rgba(0,0,0,0.14); }
+
+    .fz-card.games0-3  { border-color: #FF6B00; }
+    .fz-card.games3-6  { border-color: #00C853; }
+    .fz-card.games6-9  { border-color: #00AEEF; }
+    .fz-card.games6-9b { border-color: #FF4081; }
+    .fz-card.comics    { border-color: #FFB800; }
+
+    .fz-icon {
+      font-size: 3rem;
+      line-height: 1;
+    }
+
+    .fz-badge {
+      position: absolute;
+      top: 10px; right: -8px;
+      background: var(--green);
+      color: #fff;
+      font-size: 0.55rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0,200,83,0.4);
+    }
+
+    .fz-title {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--dark);
+      line-height: 1.3;
+    }
+
+    .fz-age {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #888;
+      background: #F5F5F5;
+      border-radius: 20px;
+      padding: 3px 10px;
+    }
+
+    .fz-new {
+      position: absolute;
+      top: 10px; left: -8px;
+      background: var(--pink);
+      color: #fff;
+      font-size: 0.55rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(255,64,129,0.4);
+    }
+
+    /* ── CTA BANNER ── */
+    .cta-section {
+      padding: 5rem 1.5rem;
+      text-align: center;
+      background: linear-gradient(135deg, var(--saffron), var(--pink));
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 30%, rgba(255,255,255,0.08) 0%, transparent 40%);
+    }
+    .cta-section h2 {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: #fff;
+      margin-bottom: 0.75rem;
+      position: relative;
+    }
+    .cta-section p { color: rgba(255,255,255,0.85); font-size: 1.05rem; margin-bottom: 2rem; position: relative; }
+    .btn-white {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      color: var(--saffron);
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 14px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .btn-white:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(0,0,0,0.25); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: rgba(255,255,255,0.35);
+      font-size: 0.85rem;
+    }
+    footer .logo-f {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    footer .logo-f span { color: var(--sky); }
+
+    /* ── TRANSLATIONS (hidden by default) ── */
+    [data-lang] { display: none; }
+    [data-lang="en"] { display: inline; }
+    .block-en, .block-as, .block-hi { display: none; }
+    .block-en { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV / LANG BAR -->
+  <nav class="lang-bar">
+    <div class="logo-small">Gyan<span>Play</span></div>
+    <div class="lang-toggle">
+      <button onclick="setLang('en')" id="lbEn">EN</button>
+      <button onclick="setLang('hi')" id="lbHi">हि</button>
+      <button onclick="setLang('as')" id="lbAs">অ</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="stars"></div>
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="floaters">
+      <span class="floater">🎮</span>
+      <span class="floater">📚</span>
+      <span class="floater">🌟</span>
+      <span class="floater">🎯</span>
+      <span class="floater">🧠</span>
+    </div>
+    <div class="hero-content">
+      <div class="badge">
+        <span data-lang="en">🇮🇳 India's Game-Based Learning Platform</span>
+        <span data-lang="as">🇮🇳 ভাৰতৰ খেল-ভিত্তিক শিক্ষা মঞ্চ</span>
+        <span data-lang="hi">🇮🇳 भारत का खेल-आधारित शिक्षा मंच</span>
+      </div>
+      <h1 class="hero-title">
+        <span data-lang="en">Where <span class="accent">Knowledge</span> Meets <span class="accent2">Play</span></span>
+        <span data-lang="as"><span class="accent">জ্ঞান</span> আৰু <span class="accent2">খেলৰ</span> মিলনস্থল</span>
+        <span data-lang="hi"><span class="accent">ज्ञान</span> और <span class="accent2">खेल</span> का संगम</span>
+      </h1>
+      <p class="hero-sub">
+        <span data-lang="en">Unlock your child's potential through fun, interactive games — from Pre-Nursery to Class 10. Login with Gmail and start the adventure today.</span>
+        <span data-lang="as">মজাদাৰ, ইন্টাৰেক্টিভ গেমৰ মাধ্যমেৰে আপোনাৰ সন্তানৰ সম্ভাৱনা মুকলি কৰক — Pre-Nursery ৰ পৰা Class 10 লৈ।</span>
+        <span data-lang="hi">मज़ेदार, इंटरेक्टिव गेम्स के ज़रिए अपने बच्चे की क्षमता को उजागर करें — Pre-Nursery से Class 10 तक।</span>
+      </p>
+      <div class="hero-cta">
+        <a href="dashboard.html" class="btn-primary">
+          <span class="google-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+          </span>
+          <span data-lang="en">Login with Gmail</span>
+          <span data-lang="as">Gmail ৰে লগইন কৰক</span>
+          <span data-lang="hi">Gmail से Login करें</span>
+        </a>
+        <a href="#classes" class="btn-secondary">
+          <span data-lang="en">View Classes ↓</span>
+          <span data-lang="as">ক্লাছ চাওক ↓</span>
+          <span data-lang="hi">Classes देखें ↓</span>
+        </a>
+        <a href="#free-games" class="btn-secondary" style="border-color:var(--green);color:var(--green);">
+          🎮 <span data-lang="en">Free Games &amp; Comics</span>
+          <span data-lang="as">বিনামূলীয়া গেম আৰু কমিকছ</span>
+          <span data-lang="hi">मुफ़्त गेम्स और कॉमिक्स</span>
+        </a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span>scroll</span>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </section>
+
+  <!-- FREE GAMES & COMICS -->
+  <section class="freezone-section" id="free-games">
+    <div class="section-label" style="color:var(--green)">
+      ✨ <span data-lang="en">100% Free</span><span data-lang="as">১০০% বিনামূলীয়া</span><span data-lang="hi">१००% मुफ़्त</span>
+    </div>
+    <h2 class="section-title" style="margin-bottom:0.5rem">
+      <span data-lang="en">Free Games &amp; Comics</span>
+      <span data-lang="as">বিনামূলীয়া গেম আৰু কমিকছ</span>
+      <span data-lang="hi">मुफ़्त गेम्स और कॉमिक्स</span>
+    </h2>
+    <p class="section-sub" style="margin-bottom:3rem">
+      <span data-lang="en">No login needed — jump straight into fun learning!</span>
+      <span data-lang="as">লগইনৰ প্ৰয়োজন নাই — পোনপটীয়াকৈ মজাৰে শিকক!</span>
+      <span data-lang="hi">लॉगिन की ज़रूरत नहीं — सीधे मज़ेदार सीखाई में कूदें!</span>
+    </p>
+
+    <div class="freezone-grid">
+
+      <!-- Age 0–3 -->
+      <a href="comics-games/age%20-%280-3%29/index.html" target="_blank" rel="noopener" class="fz-card games0-3">
+        <span class="fz-badge">FREE</span>
+        <div class="fz-icon">🍼</div>
+        <div class="fz-title">
+          <span data-lang="en">Khelona</span>
+          <span data-lang="as">খেলনা</span>
+          <span data-lang="hi">खेलोना</span>
+        </div>
+        <div class="fz-age">Age 0 – 3</div>
+      </a>
+
+      <!-- Age 3–6 -->
+      <a href="comics-games/age%20-%283-6%29/index.html" target="_blank" rel="noopener" class="fz-card games3-6">
+        <span class="fz-badge">FREE</span>
+        <div class="fz-icon">🌈</div>
+        <div class="fz-title">
+          <span data-lang="en">Play &amp; Learn</span>
+          <span data-lang="as">খেলক আৰু শিকক</span>
+          <span data-lang="hi">खेलो &amp; सीखो</span>
+        </div>
+        <div class="fz-age">Age 3 – 6</div>
+      </a>
+
+      <!-- Age 6–9 -->
+      <a href="comics-games/age%20-%286-9%29/index.html" target="_blank" rel="noopener" class="fz-card games6-9">
+        <span class="fz-badge">FREE</span>
+        <div class="fz-icon">🎮</div>
+        <div class="fz-title">
+          <span data-lang="en">Kids Learn</span>
+          <span data-lang="as">শিশু শিকক</span>
+          <span data-lang="hi">बच्चे सीखें</span>
+        </div>
+        <div class="fz-age">Age 6 – 9</div>
+      </a>
+
+      <!-- Age 6–9 Assamese -->
+      <a href="comics-games/age%20-%286-9%29%20-%20claude/index.html" target="_blank" rel="noopener" class="fz-card games6-9b">
+        <span class="fz-new">NEW</span>
+        <span class="fz-badge">FREE</span>
+        <div class="fz-icon">🦚</div>
+        <div class="fz-title">
+          <span data-lang="en">Rongmon's World</span>
+          <span data-lang="as">ৰংমনৰ জগত</span>
+          <span data-lang="hi">रोंगमोन की दुनिया</span>
+        </div>
+        <div class="fz-age">Age 6 – 9 · অসমীয়া</div>
+      </a>
+
+      <!-- Comics -->
+      <a href="comics-games/comic1/index.html" target="_blank" rel="noopener" class="fz-card comics">
+        <span class="fz-badge">FREE</span>
+        <div class="fz-icon">📖</div>
+        <div class="fz-title">
+          <span data-lang="en">Magic Story Forest</span>
+          <span data-lang="as">যাদুৰ বন-গল্প</span>
+          <span data-lang="hi">जादुई वन कहानियाँ</span>
+        </div>
+        <div class="fz-age">Comics · All Ages</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- CLASSES -->
+  <section class="classes-section" id="classes">
+    <div class="section-label">
+      <span data-lang="en">Choose Your Class</span>
+      <span data-lang="as">আপোনাৰ ক্লাছ বাছক</span>
+      <span data-lang="hi">अपनी Class चुनें</span>
+    </div>
+    <h2 class="section-title">
+      <span data-lang="en">One Class. One Year. Unlimited Games.</span>
+      <span data-lang="as">এক ক্লাছ। এক বছৰ। অসীমিত গেম।</span>
+      <span data-lang="hi">एक Class. एक साल. असीमित Games.</span>
+    </h2>
+    <p class="section-sub">
+      <span data-lang="en">Pay once per class and access all games for 12 months.</span>
+      <span data-lang="as">প্ৰতিটো ক্লাছৰ বাবে এবাৰ পেমেণ্ট কৰক আৰু ১২ মাহৰ বাবে সকলো গেম এক্সেছ কৰক।</span>
+      <span data-lang="hi">एक बार pay करें और 12 महीनों तक सभी games खेलें।</span>
+    </p>
+    <div class="classes-grid" id="classesGrid">
+      <!-- populated from games.json by JS -->
+    </div>
+  </section>
+
+  <!-- SUBJECTS -->
+  <section class="subjects-section">
+    <div class="section-label">
+      <span data-lang="en">Subjects Covered</span>
+      <span data-lang="as">বিষয়সমূহ</span>
+      <span data-lang="hi">विषय</span>
+    </div>
+    <h2 class="section-title" style="margin-bottom:2rem">
+      <span data-lang="en">5 Subjects. 1 Platform.</span>
+      <span data-lang="as">৫টি বিষয়। ১টি মঞ্চ।</span>
+      <span data-lang="hi">5 विषय। 1 Platform.</span>
+    </h2>
+    <div class="subjects-row">
+      <div class="subject-pill s1">🔢 <span data-lang="en">Maths</span><span data-lang="as">গণিত</span><span data-lang="hi">गणित</span></div>
+      <div class="subject-pill s2">📝 <span data-lang="en">English</span><span data-lang="as">ইংৰাজী</span><span data-lang="hi">English</span></div>
+      <div class="subject-pill s3">🔬 <span data-lang="en">Science</span><span data-lang="as">বিজ্ঞান</span><span data-lang="hi">विज्ञान</span></div>
+      <div class="subject-pill s4">🌏 <span data-lang="en">Social Studies</span><span data-lang="as">সমাজ বিজ্ঞান</span><span data-lang="hi">सामाजिक विज्ञान</span></div>
+      <div class="subject-pill s5">🙏 <span data-lang="en">Hindi</span><span data-lang="as">হিন্দী</span><span data-lang="hi">हिंदी</span></div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features-section">
+    <div class="section-label" style="color:var(--gold)">
+      <span data-lang="en">Why GyanPlay?</span>
+      <span data-lang="as">GyanPlay কিয়?</span>
+      <span data-lang="hi">GyanPlay क्यों?</span>
+    </div>
+    <h2 class="section-title" style="margin-bottom:0.5rem">
+      <span data-lang="en">Built for Indian Children</span>
+      <span data-lang="as">ভাৰতীয় শিশুৰ বাবে নিৰ্মিত</span>
+      <span data-lang="hi">भारतीय बच्चों के लिए बनाया गया</span>
+    </h2>
+    <p class="section-sub" style="margin-bottom:3rem">
+      <span data-lang="en">Games that teach the core of every concept — not just memorization.</span>
+      <span data-lang="as">প্ৰতিটো ধাৰণাৰ মূল শিকোৱা গেম — মাত্ৰ মুখস্থ নহয়।</span>
+      <span data-lang="hi">हर concept की core सिखाने वाले games — सिर्फ रटने के लिए नहीं।</span>
+    </p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="icon">🎮</div>
+        <h3><span data-lang="en">Game-Based Learning</span><span data-lang="as">খেল-ভিত্তিক শিক্ষা</span><span data-lang="hi">Game-Based Learning</span></h3>
+        <p><span data-lang="en">Every concept taught through interactive games kids actually want to play.</span><span data-lang="as">প্ৰতিটো ধাৰণা ইন্টাৰেক্টিভ গেমৰ জৰিয়তে শিকোৱা হয়।</span><span data-lang="hi">हर concept को ऐसे games के ज़रिए सिखाया जाता है जो बच्चे खेलना पसंद करते हैं।</span></p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🔐</div>
+        <h3><span data-lang="en">Safe & Secure</span><span data-lang="as">সুৰক্ষিত</span><span data-lang="hi">Safe & Secure</span></h3>
+        <p><span data-lang="en">Gmail login only. No strangers. No ads. Just learning.</span><span data-lang="as">কেৱল Gmail লগইন। কোনো বিজ্ঞাপন নাই।</span><span data-lang="hi">सिर्फ Gmail login. कोई विज्ञापन नहीं। सिर्फ सीखना।</span></p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🌐</div>
+        <h3><span data-lang="en">3 Languages</span><span data-lang="as">৩টি ভাষা</span><span data-lang="hi">3 भाषाएं</span></h3>
+        <p><span data-lang="en">Switch between English, Assamese & Hindi anytime.</span><span data-lang="as">English, অসমীয়া আৰু Hindi যিকোনো সময়ত পৰিবৰ্তন কৰক।</span><span data-lang="hi">English, असमिया और Hindi में कभी भी बदलें।</span></p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📅</div>
+        <h3><span data-lang="en">1 Year Access</span><span data-lang="as">১ বছৰৰ প্ৰৱেশাধিকাৰ</span><span data-lang="hi">1 साल की Access</span></h3>
+        <p><span data-lang="en">Pay once per class and get full access for 12 full months.</span><span data-lang="as">এবাৰ পেমেণ্ট কৰক আৰু ১২ মাহৰ সম্পূৰ্ণ এক্সেছ পাওক।</span><span data-lang="hi">एक बार pay करें और पूरे 12 महीने full access पाएं।</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section">
+    <div class="section-label">
+      <span data-lang="en">How It Works</span>
+      <span data-lang="as">কেনেকৈ কাম কৰে</span>
+      <span data-lang="hi">कैसे काम करता है</span>
+    </div>
+    <h2 class="section-title" style="margin-bottom:3rem">
+      <span data-lang="en">3 Simple Steps</span>
+      <span data-lang="as">৩টি সহজ পদক্ষেপ</span>
+      <span data-lang="hi">3 आसान Steps</span>
+    </h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4><span data-lang="en">Login with Gmail</span><span data-lang="as">Gmail ৰে লগইন</span><span data-lang="hi">Gmail से Login</span></h4>
+        <p><span data-lang="en">Create your parent account using your Google account in seconds.</span><span data-lang="as">কেইছেকেণ্ডমানতে আপোনাৰ Google account ব্যৱহাৰ কৰি একাউণ্ট বনাওক।</span><span data-lang="hi">अपने Google account से seconds में parent account बनाएं।</span></p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4><span data-lang="en">Choose a Class</span><span data-lang="as">ক্লাছ বাছক</span><span data-lang="hi">Class चुनें</span></h4>
+        <p><span data-lang="en">Select your child's class and pay securely via Razorpay (UPI/Card).</span><span data-lang="as">আপোনাৰ সন্তানৰ ক্লাছ বাছক আৰু Razorpay ৰ জৰিয়তে নিৰাপদে পেমেণ্ট কৰক।</span><span data-lang="hi">अपने बच्चे की class चुनें और Razorpay से सुरक्षित payment करें।</span></p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4><span data-lang="en">Start Playing!</span><span data-lang="as">খেলা আৰম্ভ কৰক!</span><span data-lang="hi">खेलना शुरू करें!</span></h4>
+        <p><span data-lang="en">Instant access to all games for that class — for a full year.</span><span data-lang="as">সেই ক্লাছৰ সকলো গেমলৈ তৎক্ষণাৎ প্ৰৱেশ — পূৰ্ণ এক বছৰৰ বাবে।</span><span data-lang="hi">उस class के सभी games तक तुरंत access — पूरे एक साल के लिए।</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="cta-section">
+    <h2>
+      <span data-lang="en">Ready to Start Learning?</span>
+      <span data-lang="as">শিকিবলৈ প্ৰস্তুত?</span>
+      <span data-lang="hi">सीखने के लिए तैयार हैं?</span>
+    </h2>
+    <p>
+      <span data-lang="en">Pre-Nursery is FREE. No credit card needed. Just your Gmail.</span>
+      <span data-lang="as">Pre-Nursery বিনামূলীয়া। কোনো credit card নালাগে। মাত্ৰ আপোনাৰ Gmail।</span>
+      <span data-lang="hi">Pre-Nursery FREE है। Credit card की ज़रूरत नहीं। बस आपका Gmail।</span>
+    </p>
+    <a href="dashboard.html" class="btn-white">
+      <span class="google-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+      </span>
+      <span data-lang="en">Get Started Free →</span>
+      <span data-lang="as">বিনামূলীয়াকৈ আৰম্ভ কৰক →</span>
+      <span data-lang="hi">Free में शुरू करें →</span>
+    </a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="logo-f">Gyan<span>Play</span></div>
+    <p style="margin-bottom:0.5rem">
+      <span data-lang="en">Learn Through Play — Pre-Nursery to Class 10</span>
+      <span data-lang="as">খেলৰ মাধ্যমেৰে শিকক — Pre-Nursery ৰ পৰা Class 10 লৈ</span>
+      <span data-lang="hi">खेल के माध्यम से सीखें — Pre-Nursery से Class 10 तक</span>
+    </p>
+    <p>© 2024 GyanPlay. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const CLASS_LABELS = {
+      en: { prenursery:'Pre-Nursery', nursery:'Nursery', 'class-1':'Class 1','class-2':'Class 2',
+            'class-3':'Class 3','class-4':'Class 4','class-5':'Class 5','class-6':'Class 6',
+            'class-7':'Class 7','class-8':'Class 8','class-9':'Class 9','class-10':'Class 10' },
+      hi: { prenursery:'प्री-नर्सरी', nursery:'नर्सरी', 'class-1':'कक्षा 1','class-2':'कक्षा 2',
+            'class-3':'कक्षा 3','class-4':'कक्षा 4','class-5':'कक्षा 5','class-6':'कक्षा 6',
+            'class-7':'कक्षा 7','class-8':'कक्षा 8','class-9':'कक्षा 9','class-10':'कक्षा 10' },
+      as: { prenursery:'প্ৰী-নাৰ্চাৰি', nursery:'নাৰ্চাৰি','class-1':'শ্ৰেণী ১','class-2':'শ্ৰেণী ২',
+            'class-3':'শ্ৰেণী ৩','class-4':'শ্ৰেণী ৪','class-5':'শ্ৰেণী ৫','class-6':'শ্ৰেণী ৬',
+            'class-7':'শ্ৰেণী ৭','class-8':'শ্ৰেণী ৮','class-9':'শ্ৰেণী ৯','class-10':'শ্ৰেণী ১০' }
+    };
+
+    let _gamesData = null;
+    let currentLang = localStorage.getItem('gyanplay_lang') || 'en';
+
+    async function loadAndRenderClasses() {
+      try {
+        const res  = await fetch('data/games.json');
+        _gamesData = await res.json();
+        renderClasses(currentLang);
+      } catch(e) {}
+    }
+
+    function renderClasses(lang) {
+      if (!_gamesData) return;
+      const grid = document.getElementById('classesGrid');
+      if (!grid) return;
+      const labels = CLASS_LABELS[lang] || CLASS_LABELS.en;
+      grid.innerHTML = _gamesData.classes.map(c => {
+        const price   = _gamesData.pricing[c.id] || 0;
+        const isFree  = price === 0;
+        return `
+          <div class="class-card${isFree?' free':''}" onclick="localStorage.setItem('gyanplay_lastClass','${c.id}');navTo('classroom.html?class=${c.id}')" style="cursor:pointer">
+            ${isFree ? '<div class="free-badge">FREE</div>' : ''}
+            <div class="emoji">${c.emoji}</div>
+            <div class="name">${labels[c.id] || c.name.en}</div>
+            <div class="price">${isFree ? '₹0' : '₹' + price.toLocaleString('en-IN')}</div>
+          </div>`;
+      }).join('');
+    }
+
+    function setLang(lang) {
+      currentLang = lang;
+      ['en','hi','as'].forEach(l => {
+        const btn = document.getElementById(`lb${l.charAt(0).toUpperCase()+l.slice(1)}`);
+        if (btn) btn.classList.toggle('active', l === lang);
+      });
+      document.querySelectorAll('[data-lang]').forEach(el => {
+        el.style.display = el.getAttribute('data-lang') === lang ? 'inline' : 'none';
+      });
+      localStorage.setItem('gyanplay_lang', lang);
+      renderClasses(lang);
+    }
+
+    function navTo(href) {
+      document.body.style.transition = 'opacity 0.2s';
+      document.body.style.opacity = '0';
+      setTimeout(() => location.href = href, 210);
+    }
+
+    // smooth transitions for internal links
+    document.addEventListener('DOMContentLoaded', () => {
+      setLang(currentLang);
+      loadAndRenderClasses();
+
+      document.querySelectorAll('a[href]').forEach(a => {
+        const href = a.getAttribute('href');
+        if (href && !href.startsWith('#') && !href.startsWith('http')) {
+          a.addEventListener('click', e => { e.preventDefault(); navTo(href); });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

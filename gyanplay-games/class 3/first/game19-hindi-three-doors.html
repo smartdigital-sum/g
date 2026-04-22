@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🚪 काल के तीन दरवाज़े — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A0A18;--card:#12122A;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--red:#FF4757;--green:#06D6A0;--text:#E8E8FF;--dim:#5A5A9A}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(76,201,240,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.35rem;font-weight:800;color:var(--gold)}
+.hindi-sub{font-family:'Noto Sans Devanagari',sans-serif;font-size:.88rem;color:var(--blue)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.stars{display:flex;gap:4px;font-size:1.2rem}
+.star{opacity:.3;transition:all .3s}.star.lit{opacity:1;filter:drop-shadow(0 0 6px #FFD166)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+.hook{background:linear-gradient(135deg,rgba(76,201,240,.1),rgba(199,125,255,.08));border:1px solid rgba(76,201,240,.25);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.87rem;line-height:1.65;color:#C4EEFF}
+.hook strong{color:var(--gold)}
+.hook .hindi{font-family:'Noto Sans Devanagari',sans-serif;color:var(--blue);font-size:.95rem}
+/* Three doors */
+.doors-row{display:flex;gap:10px;justify-content:center;width:100%;max-width:460px}
+.door{flex:1;padding:16px 8px;border-radius:14px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .25s;position:relative;overflow:hidden}
+.door::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s}
+.door.bhoot{background:rgba(255,71,87,.07);border-color:rgba(255,71,87,.3)}
+.door.bhoot:hover,.door.bhoot.active{border-color:var(--red);background:rgba(255,71,87,.15);box-shadow:0 0 20px rgba(255,71,87,.25)}
+.door.vartman{background:rgba(255,209,102,.07);border-color:rgba(255,209,102,.3)}
+.door.vartman:hover,.door.vartman.active{border-color:var(--gold);background:rgba(255,209,102,.15);box-shadow:0 0 20px rgba(255,209,102,.25)}
+.door.bhavishy{background:rgba(6,214,160,.07);border-color:rgba(6,214,160,.3)}
+.door.bhavishy:hover,.door.bhavishy.active{border-color:var(--teal);background:rgba(6,214,160,.15);box-shadow:0 0 20px rgba(6,214,160,.25)}
+.door-emoji{font-size:2rem;display:block;margin-bottom:6px}
+.door-hindi{font-family:'Noto Sans Devanagari',sans-serif;font-size:.95rem;font-weight:700;display:block;margin-bottom:2px}
+.door.bhoot .door-hindi{color:var(--red)}
+.door.vartman .door-hindi{color:var(--gold)}
+.door.bhavishy .door-hindi{color:var(--teal)}
+.door-label{font-size:.68rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+/* Sentence card */
+.sentence-card{background:var(--card);border-radius:14px;padding:18px 20px;width:100%;max-width:460px;border:2px solid rgba(76,201,240,.15)}
+.sentence-task{font-size:.75rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);margin-bottom:8px}
+.sentence-given{font-family:'Noto Sans Devanagari',sans-serif;font-size:1.1rem;color:var(--text);margin-bottom:6px;line-height:1.6}
+.sentence-given .key-verb{color:var(--gold);font-weight:700}
+.sentence-target{font-family:'Noto Sans Devanagari',sans-serif;font-size:1.05rem;color:var(--dim);line-height:1.6}
+.sentence-target .blank{display:inline-block;min-width:90px;border-bottom:2px dashed rgba(76,201,240,.4);color:var(--blue);padding:0 6px}
+.sentence-target .answer{color:var(--teal);font-weight:700}
+.sentence-meaning{font-size:.78rem;color:rgba(255,255,255,.3);margin-top:6px;line-height:1.4;font-style:italic}
+/* Options */
+.verb-opts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:460px}
+.verb-opt{padding:12px 20px;background:var(--card);border:2px solid rgba(76,201,240,.2);border-radius:50px;cursor:pointer;font-family:'Noto Sans Devanagari',sans-serif;font-size:1rem;color:var(--text);transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:2px;user-select:none}
+.verb-opt:hover{border-color:var(--blue);transform:scale(1.06)}
+.verb-opt.correct{border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal);pointer-events:none}
+.verb-opt.wrong{border-color:var(--coral);animation:ws .4s ease}
+.verb-opt .v-meaning{font-size:.6rem;font-family:'Nunito',sans-serif;color:var(--dim)}
+@keyframes ws{0%,100%{transform:translateX(0)}30%{transform:translateX(-5px)}70%{transform:translateX(5px)}}
+.rule-chip{background:rgba(76,201,240,.08);border:1px solid rgba(76,201,240,.2);border-radius:10px;padding:8px 14px;font-size:.8rem;color:#90C8E8;line-height:1.5;max-width:460px;text-align:center;display:none;font-family:'Noto Sans Devanagari',sans-serif}
+.rule-chip.show{display:block}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.next-btn{padding:11px 26px;background:var(--gold);color:#0A0A18;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.next-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(10,10,24,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4rem}.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.9rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:300px;font-size:.88rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@keyframes doorWarp{0%{filter:blur(0)opacity(1)}50%{filter:blur(3px)opacity(.6)}100%{filter:blur(0)opacity(1)}}
+.warp-anim{animation:doorWarp .5s ease}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="game-title">🚪 <span class="hindi-sub">काल के तीन दरवाज़े</span></div>
+    <div class="subject-tag">Hindi · Tenses (Kaal) · Class 3</div>
+  </div>
+  <div class="stars"><span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span></div>
+</div>
+<div class="game-area">
+  <div class="hook">
+    <span class="hindi">क्रिया तीन समय में काम करती है!</span><br>
+    The verb travels through time — <strong>भूतकाल</strong> (past) · <strong>वर्तमानकाल</strong> (present) · <strong>भविष्यकाल</strong> (future). Which door does this sentence go through?
+  </div>
+  <!-- Three Doors -->
+  <div class="doors-row">
+    <div class="door bhoot" id="door-bhoot"><span class="door-emoji">🔴</span><span class="door-hindi">भूतकाल</span><span class="door-label">Yesterday / Past</span></div>
+    <div class="door vartman" id="door-vartman"><span class="door-emoji">🟡</span><span class="door-hindi">वर्तमान</span><span class="door-label">Today / Present</span></div>
+    <div class="door bhavishy" id="door-bhavishy"><span class="door-emoji">🟢</span><span class="door-hindi">भविष्य</span><span class="door-label">Tomorrow / Future</span></div>
+  </div>
+  <div class="sentence-card" id="sentCard">
+    <div class="sentence-task" id="sentTask">इस वाक्य का काल पहचानो</div>
+    <div class="sentence-given" id="sentGiven">...</div>
+    <div class="sentence-target" id="sentTarget">...</div>
+    <div class="sentence-meaning" id="sentMeaning"></div>
+  </div>
+  <div class="verb-opts" id="verbOpts"></div>
+  <div class="rule-chip" id="ruleChip"></div>
+</div>
+<div class="bottom">
+  <div class="prog" id="prog">सवाल 1 / 10</div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()">अगला →</button>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🎉</div>
+  <div class="ov-title" id="ovTitle">सही!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+<script>
+const QS=[
+  {task:'A: इस वाक्य में सही क्रिया चुनो',given:'राम आम <span class="key-verb">खाता है</span>।',target:'कल राम आम ___ था।',meaning:'Ram eats a mango. → Yesterday Ram ___ a mango.',kaal:'bhoot',correct:'खाता',opts:['खाता','खाएगा','खाएगी','खायेगा'],rule:'भूतकाल में "था/थी" आता है। (Past tense uses था/थी.)'},
+  {task:'B: इस वाक्य का काल क्या है?',given:'मीरा स्कूल <span class="key-verb">जाएगी</span>।',target:'यह वाक्य किस काल में है?',meaning:'Meera will go to school.',kaal:'bhavishy',correct:'',opts:[],isDoorQ:true,rule:'जाएगी = भविष्यकाल। "गा/गी/गे" = Future tense!'},
+  {task:'A: इस वाक्य में सही क्रिया चुनो',given:'पक्षी आकाश में <span class="key-verb">उड़ते हैं</span>।',target:'कल पक्षी आकाश में ___ ।',meaning:'Birds fly in the sky. → Tomorrow birds will ___.',kaal:'bhavishy',correct:'उड़ेंगे',opts:['उड़ते','उड़े','उड़ेंगे','उड़ता'],rule:'भविष्यकाल में "गे/गी/गा" जोड़ते हैं। Future adds गे/गी/गा!'},
+  {task:'B: इस वाक्य का काल क्या है?',given:'अर्जुन ने पानी <span class="key-verb">पिया</span>।',target:'यह वाक्य किस काल में है?',meaning:'Arjun drank water.',kaal:'bhoot',correct:'',opts:[],isDoorQ:true,rule:'पिया = भूतकाल। Past tense — action already done!'},
+  {task:'A: इस वाक्य में सही क्रिया चुनो',given:'बच्चे मैदान में <span class="key-verb">खेल रहे हैं</span>।',target:'कल बच्चे मैदान में ___ ।',meaning:'Children are playing in the ground. → Tomorrow they will ___.',kaal:'bhavishy',correct:'खेलेंगे',opts:['खेला','खेलते','खेलेंगे','खेली'],rule:'Future tense = verb + एंगे/एगी/एगा'},
+  {task:'B: इस वाक्य का काल क्या है?',given:'माँ खाना <span class="key-verb">बना रही है</span>।',target:'यह वाक्य किस काल में है?',meaning:'Mother is cooking food (right now).',kaal:'vartman',correct:'',opts:[],isDoorQ:true,rule:'बना रही है = वर्तमानकाल। Action happening RIGHT NOW = Present!'},
+  {task:'A: इस वाक्य में सही क्रिया चुनो',given:'कल बारिश <span class="key-verb">हुई</span>।',target:'आज बारिश ___ है।',meaning:'It rained yesterday. → Today it ___ .',kaal:'vartman',correct:'हो रही',opts:['हुई','हो रही','होगी','हुआ'],rule:'वर्तमान = अभी हो रहा है। Present = happening now!'},
+  {task:'B: इस वाक्य का काल क्या है?',given:'हम कल गुवाहाटी <span class="key-verb">जाएंगे</span>।',target:'यह वाक्य किस काल में है?',meaning:'We will go to Guwahati tomorrow.',kaal:'bhavishy',correct:'',opts:[],isDoorQ:true,rule:'जाएंगे = भविष्यकाल। Will go = Future tense!'},
+  {task:'A: इस वाक्य में सही क्रिया चुनो',given:'सूरज पूर्व से <span class="key-verb">उगता है</span>।',target:'कल सूरज पूर्व से ___ था।',meaning:'Sun rises in the east. → Yesterday sun ___ in the east.',kaal:'bhoot',correct:'उगता',opts:['उगता','उगेगा','उगेगी','उगे'],rule:'भूतकाल — "था/थी" tells us it is past!'},
+  {task:'B: इस वाक्य का काल क्या है?',given:'रिया गाना <span class="key-verb">गाती है</span>।',target:'यह वाक्य किस काल में है?',meaning:'Riya sings a song (usually/now).',kaal:'vartman',correct:'',opts:[],isDoorQ:true,rule:'गाती है = वर्तमानकाल। Habitual/ongoing = Present!'},
+];
+const DOOR_CLASSES={bhoot:'bhoot',vartman:'vartman',bhavishy:'bhavishy'};
+let qi=0,score=0,answered=false;
+function loadQ(){
+  const q=QS[qi];answered=false;
+  document.getElementById('prog').textContent=`सवाल ${qi+1} / ${QS.length}`;
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('ruleChip').classList.remove('show');
+  // Reset doors
+  ['bhoot','vartman','bhavishy'].forEach(d=>{document.getElementById(`door-${d}`).classList.remove('active');document.getElementById(`door-${d}`).style.pointerEvents=q.isDoorQ?'all':'none';});
+  document.getElementById('sentTask').textContent=q.isDoorQ?'इस वाक्य का काल पहचानो (Which kaal?)':'इस वाक्य में सही क्रिया चुनो (Choose correct verb)';
+  document.getElementById('sentGiven').innerHTML=q.given;
+  document.getElementById('sentTarget').innerHTML=q.isDoorQ?'<em style="color:var(--dim);font-size:.82rem">→ Tap the correct door above</em>':q.target.replace('___','<span class="blank">___</span>');
+  document.getElementById('sentMeaning').textContent=q.meaning;
+  // Build verb opts or door mode
+  const vo=document.getElementById('verbOpts');vo.innerHTML='';
+  if(!q.isDoorQ){
+    document.querySelectorAll('.door').forEach(d=>d.style.pointerEvents='none');
+    q.opts.forEach(o=>{
+      const b=document.createElement('div');b.className='verb-opt';
+      b.innerHTML=`${o}<span class="v-meaning"></span>`;
+      b.onclick=()=>pickVerb(b,o,q);vo.appendChild(b);
+    });
+  } else {
+    // Highlight which door to tap
+    ['bhoot','vartman','bhavishy'].forEach(d=>{
+      document.getElementById(`door-${d}`).onclick=()=>pickDoor(d,q);
+    });
+  }
+}
+function pickDoor(door,q){
+  if(answered)return;answered=true;
+  ['bhoot','vartman','bhavishy'].forEach(d=>document.getElementById(`door-${d}`).style.pointerEvents='none');
+  const sc=document.getElementById('sentCard');sc.classList.add('warp-anim');setTimeout(()=>sc.classList.remove('warp-anim'),500);
+  if(door===q.kaal){
+    document.getElementById(`door-${door}`).classList.add('active');
+    score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+    showOv('सही दरवाज़ा! 🚪',q.rule);confetti();setTimeout(hideOv,2000);
+  } else {
+    document.getElementById(`door-${q.kaal}`).classList.add('active');
+  }
+  document.getElementById('ruleChip').textContent='💡 '+q.rule;document.getElementById('ruleChip').classList.add('show');
+  document.getElementById('nextBtn').style.display='block';
+}
+function pickVerb(btn,val,q){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.verb-opt').forEach(b=>b.style.pointerEvents='none');
+  if(val===q.correct){
+    btn.classList.add('correct');score++;if(score<=5)document.getElementById(`s${score}`).classList.add('lit');
+    document.getElementById('sentTarget').innerHTML=q.target.replace('___',`<span class="answer">${q.correct}</span>`);
+    showOv('बहुत अच्छा! 🌟',q.rule);confetti();setTimeout(hideOv,2000);
+  } else {
+    btn.classList.add('wrong');document.querySelectorAll('.verb-opt').forEach(b=>{if(b.textContent.startsWith(q.correct))b.classList.add('correct');});
+  }
+  document.getElementById('ruleChip').textContent='💡 '+q.rule;document.getElementById('ruleChip').classList.add('show');
+  document.getElementById('nextBtn').style.display='block';
+}
+function nextQ(){qi++;document.getElementById('nextBtn').style.display='none';if(qi>=QS.length){endGame();return;}loadQ();}
+function endGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  showOv(`Score: ${score}/${QS.length}!`,'काल उस्ताद! You\'ve mastered all three tenses!');
+  document.getElementById('nextBtn').textContent='फिर खेलो ↺';
+  document.getElementById('nextBtn').onclick=()=>{score=0;qi=0;for(let i=1;i<=5;i++)document.getElementById(`s${i}`).classList.remove('lit');document.getElementById('nextBtn').style.display='none';document.getElementById('nextBtn').textContent='अगला →';document.getElementById('nextBtn').onclick=nextQ;document.getElementById('ovEmoji').textContent='🎉';document.getElementById('ovTitle').textContent='सही!';hideOv();loadQ();};
+}
+function showOv(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOv(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#4CC9F0','#FFD166','#06D6A0','#C77DFF','#FF9CC2'];for(let i=0;i<25;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+loadQ();
+</script>
+</body>
+</html>

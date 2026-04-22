@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hardware, Software & Internet — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:#fff;padding-bottom:40px}
+  h1,h2,h3{font-family:'Baloo 2',sans-serif}
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);position:sticky;top:0;z-index:99}
+  .back-btn{background:rgba(255,255,255,0.12);border:none;color:#fff;padding:7px 16px;border-radius:20px;cursor:pointer;font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;transition:background .2s}
+  .back-btn:hover{background:rgba(255,255,255,0.22)}
+  .badge{background:var(--sky);color:#fff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;font-family:'Baloo 2',sans-serif}
+  .lang-toggle{margin-left:auto;display:flex;gap:6px}
+  .lang-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s}
+  .lang-btn.active{background:var(--sky);border-color:var(--sky)}
+  .progress-wrap{padding:16px 20px 0}
+  .progress-info{display:flex;justify-content:space-between;font-size:13px;opacity:.8;margin-bottom:6px}
+  .progress-bar{height:8px;background:rgba(255,255,255,0.12);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--green));border-radius:4px;transition:width .5s ease}
+  .card{background:var(--card);border-radius:20px;padding:28px 24px;margin:20px auto;max-width:680px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:fadeIn .4s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .q-meta{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;opacity:.7}
+  .q-num{background:var(--sky);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;font-family:'Baloo 2',sans-serif;flex-shrink:0}
+  .topic-tag{background:rgba(0,174,239,0.2);border:1px solid var(--sky);color:#7dd3fc;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700}
+  .scene-emoji{font-size:40px;text-align:center;margin-bottom:10px}
+  .question{font-size:18px;font-weight:700;line-height:1.5;margin-bottom:20px;font-family:'Baloo 2',sans-serif}
+  .options{display:grid;gap:12px}
+  .opt-btn{background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);color:#fff;padding:14px 18px;border-radius:14px;cursor:pointer;text-align:left;font-size:15px;font-family:'Nunito',sans-serif;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:10px}
+  .opt-btn:hover:not(:disabled){background:rgba(0,174,239,0.15);border-color:var(--sky)}
+  .opt-btn.correct{background:rgba(0,200,83,0.2);border-color:var(--green)}
+  .opt-btn.wrong{background:rgba(255,64,129,0.18);border-color:var(--pink)}
+  .opt-btn:disabled{cursor:default}
+  .opt-label{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:14px;line-height:1.6;display:none;animation:fadeIn .3s ease}
+  .feedback.show{display:block}
+  .feedback.correct-fb{background:rgba(0,200,83,0.15);border:1px solid var(--green)}
+  .feedback.wrong-fb{background:rgba(255,64,129,0.12);border:1px solid var(--pink)}
+  .score-live{background:rgba(0,174,239,0.2);border:1px solid var(--sky);padding:4px 12px;border-radius:12px;font-size:13px;font-weight:700;color:#7dd3fc}
+  .next-btn{display:none;margin:20px auto 0;background:linear-gradient(135deg,var(--sky),#0284c7);border:none;color:#fff;padding:13px 36px;border-radius:24px;font-size:16px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 18px rgba(0,174,239,0.4)}
+  .next-btn:hover{transform:translateY(-2px)}
+  .next-btn.show{display:block}
+  .end-screen{display:none;text-align:center;padding:30px 20px;max-width:520px;margin:40px auto}
+  .end-screen.show{display:block;animation:fadeIn .5s ease}
+  .stars{font-size:44px;letter-spacing:4px;margin:10px 0}
+  .final-score{font-size:54px;font-weight:800;color:var(--gold);line-height:1;font-family:'Baloo 2',sans-serif}
+  .score-label{font-size:15px;opacity:.7;margin-bottom:20px}
+  .play-again{background:linear-gradient(135deg,var(--sky),var(--green));border:none;color:#fff;padding:14px 40px;border-radius:28px;font-size:17px;font-weight:800;font-family:'Baloo 2',sans-serif;cursor:pointer;transition:transform .15s;box-shadow:0 4px 20px rgba(0,174,239,0.4)}
+  .play-again:hover{transform:scale(1.05)}
+  .end-title{font-size:26px;font-weight:800;margin-bottom:8px;font-family:'Baloo 2',sans-serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">উভতি যাওক</span></button>
+  <span class="badge">Computer Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-info">
+    <span data-lang="en">Question <span id="qNum">1</span>/10</span>
+    <span data-lang="hi" style="display:none">प्रश्न <span id="qNumHi">1</span>/10</span>
+    <span data-lang="as" style="display:none">প্ৰশ্ন <span id="qNumAs">1</span>/10</span>
+    <span class="score-live">Score: <span id="scoreLive">0</span>/100</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+</div>
+
+<div id="quizArea"></div>
+
+<div class="end-screen" id="endScreen">
+  <div class="scene-emoji">💻</div>
+  <div class="end-title" data-lang="en">Quiz Complete!</div>
+  <div class="end-title" data-lang="hi" style="display:none">क्विज़ पूरा हुआ!</div>
+  <div class="end-title" data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</div>
+  <div class="stars" id="starsDisplay">⭐⭐⭐</div>
+  <div class="final-score" id="finalScore">0</div>
+  <div class="score-label" data-lang="en">out of 100</div>
+  <div class="score-label" data-lang="hi" style="display:none">100 में से</div>
+  <div class="score-label" data-lang="as" style="display:none">100ৰ মাজত</div>
+  <br>
+  <button class="play-again" onclick="restartQuiz()">
+    <span data-lang="en">Play Again</span>
+    <span data-lang="hi" style="display:none">फिर खेलें</span>
+    <span data-lang="as" style="display:none">আকৌ খেলক</span>
+  </button>
+</div>
+
+<script>
+const questions = [
+  {
+    emoji: "🖥️",
+    topic: "Hardware",
+    en: {
+      q: "Which of the following is an INPUT device?",
+      opts: ["Monitor", "Printer", "Keyboard", "Speaker"],
+      ans: 2,
+      exp: "A keyboard is an input device — it sends data INTO the computer. Monitor, printer, and speaker are output devices because they deliver results OUT of the computer to the user."
+    },
+    hi: {
+      q: "निम्नलिखित में से कौन-सा एक INPUT (इनपुट) डिवाइस है?",
+      opts: ["मॉनीटर", "प्रिंटर", "कीबोर्ड", "स्पीकर"],
+      ans: 2,
+      exp: "कीबोर्ड एक इनपुट डिवाइस है — यह डेटा कंप्यूटर में भेजता है। मॉनीटर, प्रिंटर, और स्पीकर आउटपुट डिवाइस हैं।"
+    },
+    as: {
+      q: "তলৰ কোনটো একটি INPUT (ইনপুট) ডিভাইচ?",
+      opts: ["মনিটৰ", "প্ৰিন্টাৰ", "কিব'ৰ্ড", "স্পীকাৰ"],
+      ans: 2,
+      exp: "কিব'ৰ্ড এটা ইনপুট ডিভাইচ — ই ডেটা কম্পিউটাৰত পঠিয়ায়। মনিটৰ, প্ৰিন্টাৰ, আৰু স্পীকাৰ আউটপুট ডিভাইচ।"
+    }
+  },
+  {
+    emoji: "💾",
+    topic: "RAM vs ROM",
+    en: {
+      q: "Which memory loses all its data when the computer is switched off?",
+      opts: ["ROM", "Hard Disk", "RAM", "CD-ROM"],
+      ans: 2,
+      exp: "RAM (Random Access Memory) is volatile memory — it loses all data when power is cut. ROM (Read Only Memory) retains data permanently. Hard disk and CD-ROM are permanent storage devices."
+    },
+    hi: {
+      q: "कंप्यूटर बंद होने पर कौन-सी मेमोरी का डेटा मिट जाता है?",
+      opts: ["ROM", "हार्ड डिस्क", "RAM", "CD-ROM"],
+      ans: 2,
+      exp: "RAM (रैंडम एक्सेस मेमोरी) अस्थायी मेमोरी है — बिजली बंद होने पर इसका सारा डेटा मिट जाता है। ROM का डेटा स्थायी रहता है।"
+    },
+    as: {
+      q: "কম্পিউটাৰ বন্ধ হ'লে কোন মেমোৰীৰ ডেটা মচি যায়?",
+      opts: ["ROM", "হাৰ্ড ডিষ্ক", "RAM", "CD-ROM"],
+      ans: 2,
+      exp: "RAM (ৰেণ্ডম একচেছ মেমোৰী) অস্থায়ী মেমোৰী — বিদ্যুৎ বন্ধ হ'লে ইয়াৰ সকলো ডেটা মচি যায়। ROM স্থায়ী মেমোৰী।"
+    }
+  },
+  {
+    emoji: "🖱️",
+    topic: "Software",
+    en: {
+      q: "Which of the following is system software?",
+      opts: ["MS Word", "Adobe Photoshop", "Windows Operating System", "Google Chrome"],
+      ans: 2,
+      exp: "Windows Operating System is system software — it manages hardware and provides a platform for other software to run. MS Word, Photoshop, and Chrome are application software used for specific tasks."
+    },
+    hi: {
+      q: "निम्नलिखित में से कौन-सा सिस्टम सॉफ्टवेयर है?",
+      opts: ["MS Word", "Adobe Photoshop", "Windows ऑपरेटिंग सिस्टम", "Google Chrome"],
+      ans: 2,
+      exp: "Windows ऑपरेटिंग सिस्टम, सिस्टम सॉफ्टवेयर है — यह हार्डवेयर को नियंत्रित करता है। MS Word, Photoshop और Chrome एप्लिकेशन सॉफ्टवेयर हैं।"
+    },
+    as: {
+      q: "তলৰ কোনটো চিষ্টেম ছফ্টৱেৰ?",
+      opts: ["MS Word", "Adobe Photoshop", "Windows অপাৰেটিং চিষ্টেম", "Google Chrome"],
+      ans: 2,
+      exp: "Windows অপাৰেটিং চিষ্টেম হ'ল চিষ্টেম ছফ্টৱেৰ — ই হাৰ্ডৱেৰ নিয়ন্ত্ৰণ কৰে। MS Word, Photoshop আৰু Chrome এপ্লিকেশ্যন ছফ্টৱেৰ।"
+    }
+  },
+  {
+    emoji: "💻",
+    topic: "Operating System",
+    en: {
+      q: "Which of the following is NOT a function of an Operating System?",
+      opts: ["Memory management", "File management", "Designing spreadsheets", "Process management"],
+      ans: 2,
+      exp: "Designing spreadsheets is done by application software like MS Excel — it is NOT a function of the operating system. The OS handles memory management, file management, process management, and device control."
+    },
+    hi: {
+      q: "निम्नलिखित में से कौन-सा ऑपरेटिंग सिस्टम का कार्य नहीं है?",
+      opts: ["मेमोरी प्रबंधन", "फ़ाइल प्रबंधन", "स्प्रेडशीट डिजाइन करना", "प्रक्रिया प्रबंधन"],
+      ans: 2,
+      exp: "स्प्रेडशीट डिजाइन करना MS Excel जैसे एप्लिकेशन सॉफ्टवेयर का काम है — यह ऑपरेटिंग सिस्टम का कार्य नहीं है।"
+    },
+    as: {
+      q: "তলৰ কোনটো অপাৰেটিং চিষ্টেমৰ কাৰ্য নহয়?",
+      opts: ["মেমোৰী পৰিচালনা", "ফাইল পৰিচালনা", "স্প্ৰেডশ্বীট ডিজাইন কৰা", "প্ৰক্ৰিয়া পৰিচালনা"],
+      ans: 2,
+      exp: "স্প্ৰেডশ্বীট ডিজাইন কৰাটো MS Excel আদি এপ্লিকেশ্যন ছফ্টৱেৰৰ কাম — এয়া অপাৰেটিং চিষ্টেমৰ কাৰ্য নহয়।"
+    }
+  },
+  {
+    emoji: "🌐",
+    topic: "Internet Protocols",
+    en: {
+      q: "What does HTTP stand for, and what is it used for?",
+      opts: ["High Transfer Text Protocol — for file compression", "HyperText Transfer Protocol — for web page transfer", "Hybrid Text Transfer Protocol — for emails", "HyperText Terminal Protocol — for printing"],
+      ans: 1,
+      exp: "HTTP stands for HyperText Transfer Protocol. It is the foundation of data communication on the World Wide Web, used to transfer web pages from servers to browsers. HTTPS is its secure version."
+    },
+    hi: {
+      q: "HTTP का पूरा नाम क्या है और इसका उपयोग किसके लिए होता है?",
+      opts: ["High Transfer Text Protocol — फ़ाइल संपीड़न", "HyperText Transfer Protocol — वेब पेज ट्रांसफर", "Hybrid Text Transfer Protocol — ईमेल", "HyperText Terminal Protocol — प्रिंटिंग"],
+      ans: 1,
+      exp: "HTTP का अर्थ है HyperText Transfer Protocol। इसका उपयोग वेब पेजों को सर्वर से ब्राउज़र तक ट्रांसफर करने के लिए होता है।"
+    },
+    as: {
+      q: "HTTP ৰ সম্পূৰ্ণ ৰূপ কি আৰু ইয়াক কিহৰ বাবে ব্যৱহাৰ কৰা হয়?",
+      opts: ["High Transfer Text Protocol — ফাইল কম্প্ৰেচন", "HyperText Transfer Protocol — ৱেব পেজ ট্ৰান্সফাৰ", "Hybrid Text Transfer Protocol — ইমেইল", "HyperText Terminal Protocol — প্ৰিন্টিং"],
+      ans: 1,
+      exp: "HTTP মানে HyperText Transfer Protocol। ইয়াক চাৰ্ভাৰৰ পৰা ব্ৰাউজাৰলৈ ৱেব পেজ ট্ৰান্সফাৰ কৰিবলৈ ব্যৱহাৰ কৰা হয়।"
+    }
+  },
+  {
+    emoji: "🌐",
+    topic: "Browser vs Search Engine",
+    en: {
+      q: "What is the difference between a web browser and a search engine?",
+      opts: ["They are the same thing", "A browser is software to access the web; a search engine is a website/service to search for content", "A search engine downloads files; a browser creates websites", "A browser is hardware; a search engine is software"],
+      ans: 1,
+      exp: "A web browser (like Chrome, Firefox) is software that lets you access and view websites. A search engine (like Google, Bing) is a web service/website that helps you find content on the internet. You use a browser to access a search engine."
+    },
+    hi: {
+      q: "वेब ब्राउज़र और सर्च इंजन में क्या अंतर है?",
+      opts: ["दोनों एक ही चीज़ हैं", "ब्राउज़र वेब एक्सेस करने का सॉफ्टवेयर है; सर्च इंजन कंटेंट खोजने की सेवा है", "सर्च इंजन फ़ाइलें डाउनलोड करता है; ब्राउज़र वेबसाइट बनाता है", "ब्राउज़र हार्डवेयर है; सर्च इंजन सॉफ्टवेयर है"],
+      ans: 1,
+      exp: "वेब ब्राउज़र (जैसे Chrome) वेबसाइट देखने का सॉफ्टवेयर है। सर्च इंजन (जैसे Google) इंटरनेट पर कंटेंट खोजने की सेवा है।"
+    },
+    as: {
+      q: "ৱেব ব্ৰাউজাৰ আৰু চাৰ্চ ইঞ্জিনৰ মাজত পাৰ্থক্য কি?",
+      opts: ["দুয়োটা একে", "ব্ৰাউজাৰ ৱেব একচেছ কৰাৰ ছফ্টৱেৰ; চাৰ্চ ইঞ্জিন বিষয়বস্তু বিচাৰাৰ সেৱা", "চাৰ্চ ইঞ্জিনে ফাইল ডাউনলোড কৰে; ব্ৰাউজাৰে ৱেবছাইট তৈয়াৰ কৰে", "ব্ৰাউজাৰ হাৰ্ডৱেৰ; চাৰ্চ ইঞ্জিন ছফ্টৱেৰ"],
+      ans: 1,
+      exp: "ৱেব ব্ৰাউজাৰ (যেনে Chrome) ৱেবছাইট চোৱাৰ ছফ্টৱেৰ। চাৰ্চ ইঞ্জিন (যেনে Google) ইণ্টাৰনেটত বিষয়বস্তু বিচাৰাৰ সেৱা।"
+    }
+  },
+  {
+    emoji: "🖥️",
+    topic: "MS Word",
+    en: {
+      q: "In MS Word, which keyboard shortcut is used to make selected text BOLD?",
+      opts: ["Ctrl + I", "Ctrl + U", "Ctrl + B", "Ctrl + E"],
+      ans: 2,
+      exp: "Ctrl + B makes selected text Bold in MS Word. Ctrl + I makes text Italic, Ctrl + U underlines text, and Ctrl + E centres the text. These are standard formatting shortcuts."
+    },
+    hi: {
+      q: "MS Word में चुने हुए टेक्स्ट को BOLD (मोटा) करने के लिए कौन-सी शॉर्टकट की है?",
+      opts: ["Ctrl + I", "Ctrl + U", "Ctrl + B", "Ctrl + E"],
+      ans: 2,
+      exp: "Ctrl + B से MS Word में टेक्स्ट Bold होता है। Ctrl + I से Italic, Ctrl + U से Underline, और Ctrl + E से Center alignment होता है।"
+    },
+    as: {
+      q: "MS Word ত নিৰ্বাচিত টেক্সট BOLD কৰিবলৈ কোন কিব'ৰ্ড শ্বৰ্টকাট ব্যৱহাৰ কৰা হয়?",
+      opts: ["Ctrl + I", "Ctrl + U", "Ctrl + B", "Ctrl + E"],
+      ans: 2,
+      exp: "Ctrl + B ৰে MS Word ত টেক্সট Bold হয়। Ctrl + I ৰে Italic, Ctrl + U ৰে Underline, আৰু Ctrl + E ৰে Centre alignment হয়।"
+    }
+  },
+  {
+    emoji: "🖱️",
+    topic: "Spreadsheet",
+    en: {
+      q: "In a spreadsheet (like MS Excel), what is the name of the intersection of a row and a column?",
+      opts: ["Sheet", "Cell", "Formula bar", "Workbook"],
+      ans: 1,
+      exp: "A cell is the basic unit of a spreadsheet — it is formed at the intersection of a row and a column. Each cell has an address like A1, B3 etc. Data, numbers, and formulas are entered in cells."
+    },
+    hi: {
+      q: "स्प्रेडशीट (MS Excel) में पंक्ति (row) और स्तंभ (column) के मिलन बिंदु को क्या कहते हैं?",
+      opts: ["शीट", "सेल", "फॉर्मूला बार", "वर्कबुक"],
+      ans: 1,
+      exp: "सेल स्प्रेडशीट की मूल इकाई है — यह एक row और एक column के मिलन पर बनती है। हर सेल का एक पता होता है जैसे A1, B3।"
+    },
+    as: {
+      q: "স্প্ৰেডশ্বীটত (MS Excel) এটা সাৰি (row) আৰু এটা স্তম্ভৰ (column) সংযোগস্থলক কি বোলা হয়?",
+      opts: ["শ্বীট", "চেল", "ফৰ্মুলা বাৰ", "ৱৰ্কবুক"],
+      ans: 1,
+      exp: "চেল স্প্ৰেডশ্বীটৰ মূল একক — ই এটা row আৰু এটা columnৰ সংযোগত গঠিত হয়। প্ৰতিটো চেলৰ এটা ঠিকনা থাকে যেনে A1, B3।"
+    }
+  },
+  {
+    emoji: "💻",
+    topic: "Networks",
+    en: {
+      q: "Which type of network covers a small geographic area like a school building or office?",
+      opts: ["WAN (Wide Area Network)", "MAN (Metropolitan Area Network)", "LAN (Local Area Network)", "Internet"],
+      ans: 2,
+      exp: "LAN (Local Area Network) connects computers within a small area like a room, building, or campus. WAN covers large areas like countries (e.g., the Internet). MAN covers a city or town. LAN is commonly used in schools and offices."
+    },
+    hi: {
+      q: "कौन-सा नेटवर्क स्कूल भवन या ऑफिस जैसे छोटे भौगोलिक क्षेत्र को कवर करता है?",
+      opts: ["WAN (वाइड एरिया नेटवर्क)", "MAN (मेट्रोपॉलिटन एरिया नेटवर्क)", "LAN (लोकल एरिया नेटवर्क)", "इंटरनेट"],
+      ans: 2,
+      exp: "LAN (लोकल एरिया नेटवर्क) एक छोटे क्षेत्र जैसे कमरे, भवन या परिसर में कंप्यूटरों को जोड़ता है। WAN देश/महाद्वीप को, MAN शहर को कवर करता है।"
+    },
+    as: {
+      q: "স্কুল ভৱন বা কাৰ্যালয়ৰ দৰে সৰু ভৌগোলিক অঞ্চল সামৰা কোন নেটৱৰ্কে?",
+      opts: ["WAN (ৱাইড এৰিয়া নেটৱৰ্ক)", "MAN (মেট্ৰ'পলিটন এৰিয়া নেটৱৰ্ক)", "LAN (লোকেল এৰিয়া নেটৱৰ্ক)", "ইণ্টাৰনেট"],
+      ans: 2,
+      exp: "LAN (লোকেল এৰিয়া নেটৱৰ্ক) এটা সৰু অঞ্চলৰ কম্পিউটাৰ সংযুক্ত কৰে। WAN দেশ/মহাদেশ সামৰে, MAN চহৰ সামৰে।"
+    }
+  },
+  {
+    emoji: "🌐",
+    topic: "Internet Protocols",
+    en: {
+      q: "Which Internet protocol is used to SEND emails from a mail client to a mail server?",
+      opts: ["HTTP", "FTP", "SMTP", "POP3"],
+      ans: 2,
+      exp: "SMTP (Simple Mail Transfer Protocol) is used to send emails from a client to a mail server and between mail servers. POP3/IMAP are used to receive/download emails. FTP is for file transfers. HTTP is for web pages."
+    },
+    hi: {
+      q: "ईमेल को मेल क्लाइंट से मेल सर्वर पर SEND करने के लिए कौन-सा इंटरनेट प्रोटोकॉल उपयोग होता है?",
+      opts: ["HTTP", "FTP", "SMTP", "POP3"],
+      ans: 2,
+      exp: "SMTP (Simple Mail Transfer Protocol) का उपयोग ईमेल भेजने के लिए होता है। POP3/IMAP ईमेल प्राप्त करने, FTP फ़ाइल ट्रांसफर, और HTTP वेब पेज के लिए उपयोग होते हैं।"
+    },
+    as: {
+      q: "ইমেইল মেইল চাৰ্ভাৰলৈ SEND কৰিবলৈ কোন ইণ্টাৰনেট প্ৰটোকল ব্যৱহাৰ হয়?",
+      opts: ["HTTP", "FTP", "SMTP", "POP3"],
+      ans: 2,
+      exp: "SMTP (Simple Mail Transfer Protocol) ইমেইল পঠিয়াবলৈ ব্যৱহাৰ হয়। POP3/IMAP ইমেইল গ্ৰহণৰ বাবে, FTP ফাইল ট্ৰান্সফাৰৰ বাবে, আৰু HTTP ৱেব পেজৰ বাবে।"
+    }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.trim() === (l==='en'?'EN':l==='hi'?'हि':'অ'));
+  });
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (current >= questions.length) { showEnd(); return; }
+  const q = questions[current];
+  const d = q[lang];
+  const pct = ((current + 1) / questions.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('qNum').textContent = current + 1;
+  document.getElementById('qNumHi').textContent = current + 1;
+  document.getElementById('qNumAs').textContent = current + 1;
+
+  const labels = ['A','B','C','D'];
+  let optsHTML = d.opts.map((o, i) => `
+    <button class="opt-btn" onclick="selectAnswer(${i})" id="opt${i}">
+      <span class="opt-label">${labels[i]}</span>${o}
+    </button>`).join('');
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="card">
+      <div class="q-meta">
+        <span class="q-num">${current+1}</span>
+        <span class="topic-tag">${q.topic}</span>
+      </div>
+      <div class="scene-emoji">${q.emoji}</div>
+      <div class="question">${d.q}</div>
+      <div class="options">${optsHTML}</div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+        ${lang==='en'?'Next →':lang==='hi'?'आगे →':'পৰৱৰ্তী →'}
+      </button>
+    </div>`;
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const d = q[lang];
+  const correct = d.ans;
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === correct) {
+    btns[idx].classList.add('correct');
+    score += 10;
+    document.getElementById('scoreLive').textContent = score;
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = `<span class="fb-icon">✅</span>${d.exp}`;
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[correct].classList.add('correct');
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = `<span class="fb-icon">❌</span>${d.exp}`;
+  }
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQuestion() {
+  current++;
+  renderQuestion();
+}
+
+function showEnd() {
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'none';
+  const end = document.getElementById('endScreen');
+  end.classList.add('show');
+  document.getElementById('finalScore').textContent = score;
+  const pct = score;
+  let stars = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : pct >= 40 ? '⭐' : '☆☆☆';
+  document.getElementById('starsDisplay').textContent = stars;
+}
+
+function restartQuiz() {
+  current = 0; score = 0;
+  document.getElementById('scoreLive').textContent = 0;
+  document.getElementById('progressWrap').style.display = '';
+  document.getElementById('quizArea').style.display = '';
+  document.getElementById('endScreen').classList.remove('show');
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sentence Train 🚆 — Class 1 English</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--navy:#1A237E;--teal:#00695C;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#E0F2F1,#B2DFDB,#80CBC4,#E0F2F1);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* BG */
+.bg-line{position:fixed;bottom:60px;left:0;right:0;height:4px;background:rgba(0,105,92,.3);z-index:1;}
+.train-smoke{position:fixed;top:20%;left:-50px;font-size:2rem;opacity:.2;animation:smokeDrift 12s linear infinite;z-index:1;}
+@keyframes smokeDrift{from{transform:translateX(-100px);}to{transform:translateX(110vw);}}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 6px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#004D40;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#004D40;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#004D40;}
+.spill span{color:#E53935;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* PICTURE CARD */
+.picture-card{position:relative;z-index:20;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.95);border-radius:24px;padding:10px 22px;margin:8px 16px;text-align:center;max-width:640px;width:calc(100% - 32px);}
+.pic-big{font-size:clamp(3rem,12vw,5.5rem);animation:picFloat 2s ease-in-out infinite;}
+@keyframes picFloat{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+.pic-label{font-family:'Fredoka One',cursive;font-size:clamp(.95rem,4vw,1.4rem);color:#004D40;margin-top:4px;}
+.task-hint{font-size:clamp(.78rem,2.8vw,.95rem);color:#00695C;font-weight:700;margin-top:3px;}
+
+/* SENTENCE SLOTS */
+.slots-section{position:relative;z-index:20;width:100%;max-width:700px;padding:0 14px;}
+.slots-label{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(0,77,64,.4);margin-bottom:6px;text-align:center;}
+.slots-row{display:flex;gap:clamp(5px,1.5vw,10px);flex-wrap:wrap;justify-content:center;min-height:clamp(52px,12vw,68px);align-items:center;}
+
+.word-slot{
+  min-width:clamp(44px,12vw,65px);height:clamp(44px,10vw,58px);
+  border-radius:12px;
+  border:3px dashed rgba(0,105,92,.35);
+  background:rgba(255,255,255,.5);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(.85rem,3.2vw,1.2rem);
+  color:#004D40;padding:0 8px;
+  transition:all .3s;
+  cursor:default;
+}
+.word-slot.filled{border-style:solid;border-color:#00897B;background:rgba(0,137,123,.1);}
+.word-slot.correct{border-color:#43A047;background:rgba(67,160,71,.15);}
+.word-slot.first-capital::first-letter{text-transform:uppercase;}
+
+/* WORD TILES */
+.tiles-area{position:relative;z-index:20;background:rgba(255,255,255,.72);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.92);border-radius:22px;padding:12px 14px;margin:8px 14px;max-width:680px;width:calc(100% - 28px);}
+.tiles-label{font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(0,77,64,.35);margin-bottom:8px;text-align:center;}
+.tiles-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+
+.word-tile{
+  padding:clamp(8px,2vw,12px) clamp(10px,3vw,18px);
+  border-radius:14px;cursor:pointer;
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(.9rem,3.5vw,1.3rem);color:#fff;
+  box-shadow:0 4px 0 rgba(0,0,0,.22),0 6px 14px rgba(0,0,0,.1);
+  transition:all .15s;position:relative;top:0;
+  border:2px solid rgba(255,255,255,.3);
+}
+.word-tile:hover{top:-3px;box-shadow:0 7px 0 rgba(0,0,0,.18);}
+.word-tile:active{top:3px;box-shadow:0 1px 0 rgba(0,0,0,.22);}
+.word-tile.used{opacity:.2;pointer-events:none;}
+.word-tile.sight-word{border:3px solid rgba(255,215,0,.7);box-shadow:0 4px 0 rgba(0,0,0,.22),0 0 10px rgba(255,215,0,.3);}
+
+/* ACTION BTNS */
+.action-row{position:relative;z-index:20;display:flex;gap:10px;margin:6px 0;}
+.act-btn{padding:10px 22px;border-radius:50px;border:none;font-family:'Fredoka One',cursive;font-size:clamp(.9rem,3.5vw,1.2rem);cursor:pointer;transition:transform .2s;box-shadow:0 4px 12px rgba(0,0,0,.12);}
+.act-btn.check{background:linear-gradient(135deg,#00897B,#4CAF50);color:#fff;}
+.act-btn.clear{background:rgba(255,255,255,.7);color:#004D40;}
+.act-btn:hover{transform:scale(1.05);}
+
+/* SENTENCE RESULT */
+.sentence-result{position:fixed;inset:0;z-index:155;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.sr-text{font-family:'Fredoka One',cursive;font-size:clamp(1.2rem,5vw,2.2rem);color:#FFD700;background:rgba(0,77,64,.9);padding:16px 28px;border-radius:20px;text-align:center;border:3px solid rgba(255,215,0,.5);max-width:90%;animation:srIn .4s ease both,srOut .35s 2.5s ease forwards;}
+@keyframes srIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+@keyframes srOut{to{transform:scale(1.3);opacity:0;}}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.88rem,3vw,1.1rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:2;}
+.ov-btn{background:linear-gradient(135deg,#004D40,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(0,77,64,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="bg-line"></div>
+<div class="train-smoke">🚂💨</div>
+
+<div class="header">
+  <div class="title">🚆 Sentence Train</div>
+  <div class="lvchip" id="lvChip">Level 1 · 3-word sentences</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">📝 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="picture-card">
+  <div class="pic-big" id="picBig">🐱</div>
+  <div class="pic-label" id="picLabel">The cat is on the mat.</div>
+  <div class="task-hint" id="taskHint">Tap the words in the right order to make the sentence!</div>
+</div>
+
+<div class="slots-section">
+  <div class="slots-label">Build the sentence here →</div>
+  <div class="slots-row" id="slotsRow"></div>
+</div>
+
+<div class="action-row">
+  <button class="act-btn check" onclick="checkSentence()">✅ Check!</button>
+  <button class="act-btn clear" onclick="clearSentence()">🗑 Clear</button>
+</div>
+
+<div class="tiles-area">
+  <div class="tiles-label">🌟 Sight words are golden! Tap to build</div>
+  <div class="tiles-row" id="tilesRow"></div>
+</div>
+
+<script>
+// NCERT Class 1 Marigold sight words + simple sentences
+const SENTENCES=[
+  {pic:'🐱',sentence:['The','cat','sat'],full:'The cat sat.',level:1,hint:'The cat is sitting!'},
+  {pic:'🐶',sentence:['I','see','a','dog'],full:'I see a dog.',level:1,hint:'Look at the dog!'},
+  {pic:'🌞',sentence:['The','sun','is','hot'],full:'The sun is hot.',level:1,hint:'The sun gives us heat!'},
+  {pic:'🌸',sentence:['I','like','flowers'],full:'I like flowers.',level:1,hint:'Flowers are beautiful!'},
+  {pic:'🐟',sentence:['The','fish','can','swim'],full:'The fish can swim.',level:2,hint:'Fish live in water!'},
+  {pic:'📚',sentence:['I','read','my','book'],full:'I read my book.',level:2,hint:'Reading helps us learn!'},
+  {pic:'🍎',sentence:['An','apple','is','red'],full:'An apple is red.',level:2,hint:'Apples are red fruits!'},
+  {pic:'🐦',sentence:['The','bird','can','fly'],full:'The bird can fly.',level:2,hint:'Birds have wings!'},
+  {pic:'🌧️',sentence:['It','is','a','rainy','day'],full:'It is a rainy day.',level:3,hint:'Rain falls from clouds!'},
+  {pic:'🏫',sentence:['We','go','to','school'],full:'We go to school.',level:3,hint:'School is where we learn!'},
+];
+
+// Sight words (NCERT): highlighted in gold
+const SIGHT_WORDS=['the','a','an','is','am','are','I','we','it','can','do','has','in','on','at','to','my','see','like','go'];
+const TILE_COLORS=['#00897B','#1E88E5','#E53935','#FB8C00','#8E24AA','#43A047','#F4511E','#0288D1','#00695C'];
+const TOTAL=10;
+let score=0,round=0,current=null,answered=false,filledWords=[],usedTileIdxs=[];
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playTap(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(600,c.currentTime);o.frequency.exponentialRampToValueAtTime(900,c.currentTime+.1);g.gain.setValueAtTime(.18,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.15);o.start();o.stop(c.currentTime+.15);}
+function playCorrect(){const c=ac();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*100));}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.85;u.pitch=1.2;window.speechSynthesis.speak(u);}
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#00897B','#FFD700','#E53935','#1E88E5','#43A047'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showSentenceResult(txt){const el=document.createElement('div');el.className='sentence-result';el.innerHTML=`<div class="sr-text">${txt}</div>`;document.body.appendChild(el);setTimeout(()=>el.remove(),3000);}
+
+function buildSlots(){
+  filledWords=[];
+  const row=document.getElementById('slotsRow');row.innerHTML='';
+  for(let i=0;i<current.sentence.length;i++){
+    const slot=document.createElement('div');slot.className='word-slot'+(i===0?' first-capital':'');
+    slot.id=`ws_${i}`;slot.textContent='___';
+    row.appendChild(slot);filledWords.push('');
+  }
+  // period slot
+  const per=document.createElement('div');per.className='word-slot filled';per.textContent='.';per.style.minWidth='28px';
+  row.appendChild(per);
+}
+
+function buildTiles(){
+  // shuffle sentence words + 2 distractors
+  const extras=['big','run','jump','happy','good','red','blue','fast'];
+  extras.sort(()=>Math.random()-.5);
+  const distractors=extras.slice(0,2);
+  const allWords=[...current.sentence,...distractors].sort(()=>Math.random()-.5);
+  usedTileIdxs=[];
+  const row=document.getElementById('tilesRow');row.innerHTML='';
+  allWords.forEach((word,i)=>{
+    const tile=document.createElement('div');
+    const isSight=SIGHT_WORDS.includes(word.toLowerCase());
+    tile.className='word-tile'+(isSight?' sight-word':'');
+    tile.textContent=word;tile.dataset.idx=i;tile.dataset.word=word;
+    tile.style.background=`linear-gradient(135deg,${TILE_COLORS[i%TILE_COLORS.length]},${TILE_COLORS[(i+3)%TILE_COLORS.length]})`;
+    tile.onclick=()=>tapWord(tile,word,i);
+    row.appendChild(tile);
+  });
+}
+
+function tapWord(tile,word,idx){
+  if(usedTileIdxs.includes(idx))return;
+  const nextEmpty=filledWords.indexOf('');
+  if(nextEmpty===-1)return;
+  playTap();
+  filledWords[nextEmpty]=word;usedTileIdxs.push(idx);tile.classList.add('used');
+  const slot=document.getElementById(`ws_${nextEmpty}`);
+  slot.textContent=word;slot.classList.add('filled');
+}
+
+function checkSentence(){
+  const built=filledWords.filter(w=>w!=='');
+  if(built.length<current.sentence.length){speak('Fill all the word boxes first!');return;}
+  if(answered)return;
+  const correct=current.sentence.every((w,i)=>filledWords[i]===w);
+  if(correct){
+    answered=true;
+    document.querySelectorAll('.word-slot.filled').forEach(s=>s.classList.add('correct'));
+    playCorrect();spawnConf();
+    showSentenceResult(`✅ "${current.full}" — ${current.hint}`);
+    score+=15;document.getElementById('scoreVal').textContent=score;
+    speak(`${current.full} ${current.hint}`);
+    round++;makeDots();setTimeout(newRound,3200);
+  } else {
+    playWrong();
+    // find first wrong word
+    const firstWrong=current.sentence.findIndex((w,i)=>filledWords[i]!==w);
+    speak(`Not quite! The ${firstWrong+1}${['st','nd','rd'][firstWrong]||'th'} word should be "${current.sentence[firstWrong]}". Try again!`);
+  }
+}
+window.checkSentence=checkSentence;
+
+function clearSentence(){
+  filledWords=[];usedTileIdxs=[];
+  for(let i=0;i<current.sentence.length;i++){const s=document.getElementById(`ws_${i}`);if(s){s.textContent='___';s.classList.remove('filled','correct');}}
+  document.querySelectorAll('.word-tile').forEach(t=>t.classList.remove('used'));
+}
+window.clearSentence=clearSentence;
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  const lvIdx=round<4?0:round<7?1:2;
+  document.getElementById('lvChip').textContent=`Level ${lvIdx+1} · ${['3-word sentences','4-word sentences','5-word sentences'][lvIdx]}`;
+  current=SENTENCES[round%SENTENCES.length];
+  document.getElementById('picBig').textContent=current.pic;
+  document.getElementById('picLabel').textContent=current.full;
+  document.getElementById('taskHint').textContent=`Tap words in order: ${current.sentence.join(' → ')}`;
+  makeDots();buildSlots();buildTiles();
+  setTimeout(()=>speak(`Build the sentence: ${current.full}`),400);
+}
+
+function showCelebration(){
+  playChime();spawnConf();speak('Brilliant! You can build sentences! You are a grammar star!');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🚆</div>
+    <div class="ov-title">Sentence Champion!</div>
+    <div class="ov-sub">Sight words you learned:<br/>
+    <span style="color:#FFD700;">The · A · An · Is · I · We · Can · See · Go</span><br/>
+    Sentences start with a CAPITAL and end with a FULL STOP!<br/><br/>
+    Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</div>
+    <button class="ov-btn" onclick="restart()">Play Again 🚆</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Arrange the words to make a sentence!');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

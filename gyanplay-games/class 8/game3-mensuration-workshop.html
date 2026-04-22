@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G8-03: Mensuration Workshop | GyanPlay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060A10;
+            --card: #0D1428;
+            --gold: #FFD166;
+            --coral: #FF6B6B;
+            --teal: #06D6A0;
+            --purple: #C77DFF;
+            --orange: #FF9F1C;
+            --text: #E8F0FF;
+            --dim: #4A6A8A;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, #180A28 0%, #0F0820 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .container { max-width: 480px; margin: 0 auto; }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(199, 125, 255, 0.22);
+            margin-bottom: 20px;
+        }
+        
+        .title-section { flex: 1; }
+        .game-title { font-family: 'Baloo 2', cursive; font-size: 1.35rem; color: var(--gold); font-weight: 800; }
+        .subject-tag { font-size: 0.7rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .stars { display: flex; gap: 4px; }
+        .star { font-size: 1.2rem; opacity: 0.3; transition: all 0.3s ease; }
+        .star.lit { opacity: 1; filter: drop-shadow(0 0 8px var(--gold)); }
+        
+        .hook-card {
+            background: linear-gradient(135deg, rgba(199, 125, 255, 0.15), rgba(199, 125, 255, 0.05));
+            border: 1px solid rgba(199, 125, 255, 0.22);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 24px rgba(199, 125, 255, 0.12);
+        }
+        
+        .hook-text { font-size: 0.95rem; line-height: 1.7; }
+        .hook-text strong { color: var(--gold); font-weight: 700; }
+        
+        .game-area {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .stage-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            color: var(--purple);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stage-title::before { content: ''; width: 4px; height: 20px; background: var(--purple); border-radius: 2px; }
+        
+        /* Net Folding */
+        .shape-selector { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .shape-btn {
+            flex: 1;
+            min-width: 80px;
+            background: rgba(199, 125, 255, 0.1);
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            color: var(--text);
+            font-family: 'Nunito', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .shape-btn:hover, .shape-btn.active { background: rgba(199, 125, 255, 0.2); border-color: var(--purple); }
+        
+        .net-container {
+            background: rgba(6, 10, 16, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .net-svg { max-width: 100%; height: auto; }
+        
+        .dimension-inputs { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .dim-input {
+            flex: 1;
+            min-width: 80px;
+            background: rgba(6, 10, 16, 0.6);
+            border: 1px solid rgba(199, 125, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            color: var(--text);
+            text-align: center;
+        }
+        .dim-input:focus { outline: none; border-color: var(--purple); }
+        
+        .calc-btn {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            border-radius: 20px;
+            padding: 12px 30px;
+            color: #060A10;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .result-box {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(6, 214, 160, 0.1);
+            border-radius: 10px;
+            border-left: 3px solid var(--teal);
+            display: none;
+        }
+        
+        .result-box.show { display: block; }
+        
+        /* Packaging Challenge */
+        .product-card {
+            background: rgba(255, 209, 102, 0.1);
+            border: 1px solid rgba(255, 209, 102, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .product-name { font-family: 'Baloo 2', cursive; color: var(--gold); margin-bottom: 8px; }
+        .product-dims { font-size: 0.9rem; color: var(--dim); }
+        
+        .challenge-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .challenge-btn {
+            background: rgba(199, 125, 255, 0.1);
+            border: 2px solid rgba(199, 125, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .challenge-btn:hover { border-color: var(--purple); }
+        .challenge-btn.correct { background: rgba(6, 214, 160, 0.2); border-color: var(--teal); }
+        .challenge-btn.wrong { background: rgba(255, 71, 87, 0.2); border-color: var(--coral); }
+        
+        /* Cylinder Lab */
+        .cylinder-visual {
+            width: 100px;
+            height: 150px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        
+        .cylinder-body {
+            width: 100%;
+            height: 80%;
+            background: linear-gradient(90deg, rgba(199, 125, 255, 0.4), rgba(199, 125, 255, 0.2), rgba(199, 125, 255, 0.4));
+            border-radius: 0;
+            position: absolute;
+            bottom: 10%;
+        }
+        
+        .cylinder-top {
+            width: 100%;
+            height: 20%;
+            background: linear-gradient(135deg, rgba(199, 125, 255, 0.5), rgba(199, 125, 255, 0.3));
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+        }
+        
+        .cylinder-bottom {
+            width: 100%;
+            height: 20%;
+            background: linear-gradient(135deg, rgba(199, 125, 255, 0.3), rgba(199, 125, 255, 0.5));
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+        }
+        
+        .formula-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px; }
+        .formula-item {
+            background: rgba(6, 10, 16, 0.4);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        /* Bottom Bar */
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 20px;
+        }
+        
+        .progress-info { font-size: 0.85rem; color: var(--dim); }
+        
+        .action-btn {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: #060A10;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 209, 102, 0.4); }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(6, 10, 16, 0.95);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px;
+        }
+        .overlay.active { display: flex; }
+        .overlay-content { text-align: center; max-width: 400px; }
+        .overlay-emoji { font-size: 4rem; margin-bottom: 15px; }
+        .overlay-title { font-family: 'Baloo 2', cursive; font-size: 1.5rem; color: var(--gold); margin-bottom: 10px; }
+        .overlay-message { font-size: 1rem; color: var(--text); margin-bottom: 15px; }
+        .overlay-fact { font-size: 0.85rem; color: var(--dim); padding: 15px; background: rgba(199, 125, 255, 0.1); border-radius: 10px; border-left: 3px solid var(--purple); }
+        
+        /* Completion */
+        .completion-screen { display: none; text-align: center; padding: 40px 20px; }
+        .completion-screen.active { display: block; }
+        .trophy { font-size: 5rem; margin-bottom: 20px; }
+        .completion-title { font-family: 'Baloo 2', cursive; font-size: 2rem; color: var(--gold); margin-bottom: 15px; }
+        .completion-score { font-size: 1.2rem; color: var(--text); margin-bottom: 30px; }
+        .play-again-btn {
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border: none; border-radius: 25px; padding: 15px 40px;
+            color: var(--text); font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 1.1rem;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .play-again-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(199, 125, 255, 0.4); }
+        
+        .stage { display: none; }
+        .stage.active { display: block; }
+        
+        .unit-note { font-size: 0.8rem; color: var(--dim); margin-top: 10px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title-section">
+                <div class="subject-tag">Mathematics</div>
+                <div class="game-title">Mensuration Workshop</div>
+            </div>
+            <div class="stars">
+                <span class="star" id="star1">⭐</span>
+                <span class="star" id="star2">⭐</span>
+                <span class="star" id="star3">⭐</span>
+                <span class="star" id="star4">⭐</span>
+                <span class="star" id="star5">⭐</span>
+            </div>
+        </div>
+        
+        <div class="hook-card">
+            <div class="hook-text">
+                The Egyptian pyramids required calculating surface area and volume with such precision that even today, with satellite measurement, the builders' calculations are accurate to within <strong>0.05%</strong>. They had no calculators, no computers — just geometry, ropes, and the human mind. <strong>Mensuration IS civilisation.</strong>
+            </div>
+        </div>
+        
+        <!-- Stage 1: Net Folding -->
+        <div class="stage active" id="stage1">
+            <div class="game-area">
+                <div class="stage-title">Stage 1: Net to Solid</div>
+                
+                <div class="shape-selector">
+                    <button class="shape-btn active" onclick="selectShape('cube')">Cube</button>
+                    <button class="shape-btn" onclick="selectShape('cuboid')">Cuboid</button>
+                    <button class="shape-btn" onclick="selectShape('cylinder')">Cylinder</button>
+                </div>
+                
+                <div class="net-container">
+                    <svg class="net-svg" id="netSvg" viewBox="0 0 200 200" width="200" height="200">
+                        <!-- Cube net -->
+                        <rect x="70" y="20" width="60" height="60" fill="rgba(199,125,255,0.3)" stroke="var(--purple)" stroke-width="2"/>
+                        <rect x="70" y="80" width="60" height="60" fill="rgba(199,125,255,0.4)" stroke="var(--purple)" stroke-width="2"/>
+                        <rect x="10" y="80" width="60" height="60" fill="rgba(199,125,255,0.2)" stroke="var(--purple)" stroke-width="2"/>
+                        <rect x="130" y="80" width="60" height="60" fill="rgba(199,125,255,0.2)" stroke="var(--purple)" stroke-width="2"/>
+                        <rect x="70" y="140" width="60" height="60" fill="rgba(199,125,255,0.2)" stroke="var(--purple)" stroke-width="2"/>
+                        <text x="100" y="55" text-anchor="middle" fill="var(--text)" font-size="12">a</text>
+                        <text x="100" y="115" text-anchor="middle" fill="var(--text)" font-size="12">a</text>
+                    </svg>
+                </div>
+                
+                <div class="dimension-inputs">
+                    <input type="number" class="dim-input" id="dimA" placeholder="a (cm)" value="5">
+                    <input type="number" class="dim-input" id="dimB" placeholder="b (cm)" style="display:none">
+                    <input type="number" class="dim-input" id="dimC" placeholder="c (cm)" style="display:none">
+                </div>
+                
+                <button class="calc-btn" onclick="calculateMensuration()">Calculate Surface Area & Volume</button>
+                
+                <div class="result-box" id="resultBox">
+                    <div id="saResult"></div>
+                    <div id="volResult" style="margin-top: 10px;"></div>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 1 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 2: Packaging Challenge -->
+        <div class="stage" id="stage2">
+            <div class="game-area">
+                <div class="stage-title">Stage 2: Packaging Challenge</div>
+                
+                <div class="product-card">
+                    <div class="product-name">🍵 Assam Tea Tin</div>
+                    <div class="product-dims">Diameter: 10cm, Height: 15cm</div>
+                </div>
+                
+                <div style="font-size: 0.9rem; margin-bottom: 15px;">What is the minimum label area needed?</div>
+                
+                <div class="challenge-options">
+                    <button class="challenge-btn" onclick="checkPackage(this, false, 471)">471 cm²</button>
+                    <button class="challenge-btn" onclick="checkPackage(this, true, 471)">471 cm² (CSA)</button>
+                    <button class="challenge-btn" onclick="checkPackage(this, false, 628)">628 cm²</button>
+                    <button class="challenge-btn" onclick="checkPackage(this, false, 785)">785 cm²</button>
+                </div>
+                
+                <div class="result-box" id="pkgResult" style="margin-top: 15px;">
+                    <strong>Correct!</strong> Curved Surface Area = 2πrh = 2 × 3.14 × 5 × 15 = 471 cm²<br>
+                    This is the label area. Total surface area would include the top and bottom circles too.
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 2 of 4</div>
+                <button class="action-btn" id="btn2" onclick="nextStage()" disabled>Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 3: Cylinder Lab -->
+        <div class="stage" id="stage3">
+            <div class="game-area">
+                <div class="stage-title">Stage 3: Cylinder Calculations</div>
+                
+                <div class="cylinder-visual">
+                    <div class="cylinder-top"></div>
+                    <div class="cylinder-body"></div>
+                    <div class="cylinder-bottom"></div>
+                </div>
+                
+                <div class="dimension-inputs">
+                    <input type="number" class="dim-input" id="cylR" placeholder="r (cm)" value="7">
+                    <input type="number" class="dim-input" id="cylH" placeholder="h (cm)" value="10">
+                </div>
+                
+                <button class="calc-btn" onclick="calculateCylinder()">Calculate</button>
+                
+                <div class="formula-grid" id="cylResults" style="display:none">
+                    <div class="formula-item">Curved SA = 2πrh = <span id="csa"></span> cm²</div>
+                    <div class="formula-item">Total SA = 2πr(r+h) = <span id="tsa"></span> cm²</div>
+                    <div class="formula-item">Volume = πr²h = <span id="vol"></span> cm³</div>
+                </div>
+                
+                <div class="unit-note">1 m³ = 1,000,000 cm³ (not 100!)</div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 3 of 4</div>
+                <button class="action-btn" onclick="nextStage()">Continue →</button>
+            </div>
+        </div>
+        
+        <!-- Stage 4: Unit Conversion -->
+        <div class="stage" id="stage4">
+            <div class="game-area">
+                <div class="stage-title">Stage 4: Unit Conversion Trap</div>
+                
+                <div style="background: rgba(255, 71, 87, 0.1); border: 1px solid rgba(255, 71, 87, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+                    <div style="color: var(--coral); font-weight: 700; margin-bottom: 8px;">⚠️ Common Mistake</div>
+                    <div style="font-size: 0.9rem;">Students often think: 1 m³ = 100 cm³ ❌</div>
+                </div>
+                
+                <div style="font-size: 0.95rem; margin-bottom: 15px;">
+                    Convert <strong>2.5 m³</strong> to cm³:
+                </div>
+                
+                <div class="challenge-options">
+                    <button class="challenge-btn" onclick="checkUnit(this, false)">250 cm³</button>
+                    <button class="challenge-btn" onclick="checkUnit(this, false)">2,500 cm³</button>
+                    <button class="challenge-btn" onclick="checkUnit(this, true)">2,500,000 cm³</button>
+                    <button class="challenge-btn" onclick="checkUnit(this, false)">25,000 cm³</button>
+                </div>
+                
+                <div class="result-box" id="unitResult" style="margin-top: 15px;">
+                    <strong>Correct!</strong> 1 m = 100 cm, so 1 m³ = (100)³ cm³ = 1,000,000 cm³<br>
+                    Therefore, 2.5 m³ = 2.5 × 1,000,000 = <strong>2,500,000 cm³</strong>
+                </div>
+            </div>
+            
+            <div class="bottom-bar">
+                <div class="progress-info">Stage 4 of 4</div>
+                <button class="action-btn" onclick="completeGame()">Complete Game</button>
+            </div>
+        </div>
+        
+        <div class="completion-screen" id="completionScreen">
+            <div class="trophy">🏆</div>
+            <div class="completion-title">Mensuration Master!</div>
+            <div class="completion-score" id="finalScore">You mastered 3D geometry!</div>
+            <button class="play-again-btn" onclick="playAgain()">Play Again</button>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay">
+        <div class="overlay-content">
+            <div class="overlay-emoji" id="overlayEmoji">✓</div>
+            <div class="overlay-title" id="overlayTitle">Correct!</div>
+            <div class="overlay-message" id="overlayMessage"></div>
+            <div class="overlay-fact" id="overlayFact"></div>
+        </div>
+    </div>
+    
+    <script>
+        let currentStage = 1;
+        let score = 0;
+        let currentShape = 'cube';
+        
+        function selectShape(shape) {
+            currentShape = shape;
+            document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const svg = document.getElementById('netSvg');
+            const dimB = document.getElementById('dimB');
+            const dimC = document.getElementById('dimC');
+            
+            if (shape === 'cube') {
+                dimB.style.display = 'none';
+                dimC.style.display = 'none';
+                svg.innerHTML = `
+                    <rect x="70" y="20" width="60" height="60" fill="rgba(199,125,255,0.3)" stroke="var(--purple)" stroke-width="2"/>
+                    <rect x="70" y="80" width="60" height="60" fill="rgba(199,125,255,0.4)" stroke="var(--purple)" stroke-width="2"/>
+                    <rect x="10" y="80" width="60" height="60" fill="rgba(199,125,255,0.2)" stroke="var(--purple)" stroke-width="2"/>
+                    <rect x="130" y="80" width="60" height="60" fill="rgba(199,125,255,0.2)" stroke="var(--purple)" stroke-width="2"/>
+                    <rect x="70" y="140" width="60" height="60" fill="rgba(199,125,255,0.2)" stroke="var(--purple)" stroke-width="2"/>
+                    <text x="100" y="55" text-anchor="middle" fill="var(--text)" font-size="12">a</text>
+                    <text x="100" y="115" text-anchor="middle" fill="var(--text)" font-size="12">a</text>
+                `;
+            } else if (shape === 'cuboid') {
+                dimB.style.display = 'block';
+                dimC.style.display = 'block';
+                svg.innerHTML = `
+                    <rect x="60" y="10" width="80" height="50" fill="rgba(199,125,255,0.3)" stroke="var(--purple)" stroke-width="2"/>
+                    <rect x="60" y="60" width="80" height="50" fill="rgba(199,125,255,0.4)" stroke="var(--purple)" stroke-width="2"/>
+                    <rect x="10" y="60" width="50" height="50" fill="rgba(199,125,255,0.2)" stroke="var(--purple)" stroke-width="2"/>
+                    <rect x="140" y="60" width="50" height="50" fill="rgba(199,125,255,0.2)" stroke="var(--purple)" stroke-width="2"/>
+                    <rect x="60" y="110" width="80" height="50" fill="rgba(199,125,255,0.2)" stroke="var(--purple)" stroke-width="2"/>
+                    <text x="100" y="40" text-anchor="middle" fill="var(--text)" font-size="10">l×b</text>
+                    <text x="100" y="90" text-anchor="middle" fill="var(--text)" font-size="10">l×b</text>
+                `;
+            } else {
+                dimB.style.display = 'none';
+                dimC.style.display = 'none';
+                svg.innerHTML = `
+                    <rect x="50" y="20" width="100" height="120" fill="rgba(199,125,255,0.3)" stroke="var(--purple)" stroke-width="2"/>
+                    <ellipse cx="100" cy="20" rx="50" ry="15" fill="rgba(199,125,255,0.4)" stroke="var(--purple)" stroke-width="2"/>
+                    <ellipse cx="100" cy="140" rx="50" ry="15" fill="rgba(199,125,255,0.2)" stroke="var(--purple)" stroke-width="2"/>
+                    <text x="100" y="85" text-anchor="middle" fill="var(--text)" font-size="12">2πr×h</text>
+                `;
+            }
+        }
+        
+        function calculateMensuration() {
+            const a = parseFloat(document.getElementById('dimA').value) || 0;
+            const b = parseFloat(document.getElementById('dimB').value) || a;
+            const c = parseFloat(document.getElementById('dimC').value) || a;
+            
+            let sa, vol;
+            
+            if (currentShape === 'cube') {
+                sa = 6 * a * a;
+                vol = a * a * a;
+            } else if (currentShape === 'cuboid') {
+                sa = 2 * (a*b + b*c + c*a);
+                vol = a * b * c;
+            } else {
+                const r = a;
+                const h = b;
+                sa = 2 * Math.PI * r * (r + h);
+                vol = Math.PI * r * r * h;
+            }
+            
+            document.getElementById('saResult').innerHTML = `<strong>Surface Area:</strong> ${Math.round(sa)} cm²`;
+            document.getElementById('volResult').innerHTML = `<strong>Volume:</strong> ${Math.round(vol)} cm³`;
+            document.getElementById('resultBox').classList.add('show');
+            
+            document.getElementById('star1').classList.add('lit');
+            score += 20;
+        }
+        
+        function checkPackage(btn, correct, val) {
+            document.querySelectorAll('.challenge-btn').forEach(b => b.disabled = true);
+            
+            if (correct) {
+                btn.classList.add('correct');
+                document.getElementById('pkgResult').classList.add('show');
+                document.getElementById('star2').classList.add('lit');
+                document.getElementById('btn2').disabled = false;
+                score += 20;
+                showOverlay('✓', 'Correct!', 'Label area = Curved Surface Area', 'The label wraps around the curved surface only.');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Not quite', 'Think about what a label covers.', 'A label only wraps around the side, not the top/bottom.');
+            }
+        }
+        
+        function calculateCylinder() {
+            const r = parseFloat(document.getElementById('cylR').value) || 0;
+            const h = parseFloat(document.getElementById('cylH').value) || 0;
+            
+            const csa = 2 * Math.PI * r * h;
+            const tsa = 2 * Math.PI * r * (r + h);
+            const vol = Math.PI * r * r * h;
+            
+            document.getElementById('csa').textContent = Math.round(csa);
+            document.getElementById('tsa').textContent = Math.round(tsa);
+            document.getElementById('vol').textContent = Math.round(vol);
+            document.getElementById('cylResults').style.display = 'grid';
+            
+            document.getElementById('star3').classList.add('lit');
+            score += 20;
+        }
+        
+        function checkUnit(btn, correct) {
+            document.querySelectorAll('.challenge-btn').forEach(b => b.disabled = true);
+            
+            if (correct) {
+                btn.classList.add('correct');
+                document.getElementById('unitResult').classList.add('show');
+                document.getElementById('star4').classList.add('lit');
+                score += 20;
+                showOverlay('✓', 'Correct!', 'You avoided the trap!', 'Cube the conversion factor: (100)³ = 1,000,000');
+            } else {
+                btn.classList.add('wrong');
+                showOverlay('✗', 'Common mistake!', 'Remember to cube the factor.', '1 m = 100 cm, so 1 m³ = (100)³ = 1,000,000 cm³');
+            }
+        }
+        
+        function nextStage() {
+            document.getElementById('stage' + currentStage).classList.remove('active');
+            currentStage++;
+            document.getElementById('stage' + currentStage).classList.add('active');
+        }
+        
+        function completeGame() {
+            document.getElementById('star5').classList.add('lit');
+            score += 20;
+            
+            localStorage.setItem('G8-03', JSON.stringify({
+                visited: true,
+                score: score,
+                date: new Date().toISOString()
+            }));
+            
+            document.querySelectorAll('.stage').forEach(s => s.style.display = 'none');
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.hook-card').style.display = 'none';
+            document.getElementById('completionScreen').classList.add('active');
+            document.getElementById('finalScore').textContent = `You scored ${score}/100!`;
+        }
+        
+        function playAgain() {
+            currentStage = 1;
+            score = 0;
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+            document.querySelectorAll('.stage').forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'block';
+            });
+            document.getElementById('stage1').classList.add('active');
+            document.querySelector('.header').style.display = 'flex';
+            document.querySelector('.hook-card').style.display = 'block';
+            document.getElementById('completionScreen').classList.remove('active');
+            document.querySelectorAll('.challenge-btn').forEach(b => {
+                b.disabled = false;
+                b.classList.remove('correct', 'wrong');
+            });
+            document.getElementById('pkgResult').classList.remove('show');
+            document.getElementById('unitResult').classList.remove('show');
+            document.getElementById('resultBox').classList.remove('show');
+            document.getElementById('cylResults').style.display = 'none';
+        }
+        
+        function showOverlay(emoji, title, message, fact) {
+            document.getElementById('overlayEmoji').textContent = emoji;
+            document.getElementById('overlayTitle').textContent = title;
+            document.getElementById('overlayMessage').textContent = message;
+            document.getElementById('overlayFact').textContent = fact;
+            document.getElementById('overlay').classList.add('active');
+            setTimeout(() => document.getElementById('overlay').classList.remove('active'), 2500);
+        }
+        
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('G8-03');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.score > 0) {
+                    const stars = Math.ceil(data.score / 20);
+                    for (let i = 1; i <= stars; i++) document.getElementById('star' + i).classList.add('lit');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

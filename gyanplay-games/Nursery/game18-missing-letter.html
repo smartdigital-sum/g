@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Missing Letter 🔤 | GyanPlay Nursery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--green:#00C853;--pink:#FF4081;--gold:#FFB800;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    body{
+      font-family:'Nunito',sans-serif;
+      min-height:100vh;
+      background:linear-gradient(135deg,#FCE4EC,#F8BBD0);
+      color:#880E4F;
+      display:flex;flex-direction:column;align-items:center;
+      padding:16px;animation:fadeIn .4s ease;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes floatUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+    @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.2)}100%{transform:scale(1)}}
+    @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+    @keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+    .top-bar{
+      width:100%;max-width:680px;
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:14px;flex-wrap:wrap;gap:8px;
+    }
+    .back-btn{
+      background:rgba(255,255,255,.55);border:none;
+      padding:9px 22px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
+      cursor:pointer;transition:background .2s;color:#880E4F;
+    }
+    .back-btn:hover{background:rgba(255,255,255,.8)}
+    .subject-badge{
+      background:rgba(255,255,255,.55);padding:7px 20px;
+      border-radius:999px;font-size:.9rem;font-weight:800;
+      font-family:'Baloo 2',sans-serif;color:#880E4F;
+    }
+    .lang-toggle{display:flex;gap:6px}
+    .lang-btn{
+      background:rgba(255,255,255,.35);border:none;
+      padding:7px 14px;border-radius:999px;
+      font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;
+      cursor:pointer;transition:all .2s;color:#880E4F;
+    }
+    .lang-btn.active{background:#fff;color:#AD1457}
+    .lang-btn:hover:not(.active){background:rgba(255,255,255,.6)}
+
+    .game-card{
+      background:rgba(255,255,255,.52);
+      backdrop-filter:blur(14px);
+      border:2.5px solid rgba(255,255,255,.7);
+      border-radius:28px;padding:22px 20px;
+      width:100%;max-width:680px;
+      box-shadow:0 12px 50px rgba(136,14,79,.1);
+    }
+    .game-title{
+      font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;
+      text-align:center;margin-bottom:6px;color:#880E4F;
+    }
+    .score-bar{display:flex;justify-content:space-between;margin:6px 0;font-size:1rem;font-weight:800;color:#880E4F;}
+    .prog-wrap{background:rgba(255,255,255,.4);border-radius:999px;height:12px;margin-bottom:16px}
+    .prog-fill{
+      height:12px;border-radius:999px;
+      background:linear-gradient(90deg,#F48FB1,#AD1457);
+      transition:width .4s ease;
+    }
+
+    .instruction{
+      font-size:1.2rem;font-weight:800;text-align:center;
+      margin-bottom:14px;color:#AD1457;
+    }
+
+    /* WORD BOX */
+    .word-box{
+      background:rgba(255,255,255,.45);
+      border:2.5px solid rgba(255,255,255,.65);
+      border-radius:24px;padding:22px 18px;
+      margin-bottom:18px;text-align:center;
+    }
+    .hint-emoji{
+      font-size:6.5rem;line-height:1;
+      display:block;margin-bottom:12px;
+      animation:floatUp 2.2s ease infinite;
+      filter:drop-shadow(0 4px 16px rgba(136,14,79,.15));
+    }
+    .word-display{
+      display:flex;justify-content:center;align-items:center;gap:10px;
+      flex-wrap:wrap;
+    }
+    .letter-tile{
+      font-family:'Baloo 2',sans-serif;font-size:3.2rem;font-weight:800;
+      width:72px;height:72px;
+      background:rgba(255,255,255,.6);
+      border:3px solid rgba(173,20,87,.2);
+      border-radius:16px;
+      display:flex;align-items:center;justify-content:center;
+      color:#880E4F;
+    }
+    .letter-tile.blank{
+      border:3px dashed #AD1457;
+      background:rgba(173,20,87,.08);
+      color:#AD1457;
+      animation:blink 1.4s ease infinite;
+    }
+    .word-hint-label{
+      font-size:.95rem;font-weight:700;color:#C2185B;margin-top:10px;
+      text-transform:uppercase;letter-spacing:1px;
+    }
+
+    /* LETTER CHOICE BUTTONS */
+    .choices-row{
+      display:flex;gap:14px;margin-bottom:12px;justify-content:center;
+    }
+    .letter-btn{
+      background:rgba(255,255,255,.5);
+      border:3px solid rgba(255,255,255,.68);
+      border-radius:24px;
+      width:100%;max-width:150px;
+      min-height:90px;
+      font-family:'Baloo 2',sans-serif;font-size:3rem;font-weight:800;
+      cursor:pointer;transition:all .2s;
+      display:flex;align-items:center;justify-content:center;
+      color:#880E4F;
+    }
+    .letter-btn:hover:not(:disabled){background:rgba(255,255,255,.8);transform:scale(1.07)}
+    .letter-btn.correct{background:rgba(0,200,83,.3);border-color:#00C853;color:#1B5E20;animation:pop .4s ease}
+    .letter-btn.wrong{background:rgba(255,64,129,.22);border-color:#FF4081;animation:shake .4s ease}
+    .letter-btn:disabled{cursor:default}
+
+    .feedback{
+      font-family:'Baloo 2',sans-serif;font-size:1.45rem;font-weight:800;
+      text-align:center;min-height:1.8rem;margin:6px 0 4px;
+    }
+    .feedback.correct{color:#2E7D32}
+    .feedback.wrong{color:#C62828}
+
+    .next-btn{
+      color:#fff;background:#AD1457;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.8rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;display:none;transition:transform .15s;
+      width:100%;margin-top:6px;
+    }
+    .next-btn:hover{transform:scale(1.04)}
+
+    .overlay{
+      display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,.55);backdrop-filter:blur(10px);
+      align-items:center;justify-content:center;z-index:100;padding:1.5rem;
+    }
+    .overlay.show{display:flex}
+    .result-box{
+      background:linear-gradient(135deg,#FCE4EC,#F8BBD0);
+      border:3px solid rgba(173,20,87,.3);
+      border-radius:28px;padding:2.5rem 2rem;text-align:center;
+      max-width:400px;width:100%;animation:popIn .35s ease;
+    }
+    .res-emoji{font-size:4rem;margin-bottom:.5rem}
+    .res-title{font-family:'Baloo 2',sans-serif;font-size:2.2rem;font-weight:800;margin-bottom:.4rem;color:#880E4F;}
+    .res-score{font-size:1.1rem;margin-bottom:.8rem;font-weight:700;color:#AD1457;}
+    .res-stars{font-size:3rem;margin-bottom:1.2rem;letter-spacing:6px}
+    .play-again-btn{
+      color:#fff;background:#AD1457;
+      font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.2rem;
+      padding:.85rem 2.5rem;border:none;border-radius:999px;
+      cursor:pointer;transition:transform .15s;
+    }
+    .play-again-btn:hover{transform:scale(1.05)}
+
+    [data-lang]{display:none}
+    [data-lang="en"]{display:inline}
+
+    @media(max-width:480px){
+      .hint-emoji{font-size:5rem}
+      .letter-tile{font-size:2.5rem;width:58px;height:58px}
+      .letter-btn{font-size:2.4rem;min-height:75px}
+      .game-title{font-size:1.65rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi">वापस</span><span data-lang="as">পাছে</span></button>
+  <div class="subject-badge">🔤 <span data-lang="en">English</span><span data-lang="hi">अंग्रेज़ी</span><span data-lang="as">ইংৰাজী</span></div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<!-- GAME CARD -->
+<div class="game-card">
+  <div class="game-title">
+    <span data-lang="en">Missing Letter! 🔤</span>
+    <span data-lang="hi">लापता अक्षर! 🔤</span>
+    <span data-lang="as">হেৰোৱা আখৰ! 🔤</span>
+  </div>
+  <div class="score-bar">
+    <span><span data-lang="en">Score</span><span data-lang="hi">स्कोर</span><span data-lang="as">স্কোৰ</span>: <b id="score-val">0</b> / 80</span>
+    <span><span data-lang="en">Round</span><span data-lang="hi">दौर</span><span data-lang="as">ৰাউণ্ড</span> <b id="round-num">1</b> / 8</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+
+  <div class="instruction">
+    <span data-lang="en">👇 Pick the missing letter!</span>
+    <span data-lang="hi">👇 लापता अक्षर को छुओ!</span>
+    <span data-lang="as">👇 হেৰোৱা আখৰটো বাছক!</span>
+  </div>
+
+  <div class="word-box">
+    <span class="hint-emoji" id="hint-emoji"></span>
+    <div class="word-display" id="word-display"></div>
+    <div class="word-hint-label" id="word-hint-label"></div>
+  </div>
+
+  <div class="choices-row" id="choices-row"></div>
+
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="next-btn" onclick="nextRound()">
+    <span data-lang="en">Next →</span>
+    <span data-lang="hi">अगला →</span>
+    <span data-lang="as">পৰৱৰ্তী →</span>
+  </button>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="result-box">
+    <div class="res-emoji" id="res-emoji"></div>
+    <div class="res-title" id="res-title"></div>
+    <div class="res-score" id="res-score"></div>
+    <div class="res-stars" id="res-stars"></div>
+    <button class="play-again-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again!</span>
+      <span data-lang="hi">🔄 फिर खेलें!</span>
+      <span data-lang="as">🔄 আকৌ খেলক!</span>
+    </button>
+  </div>
+</div>
+
+<script>
+let currentLang = 'en';
+
+function setLang(l) {
+  currentLang = l;
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? 'inline' : 'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', ['en','hi','as'][i] === l);
+  });
+}
+
+// 8 words — missing middle letter in each
+// wrongOptions: two plausible wrong letters
+const baseRounds = [
+  { word: 'CAT', missingPos: 1, emoji: '🐱',
+    hint: { en: 'A furry pet', hi: 'एक प्यारा जानवर', as: 'এটা পোহনীয়া জন্তু' },
+    wrong: ['U', 'O'] },
+  { word: 'DOG', missingPos: 1, emoji: '🐕',
+    hint: { en: 'Man\'s best friend', hi: 'इंसान का दोस्त', as: 'মানুহৰ বন্ধু' },
+    wrong: ['A', 'U'] },
+  { word: 'SUN', missingPos: 1, emoji: '☀️',
+    hint: { en: 'Shines in the sky', hi: 'आसमान में चमकता है', as: 'আকাশত চমকায়' },
+    wrong: ['A', 'O'] },
+  { word: 'BUS', missingPos: 1, emoji: '🚌',
+    hint: { en: 'We ride it to school', hi: 'स्कूल जाते हैं इसमें', as: 'স্কুললৈ যাওঁ ইয়াত' },
+    wrong: ['A', 'O'] },
+  { word: 'CUP', missingPos: 1, emoji: '☕',
+    hint: { en: 'Holds your drink', hi: 'पानी पीते हैं इसमें', as: 'পানী খাওঁ ইয়াত' },
+    wrong: ['A', 'O'] },
+  { word: 'HAT', missingPos: 1, emoji: '🎩',
+    hint: { en: 'Wear it on your head', hi: 'सिर पर पहनते हैं', as: 'মূৰত পিন্ধোঁ' },
+    wrong: ['I', 'O'] },
+  { word: 'PEN', missingPos: 1, emoji: '✏️',
+    hint: { en: 'Write with this', hi: 'इससे लिखते हैं', as: 'ইয়েৰে লিখোঁ' },
+    wrong: ['A', 'I'] },
+  { word: 'BAG', missingPos: 1, emoji: '🎒',
+    hint: { en: 'Carry your books', hi: 'किताबें रखते हैं', as: 'কিতাপ ৰাখোঁ' },
+    wrong: ['I', 'O'] },
+];
+
+let rounds = [], order = [], ri = 0, score = 0, answered = false;
+
+function shuffle(a) { return [...a].sort(() => Math.random() - .5); }
+
+function startGame() {
+  rounds = shuffle([...baseRounds]);
+  order = [...Array(rounds.length).keys()];
+  ri = 0; score = 0;
+  document.getElementById('overlay').classList.remove('show');
+  loadRound();
+}
+
+function loadRound() {
+  const r = rounds[order[ri]];
+  answered = false;
+
+  document.getElementById('prog-fill').style.width = (ri / rounds.length * 100) + '%';
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('round-num').textContent = ri + 1;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('hint-emoji').textContent = r.emoji;
+  document.getElementById('word-hint-label').textContent = r.hint[currentLang] || r.hint['en'];
+
+  // Build letter tiles
+  const display = document.getElementById('word-display');
+  display.innerHTML = '';
+  for (let i = 0; i < r.word.length; i++) {
+    const tile = document.createElement('div');
+    if (i === r.missingPos) {
+      tile.className = 'letter-tile blank';
+      tile.textContent = '_';
+      tile.id = 'blank-tile';
+    } else {
+      tile.className = 'letter-tile';
+      tile.textContent = r.word[i];
+    }
+    display.appendChild(tile);
+  }
+
+  // Build letter choice buttons
+  const correct = r.word[r.missingPos];
+  const choices = shuffle([correct, r.wrong[0], r.wrong[1]]);
+  const row = document.getElementById('choices-row');
+  row.innerHTML = '';
+  choices.forEach(letter => {
+    const btn = document.createElement('button');
+    btn.className = 'letter-btn';
+    btn.textContent = letter;
+    btn.dataset.correct = letter === correct ? '1' : '0';
+    btn.onclick = () => handleAnswer(letter === correct, btn, correct);
+    row.appendChild(btn);
+  });
+}
+
+function handleAnswer(isCorrect, clickedBtn, correctLetter) {
+  if (answered) return;
+  answered = true;
+
+  document.querySelectorAll('.letter-btn').forEach(b => b.disabled = true);
+
+  // Fill in the blank tile
+  const blank = document.getElementById('blank-tile');
+  if (blank) {
+    blank.textContent = correctLetter;
+    blank.classList.remove('blank');
+  }
+
+  if (isCorrect) {
+    clickedBtn.classList.add('correct');
+    score += 10;
+  } else {
+    clickedBtn.classList.add('wrong');
+    document.querySelectorAll('.letter-btn').forEach(b => {
+      if (b.dataset.correct === '1') b.classList.add('correct');
+    });
+  }
+
+  const fb = document.getElementById('feedback');
+  const r = rounds[order[ri]];
+  if (isCorrect) {
+    const msgs = {
+      en: [`Yes! The word is ${r.word}! ✓`, `Correct! ${r.word}! ✓`, `Superstar! ✓`, `Amazing! ✓`],
+      hi: [`हाँ! शब्द है ${r.word}! ✓`, `सही! ${r.word}! ✓`, `सुपरस्टार! ✓`, `शानदार! ✓`],
+      as: [`হয়! শব্দটো হৈছে ${r.word}! ✓`, `শুদ্ধ! ${r.word}! ✓`, `ছুপাৰষ্টাৰ! ✓`, `অসাধাৰণ! ✓`]
+    };
+    const arr = msgs[currentLang] || msgs['en'];
+    fb.textContent = arr[Math.floor(Math.random() * arr.length)];
+    fb.className = 'feedback correct';
+  } else {
+    const msgs = {
+      en: [`The letter is "${correctLetter}"! The word is ${r.word}! ✗`],
+      hi: [`अक्षर है "${correctLetter}"! शब्द है ${r.word}! ✗`],
+      as: [`আখৰটো হৈছে "${correctLetter}"! শব্দটো ${r.word}! ✗`]
+    };
+    fb.textContent = (msgs[currentLang] || msgs['en'])[0];
+    fb.className = 'feedback wrong';
+  }
+
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextRound() {
+  ri++;
+  if (ri >= rounds.length) { showResult(); return; }
+  loadRound();
+}
+
+function showResult() {
+  document.getElementById('prog-fill').style.width = '100%';
+  const pct = (score / (rounds.length * 10)) * 100;
+  let emoji = '😊', title = { en: 'Good Try!', hi: 'अच्छी कोशिश!', as: 'ভাল চেষ্টা!' };
+  if (pct >= 90) { emoji = '🏆'; title = { en: 'Letter Champion!', hi: 'अक्षर चैम्पियन!', as: 'আখৰ চেম্পিয়ন!' }; }
+  else if (pct >= 70) { emoji = '🌟'; title = { en: 'Well Done!', hi: 'बहुत अच्छा!', as: 'বহুত ভাল!' }; }
+  else if (pct >= 40) { emoji = '👍'; title = { en: 'Good Job!', hi: 'शाबाश!', as: 'ভাল কাম!' }; }
+
+  const stars = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : pct >= 40 ? '⭐' : '';
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-title').textContent = title[currentLang] || title['en'];
+  document.getElementById('res-score').textContent = 'Score: ' + score + ' / ' + (rounds.length * 10);
+  document.getElementById('res-stars').textContent = stars;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function restartGame() { startGame(); }
+startGame();
+</script>
+</body>
+</html>

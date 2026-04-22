@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GyanPlay Class 2 - Batch 2</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+        
+        .header { text-align: center; padding: 30px; background: linear-gradient(90deg, #e94560, #0f3460); margin-bottom: 30px; }
+        
+        .header h1 { color: #fff; font-size: 2.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        
+        .header p { color: #eee; margin-top: 10px; font-size: 1.2rem; }
+        
+        .subject-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        
+        .subject-section { background: rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 20px; backdrop-filter: blur(10px); border: 2px solid rgba(255, 255, 255, 0.1); transition: transform 0.3s, box-shadow 0.3s; }
+        
+        .subject-section:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); }
+        
+        .subject-title { font-size: 1.5rem; margin-bottom: 15px; padding-bottom: 10px; }
+        
+        .game-card { background: linear-gradient(135deg, #2d3436, #1e272e); border-radius: 15px; padding: 15px; margin: 10px 0; cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
+        
+        .game-card:hover { border-color: #e94560; transform: scale(1.02); }
+        
+        .game-card h3 { color: #fff; font-size: 1.1rem; }
+        
+        .game-card p { color: #aaa; font-size: 0.9rem; margin-top: 5px; }
+        
+        .subject-section.maths .subject-title { border-color: #f39c12; color: #f39c12; }
+        .subject-section.english .subject-title { border-color: #3498db; color: #3498db; }
+        .subject-section.science .subject-title { border-color: #2ecc71; color: #2ecc71; }
+        .subject-section.social .subject-title { border-color: #9b59b6; color: #9b59b6; }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="loader">Loading Game...</div>
+    </div>
+    
+    <div class="header">
+        <h1>🎒 GyanPlay Class 2 - Batch 2</h1>
+        <p>Level Up Your Skills!</p>
+    </div>
+    
+    <div class="subject-grid">
+        <div class="subject-section maths">
+            <h2 class="subject-title">🔢 Maths</h2>
+            <div class="game-card" onclick="loadGame('multiplication-pond.html')">
+                <h3>3. Multiplication Pond</h3>
+                <p>Learn tables 2, 3, 4, 5 with frog jumps</p>
+            </div>
+            <div class="game-card" onclick="loadGame('ruler-race.html')">
+                <h3>4. Ruler Race</h3>
+                <p>Measure in centimeters and meters</p>
+            </div>
+            <div class="game-card" onclick="loadGame('clock-tower.html')">
+                <h3>5. Clock Tower</h3>
+                <p>Learn o'clock and half past times</p>
+            </div>
+        </div>
+        
+        <div class="subject-section english">
+            <h2 class="subject-title">📝 English</h2>
+            <div class="game-card" onclick="loadGame('verb-volcano.html')">
+                <h3>3. Verb Volcano</h3>
+                <p>Action words - verbs in sentences</p>
+            </div>
+            <div class="game-card" onclick="loadGame('paragraph-builder.html')">
+                <h3>4. Paragraph Builder</h3>
+                <p>Arrange sentences and answer questions</p>
+            </div>
+        </div>
+        
+        <div class="subject-section science">
+            <h2 class="subject-title">🔬 Science</h2>
+            <div class="game-card" onclick="loadGame('material-world.html')">
+                <h3>2. Material World</h3>
+                <p>Hard/soft, rough/smooth materials</p>
+            </div>
+        </div>
+        
+        <div class="subject-section social">
+            <h2 class="subject-title">🌏 Social Studies</h2>
+            <div class="game-card" onclick="loadGame('festival-colours.html')">
+                <h3>2. Festival Colours</h3>
+                <p>Indian festivals - Diwali, Holi, Eid, Bihu</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="nav-buttons">
+        <button class="nav-btn" onclick="loadGame('batch1-index.html')">← Back to Batch 1</button>
+    </div>
+    
+    <script>
+        function loadGame(url) {
+            document.getElementById('loading').classList.add('active');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 500);
+        }
+    </script>
+</body>
+</html>

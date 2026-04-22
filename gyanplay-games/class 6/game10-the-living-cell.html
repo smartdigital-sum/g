@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Living Cell — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#071A07 0%,#040E04 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(6,214,160,.13),rgba(6,214,160,.04));border:1px solid rgba(6,214,160,.3);border-radius:16px;padding:16px;margin-bottom:16px}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(6,214,160,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--teal);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:700}
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.45}
+
+/* Cell toggle */
+.cell-toggle{display:flex;gap:0;background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.2);border-radius:100px;padding:3px;margin-bottom:14px;width:fit-content;margin-left:auto;margin-right:auto}
+.toggle-btn{padding:7px 18px;border-radius:100px;font-family:'Baloo 2',cursive;font-size:.85rem;font-weight:700;cursor:pointer;border:none;transition:all .25s;color:var(--dim);background:transparent}
+.toggle-btn.active{background:var(--teal);color:#060A10}
+
+/* Cell SVG area */
+.cell-area{background:rgba(6,214,160,.04);border:1px solid rgba(6,214,160,.15);border-radius:16px;padding:12px;margin-bottom:14px;display:flex;justify-content:center;position:relative;min-height:220px}
+.cell-area svg{max-width:100%;height:auto}
+
+/* Label drag targets */
+.label-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;min-height:44px;background:rgba(6,214,160,.04);border:1px dashed rgba(6,214,160,.2);border-radius:12px;padding:10px}
+.label-chip{background:rgba(6,214,160,.1);border:2px solid rgba(6,214,160,.25);border-radius:100px;padding:6px 13px;font-size:.82rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;user-select:none}
+.label-chip:hover{border-color:var(--teal);background:rgba(6,214,160,.2)}
+.label-chip.used{opacity:.35;pointer-events:none}
+.label-chip.selected{border-color:var(--gold);background:rgba(255,209,102,.15);color:var(--gold)}
+
+/* Hotspot circles on SVG */
+.hotspot{cursor:pointer;transition:all .2s}
+.hotspot circle{transition:all .2s}
+.hotspot:hover circle{r:12}
+.hotspot.filled circle{fill:rgba(6,214,160,.35)}
+.hotspot.filled text{fill:var(--teal);font-weight:bold}
+.hotspot.wrong-hs circle{fill:rgba(255,107,107,.3)}
+
+/* Organelle fact popup */
+.organelle-fact{background:rgba(6,214,160,.08);border:1px solid rgba(6,214,160,.25);border-radius:12px;padding:12px;margin-bottom:12px;font-size:.82rem;line-height:1.5;color:var(--text);display:none}
+.organelle-fact.show{display:block}
+.organelle-fact strong{color:var(--teal)}
+
+/* MCQ options */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(6,214,160,.07);border:2px solid rgba(6,214,160,.2);border-radius:14px;padding:12px 8px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--teal);background:rgba(6,214,160,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.2);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.92rem;font-weight:600;min-height:26px;margin:10px 0 4px}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+.score-display{text-align:center;font-family:'Baloo 2',cursive;font-size:.9rem;color:var(--teal);margin-bottom:8px}
+
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#040E04 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--teal);color:var(--teal);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.play-again-btn:hover{background:rgba(6,214,160,.1)}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(6,214,160,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stage-transition{background:linear-gradient(135deg,rgba(6,214,160,.1),rgba(6,214,160,.03));border:1px solid rgba(6,214,160,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--teal);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+.diff-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:10px}
+.diff-table th{background:rgba(6,214,160,.12);color:var(--teal);padding:7px 10px;text-align:left;font-family:'Baloo 2',cursive;font-size:.78rem}
+.diff-table td{padding:7px 10px;border-bottom:1px solid rgba(6,214,160,.08);color:var(--text)}
+.diff-table .plant-col{color:#A8E063}
+.diff-table .animal-col{color:var(--teal)}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">🔬 The Living Cell</div>
+      <span class="subject-tag">Science · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+  <div class="wow-hook">
+    <span class="wow-emoji">🔬</span>
+    <div class="wow-text">There are <strong>37 TRILLION cells</strong> in your body. If you lined them all up they would circle the Earth <strong>4 times</strong>. And each single cell is more complex than the most advanced factory ever built!</div>
+  </div>
+  <div id="gameArea"></div>
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Stage 1 of 3</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+<script>
+const ORGANELLES = [
+  {id:'nucleus',    name:'Nucleus',        x:50, y:42, rx:9, ry:7,  fact:'The NUCLEUS is the cell\'s control centre — it holds DNA with all genetic instructions.',        both:true},
+  {id:'membrane',  name:'Cell Membrane',  x:50, y:50, rx:44,ry:43, fact:'The CELL MEMBRANE controls what enters and leaves the cell — a selective doorman!',            both:true},
+  {id:'cytoplasm', name:'Cytoplasm',       x:30, y:65, rx:6, ry:5,  fact:'CYTOPLASM is the jelly-like fluid that fills the cell and holds all organelles in place.',      both:true},
+  {id:'mito',      name:'Mitochondria',   x:72, y:35, rx:7, ry:4,  fact:'MITOCHONDRIA produce energy (ATP) — called the powerhouse of the cell!',                       both:true},
+  {id:'vacuole',   name:'Vacuole',        x:50, y:68, rx:8, ry:6,  fact:'VACUOLES store food, water and waste. Plant vacuoles are HUGE — animal vacuoles are tiny.',      both:true},
+  {id:'wall',      name:'Cell Wall',      x:50, y:50, rx:47,ry:46, fact:'CELL WALL (plants only!) made of cellulose — gives rigidity and shape. Animal cells have none!', plant:true},
+  {id:'chloro',    name:'Chloroplast',    x:28, y:35, rx:7, ry:4,  fact:'CHLOROPLASTS contain chlorophyll and convert sunlight to food via photosynthesis — plants only!', plant:true},
+];
+
+const MCQ = [
+  {q:'Which organelle is called the "powerhouse of the cell"?', correct:'Mitochondria', opts:['Nucleus','Mitochondria','Vacuole','Chloroplast'], fact:'Mitochondria produce ATP — the energy currency used by every process in the cell.'},
+  {q:'What does the cell membrane do?', correct:'Controls entry and exit of substances', opts:['Stores DNA','Controls entry and exit of substances','Produces food from sunlight','Provides rigid shape'], fact:'The cell membrane is selectively permeable — it lets some substances in and keeps others out.'},
+  {q:'Which structure is found in PLANT cells but NOT in animal cells?', correct:'Cell wall', opts:['Nucleus','Cell membrane','Cell wall','Mitochondria'], fact:'The cell wall gives plants their rigid structure. Without it, plants would wilt and collapse like a deflated balloon!'},
+  {q:'Where is DNA stored in a cell?', correct:'Nucleus', opts:['Cytoplasm','Vacuole','Nucleus','Chloroplast'], fact:'DNA in the nucleus acts like the cell\'s instruction manual — every cell in your body has the SAME DNA!'},
+  {q:'Which organelle carries out photosynthesis?', correct:'Chloroplast', opts:['Mitochondria','Vacuole','Nucleus','Chloroplast'], fact:'Chloroplasts contain chlorophyll — the green pigment that captures light energy to make food from CO₂ and water.'},
+];
+
+const DIFF_Q = [
+  {q:'Plant vacuoles compared to animal vacuoles are:', correct:'Much larger', opts:['Much larger','Much smaller','Identical','Absent'], fact:'A plant\'s central vacuole can take up to 90% of the cell volume — storing water to keep the plant firm!'},
+  {q:'Which cell type has a chloroplast?', correct:'Plant cell only', opts:['Animal cell only','Both plant and animal','Plant cell only','Neither'], fact:'Only plants (and algae) have chloroplasts — because only they make food from sunlight!'},
+  {q:'Which cell type has a cell wall?', correct:'Plant cell only', opts:['Animal cell only','Both plant and animal','Plant cell only','Neither'], fact:'The plant cell wall is made of cellulose. It makes plant cells rigid — that\'s why a fresh carrot snaps!'},
+];
+
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+let stg=1, qIdx=0, score=0, answered=false, cellType='animal', selectedLabel=null, labelledOrgs={};
+
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  const C=['#FFD166','#06D6A0','#4CC9F0','#C77DFF','#A8E063'];
+  for(let i=0;i<28;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+}
+function updateStars(){const lit=Math.min(5,Math.ceil(score/2.4));for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.toggle('lit',i<=lit)}
+function showOverlay(emoji,title,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovFact').textContent=fact;document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay');ov.classList.add('show');
+  if(!isEnd)setTimeout(()=>ov.classList.remove('show'),2700);
+}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(t){document.getElementById('progressLabel').textContent=t}
+
+/* ── STAGE 1: Label the cell ── */
+function getVisibleOrgs(){
+  return ORGANELLES.filter(o=> cellType==='plant' ? (o.both||o.plant) : o.both);
+}
+
+function renderCellSVG(type){
+  const orgs=getVisibleOrgs();
+  const isPlant=type==='plant';
+  // Cell outline
+  let svg=`<svg viewBox="0 0 100 100" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="cellbg" cx="50%" cy="50%">
+        <stop offset="0%" stop-color="${isPlant?'#0a2a0a':'#071a1a'}"/>
+        <stop offset="100%" stop-color="${isPlant?'#040e04':'#030c10'}"/>
+      </radialGradient>
+    </defs>`;
+  // Cell wall (plant only)
+  if(isPlant) svg+=`<rect x="2" y="2" width="96" height="96" rx="8" fill="none" stroke="#A8E063" stroke-width="2.5" opacity=".6"/>`;
+  // Membrane
+  svg+=`<${isPlant?'rect':'ellipse'} ${isPlant?'x="4" y="4" width="92" height="92" rx="6"':'cx="50" cy="50" rx="44" ry="43"'} fill="url(#cellbg)" stroke="rgba(6,214,160,.5)" stroke-width="1.5"/>`;
+  // Cytoplasm label area
+  svg+=`<ellipse cx="18" cy="78" rx="8" ry="5" fill="rgba(76,201,240,.08)" stroke="rgba(76,201,240,.2)" stroke-width=".8"/>`;
+  // Nucleus
+  svg+=`<ellipse cx="50" cy="42" rx="9" ry="7" fill="rgba(199,125,255,.2)" stroke="rgba(199,125,255,.5)" stroke-width="1"/>
+        <ellipse cx="50" cy="42" rx="4" ry="3" fill="rgba(199,125,255,.3)" stroke="rgba(199,125,255,.4)" stroke-width=".6"/>`;
+  // Mitochondria
+  svg+=`<ellipse cx="72" cy="35" rx="7" ry="4" fill="rgba(255,159,28,.15)" stroke="rgba(255,159,28,.4)" stroke-width=".8" transform="rotate(-20,72,35)"/>
+        <path d="M68,34 Q72,31 76,34" fill="none" stroke="rgba(255,159,28,.4)" stroke-width=".6"/>`;
+  // Vacuole
+  svg+=`<ellipse cx="50" cy="68" rx="8" ry="6" fill="rgba(76,201,240,.12)" stroke="rgba(76,201,240,.35)" stroke-width=".8"/>`;
+  // Chloroplast (plant only)
+  if(isPlant){
+    svg+=`<ellipse cx="28" cy="35" rx="7" ry="4" fill="rgba(168,224,99,.2)" stroke="rgba(168,224,99,.5)" stroke-width=".8" transform="rotate(15,28,35)"/>
+          <line x1="24" y1="35" x2="32" y2="35" stroke="rgba(168,224,99,.4)" stroke-width=".5"/>`;
+  }
+  // Hotspot circles for labelling
+  orgs.forEach(o=>{
+    const filled=labelledOrgs[o.id];
+    const col=isPlant&&o.plant?'#A8E063':'#06D6A0';
+    svg+=`<g class="hotspot${filled?' filled':''}" id="hs_${o.id}" onclick="hotspotClick('${o.id}')">
+      <circle cx="${o.x}" cy="${o.y}" r="8" fill="${filled?`rgba(6,214,160,.25)`:'rgba(6,214,160,.08)'}" stroke="${filled?col:'rgba(6,214,160,.4)'}" stroke-width="1" stroke-dasharray="${filled?'0':'3,2'}"/>
+      <text x="${o.x}" y="${o.y+4}" text-anchor="middle" font-size="5.5" fill="${filled?col:'rgba(232,240,255,.4)'}" font-family="Baloo 2">${filled?'✓':'?'}</text>
+    </g>`;
+  });
+  svg+=`</svg>`;
+  return svg;
+}
+
+function renderStage1(){
+  setProgress('Stage 1 of 3 — Label the Cell');
+  labelledOrgs={};selectedLabel=null;answered=false;showNext(false);
+  const orgs=getVisibleOrgs();
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🏷️ Stage 1 — Label the Cell</div>
+      <div class="cell-toggle">
+        <button class="toggle-btn ${cellType==='animal'?'active':''}" onclick="switchCell('animal')">🐾 Animal</button>
+        <button class="toggle-btn ${cellType==='plant'?'active':''}" onclick="switchCell('plant')">🌿 Plant</button>
+      </div>
+      <div class="cell-area" id="cellArea">${renderCellSVG(cellType)}</div>
+      <div style="font-size:.78rem;color:var(--dim);text-align:center;margin-bottom:10px">1. Tap a label below · 2. Tap the matching hotspot (?) on the cell</div>
+      <div class="label-bank" id="labelBank">
+        ${orgs.map(o=>`<div class="label-chip" id="lc_${o.id}" onclick="selectLabel('${o.id}')">${o.name}</div>`).join('')}
+      </div>
+      <div class="score-display" id="labelScore">Labelled: 0 / ${orgs.length}</div>
+      <div class="organelle-fact" id="orgFact"></div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+
+function switchCell(type){
+  cellType=type;labelledOrgs={};selectedLabel=null;
+  renderStage1();
+}
+function selectLabel(id){
+  if(labelledOrgs[id])return;
+  selectedLabel=id;
+  document.querySelectorAll('.label-chip').forEach(c=>c.classList.remove('selected'));
+  const chip=document.getElementById('lc_'+id);
+  if(chip)chip.classList.add('selected');
+}
+function hotspotClick(orgId){
+  if(!selectedLabel){
+    document.getElementById('fb').textContent='👆 First tap a label from the bank below!';
+    document.getElementById('fb').className='feedback wrong';
+    return;
+  }
+  const orgs=getVisibleOrgs();
+  const targetOrg=orgs.find(o=>o.id===orgId);
+  if(!targetOrg)return;
+  const fb=document.getElementById('fb');
+  if(selectedLabel===orgId){
+    // Correct
+    labelledOrgs[orgId]=true;
+    const chip=document.getElementById('lc_'+orgId);
+    if(chip){chip.classList.add('used');chip.classList.remove('selected')}
+    score++;updateStars();
+    // Show fact
+    const factEl=document.getElementById('orgFact');
+    factEl.innerHTML=`<strong>${targetOrg.name}:</strong> ${targetOrg.fact}`;
+    factEl.classList.add('show');
+    fb.textContent=cheer()+' Correct!';fb.className='feedback correct';
+    // Update SVG
+    document.getElementById('cellArea').innerHTML=renderCellSVG(cellType);
+    selectedLabel=null;
+    const labelled=Object.keys(labelledOrgs).length;
+    document.getElementById('labelScore').textContent=`Labelled: ${labelled} / ${orgs.length}`;
+    if(labelled===orgs.length){
+      if(score%3===0)confetti();
+      showNext(true);
+      fb.textContent='🎉 All organelles labelled! Press Next →';fb.className='feedback correct';
+    }
+  } else {
+    // Wrong hotspot
+    fb.textContent=`That hotspot is ${targetOrg.name}, not ${orgs.find(o=>o.id===selectedLabel)?.name}. Try again!`;
+    fb.className='feedback wrong';
+  }
+}
+
+/* ── STAGE 2: MCQ on organelle functions ── */
+function renderStage2(i){
+  setProgress(`Stage 2 of 3 — Question ${i+1} of ${MCQ.length}`);
+  answered=false;showNext(false);
+  const q=MCQ[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🧬 Stage 2 — Organelle Functions</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkMCQ('${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}','${q.fact.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkMCQ(sel,correct,fact,btn){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct');score++;updateStars();
+    fb.textContent=cheer()+'  Correct!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🔬',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+/* ── STAGE 3: Plant vs Animal differences ── */
+function renderStage3(i){
+  setProgress(`Stage 3 of 3 — Question ${i+1} of ${DIFF_Q.length}`);
+  answered=false;showNext(false);
+  const q=DIFF_Q[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">⚖️ Stage 3 — Plant vs Animal Cell</div>
+      <div style="overflow-x:auto;margin-bottom:14px">
+        <table class="diff-table">
+          <tr><th>Feature</th><th class="plant-col">🌿 Plant</th><th class="animal-col">🐾 Animal</th></tr>
+          <tr><td>Cell wall</td><td class="plant-col">✅ Present</td><td class="animal-col">❌ Absent</td></tr>
+          <tr><td>Chloroplast</td><td class="plant-col">✅ Present</td><td class="animal-col">❌ Absent</td></tr>
+          <tr><td>Vacuole</td><td class="plant-col">Large (central)</td><td class="animal-col">Small / absent</td></tr>
+          <tr><td>Cell membrane</td><td class="plant-col">✅ Present</td><td class="animal-col">✅ Present</td></tr>
+          <tr><td>Nucleus</td><td class="plant-col">✅ Present</td><td class="animal-col">✅ Present</td></tr>
+        </table>
+      </div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkDiff('${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}','${q.fact.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkDiff(sel,correct,fact,btn){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct');score++;updateStars();
+    fb.textContent=cheer()+'  Correct!';fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('⚖️',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact;fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function nextQ(){
+  if(stg===1){stg=2;qIdx=0;showTrans('🧬','Stage 2: Organelle Functions!','Now test your knowledge — match each organelle to its function.',()=>renderStage2(0))}
+  else if(stg===2){qIdx++;if(qIdx<MCQ.length)renderStage2(qIdx);else{stg=3;qIdx=0;showTrans('⚖️','Stage 3: Plant vs Animal!','What makes a plant cell different from an animal cell?',()=>renderStage3(0))}}
+  else{qIdx++;if(qIdx<DIFF_Q.length)renderStage3(qIdx);else endGame();}
+}
+function showTrans(emoji,title,desc,cb){
+  showNext(false);
+  document.getElementById('gameArea').innerHTML=`<div class="stage-transition"><div style="font-size:2.5rem">${emoji}</div><h3>${title}</h3><p>${desc}</p></div>`;
+  const nb=document.getElementById('nextBtn');nb.textContent='Start →';nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →';nb.onclick=nextQ;cb()};
+}
+function endGame(){
+  confetti();
+  const medals=['Cell Learner 🌱','Biologist 🔍','Cell Master 🔬','Science Champion 🏆','Cell Legend 🌟'];
+  const totalQ=getVisibleOrgs().length+MCQ.length+DIFF_Q.length;
+  const medal=medals[Math.min(4,Math.floor(score*5/totalQ))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--teal);margin:10px 0">${score} pts</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        Every living thing — a rhino in Kaziranga, a tea plant in Assam, you — is built from cells running on these same organelles. You now understand the building block of all life!
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  setProgress('Complete!');showNext(false);
+}
+function resetGame(){
+  stg=1;qIdx=0;score=0;answered=false;cellType='animal';labelledOrgs={};selectedLabel=null;
+  for(let i=1;i<=5;i++)document.getElementById('s'+i).classList.remove('lit');
+  document.getElementById('nextBtn').textContent='Next →';document.getElementById('nextBtn').onclick=nextQ;
+  renderStage1();
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{document.getElementById('overlay').classList.remove('show');resetGame()});
+renderStage1();
+</script>
+</body>
+</html>

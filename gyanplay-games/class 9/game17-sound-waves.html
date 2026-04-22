@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sound Waves — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--green);color:#000;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--sky);color:#000;border-color:var(--sky);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--sky);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--sky),var(--purple));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.55;margin-bottom:18px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;}
+.choice-btn:hover:not(:disabled){background:rgba(0,174,239,.12);border-color:var(--sky);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--sky);color:#000;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--sky);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Science · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en',event)">EN</button>
+      <button class="lang-btn" onclick="setLang('hi',event)">हि</button>
+      <button class="lang-btn" onclick="setLang('as',event)">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">🔊 Sound Waves</span>
+    <span data-lang="hi" style="display:none">🔊 ध्वनि तरंगें</span>
+    <span data-lang="as" style="display:none">🔊 শব্দ তৰঙ্গ</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — Science Ch 12 · Sound</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — विज्ञान अध्याय 12 · ध्वनि</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — বিজ্ঞান অধ্যায় 12 · শব্দ</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    en: "🌊 Sound waves are mechanical waves. They are classified as longitudinal waves because:",
+    hi: "🌊 ध्वनि तरंगें यांत्रिक तरंगें हैं। वे अनुदैर्ध्य तरंगें हैं क्योंकि:",
+    as: "🌊 শব্দ তৰঙ্গ যান্ত্ৰিক তৰঙ্গ। এইবোৰ অনুদৈৰ্ঘ্য তৰঙ্গ কাৰণ:",
+    choices: {
+      en: ["Particles vibrate parallel to the direction of wave travel","Particles vibrate perpendicular to the direction of wave travel","They travel only in vacuum","They do not need a medium"],
+      hi: ["कण तरंग की दिशा के समानांतर कंपन करते हैं","कण तरंग की दिशा के लंबवत कंपन करते हैं","वे केवल निर्वात में यात्रा करती हैं","उन्हें माध्यम की जरूरत नहीं"],
+      as: ["কণসমূহ তৰঙ্গৰ দিশৰ সমান্তৰালভাৱে কম্পিত হয়","কণসমূহ তৰঙ্গৰ দিশৰ লম্বভাৱে কম্পিত হয়","এইবোৰ কেৱল শূন্যত যাত্ৰা কৰে","এইবোৰৰ মাধ্যমৰ প্ৰয়োজন নাই"]
+    },
+    correct: 0,
+    explain: {
+      en: "Sound is a longitudinal mechanical wave — particles vibrate parallel to wave direction forming compressions & rarefactions. Transverse waves (like light) have perpendicular vibrations. Sound CANNOT travel in vacuum.",
+      hi: "ध्वनि अनुदैर्ध्य यांत्रिक तरंग है — कण तरंग दिशा के समानांतर कंपन करते हैं (संपीडन और विरलन)। अनुप्रस्थ तरंगें (जैसे प्रकाश) लंबवत कंपन करती हैं। ध्वनि निर्वात में नहीं चलती।",
+      as: "শব্দ হৈছে অনুদৈৰ্ঘ্য যান্ত্ৰিক তৰঙ্গ — কণসমূহ তৰঙ্গৰ দিশৰ সমান্তৰালভাৱে কম্পিত হয় (সংকোচন আৰু বিৰলন)। শব্দ শূন্যত গতি কৰিব নোৱাৰে।"
+    }
+  },
+  {
+    en: "🎵 In a sound wave, compression and rarefaction are regions of:",
+    hi: "🎵 ध्वनि तरंग में, संपीडन और विरलन क्षेत्र हैं:",
+    as: "🎵 শব্দ তৰঙ্গত, সংকোচন আৰু বিৰলন অঞ্চলবোৰ হৈছে:",
+    choices: {
+      en: ["Compression = high pressure; Rarefaction = low pressure","Compression = low pressure; Rarefaction = high pressure","Both are regions of equal pressure","Compression has no particles"],
+      hi: ["संपीडन = उच्च दाब; विरलन = निम्न दाब","संपीडन = निम्न दाब; विरलन = उच्च दाब","दोनों समान दाब के क्षेत्र हैं","संपीडन में कोई कण नहीं"],
+      as: ["সংকোচন = উচ্চ চাপ; বিৰলন = নিম্ন চাপ","সংকোচন = নিম্ন চাপ; বিৰলন = উচ্চ চাপ","দুয়োটা সমান চাপৰ অঞ্চল","সংকোচনত কোনো কণ নাই"]
+    },
+    correct: 0,
+    explain: {
+      en: "Compression: particles pushed together → high density, high pressure. Rarefaction: particles spread apart → low density, low pressure. Together they form a longitudinal wave.",
+      hi: "संपीडन: कण एक साथ → उच्च घनत्व, उच्च दाब। विरलन: कण अलग → कम घनत्व, कम दाब। मिलकर वे अनुदैर्ध्य तरंग बनाते हैं।",
+      as: "সংকোচন: কণ একত্ৰে → উচ্চ ঘনত্ব, উচ্চ চাপ। বিৰলন: কণ পৃথক → কম ঘনত্ব, কম চাপ। একেলগে এইবোৰে অনুদৈৰ্ঘ্য তৰঙ্গ গঠন কৰে।"
+    }
+  },
+  {
+    en: "🔊 Frequency of sound is measured in Hertz (Hz). Higher frequency means:",
+    hi: "🔊 ध्वनि की आवृत्ति हर्ट्ज़ (Hz) में मापी जाती है। अधिक आवृत्ति का अर्थ है:",
+    as: "🔊 শব্দৰ কম্পাংক হাৰ্টজ (Hz)-ত জোখা হয়। অধিক কম্পাংক মানে:",
+    choices: {
+      en: ["Higher pitch (shriller sound) — more oscillations per second","Lower pitch (deeper sound)","Louder sound","Slower wave speed"],
+      hi: ["अधिक तारता (तीखी ध्वनि) — प्रति सेकंड अधिक दोलन","कम तारता (गहरी ध्वनि)","अधिक तेज़ ध्वनि","धीमी तरंग गति"],
+      as: ["উচ্চ সুৰ (চুচুৰীয়া শব্দ) — প্ৰতি ছেকেণ্ডত অধিক দোলন","নিম্ন সুৰ (গভীৰ শব্দ)","জোৰ শব্দ","ধীৰ তৰঙ্গ গতি"]
+    },
+    correct: 0,
+    explain: {
+      en: "Frequency = number of oscillations per second (Hz). Higher frequency = higher pitch (shriller). Amplitude = maximum displacement = determines loudness. Wavelength = distance between two consecutive compressions.",
+      hi: "आवृत्ति = प्रति सेकंड दोलनों की संख्या (Hz)। अधिक आवृत्ति = अधिक तारता। आयाम = अधिकतम विस्थापन = प्रबलता। तरंगदैर्ध्य = दो लगातार संपीडनों के बीच की दूरी।",
+      as: "কম্পাংক = প্ৰতি ছেকেণ্ডত দোলনৰ সংখ্যা (Hz)। অধিক কম্পাংক = উচ্চ সুৰ। প্ৰশস্ততা = সৰ্বাধিক সৰণ = জোৰ। তৰঙ্গদৈৰ্ঘ্য = দুটা পৰপৰ সংকোচনৰ মাজৰ দূৰত্ব।"
+    }
+  },
+  {
+    en: "🌊 The speed of sound in air at room temperature (25°C) is approximately:",
+    hi: "🌊 कमरे के तापमान (25°C) पर हवा में ध्वनि की गति लगभग है:",
+    as: "🌊 কোঠাৰ উষ্ণতা (25°C)-ত বায়ুত শব্দৰ গতি প্ৰায়:",
+    choices: {
+      en: ["343 m/s","3 × 10⁸ m/s","1500 m/s","150 m/s"],
+      hi: ["343 m/s","3 × 10⁸ m/s","1500 m/s","150 m/s"],
+      as: ["343 m/s","3 × 10⁸ m/s","1500 m/s","150 m/s"]
+    },
+    correct: 0,
+    explain: {
+      en: "Speed of sound in air ≈ 343 m/s at 25°C. In water ≈ 1500 m/s. In steel ≈ 5100 m/s. Sound travels faster in denser media. Light travels at 3×10⁸ m/s — much faster than sound.",
+      hi: "हवा में ध्वनि की गति ≈ 343 m/s (25°C पर)। पानी में ≈ 1500 m/s। स्टील में ≈ 5100 m/s। ध्वनि सघन माध्यम में तेज़ यात्रा करती है। प्रकाश 3×10⁸ m/s पर।",
+      as: "বায়ুত শব্দৰ গতি ≈ 343 m/s (25°C-ত)। পানীত ≈ 1500 m/s। ষ্টিলত ≈ 5100 m/s। শব্দ ঘন মাধ্যমত বেছি দ্ৰুতগতিত যাত্ৰা কৰে। পোহৰ 3×10⁸ m/s-ত।"
+    }
+  },
+  {
+    en: "🎵 Echo is a reflected sound. What is the minimum distance from a reflecting surface required to hear an echo clearly?",
+    hi: "🎵 प्रतिध्वनि परावर्तित ध्वनि है। प्रतिध्वनि स्पष्ट सुनने के लिए परावर्तक सतह से न्यूनतम दूरी:",
+    as: "🎵 প্ৰতিধ্বনি হৈছে প্ৰতিফলিত শব্দ। প্ৰতিধ্বনি স্পষ্টভাৱে শুনিবলৈ প্ৰতিফলিত পৃষ্ঠৰ পৰা ন্যূনতম দূৰত্ব:",
+    choices: {
+      en: ["17.2 m (sound travels 34.4 m round trip in ≥ 0.1 s)","1.72 m","172 m","3.44 m"],
+      hi: ["17.2 m (ध्वनि ≥ 0.1 s में 34.4 m आना-जाना)","1.72 m","172 m","3.44 m"],
+      as: ["17.2 m (শব্দই ≥ 0.1 ছেকেণ্ডত 34.4 m যাতায়াত কৰে)","1.72 m","172 m","3.44 m"]
+    },
+    correct: 0,
+    explain: {
+      en: "Echo requires ≥ 0.1 s gap (persistence of hearing = 1/10th of a second). Min distance = (343 × 0.1)/2 ≈ 17.15 m ≈ 17.2 m. The reflecting wall must be at least 17.2 m away.",
+      hi: "प्रतिध्वनि के लिए ≥ 0.1 s का अंतराल चाहिए (श्रवण की स्थायिता = 1/10 सेकंड)। न्यूनतम दूरी = (343 × 0.1)/2 ≈ 17.2 m।",
+      as: "প্ৰতিধ্বনিৰ বাবে ≥ 0.1 ছেকেণ্ড ব্যৱধান লাগে (শ্ৰৱণৰ স্থায়িত্ব = 1/10 ছেকেণ্ড)। ন্যূনতম দূৰত্ব = (343 × 0.1)/2 ≈ 17.2 m।"
+    }
+  },
+  {
+    en: "🔊 SONAR stands for Sound Navigation And Ranging. It uses ultrasound to:",
+    hi: "🔊 SONAR का अर्थ है Sound Navigation And Ranging। यह अल्ट्रासाउंड से करता है:",
+    as: "🔊 SONAR মানে Sound Navigation And Ranging। এইটো আল্ট্ৰাছাউণ্ড ব্যৱহাৰ কৰি:",
+    choices: {
+      en: ["Measure depth of sea and detect submarines using reflected ultrasound pulses","Measure temperature of seawater","Detect air pollution levels","Communicate with satellites in space"],
+      hi: ["परावर्तित अल्ट्रासाउंड दालों से समुद्र की गहराई मापना और पनडुब्बी का पता लगाना","समुद्री जल का तापमान मापना","वायु प्रदूषण स्तर का पता लगाना","अंतरिक्ष में उपग्रहों से संचार"],
+      as: ["প্ৰতিফলিত আল্ট্ৰাছাউণ্ড স্পন্দনেৰে সমুদ্ৰৰ গভীৰতা জুখিবলৈ আৰু ডুবাজাহাজ চিনাক্ত কৰিবলৈ","সমুদ্ৰৰ পানীৰ উষ্ণতা জুখিবলৈ","বায়ু প্ৰদূষণৰ স্তৰ চিনাক্ত কৰিবলৈ","মহাকাশৰ উপগ্ৰহৰ সৈতে যোগাযোগ কৰিবলৈ"]
+    },
+    correct: 0,
+    explain: {
+      en: "SONAR sends ultrasound pulses into sea. When they reflect from the seabed or submarines, time is measured. Depth = (speed × time)/2. Used by ships and submarines for navigation.",
+      hi: "SONAR समुद्र में अल्ट्रासाउंड दालें भेजता है। जब वे समुद्र तल या पनडुब्बी से परावर्तित होती हैं, समय मापा जाता है। गहराई = (गति × समय)/2।",
+      as: "SONAR সমুদ্ৰত আল্ট্ৰাছাউণ্ড স্পন্দন পঠিয়ায়। সেইবোৰ সমুদ্ৰৰ তল বা ডুবাজাহাজৰ পৰা প্ৰতিফলিত হ'লে সময় জোখা হয়। গভীৰতা = (গতি × সময়)/2।"
+    }
+  },
+  {
+    en: "🏥 Ultrasound applications include medical imaging. The frequency of ultrasound is:",
+    hi: "🏥 अल्ट्रासाउंड का उपयोग चिकित्सा इमेजिंग में होता है। अल्ट्रासाउंड की आवृत्ति है:",
+    as: "🏥 আল্ট্ৰাছাউণ্ড চিকিৎসা ইমেজিংত ব্যৱহাৰ হয়। আল্ট্ৰাছাউণ্ডৰ কম্পাংক হৈছে:",
+    choices: {
+      en: ["Greater than 20,000 Hz (above human hearing range)","Less than 20 Hz (infrasound range)","Between 20 Hz and 20,000 Hz (audible range)","Exactly 20,000 Hz"],
+      hi: ["20,000 Hz से अधिक (मानव श्रवण सीमा से ऊपर)","20 Hz से कम (अवश्रव्य सीमा)","20 Hz और 20,000 Hz के बीच (श्रव्य सीमा)","ठीक 20,000 Hz"],
+      as: ["20,000 Hz-তকৈ বেছি (মানৱ শ্ৰৱণ পৰিসীমাৰ ওপৰত)","20 Hz-তকৈ কম (ইনফ্ৰাছাউণ্ড পৰিসীমা)","20 Hz আৰু 20,000 Hz-ৰ মাজত (শ্ৰৱণযোগ্য পৰিসীমা)","ঠিক 20,000 Hz"]
+    },
+    correct: 0,
+    explain: {
+      en: "Ultrasound > 20,000 Hz. Medical uses: (1) sonography/USG to see internal organs, (2) breaking kidney stones (lithotripsy), (3) cleaning delicate instruments, (4) detecting cracks in metals.",
+      hi: "अल्ट्रासाउंड > 20,000 Hz। चिकित्सा उपयोग: (1) आंतरिक अंगों को देखने के लिए सोनोग्राफी/USG, (2) किडनी की पथरी तोड़ना, (3) नाजुक उपकरणों की सफाई, (4) धातुओं में दरारें पहचानना।",
+      as: "আল্ট্ৰাছাউণ্ড > 20,000 Hz। চিকিৎসা ব্যৱহাৰ: (1) অভ্যন্তৰীণ অৰ্গান চাবলৈ ছনোগ্ৰাফি/USG, (2) কিডনীৰ পাথৰ ভঙা, (3) সূক্ষ্ম যন্ত্ৰপাতি পৰিষ্কাৰ, (4) ধাতুত ফাটল চিনাক্ত।"
+    }
+  },
+  {
+    en: "🎵 The audible range of human hearing is:",
+    hi: "🎵 मानव श्रवण की श्रव्य सीमा है:",
+    as: "🎵 মানৱ শ্ৰৱণৰ শ্ৰৱণযোগ্য পৰিসীমা হৈছে:",
+    choices: {
+      en: ["20 Hz to 20,000 Hz (20 kHz)","0 Hz to 100 Hz","1 Hz to 1000 Hz","20,000 Hz to 1,00,000 Hz"],
+      hi: ["20 Hz से 20,000 Hz (20 kHz)","0 Hz से 100 Hz","1 Hz से 1000 Hz","20,000 Hz से 1,00,000 Hz"],
+      as: ["20 Hz ৰ পৰা 20,000 Hz (20 kHz) লৈ","0 Hz ৰ পৰা 100 Hz লৈ","1 Hz ৰ পৰা 1000 Hz লৈ","20,000 Hz ৰ পৰা 1,00,000 Hz লৈ"]
+    },
+    correct: 0,
+    explain: {
+      en: "Human audible range: 20 Hz – 20,000 Hz. Below 20 Hz = infrasound (used by elephants, whales, during earthquakes). Above 20,000 Hz = ultrasound (bats, dolphins use for echolocation).",
+      hi: "मानव श्रव्य सीमा: 20 Hz – 20,000 Hz। 20 Hz से नीचे = अवश्रव्य (हाथी, व्हेल, भूकंप में)। 20,000 Hz से ऊपर = पराश्रव्य (चमगादड़, डॉल्फ़िन इकोलोकेशन के लिए)।",
+      as: "মানৱ শ্ৰৱণযোগ্য পৰিসীমা: 20 Hz – 20,000 Hz। 20 Hz-ৰ তলত = ইনফ্ৰাছাউণ্ড (হাতী, তিমি, ভূকম্পত)। 20,000 Hz-ৰ ওপৰত = আল্ট্ৰাছাউণ্ড (চামচিকা, ডলফিন ইকোলোকেচনৰ বাবে)।"
+    }
+  },
+  {
+    en: "🌊 Wavelength (λ) of a sound wave is the distance between:",
+    hi: "🌊 ध्वनि तरंग की तरंगदैर्ध्य (λ) इनके बीच की दूरी है:",
+    as: "🌊 শব্দ তৰঙ্গৰ তৰঙ্গদৈৰ্ঘ্য (λ) হৈছে এইবোৰৰ মাজৰ দূৰত্ব:",
+    choices: {
+      en: ["Two consecutive compressions (or two consecutive rarefactions)","Maximum displacement from rest position","Two consecutive crests in transverse wave only","Speed of wave divided by time"],
+      hi: ["दो लगातार संपीडनों (या दो लगातार विरलनों) के बीच","विराम स्थिति से अधिकतम विस्थापन","केवल अनुप्रस्थ तरंग में दो लगातार शिखरों के बीच","तरंग गति को समय से विभाजित"],
+      as: ["দুটা পৰপৰ সংকোচন (বা দুটা পৰপৰ বিৰলন)-ৰ মাজত","বিশ্ৰাম অৱস্থানৰ পৰা সৰ্বাধিক সৰণ","কেৱল অনুপ্ৰস্থ তৰঙ্গত দুটা পৰপৰ শিখৰৰ মাজত","তৰঙ্গৰ গতিক সময়েৰে ভাগ"]
+    },
+    correct: 0,
+    explain: {
+      en: "Wavelength λ = distance between two consecutive compressions or rarefactions. Key relation: v = f × λ (wave speed = frequency × wavelength). Higher frequency → shorter wavelength.",
+      hi: "तरंगदैर्ध्य λ = दो लगातार संपीडनों या विरलनों के बीच की दूरी। मुख्य संबंध: v = f × λ (तरंग गति = आवृत्ति × तरंगदैर्ध्य)।",
+      as: "তৰঙ্গদৈৰ্ঘ্য λ = দুটা পৰপৰ সংকোচন বা বিৰলনৰ মাজৰ দূৰত্ব। মূল সম্পৰ্ক: v = f × λ (তৰঙ্গ গতি = কম্পাংক × তৰঙ্গদৈৰ্ঘ্য)।"
+    }
+  },
+  {
+    en: "🔊 Which animals use infrasound (below 20 Hz) for communication?",
+    hi: "🔊 कौन से जानवर संचार के लिए अवश्रव्य ध्वनि (20 Hz से कम) का उपयोग करते हैं?",
+    as: "🔊 কোনবোৰ প্ৰাণীয়ে যোগাযোগৰ বাবে ইনফ্ৰাছাউণ্ড (20 Hz-তকৈ কম) ব্যৱহাৰ কৰে?",
+    choices: {
+      en: ["Elephants and whales — they communicate over long distances using infrasound","Bats — they use echolocation with ultrasound","Dogs — they hear higher frequencies","Dolphins — they use ultrasound for navigation"],
+      hi: ["हाथी और व्हेल — वे अवश्रव्य का उपयोग करके लंबी दूरी संचार करते हैं","चमगादड़ — वे अल्ट्रासाउंड से इकोलोकेशन करते हैं","कुत्ते — वे उच्च आवृत्तियां सुनते हैं","डॉल्फ़िन — वे नेविगेशन के लिए अल्ट्रासाउंड का उपयोग करते हैं"],
+      as: ["হাতী আৰু তিমি — এইবোৰে ইনফ্ৰাছাউণ্ড ব্যৱহাৰ কৰি দীৰ্ঘ-দূৰত্বত যোগাযোগ কৰে","চামচিকা — এইবোৰে আল্ট্ৰাছাউণ্ডেৰে ইকোলোকেচন কৰে","কুকুৰ — এইবোৰে উচ্চ কম্পাংক শুনে","ডলফিন — এইবোৰে নেভিগেচনৰ বাবে আল্ট্ৰাছাউণ্ড ব্যৱহাৰ কৰে"]
+    },
+    correct: 0,
+    explain: {
+      en: "Infrasound (< 20 Hz): elephants communicate over many km, whales communicate across oceans, rhinoceroses also use infrasound. Bats and dolphins use ultrasound (> 20,000 Hz) for echolocation.",
+      hi: "अवश्रव्य (< 20 Hz): हाथी कई km तक संचार करते हैं, व्हेल महासागरों में संचार करती हैं, गैंडे भी अवश्रव्य का उपयोग करते हैं। चमगादड़ और डॉल्फ़िन इकोलोकेशन के लिए पराश्रव्य (> 20,000 Hz) का।",
+      as: "ইনফ্ৰাছাউণ্ড (< 20 Hz): হাতীয়ে বহু km-ত যোগাযোগ কৰে, তিমিয়ে মহাসাগৰত যোগাযোগ কৰে, গঁড়েও ইনফ্ৰাছাউণ্ড ব্যৱহাৰ কৰে। চামচিকা আৰু ডলফিনে ইকোলোকেচনৰ বাবে আল্ট্ৰাছাউণ্ড (> 20,000 Hz) ব্যৱহাৰ কৰে।"
+    }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l, e) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = 'Question ' + (current + 1) + ' of 10';
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+  const choicesArr = q.choices[lang] || q.choices.en;
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars, msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'Sound Master! Your knowledge resonates perfectly! 🔊', hi: 'ध्वनि विशेषज्ञ! आपका ज्ञान पूरी तरह से गूंजता है! 🔊', as: 'শব্দৰ বিশেষজ্ঞ! তোমাৰ জ্ঞান নিখুঁতভাৱে অনুৰণিত হয়! 🔊' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Great waves of knowledge! Keep vibrating forward! 🎵', hi: 'ज्ञान की शानदार लहरें! आगे कंपित होते रहें! 🎵', as: 'জ্ঞানৰ চমৎকাৰ তৰঙ্গ! আগলৈ কম্পিত হৈ থাকক! 🎵' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Good try! Revise ultrasound, echo distance, and wave properties.', hi: 'अच्छी कोशिश! अल्ट्रासाउंड, प्रतिध्वनि दूरी और तरंग गुण दोबारा पढ़ें।', as: 'ভাল প্ৰচেষ্টা! আল্ট্ৰাছাউণ্ড, প্ৰতিধ্বনিৰ দূৰত্ব আৰু তৰঙ্গ গুণ পুনৰায় পঢ়ক।' }; }
+  else { stars = '☆☆☆'; msg = { en: 'Keep going! Every expert started with a single vibration! 🌊', hi: 'जारी रखो! हर विशेषज्ञ एक कंपन से शुरू हुआ था! 🌊', as: 'এগাই যাওক! প্ৰতিটো বিশেষজ্ঞ এটা কম্পনেৰে আৰম্ভ হৈছিল! 🌊' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

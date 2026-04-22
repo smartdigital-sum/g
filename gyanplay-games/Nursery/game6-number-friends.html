@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Number Friends | GyanPlay Nursery</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#FFB800;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+    color:#fff;
+    font-family:'Nunito',sans-serif;
+    min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;
+    padding:20px;
+    animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+
+  .top-bar{width:100%;max-width:680px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+  .back-btn{background:rgba(255,255,255,.2);border:none;color:#fff;padding:8px 20px;border-radius:999px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:background .2s;}
+  .back-btn:hover{background:rgba(255,255,255,.35);}
+  .subject-badge{background:rgba(255,255,255,.25);padding:6px 18px;border-radius:999px;font-size:.85rem;font-weight:800;font-family:'Baloo 2',sans-serif;}
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{background:rgba(255,255,255,.2);border:none;color:#fff;padding:6px 14px;border-radius:999px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;}
+  .lang-btn.active{background:#fff;color:#764ba2;}
+  .lang-btn:hover:not(.active){background:rgba(255,255,255,.35);}
+
+  .game-card{
+    background:rgba(255,255,255,.15);
+    backdrop-filter:blur(10px);
+    border:2px solid rgba(255,255,255,.3);
+    border-radius:28px;
+    padding:30px 24px;
+    width:100%;max-width:680px;
+    box-shadow:0 12px 50px rgba(0,0,0,.25);
+  }
+  .game-title{font-family:'Baloo 2',sans-serif;font-size:2.2rem;font-weight:800;text-align:center;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.2);margin-bottom:10px;}
+
+  .score-bar{display:flex;justify-content:space-between;margin:10px 0 8px;font-size:1rem;font-weight:700;}
+  .progress-wrap{background:rgba(255,255,255,.2);border-radius:999px;height:10px;margin-bottom:22px;}
+  .progress-fill{height:10px;border-radius:999px;background:linear-gradient(90deg,#FFB800,#FF4081);transition:width .4s ease;}
+
+  .instruction{font-size:1.1rem;font-weight:700;text-align:center;margin-bottom:18px;background:rgba(255,255,255,.15);border-radius:14px;padding:10px 16px;line-height:1.4;}
+
+  .number-display{
+    font-family:'Baloo 2',sans-serif;
+    font-size:6rem;font-weight:800;
+    text-align:center;
+    color:#fff;
+    text-shadow:0 4px 20px rgba(0,0,0,.3);
+    margin-bottom:10px;
+    animation:bounce 1.5s ease infinite;
+    line-height:1;
+  }
+
+  .choices{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px;}
+  .dot-btn{
+    background:rgba(255,255,255,.2);
+    border:3px solid rgba(255,255,255,.4);
+    border-radius:20px;
+    padding:16px 8px;
+    cursor:pointer;
+    transition:all .2s;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    min-height:100px;
+    font-size:1.5rem;
+    font-weight:700;
+    color:#fff;
+  }
+  .dot-btn:hover:not(:disabled){
+    background:rgba(255,255,255,.35);
+    border-color:#fff;
+    transform:translateY(-4px) scale(1.04);
+  }
+  .dot-btn.correct{background:rgba(0,200,83,.4);border-color:#00C853;animation:pop .3s ease;}
+  .dot-btn.wrong{background:rgba(255,64,129,.3);border-color:#FF4081;}
+  .dot-btn:disabled{cursor:not-allowed;}
+  .dot-grid{font-size:1.6rem;line-height:1.4;word-break:break-all;text-align:center;}
+  .dot-count{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:800;}
+
+  .feedback{margin-top:18px;padding:14px;border-radius:14px;font-weight:800;font-size:1.1rem;text-align:center;animation:fadeIn .3s ease;display:none;}
+  .feedback.show{display:block;}
+  .feedback.correct-fb{background:rgba(0,200,83,.35);border:2px solid #00C853;}
+  .feedback.wrong-fb{background:rgba(255,64,129,.3);border:2px solid #FF4081;}
+
+  .next-btn{margin-top:16px;width:100%;background:#FFB800;border:none;color:#000;padding:16px;border-radius:16px;font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;cursor:pointer;transition:all .2s;display:none;}
+  .next-btn.show{display:block;}
+  .next-btn:hover{background:#e6a600;transform:translateY(-2px) scale(1.02);}
+
+  .result-screen{display:none;text-align:center;padding:10px 0;}
+  .result-screen.show{display:block;}
+  .result-emoji{font-size:5rem;margin:10px 0;animation:bounce 1s ease infinite;}
+  .stars{font-size:3.5rem;margin:10px 0;}
+  .result-score{font-family:'Baloo 2',sans-serif;font-size:2.8rem;font-weight:800;color:#FFB800;text-shadow:0 2px 8px rgba(0,0,0,.2);}
+  .result-msg{font-size:1.2rem;font-weight:700;margin:10px 0 24px;opacity:.9;}
+  .restart-btn{background:#fff;color:#764ba2;border:none;padding:16px 40px;border-radius:999px;font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;cursor:pointer;transition:all .2s;}
+  .restart-btn:hover{background:#f0e6ff;transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="subject-badge">🔢 Maths – Nursery</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="game-card">
+  <div class="game-title">Number Friends 🔢</div>
+
+  <div id="quizArea">
+    <div class="score-bar">
+      <span id="qCounter">1 / 8</span>
+      <span id="scoreDisplay">⭐ 0</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="instruction" id="instruction">Click the group that matches the number!</div>
+    <div class="number-display" id="numberDisplay">3</div>
+    <div class="choices" id="choicesContainer"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next ➡️</button>
+  </div>
+
+  <div class="result-screen" id="resultScreen">
+    <div class="result-emoji" id="resultEmoji">🎉</div>
+    <div class="stars" id="starsDisplay">⭐⭐⭐</div>
+    <div class="result-score" id="resultScore">8 / 8</div>
+    <div class="result-msg" id="resultMsg">Amazing! You are a Number Star!</div>
+    <button class="restart-btn" onclick="restartGame()">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+// Each question: target number, answer dot count, and 3 options (counts)
+const questions = [
+  {num:3, ans:3, opts:[2,3,4]},
+  {num:5, ans:5, opts:[3,5,6]},
+  {num:2, ans:2, opts:[1,2,3]},
+  {num:7, ans:7, opts:[5,7,9]},
+  {num:4, ans:4, opts:[3,4,5]},
+  {num:6, ans:6, opts:[4,6,8]},
+  {num:1, ans:1, opts:[1,2,3]},
+  {num:8, ans:8, opts:[6,8,10]},
+];
+
+const labels = {
+  en:{inst:"Click the group that matches the number!",counter:"/ 8",score:"⭐",next:"Next ➡️",correct:"✅ Correct! Great job! 🌟",wrong:"❌ Oops! Try the next one!",play:"🔄 Play Again",result:["Amazing! You are a Number Star! 🌟","Great job! Well done! 🎉","Good effort! Keep counting! 🔢","Keep practicing! You can do it! 💪"]},
+  hi:{inst:"संख्या से मिलती टोली पर क्लिक करो!",counter:"/ 8",score:"⭐",next:"आगे ➡️",correct:"✅ सही! शाबाश! 🌟",wrong:"❌ अरे! अगला देखो!",play:"🔄 फिर खेलें",result:["शानदार! तुम नंबर स्टार हो! 🌟","बहुत अच्छा! शाबाश! 🎉","अच्छा प्रयास! गिनते रहो! 🔢","अभ्यास जारी रखो! 💪"]},
+  as:{inst:"সংখ্যাৰ লগত মিলা দলটোত ক্লিক কৰক!",counter:"/ 8",score:"⭐",next:"পৰৱৰ্তী ➡️",correct:"✅ শুদ্ধ! চমৎকাৰ! 🌟",wrong:"❌ আৰে! পৰৱৰ্তীটো চোৱা!",play:"🔄 পুনৰ খেলক",result:["অসাধাৰণ! তুমি নম্বৰ তাৰা! 🌟","বহুত ভাল! 🎉","ভাল প্ৰচেষ্টা! গণনা কৰি যাওক! 🔢","অভ্যাস জাৰি ৰাখক! 💪"]},
+};
+
+let current=0,score=0,lang='en',answered=false;
+
+function makeDots(n){
+  return '🔵'.repeat(n);
+}
+
+function setLang(l){lang=l;document.querySelectorAll('.lang-btn').forEach((b,i)=>{b.classList.toggle('active',['en','hi','as'][i]===l);});renderQuestion();}
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+
+function renderQuestion(){
+  if(current>=questions.length){showResult();return;}
+  answered=false;
+  const q=questions[current],L=labels[lang];
+  document.getElementById('instruction').textContent=L.inst;
+  document.getElementById('qCounter').textContent=`${current+1} ${L.counter}`;
+  document.getElementById('scoreDisplay').textContent=`${L.score} ${score}`;
+  document.getElementById('numberDisplay').textContent=q.num;
+  document.getElementById('progressFill').style.width=`${(current/questions.length)*100}%`;
+  const shuffledOpts=shuffle(q.opts);
+  const cont=document.getElementById('choicesContainer');
+  cont.innerHTML='';
+  shuffledOpts.forEach(count=>{
+    const btn=document.createElement('button');
+    btn.className='dot-btn';
+    const dots=document.createElement('div');
+    dots.className='dot-grid';
+    dots.textContent=makeDots(count);
+    const num=document.createElement('div');
+    num.className='dot-count';
+    num.textContent=count;
+    btn.appendChild(dots);btn.appendChild(num);
+    btn.dataset.count=count;
+    btn.onclick=()=>handleAnswer(count,q.ans,btn);
+    cont.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').className='next-btn';
+}
+
+function handleAnswer(chosen,correct,btn){
+  if(answered)return;answered=true;
+  const L=labels[lang];
+  document.querySelectorAll('.dot-btn').forEach(b=>{
+    b.disabled=true;
+    if(parseInt(b.dataset.count)===correct)b.classList.add('correct');
+  });
+  const fb=document.getElementById('feedback');
+  if(chosen===correct){score++;btn.classList.add('correct');fb.textContent=L.correct;fb.className='feedback show correct-fb';}
+  else{btn.classList.add('wrong');fb.textContent=L.wrong;fb.className='feedback show wrong-fb';}
+  document.getElementById('scoreDisplay').textContent=`${L.score} ${score}`;
+  const nb=document.getElementById('nextBtn');nb.className='next-btn show';nb.textContent=current===questions.length-1?'See Results 🏆':L.next;
+}
+
+function nextQuestion(){current++;renderQuestion();}
+
+function showResult(){
+  document.getElementById('quizArea').style.display='none';
+  const rs=document.getElementById('resultScreen');rs.className='result-screen show';
+  const pct=(score/questions.length)*100,L=labels[lang];
+  const emojis=['🎉','😊','😄','💪'];
+  const idx=pct>=90?0:pct>=70?1:pct>=40?2:3;
+  document.getElementById('resultEmoji').textContent=emojis[idx];
+  document.getElementById('starsDisplay').textContent=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=40?'⭐':'💪';
+  document.getElementById('resultScore').textContent=`${score} / ${questions.length}`;
+  document.getElementById('resultMsg').textContent=L.result[idx];
+  document.querySelector('.restart-btn').textContent=L.play;
+}
+
+function restartGame(){
+  current=0;score=0;answered=false;
+  document.getElementById('quizArea').style.display='block';
+  document.getElementById('resultScreen').className='result-screen';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>

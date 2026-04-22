@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Market Demo - GyanPlay Class 2</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .demo-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #4a6fa5;
+        }
+        
+        .demo-header h1 {
+            color: #4a6fa5;
+            font-size: 2.2rem;
+        }
+        
+        .demo-header .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .target-number {
+            text-align: center;
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #4a6fa5;
+            background: #f0f5ff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 3px dashed #4a6fa5;
+        }
+        
+        .bundles {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .bundle {
+            width: 120px;
+            height: 120px;
+            background: #ff9a3c;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .bundle:hover {
+            transform: scale(1.05);
+        }
+        
+        .bundle.hundreds { background: #4a6fa5; }
+        .bundle.tens { background: #6dbf8d; }
+        .bundle.ones { background: #f72585; }
+        
+        .bundle-count {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .bundle-label {
+            font-size: 0.9rem;
+        }
+        
+        .counter {
+            min-height: 200px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 2px solid #ddd;
+            padding: 20px;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .counter-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .column-label {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .counter-slot {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .counter-slot.filled {
+            background: #e7f4e7;
+            border-color: #6dbf8d;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #4a6fa5;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #385d8a;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .feedback {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .instructions {
+            background: #f0f5ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 4px solid #4a6fa5;
+        }
+        
+        .demo-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #4a6fa5;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 8px;
+            background: #f0f5ff;
+            transition: all 0.2s;
+        }
+        
+        .back-link:hover {
+            background: #4a6fa5;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .demo-nav-info {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .batch-badge, .subject-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .batch-badge {
+            background: #ff9a3c;
+            color: white;
+        }
+        
+        .subject-badge {
+            background: #4a6fa5;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-nav">
+            <a href="index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Class 2 Dashboard
+            </a>
+            <div class="demo-nav-info">
+                <span class="batch-badge">Batch 1</span>
+                <span class="subject-badge">Maths</span>
+            </div>
+        </div>
+        
+        <div class="demo-header">
+            <h1><i class="fas fa-shopping-cart"></i> Number Market</h1>
+            <p class="subtitle">Place value — hundreds/tens/ones up to 999</p>
+            <p>Shopkeeper gives you bundles of 100s, 10s and 1s — drag them onto the counter to build the number shown</p>
+        </div>
+        
+        <div class="game-area">
+            <div class="target-number">
+                Build: <span id="targetNumber">347</span>
+            </div>
+            
+            <div class="bundles">
+                <div class="bundle hundreds" data-value="100" draggable="true">
+                    <div class="bundle-count">100</div>
+                    <div class="bundle-label">Hundreds</div>
+                    <div class="bundle-quantity">(3 available)</div>
+                </div>
+                <div class="bundle tens" data-value="10" draggable="true">
+                    <div class="bundle-count">10</div>
+                    <div class="bundle-label">Tens</div>
+                    <div class="bundle-quantity">(4 available)</div>
+                </div>
+                <div class="bundle ones" data-value="1" draggable="true">
+                    <div class="bundle-count">1</div>
+                    <div class="bundle-label">Ones</div>
+                    <div class="bundle-quantity">(7 available)</div>
+                </div>
+            </div>
+            
+            <div class="counter">
+                <div class="counter-column">
+                    <div class="column-label">Hundreds</div>
+                    <div class="counter-slot" id="hundreds-slot" data-column="hundreds">0</div>
+                </div>
+                <div class="counter-column">
+                    <div class="column-label">Tens</div>
+                    <div class="counter-slot" id="tens-slot" data-column="tens">0</div>
+                </div>
+                <div class="counter-column">
+                    <div class="column-label">Ones</div>
+                    <div class="counter-slot" id="ones-slot" data-column="ones">0</div>
+                </div>
+            </div>
+            
+            <div class="current-build">
+                <h3>Current Number: <span id="currentNumber">0</span></h3>
+            </div>
+            
+            <div class="feedback" id="feedback"></div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" id="checkBtn">
+                    <i class="fas fa-check"></i> Check Answer
+                </button>
+                <button class="btn btn-secondary" id="resetBtn">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+                <button class="btn btn-secondary" id="newNumberBtn">
+                    <i class="fas fa-random"></i> New Number
+                </button>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> How to Play</h3>
+            <p>1. Look at the target number you need to build (e.g., 347)</p>
+            <p>2. Drag bundles of 100s, 10s, and 1s onto the counter slots</p>
+            <p>3. Each bundle adds its value to the corresponding column</p>
+            <p>4. Try to match the target number exactly</p>
+            <p>5. Click "Check Answer" to see if you're correct!</p>
+            <p><strong>Learning:</strong> This teaches place value understanding — 347 = 3 hundreds + 4 tens + 7 ones</p>
+        </div>
+        
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to GyanPlay Class 2
+        </a>
+    </div>
+    
+    <script>
+        // Game state
+        let currentNumber = 0;
+        let targetNumber = 347;
+        let bundlesUsed = { hundreds: 0, tens: 0, ones: 0 };
+        
+        // DOM elements
+        const targetNumberEl = document.getElementById('targetNumber');
+        const currentNumberEl = document.getElementById('currentNumber');
+        const feedbackEl = document.getElementById('feedback');
+        const checkBtn = document.getElementById('checkBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const newNumberBtn = document.getElementById('newNumberBtn');
+        const slots = {
+            hundreds: document.getElementById('hundreds-slot'),
+            tens: document.getElementById('tens-slot'),
+            ones: document.getElementById('ones-slot')
+        };
+        
+        // Initialize
+        function init() {
+            targetNumberEl.textContent = targetNumber;
+            updateDisplay();
+            
+            // Setup drag and drop
+            setupDragAndDrop();
+            
+            // Button events
+            checkBtn.addEventListener('click', checkAnswer);
+            resetBtn.addEventListener('click', resetGame);
+            newNumberBtn.addEventListener('click', generateNewNumber);
+        }
+        
+        // Setup drag and drop
+        function setupDragAndDrop() {
+            const bundles = document.querySelectorAll('.bundle');
+            
+            bundles.forEach(bundle => {
+                bundle.addEventListener('dragstart', dragStart);
+            });
+            
+            Object.values(slots).forEach(slot => {
+                slot.addEventListener('dragover', dragOver);
+                slot.addEventListener('drop', drop);
+            });
+        }
+        
+        function dragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.dataset.value);
+        }
+        
+        function dragOver(e) {
+            e.preventDefault();
+        }
+        
+        function drop(e) {
+            e.preventDefault();
+            const value = parseInt(e.dataTransfer.getData('text/plain'));
+            const column = e.target.dataset.column || e.target.closest('.counter-slot').dataset.column;
+            
+            // Add bundle to column
+            if (column === 'hundreds' && value === 100) {
+                bundlesUsed.hundreds++;
+                currentNumber += 100;
+            } else if (column === 'tens' && value === 10) {
+                bundlesUsed.tens++;
+                currentNumber += 10;
+            } else if (column === 'ones' && value === 1) {
+                bundlesUsed.ones++;
+                currentNumber += 1;
+            }
+            
+            updateDisplay();
+        }
+        
+        // Update display
+        function updateDisplay() {
+            currentNumberEl.textContent = currentNumber;
+            slots.hundreds.textContent = bundlesUsed.hundreds;
+            slots.tens.textContent = bundlesUsed.tens;
+            slots.ones.textContent = bundlesUsed.ones;
+            
+            // Visual feedback
+            slots.hundreds.className = `counter-slot ${bundlesUsed.hundreds > 0 ? 'filled' : ''}`;
+            slots.tens.className = `counter-slot ${bundlesUsed.tens > 0 ? 'filled' : ''}`;
+            slots.ones.className = `counter-slot ${bundlesUsed.ones > 0 ? 'filled' : ''}`;
+            
+            // Hide feedback
+            feedbackEl.className = 'feedback';
+        }
+        
+        // Check answer
+        function checkAnswer() {
+            if (currentNumber === targetNumber) {
+                feedbackEl.textContent = `✅ Correct! ${targetNumber} = ${bundlesUsed.hundreds} hundreds + ${bundlesUsed.tens} tens + ${bundlesUsed.ones} ones`;
+                feedbackEl.className = 'feedback correct';
+            } else {
+                feedbackEl.textContent = `❌ Not quite. You built ${currentNumber}, but need ${targetNumber}. Try again!`;
+                feedbackEl.className = 'feedback incorrect';
+            }
+        }
+        
+        // Reset game
+        function resetGame() {
+            currentNumber = 0;
+            bundlesUsed = { hundreds: 0, tens: 0, ones: 0 };
+            updateDisplay();
+        }
+        
+        // Generate new number
+        function generateNewNumber() {
+            targetNumber = Math.floor(Math.random() * 900) + 100; // 100-999
+            targetNumberEl.textContent = targetNumber;
+            resetGame();
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

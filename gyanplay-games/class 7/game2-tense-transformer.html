@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tense Transformer — Class 7 English</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--dark:#1A1A2E;--blue:#1D4ED8}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#0f1f3d,#1a1a2e);
+         color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;
+         padding:1rem;animation:fadeIn .4s ease}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    .topbar{width:100%;max-width:700px;display:flex;align-items:center;
+            justify-content:space-between;padding:.75rem 0;margin-bottom:.5rem}
+    .back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:.85rem;
+              font-weight:700;padding:6px 14px;border-radius:20px;cursor:pointer;
+              text-decoration:none;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.18)}
+    .subject-tag{background:#1D4ED8;color:#fff;font-size:.75rem;font-weight:800;
+                 padding:4px 12px;border-radius:20px}
+    .stars{display:flex;gap:4px;font-size:1.3rem}
+    .star{opacity:.3;transition:all .3s}
+    .star.lit{opacity:1;filter:drop-shadow(0 0 6px #93C5FD)}
+
+    .lang-row{display:flex;gap:6px;margin-bottom:1rem}
+    .lang-btn{background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);
+              font-weight:700;font-size:.75rem;padding:4px 10px;border-radius:16px;cursor:pointer;transition:all .2s}
+    .lang-btn.active{background:var(--gold);color:var(--dark)}
+
+    .game-card{width:100%;max-width:680px;background:rgba(255,255,255,.05);
+               border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:2rem 1.5rem}
+
+    /* TIME MACHINE VISUAL */
+    .machine{text-align:center;font-size:4rem;margin:.5rem 0;
+             animation:float 3s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+    .tense-tabs{display:flex;gap:.5rem;justify-content:center;margin-bottom:1.25rem;flex-wrap:wrap}
+    .tense-tab{padding:6px 14px;border-radius:20px;font-size:.78rem;font-weight:800;
+               border:2px solid;transition:all .2s}
+    .tense-tab.past  {background:rgba(124,58,237,.2); border-color:#7C3AED;color:#A78BFA}
+    .tense-tab.present{background:rgba(0,174,239,.2);border-color:var(--sky);color:var(--sky)}
+    .tense-tab.future {background:rgba(255,184,0,.2);border-color:var(--gold);color:var(--gold)}
+    .tense-tab.active {opacity:1;transform:scale(1.05)}
+    .tense-tab:not(.active){opacity:.5}
+
+    .question-box{background:rgba(255,255,255,.08);border-radius:16px;
+                  padding:1.25rem;margin-bottom:1.25rem;text-align:center}
+    .q-context{font-size:.8rem;color:rgba(255,255,255,.4);margin-bottom:.5rem;
+               font-style:italic}
+    .q-text{font-size:clamp(1rem,4vw,1.25rem);font-weight:700;color:#fff;line-height:1.6}
+    .blank{display:inline-block;min-width:90px;height:28px;border-bottom:2px solid var(--sky);
+           color:var(--sky);font-weight:800;text-align:center;vertical-align:middle;
+           line-height:28px;transition:all .3s}
+
+    .options{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem}
+    .opt-btn{background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.12);
+             color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;
+             padding:.75rem .5rem;border-radius:14px;cursor:pointer;transition:all .2s;
+             text-align:center}
+    .opt-btn:hover{background:rgba(255,255,255,.15);transform:scale(1.02)}
+    .opt-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);color:var(--green)}
+    .opt-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink)}
+
+    .progress-bar{width:100%;background:rgba(255,255,255,.08);border-radius:20px;
+                  height:7px;margin-bottom:.4rem;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,#1D4ED8,var(--sky));
+                   border-radius:20px;transition:width .4s}
+    .progress-text{font-size:.78rem;color:rgba(255,255,255,.4);text-align:right}
+
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);
+             backdrop-filter:blur(8px);align-items:center;justify-content:center;
+             z-index:100;padding:1.5rem}
+    .overlay.show{display:flex}
+    .result-box{background:linear-gradient(135deg,#16213e,#1a1a2e);
+                border:1px solid rgba(255,255,255,.1);border-radius:28px;
+                padding:2.5rem 2rem;text-align:center;max-width:420px;width:100%;
+                animation:popIn .35s ease}
+    @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+    .result-emoji{font-size:3.5rem;margin-bottom:.75rem}
+    .result-title{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.8rem;color:#fff;margin-bottom:.5rem}
+    .result-score{font-size:1rem;color:rgba(255,255,255,.6);margin-bottom:.75rem}
+    .result-fact{background:rgba(0,174,239,.1);border:1px solid rgba(0,174,239,.25);
+                 border-radius:14px;padding:.75rem 1rem;font-size:.85rem;
+                 color:rgba(255,255,255,.8);line-height:1.5;margin-bottom:1.5rem;text-align:left}
+    .btn-play-again{background:var(--gold);color:var(--dark);font-family:'Baloo 2',cursive;
+                    font-weight:800;font-size:1rem;padding:.8rem 2rem;border:none;
+                    border-radius:50px;cursor:pointer;width:100%;transition:transform .15s}
+    .btn-play-again:hover{transform:scale(1.03)}
+
+    .confetti-piece{position:fixed;width:8px;height:8px;pointer-events:none;
+                    animation:fall var(--dur,1.8s) ease-in forwards}
+    @keyframes fall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(100vh) rotate(720deg) translateX(var(--dx,40px));opacity:0}}
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="../../classroom.html?class=class-7" class="back-btn">← Back</a>
+    <span class="subject-tag">📖 English · Class 7</span>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span>
+      <span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span>
+    </div>
+  </div>
+
+  <div class="lang-row">
+    <button class="lang-btn active" onclick="setLang('en')" id="lbEn">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')" id="lbHi">हि</button>
+    <button class="lang-btn" onclick="setLang('as')" id="lbAs">অ</button>
+  </div>
+
+  <div class="game-card">
+    <div class="progress-bar"><div class="progress-fill" id="pFill" style="width:0%"></div></div>
+    <div class="progress-text" id="pText">1 / 10</div>
+
+    <div class="machine">⏰</div>
+
+    <div class="tense-tabs">
+      <div class="tense-tab past"  id="tabPast">Past</div>
+      <div class="tense-tab present" id="tabPresent">Present</div>
+      <div class="tense-tab future" id="tabFuture">Future</div>
+    </div>
+
+    <div class="question-box">
+      <div class="q-context" id="qContext"></div>
+      <div class="q-text" id="qText"></div>
+    </div>
+
+    <div class="options" id="options"></div>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="result-box">
+      <div class="result-emoji" id="rEmoji">🎉</div>
+      <div class="result-title" id="rTitle"></div>
+      <div class="result-score" id="rScore"></div>
+      <div class="result-fact" id="rFact"></div>
+      <button class="btn-play-again" onclick="restartGame()" id="rBtn">Play Again</button>
+    </div>
+  </div>
+
+<script>
+const T = {
+  en:{
+    past:'Past',present:'Present',future:'Future',
+    playAgain:'Play Again',
+    title:['Grammar Master! 🌟','Excellent! 🎉','Well Done! 👏','Keep Practising! 💪'],
+    score:(c,t)=>`${c} out of ${t} correct!`,
+    fact:'Tip: Past tense describes what happened (Yesterday I went), Present tense describes now (I go to school), Future tense describes what will happen (Tomorrow I will go).',
+    context:'Complete the sentence with the correct tense:',
+  },
+  hi:{
+    past:'भूतकाल',present:'वर्तमान',future:'भविष्यकाल',
+    playAgain:'दोबारा खेलें',
+    title:['व्याकरण गुरु! 🌟','शानदार! 🎉','शाबाश! 👏','प्रयास जारी रखें! 💪'],
+    score:(c,t)=>`${t} में से ${c} सही!`,
+    fact:'टिप: भूतकाल — जो हो चुका है, वर्तमान काल — जो अभी हो रहा है, भविष्यकाल — जो होने वाला है।',
+    context:'सही काल से वाक्य पूरा करें:',
+  },
+  as:{
+    past:'অতীত কাল',present:'বৰ্তমান কাল',future:'ভৱিষ্যৎ কাল',
+    playAgain:'পুনৰ খেলক',
+    title:['ব্যাকৰণ মাষ্টাৰ! 🌟','অসাধাৰণ! 🎉','শাবাশ! 👏','অনুশীলন চলাই যাওক! 💪'],
+    score:(c,t)=>`${t}ৰ মাজত ${c}টা শুদ্ধ!`,
+    fact:'টিপ: অতীত কাল — যি হৈছিল, বৰ্তমান কাল — যি এতিয়া হৈছে, ভৱিষ্যৎ কাল — যি হ\'ব।',
+    context:'শুদ্ধ কালেৰে বাক্য সম্পূৰ্ণ কৰক:',
+  }
+};
+
+const QUESTIONS = [
+  {q:'Yesterday, the children ___ in the Brahmaputra river.', a:'played',  opts:['play','played','will play','playing'],   tense:'past'},
+  {q:'Every morning, she ___ puja at the temple.',           a:'performs', opts:['performed','performing','performs','will perform'], tense:'present'},
+  {q:'Next week, we ___ visit Kaziranga National Park.',      a:'will',     opts:['will','do','did','are'],                  tense:'future'},
+  {q:'The tea workers ___ their harvest last October.',       a:'completed',opts:['complete','completing','completed','will complete'],tense:'past'},
+  {q:'The Bihu festival ___ every year in April.',           a:'falls',    opts:['fell','fall','falls','will fall'],          tense:'present'},
+  {q:'She ___ her exams next month.',                        a:'will write',opts:['wrote','writes','will write','writing'],   tense:'future'},
+  {q:'Assam ___ famous for its one-horned rhinoceros.',      a:'is',       opts:['was','is','will be','were'],               tense:'present'},
+  {q:'My grandfather ___ stories about old Assam.',          a:'told',     opts:['tells','told','will tell','telling'],       tense:'past'},
+  {q:'We ___ a new school building next year.',              a:'will build',opts:['built','build','builds','will build'],     tense:'future'},
+  {q:'The Brahmaputra river ___ through Assam.',             a:'flows',    opts:['flowed','flowing','flows','will flow'],     tense:'present'},
+];
+
+let lang='en', current=0, correct=0, stars=0, answered=false;
+
+function renderQ(){
+  answered=false;
+  const t=T[lang], q=QUESTIONS[current];
+  document.getElementById('pFill').style.width=(current/QUESTIONS.length*100)+'%';
+  document.getElementById('pText').textContent=`${current+1} / ${QUESTIONS.length}`;
+  document.getElementById('qContext').textContent=t.context;
+
+  const parts=q.q.split('___');
+  document.getElementById('qText').innerHTML=
+    parts[0]+'<span class="blank" id="blankSpan">___</span>'+(parts[1]||'');
+
+  ['Past','Present','Future'].forEach(tt=>{
+    document.getElementById('tab'+tt).classList.toggle('active',
+      q.tense===tt.toLowerCase());
+  });
+  document.getElementById('tabPast').textContent   = t.past;
+  document.getElementById('tabPresent').textContent= t.present;
+  document.getElementById('tabFuture').textContent = t.future;
+
+  const shuffled=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('options').innerHTML=shuffled.map(o=>
+    `<button class="opt-btn" onclick="check('${o}',this)">${o}</button>`
+  ).join('');
+}
+
+function check(val,btn){
+  if(answered) return;
+  answered=true;
+  const q=QUESTIONS[current];
+  document.getElementById('blankSpan').textContent=val;
+
+  if(val===q.a){
+    btn.classList.add('correct');
+    correct++;
+    document.getElementById('blankSpan').style.color='var(--green)';
+    if(correct>=4&&stars<1){stars=1;litStar(1);}
+    if(correct>=7&&stars<2){stars=2;litStar(2);}
+    if(correct>=10&&stars<3){stars=3;litStar(3);}
+    playTone(660,'sine',.18,.3);
+    playTone(880,'sine',.22,.25,.1);
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById('blankSpan').style.color='var(--pink)';
+    document.querySelectorAll('.opt-btn').forEach(b=>{
+      if(b.textContent===q.a) b.classList.add('correct');
+    });
+    playTone(280,'sawtooth',.15,.2);
+  }
+  setTimeout(()=>{current++;current<QUESTIONS.length?renderQ():showResult();},1100);
+}
+
+function litStar(n){
+  const el=document.getElementById('s'+n);
+  el.classList.add('lit');
+  el.animate([{transform:'scale(1.5)'},{transform:'scale(1)'}],{duration:400});
+}
+
+function showResult(){
+  const t=T[lang], pct=correct/QUESTIONS.length;
+  const idx=pct>=.9?0:pct>=.7?1:pct>=.5?2:3;
+  document.getElementById('rEmoji').textContent=['🌟','🎉','👏','💪'][idx];
+  document.getElementById('rTitle').textContent=t.title[idx];
+  document.getElementById('rScore').textContent=t.score(correct,QUESTIONS.length);
+  document.getElementById('rFact').textContent=t.fact;
+  document.getElementById('rBtn').textContent=t.playAgain;
+  document.getElementById('overlay').classList.add('show');
+  if(pct>=.7) launchConfetti();
+}
+
+function restartGame(){
+  current=correct=stars=0;answered=false;
+  ['s1','s2','s3'].forEach(id=>document.getElementById(id).classList.remove('lit'));
+  document.getElementById('overlay').classList.remove('show');
+  renderQ();
+}
+
+function setLang(l){
+  lang=l;localStorage.setItem('gyanplay_lang',l);
+  ['en','hi','as'].forEach(x=>document.getElementById(`lb${x.charAt(0).toUpperCase()+x.slice(1)}`).classList.toggle('active',x===l));
+  if(current<QUESTIONS.length)renderQ();
+}
+
+let _ctx;
+function getCtx(){return _ctx||(_ctx=new(window.AudioContext||window.webkitAudioContext)());}
+function playTone(f,t,d,g,delay){
+  try{const c=getCtx(),dl=delay||0,o=c.createOscillator(),gn=c.createGain();
+  o.type=t;o.frequency.setValueAtTime(f,c.currentTime+dl);
+  gn.gain.setValueAtTime(0,c.currentTime+dl);
+  gn.gain.linearRampToValueAtTime(g||.2,c.currentTime+dl+.01);
+  gn.gain.exponentialRampToValueAtTime(.001,c.currentTime+dl+d);
+  o.connect(gn);gn.connect(c.destination);
+  o.start(c.currentTime+dl);o.stop(c.currentTime+dl+d+.05);}catch(e){}
+}
+document.addEventListener('click',()=>{try{getCtx().resume();}catch(e){}},{once:true});
+
+function launchConfetti(){
+  const cols=['#FFB800','#00AEEF','#FF4081','#00C853','#7C3AED'];
+  for(let i=0;i<30;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%cols.length]};--dur:${1.4+Math.random()*1.2}s;--dx:${(Math.random()-.5)*160}px;border-radius:${Math.random()>.5?'50%':'3px'}`;
+    document.body.appendChild(el);
+    el.addEventListener('animationend',()=>el.remove());
+  }
+}
+
+setLang(lang);
+renderQ();
+</script>
+</body>
+</html>

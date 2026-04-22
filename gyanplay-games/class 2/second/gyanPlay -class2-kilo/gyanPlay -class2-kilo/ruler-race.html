@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Ruler Race - GyanPlay Class 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #fdcb6e, #f39c12);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #fdcb6e;
+            font-size: 2rem;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .score {
+            background: #e94560;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text {
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        .question-box {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .question-text {
+            font-size: 1.5rem;
+            color: #2d3436;
+            font-weight: bold;
+        }
+        
+        .objects-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .object-item {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            min-width: 150px;
+        }
+        
+        .object-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .object-item.selected {
+            border-color: #f39c12;
+            background: #ffeaa7;
+        }
+        
+        .object-icon {
+            font-size: 4rem;
+        }
+        
+        .object-name {
+            font-size: 1.1rem;
+            color: #2d3436;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .ruler-area {
+            background: #dfe6e9;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .ruler-label {
+            text-align: center;
+            color: #2d3436;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .ruler {
+            background: white;
+            border-radius: 10px;
+            height: 60px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #636e72;
+        }
+        
+        .ruler-marks {
+            display: flex;
+            height: 100%;
+            align-items: flex-end;
+        }
+        
+        .mark {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-left: 1px solid #636e72;
+            padding-bottom: 5px;
+        }
+        
+        .mark.long {
+            height: 100%;
+        }
+        
+        .mark.short {
+            height: 60%;
+        }
+        
+        .mark-number {
+            font-size: 0.7rem;
+            color: #636e72;
+            margin-top: 5px;
+        }
+        
+        .drag-ruler {
+            position: absolute;
+            top: 10px;
+            background: #e17055;
+            height: 40px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: grab;
+            user-select: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .object-measure {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .measure-label {
+            color: #636e72;
+            font-size: 1rem;
+            text-align: center;
+        }
+        
+        .measure-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .measure-btn {
+            background: linear-gradient(135deg, #00b894, #55efc4);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .measure-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #e94560, #ff7675);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .feedback-content.correct {
+            border: 5px solid #00b894;
+        }
+        
+        .feedback-content.wrong {
+            border: 5px solid #e94560;
+        }
+        
+        .feedback-icon {
+            font-size: 5rem;
+        }
+        
+        .feedback-text {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            color: #2d3436;
+        }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-title {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .info-text {
+            color: #dfe6e9;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch2-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>📏 Ruler Race</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="score">Question: <span id="questionNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">Select an object and measure its length!</p>
+        </div>
+        
+        <div class="question-box">
+            <div class="question-text" id="questionText">Which object is about 15 cm long?</div>
+        </div>
+        
+        <div class="objects-container" id="objectsContainer">
+            <!-- Objects will be generated by JS -->
+        </div>
+        
+        <div class="ruler-area">
+            <div class="ruler-label">📏 Drag to measure</div>
+            <div class="ruler">
+                <div class="ruler-marks" id="rulerMarks">
+                    <!-- Marks will be generated by JS -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="object-measure">
+            <div class="measure-label">How long is the pencil?</div>
+            <div class="measure-options" id="measureOptions">
+                <button class="measure-btn" onclick="selectMeasure(10)">10 cm</button>
+                <button class="measure-btn" onclick="selectMeasure(15)">15 cm</button>
+                <button class="measure-btn" onclick="selectMeasure(20)">20 cm</button>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <div class="info-title">📖 Measurement Facts:</div>
+            <div class="info-text">1 meter = 100 centimeters (cm)</div>
+            <div class="info-text">A pencil is about 15 cm</div>
+            <div class="info-text">A ruler is usually 30 cm</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+            <button class="next-btn" onclick="nextQuestion()">Next Question →</button>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            { 
+                question: "Which object is about 15 cm long?",
+                objects: [
+                    { icon: '✏️', name: 'Pencil', length: 15 },
+                    { icon: '📏', name: 'Ruler', length: 30 },
+                    { icon: '✂️', name: 'Scissors', length: 20 },
+                    { icon: '📎', name: 'Clip', length: 5 }
+                ],
+                correct: 15
+            },
+            { 
+                question: "Which object is about 30 cm long?",
+                objects: [
+                    { icon: '✏️', name: 'Pencil', length: 15 },
+                    { icon: '📏', name: 'Ruler', length: 30 },
+                    { icon: '📚', name: 'Book', length: 25 },
+                    { icon: '🖌️', name: 'Brush', length: 20 }
+                ],
+                correct: 30
+            },
+            { 
+                question: "Which object is about 5 cm long?",
+                objects: [
+                    { icon: '📎', name: 'Clip', length: 5 },
+                    { icon: '✏️', name: 'Pencil', length: 15 },
+                    { icon: '📏', name: 'Ruler', length: 30 },
+                    { icon: '🎒', name: 'Bag', length: 40 }
+                ],
+                correct: 5
+            },
+            { 
+                question: "Which is longer, the book or the pencil?",
+                objects: [
+                    { icon: '📚', name: 'Book', length: 25 },
+                    { icon: '✏️', name: 'Pencil', length: 15 }
+                ],
+                correct: 'book'
+            },
+            { 
+                question: "Which object is about 20 cm long?",
+                objects: [
+                    { icon: '✂️', name: 'Scissors', length: 20 },
+                    { icon: '📎', name: 'Clip', length: 5 },
+                    { icon: '✏️', name: 'Pencil', length: 15 },
+                    { icon: '🧸', name: 'Toy', length: 10 }
+                ],
+                correct: 20
+            }
+        ];
+        
+        let currentIndex = 0;
+        let score = 0;
+        let selectedObject = null;
+        
+        function initRuler() {
+            const marksContainer = document.getElementById('rulerMarks');
+            marksContainer.innerHTML = '';
+            
+            for (let i = 0; i <= 30; i++) {
+                const mark = document.createElement('div');
+                mark.className = i % 10 === 0 ? 'mark long' : 'mark short';
+                mark.innerHTML = `<span class="mark-number">${i}</span>`;
+                marksContainer.appendChild(mark);
+            }
+        }
+        
+        function loadQuestion() {
+            const q = questions[currentIndex];
+            document.getElementById('questionText').textContent = q.question;
+            document.getElementById('questionNum').textContent = currentIndex + 1;
+            
+            const container = document.getElementById('objectsContainer');
+            container.innerHTML = '';
+            
+            q.objects.forEach((obj, index) => {
+                const div = document.createElement('div');
+                div.className = 'object-item';
+                div.innerHTML = `
+                    <span class="object-icon">${obj.icon}</span>
+                    <span class="object-name">${obj.name}</span>
+                `;
+                div.onclick = () => selectObject(div, obj);
+                container.appendChild(div);
+            });
+            
+            // Update measure options based on question type
+            const measureOptions = document.getElementById('measureOptions');
+            if (typeof q.correct === 'number') {
+                measureOptions.innerHTML = `
+                    <button class="measure-btn" onclick="checkAnswer(${q.correct})">${q.correct} cm</button>
+                    <button class="measure-btn" onclick="checkAnswer(${q.correct - 5})">${q.correct - 5} cm</button>
+                    <button class="measure-btn" onclick="checkAnswer(${q.correct + 5})">${q.correct + 5} cm</button>
+                `;
+            } else {
+                const obj = q.objects.find(o => o.name.toLowerCase() === q.correct);
+                measureOptions.innerHTML = `
+                    <button class="measure-btn" onclick="checkAnswer('${q.correct}')">${obj.name}</button>
+                    <button class="measure-btn" onclick="checkAnswer('other')">The other one</button>
+                `;
+            }
+            
+            selectedObject = null;
+        }
+        
+        function selectObject(div, obj) {
+            selectedObject = obj;
+            document.querySelectorAll('.object-item').forEach(d => d.classList.remove('selected'));
+            div.classList.add('selected');
+        }
+        
+        function checkAnswer(answer) {
+            const q = questions[currentIndex];
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            if (answer === q.correct) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'Correct! Great measuring!';
+                score += 10;
+                document.getElementById('score').textContent = score;
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = 'Try again!';
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextQuestion() {
+            document.getElementById('feedback').classList.remove('show');
+            currentIndex = (currentIndex + 1) % questions.length;
+            loadQuestion();
+        }
+        
+        initRuler();
+        loadQuestion();
+    </script>
+</body>
+</html>

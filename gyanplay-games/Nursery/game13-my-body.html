@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Body – GyanPlay Nursery</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--pink1:#FCE4EC;--pink2:#F48FB1;--btn:#fff;--correct:#43A047;--wrong:#E53935;--text:#5D1049}
+  body{min-height:100vh;background:linear-gradient(135deg,#FCE4EC,#F48FB1);font-family:'Nunito',sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;color:var(--text)}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .fadeIn{animation:fadeIn .5s ease forwards}
+
+  /* Top bar */
+  .topbar{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .back-btn{background:#fff;border:none;border-radius:50px;padding:8px 18px;font-size:1.1rem;font-weight:800;cursor:pointer;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+  .lang-toggle{display:flex;gap:6px}
+  .lang-btn{background:#fff;border:none;border-radius:50px;padding:7px 14px;font-size:1rem;font-weight:800;cursor:pointer;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.12);transition:background .2s}
+  .lang-btn.active{background:#F48FB1;color:#fff}
+
+  /* Score bar */
+  .score-bar{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:1.2rem;font-weight:800}
+  .progress-wrap{width:100%;max-width:520px;background:#f8bbd0;border-radius:50px;height:14px;margin-bottom:18px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,#e91e63,#f48fb1);border-radius:50px;transition:width .4s}
+
+  /* Card */
+  .card{background:rgba(255,255,255,.7);border-radius:28px;padding:24px 20px;max-width:520px;width:100%;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.12);margin-bottom:16px}
+  .emoji-display{font-size:7rem;line-height:1;margin-bottom:10px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.15))}
+  .question-label{font-size:1.5rem;font-weight:900;margin-bottom:6px}
+  .fun-fact{font-size:1.05rem;font-weight:700;color:#880E4F;margin-top:8px;min-height:28px}
+
+  /* Options */
+  .options{display:flex;flex-direction:column;gap:12px;max-width:520px;width:100%;margin-bottom:16px}
+  .opt-btn{background:#fff;border:3px solid #f48fb1;border-radius:20px;padding:18px 10px;font-size:1.6rem;font-weight:900;cursor:pointer;color:var(--text);min-height:70px;transition:transform .15s,background .2s,border-color .2s;box-shadow:0 3px 10px rgba(0,0,0,.1)}
+  .opt-btn:active{transform:scale(.96)}
+  .opt-btn.correct{background:#C8E6C9;border-color:var(--correct);color:var(--correct)}
+  .opt-btn.wrong{background:#FFCDD2;border-color:var(--wrong);color:var(--wrong)}
+  .opt-btn:disabled{cursor:default}
+
+  /* Stars / end */
+  .star-row{font-size:3rem;margin:10px 0}
+  .result-card{background:rgba(255,255,255,.85);border-radius:28px;padding:30px 20px;max-width:520px;width:100%;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.15)}
+  .result-title{font-size:2.2rem;font-weight:900;margin-bottom:8px}
+  .result-score{font-size:1.6rem;font-weight:800;margin-bottom:16px;color:#880E4F}
+  .play-again-btn{background:linear-gradient(135deg,#e91e63,#f06292);border:none;border-radius:50px;padding:18px 40px;font-size:1.5rem;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.2);transition:transform .15s}
+  .play-again-btn:active{transform:scale(.96)}
+
+  [data-lang]{display:none}
+  [data-lang].active{display:inline}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="score-bar">
+  <span>⭐ <span id="scoreDisplay">0</span></span>
+  <span id="roundDisplay">1 / 8</span>
+</div>
+<div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+<div id="gameArea" class="fadeIn"></div>
+<div id="endScreen" style="display:none"></div>
+
+<script>
+const LANG_DATA = {
+  en:{q:"What is this?",correct:"Correct! 🎉",wrong:"Try again! 💪",playAgain:"Play Again!",round:"Round",of:"of",score:"Score"},
+  hi:{q:"यह क्या है?",correct:"सही! 🎉",wrong:"फिर कोशिश करो! 💪",playAgain:"फिर खेलो!",round:"राउंड",of:"में से",score:"स्कोर"},
+  as:{q:"এইটো কি?",correct:"শুদ্ধ! 🎉",wrong:"আকৌ চেষ্টা কৰা! 💪",playAgain:"আকৌ খেলা!",round:"ৰাউণ্ড",of:"ৰ ভিতৰত",score:"স্কোৰ"}
+};
+
+const rounds = [
+  {emoji:"👁️", answer:{en:"Eye",hi:"आँख",as:"চকু"}, opts:[{en:"Eye",hi:"आँख",as:"চকু"},{en:"Ear",hi:"कान",as:"কান"},{en:"Nose",hi:"नाक",as:"নাক"}], fact:{en:"Your eyes help you see colours and shapes!",hi:"आँखें रंग और आकार देखती हैं!",as:"চকুৱে ৰং আৰু আকাৰ দেখে!"}},
+  {emoji:"👂", answer:{en:"Ear",hi:"कान",as:"কান"}, opts:[{en:"Mouth",hi:"मुँह",as:"মুখ"},{en:"Ear",hi:"कान",as:"কান"},{en:"Eye",hi:"आँख",as:"চকু"}], fact:{en:"Your ears help you hear music!",hi:"कान संगीत सुनने में मदद करते हैं!",as:"কানে সংগীত শুনিবলৈ সহায় কৰে!"}},
+  {emoji:"👃", answer:{en:"Nose",hi:"नाक",as:"নাক"}, opts:[{en:"Nose",hi:"नाक",as:"নাক"},{en:"Ear",hi:"कान",as:"কান"},{en:"Teeth",hi:"दाँत",as:"দাঁত"}], fact:{en:"Your nose can smell yummy food!",hi:"नाक स्वादिष्ट खाना सूँघ सकती है!",as:"নাকে সুস্বাদু খাদ্যৰ গোন্ধ পায়!"}},
+  {emoji:"🦷", answer:{en:"Teeth",hi:"दाँत",as:"দাঁত"}, opts:[{en:"Hand",hi:"हाथ",as:"হাত"},{en:"Teeth",hi:"दाँत",as:"দাঁত"},{en:"Leg",hi:"पैर",as:"ভৰি"}], fact:{en:"Brush your teeth twice a day!",hi:"दिन में दो बार दाँत साफ करो!",as:"দিনত দুবাৰ দাঁত মাজা!"}},
+  {emoji:"👅", answer:{en:"Tongue",hi:"जीभ",as:"জিভা"}, opts:[{en:"Eye",hi:"आँख",as:"চকু"},{en:"Nose",hi:"नाक",as:"নাক"},{en:"Tongue",hi:"जीभ",as:"জিভা"}], fact:{en:"Your tongue helps you taste food!",hi:"जीभ खाने का स्वाद लेने में मदद करती है!",as:"জিভাই খাদ্যৰ সোৱাদ লয়!"}},
+  {emoji:"🦵", answer:{en:"Leg",hi:"पैर",as:"ভৰি"}, opts:[{en:"Leg",hi:"पैर",as:"ভৰি"},{en:"Hand",hi:"हाथ",as:"হাত"},{en:"Ear",hi:"कान",as:"কান"}], fact:{en:"Your legs help you walk and run!",hi:"पैर चलने और दौड़ने में मदद करते हैं!",as:"ভৰিয়ে হোৱা আৰু দৌৰাত সহায় কৰে!"}},
+  {emoji:"🦶", answer:{en:"Foot",hi:"पाँव",as:"ঠেং"}, opts:[{en:"Foot",hi:"पाँव",as:"ঠেং"},{en:"Teeth",hi:"दाँत",as:"দাঁত"},{en:"Tongue",hi:"जीभ",as:"জিভা"}], fact:{en:"Your feet have 26 bones each!",hi:"हर पाँव में 26 हड्डियाँ होती हैं!",as:"প্ৰতিটো ঠেঙত ২৬ টা হাড় থাকে!"}},
+  {emoji:"🤚", answer:{en:"Hand",hi:"हाथ",as:"হাত"}, opts:[{en:"Nose",hi:"नाक",as:"নাক"},{en:"Leg",hi:"पैर",as:"ভৰি"},{en:"Hand",hi:"हाथ",as:"হাত"}], fact:{en:"Your hands help you draw and write!",hi:"हाथ लिखने और खींचने में मदद करते हैं!",as:"হাতে লিখিবলৈ আৰু আঁকিবলৈ সহায় কৰে!"}}
+];
+
+let lang='en', currentRound=0, score=0;
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{b.classList.toggle('active',['en','hi','as'][i]===l)});
+  renderRound();
+}
+
+function shuffle(a){return a.sort(()=>Math.random()-.5)}
+
+function renderRound(){
+  if(currentRound>=rounds.length){showEnd();return;}
+  const r=rounds[currentRound];
+  document.getElementById('roundDisplay').textContent=`${currentRound+1} / 8`;
+  document.getElementById('progressFill').style.width=`${((currentRound)/8)*100}%`;
+  const shuffled=shuffle([...r.opts]);
+  const ga=document.getElementById('gameArea');
+  ga.innerHTML=`
+    <div class="card fadeIn">
+      <div class="emoji-display">${r.emoji}</div>
+      <div class="question-label">
+        <span data-lang="en" class="${lang==='en'?'active':''}">What is this?</span>
+        <span data-lang="hi" class="${lang==='hi'?'active':''}">यह क्या है?</span>
+        <span data-lang="as" class="${lang==='as'?'active':''}">এইটো কি?</span>
+      </div>
+      <div class="fun-fact" id="funFact"></div>
+    </div>
+    <div class="options" id="optArea">
+      ${shuffled.map(o=>`<button class="opt-btn" onclick="checkAnswer(this,'${o.en}','${r.answer.en}')">${o[lang]}</button>`).join('')}
+    </div>`;
+}
+
+function checkAnswer(btn,chosen,correct){
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  const r=rounds[currentRound];
+  if(chosen===correct){
+    btn.classList.add('correct');
+    score+=10;
+    document.getElementById('scoreDisplay').textContent=score;
+    document.getElementById('funFact').textContent=r.fact[lang];
+  } else {
+    btn.classList.add('wrong');
+    btns.forEach(b=>{if(b.getAttribute('onclick').includes(`'${correct}'`))b.classList.add('correct');});
+    document.getElementById('funFact').textContent=r.fact[lang];
+  }
+  setTimeout(()=>{currentRound++;renderRound();},1600);
+}
+
+function showEnd(){
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('gameArea').style.display='none';
+  const pct=score/80*100;
+  const stars=pct>=90?3:pct>=70?2:pct>=40?1:0;
+  const starStr='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  const msg=stars===3?{en:"Amazing! You know all body parts!",hi:"शाबाश! तुम सब अंग जानते हो!",as:"অসাধাৰণ! তুমি সকলো অংগ জানা!"}
+            :stars===2?{en:"Great job! Keep learning!",hi:"बहुत अच्छा! सीखते रहो!",as:"দুৰ্দান্ত! শিকি থাকা!"}
+            :stars===1?{en:"Good try! Practice more!",hi:"अच्छी कोशिश! और अभ्यास करो!",as:"ভাল চেষ্টা! আৰু অনুশীলন কৰা!"}
+            :{en:"Keep trying! You can do it!",hi:"कोशिश करते रहो!",as:"চেষ্টা কৰি থাকা!"};
+  const es=document.getElementById('endScreen');
+  es.style.display='block';
+  es.innerHTML=`<div class="result-card fadeIn">
+    <div style="font-size:5rem">🤚</div>
+    <div class="result-title">${{en:"Game Over!",hi:"खेल समाप्त!",as:"খেল শেষ!"}[lang]}</div>
+    <div class="star-row">${starStr}</div>
+    <div class="result-score">${{en:"Score",hi:"स्कोर",as:"স্কোৰ"}[lang]}: ${score} / 80</div>
+    <p style="font-size:1.3rem;font-weight:800;margin-bottom:20px">${msg[lang]}</p>
+    <button class="play-again-btn" onclick="restartGame()">${{en:"Play Again!",hi:"फिर खेलो!",as:"আকৌ খেলা!"}[lang]}</button>
+  </div>`;
+}
+
+function restartGame(){
+  currentRound=0;score=0;
+  document.getElementById('scoreDisplay').textContent=0;
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  renderRound();
+}
+
+renderRound();
+</script>
+</body>
+</html>

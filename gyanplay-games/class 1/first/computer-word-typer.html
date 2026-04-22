@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Word Typer ⌨️ — Class 1 Computer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--cyan:#00BCD4;--dark:#0d1b2a;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#0d1b2a,#1a2f4a,#0d2a1a);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+.circuit{position:fixed;inset:0;z-index:0;opacity:.05;background-image:linear-gradient(rgba(0,188,212,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(0,188,212,.5) 1px,transparent 1px);background-size:36px 36px;}
+.bit{position:fixed;pointer-events:none;z-index:1;color:rgba(0,188,212,.2);font-family:'Courier New',monospace;font-size:.8rem;animation:bitFloat 6s linear infinite;}
+@keyframes bitFloat{from{transform:translateY(-20px);opacity:0;}to{transform:translateY(100vh);opacity:.3;}}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 4px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#00BCD4;text-shadow:0 0 20px rgba(0,188,212,.5);}
+.lvchip{display:inline-block;background:rgba(0,188,212,.15);border:2px solid rgba(0,188,212,.4);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#00BCD4;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(0,188,212,.12);border:2px solid rgba(0,188,212,.3);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#00BCD4;}
+.spill span{color:#FFD700;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.12);transition:all .3s;}
+.pdot.done{background:#00BCD4;box-shadow:0 0 8px #00BCD4;}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* WORD DISPLAY */
+.word-card{position:relative;z-index:20;background:rgba(0,188,212,.1);backdrop-filter:blur(12px);border:3px solid rgba(0,188,212,.4);border-radius:28px;padding:clamp(12px,3vw,20px) clamp(20px,5vw,40px);margin:8px 16px;text-align:center;max-width:600px;width:calc(100% - 32px);box-shadow:0 8px 28px rgba(0,0,0,.4);}
+.target-pic{font-size:clamp(3.5rem,13vw,6rem);animation:picFloat 2s ease-in-out infinite;display:block;}
+@keyframes picFloat{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+.target-label{color:rgba(255,255,255,.7);font-size:clamp(.85rem,3vw,1.15rem);font-weight:700;margin-top:4px;font-family:'Fredoka One',cursive;}
+.target-word{font-family:'Fredoka One',cursive;font-size:clamp(2rem,8vw,3.5rem);color:#FFD700;letter-spacing:4px;text-shadow:0 0 20px rgba(255,215,0,.4);margin:6px 0;}
+/* typed letters display */
+.typed-display{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px;}
+.typed-letter{
+  width:clamp(32px,8vw,46px);height:clamp(38px,9vw,52px);
+  border-radius:10px;border:3px solid rgba(0,188,212,.4);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;font-size:clamp(1.2rem,5vw,1.9rem);
+  color:#fff;background:rgba(0,188,212,.1);
+  transition:all .2s;
+}
+.typed-letter.correct-l{border-color:#4CAF50;background:rgba(76,175,80,.25);color:#4CAF50;}
+.typed-letter.wrong-l{border-color:#E53935;background:rgba(229,57,53,.2);color:#E53935;animation:letterShake .3s ease;}
+@keyframes letterShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+.typed-letter.empty{border-style:dashed;opacity:.4;}
+
+/* ON-SCREEN KEYBOARD */
+.keyboard-wrap{position:relative;z-index:20;width:100%;max-width:680px;padding:0 10px;margin:6px 0;}
+.key-row{display:flex;gap:clamp(3px,1vw,6px);justify-content:center;margin-bottom:clamp(3px,1vw,6px);}
+.key{
+  width:clamp(28px,7vw,46px);height:clamp(32px,8vw,48px);
+  border-radius:8px;border:2px solid rgba(0,188,212,.25);
+  background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.7);
+  font-family:'Fredoka One',cursive;font-size:clamp(.75rem,2.5vw,1.2rem);
+  cursor:pointer;transition:all .12s;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 0 rgba(0,0,0,.4);
+  position:relative;top:0;
+}
+.key:hover{color:#fff;border-color:rgba(0,188,212,.6);background:rgba(0,188,212,.15);top:-2px;box-shadow:0 5px 0 rgba(0,0,0,.3);}
+.key:active,.key.pressed{top:3px;box-shadow:0 0px 0 rgba(0,0,0,.3);background:rgba(0,188,212,.3);}
+.key.highlight-key{border-color:#FFD700;background:rgba(255,215,0,.2);color:#FFD700;box-shadow:0 3px 0 rgba(0,0,0,.4),0 0 12px rgba(255,215,0,.3);animation:keyGlow 1s ease-in-out infinite;}
+@keyframes keyGlow{0%,100%{box-shadow:0 3px 0 rgba(0,0,0,.4),0 0 8px rgba(255,215,0,.3);}50%{box-shadow:0 3px 0 rgba(0,0,0,.4),0 0 20px rgba(255,215,0,.7);}}
+.key.correct-key{background:rgba(76,175,80,.4);border-color:#4CAF50;animation:keyPop .35s ease;}
+@keyframes keyPop{0%{transform:scale(1);}50%{transform:scale(1.2) translateY(-4px);}100%{transform:scale(1);}}
+.key-backspace{width:clamp(50px,12vw,70px);font-size:clamp(.65rem,2vw,.85rem);}
+
+/* WORD COMPLETE BURST */
+.word-burst{position:fixed;inset:0;z-index:160;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.wb-text{font-family:'Fredoka One',cursive;font-size:clamp(3rem,12vw,6rem);color:#00BCD4;text-shadow:0 0 40px rgba(0,188,212,.6);animation:wbIn .4s ease both,wbOut .35s .9s ease forwards;}
+@keyframes wbIn{from{transform:scale(0) rotate(-15deg);opacity:0;}to{transform:scale(1);opacity:1;}}
+@keyframes wbOut{to{transform:scale(1.4);opacity:0;}}
+
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,10,.85);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:#00BCD4;font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.88rem,3vw,1.05rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:2;}
+.ov-btn{background:linear-gradient(135deg,#00BCD4,#FFD700);color:#000;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(0,188,212,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="circuit"></div>
+
+<div class="header">
+  <div class="title">⌨️ Word Typer</div>
+  <div class="lvchip" id="lvChip">Level 1 · 3-letter words</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">⌨️ Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="word-card">
+  <span class="target-pic" id="targetPic">🐱</span>
+  <div class="target-label" id="targetLabel">Type the word!</div>
+  <div class="target-word" id="targetWord">CAT</div>
+  <div class="typed-display" id="typedDisplay"></div>
+</div>
+
+<div class="keyboard-wrap" id="keyboardWrap"></div>
+
+<script>
+const WORDS=[
+  // Level 1 — 3 letter
+  {pic:'🐱',word:'CAT',label:'A furry pet!'},
+  {pic:'🐶',word:'DOG',label:'Man\'s best friend!'},
+  {pic:'☀️',word:'SUN',label:'It shines in the sky!'},
+  {pic:'🎩',word:'HAT',label:'We wear it on our head!'},
+  {pic:'🚌',word:'BUS',label:'It takes us to school!'},
+  // Level 2 — 4 letter
+  {pic:'📚',word:'BOOK',label:'We read to learn!'},
+  {pic:'🐟',word:'FISH',label:'It swims in water!'},
+  {pic:'🌙',word:'MOON',label:'It shines at night!'},
+  // Level 3 — 5 letter
+  {pic:'🍎',word:'APPLE',label:'A red healthy fruit!'},
+  {pic:'🌳',word:'TREES',label:'They give us oxygen!'},
+];
+const ROWS=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+const TOTAL=10;
+let score=0,round=0,current=null,typedSoFar='',answered=false;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playKeyClick(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='square';o.frequency.setValueAtTime(1000,c.currentTime);o.frequency.exponentialRampToValueAtTime(1800,c.currentTime+.05);g.gain.setValueAtTime(.12,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.08);o.start();o.stop(c.currentTime+.08);}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.12,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.2);o.start();o.stop(c.currentTime+.2);}
+function playWordComplete(){const c=ac();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*100));}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.2;window.speechSynthesis.speak(u);}
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#00BCD4','#FFD700','#4CAF50','#E53935','#FF8F00'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showBurst(word){const el=document.createElement('div');el.className='word-burst';el.innerHTML=`<div class="wb-text">${word} ✓</div>`;document.body.appendChild(el);setTimeout(()=>el.remove(),1400);}
+
+function buildKeyboard(){
+  const wrap=document.getElementById('keyboardWrap');wrap.innerHTML='';
+  const nextChar=current.word[typedSoFar.length];
+  ROWS.forEach(row=>{
+    const rowEl=document.createElement('div');rowEl.className='key-row';
+    [...row].forEach(letter=>{
+      const key=document.createElement('div');
+      key.className='key'+(letter===nextChar?' highlight-key':'');
+      key.id=`k_${letter}`;key.textContent=letter;
+      key.addEventListener('click',()=>pressKey(key,letter));
+      key.addEventListener('touchstart',e=>{e.preventDefault();pressKey(key,letter);},{passive:false});
+      rowEl.appendChild(key);
+    });
+    // backspace on last row
+    if(row===ROWS[ROWS.length-1]){
+      const bs=document.createElement('div');bs.className='key key-backspace';bs.textContent='⌫';
+      bs.addEventListener('click',backspace);
+      bs.addEventListener('touchstart',e=>{e.preventDefault();backspace();},{passive:false});
+      rowEl.appendChild(bs);
+    }
+    wrap.appendChild(rowEl);
+  });
+}
+
+document.addEventListener('keydown',e=>{
+  if(answered)return;
+  const letter=e.key.toUpperCase();
+  if(/^[A-Z]$/.test(letter)){const k=document.getElementById(`k_${letter}`);if(k){k.classList.add('pressed');setTimeout(()=>k.classList.remove('pressed'),150);pressKey(k,letter);}}
+  if(e.key==='Backspace')backspace();
+});
+
+function pressKey(keyEl,letter){
+  if(answered)return;
+  const expected=current.word[typedSoFar.length];
+  if(letter===expected){
+    playKeyClick();keyEl.classList.add('correct-key');
+    setTimeout(()=>keyEl.classList.remove('correct-key'),350);
+    typedSoFar+=letter;
+    renderTypedDisplay();
+    if(typedSoFar===current.word){
+      wordComplete();
+    } else {
+      buildKeyboard();
+    }
+  } else {
+    playWrong();
+    const wrongSlot=document.getElementById(`td_${typedSoFar.length}`);
+    if(wrongSlot){wrongSlot.classList.add('wrong-l');setTimeout(()=>wrongSlot.classList.remove('wrong-l'),400);}
+    speak(`Not ${letter}! The next letter is ${expected}!`);
+  }
+}
+
+function backspace(){
+  if(!typedSoFar.length)return;
+  typedSoFar=typedSoFar.slice(0,-1);
+  renderTypedDisplay();
+  buildKeyboard();
+}
+
+function renderTypedDisplay(){
+  const disp=document.getElementById('typedDisplay');disp.innerHTML='';
+  for(let i=0;i<current.word.length;i++){
+    const el=document.createElement('div');
+    el.id=`td_${i}`;
+    if(i<typedSoFar.length){el.className='typed-letter correct-l';el.textContent=typedSoFar[i];}
+    else{el.className='typed-letter empty';el.textContent='';}
+    disp.appendChild(el);
+  }
+}
+
+function wordComplete(){
+  answered=true;
+  playWordComplete();spawnConf();showBurst(current.word);
+  score+=15;document.getElementById('scoreVal').textContent=score;
+  speak(`${current.word}! You typed it perfectly!`);
+  round++;makeDots();setTimeout(newRound,1800);
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;typedSoFar='';
+  document.getElementById('roundVal').textContent=round+1;
+  const lvIdx=round<5?0:round<8?1:2;
+  document.getElementById('lvChip').textContent=`Level ${lvIdx+1} · ${['3-letter words','4-letter words','5-letter words'][lvIdx]}`;
+  makeDots();
+  current=WORDS[round%WORDS.length];
+  document.getElementById('targetPic').textContent=current.pic;
+  document.getElementById('targetWord').textContent=current.word;
+  document.getElementById('targetLabel').textContent=current.label;
+  renderTypedDisplay();
+  buildKeyboard();
+  setTimeout(()=>speak(`Type the word: ${current.word.split('').join(' ')}!`),400);
+}
+
+// Floating bits
+function makeBits(){
+  const bits=['0','1','01','10'];
+  for(let i=0;i<8;i++){const el=document.createElement('div');el.className='bit';el.textContent=bits[i%bits.length];el.style.cssText=`left:${Math.random()*100}%;animation-delay:${Math.random()*5}s;animation-duration:${5+Math.random()*4}s;`;document.body.appendChild(el);}
+}
+
+function showCelebration(){
+  playChime();spawnConf();speak('Wow! You can type words on a keyboard! You are a computer genius!');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">⌨️</div>
+    <div class="ov-title">Typing Champion!</div>
+    <div class="ov-sub">
+      You typed: CAT · DOG · SUN · HAT<br/>
+      BOOK · FISH · MOON · APPLE · TREES<br/><br/>
+      Typing is a very important skill!<br/>Practice every day to type faster!<br/><br/>
+      Score: <span style="color:#00BCD4;font-size:1.4em;">${score}</span> points!
+    </div>
+    <button class="ov-btn" onclick="restart()">Play Again ⌨️</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{makeBits();window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('Welcome to Word Typer! Type the word you see!');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

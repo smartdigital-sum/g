@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Assam Map Warrior 🗺️</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Hind+Siliguri:wght@400;600;700&family=MedievalSharp&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0d08;--bg2:#111608;--bg3:#181e0d;
+  --parchment:#c8a84b;--parchment2:#e8c870;--parchment-dim:#7a6020;
+  --conquest:#4caf50;--conquest2:#81c784;--conquest-glow:rgba(76,175,80,0.5);
+  --locked:#2a3018;--locked-border:#3a4a20;
+  --active:#f5c518;--active-glow:rgba(245,197,24,0.6);
+  --river:#1565c0;--river2:#42a5f5;
+  --red:#e53935;--orange:#ff8f00;
+  --gold:#f5c518;--gold2:#ffe082;
+  --white:#fff;--dark:#0a0d08;
+  --card-bg:rgba(10,13,8,0.92);
+  --card-border:rgba(200,168,75,0.4);
+  --text-map:rgba(200,168,75,0.8);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{
+  font-family:'Baloo 2',cursive;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;
+}
+
+/* ══ WRAPPER ══ */
+#game-wrap{
+  width:min(520px,100vw);
+  height:min(700px,100vh);
+  position:relative;overflow:hidden;
+  border-radius:28px;
+  box-shadow:0 0 0 1px rgba(200,168,75,0.3),0 30px 80px rgba(0,0,0,0.9);
+}
+
+/* ══ PARCHMENT BG ══ */
+.map-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%,#1a2008 0%,#0f1508 50%,#0a0d08 100%);
+}
+/* Grid texture */
+.map-bg::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(200,168,75,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(200,168,75,0.04) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+/* Vignette edges */
+.map-bg::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 100% 100% at 50% 50%,transparent 40%,rgba(0,0,0,0.7) 100%);
+  pointer-events:none;
+}
+
+/* Corner decorations */
+.corner{
+  position:absolute;font-size:28px;z-index:2;opacity:0.3;
+  pointer-events:none;
+}
+.c-tl{top:28px;left:14px;}
+.c-tr{top:28px;right:14px;}
+.c-bl{bottom:14px;left:14px;}
+.c-br{bottom:14px;right:14px;}
+
+/* Compass rose */
+.compass{
+  position:absolute;bottom:80px;right:14px;z-index:4;
+  width:48px;height:48px;opacity:0.55;
+  animation:compassSpin 30s linear infinite;
+}
+@keyframes compassSpin{0%{transform:rotate(0);}100%{transform:rotate(360deg);}}
+
+/* ══ SCREENS ══ */
+.screen{
+  position:absolute;inset:0;z-index:10;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:18px 16px;
+  transition:opacity 0.35s,transform 0.35s;
+}
+.screen.hidden{opacity:0;pointer-events:none;transform:scale(0.97);}
+
+/* ══ INTRO ══ */
+#screen-intro{gap:14px;text-align:center;}
+.intro-badge{
+  font-family:'Cinzel',serif;
+  background:linear-gradient(135deg,#1a2008,#2a3a10);
+  color:var(--parchment2);font-size:11px;font-weight:700;
+  padding:5px 18px;border-radius:4px;letter-spacing:2px;
+  text-transform:uppercase;border:1px solid rgba(200,168,75,0.4);
+  box-shadow:0 0 20px rgba(200,168,75,0.15);
+}
+.intro-title{
+  font-family:'Cinzel',serif;
+  font-size:26px;font-weight:700;color:var(--parchment2);
+  text-shadow:0 0 20px rgba(200,168,75,0.5);line-height:1.2;
+}
+.intro-title .as{
+  font-family:'Hind Siliguri',sans-serif;
+  display:block;font-size:16px;color:var(--parchment-dim);
+  margin-top:4px;font-weight:700;
+}
+/* Map preview with Rongmon */
+.intro-map-hero{
+  position:relative;width:200px;height:160px;
+  filter:drop-shadow(0 8px 28px rgba(200,168,75,0.3));
+  animation:heroFloat 3s ease-in-out infinite;
+}
+@keyframes heroFloat{
+  0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}
+}
+.speech-bubble{
+  background:rgba(10,13,8,0.9);
+  border:1px solid rgba(200,168,75,0.35);
+  border-radius:12px;padding:13px 18px;
+  font-size:13px;color:var(--parchment2);
+  font-weight:600;max-width:314px;line-height:1.55;
+  box-shadow:0 8px 24px rgba(0,0,0,0.5),0 0 20px rgba(200,168,75,0.08);
+  position:relative;
+}
+.speech-bubble::after{
+  content:'';position:absolute;top:-11px;left:50%;
+  transform:translateX(-50%);
+  border:7px solid transparent;
+  border-bottom-color:rgba(200,168,75,0.35);
+}
+.speech-bubble .as{font-family:'Hind Siliguri',sans-serif;color:var(--parchment-dim);display:block;font-size:12px;margin-top:3px;}
+.btn-start{
+  font-family:'Cinzel',serif;
+  font-size:18px;font-weight:700;
+  padding:13px 40px;border-radius:4px;border:2px solid var(--parchment);
+  background:linear-gradient(135deg,#1a2008,#2d3a10);
+  color:var(--parchment2);cursor:pointer;
+  box-shadow:0 0 20px rgba(200,168,75,0.25),0 6px 20px rgba(0,0,0,0.5);
+  transition:all 0.2s;letter-spacing:1px;
+  animation:pulseMap 2s ease-in-out infinite;
+}
+.btn-start:hover{background:linear-gradient(135deg,#2a3a10,#3d5018);transform:scale(1.04);}
+@keyframes pulseMap{
+  0%,100%{box-shadow:0 0 20px rgba(200,168,75,0.25);}
+  50%{box-shadow:0 0 35px rgba(200,168,75,0.45);}
+}
+
+/* ══ HUD ══ */
+#hud{
+  position:absolute;top:0;left:0;right:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px 6px;
+  background:linear-gradient(180deg,rgba(0,0,0,0.8) 0%,transparent 100%);
+  border-bottom:1px solid rgba(200,168,75,0.12);
+}
+.hud-conquests{
+  font-family:'Cinzel',serif;
+  font-size:14px;color:var(--gold2);
+  display:flex;align-items:center;gap:5px;
+  text-shadow:0 0 10px rgba(200,168,75,0.5);
+}
+.hud-level{font-family:'Cinzel',serif;font-size:12px;color:rgba(200,168,75,0.8);background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.2);padding:2px 10px;border-radius:3px;}
+.hud-lives{font-size:17px;letter-spacing:2px;}
+#prog-wrap{
+  position:absolute;top:45px;left:14px;right:14px;height:4px;
+  background:rgba(200,168,75,0.1);border-radius:2px;z-index:20;overflow:hidden;
+}
+#prog-bar{
+  height:100%;
+  background:linear-gradient(90deg,var(--conquest),var(--gold));
+  border-radius:2px;transition:width 0.5s ease;width:0%;
+}
+
+/* ══ MAP SCREEN ══ */
+#screen-map{
+  gap:0;padding:52px 12px 8px;
+  justify-content:flex-start;
+}
+
+/* Map title bar */
+.map-titlebar{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;max-width:496px;margin-bottom:8px;
+}
+.map-title{
+  font-family:'Cinzel',serif;
+  font-size:14px;color:var(--parchment2);letter-spacing:1px;
+  text-shadow:0 0 10px rgba(200,168,75,0.3);
+}
+.conquest-count{
+  font-size:12px;color:var(--conquest2);font-weight:700;
+  background:rgba(76,175,80,0.12);border:1px solid rgba(76,175,80,0.25);
+  padding:2px 10px;border-radius:12px;
+}
+
+/* Assam SVG Map */
+.assam-map-wrap{
+  width:100%;max-width:496px;
+  background:rgba(255,255,255,0.015);
+  border:1px solid rgba(200,168,75,0.15);
+  border-radius:12px;
+  padding:8px;
+  position:relative;
+  flex-shrink:0;
+}
+.assam-map-wrap svg{width:100%;height:auto;display:block;}
+
+/* District paths */
+.district{
+  cursor:pointer;
+  transition:all 0.25s;
+  stroke-width:1.5;
+}
+.district.locked{
+  fill:var(--locked);
+  stroke:var(--locked-border);
+}
+.district.locked:hover{
+  fill:#3a4a20;
+  stroke:var(--parchment-dim);
+  filter:drop-shadow(0 0 6px rgba(200,168,75,0.3));
+}
+.district.active{
+  fill:#2a3a10;
+  stroke:var(--active);
+  stroke-width:2.5;
+  filter:drop-shadow(0 0 10px var(--active-glow));
+  animation:districtPulse 1s ease-in-out infinite;
+}
+@keyframes districtPulse{
+  0%,100%{filter:drop-shadow(0 0 8px var(--active-glow));}
+  50%{filter:drop-shadow(0 0 18px var(--active-glow));}
+}
+.district.conquered{
+  fill:#1a3a1a;
+  stroke:var(--conquest);
+  stroke-width:2;
+  filter:drop-shadow(0 0 8px var(--conquest-glow));
+}
+.district.conquered:hover{filter:drop-shadow(0 0 14px var(--conquest-glow));}
+
+/* District label */
+.district-label{
+  font-family:'Cinzel',serif;
+  font-size:8.5px;fill:rgba(200,168,75,0.7);
+  pointer-events:none;text-anchor:middle;
+}
+.district-label.conquered-label{fill:var(--conquest2);}
+.district-icon{
+  font-size:11px;text-anchor:middle;dominant-baseline:middle;
+  pointer-events:none;
+}
+
+/* River path on map */
+.river-path{
+  fill:none;stroke:var(--river2);stroke-width:2.5;
+  stroke-linecap:round;opacity:0.55;
+  stroke-dasharray:4,3;
+  animation:riverFlow 3s linear infinite;
+}
+@keyframes riverFlow{
+  0%{stroke-dashoffset:0;}100%{stroke-dashoffset:-28;}
+}
+
+/* Legend */
+.map-legend{
+  display:flex;gap:14px;margin-top:7px;
+  justify-content:center;
+}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:rgba(200,168,75,0.6);}
+.leg-dot{width:10px;height:10px;border-radius:2px;border:1.5px solid;}
+
+/* ══ QUESTION CARD OVERLAY ══ */
+#q-overlay{
+  position:absolute;inset:0;z-index:30;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.25s;
+}
+#q-overlay.open{opacity:1;pointer-events:all;}
+.q-card{
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:16px;
+  padding:0;
+  max-width:400px;width:100%;
+  box-shadow:0 0 40px rgba(200,168,75,0.15),0 20px 50px rgba(0,0,0,0.7);
+  overflow:hidden;
+  transform:scale(0.85) translateY(20px);
+  transition:transform 0.3s cubic-bezier(0.34,1.4,0.64,1);
+}
+#q-overlay.open .q-card{transform:scale(1) translateY(0);}
+
+.q-card-header{
+  background:linear-gradient(135deg,#1a2a08,#243010);
+  padding:12px 18px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(200,168,75,0.15);
+}
+.q-district-name{
+  font-family:'Cinzel',serif;
+  font-size:14px;font-weight:700;color:var(--parchment2);
+  display:flex;align-items:center;gap:8px;
+}
+.q-district-icon{font-size:22px;}
+.q-close-btn{
+  font-size:18px;background:none;border:none;
+  color:rgba(200,168,75,0.5);cursor:pointer;
+  transition:color 0.2s;padding:2px 6px;
+}
+.q-close-btn:hover{color:var(--parchment2);}
+
+.q-body{padding:16px 18px;}
+.q-category{
+  font-size:10px;font-weight:800;letter-spacing:2px;
+  text-transform:uppercase;color:var(--parchment-dim);
+  margin-bottom:8px;display:flex;align-items:center;gap:5px;
+}
+.q-text{
+  font-size:16px;font-weight:700;color:var(--parchment2);
+  line-height:1.5;margin-bottom:4px;
+}
+.q-text .as{
+  font-family:'Hind Siliguri',sans-serif;
+  font-size:13px;color:var(--parchment-dim);display:block;margin-top:3px;
+}
+.q-options{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;
+}
+.q-opt{
+  font-family:'Baloo 2',cursive;
+  font-size:14px;font-weight:700;
+  padding:10px 10px;border-radius:10px;
+  border:1.5px solid rgba(200,168,75,0.2);
+  background:rgba(200,168,75,0.06);
+  color:var(--parchment2);cursor:pointer;
+  transition:all 0.15s cubic-bezier(0.34,1.56,0.64,1);
+  text-align:center;line-height:1.3;
+}
+.q-opt:hover:not(:disabled){
+  background:rgba(200,168,75,0.14);
+  border-color:rgba(200,168,75,0.5);
+  transform:scale(1.04);
+  box-shadow:0 0 12px rgba(200,168,75,0.2);
+}
+.q-opt.correct{
+  background:rgba(76,175,80,0.3)!important;
+  border-color:var(--conquest)!important;
+  color:#a8e068!important;
+  transform:scale(1.08)!important;
+  box-shadow:0 0 18px var(--conquest-glow)!important;
+}
+.q-opt.wrong{
+  background:rgba(229,57,53,0.25)!important;
+  border-color:var(--red)!important;
+  color:#ef9a9a!important;
+  animation:shakeOpt 0.4s ease;
+}
+@keyframes shakeOpt{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+.q-opt:disabled{cursor:default;}
+.q-lives-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:10px;padding-top:10px;
+  border-top:1px solid rgba(200,168,75,0.1);
+}
+.q-lives-txt{font-size:12px;color:rgba(200,168,75,0.5);font-weight:600;}
+
+/* ══ LEVEL COMPLETE ══ */
+#screen-levelup{gap:13px;text-align:center;}
+.lu-conquest-badge{
+  font-family:'Cinzel',serif;
+  display:inline-block;
+  border:3px solid var(--conquest);
+  padding:5px 22px;border-radius:4px;
+  font-size:18px;color:var(--conquest2);
+  letter-spacing:3px;text-transform:uppercase;
+  box-shadow:0 0 0 1px var(--conquest),0 0 20px var(--conquest-glow);
+  animation:conquestStamp 0.4s cubic-bezier(0.34,1.8,0.64,1);
+}
+@keyframes conquestStamp{0%{transform:scale(2.5);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.lu-district-big{font-size:72px;animation:districtReveal 0.5s cubic-bezier(0.34,1.8,0.64,1);}
+@keyframes districtReveal{0%{transform:scale(0.2) rotate(-15deg);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.lu-district-name{
+  font-family:'Cinzel',serif;
+  font-size:22px;font-weight:700;color:var(--parchment2);
+  text-shadow:0 0 14px rgba(200,168,75,0.4);
+}
+.lu-fact-card{
+  background:rgba(10,13,8,0.8);
+  border:1px solid rgba(200,168,75,0.25);
+  border-radius:14px;padding:14px 20px;
+  max-width:320px;width:100%;
+  font-size:13px;color:var(--parchment2);font-weight:600;line-height:1.6;
+  box-shadow:0 0 20px rgba(200,168,75,0.08);
+}
+.lu-fact-card .as{font-family:'Hind Siliguri',sans-serif;color:var(--parchment-dim);display:block;margin-top:4px;font-size:12px;}
+.lu-stars{font-size:32px;letter-spacing:8px;}
+.btn-next{
+  font-family:'Cinzel',serif;font-size:16px;font-weight:700;
+  padding:12px 36px;border-radius:4px;
+  border:2px solid var(--gold);
+  background:linear-gradient(135deg,#1a2008,#2d3a10);
+  color:var(--parchment2);cursor:pointer;
+  box-shadow:0 0 18px rgba(200,168,75,0.2);transition:all 0.2s;
+  letter-spacing:1px;
+}
+.btn-next:hover{background:linear-gradient(135deg,#2a3a10,#3d5018);transform:scale(1.04);}
+
+/* ══ GAME OVER ══ */
+#screen-gameover{text-align:center;gap:14px;}
+.go-title{font-family:'Cinzel',serif;font-size:26px;color:#ef9a9a;text-shadow:0 0 20px rgba(229,57,53,0.4);}
+.go-sub{font-size:14px;color:var(--parchment-dim);font-weight:600;line-height:1.55;}
+.btn-retry{
+  font-family:'Cinzel',serif;font-size:17px;font-weight:700;
+  padding:12px 34px;border-radius:4px;
+  border:2px solid var(--red);
+  background:rgba(229,57,53,0.15);color:#ef9a9a;
+  cursor:pointer;box-shadow:0 0 16px rgba(229,57,53,0.2);transition:all 0.2s;
+}
+.btn-retry:hover{background:rgba(229,57,53,0.25);}
+
+/* ══ VICTORY ══ */
+#screen-victory{text-align:center;gap:12px;}
+.vic-title{
+  font-family:'Cinzel',serif;
+  font-size:24px;font-weight:700;color:var(--parchment2);
+  line-height:1.2;text-shadow:0 0 20px rgba(200,168,75,0.5);
+}
+.vic-crown{font-size:72px;animation:crownDrop 0.6s cubic-bezier(0.34,1.8,0.64,1);}
+@keyframes crownDrop{0%{transform:translateY(-60px) scale(0.5);opacity:0;}100%{transform:translateY(0) scale(1);opacity:1;}}
+.vic-map-complete{font-size:24px;letter-spacing:3px;}
+.vic-score{font-family:'Cinzel',serif;font-size:20px;color:var(--gold2);}
+.vic-card{
+  background:rgba(10,13,8,0.8);border:1px solid rgba(200,168,75,0.25);
+  border-radius:14px;padding:13px 18px;max-width:310px;
+  font-size:13px;color:var(--parchment2);font-weight:600;line-height:1.6;
+}
+.vic-card .as{font-family:'Hind Siliguri',sans-serif;color:var(--parchment-dim);display:block;margin-top:4px;font-size:12px;}
+.btn-replay{
+  font-family:'Cinzel',serif;font-size:16px;font-weight:700;
+  padding:12px 34px;border-radius:4px;
+  border:2px solid var(--gold);
+  background:linear-gradient(135deg,#1a2008,#2d3a10);
+  color:var(--parchment2);cursor:pointer;
+  box-shadow:0 0 20px rgba(200,168,75,0.2);transition:all 0.2s;
+}
+.btn-replay:hover{transform:scale(1.04);}
+.btn-home{
+  font-family:'Baloo 2',cursive;font-size:13px;font-weight:700;
+  padding:8px 24px;border-radius:4px;
+  border:1px solid rgba(200,168,75,0.2);background:transparent;
+  color:var(--parchment-dim);cursor:pointer;transition:all 0.2s;
+}
+.btn-home:hover{color:var(--parchment2);}
+
+/* ══ LANG PILL ══ */
+.lang-pill{position:absolute;top:11px;left:50%;transform:translateX(-50%);z-index:30;display:flex;gap:4px;}
+.lpill{font-family:'Baloo 2',cursive;font-size:11px;font-weight:700;padding:3px 10px;border-radius:3px;border:1px solid transparent;cursor:pointer;background:transparent;color:rgba(200,168,75,0.4);}
+.lpill.active{background:rgba(200,168,75,0.15);color:var(--parchment2);border-color:rgba(200,168,75,0.4);}
+.lpill:hover:not(.active){color:var(--parchment2);}
+
+/* ══ CONFETTI / CONQUER BURST ══ */
+.conq-burst{position:absolute;z-index:50;font-size:18px;animation:conqPop linear forwards;pointer-events:none;}
+@keyframes conqPop{0%{transform:translate(0,0) scale(1.2) rotate(0deg);opacity:1;}100%{transform:translate(var(--cx),var(--cy)) scale(0.2) rotate(var(--cr));opacity:0;}}
+</style>
+<style>.hidden { display: none !important; }</style>
+</head>
+<body>
+<div id="game-wrap">
+
+  <!-- BG -->
+  <div class="map-bg"></div>
+
+  <!-- Corner deco -->
+  <div class="corner c-tl">⚔️</div>
+  <div class="corner c-tr">🗡️</div>
+  <div class="corner c-bl">🛡️</div>
+  <div class="corner c-br">👑</div>
+
+  <!-- Compass rose -->
+  <svg class="compass" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="24" cy="24" r="22" fill="none" stroke="rgba(200,168,75,0.4)" stroke-width="1.5"/>
+    <polygon points="24,4 27,22 24,20 21,22" fill="rgba(200,168,75,0.8)"/>
+    <polygon points="24,44 27,26 24,28 21,26" fill="rgba(200,168,75,0.4)"/>
+    <polygon points="4,24 22,21 20,24 22,27" fill="rgba(200,168,75,0.4)"/>
+    <polygon points="44,24 26,21 28,24 26,27" fill="rgba(200,168,75,0.4)"/>
+    <circle cx="24" cy="24" r="3" fill="rgba(200,168,75,0.6)"/>
+    <text x="24" y="14" text-anchor="middle" font-size="7" fill="rgba(200,168,75,0.8)" font-family="serif" font-weight="bold">N</text>
+  </svg>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-conquests">⚔️ <span id="conquest-disp">0</span> / 8</div>
+    <div class="hud-level" id="level-disp">ASSAM MAP WARRIOR</div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="lang-pill" style="position:static; transform:none; display:flex; gap:4px; z-index:100;">
+        <button class="lpill active" id="lp-en" onclick="setLang('en')">EN</button>
+        <button class="lpill" id="lp-as" onclick="setLang('as')">অস</button>
+      </div>
+      <div class="hud-lives" id="lives-disp">❤️❤️❤️</div>
+    </div>
+  </div>
+  <div id="prog-wrap" class="hidden">
+    <div id="prog-bar"></div>
+  </div>
+
+  <!-- ══ INTRO ══ -->
+  <div class="screen" id="screen-intro">
+    <div class="intro-badge" id="ib-txt">⚔️ ASSAM MAP WARRIOR</div>
+    <div class="intro-title">
+      Conquer Assam!
+      <span class="as">অসম জয় কৰক!</span>
+    </div>
+
+    <!-- Rongmon as warrior with map -->
+    <svg class="intro-map-hero" viewBox="0 0 220 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Map scroll background -->
+      <rect x="10" y="30" width="200" height="130" rx="6" fill="#c8a84b" opacity="0.15" stroke="rgba(200,168,75,0.4)" stroke-width="1.5"/>
+      <!-- Map grid lines -->
+      <line x1="10" y1="65" x2="210" y2="65" stroke="rgba(200,168,75,0.2)" stroke-width="0.8"/>
+      <line x1="10" y1="100" x2="210" y2="100" stroke="rgba(200,168,75,0.2)" stroke-width="0.8"/>
+      <line x1="10" y1="135" x2="210" y2="135" stroke="rgba(200,168,75,0.2)" stroke-width="0.8"/>
+      <line x1="65" y1="30" x2="65" y2="160" stroke="rgba(200,168,75,0.2)" stroke-width="0.8"/>
+      <line x1="120" y1="30" x2="120" y2="160" stroke="rgba(200,168,75,0.2)" stroke-width="0.8"/>
+      <line x1="165" y1="30" x2="165" y2="160" stroke="rgba(200,168,75,0.2)" stroke-width="0.8"/>
+      <!-- District shapes (simplified) -->
+      <path d="M30 50 Q55 42 80 52 Q90 60 85 78 Q70 85 45 80 Q28 72 30 50 Z" fill="#1a3a1a" stroke="#4caf50" stroke-width="1.5" opacity="0.9"/>
+      <text x="57" y="68" text-anchor="middle" font-size="8" fill="#81c784" font-family="serif">✓</text>
+      <path d="M88 48 Q115 40 135 55 Q140 68 130 82 Q115 88 95 82 Q85 72 88 48 Z" fill="#2a3018" stroke="#3a4a20" stroke-width="1.2" opacity="0.9"/>
+      <path d="M140 52 Q165 44 190 58 Q196 70 188 86 Q172 92 148 86 Q138 75 140 52 Z" fill="#2a3018" stroke="#3a4a20" stroke-width="1.2" opacity="0.9"/>
+      <path d="M25 88 Q55 82 80 90 Q88 102 82 118 Q62 126 38 118 Q22 108 25 88 Z" fill="#1a3a1a" stroke="#4caf50" stroke-width="1.5" opacity="0.9"/>
+      <text x="52" y="107" text-anchor="middle" font-size="8" fill="#81c784" font-family="serif">✓</text>
+      <path d="M88 90 Q115 84 135 94 Q142 106 136 120 Q118 128 95 122 Q84 110 88 90 Z" fill="#2a3018" stroke="#3a4a20" stroke-width="1.2" opacity="0.9"/>
+      <path d="M142 92 Q168 86 192 96 Q198 110 190 124 Q172 130 148 124 Q140 112 142 92 Z" fill="#2a3018" stroke="#3a4a20" stroke-width="1.2" opacity="0.9"/>
+      <!-- River line -->
+      <path d="M20 108 Q70 104 120 110 Q170 116 205 108" fill="none" stroke="#42a5f5" stroke-width="2" stroke-dasharray="4,3" opacity="0.5"/>
+      <!-- Rongmon warrior (small) -->
+      <ellipse cx="112" cy="65" rx="18" ry="15" fill="#a08060"/>
+      <ellipse cx="112" cy="55" rx="14" ry="12" fill="#b09070"/>
+      <ellipse cx="106" cy="52" rx="5" ry="7" fill="#a08060"/>
+      <ellipse cx="118" cy="52" rx="5" ry="7" fill="#a08060"/>
+      <ellipse cx="112" cy="60" rx="10" ry="7" fill="#c4a882"/>
+      <ellipse cx="107" cy="51" rx="4" ry="4" fill="#fff"/>
+      <ellipse cx="117" cy="51" rx="4" ry="4" fill="#fff"/>
+      <circle cx="107" cy="51" r="3" fill="#3a2a10"/>
+      <circle cx="117" cy="51" r="3" fill="#3a2a10"/>
+      <circle cx="108" cy="50" r="1.2" fill="#fff"/>
+      <circle cx="118" cy="50" r="1.2" fill="#fff"/>
+      <path d="M104 57 Q112 62 120 57" stroke="#7a5030" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M108 45 Q112 38 116 45 Z" fill="#b0a060"/>
+      <!-- Warrior helmet -->
+      <rect x="100" y="43" width="24" height="7" rx="2" fill="#8b3a20"/>
+      <path d="M102 43 Q112 36 122 43" fill="#a04020"/>
+      <!-- Sword -->
+      <line x1="125" y1="58" x2="142" y2="72" stroke="#c8a84b" stroke-width="2.5" stroke-linecap="round"/>
+      <rect x="122" y="55" width="7" height="3" rx="1" fill="#8b6020" transform="rotate(45 122 55)"/>
+      <!-- Flag -->
+      <line x1="96" y1="62" x2="96" y2="44" stroke="#5d4020" stroke-width="2"/>
+      <polygon points="96,44 108,48 96,52" fill="#f5c518"/>
+    </svg>
+
+    <div class="speech-bubble">
+      <span id="intro-msg">Rongmon is on a quest to learn every district of Assam! 🗺️ Tap a district on the map, answer the question, and CONQUER it. Claim all 8 to become Map Warrior!</span>
+      <span class="as" id="intro-msg-as">ৰংমনে অসমৰ প্ৰতিটো জিলা শিকিব বিচাৰে! 🗺️ মানচিত্ৰত জিলা টেপ কৰক, প্ৰশ্নৰ উত্তৰ দিয়ক, আৰু জয় কৰক!</span>
+    </div>
+    <button class="btn-start" onclick="startGame()" id="btn-start-txt">⚔️ Begin Quest!</button>
+  </div>
+
+  <!-- ══ MAP SCREEN ══ -->
+  <div class="screen hidden" id="screen-map">
+    <div class="map-titlebar">
+      <div class="map-title" id="map-title">⚔️ TAP A DISTRICT TO CONQUER</div>
+      <div class="conquest-count" id="conquest-count">0 / 8 conquered</div>
+    </div>
+
+    <div class="assam-map-wrap">
+      <svg id="assam-svg" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- Brahmaputra river -->
+        <path class="river-path" d="M10 140 Q60 130 110 138 Q160 146 220 135 Q280 124 340 132 Q390 138 460 128"/>
+        <text x="240" y="127" font-size="9" fill="rgba(66,165,245,0.6)" font-family="serif" text-anchor="middle">~ Brahmaputra ~</text>
+
+        <!-- 8 DISTRICTS — simplified but geographically arranged -->
+
+        <!-- 1. Kamrup Metropolitan (Guwahati) - west, south of river -->
+        <path id="d-kamrup" class="district locked"
+          d="M35 158 Q65 148 90 155 Q100 165 98 185 Q85 200 60 198 Q38 192 35 175 Z"
+          onclick="clickDistrict('kamrup')"/>
+        <text class="district-label" x="67" y="178">Kamrup</text>
+        <text class="district-icon" x="67" y="191" id="icon-kamrup">🏛️</text>
+
+        <!-- 2. Sonitpur (Tezpur) - north of river, west -->
+        <path id="d-sonitpur" class="district locked"
+          d="M95 68 Q128 58 155 65 Q165 78 160 98 Q145 110 118 108 Q95 100 93 85 Z"
+          onclick="clickDistrict('sonitpur')"/>
+        <text class="district-label" x="130" y="88">Sonitpur</text>
+        <text class="district-icon" x="130" y="100" id="icon-sonitpur">🏔️</text>
+
+        <!-- 3. Nagaon - central, south of river -->
+        <path id="d-nagaon" class="district locked"
+          d="M105 158 Q140 150 168 157 Q178 168 175 188 Q158 200 130 198 Q106 190 105 175 Z"
+          onclick="clickDistrict('nagaon')"/>
+        <text class="district-label" x="142" y="178">Nagaon</text>
+        <text class="district-icon" x="142" y="191" id="icon-nagaon">🌾</text>
+
+        <!-- 4. Lakhimpur - north, central -->
+        <path id="d-lakhimpur" class="district locked"
+          d="M168 58 Q204 48 230 58 Q240 70 236 92 Q220 104 194 102 Q168 94 166 78 Z"
+          onclick="clickDistrict('lakhimpur')"/>
+        <text class="district-label" x="203" y="80">Lakhimpur</text>
+        <text class="district-icon" x="203" y="93" id="icon-lakhimpur">🌿</text>
+
+        <!-- 5. Jorhat - central-east -->
+        <path id="d-jorhat" class="district locked"
+          d="M245 58 Q278 50 304 60 Q314 72 310 94 Q295 106 268 104 Q244 96 242 78 Z"
+          onclick="clickDistrict('jorhat')"/>
+        <text class="district-label" x="278" y="80">Jorhat</text>
+        <text class="district-icon" x="278" y="93" id="icon-jorhat">🍵</text>
+
+        <!-- 6. Dibrugarh - east, north of river -->
+        <path id="d-dibrugarh" class="district locked"
+          d="M318 55 Q355 45 382 58 Q392 70 388 92 Q372 104 345 102 Q318 94 316 74 Z"
+          onclick="clickDistrict('dibrugarh')"/>
+        <text class="district-label" x="354" y="78">Dibrugarh</text>
+        <text class="district-icon" x="354" y="91" id="icon-dibrugarh">⛏️</text>
+
+        <!-- 7. Sivasagar - east central, below river -->
+        <path id="d-sivasagar" class="district locked"
+          d="M248 155 Q285 145 315 155 Q326 167 322 190 Q305 202 275 200 Q248 192 246 172 Z"
+          onclick="clickDistrict('sivasagar')"/>
+        <text class="district-label" x="285" y="175">Sivasagar</text>
+        <text class="district-icon" x="285" y="188" id="icon-sivasagar">🏛️</text>
+
+        <!-- 8. Cachar (Silchar) - far south, below hills -->
+        <path id="d-cachar" class="district locked"
+          d="M155 225 Q192 215 222 225 Q234 238 228 260 Q208 272 178 270 Q154 260 153 244 Z"
+          onclick="clickDistrict('cachar')"/>
+        <text class="district-label" x="191" y="246">Cachar</text>
+        <text class="district-icon" x="191" y="259" id="icon-cachar">🎭</text>
+
+        <!-- Hills below cachar -->
+        <path d="M135 270 Q155 258 180 265 Q208 272 230 262 Q240 270 242 280 L130 280 Z" fill="rgba(26,58,14,0.4)" stroke="none"/>
+
+        <!-- Boundary outline of Assam (approximate) -->
+        <path d="M10 120 Q30 80 60 60 Q100 38 170 35 Q250 30 340 38 Q400 44 440 62 Q465 80 470 110 Q468 145 455 165 Q430 190 395 205 Q350 218 295 215 Q260 212 240 228 Q220 245 195 268 Q175 282 155 278 Q130 270 115 255 Q95 238 80 225 Q55 210 35 195 Q12 178 10 158 Z"
+          fill="none" stroke="rgba(200,168,75,0.25)" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+        <!-- Assam label -->
+        <text x="240" y="18" text-anchor="middle" font-family="serif" font-size="11" fill="rgba(200,168,75,0.35)" font-style="italic" letter-spacing="3">A S S A M</text>
+        <text x="240" y="290" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(200,168,75,0.25)" font-style="italic">অসম</text>
+
+      </svg>
+    </div>
+
+    <!-- Legend -->
+    <div class="map-legend">
+      <div class="leg-item">
+        <div class="leg-dot" style="background:#1a3a1a;border-color:#4caf50;"></div>
+        <span id="leg-conquered">Conquered</span>
+      </div>
+      <div class="leg-item">
+        <div class="leg-dot" style="background:#2a3018;border-color:#3a4a20;"></div>
+        <span id="leg-locked">Locked</span>
+      </div>
+      <div class="leg-item">
+        <div class="leg-dot" style="background:#42a5f5;border-color:#42a5f5;border-radius:50%;"></div>
+        <span id="leg-river">Brahmaputra</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ QUESTION OVERLAY ══ -->
+  <div id="q-overlay">
+    <div class="q-card">
+      <div class="q-card-header">
+        <div class="q-district-name">
+          <span class="q-district-icon" id="q-d-icon">🏛️</span>
+          <span id="q-d-name">Kamrup</span>
+        </div>
+        <button class="q-close-btn" onclick="closeQuestion()">✕</button>
+      </div>
+      <div class="q-body">
+        <div class="q-category" id="q-category">📍 GEOGRAPHY</div>
+        <div class="q-text" id="q-text">
+          What is Assam?
+          <span class="as" id="q-text-as"></span>
+        </div>
+        <div class="q-options" id="q-options"></div>
+        <div class="q-lives-row">
+          <div class="q-lives-txt" id="q-lives-txt">Lives: ❤️❤️❤️</div>
+          <div style="font-size:11px;color:rgba(200,168,75,0.4);font-weight:600;" id="q-hint-txt"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ LEVEL COMPLETE ══ -->
+  <div class="screen hidden" id="screen-levelup">
+    <div class="lu-conquest-badge" id="lu-badge">DISTRICT CONQUERED!</div>
+    <div class="lu-district-big" id="lu-icon">🏛️</div>
+    <div class="lu-district-name" id="lu-d-name">Kamrup</div>
+    <div class="lu-fact-card" id="lu-fact"></div>
+    <div class="lu-stars" id="lu-stars">⭐⭐⭐</div>
+    <button class="btn-next" id="btn-next" onclick="backToMap()">⚔️ Back to Map</button>
+  </div>
+
+  <!-- ══ GAME OVER ══ -->
+  <div class="screen hidden" id="screen-gameover">
+    <div style="font-size:60px">🗡️💀</div>
+    <div class="go-title" id="go-title">Defeated!</div>
+    <div class="go-sub" id="go-sub">A true warrior never gives up!<br/>Study the map and try again! 🦏</div>
+    <div style="font-family:'Hind Siliguri',sans-serif;font-size:14px;color:var(--parchment-dim);" id="go-sub-as">এজন সঁচা যোদ্ধাই কেতিয়াও হাৰ নামানে!</div>
+    <button class="btn-retry" onclick="startGame()" id="btn-retry-txt">⚔️ Fight Again!</button>
+  </div>
+
+  <!-- ══ VICTORY ══ -->
+  <div class="screen hidden" id="screen-victory">
+    <div class="vic-crown">👑</div>
+    <div class="vic-title" id="vic-title">ASSAM CONQUERED!<br/>Rongmon is Map Warrior! 🗺️</div>
+    <div class="vic-map-complete">🏛️🏔️🌾🌿🍵⛏️🏛️🎭</div>
+    <div class="vic-score" id="vic-score">⭐ Score: 0</div>
+    <div class="vic-card" id="vic-card">
+      Assam has 35 districts! It is bordered by Bhutan, Arunachal Pradesh, Nagaland, Manipur, Mizoram, Meghalaya, Tripura and Bangladesh. The Brahmaputra river flows right through its heart. 🌊
+      <span class="as">অসমত ৩৫খন জিলা আছে! ব্ৰহ্মপুত্ৰ নদী ইয়াৰ মাজেদি বৈ যায়।</span>
+    </div>
+    <button class="btn-replay" onclick="startGame()" id="btn-replay-txt">⚔️ Reconquer!</button>
+    <button class="btn-home" onclick="shareScore()" style="background:rgba(37,211,102,0.15);border-color:rgba(37,211,102,0.4);color:#25d366;">📤 Share on WhatsApp</button>
+    <button class="btn-home" onclick="window.location.href='../index.html'" id="btn-home-v">🏠 Back to Home</button>
+  </div>
+
+</div>
+
+<!-- Onboarding Overlay -->
+<div id="onboarding" class="hidden" style="position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:linear-gradient(135deg,#0a1308,#1a2a08);border-radius:24px;padding:32px 24px;max-width:320px;width:100%;text-align:center;border:2px solid rgba(200,168,75,0.4);">
+    <div style="font-size:60px;margin-bottom:8px;">🗺️</div>
+    <div style="font-size:22px;font-weight:900;color:#c8a84b;margin-bottom:8px;">How to Play</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.8;margin-bottom:20px;">
+      ⚔️ <strong>Help Rongmon conquer all of Assam!</strong><br/>
+      🗺️ Tap any district on the map to start a challenge.<br/>
+      ❓ <strong>Answer the question correctly</strong> to conquer it!<br/>
+      👑 Conquer all 8 districts to become Map Warrior!
+    </div>
+    <button onclick="dismissOnboarding()" style="font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;padding:12px 36px;border-radius:50px;border:none;background:#c8a84b;color:#0a1308;cursor:pointer;width:100%;">
+      Got it! Begin Quest ▶
+    </button>
+  </div>
+</div>
+
+<!-- Mute Toggle -->
+<button id="mute-btn-game" onclick="toggleMuteGame()" style="position:fixed;bottom:20px;right:20px;z-index:500;width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);background:rgba(10,19,8,0.9);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🔊</button>
+
+<script>
+// ══ DISTRICT DATA ══
+const districts = {
+  kamrup:{
+    name:'Kamrup (Guwahati)', name_as:'কামৰূপ (গুৱাহাটী)', icon:'🏛️',
+    q_en:"Guwahati is the largest city in Assam and is called the 'Gateway to the Northeast'. Which famous temple is on a hill in Guwahati?",
+    q_as:"গুৱাহাটী অসমৰ বৃহত্তম চহৰ। গুৱাহাটীত পাহাৰৰ ওপৰত কোনটো বিখ্যাত মন্দিৰ আছে?",
+    category_en:"🏛️ FAMOUS PLACES",category_as:"🏛️ বিখ্যাত ঠাই",
+    options_en:["Kamakhya Temple","Golden Temple","Meenakshi Temple","Lotus Temple"],
+    options_as:["কামাখ্যা মন্দিৰ","সোণালী মন্দিৰ","মীনাক্ষী মন্দিৰ","পদুম মন্দিৰ"],
+    answer:0,
+    fact_en:"Kamakhya Temple on Nilachal Hill in Guwahati is one of India's most sacred temples, visited by millions every year! 🙏 Guwahati sits on the Brahmaputra river.",
+    fact_as:"গুৱাহাটীৰ নীলাচল পাহাৰত থকা কামাখ্যা মন্দিৰ ভাৰতৰ আটাইতকৈ পবিত্ৰ মন্দিৰৰ ভিতৰত এটা!",
+  },
+  sonitpur:{
+    name:'Sonitpur (Tezpur)', name_as:'শোণিতপুৰ (তেজপুৰ)', icon:'🏔️',
+    q_en:"Tezpur is known as the 'City of Blood' in history. It sits on the banks of which great river?",
+    q_as:"তেজপুৰক ইতিহাসত 'তেজৰ চহৰ' বোলা হয়। এই চহৰ কোনটো মহান নদীৰ পাৰত আছে?",
+    category_en:"🌊 RIVERS",category_as:"🌊 নদী",
+    options_en:["Brahmaputra","Barak","Subansiri","Manas"],
+    options_as:["ব্ৰহ্মপুত্ৰ","বৰাক","সুবানসিৰি","মানস"],
+    answer:0,
+    fact_en:"Tezpur sits beautifully on the banks of the Brahmaputra river. It has ancient ruins, the first English school in Assam, and stunning views of the Himalayas! 🏔️",
+    fact_as:"তেজপুৰ ব্ৰহ্মপুত্ৰৰ পাৰত সুন্দৰকৈ অৱস্থিত। ই অসমৰ প্ৰথম ইংৰাজী বিদ্যালয়ৰ ঘৰ!",
+  },
+  nagaon:{
+    name:'Nagaon', name_as:'নগাঁও', icon:'🌾',
+    q_en:"Nagaon is famous for its rice fields. What is the Assamese word for RICE?",
+    q_as:"নগাঁও ধানৰ খেতিৰ বাবে বিখ্যাত। ভাতক অসমীয়াত কি বোলে?",
+    category_en:"📖 ASSAMESE LANGUAGE",category_as:"📖 অসমীয়া ভাষা",
+    options_en:["চাউল (Chaul)","মাছ (Maas)","আলু (Alu)","পানী (Paani)"],
+    options_as:["চাউল","মাছ","আলু","পানী"],
+    answer:0,
+    fact_en:"Nagaon is one of Assam's biggest districts. 'চাউল' (Chaul) means rice — Assam's most important crop. Nagaon is also known for its Assam Silk! 🌾",
+    fact_as:"নগাঁও অসমৰ অন্যতম বৃহত্তম জিলা। 'চাউল' মানে ভাত — অসমৰ আটাইতকৈ গুৰুত্বপূৰ্ণ শস্য!",
+  },
+  lakhimpur:{
+    name:'Lakhimpur', name_as:'লখিমপুৰ', icon:'🌿',
+    q_en:"Lakhimpur is in Upper Assam, close to the foothills of which great mountain range?",
+    q_as:"লখিমপুৰ ওপৰ অসমত অৱস্থিত, কোনটো মহান পৰ্বতমালাৰ পাদদেশৰ ওচৰত?",
+    category_en:"🗺️ GEOGRAPHY",category_as:"🗺️ ভূগোল",
+    options_en:["The Himalayas","The Western Ghats","The Vindhyas","The Aravallis"],
+    options_as:["হিমালয়","পশ্চিমঘাট","বিন্ধ্য পৰ্বত","আৰাৱল্লী পৰ্বত"],
+    answer:0,
+    fact_en:"Lakhimpur is close to the mighty Himalayas — on a clear day you can see snowy peaks from here! The district is famous for its wetlands and wildlife. 🏔️",
+    fact_as:"লখিমপুৰ হিমালয়ৰ ওচৰত — পৰিষ্কাৰ দিনত ইয়াৰ পৰা বৰফাবৃত পাহাৰ দেখা যায়!",
+  },
+  jorhat:{
+    name:'Jorhat', name_as:'যোৰহাট', icon:'🍵',
+    q_en:"Jorhat is called the 'Tea Capital of the World'. Which drink is Assam most famous for producing?",
+    q_as:"যোৰহাটক 'পৃথিৱীৰ চাহৰ ৰাজধানী' বোলা হয়। অসম কোনটো পানীয় উৎপাদনৰ বাবে বিখ্যাত?",
+    category_en:"🍵 ASSAM CULTURE",category_as:"🍵 অসম সংস্কৃতি",
+    options_en:["Tea ☕","Coffee","Juice","Milk"],
+    options_as:["চাহ ☕","কফি","জুচ","গাখীৰ"],
+    answer:0,
+    fact_en:"Jorhat is the world's Tea Capital! Assam tea is enjoyed in over 100 countries. The tea gardens here have been growing since the 1840s — over 180 years! ☕",
+    fact_as:"যোৰহাট পৃথিৱীৰ চাহৰ ৰাজধানী! অসম চাহ ১০০ খনতকৈও বেছি দেশত উপভোগ কৰা হয়!",
+  },
+  dibrugarh:{
+    name:'Dibrugarh', name_as:'ডিব্ৰুগড়', icon:'⛏️',
+    q_en:"Dibrugarh is known for oil! Assam was one of the first places in the world to find petroleum oil. What do we call oil in Assamese?",
+    q_as:"ডিব্ৰুগড় তেলৰ বাবে পৰিচিত! অসম পৃথিৱীৰ প্ৰথম ঠাইবোৰৰ এখন য'ত পেট্ৰলিয়াম তেল পোৱা গৈছিল। অসমীয়াত তেলক কি বোলে?",
+    category_en:"⛏️ NATURAL RESOURCES",category_as:"⛏️ প্ৰাকৃতিক সম্পদ",
+    options_en:["তেল (Tel)","পানী (Paani)","মাটি (Maati)","বায়ু (Bayoo)"],
+    options_as:["তেল","পানী","মাটি","বায়ু"],
+    answer:0,
+    fact_en:"Oil was first discovered in Digboi, near Dibrugarh, in 1889 — making it one of the oldest oil-producing regions in the world! The Digboi Oil Refinery still runs today. ⛏️",
+    fact_as:"১৮৮৯ চনত ডিব্ৰুগড়ৰ ওচৰৰ ডিগবইত তেল আৱিষ্কাৰ হৈছিল — পৃথিৱীৰ প্ৰাচীনতম তেল উৎপাদনকাৰী অঞ্চলৰ ভিতৰত!",
+  },
+  sivasagar:{
+    name:'Sivasagar', name_as:'শিৱসাগৰ', icon:'🏛️',
+    q_en:"Sivasagar has ancient royal tanks (ponds) built by the Ahom kings. What were the Ahom kings famous for?",
+    q_as:"শিৱসাগৰত আহোম ৰজাসকলে নিৰ্মাণ কৰা প্ৰাচীন ৰাজকীয় পুখুৰি আছে। আহোম ৰজাসকল কিহৰ বাবে বিখ্যাত?",
+    category_en:"👑 AHOM HISTORY",category_as:"👑 আহোম ইতিহাস",
+    options_en:["Ruling Assam for 600 years","Building the Taj Mahal","Discovering America","Inventing aeroplanes"],
+    options_as:["৬০০ বছৰ অসম শাসন কৰা","তাজমহল নিৰ্মাণ","আমেৰিকা আৱিষ্কাৰ","বিমান উদ্ভাৱন"],
+    answer:0,
+    fact_en:"The Ahom kings ruled Assam for 600 years — one of the longest dynasties in the world! They built grand temples, tanks and palaces. They also successfully fought off 17 Mughal invasions! 👑",
+    fact_as:"আহোম ৰজাসকলে ৬০০ বছৰ অসম শাসন কৰিছিল — পৃথিৱীৰ অন্যতম দীৰ্ঘস্থায়ী ৰাজবংশ!",
+  },
+  cachar:{
+    name:'Cachar (Silchar)', name_as:'কাছাৰ (শিলচৰ)', icon:'🎭',
+    q_en:"Cachar is in southern Assam and is known for the Barak river valley. Which language is widely spoken in Cachar?",
+    q_as:"কাছাৰ দক্ষিণ অসমত আৰু বৰাক উপত্যকাৰ বাবে পৰিচিত। কাছাৰত কোনটো ভাষা বহুলভাৱে কথা কোৱা হয়?",
+    category_en:"🗣️ LANGUAGES OF ASSAM",category_as:"🗣️ অসমৰ ভাষা",
+    options_en:["Bengali","Tamil","Marathi","Gujarati"],
+    options_as:["বাংলা","তামিল","মৰাঠী","গুজৰাটী"],
+    answer:0,
+    fact_en:"Cachar's Barak Valley has a large Bengali-speaking population alongside Assamese speakers — showing how Assam is a beautiful mix of many languages and cultures! 🎭",
+    fact_as:"কাছাৰৰ বৰাক উপত্যকাত অসমীয়াৰ পাশাপাশি বহু বাংলাভাষী লোক বাস কৰে — অসম বিভিন্ন ভাষা আৰু সংস্কৃতিৰ মিলনস্থান!",
+  },
+};
+
+const districtOrder=['kamrup','sonitpur','nagaon','lakhimpur','jorhat','dibrugarh','sivasagar','cachar'];
+
+// ══ STATE ══
+let lives=3, score=0, lang='en', conquered=new Set(), activeDistrict=null, qLocked=false;
+
+// ══ LANG ══
+const lt={
+  en:{
+    'ib-txt':'⚔️ ASSAM MAP WARRIOR',
+    'intro-msg':"Rongmon is on a quest to learn every district of Assam! 🗺️ Tap a district on the map, answer the question, and CONQUER it. Claim all 8 to become Map Warrior!",
+    'btn-start-txt':'⚔️ Begin Quest!',
+    'map-title':'⚔️ TAP A DISTRICT TO CONQUER',
+    'leg-conquered':'Conquered','leg-locked':'Locked','leg-river':'Brahmaputra',
+    'lu-badge':'DISTRICT CONQUERED!',
+    'btn-next':'⚔️ Back to Map',
+    'go-title':'Defeated!','go-sub':"A true warrior never gives up!<br/>Study the map and try again! 🦏",
+    'btn-retry-txt':'⚔️ Fight Again!',
+    'vic-title':'ASSAM CONQUERED!<br/>Rongmon is Map Warrior! 🗺️',
+    'btn-replay-txt':'⚔️ Reconquer!','btn-home-v':'🏠 Back to Home',
+  },
+  as:{
+    'ib-txt':'⚔️ অসম মানচিত্ৰ যোদ্ধা',
+    'intro-msg':'ৰংমনে অসমৰ প্ৰতিটো জিলা শিকিব বিচাৰে! 🗺️ মানচিত্ৰত জিলা টেপ কৰক, প্ৰশ্নৰ উত্তৰ দিয়ক, আৰু জয় কৰক!',
+    'btn-start-txt':'⚔️ যাত্ৰা আৰম্ভ কৰক!',
+    'map-title':'⚔️ জিলা টেপ কৰি জয় কৰক',
+    'leg-conquered':'জয় কৰা হৈছে','leg-locked':'বন্ধ','leg-river':'ব্ৰহ্মপুত্ৰ',
+    'lu-badge':'জিলা জয় কৰা হৈছে!',
+    'btn-next':'⚔️ মানচিত্ৰলৈ উভতক',
+    'go-title':'পৰাজিত!','go-sub':"এজন সঁচা যোদ্ধাই কেতিয়াও হাৰ নামানে!<br/>মানচিত্ৰ অধ্যয়ন কৰক! 🦏",
+    'btn-retry-txt':'⚔️ আকৌ যুদ্ধ কৰক!',
+    'vic-title':'অসম জয় হ\'ল!<br/>ৰংমন মানচিত্ৰ যোদ্ধা! 🗺️',
+    'btn-replay-txt':'⚔️ পুনৰ জয় কৰক!','btn-home-v':'🏠 মূল পৃষ্ঠালৈ',
+  }
+};
+function setLang(l){
+  lang=l;
+  document.getElementById('lp-en').classList.toggle('active',l==='en');
+  document.getElementById('lp-as').classList.toggle('active',l==='as');
+  const t=lt[l];
+  for(const[id,val] of Object.entries(t)){
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=val;
+  }
+  updateConquestCount();
+}
+
+function showScreen(id){
+  ['screen-intro','screen-map','screen-levelup','screen-gameover','screen-victory'].forEach(s=>
+    document.getElementById(s).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  const isMap=id==='screen-map';
+  document.getElementById('hud').classList.toggle('hidden',!isMap);
+  document.getElementById('prog-wrap').classList.toggle('hidden',!isMap);
+}
+function updateHUD(){
+  document.getElementById('conquest-disp').textContent=conquered.size;
+  const h=['','❤️','❤️❤️','❤️❤️❤️'];
+  document.getElementById('lives-disp').textContent=h[Math.max(0,lives)]||'';
+  document.getElementById('prog-bar').style.width=(conquered.size/8*100)+'%';
+}
+function updateConquestCount(){
+  document.getElementById('conquest-count').textContent=
+    `${conquered.size} / 8 ${lang==='en'?'conquered':'জয় কৰা হৈছে'}`;
+}
+
+function startGame(){
+  lives=3;score=0;conquered=new Set();
+  // Reset all districts
+  districtOrder.forEach(id=>{
+    const el=document.getElementById('d-'+id);
+    if(el){el.classList.remove('conquered','active');el.classList.add('locked');}
+    const icon=document.getElementById('icon-'+id);
+    if(icon) icon.style.opacity='0.4';
+    const label=document.querySelector(`[id="d-${id}"] ~ .district-label`);
+  });
+  // Also reset label classes via querySelectorAll
+  document.querySelectorAll('.district-label').forEach(l=>l.classList.remove('conquered-label'));
+  updateHUD();updateConquestCount();
+  showScreen('screen-map');
+}
+
+function clickDistrict(id){
+  if(conquered.has(id)){
+    // Already conquered — show fact again
+    showFact(id);return;
+  }
+  activeDistrict=id;
+  // Highlight
+  districtOrder.forEach(d=>{
+    const el=document.getElementById('d-'+d);
+    if(el&&!conquered.has(d)){el.classList.remove('active');el.classList.add('locked');}
+  });
+  const el=document.getElementById('d-'+id);
+  if(el){el.classList.remove('locked');el.classList.add('active');}
+  openQuestion(id);
+}
+
+function openQuestion(id){
+  qLocked=false;
+  const d=districts[id];
+  document.getElementById('q-d-icon').textContent=d.icon;
+  document.getElementById('q-d-name').textContent=lang==='en'?d.name:d.name_as;
+  document.getElementById('q-category').textContent=lang==='en'?d.category_en:d.category_as;
+  document.getElementById('q-text').innerHTML=(lang==='en'?d.q_en:d.q_as)+`<span class="as" id="q-text-as"></span>`;
+  document.getElementById('q-lives-txt').textContent=`${lang==='en'?'Lives':'জীৱন'}: ${'❤️'.repeat(Math.max(0,lives))}`;
+  document.getElementById('q-hint-txt').textContent='';
+
+  const opts=lang==='en'?d.options_en:d.options_as;
+  const optsArea=document.getElementById('q-options');
+  optsArea.innerHTML='';
+  // Shuffle options keeping track of correct
+  const indices=[0,1,2,3].sort(()=>Math.random()-0.5);
+  let correctBtn=null;
+  indices.forEach(i=>{
+    const btn=document.createElement('button');
+    btn.className='q-opt';
+    btn.textContent=opts[i];
+    btn.onclick=()=>handleQAnswer(btn,i===d.answer,id,d);
+    optsArea.appendChild(btn);
+    if(i===d.answer) correctBtn=btn;
+  });
+
+  document.getElementById('q-overlay').classList.add('open');
+}
+
+function closeQuestion(){
+  document.getElementById('q-overlay').classList.remove('open');
+  // Reset active district
+  if(activeDistrict&&!conquered.has(activeDistrict)){
+    const el=document.getElementById('d-'+activeDistrict);
+    if(el){el.classList.remove('active');el.classList.add('locked');}
+  }
+  activeDistrict=null;
+}
+
+function handleQAnswer(btn,isCorrect,id,d){
+  if(qLocked)return;
+  qLocked=true;
+  document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
+
+  if(isCorrect){
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playCorrect();
+    btn.classList.add('correct');
+    score+=15+(lives*5);
+    conquered.add(id);
+    // Conquer the district
+    const el=document.getElementById('d-'+id);
+    if(el){el.classList.remove('active','locked');el.classList.add('conquered');}
+    const iconEl=document.getElementById('icon-'+id);
+    if(iconEl){iconEl.textContent='⚔️';iconEl.style.opacity='1';}
+    updateHUD();updateConquestCount();
+    spawnConquerBurst();
+    setTimeout(()=>{
+      document.getElementById('q-overlay').classList.remove('open');
+      if(typeof RongmonAudio!=='undefined') RongmonAudio.playLevelUp();
+      showLevelComplete(id,d);
+    },800);
+  } else {
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playWrong();
+    btn.classList.add('wrong');
+    lives=Math.max(0,lives-1);
+    document.getElementById('q-lives-txt').textContent=`${'❤️'.repeat(Math.max(0,lives))}`;
+    updateHUD();
+    setTimeout(()=>{
+      btn.classList.remove('wrong');btn.disabled=false;
+      qLocked=false;
+      document.querySelectorAll('.q-opt').forEach(b=>b.disabled=false);
+      if(lives===0){
+        document.getElementById('q-overlay').classList.remove('open');
+        setTimeout(()=>showScreen('screen-gameover'),400);
+      }
+    },500);
+  }
+}
+
+function showFact(id){
+  // Show the fact for an already-conquered district
+  const d=districts[id];
+  document.getElementById('lu-icon').textContent=d.icon;
+  document.getElementById('lu-d-name').textContent=lang==='en'?d.name:d.name_as;
+  document.getElementById('lu-fact').innerHTML=(lang==='en'?d.fact_en:d.fact_as)+
+    `<span class="as" style="font-family:'Hind Siliguri',sans-serif;font-size:11px;color:var(--parchment-dim);display:block;margin-top:4px;"></span>`;
+  document.getElementById('lu-badge').textContent=lang==='en'?'ALREADY CONQUERED!':'ইতিমধ্যে জয় কৰা হৈছে!';
+  document.getElementById('lu-stars').textContent='⭐⭐⭐';
+  document.getElementById('btn-next').textContent=lang==='en'?'⚔️ Back to Map':'⚔️ মানচিত্ৰলৈ উভতক';
+  showScreen('screen-levelup');
+}
+
+function showLevelComplete(id,d){
+  document.getElementById('lu-badge').textContent=lang==='en'?'DISTRICT CONQUERED!':'জিলা জয় কৰা হৈছে!';
+  document.getElementById('lu-icon').textContent=d.icon;
+  document.getElementById('lu-d-name').textContent=lang==='en'?d.name:d.name_as;
+  document.getElementById('lu-fact').innerHTML=
+    `<strong style="color:var(--parchment2)">${lang==='en'?d.name:d.name_as}</strong><br>`+
+    (lang==='en'?d.fact_en:d.fact_as)+
+    `<span class="as" style="font-family:'Hind Siliguri',sans-serif;font-size:11px;color:var(--parchment-dim);display:block;margin-top:4px;"></span>`;
+  const st=lives===3?'⭐⭐⭐':lives===2?'⭐⭐':'⭐';
+  document.getElementById('lu-stars').textContent=st;
+  document.getElementById('btn-next').textContent=
+    conquered.size>=8
+      ?(lang==='en'?'👑 Claim Victory!':'👑 জয় দাবী কৰক!')
+      :(lang==='en'?'⚔️ Back to Map':'⚔️ মানচিত্ৰলৈ উভতক');
+  showScreen('screen-levelup');
+}
+
+function backToMap(){
+  if(conquered.size>=8){showVictory();return;}
+  showScreen('screen-map');
+  activeDistrict=null;
+}
+
+function showVictory(){
+  document.getElementById('vic-score').textContent=`⭐ ${lang==='en'?'Score':'স্কোৰ'}: ${score}`;
+  document.getElementById('prog-bar').style.width='100%';
+  document.getElementById('vic-title').innerHTML=
+    lang==='en'?'ASSAM CONQUERED!<br/>Rongmon is Map Warrior! 🗺️':'অসম জয় হ\'ল!<br/>ৰংমন মানচিত্ৰ যোদ্ধা! 🗺️';
+  if(typeof RongmonAudio!=='undefined') RongmonAudio.playVictory();
+  showScreen('screen-victory');
+  [200,500,900,1300].forEach(t=>setTimeout(spawnConquerBurst,t));
+}
+
+// ══ CONQUER BURST ══
+function spawnConquerBurst(){
+  const wrap=document.getElementById('game-wrap');
+  const symbols=['⭐','⚔️','🗡️','👑','🏛️','✨','🌟','💫'];
+  const cols=['#f5c518','#4caf50','#e8c870','#81c784','#fff'];
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');p.className='conq-burst';
+    const angle=Math.random()*Math.PI*2;
+    const dist=60+Math.random()*130;
+    const cx=Math.cos(angle)*dist;const cy=Math.sin(angle)*dist;
+    p.style.cssText=`
+      left:${30+Math.random()*60}%;top:${20+Math.random()*40}%;
+      color:${cols[Math.floor(Math.random()*cols.length)]};
+      --cx:${cx}px;--cy:${cy}px;
+      --cr:${Math.random()*720-360}deg;
+      animation-duration:${0.8+Math.random()*0.7}s;
+      animation-delay:${Math.random()*0.2}s;
+      font-size:${14+Math.random()*12}px;
+    `;
+    p.textContent=symbols[Math.floor(Math.random()*symbols.length)];
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(),2000);
+  }
+}
+
+// ── Shared modules ──
+window.addEventListener('load', () => {
+  if (typeof RongmonData !== 'undefined' && !RongmonData.hasSeenOnboarding('map-warrior')) {
+    document.getElementById('onboarding').classList.remove('hidden');
+  }
+  if (typeof RongmonData !== 'undefined') {
+    const m = RongmonData.getSetting('muted');
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+});
+function dismissOnboarding() {
+  document.getElementById('onboarding').classList.add('hidden');
+  if (typeof RongmonData !== 'undefined') RongmonData.markOnboardingSeen('map-warrior');
+}
+function toggleMuteGame() {
+  if (typeof RongmonAudio !== 'undefined') {
+    const m = RongmonAudio.toggleMute();
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+}
+function shareScore() {
+  const msg = `I conquered ${conquered.size}/8 districts in Assam Map Warrior! ⚔️🗺️ Join Rongmon's quest! #AssamKids`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+</script>
+<script src="rongmon-data.js"></script>
+<script src="rongmon-audio.js"></script>
+</body>
+</html>
+

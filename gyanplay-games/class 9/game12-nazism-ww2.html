@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nazism &amp; Rise of Hitler — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--pink);color:#fff;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--pink);color:#fff;border-color:var(--pink);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--pink),var(--gold));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.55;margin-bottom:18px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;}
+.choice-btn:hover:not(:disabled){background:rgba(255,64,129,.1);border-color:var(--pink);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--gold);color:#000;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Social Studies · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('hi')">हि</button>
+      <button class="lang-btn" onclick="setLang('as')">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">📜 Nazism &amp; Rise of Hitler</span>
+    <span data-lang="hi" style="display:none">📜 नाज़ीवाद और हिटलर का उदय</span>
+    <span data-lang="as" style="display:none">📜 নাজিবাদ আৰু হিটলাৰৰ উত্থান</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — History Ch 3 · Europe between the Wars</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — इतिहास अध्याय 3 · युद्धों के बीच यूरोप</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — ইতিহাস অধ্যায় 3 · যুদ্ধৰ মাজৰ ইউৰোপ</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    en: "The Weimar Republic was the democratic government of Germany set up after World War I. What was a major weakness that led to its fall?",
+    hi: "वाइमर गणराज्य WWI के बाद जर्मनी की लोकतांत्रिक सरकार थी। इसके पतन का एक प्रमुख कारण क्या था?",
+    as: "ৱাইমাৰ প্ৰজাতন্ত্ৰ WWI-ৰ পিছত জাৰ্মানীৰ গণতান্ত্ৰিক চৰকাৰ আছিল। ইয়াৰ পতনৰ এটা মুখ্য কাৰণ কি আছিল?",
+    choices: { en: ["Economic hardship, war guilt, and political instability","Strong military control","Prosperity and stable currency","Too many political parties supporting democracy"], hi: ["आर्थिक कठिनाई, युद्ध दोष और राजनीतिक अस्थिरता","मजबूत सैन्य नियंत्रण","समृद्धि और स्थिर मुद्रा","लोकतंत्र का समर्थन करने वाले बहुत सारे दल"], as: ["অৰ্থনৈতিক কষ্ট, যুদ্ধৰ দোষ আৰু ৰাজনৈতিক অস্থিৰতা","শক্তিশালী সামৰিক নিয়ন্ত্ৰণ","সমৃদ্ধি আৰু স্থিৰ মুদ্ৰা","গণতন্ত্ৰ সমৰ্থনকাৰী বহু দল"] },
+    correct: 0,
+    explain: { en: "The Weimar Republic faced massive war reparations (Treaty of Versailles), hyperinflation, unemployment, and weak coalition governments.", hi: "वाइमर गणराज्य को भारी युद्ध क्षतिपूर्ति, अत्यधिक मुद्रास्फीति, बेरोजगारी और कमजोर गठबंधन सरकारों का सामना करना पड़ा।", as: "ৱাইমাৰ প্ৰজাতন্ত্ৰে বিশাল যুদ্ধ ক্ষতিপূৰণ, অতিস্ফীতি, বেৰোজগাৰী আৰু দুৰ্বল সংযুক্ত চৰকাৰৰ সন্মুখীন হ'ল।" }
+  },
+  {
+    en: "The Great Depression (1929) worsened Germany's conditions. What happened to unemployment in Germany by 1932?",
+    hi: "महामंदी (1929) ने जर्मनी की स्थिति बिगाड़ी। 1932 तक जर्मनी में बेरोजगारी क्या हुई?",
+    as: "মহা মন্দা (1929)এ জাৰ্মানীৰ অৱস্থা খৰাপ কৰিলে। 1932 চনলৈকে জাৰ্মানীত বেৰোজগাৰীৰ কি হ'ল?",
+    choices: { en: ["Rose to about 6 million (30% of workforce)","Fell to near zero","Stayed the same","Rose to 1 million only"], hi: ["लगभग 60 लाख (30% कार्यबल) तक पहुंची","शून्य के करीब गई","वही रही","केवल 10 लाख तक पहुंची"], as: ["প্ৰায় 60 লাখলৈ বৃদ্ধি পালে (30% কৰ্মশক্তি)","শূন্যৰ ওচৰলৈ হ্ৰাস পালে","একেই ৰ'ল","মাত্ৰ 10 লাখলৈহে বৃদ্ধি পালে"] },
+    correct: 0,
+    explain: { en: "By 1932, approximately 6 million Germans (around 30% of workers) were unemployed, creating desperation that Hitler exploited.", hi: "1932 तक लगभग 60 लाख जर्मन (लगभग 30% कामगार) बेरोजगार थे, जिससे हिटलर ने फायदा उठाया।", as: "1932 চনলৈকে প্ৰায় 60 লাখ জাৰ্মান (প্ৰায় 30% শ্ৰমিক) বেৰোজগাৰ আছিল, যাক হিটলাৰে সুযোগ হিচাপে ব্যৱহাৰ কৰিলে।" }
+  },
+  {
+    en: "In which year did Hitler become the Chancellor (Prime Minister) of Germany?",
+    hi: "हिटलर किस वर्ष जर्मनी का चांसलर (प्रधानमंत्री) बना?",
+    as: "হিটলাৰ কোন বছৰত জাৰ্মানীৰ চেন্সেলৰ (প্ৰধানমন্ত্ৰী) হ'ল?",
+    choices: { en: ["1933","1929","1939","1935"], hi: ["1933","1929","1939","1935"], as: ["1933","1929","1939","1935"] },
+    correct: 0,
+    explain: { en: "Hitler was appointed Chancellor of Germany on 30 January 1933 by President Hindenburg.", hi: "हिटलर को 30 जनवरी 1933 को राष्ट्रपति हिंडनबर्ग द्वारा जर्मनी का चांसलर नियुक्त किया गया था।", as: "হিটলাৰক 30 জানুৱাৰী 1933 তাৰিখে ৰাষ্ট্ৰপতি হিন্ডেনবাৰ্গে জাৰ্মানীৰ চেন্সেলৰ নিযুক্ত কৰিছিল।" }
+  },
+  {
+    en: "The Enabling Act (1933) was significant because it allowed Hitler to:",
+    hi: "एनेबलिंग एक्ट (1933) महत्वपूर्ण था क्योंकि इसने हिटलर को अनुमति दी:",
+    as: "এনেব্লিং এক্ট (1933) গুৰুত্বপূৰ্ণ আছিল কাৰণ ই হিটলাৰক অনুমতি দিছিল:",
+    choices: { en: ["Rule by decree without parliamentary approval","Hold free and fair elections","Share power with the Communist Party","Create a federal system"], hi: ["संसदीय अनुमोदन के बिना डिक्री द्वारा शासन करने की","स्वतंत्र और निष्पक्ष चुनाव कराने की","कम्युनिस्ट पार्टी के साथ सत्ता साझा करने की","संघीय प्रणाली बनाने की"], as: ["সংসদীয় অনুমোদন নোহোৱাকৈ ডিক্ৰিৰ দ্বাৰা শাসন কৰিবলৈ","মুক্ত আৰু ন্যায্য নিৰ্বাচন অনুষ্ঠিত কৰিবলৈ","কমিউনিষ্ট দলৰ সৈতে ক্ষমতা ভাগ-বতৰা কৰিবলৈ","ফেডাৰেল ব্যৱস্থা তৈৰি কৰিবলৈ"] },
+    correct: 0,
+    explain: { en: "The Enabling Act gave Hitler dictatorial powers — he could make laws without the Reichstag (parliament), destroying German democracy.", hi: "एनेबलिंग एक्ट ने हिटलर को तानाशाही शक्तियां दीं — वह रेइखस्टाग (संसद) के बिना कानून बना सकता था।", as: "এনেব্লিং এক্টে হিটলাৰক একনায়কতান্ত্ৰিক ক্ষমতা দিলে — তেওঁ ৰাইখষ্টাগ (সংসদ) নোহোৱাকৈ আইন কৰিব পাৰিলে।" }
+  },
+  {
+    en: "The NSDAP stands for the Nazi Party. What does NSDAP mean in English?",
+    hi: "NSDAP नाज़ी पार्टी का संक्षिप्त नाम है। NSDAP का अंग्रेजी में अर्थ क्या है?",
+    as: "NSDAP নাজি দলৰ চমু নাম। NSDAP-ৰ ইংৰাজীত অৰ্থ কি?",
+    choices: { en: ["National Socialist German Workers' Party","National Security Democratic Association Party","New Social Democratic Austrian Party","North South Democratic Alliance Party"], hi: ["राष्ट्रीय समाजवादी जर्मन श्रमिक पार्टी","राष्ट्रीय सुरक्षा लोकतांत्रिक संघ पार्टी","नई सामाजिक लोकतांत्रिक ऑस्ट्रियाई पार्टी","उत्तर दक्षिण लोकतांत्रिक गठबंधन पार्टी"], as: ["ৰাষ্ট্ৰীয় সমাজতান্ত্ৰিক জাৰ্মান শ্ৰমিক দল","ৰাষ্ট্ৰীয় নিৰাপত্তা গণতান্ত্ৰিক সংঘ দল","নতুন সামাজিক গণতান্ত্ৰিক অষ্ট্ৰিয়ান দল","উত্তৰ দক্ষিণ গণতান্ত্ৰিক জোঁট দল"] },
+    correct: 0,
+    explain: { en: "NSDAP = Nationalsozialistische Deutsche Arbeiterpartei = National Socialist German Workers' Party, Hitler's political party.", hi: "NSDAP = नेशनलसोज़ियालिस्टिशे ड्यूश अर्बाइटरपार्टाई = राष्ट्रीय समाजवादी जर्मन श्रमिक पार्टी।", as: "NSDAP = ৰাষ্ট্ৰীয় সমাজতান্ত্ৰিক জাৰ্মান শ্ৰমিক দল, হিটলাৰৰ ৰাজনৈতিক দল।" }
+  },
+  {
+    en: "The Nuremberg Laws (1935) were racial laws in Nazi Germany that primarily targeted:",
+    hi: "न्यूरेम्बर्ग कानून (1935) नाज़ी जर्मनी में नस्लीय कानून थे जो मुख्य रूप से किसे निशाना बनाते थे:",
+    as: "নুৰেমবাৰ্গ আইন (1935) নাজি জাৰ্মানীৰ জাতিগত আইন আছিল যি মূলত লক্ষ্য কৰিছিল:",
+    choices: { en: ["Jewish people (stripping them of citizenship)","Communist politicians","Catholic priests","French immigrants"], hi: ["यहूदी लोग (नागरिकता छीनकर)","कम्युनिस्ट राजनेता","कैथोलिक पादरी","फ्रांसीसी आप्रवासी"], as: ["ইহুদী লোক (নাগৰিকত্ব কাঢ়ি লৈ)","কমিউনিষ্ট ৰাজনীতিবিদ","কেথলিক পুৰোহিত","ফৰাচী অভিবাসী"] },
+    correct: 0,
+    explain: { en: "Nuremberg Laws stripped Jews of German citizenship, forbade marriage between Jews and non-Jews, and laid the legal framework for the Holocaust.", hi: "न्यूरेम्बर्ग कानूनों ने यहूदियों से जर्मन नागरिकता छीनी, यहूदियों और गैर-यहूदियों के विवाह पर प्रतिबंध लगाया।", as: "নুৰেমবাৰ্গ আইনে ইহুদীসকলৰ পৰা জাৰ্মান নাগৰিকত্ব কাঢ়ি লৈছিল, ইহুদী-অইহুদী বিবাহ নিষিদ্ধ কৰিছিল।" }
+  },
+  {
+    en: "Lebensraum, a key Nazi idea, means:",
+    hi: "लेबेंसराम, एक प्रमुख नाज़ी विचार, का अर्थ है:",
+    as: "লেবেনছৰাম, এটা মুখ্য নাজি ধাৰণা, মানে:",
+    choices: { en: ["'Living space' — expanding German territory eastward","'Living peace' — peaceful coexistence","'Free market' — economic freedom","'Social security' — welfare state"], hi: ["'रहने की जगह' — पूर्व में जर्मन क्षेत्र का विस्तार","'जीवित शांति' — शांतिपूर्ण सहयोग","'मुक्त बाजार' — आर्थिक स्वतंत्रता","'सामाजिक सुरक्षा' — कल्याणकारी राज्य"], as: ["'জীৱন স্থান' — পূৱলৈ জাৰ্মান ভূখণ্ড বিস্তাৰ কৰা","'জীৱন শান্তি' — শান্তিপূৰ্ণ সহাৱস্থান","'মুক্ত বজাৰ' — অৰ্থনৈতিক স্বাধীনতা","'সামাজিক সুৰক্ষা' — কল্যাণ ৰাষ্ট্ৰ"] },
+    correct: 0,
+    explain: { en: "Lebensraum ('living space') was Hitler's ideology of expanding Germany eastward to provide territory for the 'Aryan race'.", hi: "लेबेंसराम ('रहने की जगह') हिटलर की विचारधारा थी जिसमें 'आर्य जाति' के लिए पूर्व में जर्मनी का विस्तार करना था।", as: "লেবেনছৰাম ('জীৱন স্থান') হিটলাৰৰ মতাদৰ্শ আছিল যাত 'আৰ্য জাতি'ৰ বাবে পূৱলৈ জাৰ্মানী বিস্তাৰ কৰাৰ কথা আছিল।" }
+  },
+  {
+    en: "World War II began in September 1939 when Germany invaded:",
+    hi: "द्वितीय विश्व युद्ध सितंबर 1939 में शुरू हुआ जब जर्मनी ने आक्रमण किया:",
+    as: "দ্বিতীয় বিশ্বযুদ্ধ ছেপ্টেম্বৰ 1939 চনত আৰম্ভ হৈছিল যেতিয়া জাৰ্মানীয়ে আক্ৰমণ কৰিছিল:",
+    choices: { en: ["Poland","France","Britain","Soviet Union"], hi: ["पोलैंड","फ्रांस","ब्रिटेन","सोवियत संघ"], as: ["পোলেণ্ড","ফ্ৰান্স","ব্ৰিটেন","ছোভিয়েট সংঘ"] },
+    correct: 0,
+    explain: { en: "Germany invaded Poland on 1 September 1939, triggering World War II. Britain and France declared war on Germany two days later.", hi: "जर्मनी ने 1 सितंबर 1939 को पोलैंड पर आक्रमण किया, जिससे WWII शुरू हुआ। ब्रिटेन और फ्रांस ने दो दिन बाद जर्मनी पर युद्ध घोषित किया।", as: "জাৰ্মানীয়ে 1 ছেপ্টেম্বৰ 1939 তাৰিখে পোলেণ্ড আক্ৰমণ কৰিলে, WWII আৰম্ভ হ'ল। ব্ৰিটেন আৰু ফ্ৰান্সে দুদিন পিছত যুদ্ধ ঘোষণা কৰিলে।" }
+  },
+  {
+    en: "The Holocaust was the systematic genocide of Jewish people by the Nazis. Approximately how many Jews were killed?",
+    hi: "होलोकॉस्ट नाज़ियों द्वारा यहूदी लोगों का व्यवस्थित नरसंहार था। लगभग कितने यहूदी मारे गए?",
+    as: "হলকাষ্ট আছিল নাজিসকলৰ দ্বাৰা ইহুদী লোকসকলৰ পদ্ধতিগত গণহত্যা। প্ৰায় কিমান ইহুদী নিহত হৈছিল?",
+    choices: { en: ["6 million","600,000","60 million","600"], hi: ["60 लाख","6 लाख","6 करोड़","600"], as: ["60 লাখ","6 লাখ","6 কোটি","600"] },
+    correct: 0,
+    explain: { en: "About 6 million Jews were systematically murdered in the Holocaust — one of the worst genocides in human history.", hi: "होलोकॉस्ट में लगभग 60 लाख यहूदियों को व्यवस्थित तरीके से मारा गया — मानव इतिहास की सबसे भीषण नरसंहारों में से एक।", as: "হলকাষ্টত প্ৰায় 60 লাখ ইহুদীক পদ্ধতিগতভাৱে হত্যা কৰা হৈছিল — মানৱ ইতিহাসৰ অন্যতম নৰসংহাৰ।" }
+  },
+  {
+    en: "Which countries formed the main Allied Powers that defeated Nazi Germany in World War II?",
+    hi: "कौन से देशों ने मुख्य मित्र राष्ट्र बनाए जिन्होंने WWII में नाज़ी जर्मनी को पराजित किया?",
+    as: "কোন দেশবোৰে মুখ্য মিত্ৰশক্তি গঠন কৰিছিল যিয়ে WWII-ত নাজি জাৰ্মানী পৰাজিত কৰিছিল?",
+    choices: { en: ["USA, USSR, Britain, France","Germany, Italy, Japan","Spain, Portugal, Argentina","China, India, Australia"], hi: ["USA, USSR, ब्रिटेन, फ्रांस","जर्मनी, इटली, जापान","स्पेन, पुर्तगाल, अर्जेंटीना","चीन, भारत, ऑस्ट्रेलिया"], as: ["USA, USSR, ব্ৰিটেন, ফ্ৰান্স","জাৰ্মানী, ইটালী, জাপান","স্পেইন, পৰ্তুগাল, আৰ্জেন্টিনা","চীন, ভাৰত, অষ্ট্ৰেলিয়া"] },
+    correct: 0,
+    explain: { en: "The main Allied Powers were the USA, USSR (Soviet Union), Great Britain, and France. Germany, Italy, Japan formed the Axis Powers.", hi: "मुख्य मित्र राष्ट्र थे USA, USSR (सोवियत संघ), ब्रिटेन और फ्रांस। जर्मनी, इटली, जापान ने धुरी शक्तियां बनाईं।", as: "মুখ্য মিত্ৰশক্তি আছিল USA, USSR (ছোভিয়েট সংঘ), ব্ৰিটেন আৰু ফ্ৰান্স। জাৰ্মানী, ইটালী, জাপানে অক্ষশক্তি গঠন কৰিছিল।" }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = `Question ${current + 1} of 10`;
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+  const choicesArr = (q.choices[lang] || q.choices.en);
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars, msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'History expert! You understand this dark chapter deeply.', hi: 'इतिहास विशेषज्ञ! आप इस काले अध्याय को गहराई से समझते हैं।', as: 'ইতিহাসৰ বিশেষজ্ঞ! এই অন্ধকাৰ অধ্যায় তুমি গভীৰভাৱে বোঝা।' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Good work! Understanding history prevents its repetition.', hi: 'अच्छा काम! इतिहास को समझना उसकी पुनरावृत्ति रोकता है।', as: 'ভাল কাম! ইতিহাস বুজি পোৱাই ইয়াৰ পুনৰাবৃত্তি ৰোধ কৰে।' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Keep learning! Revise the key events and dates.', hi: 'सीखते रहो! प्रमुख घटनाएं और तारीखें दोबारा पढ़ें।', as: 'শিকি থাকক! মুখ্য ঘটনা আৰু তাৰিখ পুনৰায় পঢ়ক।' }; }
+  else { stars = '☆☆☆'; msg = { en: 'History needs more attention — try again!', hi: 'इतिहास पर और ध्यान दें — फिर कोशिश करें!', as: 'ইতিহাসত অধিক মনোযোগ দিব — পুনৰ চেষ্টা কৰক!' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

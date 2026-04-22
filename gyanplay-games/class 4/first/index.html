@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>GyanPlay — Class 4 Batch 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#060A10,#0D0520);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 48px;}
+
+/* Brand header */
+.brand{text-align:center;padding:28px 0 16px;}
+.brand-logo{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;
+  background:linear-gradient(90deg,var(--gold),var(--orange));-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;letter-spacing:.02em;}
+.brand-sub{font-size:.75rem;color:var(--dim);margin-top:2px;}
+.brand-sub .as{font-family:'Noto Sans Devanagari',sans-serif;}
+.class-tag{display:inline-block;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);
+  border-radius:99px;padding:5px 16px;font-family:'Baloo 2',sans-serif;font-size:.85rem;
+  font-weight:700;color:var(--gold);margin-top:10px;}
+
+/* Overall progress */
+.overall-prog{background:var(--card);border-radius:16px;padding:16px;margin-bottom:20px;
+  border:1px solid rgba(255,255,255,.06);}
+.op-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.op-label{font-family:'Baloo 2',sans-serif;font-size:.9rem;font-weight:700;color:var(--text);}
+.op-label .as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.72rem;color:var(--dim);display:block;}
+.op-frac{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:800;color:var(--gold);}
+.prog-bar{height:8px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--gold));border-radius:99px;transition:width .6s;}
+
+/* Subject section headers */
+.section-header{display:flex;align-items:center;gap:10px;margin:20px 0 10px;}
+.sh-line{flex:1;height:1px;background:rgba(255,255,255,.07);}
+.sh-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);}
+
+/* Game cards */
+.game-card{display:flex;align-items:center;gap:14px;background:var(--card);border-radius:16px;
+  padding:14px 16px;margin-bottom:10px;border:1px solid rgba(255,255,255,.06);
+  text-decoration:none;color:inherit;transition:border-color .2s,transform .1s,background .2s;
+  touch-action:manipulation;}
+.game-card:active{transform:scale(.98);}
+.game-card.done{border-color:rgba(6,214,160,.25);background:rgba(6,214,160,.04);}
+.game-card.maths{--accent:var(--purple);--glow:rgba(199,125,255,.2);}
+.game-card.english{--accent:var(--orange);--glow:rgba(255,159,28,.2);}
+.game-card:hover{border-color:var(--accent);}
+.gc-emoji{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);flex-shrink:0;}
+.game-card.done .gc-emoji{border-color:rgba(6,214,160,.3);background:rgba(6,214,160,.08);}
+.gc-info{flex:1;min-width:0;}
+.gc-name{font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:800;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gc-concept{font-size:.7rem;color:var(--dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gc-concept .as{font-family:'Noto Sans Devanagari',sans-serif;}
+.gc-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.gc-score{font-family:'Baloo 2',sans-serif;font-size:.8rem;font-weight:700;color:var(--dim);}
+.gc-score.done{color:var(--teal);}
+.gc-arrow{color:var(--dim);font-size:1rem;}
+.gc-stars{display:flex;gap:2px;}
+.gs{font-size:.7rem;opacity:.2;}
+.gs.lit{opacity:1;filter:drop-shadow(0 0 4px var(--gold));}
+
+/* Auth */
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;
+  justify-content:center;z-index:999;flex-direction:column;gap:14px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+.auth-screen .logo{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;
+  background:linear-gradient(90deg,var(--gold),var(--orange));-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;}
+.user-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0 6px;}
+.user-name{font-size:.78rem;color:var(--dim);}
+.user-name .as{font-family:'Noto Sans Devanagari',sans-serif;display:block;}
+.logout-btn{font-size:.72rem;color:var(--coral);cursor:pointer;background:none;border:none;
+  font-family:'Nunito',sans-serif;touch-action:manipulation;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen">
+  <div class="logo">🎓 GyanPlay</div>
+  <p>Loading… / লোড হৈছে…</p>
+</div>
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="user-bar">
+    <div class="user-name"><span id="userName">—</span><span class="as" id="userNameAs"></span></div>
+    <button class="logout-btn" onclick="firebase.auth().signOut()">Sign out</button>
+  </div>
+  <div class="brand">
+    <div class="brand-logo">🎓 GyanPlay</div>
+    <div class="brand-sub">Class 4 · Batch 1 <span class="as">/ শ্ৰেণী ৪ · বেচ ১</span></div>
+    <div class="class-tag">Maths + English · Ages 9–10</div>
+  </div>
+  <!-- Overall progress -->
+  <div class="overall-prog">
+    <div class="op-top">
+      <div class="op-label">Batch 1 Progress<span class="as">বেচ ১ প্ৰগতি</span></div>
+      <div class="op-frac"><span id="doneCount">0</span>/8</div>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+
+  <!-- Maths section -->
+  <div class="section-header">
+    <div class="sh-line"></div>
+    <div class="sh-label">🔢 Maths / গণিত</div>
+    <div class="sh-line"></div>
+  </div>
+  <a class="game-card maths" href="game1-million-dollar-numbers.html" id="card-class4-game1">
+    <div class="gc-emoji">🔢</div>
+    <div class="gc-info">
+      <div class="gc-name">Million Dollar Numbers</div>
+      <div class="gc-concept">Place value to 10 lakhs <span class="as">/ ১০ লাখলৈ স্থান মান</span></div>
+    </div>
+    <div class="gc-right">
+      <div class="gc-stars" id="stars-class4-game1"><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span></div>
+      <div class="gc-score" id="score-class4-game1">Not played</div>
+    </div>
+  </a>
+  <a class="game-card maths" href="game2-multiplication-maze.html" id="card-class4-game2">
+    <div class="gc-emoji">✖️</div>
+    <div class="gc-info">
+      <div class="gc-name">Multiplication Maze</div>
+      <div class="gc-concept">2-digit × 2-digit <span class="as">/ ২ অংকৰ গুণন</span></div>
+    </div>
+    <div class="gc-right">
+      <div class="gc-stars" id="stars-class4-game2"><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span></div>
+      <div class="gc-score" id="score-class4-game2">Not played</div>
+    </div>
+  </a>
+  <a class="game-card maths" href="game3-area-perimeter-arena.html" id="card-class4-game3">
+    <div class="gc-emoji">📐</div>
+    <div class="gc-info">
+      <div class="gc-name">Area & Perimeter Arena</div>
+      <div class="gc-concept">Rectangles: area & perimeter <span class="as">/ কালি আৰু পৰিসীমা</span></div>
+    </div>
+    <div class="gc-right">
+      <div class="gc-stars" id="stars-class4-game3"><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span></div>
+      <div class="gc-score" id="score-class4-game3">Not played</div>
+    </div>
+  </a>
+  <a class="game-card maths" href="game4-fraction-faceoff.html" id="card-class4-game4">
+    <div class="gc-emoji">➗</div>
+    <div class="gc-info">
+      <div class="gc-name">Fraction Faceoff</div>
+      <div class="gc-concept">Comparing & ordering fractions <span class="as">/ ভগ্নাংশ তুলনা</span></div>
+    </div>
+    <div class="gc-right">
+      <div class="gc-stars" id="stars-class4-game4"><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span></div>
+      <div class="gc-score" id="score-class4-game4">Not played</div>
+    </div>
+  </a>
+  <a class="game-card maths" href="game5-pattern-lab.html" id="card-class4-game5">
+    <div class="gc-emoji">🔄</div>
+    <div class="gc-info">
+      <div class="gc-name">Pattern Lab</div>
+      <div class="gc-concept">Number patterns & rules <span class="as">/ সংখ্যাৰ আৰ্হি</span></div>
+    </div>
+    <div class="gc-right">
+      <div class="gc-stars" id="stars-class4-game5"><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span></div>
+      <div class="gc-score" id="score-class4-game5">Not played</div>
+    </div>
+  </a>
+
+  <!-- English section -->
+  <div class="section-header">
+    <div class="sh-line"></div>
+    <div class="sh-label">🏷️ English / ইংৰাজী</div>
+    <div class="sh-line"></div>
+  </div>
+  <a class="game-card english" href="game6-noun-spotter.html" id="card-class4-game6">
+    <div class="gc-emoji">🏷️</div>
+    <div class="gc-info">
+      <div class="gc-name">Noun Spotter</div>
+      <div class="gc-concept">4 types of nouns <span class="as">/ নামপদৰ প্ৰকাৰ</span></div>
+    </div>
+    <div class="gc-right">
+      <div class="gc-stars" id="stars-class4-game6"><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span></div>
+      <div class="gc-score" id="score-class4-game6">Not played</div>
+    </div>
+  </a>
+  <a class="game-card english" href="game7-verb-engine.html" id="card-class4-game7">
+    <div class="gc-emoji">⚙️</div>
+    <div class="gc-info">
+      <div class="gc-name">Verb Engine</div>
+      <div class="gc-concept">Action, state & linking verbs <span class="as">/ ক্ৰিয়াপদৰ প্ৰকাৰ</span></div>
+    </div>
+    <div class="gc-right">
+      <div class="gc-stars" id="stars-class4-game7"><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span></div>
+      <div class="gc-score" id="score-class4-game7">Not played</div>
+    </div>
+  </a>
+  <a class="game-card english" href="game8-conjunction-junction.html" id="card-class4-game8">
+    <div class="gc-emoji">🔗</div>
+    <div class="gc-info">
+      <div class="gc-name">Conjunction Junction</div>
+      <div class="gc-concept">Coordinating & subordinating <span class="as">/ সংযোজক শব্দ</span></div>
+    </div>
+    <div class="gc-right">
+      <div class="gc-stars" id="stars-class4-game8"><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span><span class="gs">⭐</span></div>
+      <div class="gc-score" id="score-class4-game8">Not played</div>
+    </div>
+  </a>
+
+  <div style="text-align:center;margin-top:24px;font-size:.72rem;color:var(--dim);">
+    GyanPlay · ₹750/month per class · <span style="font-family:'Noto Sans Devanagari',sans-serif;">অসমীয়া</span> · Offline-capable
+  </div>
+</div>
+
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",
+  projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",
+  messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+
+auth.onAuthStateChanged(async user=>{
+  if(!user){window.location.href='/login.html';return;}
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  const name=user.displayName||user.email.split('@')[0];
+  document.getElementById('userName').textContent='Hi, '+name+'!';
+  // Load progress
+  try{
+    const snap=await db.collection('users').doc(user.uid).collection('progress').get();
+    let done=0;
+    snap.forEach(doc=>{
+      const d=doc.data();
+      const id=doc.id;
+      const scoreEl=document.getElementById('score-'+id);
+      const starsEl=document.getElementById('stars-'+id);
+      const cardEl=document.getElementById('card-'+id);
+      if(scoreEl){
+        scoreEl.textContent=d.score+'/'+d.total;
+        scoreEl.classList.add('done');
+        if(cardEl)cardEl.classList.add('done');
+        // Light stars proportionally
+        if(starsEl){
+          const lit=Math.round((d.score/d.total)*5);
+          starsEl.querySelectorAll('.gs').forEach((s,i)=>{s.classList.toggle('lit',i<lit);});
+        }
+        done++;
+      }
+    });
+    document.getElementById('doneCount').textContent=done;
+    document.getElementById('progFill').style.width=(done/8*100)+'%';
+  }catch(e){console.warn(e);}
+});
+</script>
+</body>
+</html>

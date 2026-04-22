@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atoms &amp; Molecules — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+  --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+body{background:linear-gradient(135deg,#0F0C29,#302B63);min-height:100vh;color:#fff;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 48px;animation:fadeIn .4s ease;}
+.shell{width:100%;max-width:540px;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.back-btn:hover{background:rgba(255,255,255,.18);}
+.badge{background:var(--green);color:#000;border-radius:999px;padding:6px 16px;font-size:.8rem;font-weight:800;letter-spacing:.04em;}
+.lang-toggle{display:flex;gap:6px;margin-left:auto;}
+.lang-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--green);color:#000;border-color:var(--green);}
+.game-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--green);margin-bottom:4px;line-height:1.1;}
+.game-sub{font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:22px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:999px;height:8px;margin-bottom:18px;}
+.progress-bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--sky));transition:width .4s ease;}
+.q-counter{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.question-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:16px;}
+.question-text{font-size:1.06rem;font-weight:700;line-height:1.55;margin-bottom:18px;}
+.chem{display:inline-block;font-family:'Nunito',sans-serif;font-weight:800;}
+.chem sub{font-size:.72em;vertical-align:sub;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;}
+.choice-btn:hover:not(:disabled){background:rgba(0,200,83,.12);border-color:var(--green);}
+.choice-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:var(--green);}
+.choice-btn.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice-btn:disabled{cursor:default;}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.93rem;display:none;}
+.feedback.correct{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.feedback.wrong{background:rgba(255,64,129,.12);color:var(--pink);border:1px solid rgba(255,64,129,.28);}
+.next-btn{background:var(--green);color:#000;border:none;border-radius:999px;padding:13px 32px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;display:none;transition:transform .15s;}
+.next-btn:hover{transform:scale(1.04);}
+.result-card{background:#1a1740;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;padding:36px 28px;text-align:center;display:none;}
+.result-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--green);margin-bottom:8px;}
+.result-score{font-size:3.5rem;font-weight:800;color:#fff;margin:12px 0;}
+.result-stars{font-size:2.8rem;margin:10px 0 20px;}
+.result-msg{font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:24px;}
+.restart-btn{background:var(--purple);color:#fff;border:none;border-radius:999px;padding:14px 36px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .15s;}
+.restart-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <span class="badge">Science · Class 9</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('hi')">हि</button>
+      <button class="lang-btn" onclick="setLang('as')">অ</button>
+    </div>
+  </div>
+
+  <div class="game-title">
+    <span data-lang="en">⚛️ Atoms &amp; Molecules</span>
+    <span data-lang="hi" style="display:none">⚛️ परमाणु और अणु</span>
+    <span data-lang="as" style="display:none">⚛️ পৰমাণু আৰু অণু</span>
+  </div>
+  <div class="game-sub">
+    <span data-lang="en">NCERT Class 9 — Ch 3 &amp; 4 · Atoms, Molecules &amp; Structure of Atom</span>
+    <span data-lang="hi" style="display:none">NCERT कक्षा 9 — अध्याय 3 &amp; 4 · परमाणु, अणु और परमाणु की संरचना</span>
+    <span data-lang="as" style="display:none">NCERT শ্ৰেণী 9 — অধ্যায় 3 &amp; 4 · পৰমাণু, অণু আৰু পৰমাণুৰ গঠন</span>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="q-counter" id="qCounter">Question 1 of 10</div>
+
+  <div class="question-card" id="questionCard">
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-title">
+      <span data-lang="en">Quiz Complete!</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरी!</span>
+      <span data-lang="as" style="display:none">কুইজ সম্পূৰ্ণ!</span>
+    </div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restartGame()">
+      <span data-lang="en">🔄 Play Again</span>
+      <span data-lang="hi" style="display:none">🔄 फिर खेलें</span>
+      <span data-lang="as" style="display:none">🔄 আকৌ খেলক</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    en: "Which law states that matter can neither be created nor destroyed in a chemical reaction?",
+    hi: "कौन सा नियम कहता है कि रासायनिक अभिक्रिया में द्रव्य न बनाया जा सकता है और न नष्ट?",
+    as: "কোন নিয়মে কোৱা হৈছে যে ৰাসায়নিক বিক্ৰিয়াত পদাৰ্থ সৃষ্টি বা ধ্বংস কৰিব নোৱাৰি?",
+    choices: { en: ["Law of Conservation of Mass","Law of Definite Proportions","Dalton's Atomic Theory","Law of Multiple Proportions"], hi: ["द्रव्यमान संरक्षण का नियम","निश्चित अनुपात का नियम","डाल्टन का परमाणु सिद्धांत","बहुल अनुपात का नियम"], as: ["ভৰ সংৰক্ষণৰ নিয়ম","নিৰ্দিষ্ট অনুপাতৰ নিয়ম","ডাল্টনৰ পৰমাণু তত্ত্ব","বহুল অনুপাতৰ নিয়ম"] },
+    correct: 0,
+    explain: { en: "Law of Conservation of Mass (Lavoisier): Total mass of reactants = total mass of products.", hi: "द्रव्यमान संरक्षण का नियम (लेवोज़ियर): अभिकारकों का कुल द्रव्यमान = उत्पादों का कुल द्रव्यमान।", as: "ভৰ সংৰক্ষণৰ নিয়ম (লেভোয়জিয়াৰ): বিক্ৰিয়াকৰণৰ মুঠ ভৰ = উৎপাদৰ মুঠ ভৰ।" }
+  },
+  {
+    en: "What is the molecular formula of water?",
+    hi: "जल का आणविक सूत्र क्या है?",
+    as: "পানীৰ আণৱিক সূত্ৰ কি?",
+    choices: { en: ["H₂O","H₂O₂","HO","H₃O"], hi: ["H₂O","H₂O₂","HO","H₃O"], as: ["H₂O","H₂O₂","HO","H₃O"] },
+    correct: 0,
+    explain: { en: "Water (H₂O) has 2 hydrogen atoms and 1 oxygen atom.", hi: "जल (H₂O) में 2 हाइड्रोजन और 1 ऑक्सीजन परमाणु होते हैं।", as: "পানী (H₂O)ত 2টা হাইড্ৰজেন আৰু 1টা অক্সিজেন পৰমাণু আছে।" }
+  },
+  {
+    en: "The valency of nitrogen (N) in ammonia (NH₃) is:",
+    hi: "अमोनिया (NH₃) में नाइट्रोजन (N) की संयोजकता है:",
+    as: "এমোনিয়া (NH₃)ত নাইট্ৰজেন (N)ৰ যোজ্যতা হৈছে:",
+    choices: { en: ["1","2","3","4"], hi: ["1","2","3","4"], as: ["1","2","3","4"] },
+    correct: 2,
+    explain: { en: "Nitrogen has valency 3 in NH₃, bonding with 3 hydrogen atoms.", hi: "NH₃ में नाइट्रोजन की संयोजकता 3 है, यह 3 हाइड्रोजन परमाणुओं से जुड़ता है।", as: "NH₃ত নাইট্ৰজেনৰ যোজ্যতা 3, ই 3টা হাইড্ৰজেন পৰমাণুৰ সৈতে বন্ধ হয়।" }
+  },
+  {
+    en: "Who proposed that atoms are indivisible, indestructible particles — the smallest unit of matter?",
+    hi: "किसने प्रस्तावित किया कि परमाणु अविभाज्य, अनष्टनीय कण हैं — द्रव्य की सबसे छोटी इकाई?",
+    as: "কোনে প্ৰস্তাৱ দিছিল যে পৰমাণু অবিভাজ্য, অক্ষয় কণ — পদাৰ্থৰ ক্ষুদ্রতম একক?",
+    choices: { en: ["Thomson","Rutherford","Dalton","Bohr"], hi: ["थॉमसन","रदरफोर्ड","डाल्टन","बोर"], as: ["থমছন","ৰাদাৰফৰ্ড","ডাল্টন","বোৰ"] },
+    correct: 2,
+    explain: { en: "Dalton's Atomic Theory (1808) proposed atoms as the smallest indivisible particles of matter.", hi: "डाल्टन के परमाणु सिद्धांत (1808) में परमाणुओं को द्रव्य के सबसे छोटे अविभाज्य कण माना।", as: "ডাল্টনৰ পৰমাণু তত্ত্ব (1808)ত পৰমাণুক পদাৰ্থৰ ক্ষুদ্রতম অবিভাজ্য কণ হিচাপে প্ৰস্তাৱ দিছিল।" }
+  },
+  {
+    en: "In Thomson's model of the atom, the atom is like a:",
+    hi: "थॉमसन के परमाणु मॉडल में, परमाणु किसके जैसा है:",
+    as: "থমছনৰ পৰমাণু মডেলত, পৰমাণু কিহৰ দৰে:",
+    choices: { en: ["Plum pudding (positive sphere with embedded electrons)","A solid ball","A nucleus surrounded by orbits","An empty space with a heavy center"], hi: ["प्लम पुडिंग (धनात्मक गोले में इलेक्ट्रॉन)","एक ठोस गेंद","कक्षाओं से घिरा नाभिक","भारी केंद्र वाला खाली स्थान"], as: ["প্লাম পুডিং (ধনাত্মক গোলকত ইলেকট্ৰন)","এটা ঘন বল","কক্ষপথৰ দ্বাৰা আবৃত নিউক্লিয়াছ","ভাৰী কেন্দ্ৰ থকা খালী স্থান"] },
+    correct: 0,
+    explain: { en: "Thomson's 'Plum Pudding' model: positively charged sphere with electrons embedded like plums.", hi: "थॉमसन का 'प्लम पुडिंग' मॉडल: धनात्मक आवेशित गोले में इलेक्ट्रॉन बेर की तरह जड़े होते हैं।", as: "থমছনৰ 'প্লাম পুডিং' মডেল: ধনাত্মক আধানৰ গোলকত ইলেকট্ৰন বেৰৰ দৰে সোমাই থাকে।" }
+  },
+  {
+    en: "Rutherford's gold foil experiment showed that most of the atom is:",
+    hi: "रदरफोर्ड के स्वर्ण पत्र प्रयोग ने दिखाया कि परमाणु का अधिकांश भाग है:",
+    as: "ৰাদাৰফৰ্ডৰ সোণৰ পাত পৰীক্ষাই দেখুৱাইছিল যে পৰমাণুৰ অধিকাংশ:",
+    choices: { en: ["Empty space","Filled with electrons","Filled with protons","Solid throughout"], hi: ["खाली स्थान","इलेक्ट्रॉनों से भरा","प्रोटॉनों से भरा","पूरी तरह ठोस"], as: ["খালী স্থান","ইলেকট্ৰনেৰে পূৰ্ণ","প্ৰ'টনেৰে পূৰ্ণ","সম্পূৰ্ণ ঘন"] },
+    correct: 0,
+    explain: { en: "Rutherford found most alpha particles passed through, proving atoms are mostly empty space with a tiny positive nucleus.", hi: "रदरफोर्ड ने पाया कि अधिकांश अल्फा कण पार हो गए, साबित किया कि परमाणु अधिकतर खाली है।", as: "ৰাদাৰফৰ্ডে দেখিলে অধিকাংশ আলফা কণ পাৰ হৈ গ'ল, প্ৰমাণ কৰিলে পৰমাণু বেছিভাগ খালী।" }
+  },
+  {
+    en: "In Bohr's model, electrons revolve around the nucleus in:",
+    hi: "बोर के मॉडल में, इलेक्ट्रॉन नाभिक के चारों ओर घूमते हैं:",
+    as: "বোৰৰ মডেলত, ইলেকট্ৰন নিউক্লিয়াছৰ চাৰিওফালে ঘোৰে:",
+    choices: { en: ["Fixed circular orbits (shells) with specific energy","Random paths","Elliptical orbits only","The nucleus itself"], hi: ["निश्चित ऊर्जा वाली गोलाकार कक्षाओं (शेल) में","अनिश्चित पथों पर","केवल दीर्घवृत्तीय कक्षाओं में","नाभिक में ही"], as: ["নিৰ্দিষ্ট শক্তিৰ বৃত্তাকাৰ কক্ষপথ (শেল)ত","আকস্মিক পথত","কেৱল উপবৃত্তাকাৰ কক্ষপথত","নিউক্লিয়াছতে"] },
+    correct: 0,
+    explain: { en: "Bohr proposed electrons move in fixed energy shells/orbits (K, L, M, N) without radiating energy.", hi: "बोर ने बताया कि इलेक्ट्रॉन निश्चित ऊर्जा कक्षाओं (K, L, M, N) में बिना ऊर्जा खोए घूमते हैं।", as: "বোৰে প্ৰস্তাৱ দিছিল যে ইলেকট্ৰন নিৰ্দিষ্ট শক্তিৰ শেল (K, L, M, N)ত শক্তি নিঃসৰণ নকৰাকৈ ঘোৰে।" }
+  },
+  {
+    en: "The atomic number of an element equals the number of:",
+    hi: "किसी तत्व की परमाणु संख्या बराबर होती है:",
+    as: "এটা মৌলৰ পৰমাণু সংখ্যা সমান হয়:",
+    choices: { en: ["Protons in the nucleus","Neutrons in the nucleus","Protons + Neutrons","Electrons in the outermost shell"], hi: ["नाभिक में प्रोटॉनों की संख्या","नाभिक में न्यूट्रॉनों की संख्या","प्रोटॉन + न्यूट्रॉन","बाहरी कक्षा में इलेक्ट्रॉनों की संख्या"], as: ["নিউক্লিয়াছত প্ৰ'টনৰ সংখ্যা","নিউক্লিয়াছত নিউট্ৰনৰ সংখ্যা","প্ৰ'টন + নিউট্ৰন","বাহিৰৰ কক্ষপথত ইলেকট্ৰনৰ সংখ্যা"] },
+    correct: 0,
+    explain: { en: "Atomic number (Z) = number of protons. Mass number (A) = protons + neutrons.", hi: "परमाणु क्रमांक (Z) = प्रोटॉनों की संख्या। द्रव्यमान संख्या (A) = प्रोटॉन + न्यूट्रॉन।", as: "পৰমাণু সংখ্যা (Z) = প্ৰ'টনৰ সংখ্যা। ভৰ সংখ্যা (A) = প্ৰ'টন + নিউট্ৰন।" }
+  },
+  {
+    en: "What is the formula of sodium chloride (common salt)?",
+    hi: "सोडियम क्लोराइड (सामान्य नमक) का सूत्र क्या है?",
+    as: "ছডিয়াম ক্লৰাইড (সাধাৰণ নিমখ)ৰ সূত্ৰ কি?",
+    choices: { en: ["NaCl","Na₂Cl","NaCl₂","Na₂Cl₂"], hi: ["NaCl","Na₂Cl","NaCl₂","Na₂Cl₂"], as: ["NaCl","Na₂Cl","NaCl₂","Na₂Cl₂"] },
+    correct: 0,
+    explain: { en: "NaCl — Sodium (valency 1) + Chlorine (valency 1) combine in 1:1 ratio.", hi: "NaCl — सोडियम (संयोजकता 1) + क्लोरीन (संयोजकता 1) 1:1 अनुपात में मिलते हैं।", as: "NaCl — ছডিয়াম (যোজ্যতা 1) + ক্লৰিন (যোজ্যতা 1) 1:1 অনুপাতত মিলে।" }
+  },
+  {
+    en: "The law of definite proportions states that a compound always contains elements in:",
+    hi: "निश्चित अनुपात का नियम कहता है कि किसी यौगिक में तत्व हमेशा होते हैं:",
+    as: "নিৰ্দিষ্ট অনুপাতৰ নিয়মে কয় যে এটা যৌগত মৌল সদায় থাকে:",
+    choices: { en: ["A fixed ratio by mass","Any ratio depending on temperature","A ratio that varies with pressure","No fixed relationship"], hi: ["द्रव्यमान द्वारा एक निश्चित अनुपात में","तापमान के आधार पर किसी भी अनुपात में","दबाव के साथ बदलने वाले अनुपात में","कोई निश्चित संबंध नहीं"], as: ["ভৰৰ দ্বাৰা নিৰ্দিষ্ট অনুপাতত","তাপমাত্ৰাৰ ওপৰত নিৰ্ভৰ কৰি যিকোনো অনুপাতত","চাপৰ সৈতে পৰিৱৰ্তিত অনুপাতত","কোনো নিৰ্দিষ্ট সম্পৰ্ক নাই"] },
+    correct: 0,
+    explain: { en: "Law of Definite Proportions (Proust): Elements in a compound are always in a fixed mass ratio. E.g., H₂O always has H:O = 1:8 by mass.", hi: "निश्चित अनुपात का नियम (प्राउस्ट): यौगिक में तत्व हमेशा निश्चित द्रव्यमान अनुपात में होते हैं। जैसे H₂O में H:O = 1:8।", as: "নিৰ্দিষ্ট অনুপাতৰ নিয়ম (প্ৰাউষ্ট): যৌগত মৌল সদায় নিৰ্দিষ্ট ভৰ অনুপাতত থাকে। যেনে H₂O-ত H:O = 1:8।" }
+  }
+];
+
+let current = 0, score = 0, lang = 'en';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === l ? '' : 'none';
+  });
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = ((current / 10) * 100) + '%';
+  document.getElementById('qCounter').textContent = `Question ${current + 1} of 10`;
+  document.getElementById('questionText').innerHTML = q[lang] || q.en;
+  const choicesArr = (q.choices[lang] || q.choices.en);
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesArr.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = c;
+    btn.onclick = () => selectAnswer(i);
+    choicesDiv.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.innerHTML = '✓ ' + (q.explain[lang] || q.explain.en);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '✗ ' + (q.explain[lang] || q.explain.en);
+  }
+  fb.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= 10) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('qCounter').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+  const pct = score * 10;
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '/10 (' + pct + '%)';
+  let stars = '☆☆☆', msg;
+  if (pct >= 90) { stars = '★★★'; msg = { en: 'Outstanding! You mastered Atoms & Molecules!', hi: 'बहुत बढ़िया! आपने परमाणु और अणु में महारत हासिल की!', as: 'অসাধাৰণ! আপুনি পৰমাণু আৰু অণুত দক্ষতা অৰ্জন কৰিলে!' }; }
+  else if (pct >= 70) { stars = '★★☆'; msg = { en: 'Great job! Keep exploring atomic science!', hi: 'बहुत अच्छा! परमाणु विज्ञान का अन्वेषण जारी रखें!', as: 'চমৎকাৰ! পৰমাণু বিজ্ঞান অন্বেষণ জাৰি ৰাখক!' }; }
+  else if (pct >= 40) { stars = '★☆☆'; msg = { en: 'Good effort! Revise the atomic models.', hi: 'अच्छी कोशिश! परमाणु मॉडल दोबारा पढ़ें।', as: 'ভাল প্ৰচেষ্টা! পৰমাণু মডেলসমূহ পুনৰায় পঢ়ক।' }; }
+  else { stars = '☆☆☆'; msg = { en: 'Keep trying! Atoms & Molecules need more practice.', hi: 'कोशिश करते रहें! परमाणु और अणु को और अभ्यास चाहिए।', as: 'চেষ্টা জাৰি ৰাখক! পৰমাণু আৰু অণুত অধিক অনুশীলন প্ৰয়োজন।' }; }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg[lang] || msg.en;
+}
+
+function restartGame() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('qCounter').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

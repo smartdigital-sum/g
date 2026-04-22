@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GyanPlay — Class 2</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>GyanPlay <span class="class-badge">Class 2</span></h1>
+            </div>
+            <div class="header-info">
+                <div class="price-tag">₹700</div>
+                <div class="age-tag">Ages 7–8</div>
+                <div class="board-tag">NCERT + Assam Board</div>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <h2>🎒 Class 2 Game Plan</h2>
+                <p class="subtitle">From recognition to <strong>operation and reasoning</strong> — build, arrange, calculate, decide!</p>
+                <div class="stats">
+                    <div class="stat">
+                        <i class="fas fa-gamepad"></i>
+                        <span>23 Games</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-book"></i>
+                        <span>6 Subjects</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-brain"></i>
+                        <span>Step‑Up Challenge</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="batch-control" aria-labelledby="batch-heading">
+                <h3 id="batch-heading"><i class="fas fa-layer-group" aria-hidden="true"></i> 3‑Batch System</h3>
+                <div class="batch-buttons" role="tablist" aria-label="Game batches">
+                    <button class="batch-btn active" data-batch="1" role="tab" aria-selected="true" aria-controls="subjects-content" id="batch-1-tab">Batch 1 (7 games)</button>
+                    <button class="batch-btn" data-batch="2" role="tab" aria-selected="false" aria-controls="subjects-content" id="batch-2-tab">Batch 2 (7 games)</button>
+                    <button class="batch-btn" data-batch="3" role="tab" aria-selected="false" aria-controls="subjects-content" id="batch-3-tab">Batch 3 (9 games)</button>
+                    <button class="batch-btn" data-batch="0" role="tab" aria-selected="false" aria-controls="subjects-content" id="batch-all-tab">View All (23 games)</button>
+                </div>
+                <div class="command-hint">
+                    <code>Say "go class 2 batch 1" when ready</code>
+                </div>
+            </section>
+
+            <section class="search-control" aria-labelledby="search-heading">
+                <h3 id="search-heading"><i class="fas fa-search" aria-hidden="true"></i> Find a Game</h3>
+                <div class="search-box">
+                    <input type="text" id="gameSearch" placeholder="Search by game name or concept..."
+                           aria-label="Search games" aria-describedby="search-hint">
+                    <button id="clearSearch" class="clear-search-btn" title="Clear search" aria-label="Clear search">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="search-hint" id="search-hint">
+                    <small>Type to filter games. Search works across all batches.</small>
+                </div>
+            </section>
+
+            <section class="progress-overview" aria-labelledby="progress-heading">
+                <h3 id="progress-heading"><i class="fas fa-chart-line" aria-hidden="true"></i> Your Progress</h3>
+                <div class="progress-content">
+                    <div class="progress-stats" role="status" aria-live="polite" aria-atomic="true">
+                        <div class="progress-stat">
+                            <div class="progress-number" id="total-games" aria-label="Total games">0</div>
+                            <div class="progress-label">Total Games</div>
+                        </div>
+                        <div class="progress-stat">
+                            <div class="progress-number" id="completed-games" aria-label="Completed games">0</div>
+                            <div class="progress-label">Completed</div>
+                        </div>
+                        <div class="progress-stat">
+                            <div class="progress-number" id="progress-percentage" aria-label="Overall progress percentage">0%</div>
+                            <div class="progress-label">Overall Progress</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progress bar">
+                            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <button id="reset-progress" class="reset-progress-btn" aria-label="Reset all progress">
+                        <i class="fas fa-redo" aria-hidden="true"></i> Reset All Progress
+                    </button>
+                </div>
+            </section>
+
+            <section class="subjects">
+                <!-- Subjects will be populated by JavaScript -->
+            </section>
+
+            <section class="game-details" aria-labelledby="details-heading" aria-live="polite" aria-atomic="true">
+                <h3 id="details-heading"><i class="fas fa-info-circle" aria-hidden="true"></i> Game Details</h3>
+                <div class="details-content">
+                    <p>Select a game to see details and play.</p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>GyanPlay — Making learning fun for Class 2 students</p>
+            <p class="footer-note">Based on NCERT Marigold/Raindrops + Assam Board curriculum</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

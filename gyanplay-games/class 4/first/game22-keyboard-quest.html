@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Keyboard Quest — GyanPlay Class 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#050E1A,#030810);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 40px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.h-left{display:flex;flex-direction:column;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.game-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);}
+.subject-tag{font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:1.3rem;opacity:.25;transition:opacity .3s,filter .3s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.wow{background:linear-gradient(135deg,rgba(76,201,240,.15),rgba(76,201,240,.04));
+  border:1px solid rgba(76,201,240,.3);border-radius:16px;padding:16px;margin-bottom:18px;}
+.wow-emoji{font-size:2rem;margin-bottom:6px;}
+.wow p{font-size:.88rem;line-height:1.55;}
+.wow p span{color:var(--gold);font-weight:700;}
+.wow-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-top:6px;}
+/* Task card */
+.task-card{background:var(--card);border-radius:20px;padding:20px;margin-bottom:14px;
+  border:1px solid rgba(76,201,240,.15);}
+.task-num{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.task-scenario{font-size:.88rem;line-height:1.55;margin-bottom:6px;}
+.task-scenario-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:12px;}
+.task-instruction{font-family:'Baloo 2',sans-serif;font-size:.88rem;font-weight:700;color:var(--blue);margin-bottom:14px;}
+/* Key sequence builder */
+.seq-built{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;min-height:44px;
+  padding:8px 10px;background:rgba(76,201,240,.05);border:1px dashed rgba(76,201,240,.2);border-radius:10px;align-items:center;}
+.key-in-seq{font-family:'Baloo 2',sans-serif;font-size:.9rem;font-weight:800;padding:6px 12px;
+  background:rgba(76,201,240,.15);border:2px solid rgba(76,201,240,.4);border-radius:8px;
+  color:var(--blue);position:relative;}
+.key-plus{color:var(--dim);font-size:.8rem;align-self:center;}
+.seq-placeholder{font-size:.78rem;color:var(--dim);}
+/* Key bank */
+.key-bank-label{font-size:.72rem;color:var(--dim);margin-bottom:8px;}
+.key-bank{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.key-btn{padding:8px 12px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.12);
+  border-radius:8px;font-family:'Baloo 2',sans-serif;font-size:.88rem;font-weight:700;
+  cursor:pointer;touch-action:manipulation;transition:all .15s;color:var(--text);}
+.key-btn:active{transform:scale(.93);}
+.key-btn.special{background:rgba(76,201,240,.08);border-color:rgba(76,201,240,.2);color:var(--blue);}
+.key-btn.used{opacity:.3;pointer-events:none;}
+/* Check */
+.check-btn{width:100%;padding:12px;background:var(--blue);color:#030810;border:none;border-radius:12px;
+  font-family:'Baloo 2',sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;touch-action:manipulation;transition:transform .1s;}
+.check-btn:active{transform:scale(.97);}
+.clear-btn{width:100%;padding:9px;background:transparent;border:1px solid rgba(255,107,107,.3);border-radius:10px;
+  font-family:'Baloo 2',sans-serif;font-size:.82rem;font-weight:700;color:var(--coral);cursor:pointer;touch-action:manipulation;margin-top:6px;}
+.feedback{text-align:center;font-size:.85rem;min-height:1.2em;font-weight:600;margin-top:6px;}
+.feedback.ok{color:var(--teal);}
+.feedback.err{color:var(--coral);}
+/* Shortcut display */
+.shortcut-display{background:rgba(6,214,160,.08);border:1px solid rgba(6,214,160,.2);border-radius:10px;
+  padding:10px 14px;margin-bottom:10px;display:none;}
+.shortcut-display.show{display:block;}
+.sd-label{font-size:.65rem;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.sd-keys{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.sd-key{font-family:'Baloo 2',sans-serif;font-size:.9rem;font-weight:800;padding:5px 10px;
+  background:rgba(6,214,160,.2);border:2px solid rgba(6,214,160,.4);border-radius:7px;color:var(--teal);}
+.progress-wrap{margin-bottom:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);margin-bottom:5px;}
+.prog-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--blue);border-radius:99px;transition:width .4s;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-card{background:var(--card);border:1px solid rgba(76,201,240,.3);border-radius:22px;padding:28px 24px;text-align:center;max-width:320px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);}to{transform:scale(1) translateY(0);}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px;}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.ov-fact{font-size:.83rem;line-height:1.5;margin-bottom:12px;}
+.ov-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+.ov-btn{padding:12px 28px;background:var(--gold);color:#0F0820;border:none;border-radius:12px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:200;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen"><div style="font-size:2.5rem">🔑</div><p>Loading… / লোড হৈছে…</p></div>
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="h-left">
+      <div class="game-title">Keyboard Quest</div>
+      <div class="game-title-as">কীবৰ্ড অভিযান</div>
+      <div class="subject-tag">Computer · শ্ৰেণী ৪</div>
+    </div>
+    <div class="stars" id="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+  <div class="wow">
+    <div class="wow-emoji">⌨️</div>
+    <p>Professional typists type <span>100+ words per minute</span> — they <span>NEVER look</span> at the keyboard. Their fingers memorised the layout so well, eyes aren't needed. <span>Muscle memory is real!</span></p>
+    <div class="wow-as">পেছাদাৰী টাইপিষ্টে মিনিটত ১০০+ শব্দ টাইপ কৰে — তেওঁলোকে কীবৰ্ড কেতিয়াও নাচায়। তেওঁলোকৰ আঙুলিৰ পেশী মনত ৰাখে!</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-label"><span>Task <span id="taskNum">1</span>/6</span><span>Score: <span id="scoreDisplay">0</span>/6</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="task-card" id="taskCard"></div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <div class="ov-as" id="ovAs"></div>
+    <button class="ov-btn" id="ovBtn">Next →</button>
+  </div>
+</div>
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let currentUser=null;
+auth.onAuthStateChanged(u=>{
+  if(!u){window.location.href='/login.html';return;}
+  currentUser=u;
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initGame();
+});
+
+const TASKS=[
+  {scenario:"You wrote a document in school. You want to COPY a paragraph.",scenarioAs:"তুমি বিদ্যালয়ত এটা ডকুমেণ্ট লিখিলে। এটা অনুচ্ছেদ কপি কৰিব বিচৰা।",
+   instruction:"Build the shortcut to COPY selected text:",
+   ans:['Ctrl','C'],keys:['Ctrl','C','V','X','Z','Shift','A','F5'],
+   fact:"Ctrl+C = Copy. Ctrl+V = Paste. Ctrl+X = Cut. These 3 shortcuts save hours of work every day!",factAs:"Ctrl+C = কপি। Ctrl+V = পেষ্ট। Ctrl+X = কাট।"},
+  {scenario:"You copied the paragraph. Now you want to PASTE it somewhere else.",scenarioAs:"অনুচ্ছেদ কপি কৰিলা। এতিয়া আন ঠাইত পেষ্ট কৰিব বিচৰা।",
+   instruction:"Build the shortcut to PASTE copied text:",
+   ans:['Ctrl','V'],keys:['Ctrl','V','C','X','Z','Shift','P','Enter'],
+   fact:"Ctrl+V pastes — V stands for 'paste' because P was already taken for Print (Ctrl+P)!",factAs:"Ctrl+Vত V থাকে কাৰণ P ইতিমধ্যে প্ৰিণ্টৰ বাবে (Ctrl+P) ব্যৱহাৰ হয়!"},
+  {scenario:"You made a mistake in typing. You want to UNDO the last action.",scenarioAs:"টাইপ কৰোঁতে ভুল হ'ল। শেষ কাম আনডু কৰিব বিচৰা।",
+   instruction:"Build the shortcut to UNDO:",
+   ans:['Ctrl','Z'],keys:['Ctrl','Z','Y','X','C','Shift','B','Esc'],
+   fact:"Ctrl+Z = Undo. Ctrl+Y = Redo (unundo!). These exist in almost every software since 1984!",factAs:"Ctrl+Z = আনডু। Ctrl+Y = ৰিডু। ১৯৮৪ চনৰ পৰা প্ৰায় সকলো চফটৱেৰত আছে!"},
+  {scenario:"You want to SELECT ALL text in a document to delete or format it.",scenarioAs:"ডকুমেণ্টৰ সকলো টেক্সট বাছিবলৈ ডিলিট বা ফৰ্মেট কৰিব বিচৰা।",
+   instruction:"Build the shortcut to SELECT ALL:",
+   ans:['Ctrl','A'],keys:['Ctrl','A','S','Z','X','F','All','Tab'],
+   fact:"Ctrl+A selects everything — ALL starts with A! Also: Ctrl+S = Save, Ctrl+P = Print.",factAs:"Ctrl+A এ সকলো নিৰ্বাচন কৰে — ALL শব্দটো A দিয়ে আৰম্ভ! Ctrl+S = ছেভ।"},
+  {scenario:"You want to type an email address. You need to type the @ symbol.",scenarioAs:"ইমেইল ঠিকনা টাইপ কৰিব বিচৰা। @ চিহ্নটো টাইপ কৰিব লাগিব।",
+   instruction:"To type @, press which combination?",
+   ans:['Shift','2'],keys:['Shift','2','@','Ctrl','Alt','1','3','Enter'],
+   fact:"@ is on the '2' key — hold Shift and press 2! Email was invented in 1971 — @ became famous instantly!",factAs:"@ চিহ্ন '2' কীত আছে — Shift ধৰি 2 টিপক! ইমেইল ১৯৭১ত আৱিষ্কৃত হৈছিল।"},
+  {scenario:"Your web browser page is not loading properly. You want to REFRESH it.",scenarioAs:"ৱেব ব্ৰাউজাৰ পেজ ঠিকমতে লোড হোৱা নাই। ৰিফ্ৰেছ কৰিব বিচৰা।",
+   instruction:"Which key REFRESHES a webpage?",
+   ans:['F5'],keys:['F5','F1','F2','Esc','R','Tab','Enter','Delete'],
+   fact:"F5 = Refresh! Function keys (F1-F12) each have a special job. F1 is usually Help!",factAs:"F5 = ৰিফ্ৰেছ! ফাংচন কীবোৰৰ (F1-F12) প্ৰতিটোৰ বিশেষ কাম আছে।"},
+];
+
+let taskIdx=0,score=0,builtSeq=[];
+
+function initGame(){taskIdx=0;score=0;updateStars(0);renderTask();}
+
+function renderTask(){
+  const t=TASKS[taskIdx];
+  document.getElementById('taskNum').textContent=taskIdx+1;
+  document.getElementById('progFill').style.width=(taskIdx/6*100)+'%';
+  builtSeq=[];
+  const card=document.getElementById('taskCard');
+  card.innerHTML=`
+    <div class="task-num">Task ${taskIdx+1}/6 — ${['Copy','Paste','Undo','Select All','Type @','Refresh'][taskIdx]}</div>
+    <div class="task-scenario">${t.scenario}</div>
+    <div class="task-scenario-as">${t.scenarioAs}</div>
+    <div class="task-instruction">🔑 ${t.instruction}</div>
+    <div class="seq-built" id="seqBuilt"><span class="seq-placeholder">Tap keys below to build / তলৰ কী টেপ কৰক</span></div>
+    <div class="shortcut-display" id="shortcutDisplay">
+      <div class="sd-label">Answer / উত্তৰ:</div>
+      <div class="sd-keys" id="sdKeys"></div>
+    </div>
+    <div class="key-bank-label">Available keys / উপলব্ধ কী:</div>
+    <div class="key-bank" id="keyBank">
+      ${t.keys.map((k,i)=>`<div class="key-btn${['Ctrl','Shift','Alt','F5','F1','Esc','Enter','Tab','Delete'].includes(k)?' special':''}" id="kb-${i}" onclick="tapKey('${k}',${i})">${k}</div>`).join('')}
+    </div>
+    <button class="check-btn" onclick="checkSeq()">Check ✓ / পৰীক্ষা কৰক</button>
+    <button class="clear-btn" onclick="clearSeq()">✕ Clear / পৰিষ্কাৰ কৰক</button>
+    <div class="feedback" id="feedback"></div>`;
+}
+
+function tapKey(key,btnIdx){
+  builtSeq.push(key);
+  document.getElementById('kb-'+btnIdx).classList.add('used');
+  const sb=document.getElementById('seqBuilt');
+  sb.innerHTML='';
+  builtSeq.forEach((k,i)=>{
+    if(i>0){const plus=document.createElement('span');plus.className='key-plus';plus.textContent='+';sb.appendChild(plus);}
+    const kEl=document.createElement('span');kEl.className='key-in-seq';kEl.textContent=k;sb.appendChild(kEl);
+  });
+}
+
+function clearSeq(){
+  builtSeq=[];
+  document.querySelectorAll('.key-btn').forEach(b=>b.classList.remove('used'));
+  const sb=document.getElementById('seqBuilt');
+  sb.innerHTML='<span class="seq-placeholder">Tap keys below to build / তলৰ কী টেপ কৰক</span>';
+  document.getElementById('feedback').textContent='';
+}
+
+function checkSeq(){
+  const t=TASKS[taskIdx];
+  if(builtSeq.length===0){
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent='Build the key sequence first! / আগে কী ক্ৰম নিৰ্মাণ কৰক!';return;
+  }
+  const correct=t.ans.every((k,i)=>builtSeq[i]===k)&&builtSeq.length===t.ans.length;
+  const sd=document.getElementById('shortcutDisplay');
+  sd.classList.add('show');
+  sd.querySelector('#sdKeys').innerHTML=t.ans.map((k,i)=>`${i>0?'<span style="color:var(--dim);margin:0 3px;">+</span>':''}<span class="sd-key">${k}</span>`).join('');
+  if(correct){
+    score++;document.getElementById('scoreDisplay').textContent=score;
+    updateStars(Math.min(5,Math.ceil(score/1.2)));confetti();
+    document.getElementById('ovEmoji').textContent='⌨️';
+    document.getElementById('ovTitle').textContent=['Excellent!','Spot on!','Brilliant!','You nailed it!'][Math.floor(Math.random()*4)];
+    document.getElementById('ovFact').textContent=t.fact;
+    document.getElementById('ovAs').textContent=t.factAs;
+    const isLast=taskIdx>=5;
+    document.getElementById('ovBtn').textContent=isLast?'Finish! / শেষ!':'Next Task →';
+    document.getElementById('ovBtn').onclick=()=>{showOverlay(false);if(isLast)endGame();else{taskIdx++;renderTask();}};
+    setTimeout(()=>showOverlay(true),300);
+  } else {
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent=`❌ Not quite — correct answer shown above! / উত্তৰ ওপৰত দেখুওৱা হৈছে!`;
+    setTimeout(()=>{taskIdx++;if(taskIdx>=6)endGame();else renderTask();},2800);
+  }
+}
+
+function endGame(){
+  trackProgress();
+  document.getElementById('ovEmoji').textContent='🏆';
+  document.getElementById('ovTitle').textContent='Keyboard Master! / কীবৰ্ড বিশেষজ্ঞ!';
+  document.getElementById('ovFact').textContent=`Score: ${score}/6! You learned Copy, Paste, Undo, Select All, @, and Refresh shortcuts!`;
+  document.getElementById('ovAs').textContent=`স্কোৰ: ${score}/৬! কপি, পেষ্ট, আনডু, সকলো বাছনি, @, আৰু ৰিফ্ৰেছ শৰ্টকাট শিকিলা!`;
+  document.getElementById('ovBtn').textContent='🔄 Play Again / আকৌ খেলক';
+  document.getElementById('ovBtn').onclick=()=>{showOverlay(false);initGame();};
+  showOverlay(true);
+}
+async function trackProgress(){
+  if(!currentUser)return;
+  try{await db.collection('users').doc(currentUser.uid).collection('progress').doc('class4-game22').set(
+    {score,total:6,gameId:'class4-game22',gameName:'Keyboard Quest',class:4,subject:'Computer',completedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+}
+function updateStars(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function showOverlay(s){document.getElementById('overlay').classList.toggle('show',s);}
+function confetti(){
+  const cols=['#FFD166','#4CC9F0','#06D6A0','#FF6B6B','#C77DFF'];
+  for(let i=0;i<22;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%5]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}
+}
+</script>
+</body>
+</html>

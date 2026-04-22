@@ -1,0 +1,3256 @@
+{
+  "version": "1.0",
+  "pricing": {
+    "pre-nursery": 0,
+    "nursery": 350,
+    "class-1": 400,
+    "class-2": 450,
+    "class-3": 500,
+    "class-4": 600,
+    "class-5": 700,
+    "class-6": 900,
+    "class-7": 1000,
+    "class-8": 1100,
+    "class-9": 1400,
+    "class-10": 1600,
+    "bundle-all": 4999,
+    "bundle-family": 6999
+  },
+  "classes": [
+    {
+      "id": "pre-nursery",
+      "name": {
+        "en": "Pre-Nursery",
+        "hi": "प्री-नर्सरी",
+        "as": "প্ৰী-নাৰ্চাৰি"
+      },
+      "tagline": {
+        "en": "Ages 2–3 · Colours, Shapes & Letters",
+        "hi": "2–3 वर्ष · रंग, आकार और अक्षर",
+        "as": "2–3 বছৰ · ৰং, আকৃতি আৰু আখৰ"
+      },
+      "emoji": "🌱",
+      "color": "#00C853",
+      "games": [
+        {
+          "id": "computer-click-button",
+          "title": {
+            "en": "Click the Button",
+            "hi": "बटन क्लिक करो",
+            "as": "বুটাম ক্লিক কৰক"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/prenursery/computer-click-button.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "computer-drag-drop",
+          "title": {
+            "en": "Drag & Drop",
+            "hi": "खींचो और छोड़ो",
+            "as": "টানি এৰক"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/prenursery/computer-drag-drop.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "computer-keyboard",
+          "title": {
+            "en": "Keyboard Hero",
+            "hi": "कीबोर्ड हीरो",
+            "as": "কিবৰ্ড হিৰো"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/prenursery/computer-keyboard.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "english-abc-bubble",
+          "title": {
+            "en": "ABC Bubble Pop",
+            "hi": "अबसी बुलबुले",
+            "as": "এবিচি বুৰবুৰণি"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/prenursery/english-abc-bubble.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "english-animal-match",
+          "title": {
+            "en": "Animal Name Match",
+            "hi": "जानवर मिलान",
+            "as": "জন্তুৰ নাম মিলাওক"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/prenursery/english-animal-match.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "english-rhyme-time",
+          "title": {
+            "en": "Rhyme Time",
+            "hi": "तुकबंदी",
+            "as": "ছন্দৰ সময়"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/prenursery/english-rhyme-time.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "hindi-body-parts",
+          "title": {
+            "en": "Body Parts",
+            "hi": "शरीर के अंग",
+            "as": "শৰীৰৰ অংশ"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/prenursery/hindi-body-parts.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "hindi-fruits",
+          "title": {
+            "en": "Fruits in Hindi",
+            "hi": "फलों के नाम",
+            "as": "হিন্দীত ফলৰ নাম"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/prenursery/hindi-fruits.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "hindi-swar-bubbles",
+          "title": {
+            "en": "Swar Bubbles",
+            "hi": "स्वर बुलबुले",
+            "as": "স্বৰ বুৰবুৰণি"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/prenursery/hindi-swar-bubbles.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "maths-balloon-pop",
+          "title": {
+            "en": "Balloon Pop Maths",
+            "hi": "गुब्बारा पॉप",
+            "as": "বেলুন পপ গণিত"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/prenursery/maths-balloon-pop.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "maths-big-small",
+          "title": {
+            "en": "Big or Small?",
+            "hi": "बड़ा या छोटा?",
+            "as": "ডাঙৰ নে সৰু?"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/prenursery/maths-big-small.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "maths-count-animals",
+          "title": {
+            "en": "Count the Animals",
+            "hi": "जानवर गिनो",
+            "as": "জন্তু গণনা কৰক"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/prenursery/maths-count-animals.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "maths-shape-sorter",
+          "title": {
+            "en": "Shape Sorter",
+            "hi": "आकार छँटाई",
+            "as": "আকৃতি বাছনি"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/prenursery/maths-shape-sorter.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "science-living-nonliving",
+          "title": {
+            "en": "Living or Not?",
+            "hi": "जीव या निर्जीव?",
+            "as": "জীৱ নে অজীৱ?"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/prenursery/science-living-nonliving.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "science-plant-seed",
+          "title": {
+            "en": "Seed to Plant",
+            "hi": "बीज से पौधा",
+            "as": "বীজৰ পৰা গছ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/prenursery/science-plant-seed.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "science-weather",
+          "title": {
+            "en": "Weather Watch",
+            "hi": "मौसम देखो",
+            "as": "বতৰ চোৱা"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/prenursery/science-weather.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "social-good-habits",
+          "title": {
+            "en": "Good Habits",
+            "hi": "अच्छी आदतें",
+            "as": "ভাল অভ্যাস"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/prenursery/social-good-habits.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "social-my-family",
+          "title": {
+            "en": "My Family",
+            "hi": "मेरा परिवार",
+            "as": "মোৰ পৰিয়াল"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/prenursery/social-my-family.html",
+          "addedOn": "2025-01-01"
+        }
+      ]
+    },
+    {
+      "id": "nursery",
+      "name": {
+        "en": "Nursery",
+        "hi": "नर्सरी",
+        "as": "নাৰ্চাৰি"
+      },
+      "tagline": {
+        "en": "Ages 3–4 · Colours, Shapes & Patterns",
+        "hi": "3–4 वर्ष · रंग, आकार और पैटर्न",
+        "as": "3–4 বছৰ · ৰং, আকৃতি আৰু আৰ্হি"
+      },
+      "emoji": "🌼",
+      "color": "#FFB800",
+      "games": [
+        {
+          "id": "game1-colour-pop",
+          "title": {
+            "en": "Colour Pop",
+            "hi": "रंग पॉप",
+            "as": "ৰং পপ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/Nursery/game1-colour-pop.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "game2-find-the-colour",
+          "title": {
+            "en": "Find the Colour",
+            "hi": "रंग खोजो",
+            "as": "ৰং বিচাৰক"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/Nursery/game2-find-the-colour.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "game3-shape-town",
+          "title": {
+            "en": "Shape Town",
+            "hi": "आकार नगर",
+            "as": "আকৃতি নগৰ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/Nursery/game3-shape-town.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "game4-shape-sort",
+          "title": {
+            "en": "Shape Sort",
+            "hi": "आकार छँटाई",
+            "as": "আকৃতি বাছনি"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/Nursery/game4-shape-sort.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "game5-colour-shape-match",
+          "title": {
+            "en": "Colour & Shape Match",
+            "hi": "रंग-आकार मिलान",
+            "as": "ৰং-আকৃতি মিলাওক"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/Nursery/game5-colour-shape-match.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "game6-number-friends",
+          "title": {
+            "en": "Number Friends",
+            "hi": "नंबर दोस्त",
+            "as": "সংখ্যাৰ বন্ধু"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/nursery/game6-number-friends.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game7-abc-train",
+          "title": {
+            "en": "ABC Train",
+            "hi": "अबसी ट्रेन",
+            "as": "এবিচি ৰেল"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/nursery/game7-abc-train.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game8-big-small-more",
+          "title": {
+            "en": "Big Small and More",
+            "hi": "बड़ा छोटा और अधिक",
+            "as": "ডাঙৰ সৰু আৰু অধিক"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/nursery/game8-big-small-more.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game9-colours-world",
+          "title": {
+            "en": "Colours World",
+            "hi": "रंगों की दुनिया",
+            "as": "ৰঙৰ জগত"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/nursery/game9-colours-world.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game10-animal-sounds",
+          "title": {
+            "en": "Animal Sounds",
+            "hi": "जानवरों की आवाजें",
+            "as": "জন্তুৰ শব্দ"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/nursery/game10-animal-sounds.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game11-fruit-veg-sort",
+          "title": {
+            "en": "Fruit and Veg Sort",
+            "hi": "फल और सब्जी छँटाई",
+            "as": "ফল আৰু পাচলি"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/nursery/game11-fruit-veg-sort.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game12-day-night",
+          "title": {
+            "en": "Day and Night",
+            "hi": "दिन और रात",
+            "as": "দিন আৰু ৰাতি"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/nursery/game12-day-night.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game13-body-parts",
+          "title": {
+            "en": "Body Parts",
+            "hi": "शरीर के अंग",
+            "as": "শৰীৰৰ অংগ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/nursery/game13-body-parts.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game14-weather-fun",
+          "title": {
+            "en": "Weather Fun",
+            "hi": "मौसम मस्ती",
+            "as": "বতৰ মজা"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/nursery/game14-weather-fun.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game15-transport-world",
+          "title": {
+            "en": "Transport World",
+            "hi": "परिवहन की दुनिया",
+            "as": "পৰিবহণৰ জগত"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/nursery/game15-transport-world.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game16-opposites-game",
+          "title": {
+            "en": "Opposites Game",
+            "hi": "विपरीत खेल",
+            "as": "বিপৰীত খেল"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/nursery/game16-opposites-game.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game17-number-count",
+          "title": {
+            "en": "Number Count",
+            "hi": "संख्या गिनो",
+            "as": "সংখ্যা গণনা"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/nursery/game17-number-count.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game18-missing-letter",
+          "title": {
+            "en": "Missing Letter",
+            "hi": "खोया अक्षर",
+            "as": "হেৰুৱা আখৰ"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/nursery/game18-missing-letter.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game19-same-different",
+          "title": {
+            "en": "Same or Different",
+            "hi": "समान या अलग",
+            "as": "একে নে বেলেগ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/nursery/game19-same-different.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game20-good-habits",
+          "title": {
+            "en": "Good Habits",
+            "hi": "अच्छी आदतें",
+            "as": "ভাল অভ্যাস"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/nursery/game20-good-habits.html",
+          "addedOn": "2026-03-26"
+        }
+      ]
+    },
+    {
+      "id": "class-1",
+      "name": {
+        "en": "Class 1",
+        "hi": "कक्षा 1",
+        "as": "শ্ৰেণী ১"
+      },
+      "tagline": {
+        "en": "Ages 5–6 · Numbers, Letters & World Around Us",
+        "hi": "5–6 वर्ष · संख्या, अक्षर और हमारे आसपास",
+        "as": "5–6 বছৰ · সংখ্যা, আখৰ আৰু আমাৰ চাৰিওফালে"
+      },
+      "emoji": "🎒",
+      "color": "#00AEEF",
+      "games": [
+        {
+          "id": "computer-parts-builder",
+          "title": {
+            "en": "Computer Parts",
+            "hi": "कंप्यूटर के भाग",
+            "as": "কম্পিউটাৰৰ অংশ"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 1/first/computer-parts-builder.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "computer-smart-child",
+          "title": {
+            "en": "Smart Child",
+            "hi": "स्मार्ट बच्चा",
+            "as": "স্মাৰ্ট শিশু"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 1/first/computer-smart-child.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "computer-word-typer",
+          "title": {
+            "en": "Word Typer",
+            "hi": "शब्द टाइपर",
+            "as": "শব্দ টাইপাৰ"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 1/first/computer-word-typer.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "english-letter-twins",
+          "title": {
+            "en": "Letter Twins",
+            "hi": "अक्षर जोड़े",
+            "as": "আখৰ যোৰ"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 1/first/english-letter-twins.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "english-sentence-train",
+          "title": {
+            "en": "Sentence Train",
+            "hi": "वाक्य ट्रेन",
+            "as": "বাক্য ৰেলগাড়ী"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 1/first/english-sentence-train.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "english-story-tap",
+          "title": {
+            "en": "Story Tap",
+            "hi": "कहानी खेल",
+            "as": "গল্পৰ খেল"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 1/first/english-story-tap.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "english-word-builder",
+          "title": {
+            "en": "Word Builder",
+            "hi": "शब्द बनाओ",
+            "as": "শব্দ তৈয়াৰ কৰক"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 1/first/english-word-builder.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "hindi-matra-magic",
+          "title": {
+            "en": "Matra Magic",
+            "hi": "मात्रा जादू",
+            "as": "মাত্ৰা যাদু"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 1/first/hindi-matra-magic.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "hindi-picture-dictionary",
+          "title": {
+            "en": "Picture Dictionary",
+            "hi": "चित्र शब्दकोश",
+            "as": "চিত্ৰ অভিধান"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 1/first/hindi-picture-dictionary.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "hindi-vyanjan-rocket",
+          "title": {
+            "en": "Vyanjan Rocket",
+            "hi": "व्यंजन रॉकेट",
+            "as": "ব্যঞ্জন ৰকেট"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 1/first/hindi-vyanjan-rocket.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "maths-apple-addition",
+          "title": {
+            "en": "Apple Tree Addition",
+            "hi": "सेब का जोड़",
+            "as": "আপেল গছৰ যোগ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 1/first/maths-apple-addition.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "maths-cookie-subtraction",
+          "title": {
+            "en": "Cookie Subtraction",
+            "hi": "बिस्किट घटाव",
+            "as": "কুকি বিয়োগ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 1/first/maths-cookie-subtraction.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "maths-number-train",
+          "title": {
+            "en": "Number Train",
+            "hi": "संख्या ट्रेन",
+            "as": "সংখ্যা ৰেলগাড়ী"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 1/first/maths-number-train.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "maths-shape-builder",
+          "title": {
+            "en": "Shape Builder",
+            "hi": "आकार बनाओ",
+            "as": "আকৃতি তৈয়াৰ কৰক"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 1/first/maths-shape-builder.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "maths-weighing-scale",
+          "title": {
+            "en": "Weighing Scale",
+            "hi": "तुला खेल",
+            "as": "তুলাচাং খেল"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 1/first/maths-weighing-scale.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "science-animal-homes",
+          "title": {
+            "en": "Animal Homes",
+            "hi": "जानवरों के घर",
+            "as": "জন্তুৰ ঘৰ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 1/first/science-animal-homes.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "science-healthy-plate",
+          "title": {
+            "en": "Healthy Plate",
+            "hi": "सेहतमंद थाली",
+            "as": "স্বাস্থ্যকৰ থাল"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 1/first/science-healthy-plate.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "science-plant-doctor",
+          "title": {
+            "en": "Plant Doctor",
+            "hi": "पौधे का डॉक्टर",
+            "as": "গছৰ চিকিৎসক"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 1/first/science-plant-doctor.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "science-sky-painter",
+          "title": {
+            "en": "Sky Painter",
+            "hi": "आकाश चित्रकार",
+            "as": "আকাশ চিত্ৰকৰ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 1/first/science-sky-painter.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "social-assam-explorer",
+          "title": {
+            "en": "Assam Explorer",
+            "hi": "असम खोज",
+            "as": "অসম অন্বেষণ"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 1/first/social-assam-explorer.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "social-hero-finder",
+          "title": {
+            "en": "Hero Finder",
+            "hi": "नायक खोज",
+            "as": "নায়ক বিচাৰক"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 1/first/social-hero-finder.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "social-vehicle-sorter",
+          "title": {
+            "en": "Vehicle Sorter",
+            "hi": "वाहन छँटाई",
+            "as": "বাহন বাছনি"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 1/first/social-vehicle-sorter.html",
+          "addedOn": "2025-01-01"
+        },
+        {
+          "id": "game23-my-home",
+          "title": {"en": "My Home", "hi": "मेरा घर", "as": "মোৰ ঘৰ"},
+          "subject": "social",
+          "file": "gyanplay-games/class 1/second/game23-my-home.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game24-rhyming-words",
+          "title": {"en": "Rhyming Words", "hi": "तुकबंदी", "as": "অন্তমিল শব্দ"},
+          "subject": "english",
+          "file": "gyanplay-games/class 1/second/game24-rhyming-words.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game25-addition-fun",
+          "title": {"en": "Addition Fun", "hi": "जोड़ का मज़ा", "as": "যোগৰ আনন্দ"},
+          "subject": "maths",
+          "file": "gyanplay-games/class 1/second/game25-addition-fun.html",
+          "addedOn": "2026-03-26"
+        }
+      ]
+    },
+    {
+      "id": "class-2",
+      "name": {
+        "en": "Class 2",
+        "hi": "कक्षा 2",
+        "as": "শ্ৰেণী ২"
+      },
+      "tagline": {
+        "en": "Ages 6–7 · Addition, Stories & Our World",
+        "hi": "6–7 वर्ष · जोड़, कहानियाँ और हमारी दुनिया",
+        "as": "6–7 বছৰ · যোগ, গল্প আৰু আমাৰ জগৎ"
+      },
+      "emoji": "✏️",
+      "color": "#FF6B00",
+      "games": [
+        {
+          "id": "baby-animal-match",
+          "title": {
+            "en": "Baby Animal Match",
+            "hi": "बच्चे जानवर मिलान",
+            "as": "পোৱালি জন্তু মিলাওক"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 2/second/baby-animal-match.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "carry-coconuts",
+          "title": {
+            "en": "Carry Coconuts",
+            "hi": "नारियल जोड़",
+            "as": "নাৰিকল যোগ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 2/second/carry-coconuts.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "clock-tower",
+          "title": {
+            "en": "Clock Tower",
+            "hi": "घड़ी टावर",
+            "as": "ঘড়ী টাৱাৰ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 2/second/clock-tower.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "festival-colours",
+          "title": {
+            "en": "Festival Colours",
+            "hi": "त्योहार के रंग",
+            "as": "উৎসৱৰ ৰং"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 2/second/festival-colours.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "food-farm-to-fork",
+          "title": {
+            "en": "Farm to Fork",
+            "hi": "खेत से थाली",
+            "as": "খেতিৰ পৰা থালত"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 2/second/food-farm-to-fork.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "input-output",
+          "title": {
+            "en": "Input & Output",
+            "hi": "इनपुट आउटपुट",
+            "as": "ইনপুট আউটপুট"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 2/second/input-output.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "internet-explorer",
+          "title": {
+            "en": "Internet Explorer",
+            "hi": "इंटरनेट यात्रा",
+            "as": "ইণ্টাৰনেট অন্বেষণ"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 2/second/internet-explorer.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "ling-khel",
+          "title": {
+            "en": "Ling Khel",
+            "hi": "लिंग खेल",
+            "as": "লিঙ্গ খেল"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 2/second/ling-khel.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "map-reader",
+          "title": {
+            "en": "Map Reader",
+            "hi": "नक्शा पढ़ो",
+            "as": "মানচিত্ৰ পঢ়ক"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 2/second/map-reader.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "material-world",
+          "title": {
+            "en": "Material World",
+            "hi": "सामग्री संसार",
+            "as": "সামগ্ৰীৰ জগৎ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 2/second/material-world.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "multiplication-pond",
+          "title": {
+            "en": "Multiplication Pond",
+            "hi": "गुणा तालाब",
+            "as": "গুণন পুখুৰি"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 2/second/multiplication-pond.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "my-neighbourhood",
+          "title": {
+            "en": "My Neighbourhood",
+            "hi": "मेरा पड़ोस",
+            "as": "মোৰ চুবুৰি"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 2/second/my-neighbourhood.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "noun-town",
+          "title": {
+            "en": "Noun Town",
+            "hi": "संज्ञा नगर",
+            "as": "বিশেষ্য নগৰ"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 2/second/noun-town.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "number-market",
+          "title": {
+            "en": "Number Market",
+            "hi": "संख्या बाज़ार",
+            "as": "সংখ্যা বজাৰ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 2/second/number-market.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "paint-studio",
+          "title": {
+            "en": "Paint Studio",
+            "hi": "रंग स्टूडियो",
+            "as": "ৰং ষ্টুডিঅ'"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 2/second/paint-studio.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "paragraph-builder",
+          "title": {
+            "en": "Paragraph Builder",
+            "hi": "अनुच्छेद बनाओ",
+            "as": "অনুচ্ছেদ তৈয়াৰ কৰক"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 2/second/paragraph-builder.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "punctuation-fixer",
+          "title": {
+            "en": "Punctuation Fixer",
+            "hi": "विराम चिह्न ठीक करो",
+            "as": "বিৰাম চিহ্ন শুধৰোৱা"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 2/second/punctuation-fixer.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "ruler-race",
+          "title": {
+            "en": "Ruler Race",
+            "hi": "स्केल रेस",
+            "as": "স্কেল ৰেচ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 2/second/ruler-race.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "sense-safari",
+          "title": {
+            "en": "Sense Safari",
+            "hi": "इंद्रिय सफारी",
+            "as": "ইন্দ্ৰিয় ছাফাৰি"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 2/second/sense-safari.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "shabd-banao",
+          "title": {
+            "en": "Shabd Banao",
+            "hi": "शब्द बनाओ",
+            "as": "শব্দ বনাওক"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 2/second/shabd-banao.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "vachan-jadu",
+          "title": {
+            "en": "Vachan Jadu",
+            "hi": "वचन जादू",
+            "as": "বচন যাদু"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 2/second/vachan-jadu.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "verb-volcano",
+          "title": {
+            "en": "Verb Volcano",
+            "hi": "क्रिया ज्वालामुखी",
+            "as": "ক্ৰিয়া আগ্নেয়গিৰি"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 2/second/verb-volcano.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "water-journey",
+          "title": {
+            "en": "Water Journey",
+            "hi": "पानी की यात्रा",
+            "as": "পানীৰ যাত্ৰা"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 2/second/water-journey.html",
+          "addedOn": "2025-01-15"
+        },
+        {
+          "id": "game24-seasons",
+          "title": {"en": "Four Seasons", "hi": "चार ऋतुएँ", "as": "চাৰিটা ঋতু"},
+          "subject": "science",
+          "file": "gyanplay-games/class 2/second/game24-seasons.html",
+          "addedOn": "2026-03-26"
+        }
+      ]
+    },
+    {
+      "id": "class-3",
+      "name": {
+        "en": "Class 3",
+        "hi": "कक्षा 3",
+        "as": "শ্ৰেণী ৩"
+      },
+      "tagline": {
+        "en": "Ages 7–8 · Place Value, Assam & Nature",
+        "hi": "7–8 वर्ष · स्थानीय मान, असम और प्रकृति",
+        "as": "7–8 বছৰ · স্থানীয় মান, অসম আৰু প্ৰকৃতি"
+      },
+      "emoji": "📐",
+      "color": "#7C3AED",
+      "games": [
+        {
+          "id": "game1-number-city",
+          "title": {
+            "en": "Number City",
+            "hi": "संख्या नगर",
+            "as": "সংখ্যা নগৰ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 3/first/game1-number-city.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game2-division-diner",
+          "title": {
+            "en": "Division Diner",
+            "hi": "भाग भोजनालय",
+            "as": "ভাগ ৰেষ্টুৰেণ্ট"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 3/first/game2-division-diner.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game3-fraction-street",
+          "title": {
+            "en": "Fraction Street",
+            "hi": "भिन्न गली",
+            "as": "ভগ্নাংশ গলি"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 3/first/game3-fraction-street.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game4-spider-multiplication",
+          "title": {
+            "en": "Spider Multiplication",
+            "hi": "मकड़ी गुणा",
+            "as": "মকৰা গুণন"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 3/first/game4-spider-multiplication.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game5-railway-clock",
+          "title": {
+            "en": "Railway Clock",
+            "hi": "रेलवे घड़ी",
+            "as": "ৰেলৱে ঘড়ী"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 3/first/game5-railway-clock.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game6-adjective-artist",
+          "title": {
+            "en": "Adjective Artist",
+            "hi": "विशेषण कलाकार",
+            "as": "বিশেষণ শিল্পী"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 3/first/game6-adjective-artist.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game7-time-machine-tense",
+          "title": {
+            "en": "Time Machine Tense",
+            "hi": "काल मशीन",
+            "as": "কাল যন্ত্ৰ"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 3/first/game7-time-machine-tense.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game8-cat-prepositions",
+          "title": {
+            "en": "Cat Prepositions",
+            "hi": "बिल्ली कारक",
+            "as": "মেকুৰী বিভক্তি"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 3/first/game8-cat-prepositions.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game9-story-detectives",
+          "title": {
+            "en": "Story Detectives",
+            "hi": "कहानी जासूस",
+            "as": "গল্পৰ গোয়েন্দা"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 3/first/game9-story-detectives.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game10-photosynthesis-factory",
+          "title": {
+            "en": "Photosynthesis Factory",
+            "hi": "प्रकाश संश्लेषण",
+            "as": "সালোক-সংশ্লেষণ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 3/first/game10-photosynthesis-factory.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game11-animal-architects",
+          "title": {
+            "en": "Animal Architects",
+            "hi": "जानवर वास्तुकार",
+            "as": "জন্তু স্থপতি"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 3/first/game11-animal-architects.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game12-water-journey",
+          "title": {
+            "en": "Water Journey",
+            "hi": "पानी की यात्रा",
+            "as": "পানীৰ যাত্ৰা"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 3/first/game12-water-journey.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game13-body-fuel",
+          "title": {
+            "en": "Body Fuel",
+            "hi": "शरीर का ईंधन",
+            "as": "শৰীৰৰ ইন্ধন"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 3/first/game13-body-fuel.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game14-assam-explorer",
+          "title": {
+            "en": "Assam Explorer",
+            "hi": "असम खोज",
+            "as": "অসম অন্বেষণ"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 3/first/game14-assam-explorer.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game15-brahmaputra-story",
+          "title": {
+            "en": "Brahmaputra Story",
+            "hi": "ब्रह्मपुत्र कहानी",
+            "as": "ব্ৰহ্মপুত্ৰৰ কাহিনী"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 3/first/game15-brahmaputra-story.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game16-object-chain",
+          "title": {
+            "en": "Object Chain",
+            "hi": "वस्तु श्रृंखला",
+            "as": "বস্তুৰ শিকলি"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 3/first/game16-object-chain.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game17-monument-mission",
+          "title": {
+            "en": "Monument Mission",
+            "hi": "स्मारक मिशन",
+            "as": "স্মৃতিসৌধ অভিযান"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 3/first/game17-monument-mission.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game18-hindi-adjective-gallery",
+          "title": {
+            "en": "Hindi Adjective Gallery",
+            "hi": "हिंदी विशेषण गैलरी",
+            "as": "হিন্দী বিশেষণ গেলেৰি"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 3/first/game18-hindi-adjective-gallery.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game19-hindi-three-doors",
+          "title": {
+            "en": "Hindi Three Doors",
+            "hi": "हिंदी तीन दरवाजे",
+            "as": "হিন্দী তিনি দুৱাৰ"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 3/first/game19-hindi-three-doors.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game20-hindi-story-clues",
+          "title": {
+            "en": "Hindi Story Clues",
+            "hi": "हिंदी कहानी सुराग",
+            "as": "হিন্দী গল্পৰ সূত্ৰ"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 3/first/game20-hindi-story-clues.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game21-algorithm-kitchen",
+          "title": {
+            "en": "Algorithm Kitchen",
+            "hi": "एल्गोरिदम रसोई",
+            "as": "এলগৰিদম পাকঘৰ"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 3/first/game21-algorithm-kitchen.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game22-file-city",
+          "title": {
+            "en": "File City",
+            "hi": "फाइल शहर",
+            "as": "ফাইল চহৰ"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 3/first/game22-file-city.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game23-safe-surfer",
+          "title": {
+            "en": "Safe Surfer",
+            "hi": "सुरक्षित सर्फिंग",
+            "as": "সুৰক্ষিত ছাৰ্ফিং"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 3/first/game23-safe-surfer.html",
+          "addedOn": "2025-02-01"
+        },
+        {
+          "id": "game24-multiplication-tables",
+          "title": {"en": "Multiplication Tables", "hi": "पहाड़े", "as": "পাৰণ পণ্টা"},
+          "subject": "maths",
+          "file": "gyanplay-games/class 3/first/game24-multiplication-tables.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game25-plants-animals",
+          "title": {"en": "Plants & Animals", "hi": "पौधे और जानवर", "as": "উদ্ভিদ আৰু জন্তু"},
+          "subject": "science",
+          "file": "gyanplay-games/class 3/first/game25-plants-animals.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game26-our-earth",
+          "title": {"en": "Our Earth", "hi": "हमारी पृथ्वी", "as": "আমাৰ পৃথিৱী"},
+          "subject": "social",
+          "file": "gyanplay-games/class 3/first/game26-our-earth.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game27-multiplication-intro",
+          "title": {"en": "Multiplication Intro", "hi": "गुणा परिचय", "as": "গুণন পৰিচয়"},
+          "subject": "maths",
+          "file": "gyanplay-games/class 3/first/game27-multiplication-intro.html",
+          "addedOn": "2026-03-26"
+        }
+      ]
+    },
+    {
+      "id": "class-4",
+      "name": {
+        "en": "Class 4",
+        "hi": "कक्षा 4",
+        "as": "শ্ৰেণী ৪"
+      },
+      "tagline": {
+        "en": "Ages 8–9 · Big Numbers, Maps & Fractions",
+        "hi": "8–9 वर्ष · बड़ी संख्याएँ, नक्शे और भिन्न",
+        "as": "8–9 বছৰ · ডাঙৰ সংখ্যা, মানচিত্ৰ আৰু ভগ্নাংশ"
+      },
+      "emoji": "🗺️",
+      "color": "#FF4081",
+      "games": [
+        {
+          "id": "game1-million-dollar-numbers",
+          "title": {
+            "en": "Million Dollar Numbers",
+            "hi": "लाख का खेल",
+            "as": "লাখৰ খেল"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 4/first/game1-million-dollar-numbers.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game2-multiplication-maze",
+          "title": {
+            "en": "Multiplication Maze",
+            "hi": "गुणा भूलभुलैया",
+            "as": "গুণন গোলকধাঁধা"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 4/first/game2-multiplication-maze.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game3-area-perimeter-arena",
+          "title": {
+            "en": "Area & Perimeter Arena",
+            "hi": "क्षेत्रफल परिमाप",
+            "as": "কালি আৰু পৰিসীমা"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 4/first/game3-area-perimeter-arena.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game4-fraction-faceoff",
+          "title": {
+            "en": "Fraction Faceoff",
+            "hi": "भिन्न मुकाबला",
+            "as": "ভগ্নাংশ প্ৰতিযোগিতা"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 4/first/game4-fraction-faceoff.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game5-pattern-lab",
+          "title": {
+            "en": "Pattern Lab",
+            "hi": "पैटर्न प्रयोगशाला",
+            "as": "আৰ্হি পৰীক্ষাগাৰ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 4/first/game5-pattern-lab.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game6-noun-spotter",
+          "title": {
+            "en": "Noun Spotter",
+            "hi": "संज्ञा खोजी",
+            "as": "বিশেষ্য বিচাৰক"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 4/first/game6-noun-spotter.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game7-verb-engine",
+          "title": {
+            "en": "Verb Engine",
+            "hi": "क्रिया इंजन",
+            "as": "ক্ৰিয়া ইঞ্জিন"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 4/first/game7-verb-engine.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game8-conjunction-junction",
+          "title": {
+            "en": "Conjunction Junction",
+            "hi": "संयोजक जंक्शन",
+            "as": "সংযোজক জংশ্বন"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 4/first/game8-conjunction-junction.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game9-deep-reader",
+          "title": {
+            "en": "Deep Reader",
+            "hi": "गहरी पढ़ाई",
+            "as": "গভীৰ পঠন"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 4/first/game9-deep-reader.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game10-digestion-adventure",
+          "title": {
+            "en": "Digestion Adventure",
+            "hi": "पाचन यात्रा",
+            "as": "হজম অভিযান"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 4/first/game10-digestion-adventure.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game11-extreme-survivors",
+          "title": {
+            "en": "Extreme Survivors",
+            "hi": "चरम उत्तरजीवी",
+            "as": "চৰম জীৱিকা"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 4/first/game11-extreme-survivors.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game12-forces-simple-machines",
+          "title": {
+            "en": "Forces & Machines",
+            "hi": "बल और मशीनें",
+            "as": "বল আৰু যন্ত্ৰ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 4/first/game12-forces-simple-machines.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game13-states-of-matter-mixer",
+          "title": {
+            "en": "States of Matter",
+            "hi": "पदार्थ की अवस्थाएं",
+            "as": "পদাৰ্থৰ অৱস্থা"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 4/first/game13-states-of-matter-mixer.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game14-map-master",
+          "title": {
+            "en": "Map Master",
+            "hi": "नक्शा मास्टर",
+            "as": "মানচিত্ৰ মাষ্টাৰ"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 4/first/game14-map-master.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game15-panchayat-raj-game",
+          "title": {
+            "en": "Panchayat Raj",
+            "hi": "पंचायत राज",
+            "as": "পঞ্চায়ত ৰাজ"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 4/first/game15-panchayat-raj-game.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game16-transport-time-machine",
+          "title": {
+            "en": "Transport Time Machine",
+            "hi": "परिवहन काल यंत्र",
+            "as": "পৰিবহন সময় যন্ত্ৰ"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 4/first/game16-transport-time-machine.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game17-assam-through-time",
+          "title": {
+            "en": "Assam Through Time",
+            "hi": "समय में असम",
+            "as": "সময়ৰ মাজেৰে অসম"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 4/first/game17-assam-through-time.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game18-sangya-ka-bazaar",
+          "title": {
+            "en": "Sangya Ka Bazaar",
+            "hi": "संज्ञा का बाज़ार",
+            "as": "সংজ্ঞাৰ বজাৰ"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 4/first/game18-sangya-ka-bazaar.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game19-sarvanam-jasoos",
+          "title": {
+            "en": "Sarvanam Jasoos",
+            "hi": "सर्वनाम जासूस",
+            "as": "সৰ্বনাম গোয়েন্দা"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 4/first/game19-sarvanam-jasoos.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game20-apatit-khazana",
+          "title": {
+            "en": "Apatit Khazana",
+            "hi": "अपठित खजाना",
+            "as": "অপঠিত ভঁৰাল"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 4/first/game20-apatit-khazana.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game21-hardware-heroes",
+          "title": {
+            "en": "Hardware Heroes",
+            "hi": "हार्डवेयर हीरो",
+            "as": "হাৰ্ডৱেৰ হিৰো"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 4/first/game21-hardware-heroes.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game22-keyboard-quest",
+          "title": {
+            "en": "Keyboard Quest",
+            "hi": "कीबोर्ड खोज",
+            "as": "কিবৰ্ড অভিযান"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 4/first/game22-keyboard-quest.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game23-internet-explorer",
+          "title": {
+            "en": "Internet Explorer",
+            "hi": "इंटरनेट यात्रा",
+            "as": "ইণ্টাৰনেট অন্বেষণ"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 4/first/game23-internet-explorer.html",
+          "addedOn": "2025-02-15"
+        },
+        {
+          "id": "game24-large-numbers",
+          "title": {"en": "Large Numbers", "hi": "बड़ी संख्याएँ", "as": "ডাঙৰ সংখ্যা"},
+          "subject": "maths",
+          "file": "gyanplay-games/class 4/first/game24-large-numbers.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game25-force-work",
+          "title": {"en": "Force & Work", "hi": "बल और कार्य", "as": "বল আৰু কাৰ্য"},
+          "subject": "science",
+          "file": "gyanplay-games/class 4/first/game25-force-work.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game26-states-capitals",
+          "title": {"en": "States & Capitals", "hi": "राज्य और राजधानियाँ", "as": "ৰাজ্য আৰু ৰাজধানী"},
+          "subject": "social",
+          "file": "gyanplay-games/class 4/first/game26-states-capitals.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game27-hindi-rimjhim",
+          "title": {"en": "Hindi Rimjhim", "hi": "हिंदी रिमझिम", "as": "হিন্দী ৰিমঝিম"},
+          "subject": "hindi",
+          "file": "gyanplay-games/class 4/first/game27-hindi-rimjhim.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game28-fractions-decimals",
+          "title": {"en": "Fractions & Decimals", "hi": "भिन्न और दशमलव", "as": "ভগ্নাংশ আৰু দশমিক"},
+          "subject": "maths",
+          "file": "gyanplay-games/class 4/first/game28-fractions-decimals.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game29-map-skills",
+          "title": {"en": "Map Skills", "hi": "नक्शा कौशल", "as": "মানচিত্ৰ দক্ষতা"},
+          "subject": "social",
+          "file": "gyanplay-games/class 4/first/game29-map-skills.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game30-fractions-advanced",
+          "title": {"en": "Fractions Advanced", "hi": "उन्नत भिन्न", "as": "উন্নত ভগ্নাংশ"},
+          "subject": "maths",
+          "file": "gyanplay-games/class 4/first/game30-fractions-advanced.html",
+          "addedOn": "2026-03-26"
+        }
+      ]
+    },
+    {
+      "id": "class-5",
+      "name": {
+        "en": "Class 5",
+        "hi": "कक्षा 5",
+        "as": "শ্ৰেণী ৫"
+      },
+      "tagline": {
+        "en": "Ages 9–10 · Crores, Decimals & India",
+        "hi": "9–10 वर्ष · करोड़, दशमलव और भारत",
+        "as": "9–10 বছৰ · কোটি, দশমিক আৰু ভাৰত"
+      },
+      "emoji": "🇮🇳",
+      "color": "#FF6B00",
+      "games": [
+        {
+          "id": "game1-crore-city",
+          "title": {
+            "en": "Crore City",
+            "hi": "करोड़ शहर",
+            "as": "কোটি চহৰ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 5/first/game1-crore-city.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game2-decimal-street",
+          "title": {
+            "en": "Decimal Street",
+            "hi": "दशमलव गली",
+            "as": "দশমিক গলি"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 5/first/game2-decimal-street.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game3-lcm-hcf-machine",
+          "title": {
+            "en": "LCM & HCF Machine",
+            "hi": "ल.स.अ. और म.स.अ.",
+            "as": "ল.স.গু আৰু গ.সা.গু"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 5/first/game3-lcm-hcf-machine.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game4-average-academy",
+          "title": {
+            "en": "Average Academy",
+            "hi": "औसत अकादमी",
+            "as": "গড় শিক্ষালয়"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 5/first/game4-average-academy.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game5-area-explorer",
+          "title": {
+            "en": "Area Explorer",
+            "hi": "क्षेत्रफल खोजी",
+            "as": "কালি অন্বেষণ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 5/first/game5-area-explorer.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game6-active-passive-voice",
+          "title": {
+            "en": "Active Passive Voice",
+            "hi": "कर्तृवाच्य-कर्मवाच्य",
+            "as": "কৰ্তৃবাচ্য-কৰ্মবাচ্য"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 5/first/game6-active-passive-voice.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game7-speech-detectives",
+          "title": {
+            "en": "Speech Detectives",
+            "hi": "भाषण जासूस",
+            "as": "বক্তৃতা গোয়েন্দা"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 5/first/game7-speech-detectives.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game8-advanced-detectives",
+          "title": {
+            "en": "Advanced Detectives",
+            "hi": "उन्नत जासूस",
+            "as": "উন্নত গোয়েন্দা"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 5/first/game8-advanced-detectives.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game9-idiom-island",
+          "title": {
+            "en": "Idiom Island",
+            "hi": "मुहावरा द्वीप",
+            "as": "মুহাৱৰা দ্বীপ"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 5/first/game9-idiom-island.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game10-microbe-world",
+          "title": {
+            "en": "Microbe World",
+            "hi": "सूक्ष्म जीव संसार",
+            "as": "অণুজীৱৰ জগৎ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 5/first/game10-microbe-world.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game11-india-physical-map",
+          "title": {
+            "en": "India Physical Map",
+            "hi": "भारत का भौतिक नक्शा",
+            "as": "ভাৰতৰ ভৌগোলিক মানচিত্ৰ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 5/first/game11-india-physical-map.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game12-body-systems",
+          "title": {
+            "en": "Body Systems",
+            "hi": "शरीर तंत्र",
+            "as": "শৰীৰতন্ত্ৰ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 5/first/game12-body-systems.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game13-soil-science-lab",
+          "title": {
+            "en": "Soil Science Lab",
+            "hi": "मिट्टी विज्ञान",
+            "as": "মাটি বিজ্ঞান"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 5/first/game13-soil-science-lab.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game14-indias-neighbours",
+          "title": {
+            "en": "India's Neighbours",
+            "hi": "भारत के पड़ोसी",
+            "as": "ভাৰতৰ চুবুৰীয়া"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 5/first/game14-indias-neighbours.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game15-freedom-movement-timeline",
+          "title": {
+            "en": "Freedom Movement",
+            "hi": "स्वतंत्रता आंदोलन",
+            "as": "স্বাধীনতা আন্দোলন"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 5/first/game15-freedom-movement-timeline.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game16-industries-of-india",
+          "title": {
+            "en": "Industries of India",
+            "hi": "भारत के उद्योग",
+            "as": "ভাৰতৰ উদ্যোগ"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 5/first/game16-industries-of-india.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game17-biodiversity-hotspot",
+          "title": {
+            "en": "Biodiversity Hotspot",
+            "hi": "जैव विविधता",
+            "as": "জৈৱ বৈচিত্ৰ্য"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 5/first/game17-biodiversity-hotspot.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game18-vilom-vishwa",
+          "title": {
+            "en": "Vilom Vishwa",
+            "hi": "विलोम विश्व",
+            "as": "বিপৰীতাৰ্থ বিশ্ব"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 5/first/game18-vilom-vishwa.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game19-muhavara-mela",
+          "title": {
+            "en": "Muhavara Mela",
+            "hi": "मुहावरा मेला",
+            "as": "মুহাৱৰা মেলা"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 5/first/game19-muhavara-mela.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game20-patra-ustad",
+          "title": {
+            "en": "Patra Ustad",
+            "hi": "पत्र उस्ताद",
+            "as": "পত্ৰ বিশেষজ্ঞ"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 5/first/game20-patra-ustad.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game21-spreadsheet-city",
+          "title": {
+            "en": "Spreadsheet City",
+            "hi": "स्प्रेडशीट शहर",
+            "as": "স্প্ৰেডশ্বীট চহৰ"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 5/first/game21-spreadsheet-city.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game22-presentation-power",
+          "title": {
+            "en": "Presentation Power",
+            "hi": "प्रेजेंटेशन शक्ति",
+            "as": "প্ৰেজেণ্টেচন শক্তি"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 5/first/game22-presentation-power.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game23-binary-decoder",
+          "title": {
+            "en": "Binary Decoder",
+            "hi": "बाइनरी डिकोडर",
+            "as": "বাইনাৰি ডিকোডাৰ"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 5/first/game23-binary-decoder.html",
+          "addedOn": "2025-03-01"
+        },
+        {
+          "id": "game24-democracy-government",
+          "title": {"en": "Democracy & Government", "hi": "लोकतंत्र और सरकार", "as": "গণতন্ত্ৰ আৰু চৰকাৰ"},
+          "subject": "social",
+          "file": "gyanplay-games/class 5/first/game24-democracy-government.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game25-maps-india",
+          "title": {"en": "Maps of India", "hi": "भारत के नक्शे", "as": "ভাৰতৰ মানচিত্ৰ"},
+          "subject": "social",
+          "file": "gyanplay-games/class 5/first/game25-maps-india.html",
+          "addedOn": "2026-03-26"
+        }
+      ]
+    },
+    {
+      "id": "class-6",
+      "name": {
+        "en": "Class 6",
+        "hi": "कक्षा 6",
+        "as": "শ্ৰেণী ৬"
+      },
+      "tagline": {
+        "en": "Ages 10–11 · Integers, Cells & Ancient India",
+        "hi": "10–11 वर्ष · पूर्णांक, कोशिकाएं और प्राचीन भारत",
+        "as": "10–11 বছৰ · পূৰ্ণসংখ্যা, কোষ আৰু প্ৰাচীন ভাৰত"
+      },
+      "emoji": "⚗️",
+      "color": "#00AEEF",
+      "games": [
+        {
+          "id": "game1-integer-adventures",
+          "title": {
+            "en": "Integer Adventures",
+            "hi": "पूर्णांक साहसिक",
+            "as": "পূৰ্ণসংখ্যা অভিযান"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 6/game1-integer-adventures.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game2-algebra-intro",
+          "title": {
+            "en": "Algebra Intro",
+            "hi": "बीजगणित परिचय",
+            "as": "বীজগণিত পৰিচয়"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 6/game2-algebra-intro.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game3-ratio-proportion-lab",
+          "title": {
+            "en": "Ratio & Proportion",
+            "hi": "अनुपात समानुपात",
+            "as": "অনুপাত-সমানুপাত"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 6/game3-ratio-proportion-lab.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game4-geometry-workshop",
+          "title": {
+            "en": "Geometry Workshop",
+            "hi": "ज्यामिति कार्यशाला",
+            "as": "জ্যামিতি কৰ্মশালা"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 6/game4-geometry-workshop.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game5-data-graphs-studio",
+          "title": {
+            "en": "Data & Graphs Studio",
+            "hi": "डेटा ग्राफ स्टूडियो",
+            "as": "তথ্য গ্ৰাফ ষ্টুডিঅ'"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 6/game5-data-graphs-studio.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game6-tense-master",
+          "title": {
+            "en": "Tense Master",
+            "hi": "काल मास्टर",
+            "as": "কাল মাষ্টাৰ"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 6/game6-tense-master.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game7-clause-builders",
+          "title": {
+            "en": "Clause Builders",
+            "hi": "उपवाक्य निर्माता",
+            "as": "উপবাক্য নিৰ্মাতা"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 6/game7-clause-builders.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game8-media-literacy-lab",
+          "title": {
+            "en": "Media Literacy Lab",
+            "hi": "मीडिया साक्षरता",
+            "as": "মিডিয়া সাক্ষৰতা"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 6/game8-media-literacy-lab.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game9-creative-writing-engine",
+          "title": {
+            "en": "Creative Writing Engine",
+            "hi": "रचनात्मक लेखन",
+            "as": "সৃজনশীল লেখন"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 6/game9-creative-writing-engine.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game10-the-living-cell",
+          "title": {
+            "en": "The Living Cell",
+            "hi": "जीवित कोशिका",
+            "as": "জীৱন্ত কোষ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 6/game10-the-living-cell.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game11-electricity-circuits",
+          "title": {
+            "en": "Electricity Circuits",
+            "hi": "विद्युत परिपथ",
+            "as": "বিদ্যুৎ পৰিপথ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 6/game11-electricity-circuits.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game12-light-and-shadows",
+          "title": {
+            "en": "Light & Shadows",
+            "hi": "प्रकाश और छाया",
+            "as": "পোহৰ আৰু ছাঁ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 6/game12-light-and-shadows.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game13-classification-kingdom",
+          "title": {
+            "en": "Classification Kingdom",
+            "hi": "वर्गीकरण राज्य",
+            "as": "শ্ৰেণীবিভাজন ৰাজ্য"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 6/game13-classification-kingdom.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game14-ancient-india",
+          "title": {
+            "en": "Ancient India",
+            "hi": "प्राचीन भारत",
+            "as": "প্ৰাচীন ভাৰত"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 6/game14-ancient-india.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game15-globe-latitudes",
+          "title": {
+            "en": "Globe & Latitudes",
+            "hi": "ग्लोब और अक्षांश",
+            "as": "গ্লোব আৰু অক্ষাংশ"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 6/game15-globe-latitudes.html",
+          "addedOn": "2025-03-15"
+        },
+        {
+          "id": "game16-medieval-india",
+          "title": {"en": "Medieval India", "hi": "मध्यकालीन भारत", "as": "মধ্যযুগীয় ভাৰত"},
+          "subject": "social",
+          "file": "gyanplay-games/class 6/game16-medieval-india.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game17-earth-layers",
+          "title": {"en": "Earth Layers", "hi": "पृथ्वी की परतें", "as": "পৃথিৱীৰ স্তৰ"},
+          "subject": "science",
+          "file": "gyanplay-games/class 6/game17-earth-layers.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game18-hindi-vasant1",
+          "title": {"en": "Hindi Vasant", "hi": "हिंदी वसंत", "as": "হিন্দী বসন্ত"},
+          "subject": "hindi",
+          "file": "gyanplay-games/class 6/game18-hindi-vasant1.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game19-computer-basics6",
+          "title": {"en": "Computer Basics", "hi": "कंप्यूटर बेसिक्स", "as": "কম্পিউটাৰ মূলতত্ত্ব"},
+          "subject": "computer",
+          "file": "gyanplay-games/class 6/game19-computer-basics6.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game20-body-systems",
+          "title": {"en": "Body Systems", "hi": "शरीर तंत्र", "as": "শৰীৰ তন্ত্ৰ"},
+          "subject": "science",
+          "file": "gyanplay-games/class 6/game20-body-systems.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game21-playing-numbers",
+          "title": {"en": "Playing with Numbers", "hi": "संख्याओं के साथ खेलें", "as": "সংখ্যাৰে খেলা"},
+          "subject": "maths",
+          "file": "gyanplay-games/class 6/game21-playing-numbers.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game22-fractions-symmetry",
+          "title": {"en": "Fractions & Symmetry", "hi": "भिन्न और सममिति", "as": "ভগ্নাংশ আৰু প্ৰতিসমতা"},
+          "subject": "maths",
+          "file": "gyanplay-games/class 6/game22-fractions-symmetry.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game23-civics-government",
+          "title": {"en": "Civics & Government", "hi": "नागरिकशास्त्र और सरकार", "as": "নাগৰিকশাস্ত্ৰ আৰু চৰকাৰ"},
+          "subject": "social",
+          "file": "gyanplay-games/class 6/game23-civics-government.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game24-english-honeydew",
+          "title": {"en": "Honeydew Stories", "hi": "हनीड्यू कहानियाँ", "as": "হানিডিউ কাহিনী"},
+          "subject": "english",
+          "file": "gyanplay-games/class 6/game24-english-honeydew.html",
+          "addedOn": "2026-03-26"
+        }
+      ]
+    },
+    {
+      "id": "class-7",
+      "name": {
+        "en": "Class 7",
+        "hi": "कक्षा 7",
+        "as": "শ্ৰেণী ৭"
+      },
+      "tagline": {
+        "en": "Ages 11–12 · Integers, Cells & Medieval India",
+        "hi": "11–12 वर्ष · पूर्णांक, कोशिकाएं और मध्यकालीन भारत",
+        "as": "11–12 বছৰ · পূৰ্ণসংখ্যা, কোষ আৰু মধ্যযুগীয় ভাৰত"
+      },
+      "emoji": "🔬",
+      "color": "#7C3AED",
+      "games": [
+        {
+          "id": "game1-integer-adventurer",
+          "title": {
+            "en": "Integer Adventurer",
+            "hi": "पूर्णांक साहसी",
+            "as": "পূৰ্ণসংখ্যা অভিযাত্ৰী"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 7/game1-integer-adventurer.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game2-tense-transformer",
+          "title": {
+            "en": "Tense Transformer",
+            "hi": "काल परिवर्तक",
+            "as": "কাল ৰূপান্তৰক"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 7/game2-tense-transformer.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game3-food-web-forest",
+          "title": {
+            "en": "Food Web Forest",
+            "hi": "खाद्य जाल वन",
+            "as": "খাদ্য জাল অৰণ্য"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 7/game3-food-web-forest.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game4-mughal-mission",
+          "title": {
+            "en": "Mughal Mission",
+            "hi": "मुगल मिशन",
+            "as": "মোগল অভিযান"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 7/game4-mughal-mission.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game5-samas-sangam",
+          "title": {
+            "en": "Samas Sangam",
+            "hi": "समास संगम",
+            "as": "সমাস সংগম"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 7/game5-samas-sangam.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game6-algorithm-factory",
+          "title": {
+            "en": "Algorithm Factory",
+            "hi": "एल्गोरिदम कारखाना",
+            "as": "এলগৰিদম কাৰখানা"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 7/game6-algorithm-factory.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game7-fraction-war",
+          "title": {
+            "en": "Fraction War",
+            "hi": "भिन्न युद्ध",
+            "as": "ভগ্নাংশ যুদ্ধ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 7/game7-fraction-war.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game8-equation-solver",
+          "title": {
+            "en": "Equation Solver",
+            "hi": "समीकरण हल",
+            "as": "সমীকৰণ সমাধান"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 7/game8-equation-solver.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game9-angle-hunter",
+          "title": {
+            "en": "Angle Hunter",
+            "hi": "कोण शिकारी",
+            "as": "কোণ চিকাৰী"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 7/game9-angle-hunter.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game10-active-passive",
+          "title": {
+            "en": "Active and Passive Voice",
+            "hi": "कर्तृवाच्य और कर्मवाच्य",
+            "as": "কৰ্তৃবাচ্য আৰু কৰ্মবাচ্য"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 7/game10-active-passive.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game11-honeycomb-quiz",
+          "title": {
+            "en": "Honeycomb Quiz",
+            "hi": "हनीकॉम्ब क्विज",
+            "as": "হানিকম্ব কুইজ"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 7/game11-honeycomb-quiz.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game12-article-adjective",
+          "title": {
+            "en": "Article and Adjective",
+            "hi": "आर्टिकल और विशेषण",
+            "as": "আৰ্টিকেল আৰু বিশেষণ"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 7/game12-article-adjective.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game13-nutrition-plants",
+          "title": {
+            "en": "Nutrition in Plants",
+            "hi": "पौधों में पोषण",
+            "as": "উদ্ভিদত পুষ্টি"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 7/game13-nutrition-plants.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game14-heat-detective",
+          "title": {
+            "en": "Heat Detective",
+            "hi": "उष्मा जासूस",
+            "as": "তাপ গোয়েন্দা"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 7/game14-heat-detective.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game15-acid-base-explorer",
+          "title": {
+            "en": "Acid and Base Explorer",
+            "hi": "अम्ल-क्षार खोजकर्ता",
+            "as": "এচিড-ক্ষাৰ অন্বেষক"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 7/game15-acid-base-explorer.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game16-mughal-glory",
+          "title": {
+            "en": "Mughal Glory",
+            "hi": "मुगल वैभव",
+            "as": "মোগল গৌৰৱ"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 7/game16-mughal-glory.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game17-india-geography",
+          "title": {
+            "en": "India Geography",
+            "hi": "भारत का भूगोल",
+            "as": "ভাৰতৰ ভূগোল"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 7/game17-india-geography.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game18-hindi-muhavare",
+          "title": {
+            "en": "Hindi Muhavare",
+            "hi": "हिंदी मुहावरे",
+            "as": "হিন্দী মুহাৱাৰে"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 7/game18-hindi-muhavare.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game19-vilom-shabd",
+          "title": {
+            "en": "Vilom Shabd",
+            "hi": "विलोम शब्द",
+            "as": "বিলোম শব্দ"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 7/game19-vilom-shabd.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game20-hindi-vyakaran",
+          "title": {
+            "en": "Hindi Vyakaran",
+            "hi": "हिंदी व्याकरण",
+            "as": "হিন্দী ব্যাকৰণ"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 7/game20-hindi-vyakaran.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game21-flowchart-fun",
+          "title": {
+            "en": "Flowchart Fun",
+            "hi": "फ्लोचार्ट मजा",
+            "as": "ফ্লোচাৰ্ট মজা"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 7/game21-flowchart-fun.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game22-internet-explorer",
+          "title": {
+            "en": "Internet Explorer",
+            "hi": "इंटरनेट खोजकर्ता",
+            "as": "ইন্টাৰনেট অন্বেষক"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 7/game22-internet-explorer.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game23-cell-structure",
+          "title": {
+            "en": "Cell Structure",
+            "hi": "कोशिका संरचना",
+            "as": "কোষ গঠন"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 7/game23-cell-structure.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game24-symmetry-art",
+          "title": {
+            "en": "Symmetry Art",
+            "hi": "सममिति कला",
+            "as": "প্ৰতিসমতা কলা"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 7/game24-symmetry-art.html",
+          "addedOn": "2026-03-25"
+        }
+      ]
+    },
+    {
+      "id": "class-8",
+      "name": {
+        "en": "Class 8",
+        "hi": "कक्षा 8",
+        "as": "শ্ৰেণী ৮"
+      },
+      "tagline": {
+        "en": "Ages 12–13 · Algebra, Mensuration & Literature",
+        "hi": "12–13 वर्ष · बीजगणित, क्षेत्रमिति और साहित्य",
+        "as": "12–13 বছৰ · বীজগণিত, পৰিমিতি আৰু সাহিত্য"
+      },
+      "emoji": "📊",
+      "color": "#FF4081",
+      "games": [
+        {
+          "id": "game1-compound-interest-casino",
+          "title": {
+            "en": "Compound Interest Casino",
+            "hi": "चक्रवृद्धि ब्याज",
+            "as": "চক্ৰবৃদ্ধি সুত"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 8/game1-compound-interest-casino.html",
+          "addedOn": "2025-04-01"
+        },
+        {
+          "id": "game2-algebra-identity-forge",
+          "title": {
+            "en": "Algebra Identity Forge",
+            "hi": "बीजगणित पहचान सूत्र",
+            "as": "বীজগণিত সূত্ৰ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 8/game2-algebra-identity-forge.html",
+          "addedOn": "2025-04-01"
+        },
+        {
+          "id": "game3-mensuration-workshop",
+          "title": {
+            "en": "Mensuration Workshop",
+            "hi": "क्षेत्रमिति कार्यशाला",
+            "as": "পৰিমিতি কৰ্মশালা"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 8/game3-mensuration-workshop.html",
+          "addedOn": "2025-04-01"
+        },
+        {
+          "id": "game4-square-root-codebreaker",
+          "title": {
+            "en": "Square Root Codebreaker",
+            "hi": "वर्गमूल कोड",
+            "as": "বৰ্গমূল ক'ড"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 8/game4-square-root-codebreaker.html",
+          "addedOn": "2025-04-01"
+        },
+        {
+          "id": "game5-proportion-machine",
+          "title": {
+            "en": "Proportion Machine",
+            "hi": "समानुपात यंत्र",
+            "as": "সমানুপাত যন্ত্ৰ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 8/game5-proportion-machine.html",
+          "addedOn": "2025-04-01"
+        },
+        {
+          "id": "game6-modal-verb-theatre",
+          "title": {
+            "en": "Modal Verb Theatre",
+            "hi": "मोडल क्रिया थिएटर",
+            "as": "মডেল ক্ৰিয়া থিয়েটাৰ"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 8/game6-modal-verb-theatre.html",
+          "addedOn": "2025-04-01"
+        },
+        {
+          "id": "game7-argument-architect",
+          "title": {
+            "en": "Argument Architect",
+            "hi": "तर्क वास्तुकार",
+            "as": "তৰ্ক স্থপতি"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 8/game7-argument-architect.html",
+          "addedOn": "2025-04-01"
+        },
+        {
+          "id": "game8-character-theme-lab",
+          "title": {
+            "en": "Character Theme Lab",
+            "hi": "चरित्र विषयवस्तु प्रयोगशाला",
+            "as": "চৰিত্ৰ বিষয়বস্তু পৰীক্ষাগাৰ"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 8/game8-character-theme-lab.html",
+          "addedOn": "2025-04-01"
+        },
+        {
+          "id": "game9-rational-numbers",
+          "title": {
+            "en": "Rational Numbers",
+            "hi": "परिमेय संख्याएं",
+            "as": "পৰিমেয় সংখ্যা"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 8/game9-rational-numbers.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game10-linear-equations",
+          "title": {
+            "en": "Linear Equations",
+            "hi": "रैखिक समीकरण",
+            "as": "ৰৈখিক সমীকৰণ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 8/game10-linear-equations.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game11-microorganisms",
+          "title": {
+            "en": "Microorganisms",
+            "hi": "सूक्ष्मजीव",
+            "as": "অণুজীৱ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 8/game11-microorganisms.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game12-combustion-quiz",
+          "title": {
+            "en": "Combustion Quiz",
+            "hi": "दहन प्रश्नोत्तरी",
+            "as": "দহন কুইজ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 8/game12-combustion-quiz.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game13-indian-constitution",
+          "title": {
+            "en": "Indian Constitution",
+            "hi": "भारतीय संविधान",
+            "as": "ভাৰতীয় সংবিধান"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 8/game13-indian-constitution.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game14-resources-geography",
+          "title": {
+            "en": "Resources and Geography",
+            "hi": "संसाधन और भूगोल",
+            "as": "সম্পদ আৰু ভূগোল"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 8/game14-resources-geography.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game15-crop-production",
+          "title": {
+            "en": "Crop Production",
+            "hi": "फसल उत्पादन",
+            "as": "শস্য উৎপাদন"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 8/game15-crop-production.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game16-metals-nonmetals",
+          "title": {
+            "en": "Metals and Non-Metals",
+            "hi": "धातु और अधातु",
+            "as": "ধাতু আৰু অধাতু"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 8/game16-metals-nonmetals.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game17-cell-reproduction",
+          "title": {
+            "en": "Cell and Reproduction",
+            "hi": "कोशिका और प्रजनन",
+            "as": "কোষ আৰু প্ৰজনন"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 8/game17-cell-reproduction.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game18-squares-cubes",
+          "title": {
+            "en": "Squares and Cubes",
+            "hi": "वर्ग और घन",
+            "as": "বৰ্গ আৰু ঘন"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 8/game18-squares-cubes.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game19-linear-inequalities",
+          "title": {
+            "en": "Linear Equations",
+            "hi": "रैखिक समीकरण",
+            "as": "ৰৈখিক সমীকৰণ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 8/game19-linear-inequalities.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game20-our-constitution",
+          "title": {
+            "en": "Our Constitution",
+            "hi": "हमारा संविधान",
+            "as": "আমাৰ সংবিধান"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 8/game20-our-constitution.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game21-land-soil-water",
+          "title": {
+            "en": "Land Soil and Water",
+            "hi": "भूमि मिट्टी और पानी",
+            "as": "মাটি মাটি আৰু পানী"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 8/game21-land-soil-water.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game22-industries-india",
+          "title": {
+            "en": "Industries of India",
+            "hi": "भारत के उद्योग",
+            "as": "ভাৰতৰ উদ্যোগ"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 8/game22-industries-india.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game23-hindi-vasant",
+          "title": {
+            "en": "Hindi Vasant Bhag 3",
+            "hi": "हिंदी वसंत भाग ३",
+            "as": "হিন্দী বসন্ত ভাগ ৩"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 8/game23-hindi-vasant.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game24-software-hardware",
+          "title": {
+            "en": "Software and Hardware",
+            "hi": "सॉफ्टवेयर और हार्डवेयर",
+            "as": "ছফ্টৱেৰ আৰু হাৰ্ডৱেৰ"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 8/game24-software-hardware.html",
+          "addedOn": "2026-03-26"
+        }
+      ]
+    },
+    {
+      "id": "class-9",
+      "name": {
+        "en": "Class 9",
+        "hi": "कक्षा 9",
+        "as": "শ্ৰেণী ৯"
+      },
+      "tagline": {
+        "en": "Ages 13–14 · Real Numbers, Polynomials & Prose",
+        "hi": "13–14 वर्ष · वास्तविक संख्या, बहुपद और गद्य",
+        "as": "13–14 বছৰ · বাস্তৱ সংখ্যা, বহুপদী আৰু গদ্য"
+      },
+      "emoji": "🧮",
+      "color": "#00C853",
+      "games": [
+        {
+          "id": "game1-real-number-explorer",
+          "title": {
+            "en": "Real Number Explorer",
+            "hi": "वास्तविक संख्या खोजी",
+            "as": "বাস্তৱ সংখ্যা অন্বেষণ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 9/first/game1-real-number-explorer.html",
+          "addedOn": "2025-05-01"
+        },
+        {
+          "id": "game2-polynomial-observatory",
+          "title": {
+            "en": "Polynomial Observatory",
+            "hi": "बहुपद वेधशाला",
+            "as": "বহুপদী পৰ্যবেক্ষণাগাৰ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 9/first/game2-polynomial-observatory.html",
+          "addedOn": "2025-05-01"
+        },
+        {
+          "id": "game3-graph-world",
+          "title": {
+            "en": "Graph World",
+            "hi": "ग्राफ संसार",
+            "as": "গ্ৰাফ জগৎ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 9/first/game3-graph-world.html",
+          "addedOn": "2025-05-01"
+        },
+        {
+          "id": "game4-geometry-proof-studio",
+          "title": {
+            "en": "Geometry Proof Studio",
+            "hi": "ज्यामिति प्रमाण स्टूडियो",
+            "as": "জ্যামিতি প্ৰমাণ ষ্টুডিঅ'"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 9/first/game4-geometry-proof-studio.html",
+          "addedOn": "2025-05-01"
+        },
+        {
+          "id": "game5-data-story-lab",
+          "title": {
+            "en": "Data Story Lab",
+            "hi": "डेटा कहानी प्रयोगशाला",
+            "as": "তথ্য কাহিনী পৰীক্ষাগাৰ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 9/first/game5-data-story-lab.html",
+          "addedOn": "2025-05-01"
+        },
+        {
+          "id": "game6-grammar-engine-room",
+          "title": {
+            "en": "Grammar Engine Room",
+            "hi": "व्याकरण इंजन रूम",
+            "as": "ব্যাকৰণ ইঞ্জিন কক্ষ"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 9/first/game6-grammar-engine-room.html",
+          "addedOn": "2025-05-01"
+        },
+        {
+          "id": "game7-beehive-story-lab",
+          "title": {
+            "en": "Beehive Story Lab",
+            "hi": "मधुमक्खी कहानी",
+            "as": "মৌচাক কাহিনী"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 9/first/game7-beehive-story-lab.html",
+          "addedOn": "2025-05-01"
+        },
+        {
+          "id": "game8-writing-workshop",
+          "title": {
+            "en": "Writing Workshop",
+            "hi": "लेखन कार्यशाला",
+            "as": "লেখন কৰ্মশালা"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 9/first/game8-writing-workshop.html",
+          "addedOn": "2025-05-01"
+        },
+        {
+          "id": "game9-moments-detective",
+          "title": {
+            "en": "Moments Detective",
+            "hi": "क्षण जासूस",
+            "as": "মুহূৰ্তৰ গোয়েন্দা"
+          },
+          "subject": "english",
+          "file": "gyanplay-games/class 9/first/game9-moments-detective.html",
+          "addedOn": "2025-05-01"
+        },
+        {
+          "id": "game10-atoms-molecules",
+          "title": {
+            "en": "Atoms and Molecules",
+            "hi": "परमाणु और अणु",
+            "as": "পৰমাণু আৰু অণু"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 9/game10-atoms-molecules.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game11-fundamental-unit-life",
+          "title": {
+            "en": "Fundamental Unit of Life",
+            "hi": "जीवन की मूल इकाई",
+            "as": "জীৱনৰ মূল একক"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 9/game11-fundamental-unit-life.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game12-nazism-ww2",
+          "title": {
+            "en": "Nazism and World War II",
+            "hi": "नाजीवाद और द्वितीय विश्वयुद्ध",
+            "as": "নাজিবাদ আৰু দ্বিতীয় বিশ্বযুদ্ধ"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 9/game12-nazism-ww2.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game13-democratic-politics",
+          "title": {
+            "en": "Democratic Politics",
+            "hi": "लोकतांत्रिक राजनीति",
+            "as": "গণতান্ত্ৰিক ৰাজনীতি"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 9/game13-democratic-politics.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game14-probability-statistics",
+          "title": {
+            "en": "Stats and Probability",
+            "hi": "सांख्यिकी और प्रायिकता",
+            "as": "পৰিসংখ্যা আৰু সম্ভাৱিতা"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 9/game14-probability-statistics.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game15-force-laws-motion",
+          "title": {
+            "en": "Force and Laws of Motion",
+            "hi": "बल और गति के नियम",
+            "as": "বল আৰু গতিৰ নিয়ম"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 9/game15-force-laws-motion.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game16-gravitation-work",
+          "title": {
+            "en": "Gravitation and Work Energy",
+            "hi": "गुरुत्वाकर्षण और कार्य ऊर्जा",
+            "as": "মহাকৰ্ষণ আৰু কাৰ্য শক্তি"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 9/game16-gravitation-work.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game17-sound-waves",
+          "title": {
+            "en": "Sound and Waves",
+            "hi": "ध्वनि और तरंगें",
+            "as": "শব্দ আৰু তৰঙ্গ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 9/game17-sound-waves.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game18-climate-india",
+          "title": {
+            "en": "Climate of India",
+            "hi": "भारत की जलवायु",
+            "as": "ভাৰতৰ জলবায়ু"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 9/game18-climate-india.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game19-poverty-food-security",
+          "title": {
+            "en": "Poverty and Food Security",
+            "hi": "गरीबी और खाद्य सुरक्षा",
+            "as": "দৰিদ্ৰতা আৰু খাদ্য সুৰক্ষা"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 9/game19-poverty-food-security.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game20-coordinate-geometry",
+          "title": {
+            "en": "Coordinate Geometry",
+            "hi": "निर्देशांक ज्यामिति",
+            "as": "স্থানাংক জ্যামিতি"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 9/game20-coordinate-geometry.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game21-hindi-kshitij",
+          "title": {
+            "en": "Hindi Kshitij Bhag 1",
+            "hi": "हिंदी क्षितिज भाग १",
+            "as": "হিন্দী ক্ষিতিজ ভাগ ১"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 9/game21-hindi-kshitij.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game22-computer-class9",
+          "title": {
+            "en": "Computer and Python Basics",
+            "hi": "कंप्यूटर और Python",
+            "as": "কম্পিউটাৰ আৰু Python"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 9/game22-computer-class9.html",
+          "addedOn": "2026-03-26"
+        }
+      ]
+    },
+    {
+      "id": "class-10",
+      "name": {
+        "en": "Class 10",
+        "hi": "कक्षा 10",
+        "as": "শ্ৰেণী ১০"
+      },
+      "tagline": {
+        "en": "Ages 14–15 · Board Exam Prep · Triangles & Trigonometry",
+        "hi": "14–15 वर्ष · बोर्ड परीक्षा · त्रिभुज और त्रिकोणमिति",
+        "as": "14–15 বছৰ · বৰ্ড পৰীক্ষা · ত্ৰিভুজ আৰু ত্ৰিকোণমিতি"
+      },
+      "emoji": "🎓",
+      "color": "#FF6B00",
+      "games": [
+        {
+          "id": "game1-triangle-similarity-lab",
+          "title": {
+            "en": "Triangle Similarity Lab",
+            "hi": "त्रिभुज समानता प्रयोगशाला",
+            "as": "ত্ৰিভুজ সদৃশতা পৰীক্ষাগাৰ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 10/game1-triangle-similarity-lab.html",
+          "addedOn": "2025-06-01"
+        },
+        {
+          "id": "game2-quadratic-equation-forge",
+          "title": {
+            "en": "Quadratic Equation Forge",
+            "hi": "द्विघात समीकरण",
+            "as": "দ্বিঘাতীয় সমীকৰণ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 10/game2-quadratic-equation-forge.html",
+          "addedOn": "2025-06-01"
+        },
+        {
+          "id": "game3-trigonometry-command-centre",
+          "title": {
+            "en": "Trigonometry Command Centre",
+            "hi": "त्रिकोणमिति केंद्र",
+            "as": "ত্ৰিকোণমিতি কেন্দ্ৰ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 10/game3-trigonometry-command-centre.html",
+          "addedOn": "2025-06-01"
+        },
+        {
+          "id": "game4-chemical-reactions",
+          "title": {
+            "en": "Chemical Reactions",
+            "hi": "रासायनिक अभिक्रिया",
+            "as": "ৰাসায়নিক বিক্ৰিয়া"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 10/game4-chemical-reactions.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game5-acids-bases-salts",
+          "title": {
+            "en": "Acids Bases and Salts",
+            "hi": "अम्ल क्षार और लवण",
+            "as": "এচিড ক্ষাৰ আৰু লৱণ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 10/game5-acids-bases-salts.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game6-life-processes",
+          "title": {
+            "en": "Life Processes",
+            "hi": "जैव प्रक्रियाएं",
+            "as": "জীৱন প্ৰক্ৰিয়া"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 10/game6-life-processes.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game7-electricity",
+          "title": {
+            "en": "Electricity",
+            "hi": "विद्युत",
+            "as": "বিদ্যুৎ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 10/game7-electricity.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game8-nationalism-india",
+          "title": {
+            "en": "Nationalism in India",
+            "hi": "भारत में राष्ट्रवाद",
+            "as": "ভাৰতত জাতীয়তাবাদ"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 10/game8-nationalism-india.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game9-federalism-democracy",
+          "title": {
+            "en": "Federalism and Democracy",
+            "hi": "संघवाद और लोकतंत्र",
+            "as": "যুক্তৰাষ্ট্ৰবাদ আৰু গণতন্ত্ৰ"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 10/game9-federalism-democracy.html",
+          "addedOn": "2026-03-25"
+        },
+        {
+          "id": "game10-light-optics",
+          "title": {
+            "en": "Light: Reflection & Refraction",
+            "hi": "प्रकाश: परावर्तन और अपवर्तन",
+            "as": "পোহৰ: প্ৰতিফলন আৰু প্ৰতিসৰণ"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 10/game10-light-optics.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game11-control-reproduction",
+          "title": {
+            "en": "Control, Coordination & Reproduction",
+            "hi": "नियंत्रण, समन्वय और जनन",
+            "as": "নিয়ন্ত্ৰণ, সমন্বয় আৰু প্ৰজনন"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 10/game11-control-reproduction.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game12-heredity-evolution",
+          "title": {
+            "en": "Heredity and Evolution",
+            "hi": "आनुवंशिकता और विकास",
+            "as": "বংশগতি আৰু বিৱৰ্তন"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 10/game12-heredity-evolution.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game13-magnetic-energy",
+          "title": {
+            "en": "Magnetic Effects and Energy",
+            "hi": "चुंबकीय प्रभाव और ऊर्जा",
+            "as": "চুম্বকীয় প্ৰভাৱ আৰু শক্তি"
+          },
+          "subject": "science",
+          "file": "gyanplay-games/class 10/game13-magnetic-energy.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game14-real-polynomials",
+          "title": {
+            "en": "Real Numbers & Polynomials",
+            "hi": "वास्तविक संख्याएं और बहुपद",
+            "as": "বাস্তৱ সংখ্যা আৰু বহুপদ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 10/game14-real-polynomials.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game15-linear-equations-2var",
+          "title": {
+            "en": "Linear Equations in Two Variables",
+            "hi": "दो चरों में रैखिक समीकरण",
+            "as": "দুটা চলকত ৰৈখিক সমীকৰণ"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 10/game15-linear-equations-2var.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game16-circles-areas",
+          "title": {
+            "en": "Circles and Areas",
+            "hi": "वृत्त और क्षेत्रफल",
+            "as": "বৃত্ত আৰু কালি"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 10/game16-circles-areas.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game17-stats-probability",
+          "title": {
+            "en": "Stats and Probability",
+            "hi": "सांख्यिकी और प्रायिकता",
+            "as": "পৰিসংখ্যা আৰু সম্ভাৱিতা"
+          },
+          "subject": "maths",
+          "file": "gyanplay-games/class 10/game17-stats-probability.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game18-nationalism-europe",
+          "title": {
+            "en": "Rise of Nationalism in Europe",
+            "hi": "यूरोप में राष्ट्रवाद का उदय",
+            "as": "ইউৰোপত জাতীয়তাবাদৰ উত্থান"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 10/game18-nationalism-europe.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game19-globalisation-economy",
+          "title": {
+            "en": "Globalisation & Indian Economy",
+            "hi": "वैश्वीकरण और भारतीय अर्थव्यवस्था",
+            "as": "বিশ্বায়ন আৰু ভাৰতীয় অৰ্থনীতি"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 10/game19-globalisation-economy.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game20-agriculture-resources",
+          "title": {
+            "en": "Agriculture and Resources",
+            "hi": "कृषि और संसाधन",
+            "as": "কৃষি আৰু সম্পদ"
+          },
+          "subject": "social",
+          "file": "gyanplay-games/class 10/game20-agriculture-resources.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game21-hindi-sparsh",
+          "title": {
+            "en": "Hindi Sparsh Bhag 2",
+            "hi": "हिंदी स्पर्श भाग २",
+            "as": "হিন্দী স্পৰ্শ ভাগ ২"
+          },
+          "subject": "hindi",
+          "file": "gyanplay-games/class 10/game21-hindi-sparsh.html",
+          "addedOn": "2026-03-26"
+        },
+        {
+          "id": "game22-computer-class10",
+          "title": {
+            "en": "Computer Science Class 10",
+            "hi": "कंप्यूटर विज्ञान कक्षा १०",
+            "as": "কম্পিউটাৰ বিজ্ঞান শ্ৰেণী ১০"
+          },
+          "subject": "computer",
+          "file": "gyanplay-games/class 10/game22-computer-class10.html",
+          "addedOn": "2026-03-26"
+        }
+      ]
+    }
+  ]
+}

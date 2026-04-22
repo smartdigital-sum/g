@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Extreme Survivors — GyanPlay Class 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --lime:#A8E063;--text:#E8F0FF;--dim:#4A6A8A;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:linear-gradient(160deg,#071A07,#040E04);min-height:100vh;
+  font-family:'Nunito',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:0 16px 40px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.h-left{display:flex;flex-direction:column;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);}
+.game-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);}
+.subject-tag{font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:1.3rem;opacity:.25;transition:opacity .3s,filter .3s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.wow{background:linear-gradient(135deg,rgba(168,224,99,.15),rgba(168,224,99,.04));
+  border:1px solid rgba(168,224,99,.3);border-radius:16px;padding:16px;margin-bottom:18px;}
+.wow-emoji{font-size:2rem;margin-bottom:6px;}
+.wow p{font-size:.88rem;line-height:1.55;}
+.wow p span{color:var(--gold);font-weight:700;}
+.wow-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-top:6px;}
+/* Round tabs */
+.round-tabs{display:flex;gap:8px;margin-bottom:14px;}
+.rtab{flex:1;padding:9px 6px;background:rgba(168,224,99,.06);border:2px solid rgba(168,224,99,.15);
+  border-radius:12px;text-align:center;font-family:'Baloo 2',sans-serif;font-size:.75rem;font-weight:700;
+  color:var(--dim);transition:all .2s;}
+.rtab.active{background:rgba(168,224,99,.15);border-color:var(--lime);color:var(--lime);}
+.rtab.done{border-color:rgba(6,214,160,.4);color:var(--teal);}
+/* Game area */
+.game-area{background:var(--card);border-radius:20px;padding:20px;margin-bottom:14px;
+  border:1px solid rgba(168,224,99,.12);}
+.round-title{font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:800;color:var(--lime);margin-bottom:3px;}
+.round-title-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.72rem;color:var(--dim);margin-bottom:12px;}
+/* Match columns */
+.match-area{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.match-col{display:flex;flex-direction:column;gap:8px;}
+.match-item{padding:11px 10px;border-radius:12px;font-size:.82rem;line-height:1.4;cursor:pointer;
+  touch-action:manipulation;transition:all .2s;text-align:center;}
+.match-item.left{background:rgba(168,224,99,.08);border:2px solid rgba(168,224,99,.2);color:var(--text);}
+.match-item.right{background:rgba(255,209,102,.06);border:2px solid rgba(255,209,102,.15);color:var(--text);}
+.match-item.selected{border-width:2px;box-shadow:0 0 12px rgba(255,209,102,.3);}
+.match-item.left.selected{border-color:var(--lime);background:rgba(168,224,99,.2);}
+.match-item.right.selected{border-color:var(--gold);background:rgba(255,209,102,.15);}
+.match-item.matched{pointer-events:none;border-color:var(--teal);background:rgba(6,214,160,.15);color:var(--teal);}
+.match-item.wrong{border-color:var(--coral);background:rgba(255,107,107,.12);color:var(--coral);}
+.match-item .as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.65rem;color:var(--dim);display:block;margin-top:2px;}
+.feedback{text-align:center;font-size:.85rem;min-height:1.2em;font-weight:600;margin-top:4px;}
+.feedback.ok{color:var(--teal);}
+.feedback.err{color:var(--coral);}
+.progress-wrap{margin-bottom:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);margin-bottom:5px;}
+.prog-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--lime);border-radius:99px;transition:width .4s;}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;
+  justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-card{background:var(--card);border:1px solid rgba(168,224,99,.3);border-radius:22px;
+  padding:28px 24px;text-align:center;max-width:320px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);}to{transform:scale(1) translateY(0);}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px;}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.ov-fact{font-size:.83rem;line-height:1.5;margin-bottom:12px;}
+.ov-as{font-family:'Noto Sans Devanagari',sans-serif;font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+.ov-btn{padding:12px 28px;background:var(--gold);color:#0F0820;border:none;border-radius:12px;
+  font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:200;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.auth-screen p{color:var(--dim);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen"><div style="font-size:2.5rem">🌵</div><p>Loading… / লোড হৈছে…</p></div>
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="h-left">
+      <div class="game-title">Extreme Survivors</div>
+      <div class="game-title-as">চৰম বৰ্তমান</div>
+      <div class="subject-tag">Science · শ্ৰেণী ৪</div>
+    </div>
+    <div class="stars" id="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+      <span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+  <div class="wow">
+    <div class="wow-emoji">🐪</div>
+    <p>A camel's hump is <span>NOT full of water</span> — it's full of FAT. The fat releases water when burned. <span>Camels are solar-powered water factories!</span></p>
+    <div class="wow-as">উটৰ কুঁজ পানীৰে নহয় — চৰ্বিৰে ভৰ্তি! সেই চৰ্বি জ্বলালে পানী হয়। উট সৌৰচালিত পানীৰ কাৰখানা!</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-label"><span>Score: <span id="scoreDisplay">0</span>/12</span><span style="font-family:'Noto Sans Devanagari',sans-serif;">স্কোৰ: <span id="scoreAs">০</span>/১২</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="round-tabs" id="roundTabs"></div>
+  <div class="game-area" id="gameArea"></div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <div class="ov-as" id="ovAs"></div>
+    <button class="ov-btn" id="ovBtn">Next →</button>
+  </div>
+</div>
+<script>
+const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let currentUser=null;
+auth.onAuthStateChanged(u=>{
+  if(!u){window.location.href='/login.html';return;}
+  currentUser=u;
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initGame();
+});
+
+const ROUNDS=[
+  {
+    title:"Round 1: Animal → Habitat",titleAs:"পশু → বাসস্থান",
+    pairs:[
+      {left:{text:'🐪 Camel',as:'উট'},right:{text:'🌵 Desert',as:'মৰুভূমি'},fact:"Camels survive 2 weeks without water — their fat hump is the secret!",factAs:"উটে ২ সপ্তাহ পানী নোহোৱাকৈ থাকিব পাৰে!"},
+      {left:{text:'🦏 Rhino',as:'গঁড়'},right:{text:'🌿 Grassland',as:'তৃণভূমি'},fact:"Assam's rhinos live in tall grass — they use it to hide from predators!",factAs:"অসমৰ গঁড় ওখ ঘাঁহত লুকাই থাকে!"},
+      {left:{text:'🐟 Fish',as:'মাছ'},right:{text:'🌊 River/Water',as:'নদী/পানী'},fact:"Fish have gills to extract oxygen from water — lungs wouldn't work underwater!",factAs:"মাছৰ ফুলকা পানীৰ পৰা অক্সিজেন উলিয়ায়!"},
+      {left:{text:'🐻‍❄️ Polar Bear',as:'মেৰুভালুক'},right:{text:'❄️ Arctic Ice',as:'আৰ্কটিক বৰফ'},fact:"Polar bears have black skin under white fur — black absorbs heat from the sun!",factAs:"মেৰুভালুকৰ বগা নোমৰ তলত ক'লা ছাল — তাপ শোষণ কৰিবলৈ!"}
+    ]
+  },
+  {
+    title:"Round 2: Feature → Function",titleAs:"বৈশিষ্ট্য → কাৰ্য",
+    pairs:[
+      {left:{text:'🌵 Thick waxy leaves',as:'মোটা মোমযুক্ত পাত'},right:{text:'💧 Prevent water loss',as:'পানী হেৰুৱা ৰোধ কৰে'},fact:"Desert plants coat leaves in wax to seal in moisture — nature's plastic wrap!",factAs:"মৰুভূমিৰ উদ্ভিদে পাতত মোম লগাই আৰ্দ্ৰতা আবদ্ধ ৰাখে!"},
+      {left:{text:'🦎 Colour-changing skin',as:'ৰং সলনি হোৱা ছাল'},right:{text:'🙈 Camouflage/hide',as:'ছদ্মবেশ/লুকোৱা'},fact:"Chameleons change colour for temperature control too, not just hiding!",factAs:"গিৰ্গিটি তাপমাত্ৰা নিয়ন্ত্ৰণৰ বাবেও ৰং সলনি কৰে!"},
+      {left:{text:'🐘 Large ears',as:'ডাঙৰ কান'},right:{text:'🌬️ Cool the body',as:'শৰীৰ ঠাণ্ডা কৰে'},fact:"Elephant ears are full of blood vessels — flapping fans the blood and cools them!",factAs:"হাতীৰ কান তেজৰ নলীৰে ভৰা — কাণ দুলিলে তেজ ঠাণ্ডা হয়!"},
+      {left:{text:'🦅 Hollow bones',as:'ফোঁপোলা হাড়'},right:{text:'✈️ Makes flight easier',as:'উৰিবলৈ সহায় কৰে'},fact:"Birds' hollow bones make them 30–40% lighter than mammals of the same size!",factAs:"চৰাইৰ ফোঁপোলা হাড়ে একে আকাৰৰ স্তন্যপায়ীতকৈ ৩০-৪০% হাল্কা!"}
+    ]
+  },
+  {
+    title:"Round 3: Environment → Survivor",titleAs:"পৰিৱেশ → বৰ্তমান",
+    pairs:[
+      {left:{text:'🌡️ Very hot & dry',as:'অতি গৰম আৰু শুকান'},right:{text:'🐪 Camel',as:'উট'},fact:"Camels can drink 100 litres of water in 10 minutes when they find a source!",factAs:"পানী পালে উটে ১০ মিনিটত ১০০ লিটাৰ পিব পাৰে!"},
+      {left:{text:'🌊 Deep ocean',as:'গভীৰ সমুদ্ৰ'},right:{text:'🦑 Squid',as:'স্কুইড'},fact:"Deep ocean squids can produce their own light — bioluminescence in darkness!",factAs:"গভীৰ সমুদ্ৰৰ স্কুইড নিজেই পোহৰ উৎপাদন কৰিব পাৰে!"},
+      {left:{text:'🌿 Dense rainforest',as:'ঘন বৰষুণৰ অৰণ্য'},right:{text:'🐒 Monkey',as:'বান্দৰ'},fact:"Rainforest monkeys have prehensile tails — like a 5th limb for gripping branches!",factAs:"বৰষুণ অৰণ্যৰ বান্দৰৰ নেজ ডালত ধৰিব পাৰে!"},
+      {left:{text:'❄️ Freezing cold',as:'প্ৰচণ্ড ঠাণ্ডা'},right:{text:'🐧 Penguin',as:'পেংগুইন'},fact:"Penguins huddle in groups of 10,000 — temperature in the middle reaches 37°C!",factAs:"পেংগুইন ১০,০০০ৰ দলত গোট খায় — মাজৰ তাপমাত্ৰা ৩৭°C হয়!"}
+    ]
+  }
+];
+
+let currentRound=0,selectedLeft=null,score=0,roundsDone=[false,false,false];
+
+function initGame(){currentRound=0;selectedLeft=null;score=0;roundsDone=[false,false,false];updateStars(0);renderTabs();loadRound(0);}
+
+function renderTabs(){
+  const c=document.getElementById('roundTabs');c.innerHTML='';
+  ROUNDS.forEach((r,i)=>{
+    const t=document.createElement('div');
+    t.className='rtab'+(i===currentRound?' active':'')+(roundsDone[i]?' done':'');
+    t.innerHTML=`<div>Round ${i+1}</div><div style="font-size:.6rem;">${roundsDone[i]?'✓ Done':r.title.split(':')[1].trim()}</div>`;
+    t.addEventListener('click',()=>{currentRound=i;renderTabs();loadRound(i);});
+    c.appendChild(t);
+  });
+}
+
+function loadRound(idx){
+  const r=ROUNDS[idx];
+  const ga=document.getElementById('gameArea');
+  const pairs=[...r.pairs].map((p,i)=>({...p,id:i}));
+  const shuffledRight=[...pairs].sort(()=>Math.random()-.5);
+  ga.innerHTML=`
+    <div class="round-title">${r.title}</div>
+    <div class="round-title-as">${r.titleAs}</div>
+    <p style="font-size:.75rem;color:var(--dim);margin-bottom:12px;">Tap a green item, then tap its match on the right. / সেউজীয়া বস্তু টেপ কৰক, তাৰপিছত সোঁফালৰ মিল টেপ কৰক।</p>
+    <div class="match-area">
+      <div class="match-col" id="leftCol">
+        ${pairs.map(p=>`<div class="match-item left" id="L${idx}-${p.id}" onclick="selectLeft(${idx},${p.id})">${p.left.text}<span class="as">${p.left.as}</span></div>`).join('')}
+      </div>
+      <div class="match-col" id="rightCol">
+        ${shuffledRight.map(p=>`<div class="match-item right" id="R${idx}-${p.id}" onclick="selectRight(${idx},${p.id})">${p.right.text}<span class="as">${p.right.as}</span></div>`).join('')}
+      </div>
+    </div>
+    <div class="feedback" id="feedback"></div>`;
+  selectedLeft=null;
+}
+
+function selectLeft(roundIdx,itemId){
+  selectedLeft=itemId;
+  document.querySelectorAll(`#L${roundIdx}-${itemId}`).forEach(el=>el.classList.add('selected'));
+  document.querySelectorAll('.match-item.left').forEach(el=>{if(el.id!==`L${roundIdx}-${itemId}`)el.classList.remove('selected');});
+}
+
+function selectRight(roundIdx,itemId){
+  if(selectedLeft===null){
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent='Tap a green item first! / আগে সেউজীয়া বস্তু টেপ কৰক!';
+    setTimeout(()=>document.getElementById('feedback').textContent='',1500);return;
+  }
+  const pair=ROUNDS[roundIdx].pairs[selectedLeft];
+  if(itemId===selectedLeft){
+    // correct match
+    document.getElementById('L'+roundIdx+'-'+selectedLeft).classList.replace('left','matched');
+    document.getElementById('R'+roundIdx+'-'+itemId).classList.replace('right','matched');
+    score++;
+    document.getElementById('scoreDisplay').textContent=score;
+    document.getElementById('scoreAs').textContent=['০','১','২','৩','৪','৫','৬','৭','৮','৯','১০','১১','১২'][score]||score;
+    document.getElementById('progFill').style.width=(score/12*100)+'%';
+    updateStars(Math.min(5,Math.ceil(score/2.4)));
+    selectedLeft=null;
+    // Check round complete
+    const allMatched=ROUNDS[roundIdx].pairs.every((_,i)=>document.getElementById('L'+roundIdx+'-'+i)?.classList.contains('matched'));
+    if(allMatched){
+      roundsDone[roundIdx]=true;renderTabs();confetti();
+      const isLast=roundsDone.every(d=>d);
+      document.getElementById('ovEmoji').textContent='🌿';
+      document.getElementById('ovTitle').textContent=isLast?'Adaptation Expert!':'Round Complete!';
+      document.getElementById('ovFact').textContent=pair.fact;
+      document.getElementById('ovAs').textContent=pair.factAs;
+      document.getElementById('ovBtn').textContent=isLast?'Finish! / শেষ!':'Next Round → / পৰৱৰ্তী ৰাউণ্ড';
+      document.getElementById('ovBtn').onclick=()=>{showOverlay(false);if(isLast)endGame();else{currentRound++;renderTabs();loadRound(currentRound);}};
+      setTimeout(()=>showOverlay(true),400);
+    }
+  } else {
+    document.getElementById('R'+roundIdx+'-'+itemId).classList.add('wrong');
+    setTimeout(()=>document.getElementById('R'+roundIdx+'-'+itemId).classList.remove('wrong'),700);
+    document.getElementById('feedback').className='feedback err';
+    document.getElementById('feedback').textContent='❌ Try another match! / আন মিল চেষ্টা কৰক!';
+    setTimeout(()=>document.getElementById('feedback').textContent='',1500);
+    selectedLeft=null;
+    document.querySelectorAll('.match-item.left').forEach(el=>el.classList.remove('selected'));
+  }
+}
+
+function endGame(){
+  trackProgress();
+  document.getElementById('ovEmoji').textContent='🏆';
+  document.getElementById('ovTitle').textContent='Survival Master! / বৰ্তমানৰ ওস্তাদ!';
+  document.getElementById('ovFact').textContent=`Score: ${score}/12! You matched animals to habitats, features to functions, and environments to survivors!`;
+  document.getElementById('ovAs').textContent=`স্কোৰ: ${score}/১২! তুমি পশু, বাসস্থান, বৈশিষ্ট্য আৰু পৰিৱেশ মিলালে!`;
+  document.getElementById('ovBtn').textContent='🔄 Play Again / আকৌ খেলক';
+  document.getElementById('ovBtn').onclick=()=>{showOverlay(false);initGame();};
+  showOverlay(true);
+}
+async function trackProgress(){
+  if(!currentUser)return;
+  try{await db.collection('users').doc(currentUser.uid).collection('progress').doc('class4-game11').set(
+    {score,total:12,gameId:'class4-game11',gameName:'Extreme Survivors',class:4,subject:'Science',completedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+}
+function updateStars(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function showOverlay(s){document.getElementById('overlay').classList.toggle('show',s);}
+function confetti(){
+  const cols=['#FFD166','#A8E063','#06D6A0','#FF6B6B','#4CC9F0'];
+  for(let i=0;i<26;i++){const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[i%5]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}
+}
+</script>
+</body>
+</html>

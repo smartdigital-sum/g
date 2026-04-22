@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>व्यंजन Rocket 🚀 — Class 1 Hindi</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans+Devanagari:wght@700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--saffron:#FF6B00;--space:#0d1b2a;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans Devanagari','Nunito',sans-serif;background:radial-gradient(ellipse at 30% 20%,#1a0a4e,#0d1b2a 60%,#050d1a);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* SPACE BG */
+.stars-bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.sstar{position:absolute;background:#fff;border-radius:50%;animation:twink 2s infinite;}
+@keyframes twink{0%,100%{opacity:.15;}50%{opacity:.9;}}
+.planet{position:fixed;pointer-events:none;z-index:1;animation:planetOrbit 15s ease-in-out infinite;}
+@keyframes planetOrbit{0%,100%{transform:translateY(0);}50%{transform:translateY(-20px);}}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 4px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#FFD700;text-shadow:0 0 20px rgba(255,215,0,.5);}
+.lvchip{display:inline-block;background:rgba(255,215,0,.15);border:2px solid rgba(255,215,0,.4);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#FFD700;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,215,0,.12);border:2px solid rgba(255,215,0,.3);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#FFD700;}
+.spill span{color:#FF6B00;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .3s;}
+.pdot.done{background:#FFD700;box-shadow:0 0 8px #FFD700;}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* TARGET CARD */
+.target-card{
+  position:relative;z-index:20;
+  background:linear-gradient(135deg,rgba(255,107,0,.2),rgba(255,215,0,.15));
+  backdrop-filter:blur(12px);
+  border:3px solid rgba(255,215,0,.4);border-radius:28px;
+  padding:clamp(12px,3vw,20px) clamp(20px,5vw,40px);
+  margin:8px 16px;text-align:center;
+  max-width:600px;width:calc(100% - 32px);
+  box-shadow:0 8px 28px rgba(0,0,0,.4);
+}
+.target-vyanjan{
+  font-size:clamp(5rem,20vw,9rem);color:#FFD700;
+  font-weight:900;line-height:1;display:block;
+  text-shadow:0 0 40px rgba(255,215,0,.5);
+  animation:vyFloat 2s ease-in-out infinite;
+}
+@keyframes vyFloat{0%,100%{transform:scale(1);}50%{transform:scale(1.08) rotate(-2deg);}}
+.target-roman{color:rgba(255,255,255,.6);font-size:clamp(.9rem,3.5vw,1.3rem);font-weight:700;font-family:'Fredoka One',cursive;}
+.target-word{color:rgba(255,255,255,.85);font-size:clamp(.85rem,3.2vw,1.15rem);font-weight:700;margin-top:4px;}
+.hear-btn{background:rgba(255,215,0,.2);border:2px solid rgba(255,215,0,.5);color:#FFD700;border-radius:50px;padding:6px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem;cursor:pointer;margin-top:8px;}
+.hear-btn:hover{background:rgba(255,215,0,.35);}
+
+/* ROCKET LAUNCH AREA */
+.launch-area{position:relative;z-index:15;flex:1;width:100%;max-width:700px;padding:0 14px;}
+.rockets-row{display:flex;gap:clamp(8px,3vw,16px);justify-content:center;flex-wrap:wrap;padding:10px 0;}
+
+.rocket-btn{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  cursor:pointer;padding:clamp(10px,2.5vw,16px) clamp(12px,3vw,20px);
+  border-radius:22px;border:3px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.07);
+  transition:all .2s;
+  position:relative;top:0;
+  min-width:clamp(60px,15vw,90px);
+}
+.rocket-btn:hover{top:-4px;border-color:rgba(255,215,0,.6);background:rgba(255,215,0,.1);}
+.rocket-ico{font-size:clamp(1.8rem,6vw,2.8rem);}
+.rocket-letter{
+  font-size:clamp(1.6rem,6vw,2.6rem);font-weight:900;
+  background:linear-gradient(135deg,var(--gold),var(--saffron));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.rocket-roman{font-size:clamp(.6rem,2vw,.8rem);color:rgba(255,255,255,.5);font-weight:800;font-family:'Fredoka One',cursive;}
+.rocket-btn.correct-launch{border-color:#2ed573;background:rgba(46,213,115,.2);animation:rLaunch .5s ease;}
+@keyframes rLaunch{0%{transform:scale(1);}30%{transform:scale(1.2) translateY(-8px);}100%{transform:scale(1);}}
+.rocket-btn.wrong-launch{border-color:#FF4757;background:rgba(255,71,87,.2);animation:rShake .35s ease;opacity:.35;pointer-events:none;}
+@keyframes rShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+
+/* ROCKET LAUNCH VFX */
+.rocket-vfx{position:fixed;z-index:200;pointer-events:none;font-size:clamp(2.5rem,8vw,4rem);animation:rocketUp 1s ease-out forwards;}
+@keyframes rocketUp{0%{transform:translateY(0) scale(1);opacity:1;}100%{transform:translateY(-80vh) scale(.3);opacity:0;}}
+
+/* LETTER FLASH */
+.letter-flash{position:fixed;inset:0;z-index:160;display:flex;align-items:center;justify-content:center;pointer-events:none;flex-direction:column;gap:8px;}
+.lf-letter{font-size:clamp(6rem,22vw,12rem);font-weight:900;color:#FFD700;text-shadow:0 0 50px rgba(255,215,0,.6);animation:lfIn .5s ease both,lfOut .3s .8s ease forwards;}
+.lf-word{font-size:clamp(1rem,4vw,1.8rem);color:#fff;font-weight:700;animation:lfIn .5s .1s ease both,lfOut .3s .8s ease forwards;font-family:'Fredoka One',cursive;}
+@keyframes lfIn{from{transform:scale(0);opacity:0;}60%{transform:scale(1.2);}to{transform:scale(1);opacity:1;}}
+@keyframes lfOut{to{transform:scale(1.5);opacity:0;}}
+
+/* FACT */
+.fact-box{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(13,27,42,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:400px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,30,.85);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.85rem,3vw,1.05rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:2;}
+.ov-btn{background:linear-gradient(135deg,#FF6B00,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(255,107,0,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="stars-bg" id="starsBg"></div>
+<div class="planet" style="top:15%;right:8%;font-size:3rem;">🪐</div>
+<div class="planet" style="top:5%;left:5%;font-size:2rem;animation-delay:3s;">🌙</div>
+
+<div class="header">
+  <div class="title">🚀 व्यंजन Rocket</div>
+  <div class="lvchip" id="lvChip">Hindi Consonants — क ख ग...</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">🚀 Round: <span id="roundVal">1</span>/25</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="target-card">
+  <span class="target-vyanjan" id="targetV">क</span>
+  <div class="target-roman" id="targetR">Ka</div>
+  <div class="target-word" id="targetW">क से कमल (Kamal — Lotus)</div>
+  <button class="hear-btn" onclick="hearLetter()">🔊 सुनो! / Hear!</button>
+</div>
+
+<div class="launch-area">
+  <div class="rockets-row" id="rocketsRow"></div>
+</div>
+
+<script>
+const VYANJANS=[
+  {v:'क',r:'Ka',word:'कमल',meaning:'Lotus 🌸'},{v:'ख',r:'Kha',word:'खरगोश',meaning:'Rabbit 🐰'},
+  {v:'ग',r:'Ga',word:'गाय',meaning:'Cow 🐮'},{v:'घ',r:'Gha',word:'घर',meaning:'House 🏠'},
+  {v:'च',r:'Cha',word:'चाँद',meaning:'Moon 🌙'},{v:'छ',r:'Chha',word:'छाता',meaning:'Umbrella ☂️'},
+  {v:'ज',r:'Ja',word:'जंगल',meaning:'Jungle 🌳'},{v:'झ',r:'Jha',word:'झरना',meaning:'Waterfall 💧'},
+  {v:'त',r:'Ta',word:'तालाब',meaning:'Pond 🌊'},{v:'द',r:'Da',word:'दरवाजा',meaning:'Door 🚪'},
+  {v:'न',r:'Na',word:'नदी',meaning:'River 🏞️'},{v:'प',r:'Pa',word:'पानी',meaning:'Water 💧'},
+  {v:'फ',r:'Pha',word:'फूल',meaning:'Flower 🌸'},{v:'ब',r:'Ba',word:'बादल',meaning:'Cloud ☁️'},
+  {v:'भ',r:'Bha',word:'भालू',meaning:'Bear 🐻'},{v:'म',r:'Ma',word:'माँ',meaning:'Mother 👩'},
+  {v:'य',r:'Ya',word:'यात्रा',meaning:'Journey 🚀'},{v:'र',r:'Ra',word:'रात',meaning:'Night 🌙'},
+  {v:'ल',r:'La',word:'लड्डू',meaning:'Sweet 🍬'},{v:'व',r:'Va',word:'वन',meaning:'Forest 🌲'},
+  {v:'स',r:'Sa',word:'सूरज',meaning:'Sun ☀️'},{v:'ह',r:'Ha',word:'हाथी',meaning:'Elephant 🐘'},
+  {v:'ट',r:'Ta',word:'टोपी',meaning:'Cap 🎩'},{v:'ड',r:'Da',word:'डमरू',meaning:'Drum 🥁'},
+  {v:'ण',r:'Na',word:'बाण',meaning:'Arrow 🏹'},
+];
+const ROCKET_EMOJIS=['🚀','🛸','🛩️','🚁','✈️'];
+const TOTAL=25;
+let score=0,round=0,used=[],current=null,answered=false;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playLaunch(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(200,c.currentTime);o.frequency.exponentialRampToValueAtTime(1200,c.currentTime+.5);g.gain.setValueAtTime(.2,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.6);o.start();o.stop(c.currentTime+.6);}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t,lang='hi-IN'){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.8;u.pitch=1.3;u.lang=lang;window.speechSynthesis.speak(u);}
+function hearLetter(){if(current){speak(`${current.v}! ${current.v} से ${current.word}! ${current.meaning.split(' ')[0]}!`);}}
+window.hearLetter=hearLetter;
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<Math.min(TOTAL,20);i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#FF6B00','#FFD700','#2ed573','#00ffff','#FF4757'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showFact(v,word,meaning){document.querySelector('.fact-box')?.remove();const el=document.createElement('div');el.className='fact-box';el.textContent=`✅ ${v} = ${word} — ${meaning}`;document.body.appendChild(el);setTimeout(()=>el.remove(),3000);}
+function showLetterFlash(v,word,meaning){const el=document.createElement('div');el.className='letter-flash';el.innerHTML=`<div class="lf-letter">${v}</div><div class="lf-word">${v} से ${word} (${meaning})</div>`;document.body.appendChild(el);setTimeout(()=>el.remove(),1200);}
+
+function launchVfx(btn){
+  const rect=btn.getBoundingClientRect();
+  const el=document.createElement('div');el.className='rocket-vfx';
+  el.textContent='🚀';el.style.cssText=`left:${rect.left+rect.width/2-20}px;top:${rect.top}px;`;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1100);
+}
+
+function makeStars(){
+  const bg=document.getElementById('starsBg');
+  for(let i=0;i<60;i++){const s=document.createElement('div');s.className='sstar';const sz=Math.random()*2.5+.5;s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${1.5+Math.random()*2}s;`;bg.appendChild(s);}
+}
+
+function newRound(){
+  if(used.length>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+  const remaining=VYANJANS.filter(v=>!used.some(u=>u.v===v.v));
+  current=remaining[Math.floor(Math.random()*remaining.length)];
+  used.push(current);
+  document.getElementById('targetV').textContent=current.v;
+  document.getElementById('targetR').textContent=current.r;
+  document.getElementById('targetW').textContent=`${current.v} से ${current.word} (${current.meaning})`;
+  // 5 choices: correct + 4 distractors
+  const others=VYANJANS.filter(v=>v.v!==current.v).sort(()=>Math.random()-.5).slice(0,4);
+  const all=[current,...others].sort(()=>Math.random()-.5);
+  const row=document.getElementById('rocketsRow');row.innerHTML='';
+  all.forEach((vy,i)=>{
+    const btn=document.createElement('div');btn.className='rocket-btn';
+    btn.innerHTML=`<span class="rocket-ico">${ROCKET_EMOJIS[i%ROCKET_EMOJIS.length]}</span><span class="rocket-letter">${vy.v}</span><span class="rocket-roman">${vy.r}</span>`;
+    btn.onclick=()=>pickRocket(btn,vy);
+    row.appendChild(btn);
+  });
+  setTimeout(()=>{speak(`${current.v}! ${current.v} से ${current.word}! इसे ढूंढो!`);},400);
+}
+
+function pickRocket(btn,vy){
+  if(answered)return;
+  if(vy.v===current.v){
+    answered=true;btn.classList.add('correct-launch');
+    playLaunch();spawnConf();launchVfx(btn);
+    showLetterFlash(current.v,current.word,current.meaning);
+    showFact(current.v,current.word,current.meaning);
+    score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(`${current.v}! शाबाश! ${current.v} से ${current.word}!`);
+    round++;makeDots();setTimeout(newRound,1800);
+  } else {
+    btn.classList.add('wrong-launch');playWrong();
+    speak(`यह ${vy.v} है! ${current.v} ढूंढो!`);
+  }
+}
+
+function showCelebration(){
+  playChime();spawnConf();speak('शाबाश! सभी व्यंजन सीख लिए! Amazing! You know all Hindi consonants!','hi-IN');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">🚀</div>
+    <div class="ov-title">व्यंजन Champion!</div>
+    <div class="ov-sub">क ख ग घ च छ ज झ त द न प फ ब भ म य र ल व स ह<br/>
+    You launched all the consonant rockets into space!<br/><br/>
+    Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</div>
+    <button class="ov-btn" onclick="restart()">Play Again 🚀</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;used=[];document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{makeStars();window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('व्यंजन सीखो! Find the right Hindi letter!','hi-IN');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>

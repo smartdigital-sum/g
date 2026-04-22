@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>G5-01 · Crore City · GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--purple:#C77DFF;--text:#E8F0FF;--dim:#4A6A8A;
+  --grad-from:#180A28;--grad-to:#0F0820;--accent:var(--purple);
+  --border:rgba(199,125,255,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:linear-gradient(145deg,var(--grad-from),var(--grad-to));
+  min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);
+  display:flex;flex-direction:column;align-items:center;
+  padding:0 0 40px;
+}
+/* HEADER */
+.header{
+  width:100%;max-width:480px;padding:16px 20px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.subject-tag{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.4rem;font-weight:800;color:var(--gold);text-align:center;}
+.stars{display:flex;gap:3px;}
+.star{font-size:1rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+
+/* WOW CARD */
+.wow-card{
+  width:calc(100% - 32px);max-width:448px;
+  background:linear-gradient(135deg,rgba(199,125,255,.18),rgba(76,201,240,.12));
+  border:1px solid var(--border);border-radius:18px;
+  padding:18px 20px;margin:8px 16px 16px;text-align:center;
+}
+.wow-card .wow-label{font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.wow-card p{font-size:.95rem;line-height:1.6;color:var(--text);}
+.wow-card strong{color:var(--gold);}
+
+/* STAGE LABEL */
+.stage-label{
+  font-size:.75rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);margin:0 0 10px;text-align:center;
+}
+
+/* DIAL CONTAINER */
+.dial-section{width:calc(100% - 32px);max-width:448px;margin:0 16px;}
+.target-display{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:14px 20px;margin-bottom:16px;text-align:center;
+}
+.target-display .label{font-size:.75rem;color:var(--dim);font-weight:700;margin-bottom:4px;}
+.target-display .number{font-family:'Baloo 2',cursive;font-size:1.8rem;font-weight:800;color:var(--gold);letter-spacing:2px;}
+.target-display .words{font-size:.85rem;color:var(--teal);margin-top:4px;}
+
+/* DIALS ROW */
+.dials-row{
+  display:flex;justify-content:center;gap:6px;margin-bottom:16px;flex-wrap:wrap;
+}
+.dial-wrapper{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.dial-place{font-size:.55rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;text-align:center;}
+.dial{
+  width:44px;height:120px;background:var(--card);
+  border:2px solid var(--border);border-radius:10px;
+  overflow:hidden;position:relative;cursor:pointer;
+  user-select:none;touch-action:none;
+}
+.dial-inner{
+  position:absolute;width:100%;
+  transition:transform .15s ease;
+}
+.dial-digit{
+  height:40px;display:flex;align-items:center;justify-content:center;
+  font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;
+  color:rgba(232,240,255,.25);
+}
+.dial-digit.active{color:var(--gold);font-size:1.5rem;}
+.dial-highlight{
+  position:absolute;top:50%;left:0;right:0;
+  height:40px;transform:translateY(-50%);
+  background:rgba(199,125,255,.12);
+  border-top:2px solid rgba(199,125,255,.4);
+  border-bottom:2px solid rgba(199,125,255,.4);
+  pointer-events:none;border-radius:4px;
+}
+.dial-btn{display:flex;justify-content:center;align-items:center;gap:8px;}
+.dial-btn button{
+  background:rgba(199,125,255,.15);border:none;
+  color:var(--accent);font-size:1rem;width:28px;height:28px;
+  border-radius:6px;cursor:pointer;font-weight:800;
+  transition:background .2s;
+}
+.dial-btn button:hover{background:rgba(199,125,255,.3);}
+
+/* PLAYER NUMBER */
+.player-num{
+  background:var(--card);border:2px solid var(--border);border-radius:14px;
+  padding:14px 20px;text-align:center;margin-bottom:14px;
+}
+.player-num .label{font-size:.75rem;color:var(--dim);font-weight:700;margin-bottom:4px;}
+.player-num .number{font-family:'Baloo 2',cursive;font-size:1.8rem;font-weight:800;color:var(--accent);letter-spacing:2px;}
+.player-num .words{font-size:.85rem;color:var(--text);margin-top:4px;min-height:20px;}
+
+/* CHECK BUTTON */
+.check-btn{
+  width:100%;padding:14px;border-radius:14px;border:none;
+  font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;
+  background:linear-gradient(135deg,var(--accent),#8B5CF6);
+  color:#fff;cursor:pointer;transition:opacity .2s,transform .1s;
+  box-shadow:0 4px 20px rgba(199,125,255,.35);
+}
+.check-btn:hover{opacity:.9;transform:translateY(-1px);}
+.check-btn:active{transform:translateY(0);}
+
+/* FEEDBACK */
+.feedback{
+  margin-top:12px;padding:12px 16px;border-radius:12px;
+  font-weight:700;font-size:.9rem;text-align:center;
+  display:none;
+}
+.feedback.correct{background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.4);color:var(--teal);}
+.feedback.wrong{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:var(--coral);}
+
+/* PROGRESS */
+.progress-row{
+  width:calc(100% - 32px);max-width:448px;margin:16px 16px 0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.progress-text{font-size:.8rem;font-weight:700;color:var(--dim);}
+.next-btn{
+  background:var(--gold);color:#1A0F00;
+  font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;
+  border:none;border-radius:50px;padding:8px 22px;cursor:pointer;
+  transition:opacity .2s;display:none;
+}
+.next-btn:hover{opacity:.85;}
+
+/* OVERLAY POPUP */
+.overlay{
+  position:fixed;inset:0;background:rgba(6,10,16,.88);
+  display:flex;align-items:center;justify-content:center;
+  z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{
+  background:var(--card);border:2px solid var(--border);border-radius:22px;
+  padding:30px 28px;max-width:360px;width:90%;text-align:center;
+}
+.overlay-box .o-emoji{font-size:3rem;margin-bottom:12px;}
+.overlay-box h3{font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--gold);margin-bottom:8px;}
+.overlay-box p{font-size:.9rem;color:var(--text);line-height:1.6;}
+.overlay-box strong{color:var(--teal);}
+
+/* GAME COMPLETE */
+.complete-screen{
+  width:calc(100% - 32px);max-width:448px;margin:20px 16px;
+  background:var(--card);border:2px solid rgba(6,214,160,.3);
+  border-radius:22px;padding:32px 24px;text-align:center;display:none;
+}
+.complete-screen.show{display:block;}
+.complete-screen .big{font-size:4rem;margin-bottom:12px;}
+.complete-screen h2{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--gold);margin-bottom:8px;}
+.complete-screen p{color:var(--text);font-size:.95rem;line-height:1.6;margin-bottom:20px;}
+.play-again{
+  background:var(--teal);color:#040E04;
+  font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;
+  border:none;border-radius:50px;padding:12px 28px;cursor:pointer;
+  transition:opacity .2s;
+}
+
+/* CONFETTI */
+.confetti-piece{
+  position:fixed;width:10px;height:10px;opacity:0;
+  animation:confFall 1.8s ease-in forwards;pointer-events:none;z-index:200;
+}
+@keyframes confFall{
+  0%{opacity:1;transform:translateY(0) rotate(0deg);}
+  100%{opacity:0;transform:translateY(80vh) rotate(720deg);}
+}
+
+/* CONVERSION INFO */
+.conversion-table{
+  width:calc(100% - 32px);max-width:448px;margin:12px 16px 0;
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:14px 16px;
+}
+.conversion-table .ct-title{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px;}
+.ct-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.82rem;}
+.ct-row:last-child{border-bottom:none;}
+.ct-row .ct-ind{color:var(--purple);}
+.ct-row .ct-int{color:var(--blue);}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="subject-tag">Maths</div>
+  <div class="game-title">💯 Crore City</div>
+  <div class="stars">
+    <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+    <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+  </div>
+</div>
+
+<!-- WOW CARD -->
+<div class="wow-card">
+  <div class="wow-label">🤯 Did You Know?</div>
+  <p>India's population is <strong>140 CRORE</strong> people. If you spent <strong>₹1 every second</strong>, it would take <strong>444 YEARS</strong> to spend 1 crore rupees. Big numbers are hard to feel — let's make them real!</p>
+</div>
+
+<!-- CONVERSION REFERENCE -->
+<div class="conversion-table">
+  <div class="ct-title">Quick Reference</div>
+  <div class="ct-row"><span class="ct-ind">1 Lakh</span><span>=</span><span class="ct-int">1,00,000</span></div>
+  <div class="ct-row"><span class="ct-ind">10 Lakh</span><span>=</span><span class="ct-int">1 Million</span></div>
+  <div class="ct-row"><span class="ct-ind">1 Crore</span><span>=</span><span class="ct-int">10 Million</span></div>
+  <div class="ct-row"><span class="ct-ind">100 Crore</span><span>=</span><span class="ct-int">1 Billion</span></div>
+</div>
+
+<!-- DIAL SECTION -->
+<div class="dial-section" id="gameArea" style="margin-top:16px;">
+  <div class="stage-label" id="stageLabel">Stage 1 of 5 — Set the Number</div>
+  <div class="target-display">
+    <div class="label">🎯 Target Number (Indian System)</div>
+    <div class="number" id="targetNum">—</div>
+    <div class="words" id="targetWords"></div>
+  </div>
+
+  <div class="dials-row" id="dialsRow"></div>
+
+  <div class="player-num">
+    <div class="label">Your Number</div>
+    <div class="number" id="playerNum">0,00,00,000</div>
+    <div class="words" id="playerWords">zero</div>
+  </div>
+
+  <div class="dial-section">
+    <button class="check-btn" onclick="checkAnswer()">Check My Answer ✓</button>
+    <div class="feedback" id="feedback"></div>
+  </div>
+</div>
+
+<div class="progress-row">
+  <span class="progress-text" id="progressText">Question 1 of 5</span>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next →</button>
+</div>
+
+<!-- COMPLETE SCREEN -->
+<div class="complete-screen" id="completeScreen">
+  <div class="big">🏙️</div>
+  <h2>Crore City Mastered!</h2>
+  <p>You can read and build numbers up to <strong>10 crore</strong> in both Indian and International systems. India's 140 crore population? You can write that now!</p>
+  <button class="play-again" onclick="restartGame()">Play Again 🔄</button>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="o-emoji" id="oEmoji">🎉</div>
+    <h3 id="oTitle">Correct!</h3>
+    <p id="oFact"></p>
+  </div>
+</div>
+
+<script>
+const PLACE_LABELS = ['Cr','10L','L','10K','K','100s','10s','1s'];
+const PLACE_NAMES  = ['Crores','Ten Lakhs','Lakhs','Ten Thousands','Thousands','Hundreds','Tens','Units'];
+
+const QUESTIONS = [
+  {target:14000000, label:"1,40,00,000", words:"One crore forty lakh"},
+  {target:3500000,  label:"35,00,000",   words:"Thirty-five lakh"},
+  {target:75000000, label:"7,50,00,000", words:"Seven crore fifty lakh"},
+  {target:9100000,  label:"91,00,000",   words:"Ninety-one lakh"},
+  {target:100000000,label:"10,00,00,000",words:"Ten crore"},
+];
+
+const FACTS = [
+  "India has <strong>140 crore = 1.4 billion</strong> people. In international system: 1.4 billion = 140 crore!",
+  "35 lakh = 3.5 million. Mumbai alone has more than 2 crore (20 million) people!",
+  "7.5 crore = 75 million. That's roughly the population of France — in one number!",
+  "91 lakh is close to 1 crore. The Moon is about <strong>38 crore meters</strong> away from Earth!",
+  "10 crore = 100 million = 0.1 billion. India produces 10 crore+ tonnes of food every year!",
+];
+
+let currentQ = 0, score = 0;
+let dialValues = new Array(8).fill(0);
+let answered = false;
+
+function buildDials(){
+  const row = document.getElementById('dialsRow');
+  row.innerHTML = '';
+  for(let i=0;i<8;i++){
+    const w = document.createElement('div');
+    w.className = 'dial-wrapper';
+    w.innerHTML = `
+      <div class="dial-place">${PLACE_LABELS[i]}</div>
+      <div class="dial" id="dial${i}" data-idx="${i}">
+        <div class="dial-inner" id="inner${i}"></div>
+        <div class="dial-highlight"></div>
+      </div>
+      <div class="dial-btn">
+        <button onclick="spinDial(${i},-1)">▲</button>
+        <button onclick="spinDial(${i},1)">▼</button>
+      </div>`;
+    row.appendChild(w);
+    renderDialInner(i);
+  }
+}
+
+function renderDialInner(idx){
+  const inner = document.getElementById(`inner${idx}`);
+  const val = dialValues[idx];
+  let html='';
+  for(let d=-2;d<=12;d++){
+    const digit = ((d%10)+10)%10;
+    const isActive = digit === val && (d===val || d===val+10);
+    html += `<div class="dial-digit${isActive?' active':''}">${digit}</div>`;
+  }
+  inner.innerHTML = html;
+  inner.style.transform = `translateY(${-val*40}px)`;
+}
+
+function spinDial(idx, dir){
+  dialValues[idx] = (dialValues[idx]+dir+10)%10;
+  renderDialInner(idx);
+  updatePlayerDisplay();
+}
+
+function updatePlayerDisplay(){
+  let num = 0;
+  const multipliers=[10000000,1000000,100000,10000,1000,100,10,1];
+  for(let i=0;i<8;i++) num += dialValues[i]*multipliers[i];
+  document.getElementById('playerNum').textContent = formatIndian(num);
+  document.getElementById('playerWords').textContent = toWords(num);
+}
+
+function formatIndian(n){
+  if(n===0) return '0';
+  let s = n.toString();
+  let result='';
+  if(s.length>7){result = s.slice(0,s.length-7)+','+s.slice(s.length-7);}
+  else result=s;
+  let parts=result.split(',');
+  let last=parts[parts.length-1];
+  let formatted='';
+  while(last.length>3){formatted=','+last.slice(-3)+formatted;last=last.slice(0,-3);}
+  formatted=last+formatted;
+  if(parts.length>1) return parts.slice(0,-1).join(',')+','+formatted;
+  // standard Indian grouping
+  s=n.toString();
+  if(s.length<=3) return s;
+  let end=s.slice(-3);
+  s=s.slice(0,-3);
+  let mid='';
+  while(s.length>2){mid=','+s.slice(-2)+mid;s=s.slice(0,-2);}
+  return s+mid+','+end;
+}
+
+function toWords(n){
+  if(n===0) return 'zero';
+  const crore=Math.floor(n/10000000);
+  const lakh=Math.floor((n%10000000)/100000);
+  const thous=Math.floor((n%100000)/1000);
+  const rest=n%1000;
+  const ones=['','one','two','three','four','five','six','seven','eight','nine'];
+  const tens=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+  const teens=['ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+  function hw(x){
+    if(x===0) return '';
+    if(x<10) return ones[x];
+    if(x<20) return teens[x-10];
+    return tens[Math.floor(x/10)]+(x%10?' '+ones[x%10]:'');
+  }
+  let parts=[];
+  if(crore) parts.push(hw(crore)+' crore');
+  if(lakh) parts.push(hw(lakh)+' lakh');
+  if(thous) parts.push(hw(thous)+' thousand');
+  if(rest) parts.push(hw(rest));
+  return parts.join(' ');
+}
+
+function loadQuestion(){
+  const q = QUESTIONS[currentQ];
+  document.getElementById('targetNum').textContent = q.label;
+  document.getElementById('targetWords').textContent = q.words;
+  document.getElementById('stageLabel').textContent = `Stage ${currentQ+1} of 5 — Set the Number`;
+  document.getElementById('progressText').textContent = `Question ${currentQ+1} of 5`;
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('feedback').style.display='none';
+  document.getElementById('feedback').className='feedback';
+  dialValues = new Array(8).fill(0);
+  buildDials();
+  updatePlayerDisplay();
+  answered=false;
+  document.querySelector('.check-btn').disabled=false;
+}
+
+function checkAnswer(){
+  if(answered) return;
+  const q = QUESTIONS[currentQ];
+  let playerVal=0;
+  const multipliers=[10000000,1000000,100000,10000,1000,100,10,1];
+  for(let i=0;i<8;i++) playerVal += dialValues[i]*multipliers[i];
+  const fb = document.getElementById('feedback');
+  if(playerVal === q.target){
+    answered=true;
+    score++;
+    updateStars();
+    fb.textContent='✅ Correct! Amazing work!';
+    fb.className='feedback correct';
+    fb.style.display='block';
+    document.getElementById('nextBtn').style.display='block';
+    document.querySelector('.check-btn').disabled=true;
+    spawnConfetti();
+    showOverlay('🎉','Correct!',FACTS[currentQ]);
+  } else {
+    fb.textContent=`❌ Not quite. You set ${formatIndian(playerVal)}. Target is ${q.label}. Try again!`;
+    fb.className='feedback wrong';
+    fb.style.display='block';
+  }
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ>=QUESTIONS.length){
+    document.getElementById('gameArea').style.display='none';
+    document.querySelector('.progress-row').style.display='none';
+    document.getElementById('completeScreen').style.display='block';
+    spawnConfetti();return;
+  }
+  loadQuestion();
+}
+
+function updateStars(){
+  const lit=[1,2,2,2,3,3,3,4,4,5];
+  const count=Math.min(5,score);
+  for(let i=1;i<=count;i++) document.getElementById(`s${i}`).classList.add('lit');
+}
+
+function showOverlay(emoji,title,fact){
+  document.getElementById('oEmoji').textContent=emoji;
+  document.getElementById('oTitle').textContent=title;
+  document.getElementById('oFact').innerHTML=fact;
+  const ov=document.getElementById('overlay');
+  ov.classList.add('show');
+  setTimeout(()=>ov.classList.remove('show'),2500);
+}
+
+function spawnConfetti(){
+  const colors=['#FFD166','#FF6B6B','#06D6A0','#4CC9F0','#C77DFF'];
+  for(let i=0;i<28;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`
+      left:${Math.random()*100}vw;
+      top:-10px;
+      background:${colors[i%5]};
+      animation-delay:${Math.random()*0.8}s;
+      animation-duration:${1.5+Math.random()*2}s;
+      transform:rotate(${Math.random()*360}deg);
+    `;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),3500);
+  }
+}
+
+function restartGame(){
+  currentQ=0;score=0;answered=false;
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('completeScreen').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  document.querySelector('.progress-row').style.display='flex';
+  loadQuestion();
+}
+
+// INIT
+loadQuestion();
+</script>
+</body>
+</html>

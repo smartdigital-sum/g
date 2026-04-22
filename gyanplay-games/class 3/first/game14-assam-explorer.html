@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗺️ Assam Explorer — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#071A12;--card:#0D2A1C;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--green:#4CAF50;--lime:#A8E063;--orange:#FF9F1C;--text:#E8FFF0;--dim:#4A8A6A}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(168,224,99,.2)}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.badges-wrap{display:flex;gap:6px;align-items:center}
+.badge-icon{font-size:1.4rem;opacity:.25;transition:opacity .4s,filter .4s}
+.badge-icon.earned{opacity:1;filter:drop-shadow(0 0 6px rgba(255,209,102,.7))}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:18px 16px;gap:16px}
+.hook{background:linear-gradient(135deg,rgba(168,224,99,.12),rgba(6,214,160,.08));border:1px solid rgba(168,224,99,.3);border-radius:14px;padding:12px 18px;text-align:center;max-width:480px;font-size:.88rem;line-height:1.6;color:#C8F0A0}
+.hook strong{color:var(--gold)}
+/* Map area */
+.map-container{position:relative;width:100%;max-width:440px;background:linear-gradient(160deg,#0A2A18,#071A12,#0D200E);border-radius:16px;border:2px solid rgba(168,224,99,.2);overflow:hidden;aspect-ratio:1.4}
+/* Map bg texture */
+.map-container::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 40% 45%,rgba(6,214,160,.05),transparent 70%)}
+/* River line (Brahmaputra) */
+.river-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+/* Region pins */
+.region-pin{position:absolute;transform:translate(-50%,-50%);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .2s}
+.region-pin:hover{transform:translate(-50%,-50%) scale(1.15)}
+.pin-icon{font-size:1.8rem;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6));transition:filter .3s}
+.region-pin.visited .pin-icon{filter:drop-shadow(0 0 10px rgba(168,224,99,.8))}
+.pin-label{font-size:.55rem;font-weight:700;color:rgba(255,255,255,.7);background:rgba(0,0,0,.5);padding:2px 5px;border-radius:10px;white-space:nowrap;letter-spacing:.3px}
+.region-pin.visited .pin-label{color:var(--lime);background:rgba(7,26,18,.8)}
+/* Fact card */
+.fact-card{background:var(--card);border-radius:14px;padding:16px 18px;border:2px solid rgba(168,224,99,.2);width:100%;max-width:440px;min-height:100px;transition:border-color .3s}
+.fact-card.active{border-color:var(--teal)}
+.fact-location{font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);margin-bottom:6px}
+.fact-wow{font-size:1.05rem;font-weight:700;color:var(--gold);margin-bottom:8px;line-height:1.4}
+.fact-detail{font-size:.85rem;color:var(--dim);line-height:1.6}
+.quiz-section{margin-top:12px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px;display:none}
+.quiz-section.show{display:block}
+.quiz-q{font-size:.85rem;color:var(--text);margin-bottom:8px}
+.quiz-opts{display:flex;flex-direction:column;gap:6px}
+.quiz-opt{padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(168,224,99,.15);border-radius:8px;cursor:pointer;font-size:.82rem;color:var(--dim);transition:all .15s;text-align:left}
+.quiz-opt:hover{border-color:var(--teal);color:var(--text)}
+.quiz-opt.correct{border-color:var(--teal);background:rgba(6,214,160,.12);color:var(--teal)}
+.quiz-opt.wrong{border-color:var(--coral);background:rgba(255,107,107,.1);color:var(--coral)}
+/* Progress */
+.progress-text{font-size:.82rem;color:var(--dim);text-align:center}
+.progress-text span{color:var(--lime);font-weight:700}
+.bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--card);border-top:1px solid rgba(255,255,255,.08)}
+.prog{font-size:.82rem;color:var(--dim)}
+.finish-btn{padding:11px 26px;background:var(--gold);color:#071A12;border:none;border-radius:50px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .2s;display:none}
+.finish-btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(7,26,18,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-emoji{font-size:4.5rem}
+.ov-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);text-align:center}
+.ov-sub{color:var(--dim);text-align:center;max-width:320px;font-size:.9rem;line-height:1.6}
+.confetti-p{position:fixed;top:-10px;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;z-index:200}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@keyframes ping{0%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.3)}100%{transform:translate(-50%,-50%) scale(1)}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="game-title">🗺️ Assam Explorer</div><div class="subject-tag">Social Studies · Our State · Class 3</div></div>
+  <div class="badges-wrap" id="badgeWrap"></div>
+</div>
+
+<div class="game-area">
+  <div class="hook">🦏 Assam has the world's <strong>LARGEST river island</strong> (Majuli), more one-horned rhinos than anywhere on Earth, and makes <strong>50% of India's tea</strong>. Your home state is genuinely incredible — and most people don't know!</div>
+
+  <div class="map-container" id="mapContainer">
+    <!-- Brahmaputra river SVG path -->
+    <svg class="river-svg" viewBox="0 0 440 314" preserveAspectRatio="none">
+      <path d="M10,140 Q80,120 140,135 Q200,150 260,138 Q320,126 380,145 Q410,152 440,148" fill="none" stroke="rgba(76,201,240,.4)" stroke-width="6" stroke-linecap="round"/>
+      <path d="M10,140 Q80,120 140,135 Q200,150 260,138 Q320,126 380,145 Q410,152 440,148" fill="none" stroke="rgba(76,201,240,.15)" stroke-width="14" stroke-linecap="round"/>
+    </svg>
+    <!-- Region pins (positioned as % of container) -->
+    <div id="pinsLayer"></div>
+  </div>
+
+  <div class="progress-text" id="progText">Tap the pins on the map to explore Assam! <span>0/6</span> discovered</div>
+
+  <div class="fact-card" id="factCard">
+    <div class="fact-location">📍 Start here</div>
+    <div class="fact-wow">Tap any pin on the map above to discover an amazing fact!</div>
+    <div class="fact-detail">Assam is one of the most remarkable places in India. Let's explore it together.</div>
+  </div>
+</div>
+
+<div class="bottom">
+  <div class="prog" id="prog">Explore all 6 regions</div>
+  <button class="finish-btn" id="finishBtn" onclick="finishGame()">See your Badges! 🏅</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-emoji" id="ovEmoji">🏅</div>
+  <div class="ov-title" id="ovTitle">Explorer!</div>
+  <div class="ov-sub" id="ovSub"></div>
+</div>
+
+<script>
+const REGIONS=[
+  {
+    id:'kaziranga',icon:'🦏',label:'Kaziranga',x:'62%',y:'55%',badge:'🦏',
+    location:'Kaziranga National Park',
+    wow:'Kaziranga has over 2,600 one-horned rhinos — that\'s 70% of the ENTIRE world population!',
+    detail:'It\'s a UNESCO World Heritage Site covering 430 sq km of tall elephant grass, marshland and forests along the Brahmaputra. Elephants, tigers and wild water buffalo also live here.',
+    quiz:{q:'What % of the world\'s one-horned rhinos live in Kaziranga?',opts:['10%','40%','70%','90%'],ans:2}
+  },
+  {
+    id:'majuli',icon:'🏝️',label:'Majuli',x:'48%',y:'42%',badge:'🌊',
+    location:'Majuli Island',
+    wow:'Majuli is the world\'s LARGEST river island — it floats in the middle of the Brahmaputra river!',
+    detail:'Majuli is also a centre of Vaishnavite culture, with ancient monasteries called satras. Unfortunately, it is getting smaller each year due to river erosion.',
+    quiz:{q:'What makes Majuli special in the world?',opts:['It\'s the highest island','It\'s the world\'s largest river island','It never floods','It has the most birds'],ans:1}
+  },
+  {
+    id:'guwahati',icon:'🛕',label:'Guwahati',x:'32%',y:'52%',badge:'🛕',
+    location:'Guwahati — State Capital',
+    wow:'The Kamakhya Temple on Nilachal Hill is over 1,000 years old and one of the most sacred temples in all of India!',
+    detail:'Guwahati is Assam\'s largest city and sits on the banks of the Brahmaputra. The Kamakhya temple attracts millions of pilgrims. The city is also growing fast as a trade hub for Northeast India.',
+    quiz:{q:'Where is the Kamakhya Temple located?',opts:['Jorhat','Nilachal Hill, Guwahati','Majuli','Kaziranga'],ans:1}
+  },
+  {
+    id:'jorhat',icon:'🍃',label:'Jorhat',x:'72%',y:'48%',badge:'🍵',
+    location:'Jorhat — Tea Capital',
+    wow:'The Brahmaputra Valley around Jorhat produces some of the world\'s finest Assam tea — you probably had some this morning!',
+    detail:'Assam produces over 50% of India\'s tea. Tea leaves are plucked by hand, mostly by women tea garden workers. Assam tea is known for its strong, malty flavour.',
+    quiz:{q:'What % of India\'s tea comes from Assam?',opts:['10%','25%','50%','80%'],ans:2}
+  },
+  {
+    id:'sibsagar',icon:'⛪',label:'Sibsagar',x:'78%',y:'53%',badge:'👑',
+    location:'Sibsagar — Ancient Ahom Capital',
+    wow:'Sibsagar was the capital of the mighty Ahom kingdom for 600 years — the Ahoms never lost to the Mughal Empire in 17 invasions!',
+    detail:'The Ahom people came from Myanmar and ruled Assam from 1228 to 1826 CE. They built huge ponds (puskaranis), temples and palaces. Rang Ghar, an ancient amphitheatre, still stands here.',
+    quiz:{q:'How long did the Ahom kingdom rule Assam?',opts:['100 years','300 years','600 years','1000 years'],ans:2}
+  },
+  {
+    id:'manas',icon:'🐯',label:'Manas',x:'18%',y:'44%',badge:'🐯',
+    location:'Manas National Park',
+    wow:'Manas is home to the rare Golden Langur monkey, found ONLY along the Bhutan border — nowhere else on Earth!',
+    detail:'Manas is both a UNESCO World Heritage Site and a Tiger Reserve. The Manas river flows through it from Bhutan. It is home to elephants, tigers, clouded leopards and the rare pygmy hog.',
+    quiz:{q:'Which rare animal is found ONLY near Manas along the Bhutan border?',opts:['Snow Leopard','Golden Langur','One-horned Rhino','Red Panda'],ans:1}
+  }
+];
+
+let visited=new Set(),quizDone=new Set(),score=0;
+
+function buildPins(){
+  const layer=document.getElementById('pinsLayer');
+  const bw=document.getElementById('badgeWrap');
+  REGIONS.forEach(r=>{
+    const pin=document.createElement('div');pin.className='region-pin';
+    pin.style.left=r.x;pin.style.top=r.y;
+    pin.innerHTML=`<div class="pin-icon">${r.icon}</div><div class="pin-label">${r.label}</div>`;
+    pin.onclick=()=>visitRegion(r);
+    pin.id=`pin-${r.id}`;
+    layer.appendChild(pin);
+    // Badge slot
+    const b=document.createElement('span');b.className='badge-icon';b.id=`badge-${r.id}`;b.textContent=r.badge;
+    bw.appendChild(b);
+  });
+}
+
+function visitRegion(r){
+  // Mark visited
+  document.getElementById(`pin-${r.id}`).classList.add('visited');
+  // Show fact
+  const fc=document.getElementById('factCard');
+  fc.classList.add('active');
+  fc.innerHTML=`
+    <div class="fact-location">📍 ${r.location}</div>
+    <div class="fact-wow">🤯 ${r.wow}</div>
+    <div class="fact-detail">${r.detail}</div>
+    <div class="quiz-section${quizDone.has(r.id)?'':' show'}" id="quiz-${r.id}">
+      <div class="quiz-q">❓ ${r.quiz.q}</div>
+      <div class="quiz-opts" id="qopts-${r.id}"></div>
+    </div>`;
+  if(!quizDone.has(r.id)){
+    r.quiz.opts.forEach((o,oi)=>{
+      const b=document.createElement('button');b.className='quiz-opt';b.textContent=o;
+      b.onclick=()=>pickQuiz(r,oi,b);
+      document.getElementById(`qopts-${r.id}`).appendChild(b);
+    });
+  }
+  if(!visited.has(r.id)){visited.add(r.id);updateProgress();}
+}
+
+function pickQuiz(r,oi,btn){
+  document.querySelectorAll(`#qopts-${r.id} .quiz-opt`).forEach(b=>b.style.pointerEvents='none');
+  if(oi===r.quiz.ans){
+    btn.classList.add('correct');
+    quizDone.add(r.id);score++;
+    // Earn badge
+    document.getElementById(`badge-${r.id}`).classList.add('earned');
+    if(score<=6&&score>=1){const sn=Math.ceil(score*5/6);if(sn<=5)document.getElementById(`s${sn}`).classList.add('lit');}
+    // Add star
+    const idx=Math.min(score,5);try{document.getElementById(`s${idx}`).classList.add('lit');}catch(e){}
+    showOverlay(`Badge Earned! ${r.badge}`,`${r.location} unlocked! ${score}/${REGIONS.length} badges collected.`);
+    confetti();setTimeout(hideOverlay,2200);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll(`#qopts-${r.id} .quiz-opt`)[r.quiz.ans].classList.add('correct');
+  }
+  if(quizDone.size===REGIONS.length)document.getElementById('finishBtn').style.display='block';
+}
+
+function updateProgress(){
+  const v=visited.size;
+  document.getElementById('progText').innerHTML=`Tap the pins on the map to explore Assam! <span>${v}/6</span> discovered`;
+  document.getElementById('prog').textContent=`${v}/6 regions explored`;
+  if(v===REGIONS.length&&quizDone.size===REGIONS.length)document.getElementById('finishBtn').style.display='block';
+}
+
+function finishGame(){
+  document.getElementById('ovEmoji').textContent='🏆';
+  const badges=REGIONS.filter(r=>quizDone.has(r.id)).map(r=>r.badge).join(' ');
+  showOverlay('Assam Explorer! 🗺️',`You earned ${quizDone.size}/${REGIONS.length} badges! Your home state is truly extraordinary: ${badges}`);
+}
+function showOverlay(t,s){document.getElementById('ovTitle').textContent=t;document.getElementById('ovSub').textContent=s;document.getElementById('overlay').classList.add('show');}
+function hideOverlay(){document.getElementById('overlay').classList.remove('show');}
+function confetti(){const C=['#A8E063','#FFD166','#06D6A0','#4CAF50','#FF9F1C'];for(let i=0;i<28;i++){const d=document.createElement('div');d.className='confetti-p';d.style.left=Math.random()*100+'vw';d.style.background=C[i%5];d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}}
+// Stars
+for(let i=1;i<=5;i++){const s=document.createElement('span');s.className='star';s.id=`s${i}`;s.textContent='⭐';document.querySelector('.header .badges-wrap');}
+// Build header stars separately
+const hdr=document.querySelector('.header');
+const starsDiv=document.createElement('div');starsDiv.style.cssText='display:flex;gap:4px;font-size:1.1rem';
+for(let i=1;i<=5;i++){const s=document.createElement('span');s.id=`s${i}`;s.style.cssText='opacity:.3;transition:all .3s';s.textContent='⭐';starsDiv.appendChild(s);}
+hdr.querySelector('.badges-wrap').before(starsDiv);
+buildPins();
+</script>
+</body>
+</html>

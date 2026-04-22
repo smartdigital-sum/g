@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Periodic Classification of Elements — GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+  --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+  --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));min-height:100vh;color:#fff;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fadeIn{animation:fadeIn .45s ease both;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:99;}
+.back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:.95rem;padding:7px 16px;border-radius:20px;cursor:pointer;transition:.2s;}
+.back-btn:hover{background:rgba(255,255,255,.22);}
+.badge{background:var(--green);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.82rem;padding:5px 14px;border-radius:20px;letter-spacing:.5px;}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:.8rem;padding:5px 11px;border-radius:14px;cursor:pointer;transition:.2s;}
+.lang-btn.active,.lang-btn:hover{background:var(--purple);}
+.container{max-width:780px;margin:0 auto;padding:24px 16px 60px;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.7rem;font-weight:800;text-align:center;margin-bottom:4px;background:linear-gradient(90deg,var(--sky),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.game-sub{text-align:center;font-size:.88rem;color:#bbb;margin-bottom:22px;}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.prog-bar{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--gold));border-radius:4px;transition:width .4s ease;}
+.prog-label{font-size:.82rem;color:#aaa;white-space:nowrap;}
+.score-display{text-align:right;font-family:'Baloo 2',sans-serif;font-size:1rem;color:var(--gold);margin-bottom:14px;}
+.q-card{background:var(--card);border-radius:18px;padding:26px 24px;border:1px solid rgba(255,255,255,.09);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.q-num{font-size:.78rem;color:var(--sky);font-weight:700;letter-spacing:1px;margin-bottom:8px;}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.12rem;font-weight:600;line-height:1.55;margin-bottom:20px;}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.options{grid-template-columns:1fr;}}
+.opt-btn{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);color:#e8e8e8;font-family:'Nunito',sans-serif;font-size:.95rem;padding:13px 16px;border-radius:12px;cursor:pointer;text-align:left;transition:.22s;line-height:1.4;}
+.opt-btn:hover:not(:disabled){background:rgba(0,174,239,.2);border-color:var(--sky);}
+.opt-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);color:#fff;}
+.opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);color:#fff;}
+.opt-btn:disabled{cursor:not-allowed;}
+.feedback{margin-top:16px;padding:12px 16px;border-radius:12px;font-size:.92rem;line-height:1.5;display:none;}
+.feedback.show{display:block;}
+.feedback.correct{background:rgba(0,200,83,.15);border:1px solid var(--green);color:#b9f6ca;}
+.feedback.wrong{background:rgba(255,64,129,.15);border:1px solid var(--pink);color:#ffd0dd;}
+.next-btn{display:block;margin:20px auto 0;background:linear-gradient(135deg,var(--sky),#0080b3);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:13px 36px;border-radius:24px;cursor:pointer;transition:.2s;opacity:0;pointer-events:none;}
+.next-btn.visible{opacity:1;pointer-events:all;}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,174,239,.4);}
+.end-screen{background:var(--card);border-radius:20px;padding:36px 28px;text-align:center;border:1px solid rgba(255,255,255,.09);}
+.stars{font-size:2.8rem;margin-bottom:10px;letter-spacing:4px;}
+.final-score{font-family:'Baloo 2',sans-serif;font-size:2.4rem;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.final-msg{color:#ccc;font-size:1rem;margin-bottom:24px;}
+.play-again{background:linear-gradient(135deg,var(--purple),#5b21b6);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:14px 38px;border-radius:24px;cursor:pointer;transition:.2s;}
+.play-again:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(124,58,237,.5);}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">&#8592; Back</button>
+  <span class="badge">Science</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('bn')">অ</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="game-title">
+    <span data-lang="en">Periodic Classification of Elements</span>
+    <span data-lang="hi" class="hidden">तत्वों का आवर्त वर्गीकरण</span>
+    <span data-lang="bn" class="hidden">মৌলের পর্যায়ক্রমিক শ্রেণীবিভাগ</span>
+  </div>
+  <div class="game-sub">Class 10 Science &nbsp;|&nbsp; Ch 5 NCERT &nbsp;|&nbsp; 10 Questions</div>
+
+  <div class="prog-row">
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-label" id="progLabel">0 / 10</div>
+  </div>
+  <div class="score-display">Score: <span id="scoreVal">0</span> / 100</div>
+
+  <div class="q-card fadeIn" id="qCard">
+    <div class="q-num" id="qNum">QUESTION 1</div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="optionsGrid"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next &#8594;</button>
+  </div>
+
+  <div class="end-screen fadeIn hidden" id="endScreen">
+    <div class="stars" id="stars"></div>
+    <div class="final-score" id="finalScore"></div>
+    <div class="final-msg" id="finalMsg"></div>
+    <button class="play-again" onclick="restartGame()">&#9654; Play Again</button>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    en:"Dobereiner's Law of Triads states that the atomic mass of the middle element is approximately:",
+    hi:"डोबेरेनर का त्रिक का नियम कहता है कि मध्य तत्व का परमाणु द्रव्यमान लगभग है:",
+    bn:"ডোবেরেইনারের ত্রয়ী সূত্র বলে যে মধ্যবর্তী মৌলের পারমাণবিক ভর প্রায়:",
+    opts:{
+      en:["Twice the sum of the other two","The arithmetic mean of the other two elements","Equal to the heaviest element","The geometric mean of the other two"],
+      hi:["अन्य दो का दोगुना","अन्य दो तत्वों का अंकगणितीय माध्य","सबसे भारी तत्व के बराबर","अन्य दो का गुणात्मक माध्य"],
+      bn:["অন্য দুটির দ্বিগুণ","অন্য দুটি মৌলের গাণিতিক গড়","সবচেয়ে ভারী মৌলের সমান","অন্য দুটির গুণীতিক গড়"]
+    },
+    ans:1,
+    exp:{
+      en:"Example: Li(7), Na(23), K(39). Mean of Li and K = (7+39)/2 = 23 = Na. Dobereiner grouped elements into triads based on similar properties, but this law applied to only a few triads.",
+      hi:"उदाहरण: Li(7), Na(23), K(39)। Li और K का माध्य = (7+39)/2 = 23 = Na। डोबेरेनर ने समान गुणों के आधार पर तत्वों को त्रिकों में समूहित किया, लेकिन यह नियम केवल कुछ त्रिकों पर लागू होता था।",
+      bn:"উদাহরণ: Li(7), Na(23), K(39)। Li ও K-এর গড় = (7+39)/2 = 23 = Na। ডোবেরেইনার অনুরূপ বৈশিষ্ট্যের ভিত্তিতে মৌলগুলিকে ত্রয়ীতে বিভক্ত করেন, কিন্তু এই সূত্র মাত্র কয়েকটি ত্রয়ীতে প্রযোজ্য ছিল।"
+    }
+  },
+  {
+    en:"Newlands' Law of Octaves states that every eighth element has properties similar to the first because he arranged elements by:",
+    hi:"न्यूलैंड्स का अष्टक नियम कहता है कि प्रत्येक आठवें तत्व के गुण पहले जैसे हैं क्योंकि उन्होंने तत्वों को किस आधार पर व्यवस्थित किया:",
+    bn:"নিউল্যান্ডসের অষ্টক সূত্র বলে প্রতিটি অষ্টম মৌলের ধর্ম প্রথম মৌলের মতো কারণ তিনি মৌলগুলি সাজিয়েছিলেন:",
+    opts:{
+      en:["Increasing atomic number","Increasing atomic mass","Decreasing density","Alphabetical order"],
+      hi:["बढ़ते परमाणु क्रमांक के अनुसार","बढ़ते परमाणु द्रव्यमान के अनुसार","घटते घनत्व के अनुसार","वर्णानुक्रम में"],
+      bn:["বর্ধমান পরমাণু ক্রমাঙ্ক অনুসারে","বর্ধমান পরমাণু ভর অনুসারে","হ্রাসমান ঘনত্ব অনুসারে","বর্ণানুক্রমে"]
+    },
+    ans:1,
+    exp:{
+      en:"Newlands arranged known elements in increasing order of atomic mass. Every 8th element repeated properties of the 1st — like musical octaves. Limitation: only worked up to calcium; noble gases were not known yet.",
+      hi:"न्यूलैंड्स ने ज्ञात तत्वों को बढ़ते परमाणु द्रव्यमान में व्यवस्थित किया। हर 8वें तत्व के गुण पहले जैसे थे — संगीत के सप्तक की तरह। सीमा: केवल कैल्शियम तक काम किया; नोबल गैसें तब ज्ञात नहीं थीं।",
+      bn:"নিউল্যান্ডস পরিচিত মৌলগুলি বর্ধমান পরমাণু ভর অনুসারে সাজান। প্রতিটি ৮ম মৌলের ধর্ম ১ম মৌলের মতো — সঙ্গীতের অক্টেভের মতো। সীমাবদ্ধতা: শুধু ক্যালসিয়াম পর্যন্ত কাজ করেছিল; নোবেল গ্যাস তখন অজানা ছিল।"
+    }
+  },
+  {
+    en:"Mendeleev left gaps in his periodic table because he:",
+    hi:"मेंडेलीव ने अपनी आवर्त सारणी में रिक्त स्थान क्यों छोड़े?",
+    bn:"মেন্ডেলিভ তার পর্যায় সারণিতে শূন্যস্থান রেখেছিলেন কারণ তিনি:",
+    opts:{
+      en:["Did not know all element symbols","Predicted undiscovered elements with specific properties","Ran out of space on the page","Wanted to add noble gases later"],
+      hi:["सभी तत्व प्रतीक नहीं जानते थे","विशिष्ट गुणों वाले अनदेखे तत्वों की भविष्यवाणी की","पृष्ठ पर जगह खत्म हो गई","बाद में नोबल गैस जोड़ना चाहते थे"],
+      bn:["সব মৌলের প্রতীক জানতেন না","নির্দিষ্ট ধর্মসম্পন্ন অনাবিষ্কৃত মৌলের পূর্বাভাস দিয়েছিলেন","পৃষ্ঠায় জায়গা শেষ হয়ে গিয়েছিল","পরে নোবেল গ্যাস যোগ করতে চেয়েছিলেন"]
+    },
+    ans:1,
+    exp:{
+      en:"Mendeleev predicted three missing elements: Eka-boron (Scandium), Eka-aluminium (Gallium), Eka-silicon (Germanium). When they were discovered, their properties closely matched his predictions — a triumph of his table.",
+      hi:"मेंडेलीव ने तीन लापता तत्वों की भविष्यवाणी की: एका-बोरॉन (स्कैंडियम), एका-एल्यूमीनियम (गैलियम), एका-सिलिकॉन (जर्मेनियम)। जब वे खोजे गए, उनके गुण उनकी भविष्यवाणियों से मेल खाते थे।",
+      bn:"মেন্ডেলিভ তিনটি নিখোঁজ মৌলের পূর্বাভাস দিয়েছিলেন: একা-বোরন (স্ক্যান্ডিয়াম), একা-অ্যালুমিনিয়াম (গ্যালিয়াম), একা-সিলিকন (জার্মেনিয়াম)। আবিষ্কারের পর তাদের ধর্ম পূর্বাভাসের সাথে মিলে যায়।"
+    }
+  },
+  {
+    en:"The Modern Periodic Law states that properties of elements are a periodic function of their:",
+    hi:"आधुनिक आवर्त नियम कहता है कि तत्वों के गुण उनके किस गुण के आवर्ती फलन हैं:",
+    bn:"আধুনিক পর্যায় সূত্র বলে যে মৌলের ধর্মগুলি তাদের কোন বৈশিষ্ট্যের পর্যায়বৃত্তিক অপেক্ষক:",
+    opts:{
+      en:["Atomic mass","Atomic number","Number of neutrons","Density"],
+      hi:["परमाणु द्रव्यमान","परमाणु क्रमांक","न्यूट्रॉनों की संख्या","घनत्व"],
+      bn:["পরমাণু ভর","পরমাণু ক্রমাঙ্ক","নিউট্রন সংখ্যা","ঘনত্ব"]
+    },
+    ans:1,
+    exp:{
+      en:"Henry Moseley (1913) established that atomic number (number of protons) is the fundamental property. Mendeleev used atomic mass. Modern law: properties repeat after a definite period when arranged by atomic number.",
+      hi:"हेनरी मोसले (1913) ने स्थापित किया कि परमाणु क्रमांक (प्रोटॉनों की संख्या) मूल गुण है। मेंडेलीव ने परमाणु द्रव्यमान का उपयोग किया। आधुनिक नियम: परमाणु क्रमांक के अनुसार व्यवस्थित करने पर गुण निश्चित अवधि के बाद दोहराए जाते हैं।",
+      bn:"হেনরি মোসলে (১৯১৩) প্রতিষ্ঠা করেন যে পরমাণু ক্রমাঙ্ক (প্রোটন সংখ্যা) হলো মৌলিক বৈশিষ্ট্য। মেন্ডেলিভ পরমাণু ভর ব্যবহার করেছিলেন। আধুনিক সূত্র: পরমাণু ক্রমাঙ্ক অনুসারে সাজালে ধর্মগুলি নির্দিষ্ট ব্যবধানে পুনরাবৃত্তি হয়।"
+    }
+  },
+  {
+    en:"In the modern periodic table, elements in the same GROUP have the same:",
+    hi:"आधुनिक आवर्त सारणी में एक ही समूह के तत्वों में समान होता है:",
+    bn:"আধুনিক পর্যায় সারণিতে একই গ্রুপের মৌলগুলির একই থাকে:",
+    opts:{
+      en:["Number of electron shells","Number of valence electrons","Atomic mass","Melting point"],
+      hi:["इलेक्ट्रॉन कोशों की संख्या","संयोजी इलेक्ट्रॉनों की संख्या","परमाणु द्रव्यमान","गलनांक"],
+      bn:["ইলেকট্রন কক্ষের সংখ্যা","যোজন ইলেকট্রনের সংখ্যা","পরমাণু ভর","গলনাঙ্ক"]
+    },
+    ans:1,
+    exp:{
+      en:"Elements in the same group have the same number of valence electrons (outer shell electrons), giving them similar chemical properties. Elements in the same PERIOD have the same number of electron shells.",
+      hi:"एक ही समूह के तत्वों में संयोजी इलेक्ट्रॉनों की समान संख्या होती है (बाहरी कोश के इलेक्ट्रॉन), जिससे उनके रासायनिक गुण समान होते हैं। एक ही आवर्त के तत्वों में इलेक्ट्रॉन कोशों की समान संख्या होती है।",
+      bn:"একই গ্রুপের মৌলগুলির একই সংখ্যক যোজন ইলেকট্রন (বাইরের কক্ষের ইলেকট্রন) থাকে, যা তাদের একই রাসায়নিক ধর্ম দেয়। একই পর্যায়ের মৌলগুলির একই সংখ্যক ইলেকট্রন কক্ষ থাকে।"
+    }
+  },
+  {
+    en:"As we move from left to right across a period in the modern periodic table, the atomic size:",
+    hi:"आधुनिक आवर्त सारणी में एक आवर्त में बाएं से दाएं जाने पर परमाणु का आकार:",
+    bn:"আধুনিক পর্যায় সারণিতে একটি পর্যায় বাম থেকে ডানে গেলে পরমাণুর আকার:",
+    opts:{
+      en:["Increases steadily","Decreases","Remains the same","First increases then decreases"],
+      hi:["लगातार बढ़ता है","घटता है","समान रहता है","पहले बढ़ता है फिर घटता है"],
+      bn:["ক্রমাগত বাড়ে","কমে","একই থাকে","প্রথমে বাড়ে তারপর কমে"]
+    },
+    ans:1,
+    exp:{
+      en:"Across a period (left to right): nuclear charge (protons) increases but electrons are added to the SAME shell, pulling them closer to the nucleus — atomic size DECREASES. Down a group: new shells are added, so atomic size increases.",
+      hi:"एक आवर्त में (बाएं से दाएं): नाभिकीय आवेश (प्रोटॉन) बढ़ता है लेकिन इलेक्ट्रॉन उसी कोश में जोड़े जाते हैं, जिससे वे नाभिक के करीब खिंचते हैं — परमाणु का आकार घटता है। समूह में नीचे जाने पर: नए कोश जुड़ते हैं, परमाणु का आकार बढ़ता है।",
+      bn:"একটি পর্যায়ে (বাম থেকে ডানে): নিউক্লিয়ার চার্জ (প্রোটন) বাড়ে কিন্তু ইলেকট্রন একই কক্ষে যোগ হয়, নিউক্লিয়াসের দিকে টেনে নেয় — পরমাণুর আকার কমে। গ্রুপে নিচে: নতুন কক্ষ যোগ হয়, পরমাণুর আকার বাড়ে।"
+    }
+  },
+  {
+    en:"Noble gases (Group 18) are chemically inert because they have:",
+    hi:"नोबल गैसें (समूह 18) रासायनिक रूप से निष्क्रिय हैं क्योंकि उनके पास:",
+    bn:"নোবেল গ্যাস (গ্রুপ ১৮) রাসায়নিকভাবে নিষ্ক্রিয় কারণ তাদের আছে:",
+    opts:{
+      en:["Zero atomic mass","A completely filled outermost shell (8 electrons, or 2 for He)","No electrons at all","Negative valency"],
+      hi:["शून्य परमाणु द्रव्यमान","पूर्णतः भरा हुआ बाहरी कोश (8 इलेक्ट्रॉन, He के लिए 2)","कोई इलेक्ट्रॉन नहीं","ऋणात्मक संयोजकता"],
+      bn:["শূন্য পরমাণু ভর","সম্পূর্ণ পূর্ণ বাইরের কক্ষ (৮ ইলেকট্রন, He-এর জন্য ২)","কোনো ইলেকট্রন নেই","ঋণাত্মক যোজনীমান"]
+    },
+    ans:1,
+    exp:{
+      en:"Noble gases have completely filled outermost electron shells — they have zero valence electrons available for bonding. This makes them extremely stable and unreactive (inert). They were absent from Mendeleev's original table.",
+      hi:"नोबल गैसों में पूर्णतः भरे हुए बाहरी इलेक्ट्रॉन कोश होते हैं — उनके पास बंधन के लिए कोई संयोजी इलेक्ट्रॉन नहीं होते। यह उन्हें अत्यधिक स्थिर और अक्रियाशील (निष्क्रिय) बनाता है। वे मेंडेलीव की मूल सारणी में अनुपस्थित थे।",
+      bn:"নোবেল গ্যাসের সম্পূর্ণ পূর্ণ বাইরের ইলেকট্রন কক্ষ আছে — বন্ধনের জন্য কোনো যোজন ইলেকট্রন নেই। এটি তাদের অত্যন্ত স্থিতিশীল ও অক্রিয় করে। মেন্ডেলিভের মূল সারণিতে এরা অনুপস্থিত ছিল।"
+    }
+  },
+  {
+    en:"Metallic character across Period 3 (Na to Cl) in the periodic table:",
+    hi:"आवर्त सारणी में आवर्त 3 (Na से Cl) में धात्विक चरित्र:",
+    bn:"পর্যায় সারণিতে পর্যায় ৩ (Na থেকে Cl) জুড়ে ধাতব বৈশিষ্ট্য:",
+    opts:{
+      en:["Increases from Na to Cl","Decreases from Na to Cl","Remains constant","First decreases then increases"],
+      hi:["Na से Cl तक बढ़ता है","Na से Cl तक घटता है","स्थिर रहता है","पहले घटता है फिर बढ़ता है"],
+      bn:["Na থেকে Cl পর্যন্ত বাড়ে","Na থেকে Cl পর্যন্ত কমে","স্থির থাকে","প্রথমে কমে তারপর বাড়ে"]
+    },
+    ans:1,
+    exp:{
+      en:"In Period 3: Na (metal) → Mg (metal) → Al (metal) → Si (metalloid) → P (non-metal) → S (non-metal) → Cl (non-metal). Metallic character DECREASES across a period as nuclear charge increases and atomic size decreases.",
+      hi:"आवर्त 3 में: Na (धातु) → Mg (धातु) → Al (धातु) → Si (धातुआभ) → P (अधातु) → S (अधातु) → Cl (अधातु)। एक आवर्त में धात्विक चरित्र घटता है क्योंकि नाभिकीय आवेश बढ़ता है और परमाणु का आकार घटता है।",
+      bn:"পর্যায় ৩-এ: Na (ধাতু) → Mg (ধাতু) → Al (ধাতু) → Si (অর্ধ-ধাতু) → P (অধাতু) → S (অধাতু) → Cl (অধাতু)। একটি পর্যায়ে নিউক্লিয়ার চার্জ বাড়ে ও পরমাণুর আকার কমে বলে ধাতব বৈশিষ্ট্য কমে।"
+    }
+  },
+  {
+    en:"Alkali metals (Group 1) are highly reactive because they:",
+    hi:"क्षार धातुएँ (समूह 1) अत्यधिक अभिक्रियाशील होती हैं क्योंकि:",
+    bn:"ক্ষার ধাতু (গ্রুপ ১) অত্যন্ত সক্রিয় কারণ তারা:",
+    opts:{
+      en:["Have 8 valence electrons","Have only 1 valence electron that is easily lost","Have the highest ionisation energy","Are the smallest atoms"],
+      hi:["8 संयोजी इलेक्ट्रॉन होते हैं","केवल 1 संयोजी इलेक्ट्रॉन होता है जो आसानी से खो जाता है","सबसे अधिक आयनीकरण ऊर्जा होती है","सबसे छोटे परमाणु होते हैं"],
+      bn:["৮টি যোজন ইলেকট্রন আছে","মাত্র ১টি যোজন ইলেকট্রন আছে যা সহজে হারায়","সর্বোচ্চ আয়নীকরণ শক্তি আছে","সবচেয়ে ছোট পরমাণু"]
+    },
+    ans:1,
+    exp:{
+      en:"Group 1 metals (Li, Na, K, Rb, Cs) each have 1 valence electron. They lose this electron very easily (low ionisation energy) to form M⁺ ions. Reactivity increases DOWN the group as the outermost electron is farther from the nucleus.",
+      hi:"समूह 1 धातुएँ (Li, Na, K, Rb, Cs) में प्रत्येक में 1 संयोजी इलेक्ट्रॉन होता है। वे इसे बहुत आसानी से खो देती हैं (कम आयनीकरण ऊर्जा) और M⁺ आयन बनाती हैं। समूह में नीचे जाने पर अभिक्रियाशीलता बढ़ती है।",
+      bn:"গ্রুপ ১ ধাতু (Li, Na, K, Rb, Cs) প্রতিটিতে ১টি যোজন ইলেকট্রন আছে। তারা খুব সহজে এই ইলেকট্রন হারায় (কম আয়নীকরণ শক্তি) এবং M⁺ আয়ন গঠন করে। গ্রুপে নিচে গেলে সক্রিয়তা বাড়ে।"
+    }
+  },
+  {
+    en:"Halogens (Group 17) are highly reactive non-metals because they need to:",
+    hi:"हैलोजन (समूह 17) अत्यधिक अभिक्रियाशील अधातुएँ हैं क्योंकि उन्हें:",
+    bn:"হ্যালোজেন (গ্রুপ ১৭) অত্যন্ত সক্রিয় অধাতু কারণ তাদের:",
+    opts:{
+      en:["Lose 7 electrons to become stable","Gain only 1 electron to complete their outermost shell","Lose all their electrons","Form 7 covalent bonds"],
+      hi:["स्थिर होने के लिए 7 इलेक्ट्रॉन खोने होते हैं","बाहरी कोश पूरा करने के लिए केवल 1 इलेक्ट्रॉन प्राप्त करना होता है","सभी इलेक्ट्रॉन खोने होते हैं","7 सहसंयोजक बंध बनाने होते हैं"],
+      bn:["স্থিতিশীল হতে ৭টি ইলেকট্রন হারাতে হয়","বাইরের কক্ষ পূর্ণ করতে মাত্র ১টি ইলেকট্রন গ্রহণ করতে হয়","সব ইলেকট্রন হারাতে হয়","৭টি সমযোজী বন্ধন গঠন করতে হয়"]
+    },
+    ans:1,
+    exp:{
+      en:"Halogens have 7 valence electrons (one short of a full octet). They gain 1 electron to become stable halide ions (F⁻, Cl⁻, Br⁻, I⁻). Reactivity DECREASES down Group 17 as electron affinity decreases. Fluorine is the most reactive.",
+      hi:"हैलोजन में 7 संयोजी इलेक्ट्रॉन होते हैं (पूर्ण अष्टक से एक कम)। वे स्थिर हैलाइड आयन (F⁻, Cl⁻, Br⁻, I⁻) बनने के लिए 1 इलेक्ट्रॉन प्राप्त करते हैं। समूह 17 में नीचे जाने पर अभिक्रियाशीलता घटती है। फ्लोरीन सबसे अभिक्रियाशील है।",
+      bn:"হ্যালোজেনের ৭টি যোজন ইলেকট্রন আছে (পূর্ণ অষ্টক থেকে একটি কম)। তারা স্থিতিশীল হ্যালাইড আয়ন (F⁻, Cl⁻, Br⁻, I⁻) হতে ১টি ইলেকট্রন গ্রহণ করে। গ্রুপ ১৭-এ নিচে গেলে সক্রিয়তা কমে। ফ্লোরিন সবচেয়ে সক্রিয়।"
+    }
+  }
+];
+
+let currentQ=0,score=0,answered=false,currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.classList.toggle('hidden', el.dataset.lang!==l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(currentQ>=questions.length){showEnd();return;}
+  const q=questions[currentQ];
+  document.getElementById('qNum').textContent='QUESTION '+(currentQ+1)+' OF '+questions.length;
+  document.getElementById('qText').textContent=q[currentLang]||q.en;
+  const grid=document.getElementById('optionsGrid');
+  grid.innerHTML='';
+  const opts=(q.opts[currentLang]||q.opts.en);
+  opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.textContent=opt;
+    btn.onclick=()=>selectAnswer(i);
+    grid.appendChild(btn);
+  });
+  const fb=document.getElementById('feedback');
+  fb.className='feedback';
+  fb.textContent='';
+  document.getElementById('nextBtn').classList.remove('visible');
+  document.getElementById('progFill').style.width=(currentQ/questions.length*100)+'%';
+  document.getElementById('progLabel').textContent=currentQ+' / '+questions.length;
+  document.getElementById('qCard').classList.remove('fadeIn');
+  void document.getElementById('qCard').offsetWidth;
+  document.getElementById('qCard').classList.add('fadeIn');
+  answered=false;
+}
+
+function selectAnswer(i){
+  if(answered)return;
+  answered=true;
+  const q=questions[currentQ];
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('feedback');
+  if(i===q.ans){
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    btns[i].classList.add('correct');
+    fb.className='feedback correct show';
+    fb.innerHTML='&#10003; Correct! '+(q.exp[currentLang]||q.exp.en);
+  } else {
+    btns[i].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    fb.className='feedback wrong show';
+    fb.innerHTML='&#10007; Incorrect. '+(q.exp[currentLang]||q.exp.en);
+  }
+  document.getElementById('nextBtn').classList.add('visible');
+  if(currentQ===questions.length-1){
+    document.getElementById('nextBtn').textContent='See Results ★';
+  }
+}
+
+function nextQuestion(){
+  currentQ++;
+  renderQuestion();
+}
+
+function showEnd(){
+  document.getElementById('qCard').classList.add('hidden');
+  document.getElementById('endScreen').classList.remove('hidden');
+  const pct=score;
+  let stars='☆☆☆';
+  if(pct>=90)stars='★★★';
+  else if(pct>=70)stars='★★☆';
+  else if(pct>=40)stars='★☆☆';
+  document.getElementById('stars').textContent=stars;
+  document.getElementById('finalScore').textContent=score+' / 100';
+  let msg='Keep going! Review Mendeleev and periodic trends.';
+  if(pct>=90)msg='Excellent! You have mastered Periodic Classification!';
+  else if(pct>=70)msg='Great job! Brush up on group and period trends.';
+  else if(pct>=40)msg='Good effort! Focus on triads, octaves, and periodicity.';
+  document.getElementById('finalMsg').textContent=msg;
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('progLabel').textContent='10 / 10';
+}
+
+function restartGame(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('scoreVal').textContent=0;
+  document.getElementById('endScreen').classList.add('hidden');
+  document.getElementById('qCard').classList.remove('hidden');
+  document.getElementById('nextBtn').textContent='Next →';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Real Numbers &amp; Polynomials — GyanPlay Class 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+  --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+  --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));min-height:100vh;color:#fff;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fadeIn{animation:fadeIn .45s ease both;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:99;}
+.back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:.95rem;padding:7px 16px;border-radius:20px;cursor:pointer;transition:.2s;}
+.back-btn:hover{background:rgba(255,255,255,.22);}
+.badge{background:var(--saffron);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.82rem;padding:5px 14px;border-radius:20px;letter-spacing:.5px;}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:.8rem;padding:5px 11px;border-radius:14px;cursor:pointer;transition:.2s;}
+.lang-btn.active,.lang-btn:hover{background:var(--purple);}
+.container{max-width:780px;margin:0 auto;padding:24px 16px 60px;}
+.game-title{font-family:'Baloo 2',sans-serif;font-size:1.7rem;font-weight:800;text-align:center;margin-bottom:4px;background:linear-gradient(90deg,var(--gold),var(--saffron));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.game-sub{text-align:center;font-size:.88rem;color:#bbb;margin-bottom:22px;}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.prog-bar{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--saffron));border-radius:4px;transition:width .4s ease;}
+.prog-label{font-size:.82rem;color:#aaa;white-space:nowrap;}
+.score-display{text-align:right;font-family:'Baloo 2',sans-serif;font-size:1rem;color:var(--gold);margin-bottom:14px;}
+.q-card{background:var(--card);border-radius:18px;padding:26px 24px;border:1px solid rgba(255,255,255,.09);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.q-num{font-size:.78rem;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:8px;}
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.08rem;font-weight:600;line-height:1.55;margin-bottom:14px;}
+.formula-highlight{background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.35);border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:.97rem;color:var(--gold);font-weight:700;text-align:center;font-family:'Baloo 2',sans-serif;letter-spacing:.02em;}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.options{grid-template-columns:1fr;}}
+.opt-btn{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);color:#e8e8e8;font-family:'Nunito',sans-serif;font-size:.93rem;padding:13px 16px;border-radius:12px;cursor:pointer;text-align:left;transition:.22s;line-height:1.4;}
+.opt-btn:hover:not(:disabled){background:rgba(255,107,0,.2);border-color:var(--saffron);}
+.opt-btn.correct{background:rgba(0,200,83,.2);border-color:var(--green);color:#fff;}
+.opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);color:#fff;}
+.opt-btn:disabled{cursor:not-allowed;}
+.feedback{margin-top:16px;padding:12px 16px;border-radius:12px;font-size:.92rem;line-height:1.5;display:none;}
+.feedback.show{display:block;}
+.feedback.correct{background:rgba(0,200,83,.15);border:1px solid var(--green);color:#b9f6ca;}
+.feedback.wrong{background:rgba(255,64,129,.15);border:1px solid var(--pink);color:#ffd0dd;}
+.next-btn{display:block;margin:20px auto 0;background:linear-gradient(135deg,var(--saffron),#cc5500);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:13px 36px;border-radius:24px;cursor:pointer;transition:.2s;opacity:0;pointer-events:none;}
+.next-btn.visible{opacity:1;pointer-events:all;}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,107,0,.4);}
+.end-screen{background:var(--card);border-radius:20px;padding:36px 28px;text-align:center;border:1px solid rgba(255,255,255,.09);}
+.stars{font-size:2.8rem;margin-bottom:10px;letter-spacing:4px;}
+.final-score{font-family:'Baloo 2',sans-serif;font-size:2.4rem;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.final-msg{color:#ccc;font-size:1rem;margin-bottom:24px;}
+.play-again{background:linear-gradient(135deg,var(--purple),#5b21b6);border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;padding:14px 38px;border-radius:24px;cursor:pointer;transition:.2s;}
+.play-again:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(124,58,237,.5);}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">&#8592; Back</button>
+  <span class="badge">Maths</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('bn')">অ</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="game-title">
+    <span data-lang="en">Real Numbers &amp; Polynomials</span>
+    <span data-lang="hi" class="hidden">वास्तविक संख्याएँ एवं बहुपद</span>
+    <span data-lang="bn" class="hidden">বাস্তব সংখ্যা ও বহুপদী</span>
+  </div>
+  <div class="game-sub">Class 10 Maths &nbsp;|&nbsp; Ch 1–2 NCERT &nbsp;|&nbsp; 10 Questions</div>
+
+  <div class="prog-row">
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-label" id="progLabel">0 / 10</div>
+  </div>
+  <div class="score-display">Score: <span id="scoreVal">0</span> / 100</div>
+
+  <div class="q-card fadeIn" id="qCard">
+    <div class="q-num" id="qNum">QUESTION 1 OF 10</div>
+    <div class="q-text" id="qText"></div>
+    <div class="formula-highlight hidden" id="formulaBox"></div>
+    <div class="options" id="optionsGrid"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next &#8594;</button>
+  </div>
+
+  <div class="end-screen fadeIn hidden" id="endScreen">
+    <div class="stars" id="starsDisplay"></div>
+    <div class="final-score" id="finalScore"></div>
+    <div class="final-msg" id="finalMsg"></div>
+    <button class="play-again" onclick="restartGame()">&#9654; Play Again</button>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {
+    en:"Euclid's Division Lemma states: for any two positive integers a and b, there exist unique integers q and r such that a = bq + r, where:",
+    hi:"यूक्लिड का विभाजन प्रमेयिका कहता है: किसी भी दो धनात्मक पूर्णांकों a और b के लिए अद्वितीय पूर्णांक q और r मौजूद हैं जिससे a = bq + r, जहाँ:",
+    bn:"ইউক্লিডের বিভাজন প্রমেয় বলে: যেকোনো দুটি ধনাত্মক পূর্ণসংখ্যা a ও b-এর জন্য অনন্য পূর্ণসংখ্যা q ও r বিদ্যমান যাতে a = bq + r, যেখানে:",
+    formula:{en:"a = bq + r, where 0 ≤ r < b",hi:"a = bq + r, जहाँ 0 ≤ r < b",bn:"a = bq + r, যেখানে 0 ≤ r < b"},
+    opts:{
+      en:["0 < r ≤ b","0 ≤ r < b","r > b","r = 0 always"],
+      hi:["0 < r ≤ b","0 ≤ r < b","r > b","r = 0 हमेशा"],
+      bn:["0 < r ≤ b","0 ≤ r < b","r > b","r সবসময় = 0"]
+    },
+    ans:1,
+    exp:{
+      en:"Euclid's Division Lemma: a = bq + r with 0 ≤ r < b. The remainder r is always non-negative and strictly less than the divisor b. This is the basis of the Euclidean Algorithm for finding HCF.",
+      hi:"यूक्लिड विभाजन प्रमेयिका: a = bq + r जहाँ 0 ≤ r < b। शेषफल r हमेशा अऋणात्मक और विभाजक b से कड़ाई से कम होता है। यह HCF निकालने के लिए यूक्लिड एल्गोरिदम का आधार है।",
+      bn:"ইউক্লিডের বিভাজন প্রমেয়: a = bq + r যেখানে 0 ≤ r < b। ভাগশেষ r সবসময় অঋণাত্মক এবং বিভাজক b-এর চেয়ে কঠোরভাবে কম। এটি HCF বের করার ইউক্লিড অ্যালগরিদমের ভিত্তি।"
+    }
+  },
+  {
+    en:"Using Euclid's algorithm, find the HCF of 135 and 225.",
+    hi:"यूक्लिड के एल्गोरिदम से 135 और 225 का HCF ज्ञात करें।",
+    bn:"ইউক্লিড অ্যালগরিদম ব্যবহার করে 135 ও 225 এর HCF নির্ণয় করো।",
+    formula:{en:"225 = 135×1 + 90 → 135 = 90×1 + 45 → 90 = 45×2 + 0",hi:"225 = 135×1 + 90 → 135 = 90×1 + 45 → 90 = 45×2 + 0",bn:"225 = 135×1 + 90 → 135 = 90×1 + 45 → 90 = 45×2 + 0"},
+    opts:{
+      en:["15","25","45","9"],
+      hi:["15","25","45","9"],
+      bn:["15","25","45","9"]
+    },
+    ans:2,
+    exp:{
+      en:"Step 1: 225 = 135×1 + 90. Step 2: 135 = 90×1 + 45. Step 3: 90 = 45×2 + 0. Since remainder = 0, HCF = 45. Apply Euclid's lemma repeatedly until remainder is 0; last non-zero remainder is HCF.",
+      hi:"चरण 1: 225 = 135×1 + 90। चरण 2: 135 = 90×1 + 45। चरण 3: 90 = 45×2 + 0। शेषफल = 0 होने पर HCF = 45। यूक्लिड की प्रमेयिका तब तक लगाते रहें जब तक शेषफल 0 न हो।",
+      bn:"ধাপ 1: 225 = 135×1 + 90। ধাপ 2: 135 = 90×1 + 45। ধাপ 3: 90 = 45×2 + 0। ভাগশেষ = 0 হলে HCF = 45। ভাগশেষ 0 না হওয়া পর্যন্ত ইউক্লিড প্রমেয় প্রয়োগ করো।"
+    }
+  },
+  {
+    en:"The Fundamental Theorem of Arithmetic states that every composite number can be expressed as a product of primes:",
+    hi:"अंकगणित का मूल प्रमेय कहता है कि प्रत्येक भाज्य संख्या को अभाज्य संख्याओं के गुणनफल के रूप में व्यक्त किया जा सकता है:",
+    bn:"পাটীগণিতের মৌলিক উপপাদ্য বলে যে প্রতিটি যৌগিক সংখ্যাকে মৌলিক সংখ্যার গুণফল হিসেবে প্রকাশ করা যায়:",
+    formula:{en:"Every composite = p₁ × p₂ × ... × pₙ (unique, order apart)",hi:"प्रत्येक भाज्य = p₁ × p₂ × ... × pₙ (क्रम छोड़कर अद्वितीय)",bn:"প্রতিটি যৌগিক = p₁ × p₂ × ... × pₙ (ক্রম বাদে অনন্য)"},
+    opts:{
+      en:["In multiple ways","Uniquely (order of factors apart)","Only using even primes","Only if it is a perfect square"],
+      hi:["अनेक तरीकों से","अद्वितीय रूप से (गुणकों के क्रम को छोड़कर)","केवल सम अभाज्य संख्याओं से","केवल यदि यह पूर्ण वर्ग है"],
+      bn:["একাধিক উপায়ে","অনন্যভাবে (গুণনীয়কের ক্রম বাদে)","শুধু জোড় মৌলিক দিয়ে","শুধু যদি পূর্ণ বর্গ হয়"]
+    },
+    ans:1,
+    exp:{
+      en:"The Fundamental Theorem of Arithmetic: every composite number has a UNIQUE prime factorisation (ignoring order). E.g., 12 = 2×2×3 = 2²×3 — this is the only factorisation. This is used to find HCF and LCM: HCF = product of smallest powers of common primes; LCM = product of greatest powers of all primes.",
+      hi:"अंकगणित का मूल प्रमेय: प्रत्येक भाज्य संख्या का एक UNIQUE अभाज्य गुणनखंड होता है (क्रम को अनदेखा करते हुए)। जैसे, 12 = 2²×3 — यही एकमात्र गुणनखंड है। इससे HCF और LCM निकाला जाता है।",
+      bn:"পাটীগণিতের মৌলিক উপপাদ্য: প্রতিটি যৌগিক সংখ্যার একটি অনন্য মৌলিক উৎপাদন আছে (ক্রম উপেক্ষা করে)। যেমন, 12 = 2²×3 — এটাই একমাত্র উৎপাদন। এটি HCF ও LCM বের করতে ব্যবহৃত হয়।"
+    }
+  },
+  {
+    en:"Which of the following numbers is irrational?",
+    hi:"निम्नलिखित में से कौन-सी संख्या अपरिमेय है?",
+    bn:"নিচের কোন সংখ্যাটি অমূলদ?",
+    formula:{en:"Irrational: cannot be written as p/q (q ≠ 0, p,q integers)",hi:"अपरिमेय: p/q के रूप में नहीं लिखा जा सकता (q ≠ 0)",bn:"অমূলদ: p/q আকারে লেখা যায় না (q ≠ 0)"},
+    opts:{
+      en:["√4","√9","√2","√25"],
+      hi:["√4","√9","√2","√25"],
+      bn:["√4","√9","√2","√25"]
+    },
+    ans:2,
+    exp:{
+      en:"√4 = 2, √9 = 3, √25 = 5 — all rational (perfect squares). √2 ≈ 1.41421356… is irrational because its decimal expansion is non-terminating and non-repeating. Proof by contradiction: assume √2 = p/q in lowest terms, then 2 = p²/q², so p² is even, making p even, then q must also be even — contradicting 'lowest terms'.",
+      hi:"√4 = 2, √9 = 3, √25 = 5 — सभी परिमेय (पूर्ण वर्ग)। √2 ≈ 1.41421356… अपरिमेय है क्योंकि इसका दशमलव विस्तार अनवसानी और अनावर्ती है। विरोधाभास से प्रमाण: माना √2 = p/q, तो p और q दोनों सम होंगे — सरलतम रूप का विरोध।",
+      bn:"√4 = 2, √9 = 3, √25 = 5 — সব মূলদ (পূর্ণ বর্গ)। √2 ≈ 1.41421356… অমূলদ কারণ এর দশমিক বিস্তার অশেষ ও পুনরাবৃত্তিহীন। বিরোধাভাস প্রমাণ: ধরো √2 = p/q, তাহলে p ও q উভয়ই জোড় হবে — সরলতম রূপের বিরোধ।"
+    }
+  },
+  {
+    en:"The decimal expansion of 17/8 is terminating. What condition on the denominator (in lowest terms p/q) guarantees a terminating decimal?",
+    hi:"17/8 का दशमलव विस्तार सांत है। सरलतम रूप p/q में हर (q) की कौन-सी शर्त सांत दशमलव की गारंटी देती है?",
+    bn:"17/8-এর দশমিক বিস্তার পরিসমাপ্ত। সরলতম আকার p/q-তে হর (q)-এর কোন শর্ত পরিসমাপ্ত দশমিক নিশ্চিত করে?",
+    formula:{en:"Terminating ⟺ q = 2ᵐ × 5ⁿ (m,n ≥ 0)",hi:"सांत ⟺ q = 2ᵐ × 5ⁿ (m,n ≥ 0)",bn:"পরিসমাপ্ত ⟺ q = 2ᵐ × 5ⁿ (m,n ≥ 0)"},
+    opts:{
+      en:["q has only factor 2","q has only factor 3 or 7","q is of the form 2ᵐ × 5ⁿ (m, n ≥ 0)","q is a prime number"],
+      hi:["q में केवल 2 का गुणक है","q में केवल 3 या 7 का गुणक है","q, 2ᵐ × 5ⁿ (m, n ≥ 0) के रूप का है","q एक अभाज्य संख्या है"],
+      bn:["q-এর শুধু 2 গুণনীয়ক","q-এর শুধু 3 বা 7 গুণনীয়ক","q হলো 2ᵐ × 5ⁿ আকারের (m, n ≥ 0)","q একটি মৌলিক সংখ্যা"]
+    },
+    ans:2,
+    exp:{
+      en:"A rational p/q (in lowest terms) has a terminating decimal if and only if q = 2ᵐ × 5ⁿ. Here 8 = 2³, so 17/8 = 2.125 (terminates). Example: 7/6 — since 6 = 2×3, denominator has prime 3, so non-terminating repeating. 1/3 = 0.333… never terminates.",
+      hi:"p/q (सरलतम रूप में) का दशमलव विस्तार सांत है यदि और केवल यदि q = 2ᵐ × 5ⁿ। यहाँ 8 = 2³, इसलिए 17/8 = 2.125 (सांत)। 7/6 — चूँकि 6 = 2×3, हर में अभाज्य 3 है, इसलिए असांत आवर्ती।",
+      bn:"p/q (সরলতম আকারে)-এর পরিসমাপ্ত দশমিক থাকে যদি এবং কেবল যদি q = 2ᵐ × 5ⁿ। এখানে 8 = 2³, তাই 17/8 = 2.125 (পরিসমাপ্ত)। 7/6-এ 6 = 2×3, হরে মৌলিক 3 আছে, তাই অশেষ পুনরাবৃত্তি।"
+    }
+  },
+  {
+    en:"A polynomial p(x) = 2x² − 5x + 3 has zeroes α and β. What is the value of α + β?",
+    hi:"एक बहुपद p(x) = 2x² − 5x + 3 के शून्यक α और β हैं। α + β का मान क्या है?",
+    bn:"একটি বহুপদী p(x) = 2x² − 5x + 3-এর শূন্যক α ও β। α + β-এর মান কত?",
+    formula:{en:"α + β = −b/a = −(−5)/2 = 5/2",hi:"α + β = −b/a = −(−5)/2 = 5/2",bn:"α + β = −b/a = −(−5)/2 = 5/2"},
+    opts:{
+      en:["5/2","−5/2","3/2","−3/2"],
+      hi:["5/2","−5/2","3/2","−3/2"],
+      bn:["5/2","−5/2","3/2","−3/2"]
+    },
+    ans:0,
+    exp:{
+      en:"For a quadratic ax² + bx + c, sum of zeroes α + β = −b/a and product αβ = c/a. Here a=2, b=−5, c=3. So α + β = −(−5)/2 = 5/2, and αβ = 3/2. These relationships come directly from Vieta's formulas.",
+      hi:"द्विघात ax² + bx + c के लिए, शून्यकों का योग α + β = −b/a और गुणनफल αβ = c/a। यहाँ a=2, b=−5, c=3। तो α + β = 5/2, αβ = 3/2। ये संबंध विएटा के सूत्रों से सीधे आते हैं।",
+      bn:"দ্বিঘাত ax² + bx + c-এর জন্য, শূন্যকের যোগফল α + β = −b/a এবং গুণফল αβ = c/a। এখানে a=2, b=−5, c=3। তাই α + β = 5/2, αβ = 3/2। এগুলি Vieta-র সূত্র থেকে আসে।"
+    }
+  },
+  {
+    en:"Which of the following is a cubic polynomial?",
+    hi:"निम्नलिखित में से कौन-सा घन बहुपद है?",
+    bn:"নিচের কোনটি ঘনবহুপদী?",
+    formula:{en:"Cubic polynomial: highest degree = 3",hi:"घन बहुपद: उच्चतम घात = 3",bn:"ঘনবহুপদী: সর্বোচ্চ মাত্রা = 3"},
+    opts:{
+      en:["x² + 3x − 1","4x + 7","x³ − 2x² + x − 5","x⁴ − 1"],
+      hi:["x² + 3x − 1","4x + 7","x³ − 2x² + x − 5","x⁴ − 1"],
+      bn:["x² + 3x − 1","4x + 7","x³ − 2x² + x − 5","x⁴ − 1"]
+    },
+    ans:2,
+    exp:{
+      en:"Degree of a polynomial is the highest power of the variable. Linear: degree 1 (e.g., 4x+7). Quadratic: degree 2 (e.g., x²+3x−1). Cubic: degree 3 (e.g., x³−2x²+x−5 — has 3 zeroes counting multiplicity). Degree 4 is biquadratic. A cubic polynomial always has exactly 3 zeroes (real or complex).",
+      hi:"बहुपद की घात चर की सर्वोच्च शक्ति होती है। रैखिक: घात 1। द्विघाती: घात 2। त्रिघाती: घात 3 (जैसे x³−2x²+x−5 — 3 शून्यक)। घात 4 द्विचतुष्पदी है।",
+      bn:"বহুপদীর মাত্রা হলো চলকের সর্বোচ্চ ঘাত। রৈখিক: মাত্রা 1। দ্বিঘাত: মাত্রা 2। ঘনবহুপদী: মাত্রা 3 (যেমন x³−2x²+x−5 — 3টি শূন্যক)। মাত্রা 4 হলো দ্বিচতুষ্কীয়।"
+    }
+  },
+  {
+    en:"If α and β are zeroes of p(x) = x² − 4x + 3, find the value of α² + β².",
+    hi:"यदि α और β, p(x) = x² − 4x + 3 के शून्यक हैं, तो α² + β² का मान ज्ञात करें।",
+    bn:"যদি α ও β, p(x) = x² − 4x + 3-এর শূন্যক হয়, তাহলে α² + β²-এর মান নির্ণয় করো।",
+    formula:{en:"α²+β² = (α+β)² − 2αβ = 4² − 2×3 = 10",hi:"α²+β² = (α+β)² − 2αβ = 16 − 6 = 10",bn:"α²+β² = (α+β)² − 2αβ = 16 − 6 = 10"},
+    opts:{
+      en:["10","14","6","7"],
+      hi:["10","14","6","7"],
+      bn:["10","14","6","7"]
+    },
+    ans:0,
+    exp:{
+      en:"α + β = −(−4)/1 = 4; αβ = 3/1 = 3. Use identity: α² + β² = (α+β)² − 2αβ = 16 − 6 = 10. This identity (a²+b² = (a+b)²−2ab) is very useful in board exams. Direct check: roots are 1 and 3 (since x²−4x+3 = (x−1)(x−3)), so 1²+3² = 1+9 = 10. ✓",
+      hi:"α + β = 4; αβ = 3। पहचान: α² + β² = (α+β)² − 2αβ = 16 − 6 = 10। जाँच: x²−4x+3 = (x−1)(x−3), मूल 1 और 3 हैं, तो 1+9 = 10। ✓",
+      bn:"α + β = 4; αβ = 3। সূত্র: α² + β² = (α+β)² − 2αβ = 16 − 6 = 10। যাচাই: x²−4x+3 = (x−1)(x−3), মূল 1 ও 3, তাই 1+9 = 10। ✓"
+    }
+  },
+  {
+    en:"According to the Division Algorithm for polynomials, if p(x) is divided by g(x), then p(x) =",
+    hi:"बहुपदों के लिए विभाजन एल्गोरिदम के अनुसार, यदि p(x) को g(x) से विभाजित किया जाए, तो p(x) =",
+    bn:"বহুপদীর বিভাজন অ্যালগরিদম অনুযায়ী, p(x)-কে g(x) দিয়ে ভাগ করলে p(x) =",
+    formula:{en:"p(x) = g(x) × q(x) + r(x), where deg r(x) < deg g(x)",hi:"p(x) = g(x) × q(x) + r(x), जहाँ r(x) की घात < g(x) की घात",bn:"p(x) = g(x) × q(x) + r(x), যেখানে r(x)-এর মাত্রা < g(x)-এর মাত্রা"},
+    opts:{
+      en:["g(x) × q(x)","g(x) + q(x) + r(x)","g(x) × q(x) + r(x), where deg r < deg g","g(x) × q(x) − r(x)"],
+      hi:["g(x) × q(x)","g(x) + q(x) + r(x)","g(x) × q(x) + r(x), जहाँ r की घात < g की घात","g(x) × q(x) − r(x)"],
+      bn:["g(x) × q(x)","g(x) + q(x) + r(x)","g(x) × q(x) + r(x), যেখানে r-এর মাত্রা < g-এর মাত্রা","g(x) × q(x) − r(x)"]
+    },
+    ans:2,
+    exp:{
+      en:"Division Algorithm for Polynomials: p(x) = g(x)·q(x) + r(x), where r(x) = 0 or degree of r(x) < degree of g(x). Here q(x) is quotient, r(x) is remainder. This is analogous to Euclid's division lemma for integers. If r(x) = 0, then g(x) is a factor of p(x).",
+      hi:"बहुपदों के लिए विभाजन एल्गोरिदम: p(x) = g(x)·q(x) + r(x), जहाँ r(x) = 0 या r(x) की घात < g(x) की घात। q(x) भागफल और r(x) शेषफल है। यदि r(x) = 0, तो g(x) एक गुणक है।",
+      bn:"বহুপদীর বিভাজন অ্যালগরিদম: p(x) = g(x)·q(x) + r(x), যেখানে r(x) = 0 অথবা r(x)-এর মাত্রা < g(x)-এর মাত্রা। q(x) ভাগফল, r(x) ভাগশেষ। r(x) = 0 হলে g(x) একটি উৎপাদক।"
+    }
+  },
+  {
+    en:"The product of zeroes of the polynomial 3x³ − 5x² + 7x − 2 is:",
+    hi:"बहुपद 3x³ − 5x² + 7x − 2 के शून्यकों का गुणनफल है:",
+    bn:"বহুপদী 3x³ − 5x² + 7x − 2-এর শূন্যকগুলির গুণফল হলো:",
+    formula:{en:"For ax³+bx²+cx+d: αβγ = −d/a = −(−2)/3 = 2/3",hi:"ax³+bx²+cx+d के लिए: αβγ = −d/a = 2/3",bn:"ax³+bx²+cx+d-এর জন্য: αβγ = −d/a = 2/3"},
+    opts:{
+      en:["2/3","−2/3","5/3","7/3"],
+      hi:["2/3","−2/3","5/3","7/3"],
+      bn:["2/3","−2/3","5/3","7/3"]
+    },
+    ans:0,
+    exp:{
+      en:"For a cubic ax³+bx²+cx+d with zeroes α, β, γ: sum α+β+γ = −b/a = 5/3; sum of products of pairs αβ+βγ+γα = c/a = 7/3; product αβγ = −d/a = −(−2)/3 = 2/3. These are extensions of Vieta's formulas to cubics.",
+      hi:"घन ax³+bx²+cx+d के शून्यकों α, β, γ के लिए: α+β+γ = −b/a = 5/3; αβ+βγ+γα = c/a = 7/3; αβγ = −d/a = 2/3। ये विएटा के सूत्रों का विस्तार हैं।",
+      bn:"ঘন ax³+bx²+cx+d-এর শূন্যক α, β, γ-এর জন্য: α+β+γ = −b/a = 5/3; αβ+βγ+γα = c/a = 7/3; αβγ = −d/a = 2/3। এগুলি Vieta সূত্রের ঘনে সম্প্রসারণ।"
+    }
+  }
+];
+
+let currentQ=0,score=0,answered=false,currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.classList.toggle('hidden',el.dataset.lang!==l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(currentQ>=questions.length){showEnd();return;}
+  const q=questions[currentQ];
+  document.getElementById('qNum').textContent='QUESTION '+(currentQ+1)+' OF '+questions.length;
+  document.getElementById('qText').textContent=q[currentLang]||q.en;
+  const fb=document.getElementById('formulaBox');
+  if(q.formula){
+    fb.textContent=q.formula[currentLang]||q.formula.en;
+    fb.classList.remove('hidden');
+  } else {
+    fb.classList.add('hidden');
+  }
+  const grid=document.getElementById('optionsGrid');
+  grid.innerHTML='';
+  const opts=q.opts[currentLang]||q.opts.en;
+  opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.textContent=opt;
+    btn.onclick=()=>selectAnswer(i);
+    grid.appendChild(btn);
+  });
+  const feedback=document.getElementById('feedback');
+  feedback.className='feedback';
+  feedback.textContent='';
+  document.getElementById('nextBtn').classList.remove('visible');
+  document.getElementById('progFill').style.width=(currentQ/questions.length*100)+'%';
+  document.getElementById('progLabel').textContent=currentQ+' / '+questions.length;
+  document.getElementById('qCard').classList.remove('fadeIn');
+  void document.getElementById('qCard').offsetWidth;
+  document.getElementById('qCard').classList.add('fadeIn');
+  answered=false;
+}
+
+function selectAnswer(i){
+  if(answered)return;
+  answered=true;
+  const q=questions[currentQ];
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  const feedback=document.getElementById('feedback');
+  if(i===q.ans){
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    btns[i].classList.add('correct');
+    feedback.className='feedback correct show';
+    feedback.innerHTML='&#10003; Correct! '+(q.exp[currentLang]||q.exp.en);
+  } else {
+    btns[i].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    feedback.className='feedback wrong show';
+    feedback.innerHTML='&#10007; Incorrect. '+(q.exp[currentLang]||q.exp.en);
+  }
+  document.getElementById('nextBtn').classList.add('visible');
+  if(currentQ===questions.length-1){
+    document.getElementById('nextBtn').textContent='See Results \u2605';
+  }
+}
+
+function nextQuestion(){
+  currentQ++;
+  renderQuestion();
+}
+
+function showEnd(){
+  document.getElementById('qCard').classList.add('hidden');
+  document.getElementById('endScreen').classList.remove('hidden');
+  const pct=score;
+  let stars='\u2606\u2606\u2606';
+  if(pct>=90)stars='\u2605\u2605\u2605';
+  else if(pct>=70)stars='\u2605\u2605\u2606';
+  else if(pct>=40)stars='\u2605\u2606\u2606';
+  document.getElementById('starsDisplay').textContent=stars;
+  document.getElementById('finalScore').textContent=score+' / 100';
+  let msg='Keep practising! Review Euclid\'s lemma and polynomial zeroes.';
+  if(pct>=90)msg='Brilliant! You have mastered Real Numbers & Polynomials!';
+  else if(pct>=70)msg='Well done! Revise prime factorisation and zero relations.';
+  else if(pct>=40)msg='Good effort! Focus on HCF algorithm and sum/product of zeroes.';
+  document.getElementById('finalMsg').textContent=msg;
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('progLabel').textContent='10 / 10';
+}
+
+function restartGame(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('scoreVal').textContent=0;
+  document.getElementById('endScreen').classList.add('hidden');
+  document.getElementById('qCard').classList.remove('hidden');
+  document.getElementById('nextBtn').textContent='Next \u2192';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>

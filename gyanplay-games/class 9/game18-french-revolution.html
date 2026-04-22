@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The French Revolution – Class 9 History | GyanPlay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --saffron:#FF6B00; --gold:#FFB800; --sky:#00AEEF;
+    --green:#00C853; --pink:#FF4081; --purple:#7C3AED;
+    --bg1:#0F0C29; --bg2:#302B63; --card:#1a1740;
+    --text:#F0EEF8; --subtext:#A89EC9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    min-height:100vh; color:var(--text);
+    display:flex; flex-direction:column; align-items:center;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .fade-in{animation:fadeIn .45s ease both}
+
+  .topbar{
+    width:100%; max-width:720px;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 18px;
+  }
+  .back-btn{
+    background:rgba(255,255,255,.08); border:none; color:var(--text);
+    font-family:'Nunito',sans-serif; font-size:15px; font-weight:700;
+    padding:7px 14px; border-radius:20px; cursor:pointer; transition:background .2s;
+  }
+  .back-btn:hover{background:rgba(255,255,255,.15)}
+  .subject-badge{
+    background:var(--pink); color:#fff;
+    font-family:'Baloo 2',sans-serif; font-size:13px; font-weight:700;
+    padding:5px 14px; border-radius:20px; letter-spacing:.5px;
+  }
+  .lang-toggle{display:flex;gap:6px}
+  .lang-btn{
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    color:var(--subtext); font-size:13px; font-weight:700;
+    padding:5px 11px; border-radius:16px; cursor:pointer; transition:all .2s;
+  }
+  .lang-btn.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+
+  .card{
+    width:100%; max-width:720px;
+    background:var(--card); border-radius:22px;
+    padding:28px 30px; margin:6px 16px 24px;
+    box-shadow:0 8px 40px rgba(0,0,0,.45);
+  }
+  .score-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .score-label{font-family:'Baloo 2',sans-serif;font-size:22px;font-weight:800;color:var(--gold)}
+  .q-counter{font-size:14px;color:var(--subtext);font-weight:700}
+  .progress-track{
+    width:100%; height:8px; background:rgba(255,255,255,.1);
+    border-radius:8px; overflow:hidden; margin-bottom:22px;
+  }
+  .progress-fill{
+    height:100%; border-radius:8px;
+    background:linear-gradient(90deg,var(--pink),var(--purple));
+    transition:width .4s ease;
+  }
+
+  .question-text{
+    font-family:'Baloo 2',sans-serif; font-size:19px; font-weight:700;
+    line-height:1.5; margin-bottom:8px;
+  }
+  .hist-context{
+    background:rgba(255,64,129,.1); border-left:3px solid var(--pink);
+    padding:8px 12px; border-radius:0 8px 8px 0;
+    font-size:13px; color:#ffb3cc; margin-bottom:20px; font-weight:600;
+  }
+
+  .options{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
+  .opt-btn{
+    background:rgba(255,255,255,.06); border:2px solid rgba(255,255,255,.12);
+    color:var(--text); font-family:'Nunito',sans-serif; font-size:16px; font-weight:700;
+    padding:13px 18px; border-radius:14px; cursor:pointer; text-align:left;
+    transition:all .2s; display:flex; align-items:center; gap:10px;
+  }
+  .opt-btn:hover:not(:disabled){background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.25)}
+  .opt-btn.correct{background:rgba(0,200,83,.18);border-color:var(--green);color:#6fffa8}
+  .opt-btn.wrong{background:rgba(255,64,129,.18);border-color:var(--pink);color:#ff9eb5}
+  .opt-btn:disabled{cursor:not-allowed}
+  .opt-letter{
+    width:28px;height:28px;border-radius:50%;
+    background:rgba(255,255,255,.1);display:flex;align-items:center;
+    justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;
+  }
+
+  .feedback{
+    border-radius:12px; padding:13px 16px;
+    font-size:14px; font-weight:700; line-height:1.55;
+    margin-bottom:16px; display:none;
+  }
+  .feedback.correct{background:rgba(0,200,83,.15);border:1px solid rgba(0,200,83,.35);color:#7fffb6}
+  .feedback.wrong{background:rgba(255,64,129,.15);border:1px solid rgba(255,64,129,.35);color:#ffaac9}
+
+  .next-btn{
+    width:100%; padding:14px; border:none; border-radius:14px;
+    background:linear-gradient(90deg,var(--pink),var(--purple));
+    color:#fff; font-family:'Baloo 2',sans-serif; font-size:18px; font-weight:800;
+    cursor:pointer; transition:opacity .2s; display:none;
+  }
+  .next-btn:hover{opacity:.88}
+
+  .end-screen{display:none;text-align:center}
+  .end-screen h2{font-family:'Baloo 2',sans-serif;font-size:30px;font-weight:800;margin-bottom:6px}
+  .final-score{font-size:52px;font-weight:800;font-family:'Baloo 2',sans-serif;color:var(--gold);margin:10px 0}
+  .stars-row{font-size:36px;margin:10px 0 18px}
+  .end-screen p{color:var(--subtext);font-size:16px;margin-bottom:24px}
+  .play-again{
+    background:linear-gradient(90deg,var(--pink),var(--saffron));
+    border:none;color:#fff;font-family:'Baloo 2',sans-serif;
+    font-size:19px;font-weight:800;padding:14px 38px;
+    border-radius:30px;cursor:pointer;transition:opacity .2s;
+  }
+  .play-again:hover{opacity:.85}
+
+  @media(max-width:480px){
+    .card{padding:20px 16px;margin:4px 10px 16px}
+    .question-text{font-size:16px}
+    .opt-btn{font-size:14px;padding:11px 14px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="subject-badge">🏛️ Social Studies</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')"><span data-lang="en">EN</span></button>
+    <button class="lang-btn" onclick="setLang('hi')"><span data-lang="hi">हि</span></button>
+    <button class="lang-btn" onclick="setLang('bn')"><span data-lang="bn">অ</span></button>
+  </div>
+</div>
+
+<div class="card fade-in" id="quiz-card">
+  <div class="score-row">
+    <span class="score-label" id="score-display">Score: 0/100</span>
+    <span class="q-counter" id="q-counter">Question 1 / 10</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+  <div id="game-area">
+    <p class="question-text" id="question-text"></p>
+    <div class="hist-context" id="hist-context" style="display:none"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="bn" style="display:none">পরবর্তী →</span>
+    </button>
+  </div>
+
+  <div class="end-screen" id="end-screen">
+    <h2>
+      <span data-lang="en">Quiz Complete! 🎉</span>
+      <span data-lang="hi" style="display:none">क्विज़ पूरा! 🎉</span>
+      <span data-lang="bn" style="display:none">কুইজ শেষ! 🎉</span>
+    </h2>
+    <div class="final-score" id="final-score"></div>
+    <div class="stars-row" id="stars-row"></div>
+    <p id="end-msg"></p>
+    <button class="play-again" onclick="restartGame()">
+      <span data-lang="en">Play Again</span>
+      <span data-lang="hi" style="display:none">फिर खेलें</span>
+      <span data-lang="bn" style="display:none">আবার খেলো</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    en:"French society before the Revolution was divided into three Estates. Who paid most of the taxes?",
+    hi:"क्रांति से पहले फ्रांसीसी समाज तीन एस्टेट में विभाजित था। सबसे अधिक कर कौन देता था?",
+    bn:"বিপ্লবের আগে ফরাসি সমাজ তিনটি এস্টেটে বিভক্ত ছিল। সবচেয়ে বেশি কর কে দিত?",
+    context:{en:"🏛️ The First Estate = clergy; Second Estate = nobility; Third Estate = everyone else (97% of population).",hi:"🏛️ प्रथम एस्टेट = पादरी; द्वितीय = कुलीन; तृतीय = बाकी सभी (97% जनसंख्या)।",bn:"🏛️ প্রথম এস্টেট = পাদ্রি; দ্বিতীয় = অভিজাত; তৃতীয় = বাকি সবাই (জনসংখ্যার 97%)।"},
+    options:{en:["The clergy (First Estate)","The nobility (Second Estate)","The common people (Third Estate)"],
+              hi:["पादरी वर्ग (प्रथम एस्टेट)","कुलीन वर्ग (द्वितीय एस्टेट)","आम जनता (तृतीय एस्टेट)"],
+              bn:["পাদ্রি (প্রথম এস্টেট)","অভিজাত (দ্বিতীয় এস্টেট)","সাধারণ মানুষ (তৃতীয় এস্টেট)"]},
+    correct:2,
+    explanation:{en:"The Third Estate (peasants, merchants, lawyers) bore almost all taxes while the First and Second Estates enjoyed exemptions.",
+                 hi:"तृतीय एस्टेट (किसान, व्यापारी, वकील) लगभग सभी कर देती थी जबकि प्रथम और द्वितीय एस्टेट को छूट मिलती थी।",
+                 bn:"তৃতীয় এস্টেট (কৃষক, ব্যবসায়ী, আইনজীবী) প্রায় সব কর দিত, অথচ প্রথম ও দ্বিতীয় এস্টেট করমুক্ত ছিল।"}
+  },
+  {
+    en:"The Tennis Court Oath was taken on 20 June 1789. What did the Third Estate representatives vow?",
+    hi:"20 जून 1789 को टेनिस कोर्ट शपथ ली गई। तृतीय एस्टेट के प्रतिनिधियों ने क्या प्रण लिया?",
+    bn:"20 জুন 1789 সালে টেনিস কোর্ট শপথ নেওয়া হয়। তৃতীয় এস্টেটের প্রতিনিধিরা কী প্রতিজ্ঞা করেছিল?",
+    context:{en:"🏛️ When locked out of their assembly hall, members met on a nearby tennis court.",hi:"🏛️ जब उन्हें सभा कक्ष से बाहर कर दिया गया, तो वे पास के टेनिस कोर्ट में मिले।",bn:"🏛️ সভাকক্ষ থেকে বের করে দেওয়া হলে তারা কাছের একটি টেনিস কোর্টে মিলিত হয়।"},
+    options:{en:["To overthrow King Louis XVI","Not to disperse until a new constitution was drafted for France","To ally with Britain against France"],
+              hi:["राजा लुई XVI को उखाड़ फेंकने की","फ्रांस का नया संविधान बनने तक न हटने की","ब्रिटेन से फ्रांस के खिलाफ गठबंधन की"],
+              bn:["রাজা লুই XVI কে উৎখাত করার","ফ্রান্সের নতুন সংবিধান না হওয়া পর্যন্ত না সরার","ব্রিটেনের সাথে ফ্রান্সের বিরুদ্ধে জোট বাঁধার"]},
+    correct:1,
+    explanation:{en:"They swore to remain assembled until they had given France a constitution — a direct challenge to royal authority.",
+                 hi:"उन्होंने शपथ ली कि जब तक फ्रांस को संविधान नहीं मिलता, वे नहीं हटेंगे — यह राजशाही को सीधी चुनौती थी।",
+                 bn:"তারা শপথ নিল যে ফ্রান্সকে সংবিধান না দেওয়া পর্যন্ত সরবে না — এটি রাজতন্ত্রের প্রতি সরাসরি চ্যালেঞ্জ।"}
+  },
+  {
+    en:"The Bastille fortress was stormed on 14 July 1789. It was significant because it was a symbol of:",
+    hi:"14 जुलाई 1789 को बास्तील किले पर धावा बोला गया। यह महत्वपूर्ण था क्योंकि यह किसका प्रतीक था:",
+    bn:"14 জুলাই 1789 সালে বাস্তিল দুর্গ আক্রমণ করা হয়। এটি গুরুত্বপূর্ণ ছিল কারণ এটি ছিল:",
+    context:{en:"🏛️ 14 July is celebrated as Bastille Day — France's national holiday — to this day.",hi:"🏛️ 14 जुलाई आज भी बास्तील दिवस — फ्रांस का राष्ट्रीय पर्व — के रूप में मनाया जाता है।",bn:"🏛️ 14 জুলাই আজও বাস্তিল দিবস — ফ্রান্সের জাতীয় উৎসব — হিসেবে পালিত হয়।"},
+    options:{en:["Religious power of the Church","Royal tyranny and despotism","The wealth of the nobility"],
+              hi:["चर्च की धार्मिक शक्ति","राजशाही अत्याचार और निरंकुशता","कुलीन वर्ग की संपत्ति"],
+              bn:["চার্চের ধর্মীয় ক্ষমতা","রাজকীয় স্বৈরাচার ও নিপীড়ন","অভিজাতদের ধন-সম্পদ"]},
+    correct:1,
+    explanation:{en:"The Bastille was a royal prison representing absolute royal power. Its fall symbolised the end of despotism and the beginning of revolution.",
+                 hi:"बास्तील राजकीय जेल थी जो राजशाही की निरंकुशता का प्रतीक था। इसका पतन क्रांति की शुरुआत का प्रतीक बना।",
+                 bn:"বাস্তিল ছিল রাজকীয় কারাগার — নিরঙ্কুশ রাজশাহীর প্রতীক। এর পতন বিপ্লবের সূচনার প্রতীক হয়ে ওঠে।"}
+  },
+  {
+    en:"The Declaration of the Rights of Man and of the Citizen (1789) was inspired by ideas of which thinker?",
+    hi:"मनुष्य और नागरिक के अधिकारों की घोषणा (1789) किस विचारक के विचारों से प्रेरित थी?",
+    bn:"মানুষ ও নাগরিকের অধিকারের ঘোষণা (1789) কোন চিন্তাবিদের ধারণা দ্বারা অনুপ্রাণিত ছিল?",
+    context:{en:"🏛️ The document proclaimed liberty, equality, and natural rights for all citizens.",hi:"🏛️ इस दस्तावेज़ में सभी नागरिकों के लिए स्वतंत्रता, समानता और प्राकृतिक अधिकार घोषित किए गए।",bn:"🏛️ দলিলটিতে সব নাগরিকের জন্য স্বাধীনতা, সমতা ও স্বাভাবিক অধিকার ঘোষণা করা হয়েছিল।"},
+    options:{en:["Machiavelli","John Locke and Jean-Jacques Rousseau","Karl Marx"],
+              hi:["मैकियावेली","जॉन लॉक और ज्यां-ज्याक रूसो","कार्ल मार्क्स"],
+              bn:["ম্যাকিয়াভেলি","জন লক ও জ্যাঁ-জ্যাক রুসো","কার্ল মার্ক্স"]},
+    correct:1,
+    explanation:{en:"Enlightenment thinkers like Locke (natural rights, social contract) and Rousseau (popular sovereignty) deeply influenced the Declaration.",
+                 hi:"लॉक (प्राकृतिक अधिकार, सामाजिक अनुबंध) और रूसो (लोकप्रिय संप्रभुता) के प्रबोधन विचारों ने इस घोषणा को गहराई से प्रभावित किया।",
+                 bn:"লক (প্রাকৃতিক অধিকার, সামাজিক চুক্তি) ও রুসোর (জনগণের সার্বভৌমত্ব) আলোকায়ন ভাবনা এই ঘোষণাকে গভীরভাবে প্রভাবিত করেছিল।"}
+  },
+  {
+    en:"Olympe de Gouges wrote the Declaration of the Rights of Woman in 1791 to protest that:",
+    hi:"ओलांप द गूज ने 1791 में 'महिलाओं के अधिकारों की घोषणा' इसलिए लिखी क्योंकि:",
+    bn:"অলিম্প দ্য গুজ 1791 সালে 'নারীর অধিকারের ঘোষণা' লিখেছিলেন কারণ:",
+    context:{en:"🏛️ Women participated actively in the Revolution — marching, forming clubs — but were denied full citizenship.",hi:"🏛️ महिलाओं ने क्रांति में सक्रिय भाग लिया — मार्च किया, क्लब बनाए — पर उन्हें पूर्ण नागरिकता से वंचित रखा गया।",bn:"🏛️ নারীরা বিপ্লবে সক্রিয়ভাবে অংশ নিয়েছিল — মার্চ করেছিল, ক্লাব গঠন করেছিল — কিন্তু পূর্ণ নাগরিকত্ব থেকে বঞ্চিত হয়েছিল।"},
+    options:{en:["Women had too many rights","The 1789 Declaration excluded women from equal political rights","Women should not participate in politics"],
+              hi:["महिलाओं को बहुत अधिक अधिकार मिले","1789 की घोषणा ने महिलाओं को समान राजनीतिक अधिकारों से बाहर रखा","महिलाओं को राजनीति में नहीं आना चाहिए"],
+              bn:["নারীদের অনেক বেশি অধিকার ছিল","1789-এর ঘোষণা নারীদের সমান রাজনৈতিক অধিকার থেকে বাদ দিয়েছিল","নারীদের রাজনীতিতে অংশ নেওয়া উচিত নয়"]},
+    correct:1,
+    explanation:{en:"The 1789 Declaration applied mainly to men. Olympe de Gouges demanded equal rights for women — she was later executed under Robespierre.",
+                 hi:"1789 की घोषणा मुख्यतः पुरुषों के लिए थी। ओलांप ने महिलाओं के लिए समान अधिकार मांगे — बाद में रोब्सपियर के काल में उन्हें फाँसी दी गई।",
+                 bn:"1789-এর ঘোষণা মূলত পুরুষদের জন্য ছিল। অলিম্প নারীদের সমান অধিকার চেয়েছিলেন — পরে রোবেসপিয়েরের আমলে তাঁকে মৃত্যুদণ্ড দেওয়া হয়।"}
+  },
+  {
+    en:"The Reign of Terror (1793–94) was associated with which leader of the Jacobins?",
+    hi:"आतंक का राज्य (1793–94) जेकोबिन के किस नेता से जुड़ा था?",
+    bn:"সন্ত্রাসের রাজত্ব (1793–94) জ্যাকোবিনদের কোন নেতার সাথে যুক্ত ছিল?",
+    context:{en:"🏛️ During this period, thousands were guillotined — including former allies — for being 'enemies of the Republic'.",hi:"🏛️ इस काल में हजारों को — पूर्व साथियों सहित — 'गणराज्य के दुश्मन' बताकर गिलोटिन किया गया।",bn:"🏛️ এই সময়কালে হাজার হাজারকে — পূর্ববর্তী সহযোগীসহ — 'প্রজাতন্ত্রের শত্রু' বলে গিলোটিনে হত্যা করা হয়।"},
+    options:{en:["Jean-Paul Marat","Maximilien Robespierre","Georges Danton"],
+              hi:["ज्यां-पॉल मारा","मैक्सिमिलियन रोब्सपियर","जॉर्ज दांतों"],
+              bn:["জ্যাঁ-পল মারা","ম্যাক্সিমিলিয়েন রোবেসপিয়ের","জর্জেস দাঁতোঁ"]},
+    correct:1,
+    explanation:{en:"Robespierre, head of the Committee of Public Safety, ordered mass executions. He was himself guillotined in July 1794 (Thermidorian Reaction).",
+                 hi:"रोब्सपियर, सार्वजनिक सुरक्षा समिति के प्रमुख, ने सामूहिक मृत्युदंड का आदेश दिया। उन्हें स्वयं जुलाई 1794 में गिलोटिन किया गया।",
+                 bn:"রোবেসপিয়ের, পাবলিক সেফটি কমিটির প্রধান, গণহত্যার নির্দেশ দিয়েছিলেন। তাকে নিজেই জুলাই 1794 সালে গিলোটিনে হত্যা করা হয়।"}
+  },
+  {
+    en:"The guillotine was used as the main method of execution during the Revolution. It was considered 'democratic' because:",
+    hi:"गिलोटिन क्रांति के दौरान मुख्य मृत्युदंड का तरीका था। इसे 'लोकतांत्रिक' माना जाता था क्योंकि:",
+    bn:"বিপ্লবের সময় গিলোটিন মৃত্যুদণ্ডের প্রধান পদ্ধতি ছিল। এটিকে 'গণতান্ত্রিক' মনে করা হত কারণ:",
+    context:{en:"🏛️ Named after Dr. Joseph-Ignace Guillotin who proposed a humane, uniform method of execution.",hi:"🏛️ डॉ. जोसेफ-इग्नेस गिलोटिन के नाम पर, जिन्होंने मानवीय और एकसमान मृत्युदंड का प्रस्ताव दिया।",bn:"🏛️ ডাক্তার জোসেফ-ইগনাস গিলোটিনের নামে, যিনি মানবিক ও অভিন্ন মৃত্যুদণ্ডের প্রস্তাব দিয়েছিলেন।"},
+    options:{en:["It was painless and quick for everyone, regardless of social class","It was used only for criminals","It was invented by the people"],
+              hi:["यह सामाजिक वर्ग की परवाह किए बिना सभी के लिए त्वरित और पीड़ारहित था","इसका उपयोग केवल अपराधियों के लिए था","इसे जनता ने बनाया था"],
+              bn:["এটি সামাজিক শ্রেণী নির্বিশেষে সবার জন্য দ্রুত ও যন্ত্রণাহীন ছিল","এটি শুধু অপরাধীদের জন্য ব্যবহৃত হত","এটি জনগণ তৈরি করেছিল"]},
+    correct:0,
+    explanation:{en:"Previously, nobles were beheaded while commoners were hanged. The guillotine applied the same method to all — seen as equal treatment in death.",
+                 hi:"पहले कुलीनों को सिर काटकर और आम लोगों को फाँसी देकर मारा जाता था। गिलोटिन सभी के लिए एकसमान तरीका था।",
+                 bn:"আগে অভিজাতদের শিরশ্ছেদ এবং সাধারণদের ফাঁসি দেওয়া হত। গিলোটিন সবার জন্য একই পদ্ধতি প্রয়োগ করত।"}
+  },
+  {
+    en:"The Jacobins were a radical political club during the Revolution. Their main opponents within the revolutionaries were:",
+    hi:"जेकोबिन क्रांति के दौरान एक उग्र राजनीतिक दल था। क्रांतिकारियों में उनके मुख्य विरोधी थे:",
+    bn:"জ্যাকোবিনরা বিপ্লবের সময় একটি উগ্র রাজনৈতিক দল ছিল। বিপ্লবীদের মধ্যে তাদের মূল প্রতিপক্ষ ছিল:",
+    context:{en:"🏛️ These two factions argued over how radical the Revolution should be.",hi:"🏛️ ये दोनों गुट इस बात पर बहस करते थे कि क्रांति कितनी उग्र होनी चाहिए।",bn:"🏛️ এই দুটি দল তর্ক করত বিপ্লব কতটা উগ্র হওয়া উচিত তা নিয়ে।"},
+    options:{en:["Girondins","Monarchists","Republicans"],
+              hi:["जिरोंदिन","राजतंत्रवादी","गणतंत्रवादी"],
+              bn:["জিরোঁদিন","রাজতন্ত্রবাদী","প্রজাতন্ত্রবাদী"]},
+    correct:0,
+    explanation:{en:"The Girondins were moderate republicans who clashed with the radical Jacobins. Many Girondins were executed during the Reign of Terror.",
+                 hi:"जिरोंदिन मध्यमवादी गणतंत्रवादी थे जो उग्र जेकोबिनों से टकराए। आतंक के राज में कई जिरोंदिनों को मार दिया गया।",
+                 bn:"জিরোঁদিনরা ছিল মধ্যপন্থী প্রজাতন্ত্রবাদী যারা উগ্র জ্যাকোবিনদের সাথে সংঘাতে লিপ্ত হয়েছিল। সন্ত্রাসের সময় অনেক জিরোঁদিনকে হত্যা করা হয়।"}
+  },
+  {
+    en:"Napoleon Bonaparte rose to power after the Revolution. He is best described as:",
+    hi:"क्रांति के बाद नेपोलियन बोनापार्ट सत्ता में आए। उन्हें सबसे अच्छे से कैसे वर्णित किया जा सकता है?",
+    bn:"বিপ্লবের পরে নেপোলিয়ন বোনাপার্ট ক্ষমতায় আসেন। তাকে সবচেয়ে ভালোভাবে বলা যায়:",
+    context:{en:"🏛️ He became First Consul in 1799 and Emperor of France in 1804.",hi:"🏛️ वे 1799 में प्रथम कौंसल और 1804 में फ्रांस के सम्राट बने।",bn:"🏛️ তিনি 1799 সালে প্রথম কনসাল এবং 1804 সালে ফ্রান্সের সম্রাট হয়েছিলেন।"},
+    options:{en:["A Jacobin radical who continued the Terror","A military general who ended the Revolution and became Emperor","A king who was restored by European powers"],
+              hi:["एक जेकोबिन उग्रवादी जिसने आतंक जारी रखा","एक सैन्य जनरल जिसने क्रांति समाप्त की और सम्राट बना","एक राजा जिसे यूरोपीय शक्तियों ने बहाल किया"],
+              bn:["একজন জ্যাকোবিন উগ্রবাদী যিনি সন্ত্রাস চালিয়ে গেছেন","একজন সামরিক জেনারেল যিনি বিপ্লব শেষ করে সম্রাট হয়েছিলেন","একজন রাজা যাকে ইউরোপীয় শক্তি পুনরুদ্ধার করেছিল"]},
+    correct:1,
+    explanation:{en:"Napoleon used a coup (18 Brumaire, 1799) to seize power, ending the Directory. He spread some Revolutionary ideals across Europe but also concentrated power.",
+                 hi:"नेपोलियन ने 1799 में तख्तापलट (18 ब्रूमेयर) के जरिए सत्ता हथियाई और डायरेक्टरी को समाप्त किया।",
+                 bn:"নেপোলিয়ন 1799 সালে অভ্যুত্থান (18 ব্রুমেয়ার) দ্বারা ক্ষমতা দখল করেন এবং ডিরেক্টরি শেষ করেন।"}
+  },
+  {
+    en:"The French Revolution's slogan 'Liberté, Égalité, Fraternité' (Liberty, Equality, Fraternity) influenced which major event in India?",
+    hi:"फ्रांसीसी क्रांति के नारे 'स्वतंत्रता, समानता, बंधुत्व' ने भारत की किस प्रमुख घटना को प्रभावित किया?",
+    bn:"ফরাসি বিপ্লবের স্লোগান 'স্বাধীনতা, সমতা, ভ্রাতৃত্ব' ভারতের কোন প্রধান ঘটনাকে প্রভাবিত করেছিল?",
+    context:{en:"🏛️ Revolutionary ideals spread across Europe and influenced independence movements worldwide.",hi:"🏛️ क्रांतिकारी आदर्श पूरे यूरोप में फैले और विश्वभर के स्वतंत्रता आंदोलनों को प्रभावित किया।",bn:"🏛️ বিপ্লবের আদর্শ সারা ইউরোপে ছড়িয়ে পড়ে এবং বিশ্বজুড়ে স্বাধীনতা আন্দোলনকে প্রভাবিত করে।"},
+    options:{en:["The partition of Bengal (1905)","India's freedom movement and framing of the Constitution","The British East India Company's formation"],
+              hi:["बंगाल विभाजन (1905)","भारत का स्वतंत्रता आंदोलन और संविधान निर्माण","ब्रिटिश ईस्ट इंडिया कंपनी का गठन"],
+              bn:["বঙ্গভঙ্গ (1905)","ভারতের স্বাধীনতা আন্দোলন ও সংবিধান প্রণয়ন","ব্রিটিশ ইস্ট ইন্ডিয়া কোম্পানির গঠন"]},
+    correct:1,
+    explanation:{en:"Ideas of liberty, equality, and fraternity inspired Indian nationalists. The Indian Constitution's Preamble reflects these values — justice, liberty, equality, fraternity.",
+                 hi:"स्वतंत्रता, समानता और बंधुत्व के विचारों ने भारतीय राष्ट्रवादियों को प्रेरित किया। भारतीय संविधान की प्रस्तावना में ये मूल्य परिलक्षित हैं।",
+                 bn:"স্বাধীনতা, সমতা ও ভ্রাতৃত্বের আদর্শ ভারতীয় জাতীয়তাবাদীদের অনুপ্রাণিত করেছিল। ভারতীয় সংবিধানের প্রস্তাবনায় এই মূল্যবোধ প্রতিফলিত।"}
+  }
+];
+
+let currentLang = 'en';
+let currentQ = 0;
+let score = 0;
+let answered = false;
+const PER_Q = 10;
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', !!b.querySelector(`[data-lang="${lang}"]`));
+  });
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = (el.getAttribute('data-lang') === lang) ? '' : 'none';
+  });
+  if(document.getElementById('end-screen').style.display === 'block') return;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  document.getElementById('question-text').textContent = q[currentLang] || q.en;
+  const ctx = document.getElementById('hist-context');
+  const ctxText = q.context ? (q.context[currentLang] || q.context.en) : '';
+  ctx.textContent = ctxText;
+  ctx.style.display = ctxText ? 'block' : 'none';
+
+  const optContainer = document.getElementById('options');
+  optContainer.innerHTML = '';
+  const opts = q.options[currentLang] || q.options.en;
+  const letters = ['A','B','C'];
+  opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${opt}`;
+    btn.onclick = () => selectAnswer(i);
+    optContainer.appendChild(btn);
+  });
+  document.getElementById('q-counter').textContent = `Question ${currentQ+1} / ${QUESTIONS.length}`;
+  document.getElementById('progress-fill').style.width = `${(currentQ / QUESTIONS.length) * 100}%`;
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+}
+
+function selectAnswer(idx) {
+  if(answered) return;
+  answered = true;
+  const q = QUESTIONS[currentQ];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  const isCorrect = idx === q.correct;
+  if(isCorrect) score += PER_Q;
+
+  btns[idx].classList.add(isCorrect ? 'correct' : 'wrong');
+  btns[q.correct].classList.add('correct');
+
+  const fb = document.getElementById('feedback');
+  const expl = q.explanation[currentLang] || q.explanation.en;
+  fb.className = 'feedback ' + (isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = (isCorrect ? '✓ Correct! ' : '✗ Incorrect. ') + expl;
+  fb.style.display = 'block';
+
+  document.getElementById('score-display').textContent = `Score: ${score}/100`;
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if(currentQ >= QUESTIONS.length) { showEnd(); return; }
+  const ga = document.getElementById('game-area');
+  ga.classList.remove('fade-in'); void ga.offsetWidth; ga.classList.add('fade-in');
+  renderQuestion();
+}
+
+function showEnd() {
+  document.getElementById('game-area').style.display = 'none';
+  const es = document.getElementById('end-screen');
+  es.style.display = 'block'; es.classList.add('fade-in');
+  document.getElementById('final-score').textContent = `${score}/100`;
+  const pct = score;
+  document.getElementById('stars-row').textContent = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : pct >= 40 ? '⭐' : '☆☆☆';
+  const msgs = {
+    en: pct>=90?'Brilliant! You know the French Revolution inside out!': pct>=70?'Well done, young historian!': pct>=40?'Good effort. Review the key dates and events.':'Keep going — history rewards the persistent!',
+    hi: pct>=90?'शानदार! आप फ्रांसीसी क्रांति के विशेषज्ञ हैं!': pct>=70?'बहुत अच्छा, युवा इतिहासकार!': pct>=40?'अच्छा प्रयास। प्रमुख तिथियाँ दोहराएँ।':'जारी रखें — इतिहास परिश्रमी को पुरस्कृत करता है!',
+    bn: pct>=90?'অসাধারণ! তুমি ফরাসি বিপ্লব সম্পর্কে দক্ষ!': pct>=70?'খুব ভালো, তরুণ ইতিহাসবিদ!': pct>=40?'ভালো চেষ্টা। মূল তারিখ ও ঘটনা পড়ো।':'চালিয়ে যাও — ইতিহাস অধ্যবসায়ীকে পুরস্কৃত করে!'
+  };
+  document.getElementById('end-msg').textContent = msgs[currentLang] || msgs.en;
+  document.getElementById('progress-fill').style.width = '100%';
+}
+
+function restartGame() {
+  currentQ = 0; score = 0; answered = false;
+  document.getElementById('score-display').textContent = 'Score: 0/100';
+  document.getElementById('end-screen').style.display = 'none';
+  document.getElementById('game-area').style.display = 'block';
+  renderQuestion();
+}
+
+document.querySelectorAll('[data-lang]').forEach(el => {
+  el.style.display = (el.getAttribute('data-lang') === currentLang) ? '' : 'none';
+});
+renderQuestion();
+</script>
+</body>
+</html>

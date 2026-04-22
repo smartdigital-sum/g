@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>G5-02 · Decimal Street · GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;
+  --blue:#4CC9F0;--purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;
+  --grad-from:#180A28;--grad-to:#0F0820;--accent:var(--purple);
+  --border:rgba(199,125,255,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:linear-gradient(145deg,var(--grad-from),var(--grad-to));
+  min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);
+  display:flex;flex-direction:column;align-items:center;padding:0 0 40px;
+}
+.header{width:100%;max-width:480px;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;}
+.subject-tag{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.4rem;font-weight:800;color:var(--gold);text-align:center;}
+.stars{display:flex;gap:3px;}
+.star{font-size:1rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+
+.wow-card{
+  width:calc(100% - 32px);max-width:448px;
+  background:linear-gradient(135deg,rgba(199,125,255,.18),rgba(76,201,240,.12));
+  border:1px solid var(--border);border-radius:18px;
+  padding:18px 20px;margin:8px 16px 16px;text-align:center;
+}
+.wow-card .wow-label{font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.wow-card p{font-size:.95rem;line-height:1.6;}
+.wow-card strong{color:var(--gold);}
+
+.stage-tabs{
+  width:calc(100% - 32px);max-width:448px;margin:0 16px 14px;
+  display:flex;gap:6px;
+}
+.tab-btn{
+  flex:1;padding:8px 4px;border-radius:10px;border:2px solid transparent;
+  font-family:'Baloo 2',cursive;font-weight:700;font-size:.8rem;
+  background:var(--card);color:var(--dim);cursor:pointer;transition:all .2s;
+}
+.tab-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(199,125,255,.1);}
+
+/* NUMBER LINE STAGE */
+.section{width:calc(100% - 32px);max-width:448px;margin:0 16px;}
+.task-card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:14px 18px;margin-bottom:14px;text-align:center;
+}
+.task-label{font-size:.75rem;color:var(--dim);font-weight:700;margin-bottom:4px;}
+.task-value{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--gold);}
+.task-hint{font-size:.8rem;color:var(--text);margin-top:4px;opacity:.7;}
+
+/* NUMBER LINE */
+.numline-wrap{
+  position:relative;background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:40px 20px 20px;margin-bottom:14px;overflow:hidden;
+}
+.numline{
+  position:relative;height:6px;background:rgba(199,125,255,.2);
+  border-radius:3px;margin:0 10px;
+}
+.numline-ticks{position:relative;height:28px;margin:0 10px;}
+.tick{
+  position:absolute;display:flex;flex-direction:column;align-items:center;
+  transform:translateX(-50%);
+}
+.tick-line{width:2px;height:14px;background:var(--dim);}
+.tick-num{font-size:.65rem;color:var(--dim);margin-top:3px;font-weight:700;}
+
+/* DRAGGABLE TOKEN */
+.drag-token{
+  position:absolute;top:-18px;transform:translateX(-50%);
+  background:var(--accent);color:#fff;font-family:'Baloo 2',cursive;
+  font-weight:800;font-size:.85rem;padding:4px 10px;border-radius:20px;
+  cursor:grab;user-select:none;touch-action:none;white-space:nowrap;
+  box-shadow:0 4px 14px rgba(199,125,255,.5);transition:box-shadow .2s;
+  z-index:5;
+}
+.drag-token:active{cursor:grabbing;box-shadow:0 6px 20px rgba(199,125,255,.7);}
+.target-marker{
+  position:absolute;bottom:-8px;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;
+}
+.target-line{width:3px;height:20px;background:var(--gold);opacity:.5;}
+.target-dot{width:12px;height:12px;border-radius:50%;background:var(--gold);opacity:.3;margin-top:-3px;}
+
+/* PLACE VALUE TABLE */
+.pv-table{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:16px;margin-bottom:14px;
+}
+.pv-title{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px;text-align:center;}
+.pv-row{display:flex;border-radius:8px;overflow:hidden;margin-bottom:6px;}
+.pv-cell{
+  flex:1;text-align:center;padding:8px 4px;
+  font-family:'Baloo 2',cursive;font-weight:700;
+}
+.pv-cell.header{background:rgba(199,125,255,.15);color:var(--accent);font-size:.7rem;font-weight:800;}
+.pv-cell.value{background:rgba(199,125,255,.08);color:var(--gold);font-size:1.2rem;}
+.pv-cell.decimal-pt{background:rgba(255,209,102,.15);color:var(--gold);font-size:1.3rem;max-width:30px;flex:0 0 30px;}
+
+/* COMPARISON STAGE */
+.runners{
+  display:flex;flex-direction:column;gap:10px;margin-bottom:14px;
+}
+.runner-row{
+  background:var(--card);border:2px solid var(--border);border-radius:14px;
+  padding:14px 18px;display:flex;align-items:center;gap:12px;
+  cursor:pointer;transition:border-color .2s,background .2s;
+}
+.runner-row:hover{border-color:var(--accent);}
+.runner-row.selected{border-color:var(--teal);background:rgba(6,214,160,.08);}
+.runner-row.wrong{border-color:var(--coral);background:rgba(255,107,107,.08);}
+.runner-emoji{font-size:1.8rem;}
+.runner-num{font-family:'Baloo 2',cursive;font-size:1.6rem;font-weight:800;color:var(--gold);}
+.runner-label{font-size:.8rem;color:var(--dim);margin-top:2px;}
+.runner-result{font-size:.8rem;font-weight:700;margin-left:auto;display:none;}
+
+.check-btn{
+  width:100%;padding:14px;border-radius:14px;border:none;
+  font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;
+  background:linear-gradient(135deg,var(--accent),#8B5CF6);
+  color:#fff;cursor:pointer;transition:opacity .2s,transform .1s;
+  box-shadow:0 4px 20px rgba(199,125,255,.35);
+}
+.check-btn:hover{opacity:.9;transform:translateY(-1px);}
+.check-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+.feedback{margin-top:12px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:.9rem;text-align:center;display:none;}
+.feedback.correct{background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.4);color:var(--teal);}
+.feedback.wrong{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:var(--coral);}
+
+.progress-row{width:calc(100% - 32px);max-width:448px;margin:16px 16px 0;display:flex;align-items:center;justify-content:space-between;}
+.progress-text{font-size:.8rem;font-weight:700;color:var(--dim);}
+.next-btn{background:var(--gold);color:#1A0F00;font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;border:none;border-radius:50px;padding:8px 22px;cursor:pointer;transition:opacity .2s;display:none;}
+
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:30px 28px;max-width:360px;width:90%;text-align:center;}
+.overlay-box .o-emoji{font-size:3rem;margin-bottom:12px;}
+.overlay-box h3{font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--gold);margin-bottom:8px;}
+.overlay-box p{font-size:.9rem;color:var(--text);line-height:1.6;}
+.overlay-box strong{color:var(--teal);}
+
+.complete-screen{width:calc(100% - 32px);max-width:448px;margin:20px 16px;background:var(--card);border:2px solid rgba(6,214,160,.3);border-radius:22px;padding:32px 24px;text-align:center;display:none;}
+.complete-screen .big{font-size:4rem;margin-bottom:12px;}
+.complete-screen h2{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--gold);margin-bottom:8px;}
+.complete-screen p{color:var(--text);font-size:.95rem;line-height:1.6;margin-bottom:20px;}
+.play-again{background:var(--teal);color:#040E04;font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;border:none;border-radius:50px;padding:12px 28px;cursor:pointer;}
+
+.confetti-piece{position:fixed;width:10px;height:10px;opacity:0;animation:confFall 1.8s ease-in forwards;pointer-events:none;z-index:200;}
+@keyframes confFall{0%{opacity:1;transform:translateY(0) rotate(0deg);}100%{opacity:0;transform:translateY(80vh) rotate(720deg);}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="subject-tag">Maths</div>
+  <div class="game-title">🔢 Decimal Street</div>
+  <div class="stars">
+    <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+    <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+  </div>
+</div>
+
+<div class="wow-card">
+  <div class="wow-label">🤯 Did You Know?</div>
+  <p>A 100m world record is measured to <strong>0.001 seconds</strong>. Usain Bolt's <strong>9.58s</strong> run would have been a DIFFERENT result at 9.59. <strong>One hundredth of a second changes history!</strong></p>
+</div>
+
+<div class="stage-tabs">
+  <button class="tab-btn active" id="tab1" onclick="setStage(1)">1. Place on Line</button>
+  <button class="tab-btn" id="tab2" onclick="setStage(2)">2. Place Value</button>
+  <button class="tab-btn" id="tab3" onclick="setStage(3)">3. Compare</button>
+</div>
+
+<!-- STAGE 1: NUMBER LINE -->
+<div class="section" id="stage1">
+  <div class="task-card">
+    <div class="task-label">📍 Drag the number to the right spot</div>
+    <div class="task-value" id="nl-target">3.7</div>
+    <div class="task-hint">Tap and drag the purple pill onto the number line</div>
+  </div>
+  <div class="numline-wrap" id="numlineWrap">
+    <div class="numline" id="numline">
+      <div class="drag-token" id="dragToken">3.7</div>
+    </div>
+    <div class="numline-ticks" id="ticks"></div>
+  </div>
+  <button class="check-btn" id="nlCheck" onclick="checkNL()">Check Placement ✓</button>
+  <div class="feedback" id="nlFeedback"></div>
+</div>
+
+<!-- STAGE 2: PLACE VALUE TABLE -->
+<div class="section" id="stage2" style="display:none;">
+  <div class="task-card">
+    <div class="task-label">🔍 Break this number into place values</div>
+    <div class="task-value" id="pv-num">4.35</div>
+    <div class="task-hint">Which digit is in which column?</div>
+  </div>
+  <div class="pv-table" id="pvTable"></div>
+  <div id="pv-quiz"></div>
+  <button class="check-btn" id="pvCheck" onclick="checkPV()">Verify Columns ✓</button>
+  <div class="feedback" id="pvFeedback"></div>
+</div>
+
+<!-- STAGE 3: COMPARISON RACE -->
+<div class="section" id="stage3" style="display:none;">
+  <div class="task-card">
+    <div class="task-label">🏃 Which runner is FASTER? (larger decimal = faster)</div>
+    <div class="task-hint">Pick the runner with the greater decimal time</div>
+  </div>
+  <div class="runners" id="runners"></div>
+  <button class="check-btn" id="cmpCheck" onclick="checkCMP()">Pick the Winner ✓</button>
+  <div class="feedback" id="cmpFeedback"></div>
+</div>
+
+<div class="progress-row">
+  <span class="progress-text" id="progressText">Stage 1 of 3</span>
+  <button class="next-btn" id="nextBtn" onclick="nextStage()">Next Stage →</button>
+</div>
+
+<div class="complete-screen" id="completeScreen">
+  <div class="big">🏁</div>
+  <h2>Decimal Street Cleared!</h2>
+  <p>You can place, read, and compare decimals. Usain Bolt's 9.58 vs 9.59 second record? Now you understand exactly why <strong>0.01 changes everything!</strong></p>
+  <button class="play-again" onclick="restartGame()">Play Again 🔄</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="o-emoji" id="oEmoji">🎉</div>
+    <h3 id="oTitle">Correct!</h3>
+    <p id="oFact"></p>
+  </div>
+</div>
+
+<script>
+let currentStage = 1, score = 0;
+let nlAnswered = false, pvAnswered = false, cmpAnswered = false;
+
+// ── STAGE 1: NUMBER LINE ──
+const NL_QUESTIONS = [{val:3.7,min:0,max:10},{val:5.5,min:0,max:10},{val:0.75,min:0,max:1}];
+let nlQ = 0, isDragging = false, dragStartX = 0, tokenStartLeft = 0, lineWidth = 0;
+
+function buildNumberLine(){
+  const q = NL_QUESTIONS[nlQ];
+  document.getElementById('nl-target').textContent = q.val;
+  const token = document.getElementById('dragToken');
+  token.textContent = q.val;
+  const ticks = document.getElementById('ticks');
+  ticks.innerHTML='';
+  const steps = 10;
+  for(let i=0;i<=steps;i++){
+    const pct = (i/steps)*100;
+    const val = q.min + (q.max-q.min)*(i/steps);
+    const tick = document.createElement('div');
+    tick.className='tick';
+    tick.style.left=pct+'%';
+    tick.innerHTML=`<div class="tick-line"></div><div class="tick-num">${val%1===0?val:val.toFixed(1)}</div>`;
+    ticks.appendChild(tick);
+  }
+  // reset token position
+  token.style.left='10%';
+  nlAnswered=false;
+  document.getElementById('nlCheck').disabled=false;
+  document.getElementById('nlFeedback').style.display='none';
+}
+
+const dragToken = document.getElementById('dragToken');
+dragToken.addEventListener('mousedown', startDrag);
+dragToken.addEventListener('touchstart', startDrag, {passive:true});
+
+function startDrag(e){
+  isDragging=true;
+  const line = document.getElementById('numline');
+  const rect = line.getBoundingClientRect();
+  lineWidth = rect.width;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  dragStartX = clientX;
+  tokenStartLeft = parseFloat(dragToken.style.left)||10;
+  document.addEventListener('mousemove', onDrag);
+  document.addEventListener('touchmove', onDrag, {passive:true});
+  document.addEventListener('mouseup', stopDrag);
+  document.addEventListener('touchend', stopDrag);
+}
+function onDrag(e){
+  if(!isDragging) return;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const deltaPct = ((clientX - dragStartX)/lineWidth)*100;
+  let newLeft = Math.max(0, Math.min(100, tokenStartLeft + deltaPct));
+  dragToken.style.left = newLeft+'%';
+}
+function stopDrag(){
+  isDragging=false;
+  document.removeEventListener('mousemove', onDrag);
+  document.removeEventListener('touchmove', onDrag);
+  document.removeEventListener('mouseup', stopDrag);
+  document.removeEventListener('touchend', stopDrag);
+}
+
+function checkNL(){
+  if(nlAnswered) return;
+  const q = NL_QUESTIONS[nlQ];
+  const tokenLeft = parseFloat(dragToken.style.left)||10;
+  const correctPct = ((q.val - q.min)/(q.max-q.min))*100;
+  const diff = Math.abs(tokenLeft - correctPct);
+  const fb = document.getElementById('nlFeedback');
+  if(diff < 8){
+    nlAnswered=true; score++;
+    fb.textContent='✅ Great placement! You found it!';
+    fb.className='feedback correct'; fb.style.display='block';
+    dragToken.style.left=correctPct+'%';
+    dragToken.style.background='var(--teal)';
+    spawnConfetti();
+    document.getElementById('nextBtn').style.display='block';
+    showOverlay('📍','Spot On!',`<strong>${q.val}</strong> is exactly at the ${((q.val-q.min)/(q.max-q.min)*100).toFixed(0)}% mark on this number line. Decimals are precise positions!`);
+    updateStars();
+  } else {
+    fb.textContent=`❌ Not quite — ${q.val} should be at the ${correctPct.toFixed(0)}% mark. Drag it closer!`;
+    fb.className='feedback wrong'; fb.style.display='block';
+  }
+}
+
+// ── STAGE 2: PLACE VALUE ──
+const PV_NUMBERS = ['4.35','7.08','12.6','0.125'];
+let pvQ=0, pvSelected={};
+
+function buildPVTable(){
+  const num = PV_NUMBERS[pvQ];
+  document.getElementById('pv-num').textContent = num;
+  const parts = num.split('.');
+  const intPart = parts[0].padStart(2,'0');
+  const decPart = (parts[1]||'').padEnd(3,'_');
+
+  const digits = (intPart+'.'+decPart).split('');
+  const cols = ['Tens','Ones','.','Tenths','Hundredths','Thousandths'];
+  let html=`<div class="pv-title">Place Value Columns</div>`;
+  html+=`<div class="pv-row">`;
+  cols.forEach(c=>html+=`<div class="pv-cell header">${c==='.'?'·':c}</div>`);
+  html+=`</div><div class="pv-row">`;
+  digits.forEach((d,i)=>{
+    if(i===2) html+=`<div class="pv-cell decimal-pt value">.</div>`;
+    else html+=`<div class="pv-cell value">${d==='_'?'0':d}</div>`;
+  });
+  html+=`</div>`;
+
+  // Quiz: which digit is in X place?
+  const questions=[
+    {place:'tenths',answer:decPart[0]==='_'?'0':decPart[0]},
+    {place:'ones',answer:intPart[1]},
+  ];
+  pvSelected={};
+  let quiz='<div style="margin-top:10px;">';
+  questions.forEach((q,i)=>{
+    const opts=Array.from({length:10},(_,j)=>j.toString()).sort(()=>Math.random()-.5).slice(0,4);
+    if(!opts.includes(q.answer)) opts[0]=q.answer;
+    quiz+=`<div style="margin-bottom:10px;"><div style="font-size:.8rem;color:var(--dim);font-weight:700;margin-bottom:6px;">What digit is in the <strong style="color:var(--gold)">${q.place}</strong> place?</div>`;
+    quiz+=`<div style="display:flex;gap:8px;flex-wrap:wrap;">`;
+    opts.sort(()=>Math.random()-.5).forEach(opt=>{
+      quiz+=`<button onclick="selectPVOpt(${i},'${opt}')" id="pvopt_${i}_${opt}" style="background:var(--card);border:2px solid var(--border);color:var(--text);font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;width:44px;height:44px;border-radius:10px;cursor:pointer;transition:all .2s;">${opt}</button>`;
+    });
+    quiz+='</div></div>';
+  });
+  quiz+='</div>';
+  document.getElementById('pvTable').innerHTML=html;
+  document.getElementById('pv-quiz').innerHTML=quiz;
+  pvAnswered=false;
+  document.getElementById('pvCheck').disabled=false;
+  document.getElementById('pvFeedback').style.display='none';
+}
+
+window.selectPVOpt = function(qIdx, val){
+  pvSelected[qIdx]=val;
+  // update button styles
+  document.querySelectorAll(`[id^="pvopt_${qIdx}_"]`).forEach(b=>{
+    b.style.borderColor=b.id.endsWith('_'+val)?'var(--accent)':'var(--border)';
+    b.style.color=b.id.endsWith('_'+val)?'var(--accent)':'var(--text)';
+    b.style.background=b.id.endsWith('_'+val)?'rgba(199,125,255,.15)':'var(--card)';
+  });
+}
+
+function checkPV(){
+  if(pvAnswered) return;
+  const num=PV_NUMBERS[pvQ];
+  const parts=num.split('.');
+  const intPart=parts[0].padStart(2,'0');
+  const decPart=(parts[1]||'').padEnd(3,'0');
+  const answers=[decPart[0],intPart[1]];
+  let allCorrect=true;
+  [0,1].forEach(i=>{if(pvSelected[i]!==answers[i]) allCorrect=false;});
+  const fb=document.getElementById('pvFeedback');
+  if(allCorrect){
+    pvAnswered=true; score++;
+    fb.textContent='✅ Perfect! You cracked the place value columns!';
+    fb.className='feedback correct'; fb.style.display='block';
+    document.getElementById('nextBtn').style.display='block';
+    spawnConfetti(); updateStars();
+    showOverlay('🔍','Place Value Pro!',`In <strong>${num}</strong>, every digit has a fixed address — like a house on a street!`);
+  } else {
+    fb.textContent='❌ Not all correct — check each column carefully!';
+    fb.className='feedback wrong'; fb.style.display='block';
+  }
+}
+
+// ── STAGE 3: COMPARISON ──
+const CMP_PAIRS=[
+  {a:9.58,b:9.59,winner:'b',hint:'9.59 > 9.58 — Bolt's actual record beats the slower time!'},
+  {a:3.14,b:3.09,winner:'a',hint:'3.14 > 3.09 — Look at the tenths digit first!'},
+  {a:0.75,b:0.8,winner:'b',hint:'0.8 = 0.80, which is greater than 0.75'},
+  {a:12.3,b:12.30,winner:'neither',hint:'12.3 and 12.30 are EQUAL — trailing zeros after the decimal don\'t change value!'},
+];
+let cmpQ=0, cmpSelected=null;
+
+function buildCMP(){
+  const q=CMP_PAIRS[cmpQ];
+  cmpSelected=null;
+  const runners=document.getElementById('runners');
+  runners.innerHTML=`
+    <div class="runner-row" id="rA" onclick="selectRunner('a')">
+      <span class="runner-emoji">🏃</span>
+      <div><div class="runner-num">${q.a}</div><div class="runner-label">Runner A</div></div>
+      <span class="runner-result" id="resA"></span>
+    </div>
+    <div class="runner-row" id="rB" onclick="selectRunner('b')">
+      <span class="runner-emoji">🏃‍♀️</span>
+      <div><div class="runner-num">${q.b}</div><div class="runner-label">Runner B</div></div>
+      <span class="runner-result" id="resB"></span>
+    </div>
+    ${q.winner==='neither'?`
+    <div class="runner-row" id="rTie" onclick="selectRunner('neither')">
+      <span class="runner-emoji">🤝</span>
+      <div><div class="runner-num" style="font-size:1rem;">It's a tie!</div><div class="runner-label">Equal speed</div></div>
+    </div>`:''}
+  `;
+  cmpAnswered=false;
+  document.getElementById('cmpCheck').disabled=false;
+  document.getElementById('cmpFeedback').style.display='none';
+  document.getElementById('nextBtn').style.display='none';
+}
+
+window.selectRunner=function(which){
+  cmpSelected=which;
+  ['a','b','neither'].forEach(x=>{
+    const el=document.getElementById('r'+x.charAt(0).toUpperCase()+x.slice(1).replace('neither','Tie'));
+    if(el){el.classList.toggle('selected',x===which);el.classList.remove('wrong');}
+  });
+}
+
+function checkCMP(){
+  if(cmpAnswered||!cmpSelected) return;
+  const q=CMP_PAIRS[cmpQ];
+  const fb=document.getElementById('cmpFeedback');
+  if(cmpSelected===q.winner){
+    cmpAnswered=true; score++;
+    fb.textContent='✅ Correct! You picked the right runner!';
+    fb.className='feedback correct'; fb.style.display='block';
+    document.getElementById('nextBtn').style.display='block';
+    spawnConfetti(); updateStars();
+    showOverlay('🏆','Winner Found!',q.hint);
+  } else {
+    fb.textContent=`❌ Not quite. Hint: compare digit by digit from left to right!`;
+    fb.className='feedback wrong'; fb.style.display='block';
+    const wrongEl=document.getElementById('r'+cmpSelected.charAt(0).toUpperCase()+cmpSelected.slice(1).replace('neither','Tie'));
+    if(wrongEl) wrongEl.classList.add('wrong');
+  }
+}
+
+// ── NAVIGATION ──
+function setStage(n){
+  currentStage=n;
+  [1,2,3].forEach(i=>{
+    document.getElementById('stage'+i).style.display=i===n?'block':'none';
+    document.getElementById('tab'+i).classList.toggle('active',i===n);
+  });
+  document.getElementById('progressText').textContent=`Stage ${n} of 3`;
+  document.getElementById('nextBtn').style.display='none';
+  if(n===1){buildNumberLine();}
+  else if(n===2){buildPVTable();}
+  else if(n===3){buildCMP();}
+}
+
+function nextStage(){
+  if(currentStage<3){setStage(currentStage+1);}
+  else{
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+    document.querySelector('.stage-tabs').style.display='none';
+    document.querySelector('.progress-row').style.display='none';
+    document.getElementById('completeScreen').style.display='block';
+    spawnConfetti();
+  }
+}
+
+function updateStars(){
+  const count=Math.min(5,Math.ceil(score*5/3));
+  for(let i=1;i<=count;i++) document.getElementById('s'+i).classList.add('lit');
+}
+
+function showOverlay(emoji,title,fact){
+  document.getElementById('oEmoji').textContent=emoji;
+  document.getElementById('oTitle').textContent=title;
+  document.getElementById('oFact').innerHTML=fact;
+  const ov=document.getElementById('overlay');
+  ov.classList.add('show');
+  setTimeout(()=>ov.classList.remove('show'),2500);
+}
+
+function spawnConfetti(){
+  const colors=['#FFD166','#FF6B6B','#06D6A0','#4CC9F0','#C77DFF'];
+  for(let i=0;i<28;i++){
+    const c=document.createElement('div');c.className='confetti-piece';
+    c.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[i%5]};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()*2}s;transform:rotate(${Math.random()*360}deg);`;
+    document.body.appendChild(c);setTimeout(()=>c.remove(),3500);
+  }
+}
+
+function restartGame(){
+  score=0;nlQ=0;pvQ=0;cmpQ=0;
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('completeScreen').style.display='none';
+  document.querySelectorAll('.section').forEach(s=>s.style.display='block');
+  document.querySelector('.stage-tabs').style.display='flex';
+  document.querySelector('.progress-row').style.display='flex';
+  setStage(1);
+}
+
+// INIT
+buildNumberLine();
+</script>
+</body>
+</html>

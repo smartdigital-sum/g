@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kaziranga Animal Detective 🔍</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Hind+Siliguri:wght@400;600;700&family=Special+Elite&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --mist1:#2a1f0e;--mist2:#3d2e12;--mist3:#5c4520;
+  --dawn-gold:#f0a500;--dawn-orange:#e07000;
+  --grass-dark:#1a2e0a;--grass-mid:#2a4a10;--grass-light:#4a7a1e;
+  --mist-white:rgba(240,220,170,0.18);
+  --paper:#f5ead0;--paper-dark:#e8d5a8;--paper-ink:#2a1a08;
+  --stamp-red:#c0392b;--stamp-green:#1a6b2a;
+  --gold:#f5c518;--gold2:#ffd740;
+  --clue-bg:#1e3a0a;--clue-border:#4a7a1e;
+  --white:#fff;--dark:#1a1a2e;
+  --text-dim:rgba(255,255,255,0.5);
+  --solved:#2e7d32;--unsolved:#8b6914;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{
+  font-family:'Baloo 2',cursive;
+  background:var(--mist1);
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;
+}
+
+/* ══ WRAPPER ══ */
+#game-wrap{
+  width:min(520px,100vw);
+  height:min(700px,100vh);
+  position:relative;overflow:hidden;
+  border-radius:28px;
+  box-shadow:0 30px 80px rgba(0,0,0,0.85);
+}
+
+/* ══ KAZIRANGA DAWN BG ══ */
+.dawn-bg{
+  position:absolute;inset:0;z-index:0;
+  background:linear-gradient(180deg,
+    #1a0e04 0%,
+    #2d1a06 15%,
+    #4a2e0a 30%,
+    #6b4010 45%,
+    #7a5018 55%,
+    #5c4020 70%,
+    #2a2010 85%,
+    #1a1508 100%
+  );
+}
+
+/* Mist layers */
+.mist-layer{
+  position:absolute;z-index:1;
+  left:-20%;right:-20%;
+  background:radial-gradient(ellipse 80% 40% at 50% 50%,rgba(230,180,80,0.12) 0%,transparent 100%);
+  pointer-events:none;
+}
+
+/* Sun glow */
+.sun-glow{
+  position:absolute;
+  top:12%;left:50%;transform:translateX(-50%);
+  width:120px;height:120px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(240,165,0,0.35) 0%,rgba(220,120,0,0.15) 40%,transparent 70%);
+  z-index:1;
+  animation:sunPulse 4s ease-in-out infinite;
+}
+@keyframes sunPulse{
+  0%,100%{transform:translateX(-50%) scale(1);opacity:0.8;}
+  50%{transform:translateX(-50%) scale(1.1);opacity:1;}
+}
+
+/* Birds flying */
+.bird{
+  position:absolute;font-size:14px;z-index:2;
+  animation:birdFly linear infinite;opacity:0.7;
+}
+@keyframes birdFly{
+  0%{transform:translateX(-80px) translateY(0);}
+  50%{transform:translateX(300px) translateY(-20px);}
+  100%{transform:translateX(600px) translateY(5px);}
+}
+
+/* Elephant grass silhouettes */
+.grass-layer{
+  position:absolute;bottom:0;left:0;right:0;
+  height:200px;z-index:2;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+/* Mist band across middle */
+.mist-band{
+  position:absolute;
+  left:-10%;right:-10%;
+  height:70px;
+  border-radius:50%;
+  background:linear-gradient(90deg,
+    transparent 0%,
+    rgba(220,180,80,0.08) 20%,
+    rgba(240,200,100,0.13) 50%,
+    rgba(220,180,80,0.08) 80%,
+    transparent 100%
+  );
+  z-index:3;
+  animation:mistDrift 8s ease-in-out infinite;
+}
+@keyframes mistDrift{
+  0%,100%{transform:scaleX(1) translateX(0);opacity:0.7;}
+  50%{transform:scaleX(1.05) translateX(2%);opacity:1;}
+}
+
+/* Fireflies */
+.firefly{
+  position:absolute;width:4px;height:4px;
+  border-radius:50%;background:#ffe066;
+  box-shadow:0 0 6px 2px rgba(255,224,102,0.7);
+  animation:fireflyBlink ease-in-out infinite;
+  z-index:4;
+}
+@keyframes fireflyBlink{
+  0%,100%{opacity:0;}40%,60%{opacity:1;}
+}
+
+/* ══ SCREENS ══ */
+.screen{
+  position:absolute;inset:0;z-index:10;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px 18px;
+  transition:opacity 0.35s,transform 0.35s;
+}
+.screen.hidden{opacity:0;pointer-events:none;transform:scale(0.97);}
+
+/* ══ INTRO ══ */
+#screen-intro{gap:13px;text-align:center;}
+.intro-badge{
+  background:linear-gradient(135deg,#1a4a10,#2d7a20);
+  color:#a8e068;font-size:11px;font-weight:800;
+  padding:5px 18px;border-radius:20px;letter-spacing:1.5px;
+  text-transform:uppercase;border:1px solid rgba(100,200,50,0.3);
+  box-shadow:0 3px 12px rgba(0,0,0,0.4);
+}
+.intro-title{
+  font-size:26px;font-weight:900;color:var(--dawn-gold);
+  text-shadow:0 3px 16px rgba(0,0,0,0.7);line-height:1.15;
+}
+.intro-title .as{
+  font-family:'Hind Siliguri',sans-serif;
+  display:block;font-size:17px;color:rgba(240,180,80,0.8);margin-top:4px;
+}
+/* Detective badge SVG */
+.detective-badge{
+  width:150px;
+  filter:drop-shadow(0 8px 24px rgba(0,0,0,0.6));
+  animation:badgeBob 2.5s ease-in-out infinite;
+}
+@keyframes badgeBob{
+  0%,100%{transform:translateY(0) rotate(-2deg);}
+  50%{transform:translateY(-12px) rotate(2deg);}
+}
+.speech-bubble{
+  background:var(--paper);border-radius:16px;
+  padding:13px 18px;font-size:13px;
+  color:var(--paper-ink);font-weight:600;
+  max-width:314px;line-height:1.55;
+  box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  position:relative;
+  font-family:'Special Elite',cursive;
+}
+.speech-bubble::after{
+  content:'';position:absolute;top:-11px;left:50%;
+  transform:translateX(-50%);
+  border:7px solid transparent;border-bottom-color:var(--paper);
+}
+.speech-bubble .as{
+  font-family:'Hind Siliguri',sans-serif;
+  color:#6b3a10;display:block;font-size:12px;margin-top:3px;
+  font-weight:700;
+}
+.btn-start{
+  font-family:'Baloo 2',cursive;font-size:19px;font-weight:900;
+  padding:13px 40px;border-radius:50px;border:none;
+  background:linear-gradient(135deg,var(--dawn-gold),var(--dawn-orange));
+  color:#1a0e04;cursor:pointer;
+  box-shadow:0 6px 24px rgba(240,165,0,0.45);
+  transition:all 0.2s;animation:pulseGold 2s ease-in-out infinite;
+}
+.btn-start:hover{transform:scale(1.06);}
+@keyframes pulseGold{
+  0%,100%{box-shadow:0 6px 24px rgba(240,165,0,0.45);}
+  50%{box-shadow:0 6px 40px rgba(240,200,0,0.7);}
+}
+
+/* ══ HUD ══ */
+#hud{
+  position:absolute;top:0;left:0;right:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px 8px;
+  background:linear-gradient(180deg,rgba(0,0,0,0.65) 0%,transparent 100%);
+}
+.hud-score{font-size:16px;font-weight:800;color:var(--dawn-gold);display:flex;align-items:center;gap:5px;}
+.hud-level{font-size:13px;font-weight:700;color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.13);padding:3px 12px;border-radius:20px;}
+.hud-lives{font-size:18px;letter-spacing:3px;}
+#prog-wrap{
+  position:absolute;top:48px;left:16px;right:16px;height:5px;
+  background:rgba(255,255,255,0.12);border-radius:3px;z-index:20;overflow:hidden;
+}
+#prog-bar{
+  height:100%;
+  background:linear-gradient(90deg,var(--grass-light),var(--dawn-gold));
+  border-radius:3px;transition:width 0.5s ease;width:0%;
+}
+
+/* ══ DOSSIER CARD (main game UI) ══ */
+#screen-game{gap:10px;padding-top:65px;padding-bottom:16px;justify-content:flex-start;}
+
+.dossier-card{
+  background:var(--paper);
+  border-radius:6px;
+  padding:0;
+  max-width:400px;width:100%;
+  box-shadow:0 8px 32px rgba(0,0,0,0.6),inset 0 0 0 2px rgba(0,0,0,0.08);
+  position:relative;
+  overflow:hidden;
+  font-family:'Special Elite',cursive;
+}
+/* Torn paper top edge */
+.dossier-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:6px;
+  background:repeating-linear-gradient(
+    90deg,var(--paper) 0,var(--paper) 6px,
+    var(--paper-dark) 6px,var(--paper-dark) 12px
+  );
+}
+.dossier-header{
+  background:linear-gradient(135deg,#1a3a0a,#2a5a12);
+  padding:10px 16px 10px;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:6px;
+}
+.dossier-header-left{display:flex;align-items:center;gap:8px;}
+.dossier-icon{font-size:22px;}
+.dossier-header-title{
+  font-family:'Baloo 2',cursive;
+  font-size:13px;font-weight:800;color:#a8e068;
+  letter-spacing:1px;text-transform:uppercase;
+  line-height:1.2;
+}
+.dossier-header-sub{font-size:11px;color:rgba(168,224,104,0.6);font-weight:600;}
+.case-number{
+  font-family:'Special Elite',cursive;
+  font-size:11px;color:rgba(168,224,104,0.5);
+  letter-spacing:1px;
+}
+
+/* Silhouette mystery animal */
+.silhouette-area{
+  padding:10px 16px 6px;
+  display:flex;align-items:center;gap:14px;
+}
+.animal-silhouette{
+  font-size:64px;
+  filter:brightness(0) invert(0.08);
+  flex-shrink:0;
+  transition:filter 0.6s ease;
+  line-height:1;
+}
+.animal-silhouette.revealed{
+  filter:none;
+  animation:revealPop 0.5s cubic-bezier(0.34,1.8,0.64,1);
+}
+@keyframes revealPop{
+  0%{transform:scale(0.4) rotate(-10deg);opacity:0;}
+  100%{transform:scale(1) rotate(0deg);opacity:1;}
+}
+.mystery-label{
+  font-family:'Baloo 2',cursive;
+  font-size:13px;font-weight:700;color:#6b4a18;
+}
+.mystery-label .bold{font-size:18px;font-weight:900;color:var(--paper-ink);display:block;}
+.mystery-label .as{
+  font-family:'Hind Siliguri',sans-serif;
+  font-size:12px;color:#8b6030;display:block;
+}
+
+/* Clue strips */
+.clues-area{padding:6px 16px 10px;display:flex;flex-direction:column;gap:6px;}
+.clue-strip{
+  border-radius:8px;padding:8px 12px;
+  display:flex;align-items:flex-start;gap:8px;
+  transition:all 0.4s cubic-bezier(0.34,1.2,0.64,1);
+  position:relative;overflow:hidden;
+}
+.clue-strip.hidden-clue{
+  background:rgba(0,0,0,0.08);
+  border:1.5px dashed rgba(0,0,0,0.15);
+  filter:blur(0);
+}
+.clue-strip.revealed-clue{
+  background:linear-gradient(135deg,rgba(26,74,16,0.12),rgba(42,90,18,0.06));
+  border:1.5px solid rgba(74,122,30,0.35);
+  animation:clueReveal 0.5s cubic-bezier(0.34,1.2,0.64,1);
+}
+@keyframes clueReveal{
+  0%{transform:translateX(-12px);opacity:0;}
+  100%{transform:translateX(0);opacity:1;}
+}
+.clue-num{
+  font-family:'Baloo 2',cursive;
+  font-size:11px;font-weight:900;
+  background:var(--grass-mid);color:#a8e068;
+  padding:2px 7px;border-radius:8px;
+  flex-shrink:0;margin-top:2px;
+}
+.clue-text{
+  font-family:'Special Elite',cursive;
+  font-size:13px;color:var(--paper-ink);line-height:1.5;flex:1;
+}
+.clue-text .as{
+  font-family:'Hind Siliguri',sans-serif;
+  font-size:11px;color:#6b4a18;display:block;margin-top:2px;
+}
+.clue-lock{
+  font-size:18px;color:rgba(0,0,0,0.18);flex-shrink:0;
+  align-self:center;
+}
+.clue-strip.hidden-clue .clue-text{opacity:0.3;}
+
+/* Next clue / guess buttons */
+.dossier-footer{
+  padding:10px 16px 14px;
+  border-top:1px dashed rgba(0,0,0,0.12);
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.btn-next-clue{
+  font-family:'Baloo 2',cursive;font-size:13px;font-weight:800;
+  padding:8px 18px;border-radius:20px;border:none;
+  background:linear-gradient(135deg,var(--grass-mid),var(--grass-light));
+  color:#fff;cursor:pointer;
+  box-shadow:0 3px 12px rgba(0,0,0,0.3);
+  transition:all 0.2s;flex:1;
+}
+.btn-next-clue:hover{transform:translateY(-2px);filter:brightness(1.15);}
+.btn-next-clue:disabled{opacity:0.35;cursor:default;transform:none;}
+.clue-counter{
+  font-size:11px;font-weight:700;color:rgba(0,0,0,0.4);
+  font-family:'Special Elite',cursive;
+  flex-shrink:0;
+}
+
+/* Answer options */
+.answers-wrap{max-width:400px;width:100%;}
+.answers-label{
+  font-size:10px;font-weight:800;letter-spacing:2px;
+  text-transform:uppercase;color:var(--dawn-gold);
+  margin-bottom:8px;text-align:center;
+}
+.answers-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+}
+.ans-btn{
+  font-size:22px;
+  padding:12px 8px 8px;
+  border-radius:16px;
+  border:2.5px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.08);
+  color:var(--white);cursor:pointer;
+  transition:all 0.15s cubic-bezier(0.34,1.56,0.64,1);
+  backdrop-filter:blur(8px);
+  box-shadow:0 4px 14px rgba(0,0,0,0.35);
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+}
+.ans-name{
+  font-family:'Baloo 2',cursive;
+  font-size:12px;font-weight:800;color:rgba(255,255,255,0.9);
+  text-align:center;line-height:1.2;
+}
+.ans-name-as{
+  font-family:'Hind Siliguri',sans-serif;
+  font-size:11px;color:rgba(255,255,255,0.5);
+  text-align:center;
+}
+.ans-btn:hover:not(:disabled){
+  transform:scale(1.08) translateY(-3px);
+  background:rgba(255,255,255,0.16);
+  border-color:var(--dawn-gold);
+  box-shadow:0 8px 24px rgba(240,165,0,0.3);
+}
+.ans-btn.correct{
+  background:rgba(46,125,50,0.5)!important;
+  border-color:#4caf50!important;
+  transform:scale(1.12)!important;
+  box-shadow:0 8px 28px rgba(76,175,80,0.6)!important;
+}
+.ans-btn.wrong{
+  background:rgba(192,57,43,0.4)!important;
+  border-color:#e53935!important;
+  animation:shakeAns 0.4s ease;
+}
+@keyframes shakeAns{
+  0%,100%{transform:translateX(0);}
+  25%{transform:translateX(-8px);}75%{transform:translateX(8px);}
+}
+.ans-btn:disabled{cursor:default;}
+
+/* Stars hint: more clues = fewer stars */
+.star-hint{
+  font-size:12px;text-align:center;color:rgba(255,255,255,0.45);
+  font-weight:600;font-family:'Baloo 2',cursive;
+}
+
+/* ══ LEVEL COMPLETE ══ */
+#screen-levelup{gap:10px;text-align:center;}
+.lu-solved-stamp{
+  display:inline-block;
+  border:4px solid var(--solved);
+  border-radius:8px;padding:4px 18px;
+  font-family:'Special Elite',cursive;
+  font-size:22px;color:var(--solved);
+  letter-spacing:3px;text-transform:uppercase;
+  transform:rotate(-5deg);
+  box-shadow:0 0 0 2px var(--solved),0 4px 12px rgba(0,0,0,0.3);
+  animation:stampIn 0.4s cubic-bezier(0.34,1.8,0.64,1);
+}
+@keyframes stampIn{0%{transform:rotate(-5deg) scale(3);opacity:0;}100%{transform:rotate(-5deg) scale(1);opacity:1;}}
+.lu-animal-big{font-size:80px;animation:bigReveal 0.5s cubic-bezier(0.34,1.8,0.64,1);}
+@keyframes bigReveal{0%{transform:scale(0) rotate(-15deg);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.lu-name{
+  font-family:'Hind Siliguri',sans-serif;
+  font-size:30px;font-weight:800;color:var(--dawn-gold);
+}
+.lu-name-en{font-size:16px;color:rgba(255,255,255,0.75);font-weight:700;}
+.lu-fact-card{
+  background:rgba(0,0,0,0.45);
+  border:1px solid rgba(240,165,0,0.25);
+  border-radius:14px;padding:12px 18px;
+  max-width:330px;width:100%;
+  font-family:'Special Elite',cursive;
+  font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;
+  backdrop-filter:blur(10px);
+}
+.lu-fact-card .as{
+  font-family:'Hind Siliguri',sans-serif;
+  font-size:12px;color:rgba(240,180,80,0.8);
+  display:block;margin-top:5px;
+}
+.lu-stars{font-size:32px;letter-spacing:8px;}
+.btn-next{
+  font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;
+  padding:12px 38px;border-radius:50px;border:none;
+  background:linear-gradient(135deg,var(--dawn-gold),var(--dawn-orange));
+  color:#1a0e04;cursor:pointer;
+  box-shadow:0 5px 20px rgba(240,165,0,0.4);transition:all 0.2s;
+}
+.btn-next:hover{transform:translateY(-3px) scale(1.05);}
+
+/* ══ GAME OVER ══ */
+#screen-gameover{text-align:center;gap:14px;}
+.go-title{font-size:28px;font-weight:900;color:#e57373;text-shadow:0 3px 12px rgba(0,0,0,0.6);}
+.go-sub{font-size:14px;color:rgba(255,255,255,0.75);font-weight:600;line-height:1.55;}
+.btn-retry{
+  font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;
+  padding:12px 36px;border-radius:50px;border:none;
+  background:#c62828;color:#fff;cursor:pointer;
+  box-shadow:0 5px 20px rgba(198,40,40,0.5);transition:all 0.2s;
+}
+.btn-retry:hover{transform:scale(1.05);}
+
+/* ══ VICTORY ══ */
+#screen-victory{text-align:center;gap:11px;}
+.vic-title{font-size:28px;font-weight:900;color:var(--dawn-gold);line-height:1.15;text-shadow:0 3px 16px rgba(0,0,0,0.6);}
+.vic-badge{
+  display:inline-block;
+  border:4px solid var(--dawn-gold);
+  border-radius:50%;width:100px;height:100px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:52px;
+  box-shadow:0 0 0 3px var(--dawn-gold),0 8px 32px rgba(240,165,0,0.4);
+  animation:victoryBadge 0.6s cubic-bezier(0.34,1.8,0.64,1);
+  margin:0 auto;
+}
+@keyframes victoryBadge{0%{transform:scale(0);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.vic-animals{font-size:28px;letter-spacing:3px;}
+.vic-score{font-size:22px;font-weight:800;color:rgba(240,200,80,0.9);}
+.vic-card{
+  background:rgba(0,0,0,0.45);border:1px solid rgba(240,165,0,0.22);
+  border-radius:14px;padding:12px 18px;max-width:310px;
+  font-family:'Special Elite',cursive;
+  font-size:13px;color:rgba(255,255,255,0.8);line-height:1.6;
+  backdrop-filter:blur(10px);
+}
+.vic-card .as{font-family:'Hind Siliguri',sans-serif;color:rgba(240,180,80,0.8);display:block;margin-top:4px;font-size:12px;}
+.btn-replay{
+  font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;
+  padding:12px 36px;border-radius:50px;border:none;
+  background:linear-gradient(135deg,var(--dawn-gold),var(--dawn-orange));
+  color:#1a0e04;cursor:pointer;
+  box-shadow:0 5px 20px rgba(240,165,0,0.4);transition:all 0.2s;
+}
+.btn-replay:hover{transform:scale(1.05);}
+.btn-home{
+  font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;
+  padding:9px 28px;border-radius:50px;
+  border:2px solid rgba(255,255,255,0.3);background:transparent;color:#fff;
+  cursor:pointer;transition:all 0.2s;
+}
+.btn-home:hover{background:rgba(255,255,255,0.1);}
+
+/* ══ LANG PILL ══ */
+.lang-pill{position:absolute;top:11px;left:50%;transform:translateX(-50%);z-index:30;display:flex;gap:4px;}
+.lpill{font-family:'Baloo 2',cursive;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1.5px solid transparent;cursor:pointer;background:transparent;color:rgba(255,255,255,0.4);}
+.lpill.active{background:var(--dawn-gold);color:#1a0e04;border-color:var(--dawn-gold);}
+.lpill:hover:not(.active){color:#fff;border-color:rgba(255,255,255,0.3);}
+
+/* ══ CONFETTI ══ */
+.confetti-piece{position:absolute;z-index:50;border-radius:2px;animation:confettiFall linear forwards;pointer-events:none;}
+@keyframes confettiFall{0%{transform:translate(0,0) rotate(0deg);opacity:1;}100%{transform:translate(var(--cx),var(--cy)) rotate(720deg);opacity:0;}}
+</style>
+<style>.hidden { display: none !important; }</style>
+</head>
+<body>
+<div id="game-wrap">
+
+  <!-- BG -->
+  <div class="dawn-bg"></div>
+  <div class="sun-glow"></div>
+  <div class="mist-layer" style="top:35%;height:80px;"></div>
+  <div class="mist-layer" style="top:55%;height:50px;opacity:0.6;"></div>
+  <div class="mist-band" style="top:38%;"></div>
+
+  <!-- Elephant grass SVG -->
+  <svg style="position:absolute;bottom:0;left:0;right:0;width:100%;height:180px;z-index:2;pointer-events:none;" viewBox="0 0 520 180" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- back grass dark -->
+    <path d="M0 180 L0 120 Q10 80 20 120 Q30 60 40 110 Q50 70 60 115 Q70 75 80 118 Q90 85 100 120 Q110 70 120 115 Q135 80 145 118 Q155 65 165 112 Q175 78 185 118 Q200 82 210 115 Q220 68 230 112 Q245 75 255 115 Q265 65 275 110 Q290 78 300 115 Q310 70 320 112 Q335 80 345 116 Q355 68 365 110 Q375 75 385 115 Q400 80 410 115 Q420 70 430 112 Q445 78 455 115 Q465 65 475 110 Q490 80 500 115 Q510 70 520 112 L520 180 Z" fill="#1a2e0a" opacity="0.9"/>
+    <!-- front grass lighter -->
+    <path d="M0 180 L0 140 Q15 90 25 138 Q35 95 45 140 Q58 100 68 138 Q78 92 90 138 Q103 105 113 140 Q125 95 138 140 Q150 100 162 138 Q172 92 183 138 Q196 105 208 140 Q218 95 230 138 Q242 100 254 140 Q268 105 280 140 Q290 95 302 138 Q314 102 326 140 Q338 95 350 138 Q362 100 374 140 Q386 105 398 138 Q410 92 422 138 Q434 100 446 140 Q460 105 472 140 Q484 95 496 138 L520 140 L520 180 Z" fill="#2a4a10" opacity="0.85"/>
+    <!-- foreground grass bright -->
+    <path d="M0 180 L0 155 Q12 120 22 155 Q32 118 42 155 Q54 125 64 155 Q76 118 86 155 Q100 128 112 155 Q122 115 134 155 Q148 125 160 155 Q170 115 183 155 Q196 128 208 155 Q220 115 232 155 Q244 120 256 155 Q268 112 280 155 Q292 128 305 155 Q318 118 330 155 Q342 120 354 155 Q366 115 379 155 Q392 128 404 155 Q416 115 428 155 Q440 120 452 155 Q464 112 476 155 Q488 128 500 155 Q510 118 520 152 L520 180 Z" fill="#3a6a18" opacity="0.8"/>
+  </svg>
+
+  <!-- Birds -->
+  <div class="bird" style="top:18%;animation-duration:18s;animation-delay:0s;">🦅</div>
+  <div class="bird" style="top:14%;animation-duration:22s;animation-delay:-8s;font-size:10px;">🕊️</div>
+  <div class="bird" style="top:22%;animation-duration:26s;animation-delay:-14s;font-size:11px;">🦅</div>
+
+  <!-- Fireflies -->
+  <div id="firefly-layer"></div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-score">🔍 <span id="score-disp">0</span></div>
+    <div class="hud-level" id="level-disp">Case 1 / 8</div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="lang-pill" style="position:static; transform:none; display:flex; gap:4px; z-index:100;">
+        <button class="lpill active" id="lp-en" onclick="setLang('en')">EN</button>
+        <button class="lpill" id="lp-as" onclick="setLang('as')">অস</button>
+      </div>
+      <div class="hud-lives" id="lives-disp">❤️❤️❤️</div>
+    </div>
+  </div>
+  <div id="prog-wrap" class="hidden">
+    <div id="prog-bar"></div>
+  </div>
+
+  <!-- ══ INTRO ══ -->
+  <div class="screen" id="screen-intro">
+    <div class="intro-badge" id="ib-txt">🔍 KAZIRANGA WILDLIFE DETECTIVE</div>
+    <div class="intro-title">
+      Animal Detective
+      <span class="as">কাজিৰঙা জীৱ-জন্তু গোয়েন্দা</span>
+    </div>
+
+    <!-- Detective badge with Rongmon -->
+    <svg class="detective-badge" viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Badge shape -->
+      <path d="M90 10 L160 40 L170 130 Q170 180 90 195 Q10 180 10 130 L20 40 Z" fill="#c8a030" stroke="#f5c518" stroke-width="3"/>
+      <path d="M90 18 L152 44 L162 128 Q162 172 90 186 Q18 172 18 128 L28 44 Z" fill="#1a3a0a"/>
+      <!-- Star points -->
+      <polygon points="90,28 96,42 112,42 100,52 104,67 90,58 76,67 80,52 68,42 84,42" fill="#f5c518"/>
+      <!-- Rongmon mini face -->
+      <ellipse cx="90" cy="110" rx="32" ry="28" fill="#b09070"/>
+      <ellipse cx="90" cy="116" rx="22" ry="18" fill="#c4a882"/>
+      <ellipse cx="78" cy="104" rx="8" ry="8" fill="#fff"/>
+      <ellipse cx="102" cy="104" rx="8" ry="8" fill="#fff"/>
+      <circle cx="78" cy="104" r="5" fill="#3a2a10"/>
+      <circle cx="102" cy="104" r="5" fill="#3a2a10"/>
+      <circle cx="80" cy="102" r="2" fill="#fff"/>
+      <circle cx="104" cy="102" r="2" fill="#fff"/>
+      <ellipse cx="90" cy="117" rx="12" ry="8" fill="#8b7355"/>
+      <circle cx="86" cy="116" r="3" fill="#5a4020"/>
+      <circle cx="94" cy="116" r="3" fill="#5a4020"/>
+      <path d="M80 126 Q90 133 100 126" stroke="#7a5030" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M86 90 Q90 80 94 90 Z" fill="#b0a060"/>
+      <!-- Detective hat -->
+      <rect x="68" y="84" width="44" height="8" rx="3" fill="#2d1a00"/>
+      <path d="M72 84 Q90 72 108 84 Z" fill="#3d2600"/>
+      <!-- Magnifying glass -->
+      <circle cx="128" cy="148" r="14" fill="none" stroke="#f5c518" stroke-width="4"/>
+      <circle cx="128" cy="148" r="9" fill="rgba(200,230,255,0.15)" stroke="rgba(200,230,255,0.3)" stroke-width="1"/>
+      <line x1="138" y1="158" x2="150" y2="170" stroke="#f5c518" stroke-width="4" stroke-linecap="round"/>
+      <!-- Text -->
+      <text x="90" y="78" text-anchor="middle" font-family="'Baloo 2',cursive" font-size="8" fill="#f5c518" font-weight="800">DETECTIVE</text>
+      <text x="90" y="185" text-anchor="middle" font-family="'Hind Siliguri',sans-serif" font-size="9" fill="rgba(245,197,24,0.7)">গোয়েন্দা</text>
+    </svg>
+
+    <div class="speech-bubble">
+      <span id="intro-msg">A mystery animal is hiding in Kaziranga! 🌿 Read the clues one by one — the faster you guess, the more stars you earn!</span>
+      <span class="as" id="intro-msg-as">কাজিৰঙাত এটা ৰহস্যময় জন্তু লুকাই আছে! 🌿 এটা এটাকৈ সংকেত পঢ়ক আৰু অনুমান কৰক!</span>
+    </div>
+    <button class="btn-start" onclick="startGame()" id="btn-start-txt">🔍 Start Investigation!</button>
+  </div>
+
+  <!-- ══ GAME ══ -->
+  <div class="screen hidden" id="screen-game">
+
+    <!-- Dossier -->
+    <div class="dossier-card" id="dossier-card">
+      <div class="dossier-header">
+        <div class="dossier-header-left">
+          <span class="dossier-icon">📋</span>
+          <div>
+            <div class="dossier-header-title" id="dossier-title">KAZIRANGA CASE FILE</div>
+            <div class="dossier-header-sub" id="dossier-sub">Who is hiding in the grassland?</div>
+          </div>
+        </div>
+        <div class="case-number" id="case-num">CASE #001</div>
+      </div>
+
+      <div class="silhouette-area">
+        <div class="animal-silhouette" id="animal-silhouette">🦏</div>
+        <div class="mystery-label">
+          <span id="mystery-who">WHO AM I?</span>
+          <span class="bold" id="mystery-bold">MYSTERY ANIMAL</span>
+          <span class="as" id="mystery-as">মই কোন?</span>
+        </div>
+      </div>
+
+      <div class="clues-area" id="clues-area">
+        <!-- Filled by JS -->
+      </div>
+
+      <div class="dossier-footer">
+        <button class="btn-next-clue" id="btn-next-clue" onclick="revealNextClue()">
+          <span id="next-clue-txt">🔍 Reveal Clue 1</span>
+        </button>
+        <div class="clue-counter" id="clue-counter">0 / 3 clues</div>
+      </div>
+    </div>
+
+    <!-- Answer choices -->
+    <div class="answers-wrap">
+      <div class="answers-label" id="ans-label">🤔 WHICH ANIMAL IS IT?</div>
+      <div class="answers-grid" id="answers-grid"></div>
+      <div class="star-hint" id="star-hint">⭐⭐⭐ Guess now for 3 stars!</div>
+    </div>
+
+  </div>
+
+  <!-- ══ LEVEL COMPLETE ══ -->
+  <div class="screen hidden" id="screen-levelup">
+    <div class="lu-solved-stamp" id="lu-stamp">SOLVED!</div>
+    <div class="lu-animal-big" id="lu-animal">🦏</div>
+    <div class="lu-name" id="lu-name">গঁড়</div>
+    <div class="lu-name-en" id="lu-name-en">One-Horned Rhinoceros</div>
+    <div class="lu-fact-card" id="lu-fact"></div>
+    <div class="lu-stars" id="lu-stars">⭐⭐⭐</div>
+    <button class="btn-next" id="btn-next" onclick="nextLevel()">Next Case ▶</button>
+  </div>
+
+  <!-- ══ GAME OVER ══ -->
+  <div class="screen hidden" id="screen-gameover">
+    <div style="font-size:60px">🌿🔍</div>
+    <div class="go-title" id="go-title">Case Unsolved!</div>
+    <div class="go-sub" id="go-sub">Every great detective makes mistakes.<br/>Try reading the clues more carefully! 🦏</div>
+    <div style="font-family:'Hind Siliguri',sans-serif;font-size:14px;color:rgba(255,255,255,0.4);margin-top:-4px;" id="go-sub-as">চিন্তা নকৰিব! ভাল গোয়েন্দাও ভুল কৰে!</div>
+    <button class="btn-retry" onclick="startGame()" id="btn-retry-txt">🔄 Investigate Again!</button>
+  </div>
+
+  <!-- ══ VICTORY ══ -->
+  <div class="screen hidden" id="screen-victory">
+    <div class="vic-badge">🔍</div>
+    <div class="vic-title" id="vic-title">🏆 Master Detective!<br/>All 8 Cases Solved!</div>
+    <div class="vic-animals">🦏🐅🐘🦌🐊🦅🐍🐟</div>
+    <div class="vic-score" id="vic-score">⭐ Score: 0</div>
+    <div class="vic-card" id="vic-card">
+      Kaziranga National Park is a UNESCO World Heritage Site in Assam. It protects the world's largest population of one-horned rhinoceroses! 🌿
+      <span class="as">কাজিৰঙা ৰাষ্ট্ৰীয় উদ্যান এটা ইউনেস্কো বিশ্ব ঐতিহ্যক্ষেত্ৰ। ই একশিংযুক্ত গঁড়ৰ পৃথিৱীৰ সৰ্ববৃহৎ বাসস্থান!</span>
+    </div>
+    <button class="btn-replay" onclick="startGame()" id="btn-replay-txt">🔄 Solve Again!</button>
+    <button class="btn-home" onclick="shareScore()" style="background:rgba(37,211,102,0.15);border-color:rgba(37,211,102,0.4);color:#25d366;">📤 Share on WhatsApp</button>
+    <button class="btn-home" onclick="window.location.href='../index.html'" id="btn-home-v">🏠 Back to Home</button>
+  </div>
+
+</div>
+
+<!-- Onboarding Overlay -->
+<div id="onboarding" class="hidden" style="position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:linear-gradient(135deg,#1a3a0a,#243010);border-radius:24px;padding:32px 24px;max-width:320px;width:100%;text-align:center;border:2px solid rgba(240,165,0,0.4);">
+    <div style="font-size:60px;margin-bottom:8px;">🔍</div>
+    <div style="font-size:22px;font-weight:900;color:#f0a500;margin-bottom:8px;">How to Play</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.8;margin-bottom:20px;">
+      🦏 <strong>A mystery animal is hiding in Kaziranga!</strong><br/>
+      🔦 Reveal clues one by one using the button below.<br/>
+      🎯 <strong>The fewer clues you use, the more stars you earn!</strong><br/>
+      🏆 Solve all 8 cases to become Master Detective!
+    </div>
+    <button onclick="dismissOnboarding()" style="font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;padding:12px 36px;border-radius:50px;border:none;background:#f0a500;color:#1a3a0a;cursor:pointer;width:100%;">
+      Got it! Investigate ▶
+    </button>
+  </div>
+</div>
+
+<!-- Mute Toggle -->
+<button id="mute-btn-game" onclick="toggleMuteGame()" style="position:fixed;bottom:20px;right:20px;z-index:500;width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);background:rgba(26,58,10,0.9);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🔊</button>
+
+<script>
+// ══ CASE DATA ══
+const cases = [
+  {
+    animal:'🦏', name_as:'গঁড়', name_en:'One-Horned Rhinoceros',
+    silhouette:'🦏',
+    clues_en:[
+      "I am Kaziranga's most famous resident and Rongmon's cousin! 🌿",
+      "I have exactly ONE horn on my nose — that makes me unique in the world!",
+      "I am grey, very heavy, and I love to wade in rivers and eat tall grass.",
+    ],
+    clues_as:[
+      "মই কাজিৰঙাৰ আটাইতকৈ বিখ্যাত বাসিন্দা আৰু ৰংমনৰ আত্মীয়! 🌿",
+      "মোৰ নাকত মাত্ৰ এটাই শিং আছে — এয়াই মোক বিশেষ কৰি তোলে!",
+      "মই ধূসৰ বৰণৰ, অতি গধুৰ, আৰু নদীত ঘূৰি ফুৰি ওখ ঘাঁহ খাওঁ।",
+    ],
+    wrong:[
+      {emoji:'🐅',name_en:'Tiger',name_as:'বাঘ'},
+      {emoji:'🐘',name_en:'Elephant',name_as:'হাতী'},
+      {emoji:'🦛',name_en:'Hippo',name_as:'জলঘোঁৰা'},
+    ],
+    fact_en:"There are about 2,600 one-horned rhinos in Kaziranga — that's more than 70% of the world's entire population! They are protected by the Indian Wildlife Act. 🌿",
+    fact_as:"কাজিৰঙাত প্ৰায় ২,৬০০টা একশিংযুক্ত গঁড় আছে — এইটো পৃথিৱীৰ মুঠ সংখ্যাৰ ৭০% তকৈও বেছি!",
+  },
+  {
+    animal:'🐅', name_as:'বাঘ', name_en:'Royal Bengal Tiger',
+    silhouette:'🐅',
+    clues_en:[
+      "I am the largest wild cat in the world — and I live in Kaziranga! 🌿",
+      "My fur is orange with bold black stripes — no two of us look the same.",
+      "I am a hunter who is mostly active at night. I can roar so loud it shakes the trees!",
+    ],
+    clues_as:[
+      "মই পৃথিৱীৰ আটাইতকৈ ডাঙৰ বনৰীয়া মেকুৰী — আৰু কাজিৰঙাতে বাস কৰোঁ!",
+      "মোৰ নিমখীয়া কমলা নোম আৰু ক'লা ৰেখা আছে।",
+      "মই নিশা চিকাৰ কৰোঁ আৰু মোৰ হুংকাৰ গছ জোকাৰে!",
+    ],
+    wrong:[
+      {emoji:'🦁',name_en:'Lion',name_as:'সিংহ'},
+      {emoji:'🐆',name_en:'Leopard',name_as:'চিতা'},
+      {emoji:'🦏',name_en:'Rhino',name_as:'গঁড়'},
+    ],
+    fact_en:"Kaziranga has one of the highest densities of Royal Bengal Tigers in the world! Tigers can swim very well and often cross the Brahmaputra river. 🐾",
+    fact_as:"কাজিৰঙাত ৰয়েল বেঙ্গল টাইগাৰৰ ঘনত্ব পৃথিৱীৰ ভিতৰতে আটাইতকৈ বেছি! বাঘে ভালদৰে সাঁতুৰিব পাৰে।",
+  },
+  {
+    animal:'🐘', name_as:'হাতী', name_en:'Asian Elephant',
+    silhouette:'🐘',
+    clues_en:[
+      "I am the biggest land animal in Asia — and herds of us roam Kaziranga freely! 🌿",
+      "I use my long trunk to drink water, pick up food, and greet my friends.",
+      "My ears are smaller than African elephants. I have a great memory — I never forget!",
+    ],
+    clues_as:[
+      "মই এছিয়াৰ আটাইতকৈ ডাঙৰ স্থলজ জন্তু — আৰু আমাৰ জাক কাজিৰঙাত ঘূৰি ফুৰে!",
+      "মই মোৰ দীঘল শুঁড় ব্যৱহাৰ কৰি পানী খাওঁ, খাদ্য তুলোঁ, আৰু বন্ধুক অভিবাদন জনাওঁ।",
+      "মোৰ কণ আফ্ৰিকান হাতীতকৈ সৰু। মই কোনো কথা পাহৰি নাযাওঁ!",
+    ],
+    wrong:[
+      {emoji:'🦏',name_en:'Rhino',name_as:'গঁড়'},
+      {emoji:'🦛',name_en:'Hippo',name_as:'জলঘোঁৰা'},
+      {emoji:'🐗',name_en:'Wild Boar',name_as:'বনৰীয়া গাহৰি'},
+    ],
+    fact_en:"Asian elephants are endangered. In Kaziranga, elephant calves stay close to their mothers for up to 5 years. They communicate using sounds too low for humans to hear! 🐘",
+    fact_as:"এছিয়ান হাতী বিপন্ন প্ৰজাতি। কাজিৰঙাত শাৱকবোৰ ৫ বছৰলৈকে মাকৰ কাষত থাকে!",
+  },
+  {
+    animal:'🦅', name_as:'ঈগল', name_en:'Greater Adjutant Stork',
+    silhouette:'🦅',
+    clues_en:[
+      "I am a rare and very tall bird — one of the tallest in the world! 🌿",
+      "I have a long bald neck, a huge beak, and I stand nearly 1.5 metres tall.",
+      "Assam is one of the last places on Earth where I can still be found — I am critically endangered.",
+    ],
+    clues_as:[
+      "মই এটা বিৰল আৰু অতি ওখ চৰাই — পৃথিৱীৰ আটাইতকৈ ওখবোৰৰ ভিতৰত এটা!",
+      "মোৰ দীঘল নিমজ ডিঙি, বৃহৎ ঠোঁট আছে আৰু মই প্ৰায় দেৰ মিটাৰ ওখ।",
+      "অসম পৃথিৱীৰ শেষ কেইখনমান ঠাইৰ এখন য'ত মোক এতিয়াও দেখা যায়।",
+    ],
+    wrong:[
+      {emoji:'🦢',name_en:'Swan',name_as:'হাঁহ'},
+      {emoji:'🦜',name_en:'Parrot',name_as:'ভেটুলী'},
+      {emoji:'🦚',name_en:'Peacock',name_as:'ময়ূৰ'},
+    ],
+    fact_en:"The Greater Adjutant Stork is critically endangered. Assam has the largest remaining population in the world. Local communities in Assam protect their nests! 🌿",
+    fact_as:"বৃহৎ অ্যাডজুটেন্ট স্টৰ্ক অতি বিপন্ন। অসমৰ স্থানীয় সম্প্ৰদায়ে তেওঁলোকৰ বাহ ৰক্ষা কৰে!",
+  },
+  {
+    animal:'🐊', name_as:'কুমিৰ', name_en:'Gharial Crocodile',
+    silhouette:'🐊',
+    clues_en:[
+      "I am a reptile — cold-blooded and ancient, older than the dinosaurs' time! 🌿",
+      "I have a very long thin snout with a round bump at the end of my nose.",
+      "I live in Assam's rivers and I am one of the most endangered reptiles on Earth.",
+    ],
+    clues_as:[
+      "মই এটা সৰীসৃপ — ঠাণ্ডা তেজৰ আৰু অতি প্ৰাচীন!",
+      "মোৰ অতি দীঘল পাতল মুখ আছে আৰু নাকৰ আগত গোল উঠ আছে।",
+      "মই অসমৰ নদীত বাস কৰোঁ আৰু পৃথিৱীৰ আটাইতকৈ বিপন্ন সৰীসৃপৰ এটা।",
+    ],
+    wrong:[
+      {emoji:'🦎',name_en:'Lizard',name_as:'গিৰগিটি'},
+      {emoji:'🐢',name_en:'Turtle',name_as:'কাছ'},
+      {emoji:'🐍',name_en:'Python',name_as:'অজগৰ'},
+    ],
+    fact_en:"The Gharial is critically endangered — fewer than 200 remain in the wild! They eat only fish and are harmless to humans. The Brahmaputra river is one of their last homes. 🌊",
+    fact_as:"ঘড়িয়াল অতি বিপন্ন — মাত্ৰ ২০০টাতকৈও কম বন্য অবস্থাত আছে! তেওঁলোক মাত্ৰ মাছ খায়।",
+  },
+  {
+    animal:'🦌', name_as:'হগ ডিয়াৰ', name_en:'Hog Deer',
+    silhouette:'🦌',
+    clues_en:[
+      "I am a small deer with short legs — and I run low to the ground through tall grass! 🌿",
+      "My coat is brown with spots, and the male has small antlers that point upward.",
+      "I am shy and gentle — I eat grass and leaves in Kaziranga's floodplains.",
+    ],
+    clues_as:[
+      "মই চুটি ভৰিৰ এটা সৰু হৰিণ — আৰু ওখ ঘাঁহৰ মাজেদি দৌৰোঁতে মই তলেদি দৌৰোঁ!",
+      "মোৰ বাদামী নোমত ফুট আছে, আৰু মতাটোৰ সৰু শিং ওপৰলৈ মুখ কৰি আছে।",
+      "মই লাজকুৰীয়া আৰু কোমল — কাজিৰঙাৰ বানভূমিত ঘাঁহ আৰু পাত খাওঁ।",
+    ],
+    wrong:[
+      {emoji:'🐐',name_en:'Goat',name_as:'ছাগলী'},
+      {emoji:'🦏',name_en:'Rhino',name_as:'গঁড়'},
+      {emoji:'🐄',name_en:'Gaur',name_as:'গৌৰ'},
+    ],
+    fact_en:"The Hog Deer gets its name from running like a hog (pig) — low to the ground! Kaziranga is one of the most important habitats for this endangered deer. 🌿",
+    fact_as:"হগ ডিয়াৰে গাহৰিৰ দৰে তলেদি দৌৰে বাবে এই নাম পাইছে! কাজিৰঙা ইয়াৰ বাবে অতি গুৰুত্বপূৰ্ণ।",
+  },
+  {
+    animal:'🐍', name_as:'অজগৰ', name_en:'Indian Rock Python',
+    silhouette:'🐍',
+    clues_en:[
+      "I am one of the longest snakes in the world — I can grow over 6 metres! 🌿",
+      "I have no venom — instead I squeeze my prey very tightly to catch it.",
+      "My patterned skin is brown and gold. I live near water and I can swim very well.",
+    ],
+    clues_as:[
+      "মই পৃথিৱীৰ আটাইতকৈ দীঘল সাপবোৰৰ ভিতৰত এটা — ৬ মিটাৰতকৈও বেছি হ'ব পাৰোঁ!",
+      "মোৰ বিষ নাই — মই মোৰ চিকাৰক টানি ধৰোঁ।",
+      "মোৰ বাদামী-সোণালী ৰঙৰ ছাল আছে। মই পানীৰ কাষত থাকোঁ আৰু ভালদৰে সাঁতুৰিব পাৰোঁ।",
+    ],
+    wrong:[
+      {emoji:'🦎',name_en:'Lizard',name_as:'গিৰগিটি'},
+      {emoji:'🐊',name_en:'Crocodile',name_as:'কুমিৰ'},
+      {emoji:'🪱',name_en:'Worm',name_as:'পেলু'},
+    ],
+    fact_en:"The Indian Rock Python is a Schedule I protected species in India! They can go for months without eating after a big meal. Kaziranga protects many pythons in its swampy grasslands. 🌿",
+    fact_as:"ভাৰতীয় শিলৰ অজগৰ ভাৰতৰ এক সুৰক্ষিত প্ৰজাতি! ডাঙৰ খাদ্যৰ পিছত কেইমাহমান নোখোৱাকৈ থাকিব পাৰে।",
+  },
+  {
+    animal:'🦦', name_as:'ভোঁদৰ', name_en:'Smooth-Coated Otter',
+    silhouette:'🦦',
+    clues_en:[
+      "I am a playful aquatic mammal — I love rivers, streams and wetlands! 🌿",
+      "I have sleek brown fur, a flat tail, and webbed feet perfect for swimming.",
+      "I am social and live in family groups. You can hear me whistling and chirping by the river!",
+    ],
+    clues_as:[
+      "মই এটা কৌতুকপ্ৰিয় জলজ স্তন্যপায়ী — নদী আৰু জলাশয় মোৰ প্ৰিয়!",
+      "মোৰ মসৃণ বাদামী নোম, চেপেটা ঠেং, আৰু সাঁতোৰৰ বাবে পৰদাযুক্ত ভৰি আছে।",
+      "মই পৰিয়ালৰ গোটত থাকোঁ। নদীৰ কাষত মোৰ হুইল আৰু চিৰিং মাত শুনা যায়!",
+    ],
+    wrong:[
+      {emoji:'🦫',name_en:'Beaver',name_as:'বিভাৰ'},
+      {emoji:'🐟',name_en:'Fish',name_as:'মাছ'},
+      {emoji:'🦭',name_en:'Seal',name_as:'চীল'},
+    ],
+    fact_en:"The Smooth-Coated Otter is endangered and found in Assam's rivers and wetlands. Otters help keep rivers healthy by controlling fish populations — they are nature's river managers! 🌊",
+    fact_as:"মসৃণ-আবৃত ভোঁদৰ অসমৰ নদী আৰু জলাভূমিত পোৱা যায়। ভোঁদৰে নদী সুস্থ ৰখাত সহায় কৰে!",
+  },
+];
+
+// ══ STATE ══
+let currentCase=0, lives=3, score=0, lang='en';
+let cluesRevealed=0, inputLocked=false;
+
+const lt={
+  en:{
+    'ib-txt':'🔍 KAZIRANGA WILDLIFE DETECTIVE',
+    'intro-msg':"A mystery animal is hiding in Kaziranga! 🌿 Read the clues one by one — the faster you guess, the more stars you earn!",
+    'btn-start-txt':'🔍 Start Investigation!',
+    'dossier-title':'KAZIRANGA CASE FILE',
+    'dossier-sub':'Who is hiding in the grassland?',
+    'mystery-who':'WHO AM I?','mystery-bold':'MYSTERY ANIMAL','mystery-as':'মই কোন?',
+    'ans-label':'🤔 WHICH ANIMAL IS IT?',
+    'lu-stamp':'SOLVED!',
+    'btn-next':'Next Case ▶',
+    'go-title':'Case Unsolved!',
+    'go-sub':'Every great detective makes mistakes.<br/>Try reading the clues more carefully! 🦏',
+    'btn-retry-txt':'🔄 Investigate Again!',
+    'vic-title':'🏆 Master Detective!<br/>All 8 Cases Solved!',
+    'btn-replay-txt':'🔄 Solve Again!',
+    'btn-home-v':'🏠 Back to Home',
+  },
+  as:{
+    'ib-txt':'🔍 কাজিৰঙা বন্যপ্ৰাণী গোয়েন্দা',
+    'intro-msg':'কাজিৰঙাত এটা ৰহস্যময় জন্তু লুকাই আছে! 🌿 এটা এটাকৈ সংকেত পঢ়ক আৰু অনুমান কৰক!',
+    'btn-start-txt':'🔍 তদন্ত আৰম্ভ কৰক!',
+    'dossier-title':'কাজিৰঙা গোপন নথি',
+    'dossier-sub':'ঘাঁহনিত কোন লুকাই আছে?',
+    'mystery-who':'মই কোন?','mystery-bold':'ৰহস্যময় জন্তু','mystery-as':'Who am I?',
+    'ans-label':'🤔 এইটো কোন জন্তু?',
+    'lu-stamp':'সমাধান!',
+    'btn-next':'পৰৱৰ্তী কেছ ▶',
+    'go-title':'কেছ অসমাধান!',
+    'go-sub':'প্ৰতিজন ভাল গোয়েন্দাই ভুল কৰে।<br/>সংকেতবোৰ আৰু মনোযোগেৰে পঢ়ক! 🦏',
+    'btn-retry-txt':'🔄 আকৌ তদন্ত কৰক!',
+    'vic-title':'🏆 মাষ্টাৰ গোয়েন্দা!<br/>সকলো ৮টা কেছ সমাধান!',
+    'btn-replay-txt':'🔄 আকৌ সমাধান কৰক!',
+    'btn-home-v':'🏠 মূল পৃষ্ঠালৈ',
+  }
+};
+function setLang(l){
+  lang=l;
+  document.getElementById('lp-en').classList.toggle('active',l==='en');
+  document.getElementById('lp-as').classList.toggle('active',l==='as');
+  const t=lt[l];
+  for(const[id,val] of Object.entries(t)){
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=val;
+  }
+  if(!document.getElementById('screen-game').classList.contains('hidden'))
+    renderCase(currentCase);
+}
+
+function showScreen(id){
+  ['screen-intro','screen-game','screen-levelup','screen-gameover','screen-victory'].forEach(s=>
+    document.getElementById(s).classList.add('hidden')
+  );
+  document.getElementById(id).classList.remove('hidden');
+  const isGame=id==='screen-game';
+  document.getElementById('hud').classList.toggle('hidden',!isGame);
+  document.getElementById('prog-wrap').classList.toggle('hidden',!isGame);
+}
+function updateHUD(){
+  document.getElementById('score-disp').textContent=score;
+  document.getElementById('level-disp').textContent=`${lang==='en'?'Case':'কেছ'} ${currentCase+1}/8`;
+  const h=['','❤️','❤️❤️','❤️❤️❤️'];
+  document.getElementById('lives-disp').textContent=h[Math.max(0,lives)]||'';
+  document.getElementById('prog-bar').style.width=(currentCase/8*100)+'%';
+}
+function startGame(){
+  currentCase=0;lives=3;score=0;
+  showScreen('screen-game');
+  renderCase(0);
+  updateHUD();
+}
+function renderCase(i){
+  inputLocked=false;cluesRevealed=0;
+  const c=cases[i];
+  updateHUD();
+
+  // Reset silhouette
+  const sil=document.getElementById('animal-silhouette');
+  sil.textContent=c.silhouette;
+  sil.classList.remove('revealed');
+
+  // Case number
+  document.getElementById('case-num').textContent=`CASE #${String(i+1).padStart(3,'0')}`;
+  document.getElementById('dossier-title').textContent=lang==='en'?'KAZIRANGA CASE FILE':'কাজিৰঙা গোপন নথি';
+  document.getElementById('dossier-sub').textContent=lang==='en'?'Who is hiding in the grassland?':'ঘাঁহনিত কোন লুকাই আছে?';
+
+  // Build clue strips (all locked)
+  const cluesArea=document.getElementById('clues-area');
+  cluesArea.innerHTML='';
+  const clues=lang==='en'?c.clues_en:c.clues_as;
+  clues.forEach((_,j)=>{
+    const strip=document.createElement('div');
+    strip.className='clue-strip hidden-clue';
+    strip.id=`clue-${j}`;
+    strip.innerHTML=`
+      <div class="clue-num">#${j+1}</div>
+      <div class="clue-text" id="clue-text-${j}">???</div>
+      <div class="clue-lock">🔒</div>
+    `;
+    cluesArea.appendChild(strip);
+  });
+
+  // Shuffle answers
+  const allAns=[
+    {emoji:c.animal,name_en:c.name_en,name_as:c.name_as},
+    ...c.wrong
+  ].sort(()=>Math.random()-0.5);
+
+  const grid=document.getElementById('answers-grid');
+  grid.innerHTML='';
+  allAns.forEach(ans=>{
+    const btn=document.createElement('button');
+    btn.className='ans-btn';
+    btn.innerHTML=`
+      <span style="font-size:34px">${ans.emoji}</span>
+      <div class="ans-name">${ans.name_en}</div>
+      <div class="ans-name-as">${ans.name_as}</div>
+    `;
+    btn.onclick=()=>handleAnswer(btn,ans.emoji===c.animal,c);
+    grid.appendChild(btn);
+  });
+
+  updateClueBtn();
+  updateStarHint();
+}
+
+function updateClueBtn(){
+  const c=cases[currentCase];
+  const numClues=c.clues_en.length;
+  const btn=document.getElementById('btn-next-clue');
+  const counter=document.getElementById('clue-counter');
+
+  if(cluesRevealed>=numClues){
+    btn.disabled=true;
+    btn.querySelector('#next-clue-txt')||
+      (btn.innerHTML=`<span id="next-clue-txt">${lang==='en'?'All clues revealed!':'সকলো সংকেত দেখা গ\'ল!'}</span>`);
+    document.getElementById('next-clue-txt').textContent=lang==='en'?'All clues revealed!':'সকলো সংকেত দেখা গ\'ল!';
+  } else {
+    btn.disabled=false;
+    document.getElementById('next-clue-txt').textContent=
+      lang==='en'?`🔍 Reveal Clue ${cluesRevealed+1}`:`🔍 সংকেত ${cluesRevealed+1} দেখক`;
+  }
+  counter.textContent=`${cluesRevealed} / ${numClues} ${lang==='en'?'clues':'সংকেত'}`;
+}
+function updateStarHint(){
+  const el=document.getElementById('star-hint');
+  if(cluesRevealed===0) el.textContent='⭐⭐⭐ Guess now for 3 stars!';
+  else if(cluesRevealed===1) el.textContent='⭐⭐ Guess now for 2 stars!';
+  else el.textContent='⭐ Last clue — guess now for 1 star!';
+  if(lang==='as'){
+    if(cluesRevealed===0) el.textContent='⭐⭐⭐ এতিয়া অনুমান কৰক!';
+    else if(cluesRevealed===1) el.textContent='⭐⭐ এতিয়া অনুমান কৰক!';
+    else el.textContent='⭐ শেষ সংকেত — এতিয়া অনুমান কৰক!';
+  }
+}
+
+function revealNextClue(){
+  if(inputLocked) return;
+  const c=cases[currentCase];
+  const clues=lang==='en'?c.clues_en:c.clues_as;
+  if(cluesRevealed>=clues.length) return;
+
+  const strip=document.getElementById(`clue-${cluesRevealed}`);
+  const textEl=document.getElementById(`clue-text-${cluesRevealed}`);
+  strip.classList.remove('hidden-clue');
+  strip.classList.add('revealed-clue');
+  textEl.textContent=clues[cluesRevealed];
+  // Remove lock icon
+  const lock=strip.querySelector('.clue-lock');
+  if(lock) lock.remove();
+
+  cluesRevealed++;
+  updateClueBtn();
+  updateStarHint();
+}
+
+function handleAnswer(btn,isCorrect,c){
+  if(inputLocked) return;
+  inputLocked=true;
+  // Disable all
+  document.querySelectorAll('.ans-btn').forEach(b=>b.disabled=true);
+
+  if(isCorrect){
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playCorrect();
+    btn.classList.add('correct');
+    // Stars: 3 for 0 clues used, 2 for 1, 1 for 2+
+    const stars=cluesRevealed===0?3:cluesRevealed===1?2:1;
+    score+=stars*10+(lives*3);
+    updateHUD();
+    // Reveal silhouette
+    const sil=document.getElementById('animal-silhouette');
+    setTimeout(()=>{
+      sil.classList.add('revealed');
+      spawnConfetti();
+    },400);
+    setTimeout(()=>{
+      if(typeof RongmonAudio!=='undefined') RongmonAudio.playLevelUp();
+      showLevelComplete(c,stars);
+    },1200);
+  } else {
+    if(typeof RongmonAudio!=='undefined') RongmonAudio.playWrong();
+    btn.classList.add('wrong');
+    lives=Math.max(0,lives-1);
+    updateHUD();
+    setTimeout(()=>{
+      btn.disabled=true;
+      btn.classList.remove('wrong');
+      inputLocked=false;
+      // Re-enable remaining buttons
+      document.querySelectorAll('.ans-btn:not(.correct):not(:disabled)').forEach(b=>{
+        if(!b.classList.contains('wrong')) b.disabled=false;
+      });
+      document.querySelectorAll('.ans-btn').forEach(b=>{
+        if(b!==btn) b.disabled=false;
+      });
+      if(lives===0) setTimeout(()=>showScreen('screen-gameover'),400);
+    },500);
+  }
+}
+
+function showLevelComplete(c,stars){
+  document.getElementById('lu-animal').textContent=c.animal;
+  document.getElementById('lu-name').textContent=c.name_as;
+  document.getElementById('lu-name-en').textContent=c.name_en;
+  document.getElementById('lu-fact').innerHTML=lang==='en'?c.fact_en:c.fact_as;
+  document.getElementById('lu-stamp').textContent=lang==='en'?'SOLVED!':'সমাধান!';
+  document.getElementById('lu-stars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('btn-next').textContent=
+    lang==='en'
+      ?(currentCase>=cases.length-1?'🏆 Finish!':'Next Case ▶')
+      :(currentCase>=cases.length-1?'🏆 শেষ!':'পৰৱৰ্তী কেছ ▶');
+  showScreen('screen-levelup');
+}
+function nextLevel(){
+  currentCase++;
+  if(currentCase>=cases.length) showVictory();
+  else{ renderCase(currentCase);showScreen('screen-game');updateHUD(); }
+}
+function showVictory(){
+  document.getElementById('vic-score').textContent=`⭐ Score: ${score}`;
+  document.getElementById('prog-bar').style.width='100%';
+  document.getElementById('vic-title').innerHTML=
+    lang==='en'?'🏆 Master Detective!<br/>All 8 Cases Solved!':'🏆 মাষ্টাৰ গোয়েন্দা!<br/>সকলো ৮টা কেছ সমাধান!';
+  if(typeof RongmonAudio!=='undefined') RongmonAudio.playVictory();
+  showScreen('screen-victory');
+  [300,700,1100,1500].forEach(t=>setTimeout(spawnConfetti,t));
+}
+
+// ══ CONFETTI ══
+function spawnConfetti(){
+  const cols=['#f5c518','#4caf50','#e53935','#42a5f5','#ff8f00','#fff','#a8e068'];
+  const wrap=document.getElementById('game-wrap');
+  for(let i=0;i<26;i++){
+    const p=document.createElement('div');p.className='confetti-piece';
+    const cx=(Math.random()-0.5)*360;const cy=180+Math.random()*260;
+    p.style.cssText=`left:${Math.random()*100}%;top:${10+Math.random()*35}%;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
+      --cx:${cx}px;--cy:${cy}px;
+      animation-duration:${0.9+Math.random()*0.9}s;
+      animation-delay:${Math.random()*0.25}s;
+      border-radius:${Math.random()>0.5?'50%':'3px'};
+      width:${6+Math.random()*7}px;height:${6+Math.random()*7}px;`;
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(),2200);
+  }
+}
+
+// ══ FIREFLIES ══
+(function(){
+  const layer=document.getElementById('firefly-layer');
+  for(let i=0;i<10;i++){
+    const f=document.createElement('div');f.className='firefly';
+    f.style.cssText=`
+      left:${Math.random()*90}%;
+      top:${25+Math.random()*45}%;
+      animation-duration:${2+Math.random()*4}s;
+      animation-delay:${Math.random()*5}s;
+    `;
+    layer.appendChild(f);
+  }
+})();
+
+// ── Shared modules ──
+window.addEventListener('load', () => {
+  if (typeof RongmonData !== 'undefined' && !RongmonData.hasSeenOnboarding('animal-detective')) {
+    document.getElementById('onboarding').classList.remove('hidden');
+  }
+  if (typeof RongmonData !== 'undefined') {
+    const m = RongmonData.getSetting('muted');
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+});
+function dismissOnboarding() {
+  document.getElementById('onboarding').classList.add('hidden');
+  if (typeof RongmonData !== 'undefined') RongmonData.markOnboardingSeen('animal-detective');
+}
+function toggleMuteGame() {
+  if (typeof RongmonAudio !== 'undefined') {
+    const m = RongmonAudio.toggleMute();
+    document.getElementById('mute-btn-game').textContent = m ? '🔇' : '🔊';
+  }
+}
+function shareScore() {
+  const msg = `I solved ${cases.length} cases in Kaziranga Animal Detective! 🔍🦏 Help Rongmon find more animals! #AssamKids`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+</script>
+<script src="rongmon-data.js"></script>
+<script src="rongmon-audio.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Writing Workshop — GyanPlay Class 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A;--border-glow:rgba(255,159,28,.2);--card-glow:rgba(255,159,28,.1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:linear-gradient(160deg,#1A0F00,#100800);min-height:100vh;color:var(--text);font-family:'Nunito',sans-serif;font-size:18px;display:flex;justify-content:center;padding-bottom:40px;}
+.shell{width:100%;max-width:480px;display:flex;flex-direction:column;}
+.header{padding:16px 20px 10px;border-bottom:2px solid var(--border-glow);background:rgba(13,20,40,.8);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px);}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold);}
+.subject-tag{font-size:.68rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+.stars{display:flex;gap:4px;margin-top:4px;}
+.star{font-size:.95rem;opacity:.3;transition:opacity .4s,filter .4s;}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold));}
+.score-display{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--gold);}
+.wow-hook{margin:14px 14px 0;background:linear-gradient(135deg,rgba(255,159,28,.15),rgba(13,20,40,.95));border:1px solid var(--border-glow);border-radius:14px;padding:16px;box-shadow:0 4px 20px var(--card-glow);}
+.wow-hook .emoji{font-size:1.8rem;margin-bottom:6px;display:block;}
+.wow-hook p{font-size:.88rem;line-height:1.6;}
+.wow-hook strong{color:var(--gold);}
+.stage-area{padding:14px;flex:1;}
+.stage{display:none;}
+.stage.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.stage-title{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--orange);margin-bottom:8px;}
+.card{background:var(--card);border:1px solid var(--border-glow);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 2px 14px var(--card-glow);}
+.info-box{background:rgba(255,159,28,.07);border-left:3px solid var(--orange);padding:9px 12px;border-radius:0 7px 7px 0;font-size:.82rem;color:var(--dim);line-height:1.5;margin:8px 0;}
+.info-box strong{color:var(--text);}
+.result-msg{font-size:.85rem;min-height:20px;padding:3px 0;}
+.result-msg.ok{color:var(--teal);}
+.result-msg.err{color:var(--coral);}
+.bottom-bar{position:sticky;bottom:0;background:rgba(13,20,40,.92);border-top:1px solid var(--border-glow);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(8px);}
+.progress-label{font-size:.82rem;color:var(--dim);}
+.progress-label strong{color:var(--text);}
+.action-btn{background:var(--gold);color:#060A10;border:none;border-radius:22px;padding:9px 24px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;min-height:44px;}
+.action-btn:hover{transform:scale(1.04);box-shadow:0 4px 14px rgba(255,209,102,.4);}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.9);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.overlay-box{text-align:center;padding:26px 22px;max-width:340px;}
+.overlay-emoji{font-size:2.8rem;margin-bottom:10px;}
+.overlay-msg{font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--gold);margin-bottom:7px;}
+.overlay-fact{font-size:.82rem;color:var(--dim);line-height:1.5;}
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:200;}
+.confetto{position:absolute;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.game-complete{display:none;text-align:center;padding:36px 18px;}
+.game-complete.show{display:block;animation:fadeIn .5s ease;}
+.complete-title{font-family:'Baloo 2',cursive;font-size:1.9rem;color:var(--gold);margin-bottom:10px;}
+.complete-sub{color:var(--dim);font-size:.9rem;line-height:1.6;margin-bottom:20px;}
+.replay-btn{background:transparent;border:2px solid var(--gold);color:var(--gold);border-radius:22px;padding:9px 26px;font-family:'Baloo 2',cursive;font-size:.95rem;cursor:pointer;min-height:44px;}
+
+/* FORMAT MATCHER */
+.situation-card{background:rgba(0,0,0,.22);border:1px solid var(--border-glow);border-radius:10px;padding:12px;margin-bottom:10px;}
+.sit-desc{font-size:.88rem;color:var(--text);margin-bottom:8px;line-height:1.5;}
+.fmt-opts{display:flex;flex-wrap:wrap;gap:6px;}
+.fmt-opt{background:rgba(255,159,28,.1);border:1px solid var(--border-glow);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:.82rem;color:var(--text);transition:all .2s;min-height:38px;}
+.fmt-opt:hover{background:rgba(255,159,28,.22);}
+.fmt-opt.correct{background:rgba(6,214,160,.18);border-color:var(--teal);color:var(--teal);}
+.fmt-opt.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* FORMAT ASSEMBLER */
+.format-zone{border:2px dashed rgba(255,159,28,.3);border-radius:10px;padding:10px;min-height:80px;margin:10px 0;}
+.format-zone .zone-label{font-size:.72rem;color:var(--dim);text-align:center;margin-bottom:6px;}
+.elem-pool{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.format-elem{background:rgba(255,159,28,.1);border:1px solid var(--border-glow);border-radius:8px;padding:9px 12px;cursor:pointer;font-size:.82rem;color:var(--text);transition:all .2s;}
+.format-elem:hover{background:rgba(255,159,28,.22);border-color:var(--orange);}
+.format-elem.placed{background:rgba(6,214,160,.1);border-color:var(--teal);cursor:default;opacity:.7;}
+.format-elem.wrong-pos{animation:shake .3s;background:rgba(255,107,107,.12);}
+.format-slot{background:rgba(0,0,0,.2);border:1px dashed rgba(6,214,160,.3);border-radius:7px;padding:7px 10px;font-size:.78rem;color:var(--dim);min-height:36px;display:flex;align-items:center;}
+.format-slot.filled{background:rgba(6,214,160,.06);border-color:var(--teal);color:var(--text);}
+
+/* REGISTER RADAR */
+.register-sample{background:rgba(0,0,0,.22);border:1px solid var(--border-glow);border-radius:10px;padding:12px;margin-bottom:10px;}
+.reg-text{font-size:.88rem;color:var(--text);line-height:1.6;margin-bottom:8px;font-family:'Crimson Pro',serif;}
+.reg-opts{display:flex;flex-wrap:wrap;gap:6px;}
+.reg-opt{background:rgba(255,159,28,.1);border:1px solid var(--border-glow);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:.78rem;color:var(--text);transition:all .2s;min-height:36px;}
+.reg-opt:hover{background:rgba(255,159,28,.22);}
+.reg-opt.correct{background:rgba(6,214,160,.18);border-color:var(--teal);color:var(--teal);}
+.reg-opt.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);animation:shake .3s;}
+
+/* OPENING LINE LAB */
+.opening-line{background:rgba(0,0,0,.22);border:1px solid var(--border-glow);border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all .2s;}
+.opening-line:hover{border-color:var(--orange);}
+.opening-line.selected{border-color:var(--gold);background:rgba(255,209,102,.06);}
+.opening-line.revealed{cursor:default;}
+.ol-text{font-size:.88rem;font-family:'Crimson Pro',serif;color:var(--text);margin-bottom:6px;line-height:1.5;}
+.ol-rating{font-size:.75rem;color:var(--dim);display:none;}
+.opening-line.revealed .ol-rating{display:block;}
+.star-row{color:var(--gold);font-size:.9rem;}
+
+/* NOTICE COMPRESSION */
+.source-text{background:rgba(0,0,0,.3);border-radius:9px;padding:12px;font-size:.82rem;color:var(--dim);line-height:1.7;margin-bottom:12px;border-left:3px solid rgba(255,159,28,.3);}
+.notice-editor{background:rgba(0,0,0,.3);border:1px solid var(--border-glow);border-radius:10px;padding:12px;}
+.notice-template{font-family:'Crimson Pro',serif;font-size:.88rem;line-height:2;color:var(--text);}
+.notice-template .tfield{display:inline-block;border-bottom:2px solid var(--orange);min-width:80px;cursor:text;color:var(--gold);font-family:'Nunito',sans-serif;font-size:.82rem;padding:0 4px;}
+.word-counter{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--border-glow);}
+.wc-count{font-family:'Baloo 2',cursive;font-size:1.1rem;}
+.wc-count.ok{color:var(--teal);}
+.wc-count.over{color:var(--coral);}
+textarea.notice-ta{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--border-glow);border-radius:8px;color:var(--text);padding:10px;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:100px;line-height:1.6;}
+textarea.notice-ta:focus{outline:none;border-color:var(--orange);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="game-title">✍️ Writing Workshop</div>
+        <div class="subject-tag">📝 English · G9-08 · Formal Letter, Article, Notice, Debate, Story</div>
+      </div>
+      <div class="score-display" id="scoreDisplay">0 pts</div>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+      <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="emoji">🎤</span>
+    <p>Abraham Lincoln wrote the Gettysburg Address — <strong>272 words that redefined America</strong> — on a train journey, on an envelope. It took him 4 minutes to deliver. Professional speechwriters today say it is impossible to improve a single word. <strong>The most effective writing in history was short, structured, and written under pressure.</strong> That is exactly what you practise in Class 9.</p>
+  </div>
+
+  <div class="stage-area">
+
+    <!-- STAGE 1: FORMAT MATCHER -->
+    <div class="stage active" id="stage1">
+      <div class="stage-title">📋 Stage 1: Format Matcher</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">Match each situation to the correct writing format. Format confusion is the #1 mark-loser in Class 9 exams.</p>
+
+        <div class="situation-card">
+          <div class="sit-desc">🏫 Your school is organising a Science Exhibition on 15 March. You need to inform all students about the date, venue, and how to register.</div>
+          <div class="fmt-opts">
+            <div class="fmt-opt" onclick="checkFmt(this,0,'notice')">Notice</div>
+            <div class="fmt-opt" onclick="checkFmt(this,0,'letter')">Formal Letter</div>
+            <div class="fmt-opt" onclick="checkFmt(this,0,'article')">Article</div>
+            <div class="fmt-opt" onclick="checkFmt(this,0,'debate')">Debate Speech</div>
+          </div>
+          <div class="result-msg" id="fmtr0"></div>
+        </div>
+
+        <div class="situation-card">
+          <div class="sit-desc">📰 Your school magazine wants a piece on 'The Impact of Social Media on Teenagers' — with your byline and an engaging introduction.</div>
+          <div class="fmt-opts">
+            <div class="fmt-opt" onclick="checkFmt(this,1,'notice')">Notice</div>
+            <div class="fmt-opt" onclick="checkFmt(this,1,'letter')">Formal Letter</div>
+            <div class="fmt-opt" onclick="checkFmt(this,1,'article')">Article</div>
+            <div class="fmt-opt" onclick="checkFmt(this,1,'debate')">Debate Speech</div>
+          </div>
+          <div class="result-msg" id="fmtr1"></div>
+        </div>
+
+        <div class="situation-card">
+          <div class="sit-desc">💬 The motion is: "Mobile phones should be banned in schools." You must argue FOR the motion, acknowledge the opposition's point, and conclude with an appeal.</div>
+          <div class="fmt-opts">
+            <div class="fmt-opt" onclick="checkFmt(this,2,'notice')">Notice</div>
+            <div class="fmt-opt" onclick="checkFmt(this,2,'letter')">Formal Letter</div>
+            <div class="fmt-opt" onclick="checkFmt(this,2,'article')">Article</div>
+            <div class="fmt-opt" onclick="checkFmt(this,2,'debate')">Debate Speech</div>
+          </div>
+          <div class="result-msg" id="fmtr2"></div>
+        </div>
+
+        <div class="info-box">
+          <strong>Key distinctions:</strong> Notice = institution + DATE + HEADING + brief info + signature. Article = title + byline + intro/body/conclusion. Debate = address chair + thesis + arguments + counter + appeal.
+        </div>
+        <div class="result-msg" id="r1"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 2: FORMAT ASSEMBLER (Letter) -->
+    <div class="stage" id="stage2">
+      <div class="stage-title">🔧 Stage 2: Format Assembler — Formal Letter</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">A formal complaint letter has a strict structure. Tap each element to place it in the correct position. Wrong order = marks deducted!</p>
+
+        <div class="elem-pool" id="elemPool">
+          <div class="format-elem" onclick="placeElem(this,0,3)" data-order="3">Body paragraph — explaining the complaint in detail</div>
+          <div class="format-elem" onclick="placeElem(this,1,1)" data-order="1">Sender's address + Date</div>
+          <div class="format-elem" onclick="placeElem(this,2,5)" data-order="5">Complimentary close + Signature (Yours faithfully)</div>
+          <div class="format-elem" onclick="placeElem(this,3,4)" data-order="4">Concluding paragraph — requesting action</div>
+          <div class="format-elem" onclick="placeElem(this,4,2)" data-order="2">Receiver's address + Subject line + Salutation (Dear Sir/Ma'am)</div>
+        </div>
+
+        <div class="format-zone" id="letterZone">
+          <div class="zone-label">→ Letter structure (tap elements above in correct order)</div>
+        </div>
+
+        <div class="info-box">
+          <strong>Common errors:</strong> Missing date · Missing subject line · Writing 'Dear Friend' instead of 'Dear Sir/Madam' · Ending with 'Yours sincerely' when you don't know the name (should be 'Yours faithfully')
+        </div>
+        <div class="result-msg" id="r2"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 3: REGISTER RADAR -->
+    <div class="stage" id="stage3">
+      <div class="stage-title">📡 Stage 3: Register Radar</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">The same content can be written in four different registers. Classify each sample correctly.</p>
+
+        <div class="register-sample">
+          <div class="reg-text">"Yo! So the school fair is on the 20th. Everyone's coming, it's gonna be lit! Don't miss it, seriously."</div>
+          <div class="reg-opts">
+            <div class="reg-opt" onclick="checkReg(this,0,'informal')">Informal/Conversational</div>
+            <div class="reg-opt" onclick="checkReg(this,0,'formal')">Formal/Academic</div>
+            <div class="reg-opt" onclick="checkReg(this,0,'journalistic')">Journalistic</div>
+            <div class="reg-opt" onclick="checkReg(this,0,'bureaucratic')">Bureaucratic/Official</div>
+          </div>
+          <div class="result-msg" id="regr0"></div>
+        </div>
+
+        <div class="register-sample">
+          <div class="reg-text">"This is to notify all concerned that the Annual School Fair shall be held on the 20th inst. All students are hereby directed to participate."</div>
+          <div class="reg-opts">
+            <div class="reg-opt" onclick="checkReg(this,1,'informal')">Informal/Conversational</div>
+            <div class="reg-opt" onclick="checkReg(this,1,'formal')">Formal/Academic</div>
+            <div class="reg-opt" onclick="checkReg(this,1,'journalistic')">Journalistic</div>
+            <div class="reg-opt" onclick="checkReg(this,1,'bureaucratic')">Bureaucratic/Official</div>
+          </div>
+          <div class="result-msg" id="regr1"></div>
+        </div>
+
+        <div class="register-sample">
+          <div class="reg-text">"Hundreds of students thronged the school grounds on Saturday as the Annual Fair opened its gates to an enthusiastic crowd."</div>
+          <div class="reg-opts">
+            <div class="reg-opt" onclick="checkReg(this,2,'informal')">Informal/Conversational</div>
+            <div class="reg-opt" onclick="checkReg(this,2,'formal')">Formal/Academic</div>
+            <div class="reg-opt" onclick="checkReg(this,2,'journalistic')">Journalistic</div>
+            <div class="reg-opt" onclick="checkReg(this,2,'bureaucratic')">Bureaucratic/Official</div>
+          </div>
+          <div class="result-msg" id="regr2"></div>
+        </div>
+
+        <div class="info-box"><strong>Register signals:</strong> Informal → contractions, slang · Bureaucratic → 'hereby', 'inst.', passive voice · Journalistic → active verbs, past tense, who/what/when · Formal/Academic → hedged claims, complex sentences</div>
+        <div class="result-msg" id="r3"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 4: OPENING LINE LABORATORY -->
+    <div class="stage" id="stage4">
+      <div class="stage-title">🔦 Stage 4: Opening Line Laboratory</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">Article topic: <strong style="color:var(--gold)">'The Importance of Sports in School'</strong>. Rank these opening lines — tap each to reveal how a reader would rate it and why.</p>
+
+        <div class="opening-line" id="ol0" onclick="revealOpening(0)">
+          <div class="ol-text">"Sports is important for students. It helps them stay healthy and fit."</div>
+          <div class="ol-rating">
+            <div class="star-row">⭐☆☆☆☆</div>
+            <div style="font-size:.78rem;color:var(--coral);margin-top:3px;">Weak — states the obvious with no hook, no specificity, no reason to keep reading.</div>
+          </div>
+        </div>
+
+        <div class="opening-line" id="ol1" onclick="revealOpening(1)">
+          <div class="ol-text">"In 1992, Derek Redmond tore his hamstring mid-race at the Olympics, hobbled to the finish line supported by his father — and received a standing ovation. Sports doesn't just build bodies. It reveals character."</div>
+          <div class="ol-rating">
+            <div class="star-row">⭐⭐⭐⭐⭐</div>
+            <div style="font-size:.78rem;color:var(--teal);margin-top:3px;">Excellent — specific story hook, unexpected, leads directly to the thesis, creates emotional engagement before the argument begins.</div>
+          </div>
+        </div>
+
+        <div class="opening-line" id="ol2" onclick="revealOpening(2)">
+          <div class="ol-text">"According to various studies, sports participation has been found to correlate positively with academic performance in secondary school students."</div>
+          <div class="ol-rating">
+            <div class="star-row">⭐⭐⭐☆☆</div>
+            <div style="font-size:.78rem;color:var(--orange);margin-top:3px;">Average — accurate and formal, but dry. 'Various studies' is vague. Works for a report but not an engaging article.</div>
+          </div>
+        </div>
+
+        <div class="opening-line" id="ol3" onclick="revealOpening(3)">
+          <div class="ol-text">"Can running a race teach you more than a textbook? Every student who has ever stood at a starting line knows the answer."</div>
+          <div class="ol-rating">
+            <div class="star-row">⭐⭐⭐⭐☆</div>
+            <div style="font-size:.78rem;color:var(--teal);margin-top:3px;">Strong — rhetorical question creates engagement, the second sentence builds on it. Could be even stronger with a specific example.</div>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-top:10px;"><strong>Principle:</strong> The best opening lines do three things simultaneously: (1) surprise or intrigue the reader, (2) establish the article's central claim, (3) make the reader want to read sentence two.</div>
+        <div class="result-msg" id="r4"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 5: 50-WORD NOTICE COMPRESSION -->
+    <div class="stage" id="stage5">
+      <div class="stage-title">✂️ Stage 5: 50-Word Notice — The Compression Challenge</div>
+      <div class="card">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">Read the full description below. Now write a notice in <strong style="color:var(--gold)">maximum 50 words</strong> that includes ALL required elements.</p>
+
+        <div class="source-text">
+          The Cultural Committee of Kendriya Vidyalaya, Guwahati, has organised a Bihu Dance and Music Festival. The event will take place on 14th April 2025, from 10:00 AM to 4:00 PM, in the School Auditorium. All students from Classes 6 to 12 are invited to participate or attend. Students who wish to participate must register with the Cultural Secretary, Ms. Priya Sharma, by 10th April. There will be prizes for winners in solo dance, group dance, and instrument performance categories.
+        </div>
+
+        <div style="font-size:.82rem;color:var(--dim);margin-bottom:8px;">Required elements: ✓ School name · ✓ 'NOTICE' heading · ✓ Date · ✓ Event name · ✓ Timing & venue · ✓ How to register · ✓ Secretary's signature</div>
+
+        <textarea class="notice-ta" id="noticeInput" placeholder="Write your notice here..." oninput="countWords()"></textarea>
+
+        <div class="word-counter">
+          <span style="font-size:.78rem;color:var(--dim);">Word count:</span>
+          <span class="wc-count" id="wordCount">0 / 50</span>
+        </div>
+
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="action-btn" onclick="checkNotice()" style="font-size:.85rem;padding:8px 18px;">Check Notice</button>
+          <button onclick="showSample()" style="background:transparent;border:1px solid var(--orange);color:var(--orange);border-radius:22px;padding:8px 16px;cursor:pointer;font-size:.82rem;min-height:40px;">Show Sample ✓</button>
+        </div>
+
+        <div id="sampleNotice" style="display:none;margin-top:10px;background:rgba(6,214,160,.06);border:1px solid rgba(6,214,160,.3);border-radius:10px;padding:12px;">
+          <div style="font-size:.72rem;color:var(--teal);margin-bottom:6px;">SAMPLE ANSWER (48 words):</div>
+          <div style="font-family:'Crimson Pro',serif;font-size:.88rem;line-height:1.8;color:var(--text);">
+            <strong>KENDRIYA VIDYALAYA, GUWAHATI</strong><br>
+            <strong>NOTICE</strong><br>
+            Date: 5 April 2025<br>
+            <strong>BIHU FESTIVAL — 14 APRIL</strong><br>
+            All students (Classes 6–12) are invited to the Bihu Dance and Music Festival on 14 April, 10 AM–4 PM, School Auditorium. Register for solo/group dance or instrument by 10 April.<br>
+            — Priya Sharma, Cultural Secretary
+          </div>
+        </div>
+        <div class="result-msg" id="r5" style="margin-top:8px;"></div>
+      </div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="game-complete" id="gameComplete">
+      <div style="font-size:2.8rem;margin-bottom:14px;">✍️</div>
+      <div class="complete-title">Writing Workshop Complete!</div>
+      <div class="complete-sub">You matched 3 formats, assembled a formal letter, classified 3 registers, evaluated opening lines, and compressed 200 words into a 50-word notice.<br><br><strong style="color:var(--gold);">Lincoln wrote 272 words that changed history.</strong> Quality, not quantity.</div>
+      <br>
+      <button class="replay-btn" onclick="resetGame()">↺ Play Again</button>
+    </div>
+  </div>
+
+  <div class="bottom-bar" id="bottomBar">
+    <div class="progress-label">Stage <strong id="stageNum">1</strong> of 5</div>
+    <button class="action-btn" id="mainBtn" onclick="nextStage()">Continue →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <div class="overlay-emoji" id="ovEmoji">✓</div>
+    <div class="overlay-msg" id="ovMsg">Stage Complete!</div>
+    <div class="overlay-fact" id="ovFact"></div>
+  </div>
+</div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<script>
+let score=0,currentStage=1,stageDone=[false,false,false,false,false];
+function addScore(p){score+=p;document.getElementById('scoreDisplay').textContent=score+' pts';}
+function lightStar(n){const s=document.getElementById('s'+n);if(s&&!s.classList.contains('lit'))s.classList.add('lit');}
+
+// STAGE 1: FORMAT MATCHER
+const fmtAnswers=['notice','article','debate'];
+const fmtExp=['Notice ✓ — Brief, institutional, with heading, date, and contact. Not a letter (no personal address needed). Not an article (no byline or editorial angle).','Article ✓ — Has a byline, engages the reader, explores a topic with intro/body/conclusion. Not a notice (too long, opinionated).','Debate Speech ✓ — Must address the chair (Honourable Chairperson...), state your side, argue, counter the opposition, and conclude with an appeal.'];
+let fmtDone=0;
+function checkFmt(el,idx,choice){
+  const parent=el.parentElement;
+  if(parent.querySelector('.correct'))return;
+  if(choice===fmtAnswers[idx]){
+    el.classList.add('correct');
+    document.getElementById('fmtr'+idx).textContent=fmtExp[idx];
+    document.getElementById('fmtr'+idx).className='result-msg ok';
+    addScore(15);fmtDone++;
+    if(fmtDone>=2&&!stageDone[0]){stageDone[0]=true;lightStar(1);addScore(20);
+      document.getElementById('r1').textContent='Formats correctly matched. ✓';document.getElementById('r1').className='result-msg ok';}
+  }else{
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),600);
+    document.getElementById('fmtr'+idx).textContent='Incorrect. Think: who is the audience? Is it institutional or personal? Does it need a byline?';
+    document.getElementById('fmtr'+idx).className='result-msg err';
+  }
+}
+
+// STAGE 2: FORMAT ASSEMBLER
+const elemOrder=[3,1,5,4,2];
+let letterSeq=[],expectedLetter=[1,2,3,4,5],letterDone=false;
+function placeElem(el,idx,order){
+  if(el.classList.contains('placed')||letterDone)return;
+  const expected=expectedLetter[letterSeq.length];
+  if(order===expected){
+    el.classList.add('placed');letterSeq.push(order);
+    const zone=document.getElementById('letterZone');
+    if(zone.querySelector('.zone-label'))zone.querySelector('.zone-label').remove();
+    const slot=document.createElement('div');slot.className='format-slot filled';slot.textContent=el.textContent;
+    zone.appendChild(slot);
+    addScore(12);
+    if(letterSeq.length===5){letterDone=true;
+      if(!stageDone[1]){stageDone[1]=true;lightStar(2);addScore(20);}
+      document.getElementById('r2').textContent='Formal letter structure assembled correctly. ✓';document.getElementById('r2').className='result-msg ok';}
+  }else{
+    el.classList.add('wrong-pos');setTimeout(()=>el.classList.remove('wrong-pos'),500);
+    const labels={1:'Sender\'s address',2:'Receiver\'s address + Subject',3:'Body paragraph',4:'Concluding paragraph',5:'Complimentary close'};
+    document.getElementById('r2').textContent=`Incorrect position. The next element should be: ${labels[expected]}`;
+    document.getElementById('r2').className='result-msg err';
+  }
+}
+
+// STAGE 3: REGISTER RADAR
+const regAnswers=['informal','bureaucratic','journalistic'];
+const regExp=['Informal/Conversational ✓ — "Yo", "gonna", "lit" are slang. Contractions, casual tone. Correct for texting a friend, wrong for any school writing task.','Bureaucratic/Official ✓ — "hereby directed", "20th inst." are bureaucratic markers. Passive voice hides agency. Used in government orders, official circulars.','Journalistic ✓ — Past tense, active verbs ("thronged"), specific detail ("hundreds"), factual and objective. Classic news report style.'];
+let regDone=0;
+function checkReg(el,idx,choice){
+  const parent=el.parentElement;
+  if(parent.querySelector('.correct'))return;
+  if(choice===regAnswers[idx]){
+    el.classList.add('correct');
+    document.getElementById('regr'+idx).textContent=regExp[idx];
+    document.getElementById('regr'+idx).className='result-msg ok';
+    addScore(15);regDone++;
+    if(regDone>=2&&!stageDone[2]){stageDone[2]=true;lightStar(3);addScore(20);
+      document.getElementById('r3').textContent='Register classified correctly. ✓';document.getElementById('r3').className='result-msg ok';}
+  }else{
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),600);
+    document.getElementById('regr'+idx).textContent='Incorrect. Look at the specific words used — do they signal formality, informality, or officialdom?';
+    document.getElementById('regr'+idx).className='result-msg err';
+  }
+}
+
+// STAGE 4: OPENING LINE LAB
+let openingsRevealed=0;
+function revealOpening(idx){
+  const el=document.getElementById('ol'+idx);
+  if(el.classList.contains('revealed'))return;
+  el.classList.add('revealed');
+  addScore(10);openingsRevealed++;
+  if(openingsRevealed>=3&&!stageDone[3]){
+    stageDone[3]=true;lightStar(4);addScore(20);
+    document.getElementById('r4').textContent='Opening lines evaluated. The best hook: specific, surprising, leads to the thesis. ✓';
+    document.getElementById('r4').className='result-msg ok';
+  }
+}
+
+// STAGE 5: NOTICE
+function countWords(){
+  const text=document.getElementById('noticeInput').value.trim();
+  const count=text?text.split(/\s+/).length:0;
+  const wc=document.getElementById('wordCount');
+  wc.textContent=count+' / 50';
+  wc.className='wc-count '+(count<=50?'ok':'over');
+}
+
+function checkNotice(){
+  const text=document.getElementById('noticeInput').value.trim();
+  const count=text?text.split(/\s+/).length:0;
+  if(count===0){document.getElementById('r5').textContent='Write your notice first!';document.getElementById('r5').className='result-msg err';return;}
+  if(count>50){document.getElementById('r5').textContent=`${count} words — over the limit! Cut ${count-50} more words. Every word must earn its place.`;document.getElementById('r5').className='result-msg err';return;}
+  // Check for key elements
+  const t=text.toLowerCase();
+  const hasDate=t.includes('april')||t.includes('14')||t.includes('march');
+  const hasNotice=t.includes('notice');
+  const hasVenue=t.includes('auditorium')||t.includes('hall')||t.includes('venue');
+  let found=0;
+  if(hasDate)found++;if(hasNotice)found++;if(hasVenue)found++;
+  if(found>=2){
+    addScore(30);
+    if(!stageDone[4]){stageDone[4]=true;lightStar(5);addScore(25);}
+    document.getElementById('r5').textContent=`${count} words — within limit. Key elements present. Strong compression. ✓`;
+    document.getElementById('r5').className='result-msg ok';
+  }else{
+    document.getElementById('r5').textContent=`${count} words — check: have you included the 'NOTICE' heading, the date, and the venue?`;
+    document.getElementById('r5').className='result-msg err';
+  }
+}
+
+function showSample(){
+  document.getElementById('sampleNotice').style.display='block';
+  if(!stageDone[4]){stageDone[4]=true;lightStar(5);addScore(15);}
+}
+
+// NAVIGATION
+const ovData=[
+  {emoji:'📋',msg:'Formats Matched!',fact:'The most common exam error is writing a notice as a letter (with Dear Sir/Madam and a complimentary close). A notice has NO salutation — it is addressed to a group, not a person.'},
+  {emoji:'🔧',msg:'Letter Assembled!',fact:'"Yours faithfully" is used when you don\'t know the person\'s name (Dear Sir/Madam). "Yours sincerely" is used when you know the name (Dear Mr. Sharma). This distinction is always tested.'},
+  {emoji:'📡',msg:'Register Identified!',fact:'Bureaucratic writing uses passive voice deliberately — "it has been decided" hides who decided. Politicians and officials use this register to avoid accountability. Grammar is power.'},
+  {emoji:'🔦',msg:'Opening Lines Ranked!',fact:'The opening line of the Gettysburg Address — "Four score and seven years ago our fathers brought forth, on this continent, a new nation" — is considered the greatest opening in American political speech. Specific, rhythmic, immediate.'},
+];
+function nextStage(){
+  if(currentStage===5&&stageDone[4]){showComplete();return;}
+  if(currentStage>=5)return;
+  const d=ovData[currentStage-1];
+  document.getElementById('ovEmoji').textContent=d.emoji;document.getElementById('ovMsg').textContent=d.msg;document.getElementById('ovFact').textContent=d.fact;
+  document.getElementById('overlay').classList.add('show');
+  setTimeout(()=>{
+    document.getElementById('stage'+currentStage).classList.remove('active');currentStage++;
+    document.getElementById('stage'+currentStage).classList.add('active');
+    document.getElementById('stageNum').textContent=currentStage;
+    document.getElementById('overlay').classList.remove('show');
+    if(currentStage===5)document.getElementById('mainBtn').textContent='Finish →';
+  },2500);
+}
+function showComplete(){document.getElementById('bottomBar').style.display='none';document.getElementById('stage5').classList.remove('active');document.getElementById('gameComplete').classList.add('show');fireConfetti();}
+function fireConfetti(){
+  const wrap=document.getElementById('confettiWrap');wrap.innerHTML='';
+  const colors=['#FFD166','#06D6A0','#4CC9F0','#FF9F1C','#FF6B6B'];
+  for(let i=0;i<28;i++){const c=document.createElement('div');c.className='confetto';c.style.left=(Math.random()*100)+'%';c.style.background=colors[~~(Math.random()*colors.length)];c.style.animationDuration=(1.5+Math.random()*2)+'s';c.style.animationDelay=(Math.random()*.8)+'s';wrap.appendChild(c);setTimeout(()=>c.remove(),4000);}
+}
+function resetGame(){
+  score=0;currentStage=1;stageDone=[false,false,false,false,false];fmtDone=0;letterSeq=[];letterDone=false;regDone=0;openingsRevealed=0;
+  document.getElementById('scoreDisplay').textContent='0 pts';
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('gameComplete').classList.remove('show');document.getElementById('bottomBar').style.display='flex';
+  document.getElementById('stageNum').textContent='1';document.getElementById('mainBtn').textContent='Continue →';
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));document.getElementById('stage1').classList.add('active');
+  document.querySelectorAll('.fmt-opt,.reg-opt').forEach(el=>el.classList.remove('correct','wrong'));
+  document.querySelectorAll('.format-elem').forEach(el=>el.classList.remove('placed','wrong-pos'));
+  document.getElementById('letterZone').innerHTML='<div class="zone-label">→ Letter structure (tap elements above in correct order)</div>';
+  document.querySelectorAll('.opening-line').forEach(el=>el.classList.remove('revealed','selected'));
+  document.getElementById('noticeInput').value='';document.getElementById('wordCount').textContent='0 / 50';
+  document.getElementById('wordCount').className='wc-count ok';document.getElementById('sampleNotice').style.display='none';
+  document.querySelectorAll('.result-msg').forEach(el=>{el.textContent='';el.className='result-msg';});
+}
+</script>
+</body>
+</html>

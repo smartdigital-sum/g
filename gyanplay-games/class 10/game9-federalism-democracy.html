@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Federalism &amp; Democracy – Class 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;
+    --green:#00C853;--pink:#FF4081;--purple:#7C3AED;
+    --bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{min-height:100vh;font-family:'Nunito',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff;}
+  .topbar{display:flex;align-items:center;gap:12px;padding:12px 20px;
+    background:rgba(0,0,0,.35);flex-wrap:wrap;}
+  .back-btn{background:rgba(255,255,255,.12);border:none;color:#fff;
+    padding:7px 16px;border-radius:20px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.9rem;transition:background .2s;}
+  .back-btn:hover{background:rgba(255,255,255,.25);}
+  .subject-badge{background:var(--pink);color:#fff;padding:5px 14px;
+    border-radius:20px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.85rem;}
+  .title-bar{flex:1;font-family:'Baloo 2',sans-serif;font-weight:700;
+    font-size:1.05rem;color:var(--gold);}
+  .lang-toggle{display:flex;gap:6px;}
+  .lang-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:.82rem;transition:all .2s;}
+  .lang-btn.active{background:var(--sky);border-color:var(--sky);}
+  .progress-wrap{padding:14px 20px 0;}
+  .progress-info{display:flex;justify-content:space-between;font-size:.85rem;color:#ccc;margin-bottom:6px;}
+  .progress-bar-bg{background:rgba(255,255,255,.12);border-radius:10px;height:8px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));
+    border-radius:10px;transition:width .5s;}
+  .game-wrap{max-width:740px;margin:18px auto;padding:0 16px 40px;}
+  .card{background:var(--card);border-radius:18px;padding:26px;
+    box-shadow:0 8px 32px rgba(0,0,0,.45);animation:fadeIn .4s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .q-number{font-family:'Baloo 2',sans-serif;font-size:.85rem;color:var(--purple);margin-bottom:8px;font-weight:600;}
+  .q-text{font-size:1.08rem;line-height:1.6;margin-bottom:6px;font-weight:600;}
+
+  /* Compare table */
+  .compare-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.85rem;}
+  .compare-table th{background:rgba(124,58,237,.3);color:var(--gold);padding:8px 10px;text-align:left;}
+  .compare-table td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.08);}
+  .compare-table tr:nth-child(even) td{background:rgba(255,255,255,.04);}
+
+  .list-box{
+    background:rgba(255,255,255,.06);border-radius:10px;
+    padding:10px 14px;margin:10px 0;
+    border-left:3px solid var(--purple);font-size:.88rem;line-height:1.7;
+  }
+  .list-box b{color:var(--gold);}
+
+  .options{display:grid;gap:10px;margin-top:16px;}
+  .opt-btn{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);
+    color:#fff;padding:13px 18px;border-radius:12px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:.97rem;text-align:left;transition:all .2s;}
+  .opt-btn:hover:not(:disabled){background:rgba(124,58,237,.25);border-color:var(--purple);}
+  .opt-btn.correct{background:rgba(0,200,83,.25);border-color:var(--green);}
+  .opt-btn.wrong{background:rgba(255,64,129,.2);border-color:var(--pink);}
+  .opt-btn:disabled{cursor:default;}
+  .feedback{margin-top:14px;padding:11px 16px;border-radius:10px;
+    font-weight:700;font-size:.95rem;display:none;}
+  .feedback.show{display:block;animation:fadeIn .3s ease;}
+  .feedback.ok{background:rgba(0,200,83,.2);color:var(--green);}
+  .feedback.no{background:rgba(255,64,129,.18);color:#ff7eb3;}
+  .next-btn{margin-top:18px;background:linear-gradient(135deg,var(--purple),var(--pink));
+    border:none;color:#fff;padding:12px 32px;border-radius:25px;
+    font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;
+    cursor:pointer;display:none;transition:transform .15s;}
+  .next-btn:hover{transform:scale(1.04);}
+  .end-screen{display:none;text-align:center;}
+  .end-screen.show{display:block;animation:fadeIn .5s ease;}
+  .score-big{font-family:'Baloo 2',sans-serif;font-size:3.5rem;font-weight:800;
+    color:var(--gold);line-height:1;margin:10px 0;}
+  .score-label{color:#ccc;font-size:.95rem;margin-bottom:18px;}
+  .stars{font-size:2.5rem;margin:10px 0;}
+  .play-again{background:linear-gradient(135deg,var(--saffron),var(--gold));
+    border:none;color:#fff;padding:14px 36px;border-radius:28px;
+    font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;
+    cursor:pointer;margin-top:16px;transition:transform .15s;}
+  .play-again:hover{transform:scale(1.05);}
+  .result-detail{margin-top:22px;text-align:left;}
+  .result-detail h3{font-family:'Baloo 2',sans-serif;color:var(--sky);margin-bottom:10px;}
+  .result-item{padding:9px 14px;border-radius:8px;margin-bottom:7px;
+    font-size:.9rem;line-height:1.4;background:rgba(255,255,255,.06);}
+  .result-item.r-ok{border-left:3px solid var(--green);}
+  .result-item.r-no{border-left:3px solid var(--pink);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← <span data-lang="en">Back</span><span data-lang="hi" style="display:none">वापस</span><span data-lang="as" style="display:none">পিছলৈ</span></button>
+  <span class="subject-badge">Social Studies</span>
+  <span class="title-bar">
+    <span data-lang="en">Federalism &amp; Democracy</span>
+    <span data-lang="hi" style="display:none">संघवाद और लोकतंत्र</span>
+    <span data-lang="as" style="display:none">যুক্তৰাষ্ট্ৰীয়তা আৰু গণতন্ত্ৰ</span>
+  </span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span><span data-lang="en">Question</span><span data-lang="hi" style="display:none">प्रश्न</span><span data-lang="as" style="display:none">প্ৰশ্ন</span> <span id="qNum">1</span>/10</span>
+    <span><span data-lang="en">Score</span><span data-lang="hi" style="display:none">स्कोर</span><span data-lang="as" style="display:none">স্কোৰ</span>: <span id="scoreDisp">0</span>/100</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progBar" style="width:0%"></div></div>
+</div>
+
+<div class="game-wrap">
+  <div class="card" id="questionCard">
+    <div class="q-number" id="qLabel">Question 1 of 10</div>
+    <div class="q-text" id="qText"></div>
+    <div id="extraContent"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      <span data-lang="en">Next →</span>
+      <span data-lang="hi" style="display:none">अगला →</span>
+      <span data-lang="as" style="display:none">পৰৱৰ্তী →</span>
+    </button>
+  </div>
+
+  <div class="card end-screen" id="endScreen">
+    <div class="score-big" id="finalScore">0</div>
+    <div class="score-label">
+      <span data-lang="en">out of 100</span>
+      <span data-lang="hi" style="display:none">100 में से</span>
+      <span data-lang="as" style="display:none">100ৰ মাজৰ পৰা</span>
+    </div>
+    <div class="stars" id="stars">⭐⭐⭐</div>
+    <p id="endMsg" style="color:#ccc;font-size:1rem;"></p>
+    <button class="play-again" onclick="restartGame()">
+      <span data-lang="en">Play Again</span>
+      <span data-lang="hi" style="display:none">फिर खेलें</span>
+      <span data-lang="as" style="display:none">পুনৰ খেলক</span>
+    </button>
+    <div class="result-detail" id="resultDetail"></div>
+  </div>
+</div>
+
+<script>
+// extraHTML: optional HTML to show in extra content area
+const questions=[
+  {
+    extraHTML:`<table class="compare-table"><thead><tr><th>Federal Govt</th><th>Unitary Govt</th></tr></thead>
+    <tbody><tr><td>Power shared between Centre &amp; States</td><td>All power with Central Govt</td></tr>
+    <tr><td>Written Constitution</td><td>May be unwritten</td></tr>
+    <tr><td>Independent judiciary</td><td>Central court controls all</td></tr></tbody></table>`,
+    en:{q:"What is the key difference between FEDERAL and UNITARY government?",
+    opts:["Federal: power shared between centre and states; Unitary: all power with central government",
+          "Federal: only one level of government; Unitary: two levels",
+          "Federal: unelected leaders; Unitary: elected leaders",
+          "Federal: no constitution; Unitary: written constitution"],ans:0,
+    exp:"Federal government has two or more levels of government (Centre + States/Provinces), each with its own jurisdiction. Unitary: only central government has real power (e.g., Sri Lanka, UK)."},
+    hi:{q:"संघीय और एकात्मक सरकार में मुख्य अंतर क्या है?",
+    opts:["संघीय: केंद्र और राज्यों में शक्ति का बंटवारा; एकात्मक: सभी शक्ति केंद्र में",
+          "संघीय: केवल एक स्तर; एकात्मक: दो स्तर",
+          "संघीय: अनिर्वाचित नेता; एकात्मक: निर्वाचित",
+          "संघीय: कोई संविधान नहीं; एकात्मक: लिखित संविधान"],exp:"संघीय सरकार में केंद्र और राज्य दोनों के पास अलग-अलग क्षेत्राधिकार होते हैं। एकात्मक में सारी शक्ति केंद्र में।"},
+    as:{q:"যুক্তৰাষ্ট্ৰীয় আৰু এককেন্দ্ৰিক চৰকাৰৰ মূল পাৰ্থক্য কি?",
+    opts:["যুক্তৰাষ্ট্ৰীয়: কেন্দ্ৰ আৰু ৰাজ্যৰ মাজত ক্ষমতা ভাগ; এককেন্দ্ৰিক: সকলো ক্ষমতা কেন্দ্ৰত",
+          "যুক্তৰাষ্ট্ৰীয়: কেৱল এটা স্তৰ; এককেন্দ্ৰিক: দুটা স্তৰ",
+          "যুক্তৰাষ্ট্ৰীয়: নিৰ্বাচিত নহোৱা নেতা; এককেন্দ্ৰিক: নিৰ্বাচিত",
+          "যুক্তৰাষ্ট্ৰীয়: কোনো সংবিধান নাই; এককেন্দ্ৰিক: লিখিত সংবিধান"],exp:"যুক্তৰাষ্ট্ৰীয় চৰকাৰত কেন্দ্ৰ আৰু ৰাজ্য দুয়োৰে পৃথক এখতিয়াৰ থাকে। এককেন্দ্ৰিকত সকলো ক্ষমতা কেন্দ্ৰত।"}
+  },
+  {
+    extraHTML:`<div class="list-box"><b>Three Lists (Seventh Schedule):</b><br/>
+    • <b>Union List</b> — Defence, Foreign affairs, Currency (97 subjects)<br/>
+    • <b>State List</b> — Police, Trade, Agriculture (66 subjects)<br/>
+    • <b>Concurrent List</b> — Education, Forest, Marriage (47 subjects)</div>`,
+    en:{q:"Which LIST in the Indian Constitution covers subjects like EDUCATION and FORESTS?",
+    opts:["Concurrent List — both Centre and State can make laws",
+          "Union List — only Centre","State List — only State","Residuary List — only Centre"],ans:0,
+    exp:"Education and Forests were moved to the Concurrent List (by 42nd Amendment, 1976). Both Centre and States can legislate. If conflict, Central law prevails. Union List: defence, foreign affairs. State List: police, agriculture."},
+    hi:{q:"भारतीय संविधान में शिक्षा और वन किस सूची में हैं?",
+    opts:["समवर्ती सूची — केंद्र और राज्य दोनों कानून बना सकते हैं",
+          "संघ सूची — केवल केंद्र","राज्य सूची — केवल राज्य","अवशिष्ट सूची — केवल केंद्र"],exp:"42वें संशोधन (1976) से शिक्षा और वन समवर्ती सूची में आए। दोनों कानून बना सकते हैं; टकराव पर केंद्रीय कानून प्रभावी।"},
+    as:{q:"ভাৰতীয় সংবিধানত শিক্ষা আৰু বন কোন তালিকাত আছে?",
+    opts:["সমৱৰ্তী তালিকা — কেন্দ্ৰ আৰু ৰাজ্য দুয়োটাই আইন প্ৰণয়ন কৰিব পাৰে",
+          "সংঘ তালিকা — কেৱল কেন্দ্ৰ","ৰাজ্য তালিকা — কেৱল ৰাজ্য","অৱশিষ্ট তালিকা — কেৱল কেন্দ্ৰ"],exp:"42তম সংশোধনী (1976)ৰ দ্বাৰা শিক্ষা আৰু বন সমৱৰ্তী তালিকালৈ স্থানান্তৰিত হ'ল।"}
+  },
+  {
+    extraHTML:`<div class="list-box"><b>Belgium vs Sri Lanka Model:</b><br/>
+    🇧🇪 <b>Belgium</b>: Accommodated French &amp; Dutch communities; equal representation<br/>
+    🇱🇰 <b>Sri Lanka</b>: Majoritarianism — Sinhala only language, disadvantaged Tamils → civil conflict</div>`,
+    en:{q:"Which country is an example of SUCCESSFUL power sharing between different linguistic communities?",
+    opts:["Belgium — power shared equally between Dutch and French speakers through federal system",
+          "Sri Lanka — Sinhala-only policy gave equal rights to Tamils",
+          "India — only Hindi speakers get political power","USA — only English speakers can vote"],ans:0,
+    exp:"Belgium solved ethnic conflict by power sharing: equal representation for Dutch/French communities, separate governments for regions. Sri Lanka chose majoritarianism (Sinhala-only), which led to civil war. Belgium is the model NCERT recommends."},
+    hi:{q:"कौन सा देश विभिन्न भाषाई समुदायों के बीच सफल सत्ता साझेदारी का उदाहरण है?",
+    opts:["बेल्जियम — डच और फ्रांसीसी भाषियों के बीच संघीय व्यवस्था से समान प्रतिनिधित्व",
+          "श्रीलंका — सिंहली-केवल नीति ने तमिलों को समान अधिकार दिए",
+          "भारत — केवल हिंदी भाषियों को राजनीतिक शक्ति","अमेरिका — केवल अंग्रेजी भाषी वोट दे सकते हैं"],exp:"बेल्जियम ने सत्ता साझेदारी से जातीय संघर्ष सुलझाया। श्रीलंका में बहुसंख्यकवाद ने गृह युद्ध को जन्म दिया।"},
+    as:{q:"কোন দেশ বিভিন্ন ভাষাভাষী সম্প্ৰদায়ৰ মাজত সফল ক্ষমতা ভাগ-বতৰাৰ উদাহৰণ?",
+    opts:["বেলজিয়াম — ডাচ আৰু ফ্ৰান্সভাষী সম্প্ৰদায়ৰ মাজত যুক্তৰাষ্ট্ৰীয় ব্যৱস্থাৰে সমান প্ৰতিনিধিত্ব",
+          "শ্ৰীলংকা — চিংহালা-মাত্ৰ নীতিয়ে তামিলসকলক সমান অধিকাৰ দিলে",
+          "ভাৰত — কেৱল হিন্দিভাষীসকলে ৰাজনৈতিক ক্ষমতা পায়","আমেৰিকা — কেৱল ইংৰাজীভাষীয়ে ভোট দিব পাৰে"],exp:"বেলজিয়ামে ক্ষমতা ভাগ-বতৰাৰে জাতিগত দ্বন্দ্ব সমাধান কৰিলে। শ্ৰীলংকাত সংখ্যাগুৰুবাদে গৃহযুদ্ধৰ সৃষ্টি কৰিলে।"}
+  },
+  {
+    extraHTML:null,
+    en:{q:"The 73rd Constitutional Amendment (1992) is related to:",
+    opts:["Panchayati Raj — created a 3-tier system of local self-government in rural areas",
+          "Right to Education","Formation of linguistic states",
+          "Reservation for OBCs in central government jobs"],ans:0,
+    exp:"73rd Amendment (1992) gave constitutional status to Panchayati Raj: 3 tiers — Gram Panchayat (village), Panchayat Samiti (block), Zila Parishad (district). 1/3 seats reserved for women. 74th Amendment created Urban Local Bodies (Municipalities/Corporations)."},
+    hi:{q:"73वाँ संवैधानिक संशोधन (1992) किससे संबंधित है?",
+    opts:["पंचायती राज — ग्रामीण क्षेत्रों में स्थानीय स्वशासन की 3-स्तरीय व्यवस्था",
+          "शिक्षा का अधिकार","भाषाई राज्यों का गठन","सरकारी नौकरियों में OBC आरक्षण"],exp:"73वाँ संशोधन (1992): पंचायती राज को संवैधानिक दर्जा मिला। 3 स्तर: ग्राम पंचायत, पंचायत समिति, जिला परिषद। 1/3 सीटें महिलाओं के लिए।"},
+    as:{q:"73তম সাংবিধানিক সংশোধনী (1992) কিহৰ সৈতে সম্পৰ্কিত?",
+    opts:["পঞ্চায়তী ৰাজ — গ্ৰামীণ অঞ্চলত স্থানীয় স্বশাসনৰ 3-স্তৰীয় ব্যৱস্থা",
+          "শিক্ষাৰ অধিকাৰ","ভাষিক ৰাজ্য গঠন","চৰকাৰী চাকৰিত OBC সংৰক্ষণ"],exp:"73তম সংশোধনী (1992): পঞ্চায়তী ৰাজক সাংবিধানিক মৰ্যাদা দিলে। 3 স্তৰ: গ্ৰাম পঞ্চায়ত, পঞ্চায়ত সমিতি, জিলা পৰিষদ।"}
+  },
+  {
+    extraHTML:null,
+    en:{q:"What is the GRAM SABHA in Panchayati Raj?",
+    opts:["A body of all voters/adults in a village — can oversee the Gram Panchayat's work",
+          "The elected village council (Gram Panchayat)","The district level panchayat body",
+          "The block level panchayat body"],ans:0,
+    exp:"Gram Sabha = assembly of ALL registered voters of a village. It is the foundation of Panchayati Raj democracy. It can question the Gram Panchayat, approve plans, and is different from Gram Panchayat (elected council of 5-31 members)."},
+    hi:{q:"पंचायती राज में ग्राम सभा क्या है?",
+    opts:["ग्राम के सभी मतदाताओं की सभा — ग्राम पंचायत के कार्यों की निगरानी कर सकती है",
+          "निर्वाचित ग्राम पंचायत परिषद","जिला स्तर की पंचायत संस्था","ब्लॉक स्तर की पंचायत संस्था"],exp:"ग्राम सभा = गाँव के सभी पंजीकृत मतदाताओं की सभा। यह ग्राम पंचायत पर नियंत्रण रख सकती है। ग्राम पंचायत = 5-31 निर्वाचित सदस्यों की परिषद।"},
+    as:{q:"পঞ্চায়তী ৰাজত গ্ৰাম সভা কি?",
+    opts:["গাঁৱৰ সকলো ভোটাৰৰ সভা — গ্ৰাম পঞ্চায়তৰ কাম নিৰীক্ষণ কৰিব পাৰে",
+          "নিৰ্বাচিত গ্ৰাম পঞ্চায়ত পৰিষদ","জিলা স্তৰৰ পঞ্চায়ত সংস্থা","ব্লক স্তৰৰ পঞ্চায়ত সংস্থা"],exp:"গ্ৰাম সভা = গাঁৱৰ সকলো পঞ্জীভুক্ত ভোটাৰৰ সভা। এইটো গ্ৰাম পঞ্চায়তক নিয়ন্ত্ৰণ কৰিব পাৰে।"}
+  },
+  {
+    extraHTML:`<div class="list-box"><b>India: Federal with Unitary Features:</b><br/>
+    ✅ Elected state governments, State List, separate High Courts<br/>
+    ⚠️ Centre can impose President's Rule, All-India Services under Centre, Single citizenship, Rajya Sabha has unequal state representation</div>`,
+    en:{q:"India is described as 'federal with a strong unitary bias'. Which feature shows this UNITARY bias?",
+    opts:["Centre can impose President's Rule in states and override state governments",
+          "States have their own constitutions","States can secede from the Union",
+          "Each state has its own currency"],ans:0,
+    exp:"India's unitary features: Centre can dismiss state governments (President's Rule Art.356), Governor appointed by Centre, All-India Services controlled by Centre, Emergency can centralize all power, Single citizenship. True federations like USA don't have these."},
+    hi:{q:"भारत को 'एकात्मक पक्षपात वाला संघ' कहा जाता है। कौन सी विशेषता एकात्मक पक्षपात दर्शाती है?",
+    opts:["केंद्र राज्यों में राष्ट्रपति शासन लगाकर राज्य सरकारें बर्खास्त कर सकता है",
+          "राज्यों का अपना संविधान है","राज्य संघ से अलग हो सकते हैं","प्रत्येक राज्य की अपनी मुद्रा है"],exp:"भारत की एकात्मक विशेषताएँ: राष्ट्रपति शासन (अनुच्छेद 356), राज्यपाल की नियुक्ति केंद्र द्वारा, एकल नागरिकता।"},
+    as:{q:"ভাৰতক 'একত্ববাদী পক্ষপাতযুক্ত যুক্তৰাষ্ট্ৰ' বুলি কোৱা হয়। কোনটো বৈশিষ্ট্য এককেন্দ্ৰিক পক্ষপাত দেখুৱায়?",
+    opts:["কেন্দ্ৰই ৰাজ্যত ৰাষ্ট্ৰপতিৰ শাসন আৰোপ কৰি ৰাজ্য চৰকাৰ বৰখাস্ত কৰিব পাৰে",
+          "ৰাজ্যসমূহৰ নিজা সংবিধান আছে","ৰাজ্যসমূহে সংঘৰ পৰা বিচ্ছিন্ন হ'ব পাৰে","প্ৰতিটো ৰাজ্যৰ নিজা মুদ্ৰা আছে"],exp:"ভাৰতৰ এককেন্দ্ৰিক বৈশিষ্ট্য: ৰাষ্ট্ৰপতিৰ শাসন (অনুচ্ছেদ 356), ৰাজ্যপালৰ কেন্দ্ৰীয় নিয়োগ, একক নাগৰিকত্ব।"}
+  },
+  {
+    extraHTML:null,
+    en:{q:"What were the LINGUISTIC STATES formed in India, and why were they significant?",
+    opts:["States reorganised in 1956 on basis of language (e.g., Andhra Pradesh for Telugu) — showed India could accommodate diversity",
+          "States formed to divide Muslims and Hindus","States that only speak English","States formed after 1947 partition"],ans:0,
+    exp:"After independence, States Reorganisation Act (1956) created linguistic states: Andhra Pradesh (Telugu), Maharashtra (Marathi), Karnataka (Kannada), etc. This accommodated India's linguistic diversity within the federal structure and showed peaceful accommodation of demands."},
+    hi:{q:"भारत में भाषाई राज्य क्यों बनाए गए?",
+    opts:["1956 में भाषा के आधार पर राज्यों का पुनर्गठन (जैसे तेलुगू के लिए आंध्र प्रदेश) — विविधता को समायोजित किया",
+          "मुसलमानों और हिंदुओं को विभाजित करने के लिए","केवल अंग्रेजी बोलने वाले राज्य","1947 विभाजन के बाद बने राज्य"],exp:"राज्य पुनर्गठन अधिनियम (1956) ने भाषाई आधार पर राज्यों का पुनर्गठन किया। इसने भारत की भाषाई विविधता को संविधानिक मान्यता दी।"},
+    as:{q:"ভাৰতত ভাষিক ৰাজ্য কিয় গঠন কৰা হ'ল?",
+    opts:["1956 চনত ভাষাৰ ভিত্তিত ৰাজ্য পুনৰগঠন (যেনে তেলুগুৰ বাবে অন্ধ্ৰপ্ৰদেশ) — বৈচিত্ৰ্য সমন্বয় কৰিলে",
+          "মুছলমান আৰু হিন্দুক বিভাজন কৰিবলৈ","কেৱল ইংৰাজীভাষী ৰাজ্য","1947 বিভাজনৰ পিছত গঠিত ৰাজ্য"],exp:"ৰাজ্য পুনৰগঠন আইন (1956)ত ভাষিক ভিত্তিত ৰাজ্য পুনৰগঠন কৰা হ'ল। ই ভাৰতৰ ভাষিক বৈচিত্ৰ্যক সাংবিধানিক স্বীকৃতি দিলে।"}
+  },
+  {
+    extraHTML:`<div class="list-box"><b>Panchayati Raj — 3 Tiers:</b><br/>
+    🏘️ <b>Gram Panchayat</b> — Village level<br/>
+    🏙️ <b>Panchayat Samiti / Block Panchayat</b> — Block level<br/>
+    🏛️ <b>Zila Parishad</b> — District level (headed by District Collector)</div>`,
+    en:{q:"What is the ZILA PARISHAD and at which level does it function?",
+    opts:["The district-level body of Panchayati Raj — coordinates development across all blocks in a district",
+          "The village level panchayat body","The block level panchayat body",
+          "An urban municipal corporation"],ans:0,
+    exp:"Zila Parishad (District Council) is the top tier of Panchayati Raj at the district level. It oversees all Panchayat Samitis in the district, coordinates development, and manages larger projects. Headed by an elected Adhyaksha/President."},
+    hi:{q:"जिला परिषद क्या है और यह किस स्तर पर कार्य करती है?",
+    opts:["पंचायती राज का जिला-स्तरीय निकाय — जिले के सभी ब्लॉकों में विकास का समन्वय",
+          "ग्राम स्तरीय पंचायत","ब्लॉक स्तरीय पंचायत","नगर निगम"],exp:"जिला परिषद पंचायती राज का शीर्ष स्तर है (जिला स्तर)। यह जिले की सभी पंचायत समितियों का पर्यवेक्षण करती है।"},
+    as:{q:"জিলা পৰিষদ কি আৰু এইটো কোন স্তৰত কাম কৰে?",
+    opts:["পঞ্চায়তী ৰাজৰ জিলা স্তৰৰ সংস্থা — জিলাৰ সকলো ব্লকৰ উন্নয়ন সমন্বয় কৰে",
+          "গ্ৰাম স্তৰৰ পঞ্চায়ত","ব্লক স্তৰৰ পঞ্চায়ত","নগৰীয় পৌৰ নিগম"],exp:"জিলা পৰিষদ হৈছে পঞ্চায়তী ৰাজৰ শীৰ্ষ স্তৰ (জিলা স্তৰ)। এইটোৱে জিলাৰ সকলো পঞ্চায়ত সমিতিৰ তদাৰক কৰে।"}
+  },
+  {
+    extraHTML:null,
+    en:{q:"What is the key idea behind POWER SHARING in a democracy?",
+    opts:["To prevent concentration of power in one group and give different groups a voice in government — reducing conflict",
+          "To make government decisions faster by sharing tasks","To allow majority community to control all decisions",
+          "To reduce the number of elected representatives"],ans:0,
+    exp:"Power sharing: (1) Prudential reason — prevents conflict and instability; (2) Moral reason — in a democracy, people have a right to participate. Forms: horizontal (3 organs of state), vertical (Centre-State-Local), between social groups, political parties."},
+    hi:{q:"लोकतंत्र में सत्ता की साझेदारी का मूल विचार क्या है?",
+    opts:["एक समूह में सत्ता के केंद्रीकरण को रोकना और विभिन्न समूहों को सरकार में भागीदारी देना — संघर्ष कम करना",
+          "सरकारी निर्णय तेज करना","बहुसंख्यक समुदाय को सभी निर्णय लेने देना","निर्वाचित प्रतिनिधियों की संख्या घटाना"],exp:"सत्ता साझेदारी: (1) विवेकपूर्ण कारण — संघर्ष और अस्थिरता रोकना; (2) नैतिक कारण — लोकतंत्र में भागीदारी का अधिकार।"},
+    as:{q:"গণতন্ত্ৰত ক্ষমতা ভাগ-বতৰাৰ মূল ধাৰণা কি?",
+    opts:["এটা গোষ্ঠীত ক্ষমতাৰ কেন্দ্ৰীভৱন প্ৰতিৰোধ আৰু বিভিন্ন গোষ্ঠীক চৰকাৰত অংশ দিয়া — বিবাদ কমোৱা",
+          "চৰকাৰী সিদ্ধান্ত দ্ৰুত কৰিবলৈ","সংখ্যাগৰিষ্ঠ সম্প্ৰদায়ক সকলো সিদ্ধান্ত ল'বলৈ দিয়া","নিৰ্বাচিত প্ৰতিনিধিৰ সংখ্যা কমোৱা"],exp:"ক্ষমতা ভাগ-বতৰা: (1) বিবেকপূৰ্ণ কাৰণ — বিবাদ আৰু অস্থিৰতা প্ৰতিৰোধ; (2) নৈতিক কাৰণ — গণতন্ত্ৰত অংশগ্ৰহণৰ অধিকাৰ।"}
+  },
+  {
+    extraHTML:null,
+    en:{q:"The 74th Constitutional Amendment (1992) is related to:",
+    opts:["Urban Local Bodies — giving constitutional status to Municipalities and Municipal Corporations in cities and towns",
+          "Panchayati Raj in rural areas","Right to vote for women","Formation of linguistic states"],ans:0,
+    exp:"74th Amendment (1992) gave constitutional status to Urban Local Bodies: Nagar Panchayat (transitional areas), Municipal Council (smaller towns), Municipal Corporation (larger cities). Both 73rd and 74th amendments are called the 'local self-government' amendments."},
+    hi:{q:"74वाँ संवैधानिक संशोधन (1992) किससे संबंधित है?",
+    opts:["शहरी स्थानीय निकाय — नगर पालिकाओं और नगर निगमों को संवैधानिक दर्जा",
+          "ग्रामीण क्षेत्रों में पंचायती राज","महिलाओं को मतदान अधिकार","भाषाई राज्यों का गठन"],exp:"74वाँ संशोधन (1992): शहरी स्थानीय निकायों को संवैधानिक दर्जा। नगर पंचायत, नगर परिषद, नगर निगम।"},
+    as:{q:"74তম সাংবিধানিক সংশোধনী (1992) কিহৰ সৈতে সম্পৰ্কিত?",
+    opts:["নগৰীয় স্থানীয় সংস্থা — নগৰ পালিকা আৰু নগৰ নিগমক সাংবিধানিক মৰ্যাদা",
+          "গ্ৰামীণ অঞ্চলত পঞ্চায়তী ৰাজ","মহিলাৰ ভোটাধিকাৰ","ভাষিক ৰাজ্য গঠন"],exp:"74তম সংশোধনী (1992): নগৰীয় স্থানীয় সংস্থাক সাংবিধানিক মৰ্যাদা — নগৰ পঞ্চায়ত, নগৰ পৰিষদ, নগৰ নিগম।"}
+  }
+];
+
+let current=0,score=0,answered=[],currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.style.display=el.getAttribute('data-lang')===l?'':'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['en','hi','as'][i]===l);
+  });
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(current>=questions.length){showEnd();return;}
+  const q=questions[current];
+  const lang=q[currentLang]||q['en'];
+  const enQ=q['en'];
+  document.getElementById('qNum').textContent=current+1;
+  document.getElementById('scoreDisp').textContent=score;
+  document.getElementById('qLabel').textContent=`Question ${current+1} of 10`;
+  document.getElementById('progBar').style.width=((current)/10*100)+'%';
+  document.getElementById('qText').textContent=lang.q||enQ.q;
+
+  // extra content
+  const ec=document.getElementById('extraContent');
+  ec.innerHTML=q.extraHTML||'';
+
+  const opts=lang.opts||enQ.opts;
+  const optDiv=document.getElementById('options');
+  optDiv.innerHTML='';
+  opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';b.textContent=o;
+    b.onclick=()=>selectAnswer(i,enQ.ans,lang.exp||enQ.exp);
+    optDiv.appendChild(b);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').style.display='none';
+}
+
+function selectAnswer(chosen,correct,exp){
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[correct].classList.add('correct');
+  const fb=document.getElementById('feedback');
+  if(chosen===correct){
+    score+=10;document.getElementById('scoreDisp').textContent=score;
+    fb.textContent='✓ Correct! '+exp;fb.className='feedback ok show';
+  } else {
+    btns[chosen].classList.add('wrong');
+    fb.textContent='✗ Not quite. '+exp;fb.className='feedback no show';
+  }
+  answered.push({q:questions[current]['en'].q,correct:chosen===correct,exp});
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextQuestion(){current++;renderQuestion();}
+
+function showEnd(){
+  document.getElementById('questionCard').style.display='none';
+  document.getElementById('progBar').style.width='100%';
+  document.getElementById('finalScore').textContent=score;
+  let stars='';
+  if(score>=90)stars='⭐⭐⭐';
+  else if(score>=70)stars='⭐⭐';
+  else if(score>=40)stars='⭐';
+  document.getElementById('stars').textContent=stars||'☆☆☆';
+  const msgs={en:['Keep learning Civics!','Good understanding!','Civics champion! 🏛️'],
+    hi:['नागरिकशास्त्र पढ़ते रहें!','अच्छी समझ!','नागरिकशास्त्र चैंपियन! 🏛️'],
+    as:['নাগৰিক বিজ্ঞান পঢ়ি থাকক!','ভাল বুজাপোৱা!','নাগৰিক বিজ্ঞান চেম্পিয়ন! 🏛️']};
+  const mArr=msgs[currentLang]||msgs.en;
+  document.getElementById('endMsg').textContent=score>=90?mArr[2]:score>=70?mArr[1]:mArr[0];
+  let html='<h3>Review</h3>';
+  answered.forEach((a,i)=>{
+    html+=`<div class="result-item ${a.correct?'r-ok':'r-no'}">
+      <strong>Q${i+1}:</strong> ${a.correct?'✓':'✗'} ${a.q}<br/><small>${a.exp}</small></div>`;
+  });
+  document.getElementById('resultDetail').innerHTML=html;
+  const es=document.getElementById('endScreen');
+  es.style.display='block';es.classList.add('show');
+}
+
+function restartGame(){
+  current=0;score=0;answered=[];
+  document.getElementById('questionCard').style.display='block';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('endScreen').classList.remove('show');
+  renderQuestion();
+}
+
+setLang('en');
+</script>
+</body>
+</html>

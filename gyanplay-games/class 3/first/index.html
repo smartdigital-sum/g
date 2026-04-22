@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GyanPlay — Class 3 · Batch 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080618;--card:#120E2A;--gold:#FFD166;--text:#F4EEFF;--dim:#6A5A9A}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+/* Header */
+.top{padding:28px 24px 20px;text-align:center}
+.brand{font-family:'Baloo 2',sans-serif;font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,#FFD166,#C77DFF,#06D6A0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.tagline{font-size:.9rem;color:var(--dim)}
+.batch-badge{display:inline-block;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:50px;padding:6px 18px;font-size:.8rem;color:var(--gold);margin-top:10px}
+/* Subject sections */
+.section{padding:0 16px 8px}
+.section-header{display:flex;align-items:center;gap:10px;padding:12px 4px 10px}
+.section-icon{font-size:1.4rem}
+.section-title{font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px}
+.section-line{flex:1;height:1px;background:rgba(255,255,255,.08)}
+/* Game cards */
+.cards-row{display:flex;flex-direction:column;gap:10px}
+.game-card{display:flex;align-items:center;gap:14px;background:var(--card);border-radius:16px;padding:16px 18px;border:2px solid transparent;cursor:pointer;text-decoration:none;color:inherit;transition:transform .18s,border-color .2s,box-shadow .2s;position:relative;overflow:hidden}
+.game-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .2s}
+.game-card:hover{transform:translateY(-2px)}
+.card-emoji{font-size:2.4rem;flex-shrink:0;width:52px;text-align:center}
+.card-info{flex:1;min-width:0}
+.card-name{font-family:'Baloo 2',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:3px}
+.card-desc{font-size:.8rem;color:var(--dim);line-height:1.4}
+.card-concept{font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;margin-top:4px;font-weight:700;opacity:.7}
+.arrow{font-size:1.2rem;color:var(--dim);flex-shrink:0}
+/* Subject colour themes */
+.math .game-card{border-color:rgba(199,125,255,.15)}
+.math .game-card:hover{border-color:rgba(199,125,255,.5);box-shadow:0 4px 20px rgba(199,125,255,.15);background:#1A1238}
+.math .card-concept{color:#C77DFF}
+.eng .game-card{border-color:rgba(255,159,28,.15)}
+.eng .game-card:hover{border-color:rgba(255,159,28,.5);box-shadow:0 4px 20px rgba(255,159,28,.15);background:#1A1208}
+.eng .card-concept{color:#FF9F1C}
+/* Progress */
+.progress-section{padding:20px 16px 0}
+.progress-card{background:var(--card);border-radius:14px;padding:16px 20px;border:1px solid rgba(255,255,255,.08)}
+.progress-title{font-size:.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:10px}
+.progress-row{display:flex;align-items:center;gap:10px}
+.prog-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#C77DFF,#06D6A0);border-radius:4px;width:0%;transition:width .8s ease}
+.prog-text{font-size:.82rem;color:var(--gold);font-weight:700;min-width:40px;text-align:right}
+.batch-info{padding:20px 16px 32px;text-align:center}
+.batch-text{font-size:.82rem;color:var(--dim);line-height:1.6}
+.batch-text strong{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand">🎓 GyanPlay</div>
+  <div class="tagline">Class 3 · Learning through curiosity</div>
+  <div class="batch-badge">📦 Batch 1 of 3 · 7 Games</div>
+</div>
+
+<div class="progress-section">
+  <div class="progress-card">
+    <div class="progress-title">Batch 1 Progress</div>
+    <div class="progress-row">
+      <div class="prog-bar-wrap"><div class="prog-bar" id="progBar"></div></div>
+      <div class="prog-text" id="progText">0/7</div>
+    </div>
+  </div>
+</div>
+
+<!-- Maths -->
+<div class="section math">
+  <div class="section-header">
+    <span class="section-icon">🔢</span>
+    <span class="section-title">Mathematics</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="cards-row">
+    <a class="game-card" href="game1-number-city.html">
+      <div class="card-emoji">🏙️</div>
+      <div class="card-info">
+        <div class="card-name">Number City</div>
+        <div class="card-desc">Build 4-digit numbers using a city skyline — skyscrapers for thousands, shops for ones!</div>
+        <div class="card-concept">Place Value · Numbers to 9,999</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="game-card" href="game2-division-diner.html">
+      <div class="card-emoji">🍽️</div>
+      <div class="card-info">
+        <div class="card-name">Division Diner</div>
+        <div class="card-desc">Serve laddoos and barfis equally to all friends — division is just fair sharing!</div>
+        <div class="card-concept">Division · Fair Sharing</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="game-card" href="game3-fraction-street.html">
+      <div class="card-emoji">🍕</div>
+      <div class="card-info">
+        <div class="card-name">Fraction Street</div>
+        <div class="card-desc">Slice rotis and pizzas into equal pieces, shade fractions, compare ½ vs ¼!</div>
+        <div class="card-concept">Fractions · ½, ¼, ¾</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="game-card" href="game4-spider-multiplication.html">
+      <div class="card-emoji">🕷️</div>
+      <div class="card-info">
+        <div class="card-name">Spider Multiplication</div>
+        <div class="card-desc">Count animal legs, wings and fins in groups — beat the timer and build a streak!</div>
+        <div class="card-concept">Times Tables · 2 to 10</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="game-card" href="game5-railway-clock.html">
+      <div class="card-emoji">🚂</div>
+      <div class="card-info">
+        <div class="card-name">Railway Clock</div>
+        <div class="card-desc">Read analog station clocks and catch trains on time — every minute counts!</div>
+        <div class="card-concept">Time · O'clock & Half Past</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<!-- English -->
+<div class="section eng">
+  <div class="section-header">
+    <span class="section-icon">📝</span>
+    <span class="section-title">English</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="cards-row">
+    <a class="game-card" href="game6-adjective-artist.html">
+      <div class="card-emoji">🎨</div>
+      <div class="card-info">
+        <div class="card-name">Adjective Artist</div>
+        <div class="card-desc">Match describing words to objects — watch your scene come alive with one word!</div>
+        <div class="card-concept">Adjectives · Describing Words</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="game-card" href="game7-time-machine-tense.html">
+      <div class="card-emoji">⏰</div>
+      <div class="card-info">
+        <div class="card-name">Time Machine Tense</div>
+        <div class="card-desc">Travel to yesterday, today and tomorrow by changing the verb — language is a time machine!</div>
+        <div class="card-concept">Tenses · Past & Present</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<div class="batch-info">
+  <div class="batch-text">
+    <strong>Batch 1 complete!</strong> Batch 2 covers Science, Social Studies and Hindi.<br>
+    Say <strong>"go class 3 batch 2"</strong> when ready.
+  </div>
+</div>
+
+<script>
+// Track which games have been visited (simple localStorage)
+const GAMES=['game1-number-city.html','game2-division-diner.html','game3-fraction-street.html','game4-spider-multiplication.html','game5-railway-clock.html','game6-adjective-artist.html','game7-time-machine-tense.html'];
+let visited=0;
+try{
+  GAMES.forEach(g=>{if(localStorage.getItem('visited_'+g))visited++;});
+}catch(e){}
+const pct=Math.round((visited/GAMES.length)*100);
+document.getElementById('progBar').style.width=pct+'%';
+document.getElementById('progText').textContent=`${visited}/${GAMES.length}`;
+
+// Mark game as visited when clicking
+document.querySelectorAll('.game-card').forEach(c=>{
+  c.onclick=()=>{try{localStorage.setItem('visited_'+c.getAttribute('href'),1);}catch(e){}};
+});
+setTimeout(()=>{document.getElementById('progBar').style.width=pct+'%';},100);
+</script>
+</body>
+</html>

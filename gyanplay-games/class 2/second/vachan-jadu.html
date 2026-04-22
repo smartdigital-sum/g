@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>वचन जादू - Singular to Plural - GyanPlay Class 2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7, #fd79a8);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436, #1e272e);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 { color: #a29bfe; font-size: 2rem; }
+        
+        .score-board { display: flex; justify-content: center; gap: 30px; margin-top: 10px; }
+        
+        .score { background: #e94560; color: white; padding: 10px 20px; border-radius: 10px; font-size: 1.2rem; }
+        
+        .instruction-box {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-text { color: white; font-size: 1.3rem; }
+        
+        .transformation-area {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .word-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .word-card {
+            background: #dfe6e9;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            min-width: 150px;
+        }
+        
+        .word-label {
+            color: #636e72;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        
+        .word-text {
+            font-size: 2rem;
+            color: #2d3436;
+            font-weight: bold;
+        }
+        
+        .arrow-icon {
+            font-size: 3rem;
+            color: #a29bfe;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .options-area {
+            background: #ffeaa7;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .options-title {
+            color: #2d3436;
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .options-grid {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .option-btn {
+            background: white;
+            border: 3px solid #dfe6e9;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option-btn:hover { transform: scale(1.1); border-color: #a29bfe; }
+        
+        .option-btn.correct { background: #55efc4; border-color: #00b894; }
+        .option-btn.wrong { background: #ff7675; border-color: #e94560; }
+        
+        .visual-demo {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .demo-item {
+            font-size: 2rem;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #00b894, #55efc4);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 184, 148, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .check-btn:hover { transform: scale(1.05); }
+        
+        .feedback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .feedback.show { display: flex; }
+        
+        .feedback-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+        
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        
+        .feedback-content.correct { border: 5px solid #00b894; }
+        .feedback-content.wrong { border: 5px solid #e94560; }
+        
+        .feedback-icon { font-size: 5rem; }
+        .feedback-text { font-size: 1.8rem; margin: 20px 0; color: #2d3436; }
+        
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-title { color: white; font-size: 1.1rem; margin-bottom: 10px; }
+        .info-text { color: #dfe6e9; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='batch3-index.html'">← Back</button>
+    
+    <div class="game-container">
+        <div class="header">
+            <h1>✨ वचन जादू (Singular to Plural)</h1>
+            <div class="score-board">
+                <div class="score">स्कोर: <span id="score">0</span></div>
+                <div class="score">शब्द: <span id="wordNum">1</span></div>
+            </div>
+        </div>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">एकवचन को बहुवचन में बदलें! (Change singular to plural)</p>
+        </div>
+        
+        <div class="transformation-area">
+            <div class="word-display">
+                <div class="word-card">
+                    <div class="word-label">एकवचन (Singular)</div>
+                    <div class="word-text" id="singularWord">एक किताब</div>
+                </div>
+                <span class="arrow-icon">→</span>
+                <div class="word-card">
+                    <div class="word-label">बहुवचन (Plural)</div>
+                    <div class="word-text" id="pluralWord">?</div>
+                </div>
+            </div>
+            
+            <div class="visual-demo" id="visualDemo">
+                <span class="demo-item">📚</span>
+            </div>
+        </div>
+        
+        <div class="options-area">
+            <div class="options-title">सही उत्तर चुनें (Choose the correct answer):</div>
+            <div class="options-grid" id="optionsGrid">
+                <!-- Options will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <div class="info-title">📖 वचन (Number):</div>
+            <div class="info-text">एकवचन (Singular) - 1 thing | बहुवचन (Plural) - Many things</div>
+            <div class="info-text">किताब → किताबें | पेड़ → पेड़ | फूल → फूल</div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <div class="feedback-text" id="feedbackText">सही!</div>
+            <button class="next-btn" onclick="nextWord()">अगला शब्द →</button>
+        </div>
+    </div>
+    
+    <script>
+        const words = [
+            { singular: 'एक किताब', singularE: 'kitab', plural: 'किताबें', options: ['किताब', 'किताबें', 'किताबों', 'किताबा'] },
+            { singular: 'एक पेड़', singularE: 'ped', plural: 'पेड़', options: ['पेड़', 'पेड़े', 'पेड़ों', 'पेड़ा'] },
+            { singular: 'एक फूल', singularE: 'phul', plural: 'फूल', options: ['फूल', 'फूले', 'फूलों', 'फूला'] },
+            { singular: 'एक घड़ी', singularE: 'ghadi', plural: 'घड़ियाँ', options: ['घड़ी', 'घड़ियाँ', 'घड़ियों', 'घड़ा'] },
+            { singular: 'एक कमल', singularE: 'kaml', plural: 'कमल', options: ['कमल', 'कमले', 'कमलों', 'कमला'] },
+            { singular: 'एक आम', singularE: 'aam', plural: 'आम', options: ['आम', 'आमे', 'आमों', 'आमा'] },
+            { singular: 'एक पानी', singularE: 'pani', plural: 'पानी', options: ['पानी', 'पानिये', 'पानियों', 'पानीया'] },
+            { singular: 'एक साबुन', singularE: 'sabun', plural: 'साबुन', options: ['साबुन', 'साबुनें', 'साबुनों', 'साबुना'] },
+            { singular: 'एक कलम', singularE: 'kalam', plural: 'कलमें', options: ['कलम', 'कलमें', 'कलमों', 'कलमा'] },
+            { singular: 'एक बस्ता', singularE: 'basta', plural: 'बस्ते', options: ['बस्ता', 'बस्ते', 'बस्तों', 'बस्ता'] }
+        ];
+        
+        let currentIndex = 0;
+        let score = 0;
+        
+        function loadWord() {
+            const word = words[currentIndex];
+            
+            document.getElementById('singularWord').textContent = word.singular;
+            document.getElementById('pluralWord').textContent = '?';
+            document.getElementById('wordNum').textContent = currentIndex + 1;
+            
+            // Show visual
+            const demo = document.getElementById('visualDemo');
+            demo.innerHTML = '<span class="demo-item">📚</span><span class="demo-item">📚</span><span class="demo-item">📚</span>';
+            
+            // Generate options
+            const options = [...word.options].sort(() => Math.random() - 0.5);
+            
+            const grid = document.getElementById('optionsGrid');
+            grid.innerHTML = '';
+            
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => selectAnswer(btn, opt);
+                grid.appendChild(btn);
+            });
+        }
+        
+        function selectAnswer(btn, answer) {
+            const word = words[currentIndex];
+            
+            // Clear previous selections
+            document.querySelectorAll('.option-btn').forEach(b => {
+                b.classList.remove('correct', 'wrong');
+            });
+            
+            if (answer === word.plural) {
+                btn.classList.add('correct');
+                document.getElementById('pluralWord').textContent = word.plural;
+                score += 10;
+                document.getElementById('score').textContent = score;
+                
+                showFeedback(true);
+            } else {
+                btn.classList.add('wrong');
+                showFeedback(false, word.plural);
+            }
+        }
+        
+        function showFeedback(isCorrect, correctAnswer = '') {
+            const feedback = document.getElementById('feedback');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+            
+            if (isCorrect) {
+                content.className = 'feedback-content correct';
+                icon.textContent = '🎉';
+                text.textContent = 'बहुत बढ़िया! (Excellent!)';
+            } else {
+                content.className = 'feedback-content wrong';
+                icon.textContent = '😢';
+                text.textContent = `सही उत्तर है: ${correctAnswer}`;
+            }
+            
+            feedback.classList.add('show');
+        }
+        
+        function nextWord() {
+            document.getElementById('feedback').classList.remove('show');
+            currentIndex = (currentIndex + 1) % words.length;
+            loadWord();
+        }
+        
+        loadWord();
+    </script>
+</body>
+</html>

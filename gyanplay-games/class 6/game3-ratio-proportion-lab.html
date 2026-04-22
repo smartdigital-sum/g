@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ratio &amp; Proportion Lab — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--blue:#4CC9F0;--purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#180A28 0%,#0F0820 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(199,125,255,.13),rgba(199,125,255,.04));border:1px solid rgba(199,125,255,.3);border-radius:16px;padding:16px;margin-bottom:16px;position:relative;overflow:hidden}
+.wow-hook::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(199,125,255,.18),transparent);border-radius:50%}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55;color:var(--text)}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(199,125,255,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--purple);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:700}
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.45}
+/* Recipe card */
+.recipe-header{background:rgba(199,125,255,.08);border:1px solid rgba(199,125,255,.2);border-radius:12px;padding:12px;margin-bottom:14px;text-align:center}
+.recipe-title{font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;color:var(--gold)}
+.recipe-serves{font-size:.8rem;color:var(--dim);margin-top:3px}
+.ingredients-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.ingredient-row{display:flex;align-items:center;justify-content:space-between;background:rgba(199,125,255,.05);border:1px solid rgba(199,125,255,.12);border-radius:10px;padding:10px 12px}
+.ing-name{font-size:.9rem;color:var(--text);display:flex;align-items:center;gap:6px}
+.ing-emoji{font-size:1rem}
+.ing-amount-base{font-family:'Baloo 2',cursive;font-size:.95rem;color:var(--dim)}
+.arrow-icon{color:var(--purple);font-size:.8rem}
+.ing-amount-scaled{font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:700;color:var(--gold)}
+/* Question for missing ingredient */
+.question-ingredient{background:rgba(255,209,102,.07);border:2px dashed rgba(255,209,102,.3);border-radius:12px;padding:14px;margin-bottom:14px;text-align:center}
+.qi-emoji{font-size:2rem;margin-bottom:6px}
+.qi-name{font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;color:var(--gold);margin-bottom:4px}
+.qi-base{font-size:.82rem;color:var(--dim)}
+/* Options */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.opt-btn{background:rgba(199,125,255,.07);border:2px solid rgba(199,125,255,.2);border-radius:14px;padding:13px 8px;font-family:'Baloo 2',cursive;font-size:1.15rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--purple);background:rgba(199,125,255,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:600;min-height:26px;margin:10px 0 4px}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+/* Scale multiplier badge */
+.scale-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(199,125,255,.12);border:1px solid rgba(199,125,255,.3);border-radius:100px;padding:6px 14px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--purple);margin-bottom:12px}
+/* Ratio display */
+.ratio-display{background:rgba(199,125,255,.07);border-radius:12px;padding:12px;text-align:center;margin-bottom:14px}
+.ratio-eq{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--text)}
+.ratio-eq .r-num{color:var(--gold)}
+.ratio-eq .r-colon{color:var(--dim);margin:0 6px}
+.ratio-hint{font-size:.78rem;color:var(--dim);margin-top:6px}
+/* Stage 3 unitary method */
+.unitary-box{background:rgba(199,125,255,.06);border-left:3px solid var(--purple);border-radius:0 12px 12px 0;padding:14px;margin-bottom:14px;font-size:.9rem;line-height:1.6;color:var(--text)}
+.unitary-box strong{color:var(--gold)}
+/* Bottom bar */
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#0F0820 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--purple);color:var(--purple);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.play-again-btn:hover{background:rgba(199,125,255,.1)}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(199,125,255,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-score{font-family:'Baloo 2',cursine;font-size:1.9rem;font-weight:800;color:var(--purple);margin:10px 0}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stage-transition{background:linear-gradient(135deg,rgba(199,125,255,.1),rgba(199,125,255,.03));border:1px solid rgba(199,125,255,.2);border-radius:14px;padding:14px;text-align:center;margin-bottom:14px}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--purple);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">⚖️ Ratio &amp; Proportion Lab</div>
+      <span class="subject-tag">Maths · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="wow-emoji">💊</span>
+    <div class="wow-text">
+      Recipes use ratio. Maps use ratio. But mixing medicine <strong>REQUIRES exact ratio</strong> — a doctor who gets a drug ratio wrong can cause serious harm. Ratio is the <strong>most practically important</strong> maths concept you'll ever learn!
+    </div>
+  </div>
+
+  <div id="gameArea"></div>
+
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Question 1 of 10</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-score" id="ovScore"></div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+// Stage 1: Recipe scaling — scale up a recipe
+const RECIPES = [
+  {
+    name:'Assam Milk Tea', serves:2, targetServes:6, multiplier:3, emoji:'🍵',
+    ingredients:[
+      {e:'🫖',n:'Tea leaves',base:'2 tsp',scaled:'6 tsp'},
+      {e:'🥛',n:'Milk',base:'1 cup',scaled:'3 cups'},
+      {e:'💧',n:'Water',base:'½ cup',scaled:'1½ cups'},
+    ],
+    question:{e:'🍬',n:'Sugar',base:'1 tsp',correct:'3 tsp',opts:['3 tsp','5 tsp','2 tsp','6 tsp'],
+      hint:'2 × ? = 6, so 1 tsp × 3 = 3 tsp'}
+  },
+  {
+    name:'Rice Khichdi', serves:2, targetServes:8, multiplier:4, emoji:'🍚',
+    ingredients:[
+      {e:'🌾',n:'Rice',base:'1 cup',scaled:'4 cups'},
+      {e:'🟡',n:'Dal (lentils)',base:'½ cup',scaled:'2 cups'},
+      {e:'🧅',n:'Onion',base:'1 piece',scaled:'4 pieces'},
+    ],
+    question:{e:'🧂',n:'Salt',base:'½ tsp',correct:'2 tsp',opts:['2 tsp','4 tsp','1 tsp','½ tsp'],
+      hint:'½ tsp × 4 = 2 tsp'}
+  },
+  {
+    name:'Banana Smoothie', serves:1, targetServes:5, multiplier:5, emoji:'🍌',
+    ingredients:[
+      {e:'🍌',n:'Bananas',base:'2 pieces',scaled:'10 pieces'},
+      {e:'🥛',n:'Yoghurt',base:'100 ml',scaled:'500 ml'},
+      {e:'🍯',n:'Honey',base:'1 tbsp',scaled:'5 tbsp'},
+    ],
+    question:{e:'🧊',n:'Ice cubes',base:'4 cubes',correct:'20 cubes',opts:['20 cubes','8 cubes','15 cubes','10 cubes'],
+      hint:'4 cubes × 5 = 20 cubes'}
+  },
+  {
+    name:'Lemon Rice', serves:4, targetServes:12, multiplier:3, emoji:'🍋',
+    ingredients:[
+      {e:'🍚',n:'Cooked rice',base:'2 cups',scaled:'6 cups'},
+      {e:'🍋',n:'Lemon juice',base:'3 tbsp',scaled:'9 tbsp'},
+      {e:'🌶️',n:'Green chilli',base:'2 pieces',scaled:'6 pieces'},
+    ],
+    question:{e:'🫒',n:'Oil',base:'2 tsp',correct:'6 tsp',opts:['6 tsp','4 tsp','8 tsp','3 tsp'],
+      hint:'2 tsp × 3 = 6 tsp'}
+  },
+];
+// Stage 2: Ratio simplification
+const S2 = [
+  {q:'Simplify the ratio <strong>6 : 9</strong>', correct:'2 : 3', opts:['2 : 3','3 : 4','6 : 9','1 : 2'], fact:'HCF of 6 and 9 is 3. So 6÷3 : 9÷3 = 2 : 3'},
+  {q:'In a class, 15 are girls and 10 are boys. What is the ratio of girls to boys?', correct:'3 : 2', opts:['3 : 2','15 : 10','1 : 2','2 : 3'], fact:'15 : 10 → divide both by 5 → 3 : 2'},
+  {q:'Simplify <strong>24 : 36</strong>', correct:'2 : 3', opts:['2 : 3','4 : 6','12 : 18','1 : 2'], fact:'HCF of 24 and 36 is 12. So 24÷12 : 36÷12 = 2 : 3'},
+];
+// Stage 3: Unitary method
+const S3 = [
+  {story:'If <strong>5 notebooks</strong> cost <strong>₹75</strong>, what will <strong>8 notebooks</strong> cost?', correct:'₹120', opts:['₹120','₹90','₹150','₹105'], fact:'Cost of 1 notebook = ₹75 ÷ 5 = ₹15. For 8: ₹15 × 8 = ₹120'},
+  {story:'A car travels <strong>60 km</strong> in <strong>1 hour</strong>. How far in <strong>3.5 hours</strong>?', correct:'210 km', opts:['210 km','180 km','240 km','200 km'], fact:'Speed = 60 km/h. Distance = 60 × 3.5 = 210 km'},
+  {story:'A tea garden in Assam packs <strong>120 kg</strong> of tea in <strong>4 hours</strong>. How much in <strong>7 hours</strong>?', correct:'210 kg', opts:['210 kg','180 kg','240 kg','168 kg'], fact:'Per hour = 120÷4 = 30 kg. For 7 hours: 30×7 = 210 kg'},
+];
+
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+const FACTS=[
+  'A ratio like 2:3 means for every 2 of the first thing, there are 3 of the second.',
+  'Ratio is used in maps: if 1 cm = 10 km, that\'s a ratio of 1 : 1,000,000!',
+  'Medicine doses are calculated by ratio of body weight — same concept as recipe scaling.',
+  'The Golden Ratio (1:1.618) appears in sunflowers, galaxies, and famous artworks!',
+  'Proportion means two ratios are equal: 2/4 = 1/2 — they are in proportion.',
+  'Unitary method finds the value of ONE unit first, then multiplies for any amount.',
+  'Speed, density, and price-per-unit all use the unitary method.',
+  'When you scale a recipe, every ingredient must multiply by the SAME factor.',
+  'Ratio 3:2 means 3 parts to 2 parts — total is 5 parts!',
+  'Ancient Egyptians used ratio to build the pyramids with incredible precision.',
+];
+
+let qIdx=0,stg=1,score=0,answered=false;
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  const C=['#FFD166','#C77DFF','#06D6A0','#4CC9F0','#FF9F1C'];
+  for(let i=0;i<28;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
+  }
+}
+function updateStars(){
+  const lit=Math.min(5,Math.floor(score/2));
+  for(let i=1;i<=5;i++) document.getElementById('s'+i).classList.toggle('lit',i<=lit);
+}
+function showOverlay(emoji,title,scoreText,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovScore').textContent=scoreText;document.getElementById('ovFact').textContent=fact;
+  document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay');ov.classList.add('show');
+  if(!isEnd) setTimeout(()=>ov.classList.remove('show'),2600);
+}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(q,t){document.getElementById('progressLabel').textContent=`Question ${q} of ${t}`}
+
+function renderS1(i){
+  setProgress(i+1,10); answered=false; showNext(false);
+  const r=RECIPES[i];
+  const opts=[...r.question.opts].sort(()=>Math.random()-.5);
+  const mul=r.multiplier;
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🍳 Stage 1 — Recipe Scaling</div>
+      <div class="recipe-header">
+        <div class="recipe-title">${r.emoji} ${r.name}</div>
+        <div class="recipe-serves">Base: ${r.serves} servings → Scale to: <strong style="color:var(--gold)">${r.targetServes} servings</strong></div>
+      </div>
+      <div style="text-align:center;margin-bottom:12px">
+        <span class="scale-badge">✖ ${mul} (multiply all by ${mul})</span>
+      </div>
+      <div class="ingredients-list">
+        ${r.ingredients.map(ing=>`
+          <div class="ingredient-row">
+            <div class="ing-name"><span class="ing-emoji">${ing.e}</span>${ing.n}</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="ing-amount-base">${ing.base}</div>
+              <div class="arrow-icon">→</div>
+              <div class="ing-amount-scaled">${ing.scaled}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div class="question-ingredient">
+        <div class="qi-emoji">${r.question.e}</div>
+        <div class="qi-name">${r.question.n}</div>
+        <div class="qi-base">Base: ${r.question.base} → for ${r.targetServes} servings = ?</div>
+      </div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS1('${o}','${r.question.correct}','${r.question.hint}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS1(sel,correct,hint,btn){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct'); score++; updateStars();
+    fb.textContent=cheer()+' '+correct+' is exactly right!';
+    fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🍳',cheer(),'',FACTS[qIdx%FACTS.length],false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. Hint: '+hint;
+    fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+function renderS2(i){
+  setProgress(RECIPES.length+i+1,10); answered=false; showNext(false);
+  const q=S2[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🔢 Stage 2 — Ratio Simplification</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS2('${o}','${q.correct}','${q.fact}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS2(sel,correct,fact,btn){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct'); score++; updateStars();
+    fb.textContent=cheer()+' '+correct+' is the simplest form!';
+    fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('📊',cheer(),'',FACTS[(qIdx+4)%FACTS.length],false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact;
+    fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+function renderS3(i){
+  setProgress(RECIPES.length+S2.length+i+1,10); answered=false; showNext(false);
+  const q=S3[i];
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🔍 Stage 3 — Unitary Method</div>
+      <div class="unitary-box">${q.story}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS3('${o}','${q.correct}','${q.fact}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS3(sel,correct,fact,btn){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct'); score++; updateStars();
+    fb.textContent=cheer()+' Perfect!';
+    fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🔍',cheer(),'',FACTS[(qIdx+7)%FACTS.length],false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct')});
+    fb.textContent='Answer: '+correct+'. '+fact;
+    fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+function nextQ(){
+  qIdx++;
+  if(stg===1){
+    if(qIdx<RECIPES.length) renderS1(qIdx);
+    else{stg=2;qIdx=0;showTransition(2,'🔢','Stage 2: Ratio Simplification!','Now simplify ratios to their lowest terms using the HCF method.',()=>renderS2(0))}
+  } else if(stg===2){
+    if(qIdx<S2.length) renderS2(qIdx);
+    else{stg=3;qIdx=0;showTransition(3,'🔍','Stage 3: Unitary Method!','Find the cost / quantity for ONE unit first, then multiply for any amount.',()=>renderS3(0))}
+  } else {
+    if(qIdx<S3.length) renderS3(qIdx);
+    else endGame();
+  }
+}
+function showTransition(stgNum,emoji,title,desc,cb){
+  showNext(false);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="stage-transition">
+      <div style="font-size:2.5rem">${emoji}</div>
+      <h3>${title}</h3>
+      <p>${desc}</p>
+    </div>`;
+  const nb=document.getElementById('nextBtn');
+  nb.textContent=`Start Stage ${stgNum} →`; nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →'; nb.onclick=nextQ; cb()};
+}
+function endGame(){
+  confetti();
+  const medals=['Ratio Learner 🌱','Proportion Pro 🔍','Ratio Master 🎯','Proportion Champion 🏆','Ratio Legend 🌟'];
+  const medal=medals[Math.min(4,Math.floor(score/2))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--purple);margin:10px 0">${score} / 10</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        Every chef, doctor, mapmaker, and engineer uses ratio and proportion every day. You now think in proportions — a fundamental skill for life!
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  document.getElementById('progressLabel').textContent=`Final Score: ${score}/10`;
+  showNext(false);
+}
+function resetGame(){
+  qIdx=0;stg=1;score=0;answered=false;
+  for(let i=1;i<=5;i++) document.getElementById('s'+i).classList.remove('lit');
+  const nb=document.getElementById('nextBtn');nb.textContent='Next →';nb.onclick=nextQ;
+  renderS1(0);
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{
+  document.getElementById('overlay').classList.remove('show'); resetGame();
+});
+renderS1(0);
+</script>
+</body>
+</html>

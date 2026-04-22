@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Addition Fun – GyanPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,#E3F2FD,#BBDEFB);font-family:'Baloo 2',cursive;display:flex;flex-direction:column;align-items:center;padding:16px}
+  header{width:100%;max-width:720px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .logo{font-size:1.6rem;font-weight:800;color:#0D47A1}
+  .lang-btns{display:flex;gap:6px}
+  .lang-btn{border:none;background:#1976D2;color:#fff;font-family:'Baloo 2',cursive;font-size:0.9rem;font-weight:700;border-radius:20px;padding:5px 14px;cursor:pointer;transition:transform .15s}
+  .lang-btn.active,.lang-btn:hover{background:#0D47A1;transform:scale(1.08)}
+  .progress-bar-wrap{width:100%;max-width:720px;background:#90CAF9;border-radius:20px;height:14px;margin-bottom:10px;overflow:hidden}
+  .progress-bar{height:100%;background:linear-gradient(90deg,#42A5F5,#0D47A1);border-radius:20px;transition:width .5s}
+  .round-label{font-size:1.1rem;font-weight:700;color:#1565C0;margin-bottom:6px;text-align:center}
+  .score-label{font-size:1rem;font-weight:700;color:#0D47A1;text-align:center;margin-bottom:6px}
+  .card{background:rgba(255,255,255,0.90);border-radius:28px;box-shadow:0 8px 32px rgba(21,101,192,0.18);padding:22px 20px 18px;max-width:720px;width:100%;text-align:center}
+  .equation{font-size:3rem;font-weight:900;color:#0D47A1;margin:8px 0;letter-spacing:2px}
+  .dot-groups{display:flex;justify-content:center;align-items:center;gap:20px;margin:10px 0 16px;flex-wrap:wrap}
+  .dot-group{display:flex;flex-wrap:wrap;gap:4px;max-width:120px;justify-content:center;background:#E3F2FD;border-radius:14px;padding:8px}
+  .dot{font-size:1.6rem;line-height:1}
+  .plus-sign{font-size:2.5rem;font-weight:900;color:#1565C0}
+  .question-text{font-size:2rem;font-weight:800;color:#1565C0;margin-bottom:14px}
+  .ans-grid{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .ans-btn{border:none;border-radius:20px;padding:16px 28px;font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:900;cursor:pointer;min-height:72px;min-width:90px;background:#E3F2FD;color:#0D47A1;box-shadow:0 4px 12px rgba(0,0,0,0.1);transition:transform .15s}
+  .ans-btn:hover{transform:scale(1.08);background:#BBDEFB}
+  .ans-btn.correct{background:#A5D6A7;border:4px solid #388E3C;animation:celebrate .4s}
+  .ans-btn.wrong{background:#FFCDD2;border:4px solid #E53935;animation:shake .3s}
+  @keyframes celebrate{0%{transform:scale(1)}30%{transform:scale(1.2) rotate(-5deg)}60%{transform:scale(1.15) rotate(5deg)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .explanation{margin-top:12px;background:#E8F5E9;border-radius:14px;padding:10px 14px;font-size:1.25rem;color:#2E7D32;font-weight:700;display:none;line-height:1.5}
+  .next-btn{margin-top:12px;border:none;background:linear-gradient(135deg,#42A5F5,#0D47A1);color:#fff;font-family:'Baloo 2',cursive;font-size:1.4rem;font-weight:800;border-radius:20px;padding:12px 40px;cursor:pointer;display:none;transition:transform .15s}
+  .next-btn:hover{transform:scale(1.06)}
+  .burst{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);font-size:5rem;pointer-events:none;animation:burstAnim .7s forwards;display:none;z-index:900}
+  @keyframes burstAnim{0%{opacity:1;transform:translate(-50%,-50%) scale(0.5)}60%{opacity:1;transform:translate(-50%,-50%) scale(1.4)}100%{opacity:0;transform:translate(-50%,-80%) scale(1.6)}}
+  .end-screen{display:none;text-align:center}
+  .end-title{font-size:3rem;font-weight:900;color:#0D47A1;margin-bottom:8px}
+  .stars-row{font-size:2.5rem;margin:10px 0}
+  .end-msg{font-size:1.8rem;color:#1565C0;margin-bottom:10px}
+  .play-again{border:none;background:linear-gradient(135deg,#42A5F5,#0D47A1);color:#fff;font-family:'Baloo 2',cursive;font-size:1.8rem;font-weight:800;border-radius:24px;padding:14px 48px;cursor:pointer;margin-top:10px;transition:transform .15s}
+  .play-again:hover{transform:scale(1.07)}
+  canvas#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">➕ GyanPlay</div>
+  <div class="lang-btns">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</header>
+<div class="progress-bar-wrap"><div class="progress-bar" id="pbar"></div></div>
+<div class="round-label" id="roundLabel">Round 1 of 10</div>
+<div class="score-label" id="scoreLabel">Score: 0</div>
+
+<div class="card" id="gameCard">
+  <div class="equation" id="equation">3 + 4 = ?</div>
+  <div class="dot-groups" id="dotGroups"></div>
+  <div class="question-text" id="qText">What is the answer?</div>
+  <div class="ans-grid" id="ansGrid"></div>
+  <div class="explanation" id="explanation"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextRound()">Next ➡️</button>
+</div>
+<div class="end-screen card" id="endScreen">
+  <div class="end-title">🎉 Well Done!</div>
+  <div class="stars-row" id="endStars"></div>
+  <div class="end-msg" id="endMsg"></div>
+  <button class="play-again" onclick="restartGame()">🔄 Play Again</button>
+</div>
+<div class="burst" id="burst">🎉</div>
+<canvas id="confetti"></canvas>
+
+<script>
+const EMOJIS=['⭐','🍎','🌸','🔵','🏀','🐝','🍬','🦋','🌟','🍕'];
+const L={
+  en:{q:"What is the answer?",next:"Next ➡️",rl:(r,t)=>`Round ${r} of ${t}`,sc:s=>`Score: ${s}`,
+      stars:["Keep Trying! 💪","Good Try! 😊","Great Job! 🌟","Maths Star! 🏆"]},
+  hi:{q:"उत्तर क्या है?",next:"अगला ➡️",rl:(r,t)=>`चक्र ${r} / ${t}`,sc:s=>`स्कोर: ${s}`,
+      stars:["कोशिश करो! 💪","अच्छा प्रयास! 😊","बहुत अच्छे! 🌟","गणित सितारा! 🏆"]},
+  as:{q:"উত্তৰ কি?",next:"পৰৱৰ্তী ➡️",rl:(r,t)=>`ৰাউণ্ড ${r} / ${t}`,sc:s=>`স্কোৰ: ${s}`,
+      stars:["চেষ্টা কৰক! 💪","ভাল চেষ্টা! 😊","চমৎকাৰ! 🌟","গণিত তাৰকা! 🏆"]}
+};
+
+function genRounds(){
+  const pairs=[[1,2],[2,3],[3,4],[4,5],[5,5],[6,4],[7,3],[8,2],[9,1],[5,6],[3,7],[4,4],[6,6],[2,8],[1,9]];
+  const used=[];
+  while(used.length<10){const p=pairs[Math.floor(Math.random()*pairs.length)];if(!used.find(u=>u[0]===p[0]&&u[1]===p[1]))used.push(p);}
+  return used.map(([a,b])=>{
+    const correct=a+b;
+    const emoji=EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+    const wrongs=new Set();
+    while(wrongs.size<2){const w=correct+Math.floor(Math.random()*5)-2;if(w!==correct&&w>0)wrongs.add(w);}
+    const opts=shuffle([correct,...wrongs]);
+    return{a,b,correct,emoji,opts};
+  });
+}
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+
+let lang='en',rounds=[],cur=0,score=0,answered=false;
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>b.classList.toggle('active',['en','hi','as'][i]===l));
+  renderRound();
+}
+
+function renderRound(){
+  const Lc=L[lang];const r=rounds[cur];
+  document.getElementById('roundLabel').textContent=Lc.rl(cur+1,rounds.length);
+  document.getElementById('scoreLabel').textContent=Lc.sc(score);
+  document.getElementById('pbar').style.width=(cur/rounds.length*100)+'%';
+  document.getElementById('equation').textContent=`${r.a} + ${r.b} = ?`;
+  document.getElementById('qText').textContent=Lc.q;
+  // dot groups
+  const dg=document.getElementById('dotGroups');dg.innerHTML='';
+  const g1=document.createElement('div');g1.className='dot-group';
+  for(let i=0;i<r.a;i++){const s=document.createElement('span');s.className='dot';s.textContent=r.emoji;g1.appendChild(s);}
+  const plus=document.createElement('span');plus.className='plus-sign';plus.textContent='+';
+  const g2=document.createElement('div');g2.className='dot-group';
+  for(let i=0;i<r.b;i++){const s=document.createElement('span');s.className='dot';s.textContent=r.emoji;g2.appendChild(s);}
+  dg.appendChild(g1);dg.appendChild(plus);dg.appendChild(g2);
+  // answer buttons
+  const ag=document.getElementById('ansGrid');ag.innerHTML='';
+  r.opts.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='ans-btn';btn.textContent=opt;btn.dataset.val=opt;
+    btn.onclick=()=>answer(opt);
+    ag.appendChild(btn);
+  });
+  document.getElementById('explanation').style.display='none';
+  document.getElementById('nextBtn').style.display='none';
+  answered=false;
+}
+
+function answer(val){
+  if(answered)return;answered=true;
+  const r=rounds[cur];
+  const btns=document.querySelectorAll('.ans-btn');
+  btns.forEach(b=>{
+    if(+b.dataset.val===r.correct)b.classList.add('correct');
+    else if(+b.dataset.val===val&&val!==r.correct)b.classList.add('wrong');
+    b.disabled=true;
+  });
+  if(val===r.correct){
+    score++;
+    const burst=document.getElementById('burst');burst.style.display='block';
+    setTimeout(()=>burst.style.display='none',700);
+    launchConfetti(10);
+  }
+  // explanation
+  const parts=[];for(let i=0;i<r.b;i++)parts.push(r.emoji);
+  const expEl=document.getElementById('explanation');
+  expEl.innerHTML=`${r.a} + ${r.b} = <b>${r.correct}</b> &nbsp;🎯<br>${r.emoji.repeat(r.a)} + ${r.emoji.repeat(r.b)} = ${r.emoji.repeat(r.correct)}`;
+  expEl.style.display='block';
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextRound(){
+  cur++;if(cur>=rounds.length){showEnd();return;}renderRound();
+}
+
+function showEnd(){
+  document.getElementById('gameCard').style.display='none';
+  document.getElementById('roundLabel').style.display='none';
+  document.getElementById('scoreLabel').style.display='none';
+  const end=document.getElementById('endScreen');end.style.display='block';
+  const pct=score/rounds.length;
+  const stars=pct>=0.9?3:pct>=0.7?2:pct>=0.4?1:0;
+  document.getElementById('endStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('endMsg').textContent=`${score}/${rounds.length} — ${L[lang].stars[stars]}`;
+  document.getElementById('pbar').style.width='100%';launchConfetti(50);
+}
+
+function restartGame(){
+  cur=0;score=0;answered=false;
+  rounds=genRounds();
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('gameCard').style.display='block';
+  document.getElementById('roundLabel').style.display='block';
+  document.getElementById('scoreLabel').style.display='block';
+  renderRound();
+}
+
+function launchConfetti(count){
+  const canvas=document.getElementById('confetti');const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const pieces=Array.from({length:count},()=>({x:Math.random()*canvas.width,y:Math.random()*-100,r:Math.random()*9+4,color:`hsl(${Math.random()*360},90%,60%)`,vx:(Math.random()-0.5)*4,vy:Math.random()*4+2,alpha:1}));
+  let frame;
+  function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);pieces.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.alpha-=0.013;ctx.save();ctx.globalAlpha=Math.max(0,p.alpha);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();ctx.restore();});if(pieces.some(p=>p.alpha>0))frame=requestAnimationFrame(draw);else ctx.clearRect(0,0,canvas.width,canvas.height);}
+  cancelAnimationFrame(frame);draw();
+}
+
+rounds=genRounds();renderRound();
+</script>
+</body>
+</html>

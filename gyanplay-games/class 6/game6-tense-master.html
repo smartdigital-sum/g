@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tense Master — GyanPlay Class 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A10;--card:#0D1428;--gold:#FFD166;--coral:#FF6B6B;--teal:#06D6A0;--purple:#C77DFF;--orange:#FF9F1C;--text:#E8F0FF;--dim:#4A6A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#1A0F00 0%,#0F0800 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 40px}
+.container{width:100%;max-width:480px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px}
+.game-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.subject-tag{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
+.stars{display:flex;gap:4px}
+.star{font-size:1.2rem;opacity:.3;transition:opacity .3s,filter .3s}
+.star.lit{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.wow-hook{background:linear-gradient(135deg,rgba(255,159,28,.13),rgba(255,159,28,.04));border:1px solid rgba(255,159,28,.3);border-radius:16px;padding:16px;margin-bottom:16px}
+.wow-emoji{font-size:1.8rem;margin-bottom:8px;display:block}
+.wow-text{font-size:.88rem;line-height:1.55}
+.wow-text strong{color:var(--gold)}
+.game-card{background:var(--card);border:1px solid rgba(255,159,28,.15);border-radius:20px;padding:20px;margin-bottom:14px}
+.stage-label{font-size:.68rem;color:var(--orange);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:700}
+/* Tense Clock */
+.clock-wrap{position:relative;width:240px;height:240px;margin:0 auto 16px}
+.clock-svg{width:240px;height:240px}
+.clock-center-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.tense-name-big{font-family:'Baloo 2',cursive;font-size:.85rem;font-weight:800;color:var(--orange);line-height:1.2;text-align:center}
+.tense-time{font-size:.65rem;color:var(--dim);text-align:center;margin-top:2px}
+/* Tense grid reference */
+.tense-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-bottom:14px}
+.tense-cell{background:rgba(255,159,28,.06);border:1px solid rgba(255,159,28,.15);border-radius:8px;padding:7px 4px;text-align:center}
+.tense-cell.active{background:rgba(255,159,28,.18);border-color:var(--orange);box-shadow:0 0 8px rgba(255,159,28,.25)}
+.tc-time{font-size:.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:.3px}
+.tc-name{font-size:.65rem;color:var(--orange);font-weight:700;margin-top:2px;line-height:1.2}
+/* Question area */
+.question-text{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.45}
+.sentence-display{background:rgba(255,159,28,.07);border:1px solid rgba(255,159,28,.2);border-radius:12px;padding:14px;margin-bottom:14px;font-size:1rem;line-height:1.7;color:var(--text);text-align:center}
+.blank{display:inline-block;min-width:80px;border-bottom:2px solid var(--orange);padding:0 4px;color:var(--orange);font-family:'Baloo 2',cursive;font-weight:700;text-align:center;font-size:1.05rem}
+/* Options */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{background:rgba(255,159,28,.07);border:2px solid rgba(255,159,28,.2);border-radius:14px;padding:12px 8px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.opt-btn:hover{border-color:var(--orange);background:rgba(255,159,28,.15);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(6,214,160,.15);border-color:var(--teal);color:var(--teal)}
+.opt-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--coral);color:var(--coral)}
+.opt-btn:disabled{pointer-events:none}
+.feedback{text-align:center;font-family:'Baloo 2',cursive;font-size:.92rem;font-weight:600;min-height:26px;margin:10px 0 4px}
+.feedback.correct{color:var(--teal)}
+.feedback.wrong{color:var(--coral)}
+.tense-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,159,28,.1);border:1px solid rgba(255,159,28,.3);border-radius:100px;padding:5px 12px;font-size:.78rem;font-weight:700;color:var(--orange);margin-bottom:10px}
+.identify-q{background:rgba(255,159,28,.06);border-left:3px solid var(--orange);border-radius:0 12px 12px 0;padding:12px 14px;margin-bottom:14px;font-size:.9rem;line-height:1.6;font-style:italic;color:var(--text)}
+/* bottom bar */
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;bottom:0;background:linear-gradient(to top,#0F0800 60%,transparent)}
+.progress-label{font-size:.8rem;color:var(--dim)}
+.next-btn{background:var(--gold);color:#060A10;border:none;border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0;pointer-events:none}
+.next-btn.visible{opacity:1;pointer-events:all}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,209,102,.4)}
+.play-again-btn{background:transparent;border:2px solid var(--orange);color:var(--orange);border-radius:100px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:12px}
+.play-again-btn:hover{background:rgba(255,159,28,.1)}
+.overlay{position:fixed;inset:0;background:rgba(6,10,16,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.ov-card{background:var(--card);border:1px solid rgba(255,159,28,.3);border-radius:24px;padding:28px 22px;text-align:center;max-width:340px;width:90%;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-emoji{font-size:2.8rem;margin-bottom:10px}
+.ov-title{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:var(--gold);margin-bottom:6px}
+.ov-fact{font-size:.85rem;color:var(--dim);line-height:1.5}
+.confetti-piece{position:fixed;width:9px;height:9px;opacity:0;animation:cfall 2.2s ease-out forwards;z-index:200;border-radius:2px}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stage-transition{background:linear-gradient(135deg,rgba(255,159,28,.1),rgba(255,159,28,.03));border:1px solid rgba(255,159,28,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.stage-transition h3{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--orange);margin:8px 0 6px}
+.stage-transition p{font-size:.85rem;color:var(--dim);line-height:1.5}
+/* Tense table for reference */
+.tense-ref{font-size:.72rem;color:var(--dim);line-height:1.5;background:rgba(255,159,28,.04);border:1px solid rgba(255,159,28,.1);border-radius:10px;padding:10px;margin-bottom:12px}
+.tense-ref strong{color:var(--orange)}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="game-title">🕰️ Tense Master</div>
+      <span class="subject-tag">English · Class 6</span>
+    </div>
+    <div class="stars">
+      <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+    </div>
+  </div>
+
+  <div class="wow-hook">
+    <span class="wow-emoji">⏱️</span>
+    <div class="wow-text">English has <strong>12 tenses</strong> — more ways to describe time than most languages! A single verb can tell you what happened, <em>was happening when something else happened</em>, or will have <strong>already finished</strong> before something in the future!</div>
+  </div>
+
+  <!-- Tense Reference Grid (always visible) -->
+  <div class="tense-grid" id="tenseGrid">
+    <div class="tense-cell"><div class="tc-time">PAST</div><div class="tc-name">Simple Past</div></div>
+    <div class="tense-cell"><div class="tc-time">PAST</div><div class="tc-name">Past Cont.</div></div>
+    <div class="tense-cell"><div class="tc-time">PAST</div><div class="tc-name">Past Perf.</div></div>
+    <div class="tense-cell"><div class="tc-time">PAST</div><div class="tc-name">Past Perf. Cont.</div></div>
+    <div class="tense-cell"><div class="tc-time">PRES.</div><div class="tc-name">Simple Pres.</div></div>
+    <div class="tense-cell"><div class="tc-time">PRES.</div><div class="tc-name">Pres. Cont.</div></div>
+    <div class="tense-cell"><div class="tc-time">PRES.</div><div class="tc-name">Pres. Perf.</div></div>
+    <div class="tense-cell"><div class="tc-time">PRES.</div><div class="tc-name">Pres. Perf. Cont.</div></div>
+    <div class="tense-cell"><div class="tc-time">FUTURE</div><div class="tc-name">Simple Future</div></div>
+    <div class="tense-cell"><div class="tc-time">FUTURE</div><div class="tc-name">Future Cont.</div></div>
+    <div class="tense-cell"><div class="tc-time">FUTURE</div><div class="tc-name">Future Perf.</div></div>
+    <div class="tense-cell"><div class="tc-time">FUTURE</div><div class="tc-name">Future Perf. Cont.</div></div>
+  </div>
+
+  <div id="gameArea"></div>
+
+  <div class="bottom-bar">
+    <span class="progress-label" id="progressLabel">Question 1 of 12</span>
+    <button class="next-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="ov-emoji" id="ovEmoji">🌟</div>
+    <div class="ov-title" id="ovTitle">Excellent!</div>
+    <div class="ov-fact" id="ovFact"></div>
+    <button class="play-again-btn" id="ovPlayAgain" style="display:none;margin-top:14px">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+/* Stage 1: Identify tense name from sentence — 6 questions */
+const S1 = [
+  {sentence:'She <u>plays</u> cricket every evening.',correct:'Simple Present',
+   opts:['Simple Present','Simple Past','Present Continuous','Present Perfect'],
+   formula:'Subject + V1 (s/es)',fact:'Simple Present uses V1. We add -s/-es for he/she/it. "plays" is V1 form!'},
+  {sentence:'They <u>were playing</u> football when it rained.',correct:'Past Continuous',
+   opts:['Simple Past','Past Continuous','Past Perfect','Present Continuous'],
+   formula:'Subject + was/were + V-ing',fact:'Past Continuous = was/were + V-ing. It shows an ongoing action in the past!'},
+  {sentence:'He <u>has finished</u> his homework.',correct:'Present Perfect',
+   opts:['Simple Past','Past Perfect','Present Perfect','Future Perfect'],
+   formula:'Subject + has/have + V3',fact:'Present Perfect = has/have + V3. It connects past action to the present!'},
+  {sentence:'By next year, she <u>will have completed</u> her degree.',correct:'Future Perfect',
+   opts:['Simple Future','Future Perfect','Future Continuous','Present Perfect'],
+   formula:'Subject + will have + V3',fact:'Future Perfect = will have + V3. An action that will be complete before a future time!'},
+  {sentence:'I <u>was eating</u> lunch when the bell rang.',correct:'Past Continuous',
+   opts:['Simple Past','Present Continuous','Past Continuous','Past Perfect'],
+   formula:'Subject + was/were + V-ing',fact:'"was eating" = was + V-ing. The eating was ongoing when the bell (Simple Past) interrupted!'},
+  {sentence:'They <u>had already left</u> before the teacher arrived.',correct:'Past Perfect',
+   opts:['Simple Past','Past Continuous','Past Perfect','Present Perfect'],
+   formula:'Subject + had + V3',fact:'Past Perfect = had + V3. It shows an action completed before another past action!'},
+];
+/* Stage 2: Fill blank with correct verb form — 6 questions */
+const S2 = [
+  {before:'The Brahmaputra river',blank:'flows',after:'through Assam every year.',
+   tense:'Simple Present',opts:['flows','flowed','is flowing','has flowed'],
+   fact:'"flows" is Simple Present. Regular, repeated actions use Simple Present!'},
+  {before:'Right now, the children',blank:'are learning',after:'about the Ahom kingdom.',
+   tense:'Present Continuous',opts:['learn','learned','are learning','have learned'],
+   fact:'"are learning" = are + V-ing = Present Continuous. Happening RIGHT NOW!'},
+  {before:'By tomorrow morning, she',blank:'will have read',after:'the entire chapter.',
+   tense:'Future Perfect',opts:['will read','reads','will have read','has read'],
+   fact:'"will have read" = Future Perfect. Action complete before a future moment!'},
+  {before:'The farmer',blank:'had planted',after:'the seeds before the rains came.',
+   tense:'Past Perfect',opts:['planted','had planted','was planting','has planted'],
+   fact:'"had planted" = Past Perfect. Completed before another past event (rains came)!'},
+  {before:'She',blank:'has been studying',after:'for three hours without a break.',
+   tense:'Present Perfect Continuous',opts:['studied','has studied','has been studying','is studying'],
+   fact:'"has been studying" = Present Perfect Continuous. Started in past, still continuing now!'},
+  {before:'At 8 pm tonight, he',blank:'will be sleeping',after:'already.',
+   tense:'Future Continuous',opts:['will sleep','sleeps','will be sleeping','is sleeping'],
+   fact:'"will be sleeping" = Future Continuous. Ongoing at a specific future time!'},
+];
+
+const CHEERS=['Excellent!','Perfect!','Amazing!','Spot on!','Brilliant!','You got it!','Outstanding!','Well done!','Champion!','Superstar!'];
+const TOTAL=12;
+let qIdx=0,stg=1,score=0,answered=false;
+
+const tenseToCell={
+  'Simple Present':4,'Present Continuous':5,'Present Perfect':6,'Present Perfect Continuous':7,
+  'Simple Past':0,'Past Continuous':1,'Past Perfect':2,'Past Perfect Continuous':3,
+  'Simple Future':8,'Future Continuous':9,'Future Perfect':10,'Future Perfect Continuous':11
+};
+function highlightCell(tense){
+  document.querySelectorAll('.tense-cell').forEach(c=>c.classList.remove('active'));
+  const idx=tenseToCell[tense];
+  if(idx!==undefined) document.querySelectorAll('.tense-cell')[idx].classList.add('active');
+}
+
+function cheer(){return CHEERS[Math.floor(Math.random()*CHEERS.length)]}
+function confetti(){
+  const C=['#FFD166','#FF9F1C','#06D6A0','#4CC9F0','#C77DFF'];
+  for(let i=0;i<28;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;top:0;background:${C[i%5]};animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*2}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
+  }
+}
+function updateStars(){
+  const lit=Math.min(5,Math.floor(score/2.4));
+  for(let i=1;i<=5;i++) document.getElementById('s'+i).classList.toggle('lit',i<=lit);
+}
+function showOverlay(emoji,title,fact,isEnd){
+  document.getElementById('ovEmoji').textContent=emoji;
+  document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovFact').textContent=fact;
+  document.getElementById('ovPlayAgain').style.display=isEnd?'block':'none';
+  const ov=document.getElementById('overlay');ov.classList.add('show');
+  if(!isEnd)setTimeout(()=>ov.classList.remove('show'),2700);
+}
+function showNext(v){document.getElementById('nextBtn').classList.toggle('visible',v)}
+function setProgress(q){document.getElementById('progressLabel').textContent=`Question ${q} of ${TOTAL}`}
+
+function renderS1(i){
+  setProgress(i+1); answered=false; showNext(false);
+  const q=S1[i];
+  highlightCell(q.correct);
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">🕵️ Stage 1 — Name the Tense</div>
+      <div class="identify-q">"${q.sentence}"</div>
+      <div class="tense-ref"><strong>Formula:</strong> ${q.formula}</div>
+      <div class="question-text">Which tense is used in this sentence?</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS1('${o}','${q.correct}','${q.fact}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS1(sel,correct,fact,btn){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct'); score++; updateStars();
+    fb.textContent=cheer()+' '+correct+'!'; fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('🕰️',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct')});
+    fb.textContent='It\'s '+correct+'. '+fact; fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function renderS2(i){
+  setProgress(S1.length+i+1); answered=false; showNext(false);
+  const q=S2[i];
+  highlightCell(q.tense);
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card">
+      <div class="stage-label">✍️ Stage 2 — Fill the Blank</div>
+      <div class="tense-badge">⏱️ ${q.tense}</div>
+      <div class="sentence-display">
+        ${q.before} <span class="blank" id="blankSpan">_____</span> ${q.after}
+      </div>
+      <div class="question-text">Choose the correct verb form:</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="opt-btn" onclick="checkS2('${o}','${q.blank}','${q.fact}',this)">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+function checkS2(sel,correct,fact,btn){
+  if(answered)return; answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const bs=document.getElementById('blankSpan');
+  const fb=document.getElementById('fb');
+  if(sel===correct){
+    btn.classList.add('correct'); score++; updateStars();
+    if(bs){bs.textContent=correct;bs.style.color='var(--teal)';bs.style.borderColor='var(--teal)'}
+    fb.textContent=cheer()+' "'+correct+'" is correct!'; fb.className='feedback correct';
+    if(score%3===0)confetti();
+    setTimeout(()=>showOverlay('✍️',cheer(),fact,false),300);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct')});
+    if(bs){bs.textContent=correct;bs.style.color='var(--orange)';bs.style.borderColor='var(--orange)'}
+    fb.textContent='Correct: "'+correct+'". '+fact; fb.className='feedback wrong';
+  }
+  showNext(true);
+}
+
+function nextQ(){
+  qIdx++;
+  if(stg===1){
+    if(qIdx<S1.length) renderS1(qIdx);
+    else{stg=2;qIdx=0;
+      document.querySelectorAll('.tense-cell').forEach(c=>c.classList.remove('active'));
+      showTrans('✍️','Stage 2: Fill the Blank!','Now choose the correct verb form to complete each sentence. The tense grid at the top will highlight the target tense!',()=>renderS2(0))}
+  } else {
+    if(qIdx<S2.length) renderS2(qIdx);
+    else endGame();
+  }
+}
+function showTrans(emoji,title,desc,cb){
+  showNext(false);
+  document.getElementById('gameArea').innerHTML=`
+    <div class="stage-transition">
+      <div style="font-size:2.5rem">${emoji}</div>
+      <h3>${title}</h3><p>${desc}</p>
+    </div>`;
+  const nb=document.getElementById('nextBtn');
+  nb.textContent='Start Stage 2 →'; nb.classList.add('visible');
+  nb.onclick=()=>{nb.textContent='Next →';nb.onclick=nextQ;cb()};
+}
+function endGame(){
+  confetti();
+  document.querySelectorAll('.tense-cell').forEach(c=>c.classList.remove('active'));
+  const medals=['Tense Learner 🌱','Tense Spotter 🔍','Tense Master ⏱️','Grammar Champion 🏆','Tense Legend 🌟'];
+  const medal=medals[Math.min(4,Math.floor(score*5/TOTAL))];
+  document.getElementById('gameArea').innerHTML=`
+    <div class="game-card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:6px">${medal}</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;color:var(--orange);margin:10px 0">${score} / ${TOTAL}</div>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.55;margin-bottom:16px">
+        You just mastered 12 tenses — the full timeline of English! Native speakers use all 12 unconsciously every day. Now you do it consciously, which is even more powerful.
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>`;
+  document.getElementById('progressLabel').textContent=`Final Score: ${score}/${TOTAL}`;
+  showNext(false);
+}
+function resetGame(){
+  qIdx=0;stg=1;score=0;answered=false;
+  for(let i=1;i<=5;i++) document.getElementById('s'+i).classList.remove('lit');
+  document.querySelectorAll('.tense-cell').forEach(c=>c.classList.remove('active'));
+  const nb=document.getElementById('nextBtn');nb.textContent='Next →';nb.onclick=nextQ;
+  renderS1(0);
+}
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('ovPlayAgain').addEventListener('click',()=>{
+  document.getElementById('overlay').classList.remove('show');resetGame();
+});
+renderS1(0);
+</script>
+</body>
+</html>

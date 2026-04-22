@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GyanPlay – Fractions, Decimals & Symmetry</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--saffron:#FF6B00;--gold:#FFB800;--sky:#00AEEF;--green:#00C853;--pink:#FF4081;--purple:#7C3AED;--bg1:#0F0C29;--bg2:#302B63;--card:#1a1740;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));font-family:'Nunito',sans-serif;color:#fff;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes zoomIn{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes popIn{0%{transform:scale(.85);opacity:0}60%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+.fadeIn{animation:fadeIn .45s ease both;}
+.zoomIn{animation:zoomIn .5s cubic-bezier(.34,1.56,.64,1) both;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100;}
+.back-btn{background:none;border:2px solid rgba(255,255,255,.25);color:#fff;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:600;padding:7px 16px;border-radius:30px;cursor:pointer;transition:all .2s;}
+.back-btn:hover{background:rgba(255,255,255,.12);}
+.badge{background:var(--saffron);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.8rem;padding:5px 14px;border-radius:30px;letter-spacing:.5px;}
+.lang-toggle{display:flex;gap:6px;}
+.lang-btn{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);color:#fff;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;padding:5px 12px;border-radius:20px;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--saffron);border-color:var(--saffron);}
+
+/* SCORE BAR */
+.score-bar{padding:12px 20px 0;max-width:700px;margin:0 auto;}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.score-label{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.95rem;color:var(--gold);}
+.score-val{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.1rem;color:#fff;}
+.progress-track{height:8px;background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--purple));border-radius:10px;transition:width .5s ease;}
+
+/* MAIN */
+.main{max-width:700px;margin:0 auto;padding:20px;}
+.q-card{background:var(--card);border-radius:20px;padding:28px 28px 24px;box-shadow:0 8px 40px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.06);}
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.q-num{font-family:'Baloo 2',sans-serif;font-size:.85rem;font-weight:700;color:rgba(255,255,255,.45);}
+.q-type{font-family:'Baloo 2',sans-serif;font-size:.8rem;font-weight:700;padding:3px 10px;border-radius:20px;}
+.q-type.fractions{color:var(--saffron);background:rgba(255,107,0,.13);}
+.q-type.decimals{color:var(--sky);background:rgba(0,174,239,.13);}
+.q-type.symmetry{color:var(--purple);background:rgba(124,58,237,.13);}
+
+/* FRACTION DISPLAY BOX */
+.frac-display{text-align:center;margin:16px 0 22px;padding:20px 18px;background:rgba(255,107,0,.07);border:2px solid rgba(255,107,0,.25);border-radius:16px;}
+.frac-box{display:inline-flex;flex-direction:column;align-items:center;gap:2px;}
+.frac-num{font-family:'Baloo 2',sans-serif;font-size:2.8rem;font-weight:800;color:var(--saffron);line-height:1;}
+.frac-line{width:60px;height:4px;background:var(--gold);border-radius:2px;margin:4px 0;}
+.frac-den{font-family:'Baloo 2',sans-serif;font-size:2.8rem;font-weight:800;color:var(--saffron);line-height:1;}
+.frac-label{font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.4);display:block;margin-top:10px;}
+.frac-compare{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;}
+.frac-compare .vs{font-family:'Baloo 2',sans-serif;font-size:1.8rem;font-weight:800;color:rgba(255,255,255,.3);}
+
+/* DECIMAL DISPLAY BOX */
+.dec-display{text-align:center;margin:16px 0 22px;padding:20px 18px;background:rgba(0,174,239,.07);border:2px solid rgba(0,174,239,.25);border-radius:16px;}
+.big-dec{font-family:'Baloo 2',sans-serif;font-size:3.2rem;font-weight:800;color:var(--sky);display:block;}
+.dec-label{font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.4);display:block;margin-top:8px;}
+
+/* SYMMETRY DISPLAY BOX */
+.sym-display{text-align:center;margin:16px 0 22px;padding:20px 18px;background:rgba(124,58,237,.07);border:2px solid rgba(124,58,237,.25);border-radius:16px;}
+.sym-shape{font-family:'Baloo 2',sans-serif;font-size:2.8rem;font-weight:800;color:var(--purple);display:block;}
+.sym-letters{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin:8px 0 4px;}
+.sym-letter{font-family:'Baloo 2',sans-serif;font-size:2.2rem;font-weight:800;color:var(--purple);}
+.sym-label{font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.4);display:block;margin-top:6px;}
+
+/* QUESTION & CHOICES */
+.q-text{font-family:'Baloo 2',sans-serif;font-size:1.15rem;font-weight:700;line-height:1.5;margin-bottom:18px;color:#fff;}
+.choices{display:flex;gap:11px;flex-wrap:wrap;}
+.choice{flex:1;min-width:140px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);border-radius:14px;padding:14px 10px;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.15rem;cursor:pointer;text-align:center;color:#fff;transition:all .2s;}
+.choice:hover:not(:disabled){background:rgba(0,174,239,.13);border-color:var(--sky);}
+.choice.correct{background:rgba(0,200,83,.15);border-color:var(--green);color:var(--green);}
+.choice.wrong{background:rgba(255,64,129,.15);border-color:var(--pink);color:var(--pink);}
+.choice:disabled{cursor:default;}
+.choice-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.4);display:block;margin-bottom:4px;font-family:'Nunito',sans-serif;}
+
+/* FEEDBACK */
+.feedback-row{display:flex;align-items:center;gap:10px;margin-top:16px;padding:10px 14px;border-radius:12px;}
+.feedback-row.correct-fb{background:rgba(0,200,83,.12);border:1.5px solid rgba(0,200,83,.3);}
+.feedback-row.wrong-fb{background:rgba(255,64,129,.12);border:1.5px solid rgba(255,64,129,.3);}
+.fb-icon{font-size:1.6rem;}
+.fb-text{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1rem;}
+.feedback-row.correct-fb .fb-text{color:var(--green);}
+.feedback-row.wrong-fb .fb-text{color:var(--pink);}
+
+/* HINT / FORMULA BOX */
+.hint-box{margin-top:14px;background:rgba(255,184,0,.08);border:1.5px solid rgba(255,184,0,.3);border-radius:14px;padding:14px 16px;}
+.hint-title{font-family:'Baloo 2',sans-serif;font-size:.85rem;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.hint-text{font-family:'Nunito',sans-serif;font-size:.93rem;font-weight:600;line-height:1.65;color:rgba(255,255,255,.85);}
+
+/* NEXT BUTTON */
+.next-btn{margin-top:20px;background:linear-gradient(135deg,var(--sky),var(--purple));border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;padding:12px 32px;border-radius:50px;cursor:pointer;display:block;width:100%;transition:transform .18s;}
+.next-btn:hover{transform:scale(1.03);}
+
+/* END SCREEN */
+.end-card{background:var(--card);border-radius:24px;padding:40px 28px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.4);}
+.stars{font-size:2.8rem;margin-bottom:10px;animation:popIn .6s ease both;}
+.end-title{font-family:'Baloo 2',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.end-score{font-family:'Baloo 2',sans-serif;font-size:1.2rem;color:rgba(255,255,255,.75);margin-bottom:8px;}
+.end-breakdown{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:16px 0 24px;}
+.end-stat{background:rgba(255,255,255,.06);border-radius:12px;padding:10px 18px;font-family:'Baloo 2',sans-serif;font-size:.9rem;font-weight:700;color:rgba(255,255,255,.7);}
+.end-stat span{display:block;font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:2px;}
+.play-again{background:linear-gradient(135deg,var(--saffron),var(--gold));border:none;color:#fff;font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:800;padding:14px 36px;border-radius:50px;cursor:pointer;transition:transform .18s;}
+.play-again:hover{transform:scale(1.06);}
+
+/* RESPONSIVE */
+@media(max-width:480px){
+  .topbar{padding:10px 14px;}
+  .q-card{padding:20px 16px 18px;}
+  .choice{min-width:110px;font-size:1rem;padding:12px 8px;}
+  .frac-num,.frac-den{font-size:2.2rem;}
+  .big-dec{font-size:2.4rem;}
+  .end-title{font-size:1.5rem;}
+  .stars{font-size:2.2rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <span class="badge">📐 Mathematics</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('hi')">हि</button>
+    <button class="lang-btn" onclick="setLang('as')">অ</button>
+  </div>
+</div>
+
+<div class="score-bar">
+  <div class="score-row">
+    <span class="score-label" id="scoreLbl">Score</span>
+    <span class="score-val" id="scoreVal">0 / 100</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<div class="main" id="mainArea"></div>
+
+<script>
+// ─── QUESTION BANK (12 questions) ──────────────────────────────────────────
+const BANK = [
+
+  // ── FRACTIONS (Q1–Q4) ──────────────────────────────────────────────────
+  {
+    cat:"fractions",
+    display:{kind:"frac",num:"3",den:"7",label:""},
+    en:{
+      q:"What type of fraction is 3/7?",
+      choices:["Proper fraction","Improper fraction","Mixed number"],
+      ans:0,
+      hint:"Formula / Rule:\n• Proper fraction: numerator < denominator (e.g. 3/7, 2/5)\n• Improper fraction: numerator ≥ denominator (e.g. 7/3, 5/5)\n• Mixed number: whole part + proper fraction (e.g. 2½)\nHere 3 < 7, so 3/7 is a PROPER fraction."
+    },
+    hi:{
+      q:"3/7 किस प्रकार का भिन्न है?",
+      choices:["उचित भिन्न","विषम भिन्न","मिश्रित संख्या"],
+      ans:0,
+      hint:"नियम:\n• उचित भिन्न: अंश < हर (जैसे 3/7)\n• विषम भिन्न: अंश ≥ हर (जैसे 7/3)\n• मिश्रित: पूर्णांक + उचित भिन्न\nयहाँ 3 < 7, इसलिए 3/7 उचित भिन्न है।"
+    },
+    as:{
+      q:"3/7 কেনে ধৰণৰ ভগ্নাংশ?",
+      choices:["সাধাৰণ ভগ্নাংশ","অসাধাৰণ ভগ্নাংশ","মিশ্ৰিত সংখ্যা"],
+      ans:0,
+      hint:"নিয়ম:\n• সাধাৰণ: লব < হৰ (যেনে 3/7)\n• অসাধাৰণ: লব ≥ হৰ (যেনে 7/3)\n• মিশ্ৰিত: পূৰ্ণসংখ্যা + সাধাৰণ ভগ্নাংশ\nইয়াত 3 < 7, গতিকে 3/7 সাধাৰণ ভগ্নাংশ।"
+    }
+  },
+
+  {
+    cat:"fractions",
+    display:{kind:"frac-compare",a:{num:"2",den:"3"},b:{num:"4",den:"6"},label:"Are these equal?"},
+    en:{
+      q:"Are 2/3 and 4/6 equivalent fractions?",
+      choices:["Yes, they are equal","No, 4/6 is larger","No, 2/3 is larger"],
+      ans:0,
+      hint:"Equivalent Fractions:\nMultiply (or divide) both numerator AND denominator by the same number.\n2/3 × (2/2) = 4/6  ✓\nAlso: 2/3 = 0.666... and 4/6 = 0.666...\nSo YES — 2/3 and 4/6 are equivalent fractions."
+    },
+    hi:{
+      q:"क्या 2/3 और 4/6 समतुल्य भिन्न हैं?",
+      choices:["हाँ, वे बराबर हैं","नहीं, 4/6 बड़ा है","नहीं, 2/3 बड़ा है"],
+      ans:0,
+      hint:"समतुल्य भिन्न:\nअंश और हर को एक ही संख्या से गुणा/भाग करें।\n2/3 × (2/2) = 4/6 ✓\nइसलिए 2/3 और 4/6 समतुल्य भिन्न हैं।"
+    },
+    as:{
+      q:"2/3 আৰু 4/6 সমতুল্য ভগ্নাংশ নেকি?",
+      choices:["হয়, সমান","নহয়, 4/6 ডাঙৰ","নহয়, 2/3 ডাঙৰ"],
+      ans:0,
+      hint:"সমতুল্য ভগ্নাংশ:\nলব আৰু হৰক একে সংখ্যাৰে গুণ/ভাগ কৰক।\n2/3 × (2/2) = 4/6 ✓\nগতিকে 2/3 আৰু 4/6 সমতুল্য।"
+    }
+  },
+
+  {
+    cat:"fractions",
+    display:{kind:"frac-compare",a:{num:"3",den:"4"},b:{num:"5",den:"8"},label:"Which is greater?"},
+    en:{
+      q:"Which fraction is greater: 3/4 or 5/8?",
+      choices:["3/4","5/8","They are equal"],
+      ans:0,
+      hint:"Comparing fractions with different denominators:\nStep 1: Find LCM of 4 and 8 → LCM = 8\nStep 2: Convert to same denominator:\n  3/4 = 6/8    (multiply top & bottom by 2)\n  5/8 = 5/8    (unchanged)\nStep 3: 6/8 > 5/8, so 3/4 > 5/8."
+    },
+    hi:{
+      q:"कौन-सा भिन्न बड़ा है: 3/4 या 5/8?",
+      choices:["3/4","5/8","दोनों बराबर"],
+      ans:0,
+      hint:"विभिन्न हरों वाले भिन्नों की तुलना:\nLCM(4,8) = 8\n3/4 = 6/8, 5/8 = 5/8\n6/8 > 5/8, इसलिए 3/4 > 5/8।"
+    },
+    as:{
+      q:"কোনটো ভগ্নাংশ ডাঙৰ: 3/4 নে 5/8?",
+      choices:["3/4","5/8","দুয়ো সমান"],
+      ans:0,
+      hint:"ভিন্ন হৰৰ ভগ্নাংশ তুলনা:\nLCM(4,8)=8\n3/4=6/8, 5/8=5/8\n6/8 > 5/8, গতিকে 3/4 > 5/8।"
+    }
+  },
+
+  {
+    cat:"fractions",
+    display:{kind:"frac",num:"12",den:"18",label:"Simplify this fraction"},
+    en:{
+      q:"What is 12/18 in its simplest form?",
+      choices:["2/3","3/4","4/6"],
+      ans:0,
+      hint:"Simplest Form (Lowest Terms):\nDivide both numerator and denominator by their HCF.\nHCF(12, 18) = 6\n12 ÷ 6 = 2\n18 ÷ 6 = 3\nSo 12/18 = 2/3 (simplest form)."
+    },
+    hi:{
+      q:"12/18 का सरलतम रूप क्या है?",
+      choices:["2/3","3/4","4/6"],
+      ans:0,
+      hint:"सरलतम रूप:\nHCF(12,18) = 6\n12÷6=2, 18÷6=3\nइसलिए 12/18 = 2/3।"
+    },
+    as:{
+      q:"12/18 ৰ সৰলতম ৰূপ কি?",
+      choices:["2/3","3/4","4/6"],
+      ans:0,
+      hint:"সৰলতম ৰূপ:\nHCF(12,18) = 6\n12÷6=2, 18÷6=3\nগতিকে 12/18 = 2/3।"
+    }
+  },
+
+  // ── DECIMALS (Q5–Q8) ──────────────────────────────────────────────────
+  {
+    cat:"decimals",
+    display:{kind:"dec",val:"0.47",label:"Place value"},
+    en:{
+      q:"In 0.47, what digit is in the hundredths place?",
+      choices:["7","4","0"],
+      ans:0,
+      hint:"Decimal Place Values:\n  Tenths (1/10)  → 1st digit after decimal point\n  Hundredths (1/100) → 2nd digit after decimal point\nIn 0.47:\n  4 is in the tenths place\n  7 is in the hundredths place ✓"
+    },
+    hi:{
+      q:"0.47 में सौवें स्थान पर कौन-सा अंक है?",
+      choices:["7","4","0"],
+      ans:0,
+      hint:"दशमलव स्थानीय मान:\n  दसवें (1/10) → दशमलव के बाद पहला अंक\n  सौवें (1/100) → दशमलव के बाद दूसरा अंक\n0.47 में: 4 = दसवें, 7 = सौवें ✓"
+    },
+    as:{
+      q:"0.47 ত শতাংশ স্থানত কোন অংক আছে?",
+      choices:["7","4","0"],
+      ans:0,
+      hint:"দশমিক স্থানীয় মান:\n  দশমাংশ (1/10) → দশমিকৰ পিছৰ প্ৰথম অংক\n  শতাংশ (1/100) → দশমিকৰ পিছৰ দ্বিতীয় অংক\n0.47 ত: 4 = দশমাংশ, 7 = শতাংশ ✓"
+    }
+  },
+
+  {
+    cat:"decimals",
+    display:{kind:"frac",num:"1",den:"4",label:"Convert to decimal"},
+    en:{
+      q:"What is 1/4 as a decimal?",
+      choices:["0.25","0.50","0.40"],
+      ans:0,
+      hint:"Fraction to Decimal Conversion:\n1/4 → Divide 1 by 4:\n  1 ÷ 4 = 0.25\nRemember these common ones:\n  1/2 = 0.5,  1/4 = 0.25,  3/4 = 0.75\n  1/5 = 0.2,  1/10 = 0.1"
+    },
+    hi:{
+      q:"1/4 का दशमलव रूप क्या है?",
+      choices:["0.25","0.50","0.40"],
+      ans:0,
+      hint:"भिन्न से दशमलव:\n1÷4 = 0.25\nयाद रखें:\n1/2=0.5, 1/4=0.25, 3/4=0.75\n1/5=0.2, 1/10=0.1"
+    },
+    as:{
+      q:"1/4 ৰ দশমিক ৰূপ কি?",
+      choices:["0.25","0.50","0.40"],
+      ans:0,
+      hint:"ভগ্নাংশৰ পৰা দশমিক:\n1÷4 = 0.25\nমনত ৰাখক:\n1/2=0.5, 1/4=0.25, 3/4=0.75\n1/5=0.2, 1/10=0.1"
+    }
+  },
+
+  {
+    cat:"decimals",
+    display:{kind:"dec",val:"3.6 vs 3.60",label:"Compare these"},
+    en:{
+      q:"Which statement is correct about 3.6 and 3.60?",
+      choices:["3.6 = 3.60","3.60 > 3.6","3.6 > 3.60"],
+      ans:0,
+      hint:"Comparing Decimals:\nTrailing zeros after the last significant digit do NOT change the value.\n3.6  = 3.60  = 3.600\n(Adding zeros to the right of the last decimal digit keeps value equal.)\nAlways line up decimal points when comparing."
+    },
+    hi:{
+      q:"3.6 और 3.60 के बारे में कौन-सा कथन सही है?",
+      choices:["3.6 = 3.60","3.60 > 3.6","3.6 > 3.60"],
+      ans:0,
+      hint:"दशमलव की तुलना:\nदशमलव के अंत में शून्य जोड़ने से मान नहीं बदलता।\n3.6 = 3.60 = 3.600\nदशमलव बिंदु को सीध में रखकर तुलना करें।"
+    },
+    as:{
+      q:"3.6 আৰু 3.60 সম্পৰ্কে কোনটো সঠিক?",
+      choices:["3.6 = 3.60","3.60 > 3.6","3.6 > 3.60"],
+      ans:0,
+      hint:"দশমিক তুলনা:\nশেষত শূন্য যোগ কৰিলে মান নিবৰ্তায়।\n3.6 = 3.60 = 3.600\nদশমিক বিন্দু সমান্তৰাল ৰাখি তুলনা কৰক।"
+    }
+  },
+
+  {
+    cat:"decimals",
+    display:{kind:"dec",val:"1.35 + 2.40",label:"Addition"},
+    en:{
+      q:"What is 1.35 + 2.40?",
+      choices:["3.75","3.65","4.75"],
+      ans:0,
+      hint:"Adding Decimals:\nStep 1: Line up the decimal points.\n  1.35\n+ 2.40\n------\nStep 2: Add column by column from right:\n  5+0=5, 3+4=7, 1+2=3\nAnswer: 3.75\nTip: Write 2.4 as 2.40 to match decimal places."
+    },
+    hi:{
+      q:"1.35 + 2.40 = ?",
+      choices:["3.75","3.65","4.75"],
+      ans:0,
+      hint:"दशमलव जोड़:\nदशमलव बिंदुओं को सीधा रखें:\n  1.35\n+ 2.40\n------\nदाएं से जोड़ें: 5+0=5, 3+4=7, 1+2=3\nउत्तर: 3.75"
+    },
+    as:{
+      q:"1.35 + 2.40 = ?",
+      choices:["3.75","3.65","4.75"],
+      ans:0,
+      hint:"দশমিক যোগ:\nদশমিক বিন্দু সমান্তৰাল ৰাখক:\n  1.35\n+ 2.40\n------\nসোঁফালৰ পৰা যোগ: 5+0=5, 3+4=7, 1+2=3\nউত্তৰ: 3.75"
+    }
+  },
+
+  // ── SYMMETRY (Q9–Q12) ────────────────────────────────────────────────
+  {
+    cat:"symmetry",
+    display:{kind:"sym",shape:"Rectangle □",label:"Lines of symmetry"},
+    en:{
+      q:"How many lines of symmetry does a rectangle have?",
+      choices:["2","4","1"],
+      ans:0,
+      hint:"Lines of Symmetry:\n• Square → 4 lines (horizontal, vertical, 2 diagonal)\n• Rectangle → 2 lines (horizontal and vertical only)\n• Circle → Infinite lines\n• Equilateral triangle → 3 lines\nA rectangle's diagonals are NOT lines of symmetry because the two halves don't mirror each other."
+    },
+    hi:{
+      q:"एक आयत में कितनी सममिति रेखाएं होती हैं?",
+      choices:["2","4","1"],
+      ans:0,
+      hint:"सममिति रेखाएं:\n• वर्ग → 4\n• आयत → 2 (केवल क्षैतिज और ऊर्ध्वाधर)\n• वृत्त → अनंत\n• समबाहु त्रिभुज → 3\nआयत के विकर्ण सममिति रेखाएं नहीं हैं।"
+    },
+    as:{
+      q:"আয়তৰ প্ৰতিসাম্যৰ ৰেখা কেইটা?",
+      choices:["2","4","1"],
+      ans:0,
+      hint:"প্ৰতিসাম্যৰ ৰেখা:\n• বৰ্গ → 4\n• আয়ত → 2 (কেৱল আনুভূমিক আৰু উলম্ব)\n• বৃত্ত → অসীম\n• সমবাহু ত্ৰিভুজ → 3\nআয়তৰ কৰ্ণ প্ৰতিসাম্যৰ ৰেখা নহয়।"
+    }
+  },
+
+  {
+    cat:"symmetry",
+    display:{kind:"sym-letters",letters:["A","H","M","O"],label:"Letters with symmetry"},
+    en:{
+      q:"Which letter does NOT have a line of symmetry?",
+      choices:["F","A","H"],
+      ans:0,
+      hint:"Letters and Lines of Symmetry:\n• A → 1 line (vertical)\n• H → 2 lines (horizontal + vertical)\n• M → 1 line (vertical)\n• O → multiple lines\n• F → NO line of symmetry (cannot be folded to match)\n• B → 1 line (horizontal only)\n• C → 1 line (horizontal)"
+    },
+    hi:{
+      q:"किस अक्षर में सममिति रेखा नहीं है?",
+      choices:["F","A","H"],
+      ans:0,
+      hint:"अक्षरों में सममिति:\n• A → 1 रेखा (ऊर्ध्वाधर)\n• H → 2 रेखाएं\n• M → 1 रेखा (ऊर्ध्वाधर)\n• O → अनेक रेखाएं\n• F → कोई सममिति रेखा नहीं ✗"
+    },
+    as:{
+      q:"কোন আখৰত প্ৰতিসাম্যৰ ৰেখা নাই?",
+      choices:["F","A","H"],
+      ans:0,
+      hint:"আখৰত প্ৰতিসাম্য:\n• A → 1 ৰেখা\n• H → 2 ৰেখা\n• M → 1 ৰেখা\n• O → বহুত ৰেখা\n• F → কোনো প্ৰতিসাম্য ৰেখা নাই ✗"
+    }
+  },
+
+  {
+    cat:"symmetry",
+    display:{kind:"sym",shape:"Circle ○",label:"Lines of symmetry"},
+    en:{
+      q:"How many lines of symmetry does a circle have?",
+      choices:["Infinite","4","2"],
+      ans:0,
+      hint:"Circle and Lines of Symmetry:\nA circle has INFINITE lines of symmetry.\nEvery diameter (a line through the centre) is a line of symmetry.\nSince there are infinitely many diameters, there are infinitely many lines of symmetry.\nThis is unlike any polygon."
+    },
+    hi:{
+      q:"एक वृत्त में कितनी सममिति रेखाएं होती हैं?",
+      choices:["अनंत","4","2"],
+      ans:0,
+      hint:"वृत्त में सममिति रेखाएं:\nवृत्त में अनंत सममिति रेखाएं होती हैं।\nवृत्त का हर व्यास एक सममिति रेखा है और असंख्य व्यास खींचे जा सकते हैं।"
+    },
+    as:{
+      q:"বৃত্তৰ প্ৰতিসাম্যৰ ৰেখা কেইটা?",
+      choices:["অসীম","4","2"],
+      ans:0,
+      hint:"বৃত্তৰ প্ৰতিসাম্য:\nবৃত্তৰ প্ৰতিসাম্যৰ ৰেখা অসীম।\nকেন্দ্ৰৰ মাজেৰে যোৱা প্ৰতিটো ব্যাস এটা প্ৰতিসাম্যৰ ৰেখা।"
+    }
+  },
+
+  {
+    cat:"symmetry",
+    display:{kind:"sym",shape:"Equilateral △",label:"Lines of symmetry"},
+    en:{
+      q:"What is the definition of a line of symmetry?",
+      choices:["A line that divides a shape into two mirror-image halves","A line that bisects all angles","A line passing through the centre"],
+      ans:0,
+      hint:"Line of Symmetry (Axis of Symmetry):\nDefinition: A line that divides a figure into two congruent halves that are mirror images of each other.\nWhen you fold the figure along this line, the two halves overlap perfectly.\nExample: An equilateral triangle has 3 such lines — one from each vertex to the midpoint of the opposite side."
+    },
+    hi:{
+      q:"सममिति रेखा की परिभाषा क्या है?",
+      choices:["वह रेखा जो आकृति को दो दर्पण-प्रतिबिंब भागों में बांटे","वह रेखा जो सभी कोण समद्विभाजित करे","केंद्र से गुजरने वाली रेखा"],
+      ans:0,
+      hint:"सममिति रेखा:\nवह रेखा जो किसी आकृति को दो सर्वांगसम दर्पण-प्रतिबिंब भागों में विभाजित करे।\nरेखा पर मोड़ने पर दोनों भाग पूरी तरह मेल खाते हैं।\nउदाहरण: समबाहु त्रिभुज में 3 सममिति रेखाएं।"
+    },
+    as:{
+      q:"প্ৰতিসাম্যৰ ৰেখাৰ সংজ্ঞা কি?",
+      choices:["যি ৰেখাই আকৃতিক দুটা দাপোণ প্ৰতিবিম্বত ভাগ কৰে","যি ৰেখাই সকলো কোণ সমদ্বিখণ্ড কৰে","কেন্দ্ৰৰ মাজেৰে যোৱা ৰেখা"],
+      ans:0,
+      hint:"প্ৰতিসাম্যৰ ৰেখা:\nযি ৰেখাই এটা আকৃতিক দুটা সৰ্বাঙ্গসম দাপোণ-প্ৰতিবিম্বত ভাগ কৰে।\nএই ৰেখাত ভাঁজ কৰিলে দুটা অংশ সম্পূৰ্ণ মিলি যায়।\nসমবাহু ত্ৰিভুজত 3 টা প্ৰতিসাম্যৰ ৰেখা।"
+    }
+  }
+
+]; // end BANK
+
+// ─── GAME STATE ─────────────────────────────────────────────────────────────
+let lang = 'en';
+let session = [];      // 10 random questions
+let current = 0;
+let score = 0;
+let answered = false;
+
+const TOTAL_Q = 10;
+const PTS_EACH = 10;
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+  // Update score label
+  const lblMap = {en:'Score', hi:'स्कोर', as:'স্কোৰ'};
+  document.getElementById('scoreLbl').textContent = lblMap[l];
+  renderQuestion();
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function initSession() {
+  // Pick 10 questions from 12 (shuffle, take first 10)
+  session = shuffle(BANK).slice(0, TOTAL_Q);
+  current = 0;
+  score = 0;
+  answered = false;
+  updateScoreBar();
+  renderQuestion();
+}
+
+function updateScoreBar() {
+  document.getElementById('scoreVal').textContent = `${score} / 100`;
+  const pct = (current / TOTAL_Q) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+// ─── DISPLAY BUILDERS ───────────────────────────────────────────────────────
+function buildFrac(num, den) {
+  return `<div class="frac-box">
+    <span class="frac-num">${num}</span>
+    <div class="frac-line"></div>
+    <span class="frac-den">${den}</span>
+  </div>`;
+}
+
+function buildDisplay(d) {
+  if (d.kind === 'frac') {
+    return `<div class="frac-display">
+      ${buildFrac(d.num, d.den)}
+      ${d.label ? `<span class="frac-label">${d.label}</span>` : ''}
+    </div>`;
+  }
+  if (d.kind === 'frac-compare') {
+    return `<div class="frac-display">
+      <div class="frac-compare">
+        ${buildFrac(d.a.num, d.a.den)}
+        <span class="vs">?</span>
+        ${buildFrac(d.b.num, d.b.den)}
+      </div>
+      ${d.label ? `<span class="frac-label" style="margin-top:12px;display:block;">${d.label}</span>` : ''}
+    </div>`;
+  }
+  if (d.kind === 'dec') {
+    return `<div class="dec-display">
+      <span class="big-dec">${d.val}</span>
+      ${d.label ? `<span class="dec-label">${d.label}</span>` : ''}
+    </div>`;
+  }
+  if (d.kind === 'sym') {
+    return `<div class="sym-display">
+      <span class="sym-shape">${d.shape}</span>
+      ${d.label ? `<span class="sym-label">${d.label}</span>` : ''}
+    </div>`;
+  }
+  if (d.kind === 'sym-letters') {
+    const ltrs = d.letters.map(l => `<span class="sym-letter">${l}</span>`).join('');
+    return `<div class="sym-display">
+      <div class="sym-letters">${ltrs}</div>
+      ${d.label ? `<span class="sym-label">${d.label}</span>` : ''}
+    </div>`;
+  }
+  return '';
+}
+
+function getCatTypeClass(cat) {
+  if (cat === 'fractions') return 'fractions';
+  if (cat === 'decimals') return 'decimals';
+  return 'symmetry';
+}
+
+function getCatLabel(cat, l) {
+  const map = {
+    fractions: {en:'Fractions', hi:'भिन्न', as:'ভগ্নাংশ'},
+    decimals:  {en:'Decimals',  hi:'दशमलव', as:'দশমিক'},
+    symmetry:  {en:'Symmetry',  hi:'सममिति', as:'প্ৰতিসাম্য'},
+  };
+  return map[cat][l];
+}
+
+// ─── RENDER QUESTION ────────────────────────────────────────────────────────
+function renderQuestion() {
+  const area = document.getElementById('mainArea');
+  if (current >= TOTAL_Q) { renderEnd(); return; }
+
+  const q = session[current];
+  const data = q[lang];
+  answered = false;
+
+  const typeClass = getCatTypeClass(q.cat);
+  const typeLabel = getCatLabel(q.cat, lang);
+
+  const qNumLabel = lang === 'hi' ? 'प्रश्न' : lang === 'as' ? 'প্ৰশ্ন' : 'Question';
+
+  const choicesHTML = data.choices.map((c, i) =>
+    `<button class="choice" onclick="pick(${i})" id="ch${i}">${c}</button>`
+  ).join('');
+
+  area.innerHTML = `
+    <div class="q-card fadeIn">
+      <div class="q-meta">
+        <span class="q-num">${qNumLabel} ${current+1} / ${TOTAL_Q}</span>
+        <span class="q-type ${typeClass}">${typeLabel}</span>
+      </div>
+      ${buildDisplay(q.display)}
+      <p class="q-text" id="qText">${data.q}</p>
+      <div class="choices" id="choicesWrap">${choicesHTML}</div>
+      <div id="feedback"></div>
+    </div>`;
+}
+
+// ─── PICK ANSWER ────────────────────────────────────────────────────────────
+function pick(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = session[current];
+  const data = q[lang];
+  const correct = data.ans;
+  const isRight = (idx === correct);
+
+  // Disable all buttons
+  data.choices.forEach((_, i) => {
+    const btn = document.getElementById('ch' + i);
+    btn.disabled = true;
+    if (i === correct) btn.classList.add('correct');
+    else if (i === idx)  btn.classList.add('wrong');
+  });
+
+  if (isRight) score += PTS_EACH;
+  updateScoreBar();
+
+  // Feedback icons/text
+  const fbLabels = {
+    right: {en:'Correct!', hi:'सही!', as:'শুদ্ধ!'},
+    wrong: {en:'Not quite!', hi:'गलत!', as:'ভুল!'},
+  };
+
+  const fbText = isRight ? fbLabels.right[lang] : fbLabels.wrong[lang];
+  const fbClass = isRight ? 'correct-fb' : 'wrong-fb';
+  const fbIcon = isRight ? '✅' : '❌';
+
+  const nextLabel = {en:'Next →', hi:'अगला →', as:'পৰৱৰ্তী →'};
+  const hintLabel = {en:'Formula / Hint', hi:'सूत्र / संकेत', as:'সূত্ৰ / ইঙ্গিত'};
+
+  document.getElementById('feedback').innerHTML = `
+    <div class="feedback-row ${fbClass}">
+      <span class="fb-icon">${fbIcon}</span>
+      <span class="fb-text">${fbText}</span>
+    </div>
+    <div class="hint-box">
+      <div class="hint-title">💡 ${hintLabel[lang]}</div>
+      <div class="hint-text">${data.hint.replace(/\n/g,'<br>')}</div>
+    </div>
+    <button class="next-btn" onclick="nextQ()">${current+1 < TOTAL_Q ? nextLabel[lang] : (lang==='hi'?'परिणाम देखें':lang==='as'?'ফলাফল চাওক':'See Result')}</button>`;
+}
+
+// ─── NEXT QUESTION ──────────────────────────────────────────────────────────
+function nextQ() {
+  current++;
+  updateScoreBar();
+  renderQuestion();
+}
+
+// ─── END SCREEN ─────────────────────────────────────────────────────────────
+function renderEnd() {
+  const pct = score; // already /100
+  let stars = '☆☆☆';
+  if (pct >= 90) stars = '⭐⭐⭐';
+  else if (pct >= 70) stars = '⭐⭐☆';
+  else if (pct >= 40) stars = '⭐☆☆';
+
+  const titles = {
+    en: pct >= 90 ? 'Outstanding!' : pct >= 70 ? 'Well Done!' : pct >= 40 ? 'Good Try!' : 'Keep Practising!',
+    hi: pct >= 90 ? 'शानदार!' : pct >= 70 ? 'शाबाश!' : pct >= 40 ? 'अच्छा प्रयास!' : 'अभ्यास जारी रखो!',
+    as: pct >= 90 ? 'অসাধাৰণ!' : pct >= 70 ? 'ভালেই হ'ল!' : pct >= 40 ? 'ভাল চেষ্টা!' : 'অনুশীলন কৰা!',
+  };
+
+  const correct = score / PTS_EACH;
+  const wrong   = TOTAL_Q - correct;
+
+  const labels = {
+    score:   {en:'Score', hi:'स्कोर', as:'স্কোৰ'},
+    correct: {en:'Correct', hi:'सही', as:'শুদ্ধ'},
+    wrong:   {en:'Wrong', hi:'गलत', as:'ভুল'},
+    again:   {en:'Play Again', hi:'फिर खेलें', as:'আকৌ খেলক'},
+  };
+
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('scoreVal').textContent = `${score} / 100`;
+
+  document.getElementById('mainArea').innerHTML = `
+    <div class="end-card zoomIn">
+      <div class="stars">${stars}</div>
+      <div class="end-title">${titles[lang]}</div>
+      <div class="end-score">${labels.score[lang]}: ${score} / 100</div>
+      <div class="end-breakdown">
+        <div class="end-stat"><span>${correct}</span>${labels.correct[lang]}</div>
+        <div class="end-stat"><span>${wrong}</span>${labels.wrong[lang]}</div>
+        <div class="end-stat"><span>${TOTAL_Q}</span>${lang==='hi'?'कुल':lang==='as'?'মুঠ':'Total'}</div>
+      </div>
+      <button class="play-again" onclick="initSession()">${labels.again[lang]}</button>
+    </div>`;
+}
+
+// ─── BOOT ───────────────────────────────────────────────────────────────────
+initSession();
+</script>
+</body>
+</html>

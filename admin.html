@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GyanPlay — Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --saffron: #FF6B00;
+      --gold:    #FFB800;
+      --sky:     #00AEEF;
+      --green:   #00C853;
+      --pink:    #FF4081;
+      --red:     #FF3D3D;
+      --dark:    #1A1A2E;
+      --dark2:   #16213E;
+      --dark3:   #0F3460;
+      --bg:      #F4F6FB;
+      --card:    #ffffff;
+      --muted:   #7a7a9a;
+      --shadow:  0 4px 24px rgba(26,26,46,0.10);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--dark);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 220px;
+      background: var(--dark2);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 1rem;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 50;
+      transition: transform 0.3s;
+    }
+    .sidebar-logo {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800; font-size: 1.5rem;
+      color: var(--gold); margin-bottom: 0.25rem;
+    }
+    .sidebar-logo span { color: var(--sky); }
+    .sidebar-label {
+      font-size: 0.65rem; font-weight: 800;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 2rem;
+    }
+    .nav-section {
+      font-size: 0.65rem; font-weight: 800;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      padding: 0 0.5rem;
+      margin: 1rem 0 0.5rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 700; font-size: 0.88rem;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer; transition: all 0.2s;
+      border: none; background: none; width: 100%;
+      text-align: left;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+    .nav-item.active { background: rgba(255,184,0,0.12); color: var(--gold); }
+    .nav-item .icon { font-size: 1.1rem; width: 20px; text-align: center; }
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .admin-chip {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+    }
+    .admin-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
+    .admin-name {
+      font-size: 0.8rem; font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      flex: 1; overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap;
+    }
+    .logout-btn {
+      background: none; border: none;
+      color: rgba(255,255,255,0.3);
+      font-size: 1rem; cursor: pointer;
+      transition: color 0.2s; padding: 2px;
+    }
+    .logout-btn:hover { color: var(--red); }
+
+    /* ── MAIN AREA ── */
+    .main {
+      margin-left: 220px;
+      flex: 1;
+      background: var(--bg);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    /* topbar */
+    .main-topbar {
+      background: #fff;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #eef;
+      display: flex; align-items: center;
+      justify-content: space-between;
+    }
+    .page-title {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800; font-size: 1.3rem;
+      color: var(--dark);
+    }
+    .topbar-actions { display: flex; gap: 0.75rem; }
+
+    /* panels */
+    .panel { display: none; padding: 2rem; }
+    .panel.active { display: block; }
+
+    /* ── STAT CARDS ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .stat-card .s-icon { font-size: 1.8rem; }
+    .stat-card .s-num {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800; font-size: 2rem;
+      color: var(--dark); line-height: 1;
+    }
+    .stat-card .s-label { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+
+    /* ── TABLE ── */
+    .table-card {
+      background: var(--card);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .table-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #eef;
+      display: flex; align-items: center;
+      justify-content: space-between;
+    }
+    .table-header h3 {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700; font-size: 1.1rem;
+      color: var(--dark);
+    }
+    .search-input {
+      border: 1.5px solid #eef;
+      border-radius: 10px;
+      padding: 7px 14px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.85rem; color: var(--dark);
+      outline: none; transition: border-color 0.2s;
+      width: 200px;
+    }
+    .search-input:focus { border-color: var(--sky); }
+
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    thead th {
+      text-align: left;
+      padding: 10px 1.5rem;
+      font-size: 0.72rem; font-weight: 800;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--muted);
+      background: #fafafe;
+      border-bottom: 1px solid #eef;
+    }
+    tbody tr {
+      border-bottom: 1px solid #f0f0f8;
+      transition: background 0.15s;
+    }
+    tbody tr:hover { background: #fafafe; }
+    tbody tr:last-child { border-bottom: none; }
+    td { padding: 12px 1.5rem; color: var(--dark); }
+    .td-avatar {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .td-av {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--saffron); color: #fff;
+      font-weight: 800; font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .td-name { font-weight: 700; }
+    .td-email { font-size: 0.78rem; color: var(--muted); }
+    .badge {
+      display: inline-block;
+      padding: 2px 10px; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 800;
+    }
+    .badge-green { background: rgba(0,200,83,0.1); color: var(--green); }
+    .badge-red   { background: rgba(255,61,61,0.1); color: var(--red); }
+    .badge-gold  { background: rgba(255,184,0,0.1); color: #b07d00; }
+    .badge-blue  { background: rgba(0,174,239,0.1); color: var(--sky); }
+
+    .action-btn {
+      padding: 5px 12px; border-radius: 8px;
+      font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; border: none;
+      transition: opacity 0.2s;
+    }
+    .action-btn:hover { opacity: 0.8; }
+    .btn-extend { background: rgba(0,174,239,0.1); color: var(--sky); }
+    .btn-revoke { background: rgba(255,61,61,0.1);  color: var(--red); }
+    .btn-primary-sm {
+      background: var(--saffron); color: #fff;
+      padding: 8px 18px; border-radius: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700; font-size: 0.85rem;
+      border: none; cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-primary-sm:hover { opacity: 0.85; }
+
+    /* ── GAME MANAGER ── */
+    .game-manager-top {
+      display: flex; gap: 1rem;
+      margin-bottom: 1.5rem; flex-wrap: wrap;
+    }
+    .select-styled {
+      border: 1.5px solid #eef;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.88rem; color: var(--dark);
+      background: #fff; outline: none;
+      cursor: pointer; transition: border-color 0.2s;
+    }
+    .select-styled:focus { border-color: var(--saffron); }
+
+    .game-manager-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .admin-game-card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+      display: flex; flex-direction: column; gap: 0.75rem;
+      border: 2px solid transparent;
+    }
+    .admin-game-card:hover { border-color: var(--saffron); }
+    .agc-top { display: flex; align-items: center; gap: 10px; }
+    .agc-emoji {
+      font-size: 2rem; width: 48px; height: 48px;
+      border-radius: 12px; background: #FFF0E6;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .agc-title { font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 1rem; }
+    .agc-desc  { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+    .agc-url   { font-size: 0.75rem; color: var(--sky); word-break: break-all; }
+    .agc-actions { display: flex; gap: 8px; margin-top: 4px; }
+
+    /* ── ADD GAME FORM ── */
+    .form-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 1.75rem;
+      box-shadow: var(--shadow);
+      max-width: 600px;
+    }
+    .form-card h3 {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700; font-size: 1.1rem;
+      color: var(--dark); margin-bottom: 1.25rem;
+    }
+    .form-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .form-group {
+      display: flex; flex-direction: column;
+      gap: 5px; flex: 1; min-width: 200px;
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      font-size: 0.78rem; font-weight: 800;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .form-input {
+      border: 1.5px solid #eef;
+      border-radius: 10px; padding: 10px 14px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem; color: var(--dark);
+      outline: none; transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--saffron); }
+    textarea.form-input { resize: vertical; min-height: 80px; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: var(--dark);
+      color: #fff; padding: 12px 20px;
+      border-radius: 14px; font-weight: 600;
+      font-size: 0.88rem; box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      transform: translateY(80px); opacity: 0;
+      transition: all 0.35s cubic-bezier(.34,1.56,.64,1);
+      z-index: 999;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-left: 4px solid var(--green); }
+    .toast.error   { border-left: 4px solid var(--red); }
+
+    /* ── LOADING ── */
+    .loading-row {
+      display: flex; align-items: center; justify-content: center;
+      padding: 3rem; color: var(--muted); gap: 10px; font-weight: 600;
+    }
+    .spinner-sm {
+      width: 18px; height: 18px;
+      border: 2.5px solid #dde;
+      border-top-color: var(--saffron);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── CONFIRM MODAL ── */
+    .confirm-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 600; display: none;
+      align-items: center; justify-content: center;
+    }
+    .confirm-overlay.open { display: flex; }
+    .confirm-box {
+      background: #fff; border-radius: 20px;
+      padding: 2rem; max-width: 360px; width: 90%;
+      text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+    }
+    .confirm-box h3 { font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 1.2rem; color: var(--dark); margin-bottom: 0.5rem; }
+    .confirm-box p  { font-size: 0.88rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.5; }
+    .confirm-actions { display: flex; gap: 0.75rem; justify-content: center; }
+    .btn-cancel { background: #f0f0f8; color: var(--muted); padding: 10px 22px; border-radius: 10px; font-weight: 700; font-size: 0.88rem; border: none; cursor: pointer; }
+    .btn-danger { background: var(--red); color: #fff; padding: 10px 22px; border-radius: 10px; font-weight: 700; font-size: 0.88rem; border: none; cursor: pointer; }
+
+    @media (max-width: 700px) {
+      .sidebar { transform: translateX(-100%); }
+      .main { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">Gyan<span>Play</span></div>
+    <div class="sidebar-label">Admin Panel</div>
+
+    <div class="nav-section">Overview</div>
+    <button class="nav-item active" onclick="switchPanel('dashboard')">
+      <span class="icon">📊</span> Dashboard
+    </button>
+
+    <div class="nav-section">Manage</div>
+    <button class="nav-item" onclick="switchPanel('users')">
+      <span class="icon">👥</span> Users
+    </button>
+    <button class="nav-item" onclick="switchPanel('payments')">
+      <span class="icon">💳</span> Payments
+    </button>
+    <button class="nav-item" onclick="switchPanel('games')">
+      <span class="icon">🎮</span> Games
+    </button>
+
+    <div class="sidebar-footer">
+      <div class="admin-chip">
+        <div class="admin-dot"></div>
+        <span class="admin-name" id="sidebarAdminName">Admin</span>
+        <button class="logout-btn" onclick="handleLogout()" title="Logout">⏻</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+    <div class="main-topbar">
+      <div class="page-title" id="pageTitle">📊 Dashboard</div>
+      <div class="topbar-actions" id="topbarActions"></div>
+    </div>
+
+    <!-- ── DASHBOARD PANEL ── -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="s-icon">👥</div>
+          <div class="s-num" id="statTotalUsers">—</div>
+          <div class="s-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-icon">💳</div>
+          <div class="s-num" id="statTotalPayments">—</div>
+          <div class="s-label">Total Purchases</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-icon">💰</div>
+          <div class="s-num" id="statRevenue">—</div>
+          <div class="s-label">Total Revenue</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-icon">🎮</div>
+          <div class="s-num" id="statGames">—</div>
+          <div class="s-label">Games Added</div>
+        </div>
+      </div>
+
+      <!-- Recent payments -->
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Recent Purchases</h3>
+        </div>
+        <div id="recentPaymentsBody">
+          <div class="loading-row"><div class="spinner-sm"></div> Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── USERS PANEL ── -->
+    <div class="panel" id="panel-users">
+      <div class="table-card">
+        <div class="table-header">
+          <h3>All Users</h3>
+          <input class="search-input" id="userSearch" placeholder="Search name / email..." oninput="filterUsers()"/>
+        </div>
+        <div id="usersTableBody">
+          <div class="loading-row"><div class="spinner-sm"></div> Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAYMENTS PANEL ── -->
+    <div class="panel" id="panel-payments">
+      <div class="table-card">
+        <div class="table-header">
+          <h3>All Purchases</h3>
+          <input class="search-input" id="paySearch" placeholder="Search user / class..." oninput="filterPayments()"/>
+        </div>
+        <div id="paymentsTableBody">
+          <div class="loading-row"><div class="spinner-sm"></div> Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── GAMES PANEL ── -->
+    <div class="panel" id="panel-games">
+
+      <!-- Filters -->
+      <div class="game-manager-top">
+        <select class="select-styled" id="filterClass" onchange="loadAdminGames()">
+          <option value="pre-nursery">Pre-Nursery</option>
+          <option value="class-1" selected>Class 1</option>
+          <option value="class-2">Class 2</option>
+          <option value="class-3">Class 3</option>
+          <option value="class-4">Class 4</option>
+          <option value="class-5">Class 5</option>
+          <option value="class-6">Class 6</option>
+          <option value="class-7">Class 7</option>
+          <option value="class-8">Class 8</option>
+          <option value="class-9">Class 9</option>
+          <option value="class-10">Class 10</option>
+        </select>
+        <select class="select-styled" id="filterSubject" onchange="loadAdminGames()">
+          <option value="maths">Maths</option>
+          <option value="english">English</option>
+          <option value="science">Science</option>
+          <option value="social">Social Studies</option>
+          <option value="hindi">Hindi</option>
+        </select>
+      </div>
+
+      <!-- Existing games -->
+      <div class="game-manager-grid" id="adminGamesGrid">
+        <div class="loading-row"><div class="spinner-sm"></div> Loading games...</div>
+      </div>
+
+      <!-- Add game form -->
+      <div class="form-card">
+        <h3>➕ Add New Game</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Game Title (English) *</label>
+            <input class="form-input" id="gameTitle" placeholder="e.g. Count the Stars"/>
+          </div>
+          <div class="form-group">
+            <label>Emoji / Icon</label>
+            <input class="form-input" id="gameEmoji" placeholder="e.g. ⭐" maxlength="4"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Title (Assamese)</label>
+            <input class="form-input" id="gameTitleAs" placeholder="অসমীয়া শিৰোনাম"/>
+          </div>
+          <div class="form-group">
+            <label>Title (Hindi)</label>
+            <input class="form-input" id="gameTitleHi" placeholder="हिंदी शीर्षक"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description (English)</label>
+          <textarea class="form-input" id="gameDesc" placeholder="Short description of what this game teaches..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Game URL *</label>
+          <input class="form-input" id="gameUrl" placeholder="https://your-game-url.com/game"/>
+        </div>
+        <div class="form-group">
+          <label>Thumbnail Image URL (optional)</label>
+          <input class="form-input" id="gameThumbnail" placeholder="https://..."/>
+        </div>
+        <button class="btn-primary-sm" onclick="addGame()">➕ Add Game</button>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- CONFIRM MODAL -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+      <h3 id="confirmTitle">Are you sure?</h3>
+      <p id="confirmMsg">This action cannot be undone.</p>
+      <div class="confirm-actions">
+        <button class="btn-cancel" onclick="closeConfirm()">Cancel</button>
+        <button class="btn-danger" id="confirmOkBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { auth, db }        from "./src/firebase.js";
+    import { logOut }          from "./src/auth.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      collection, getDocs, getDoc, doc,
+      setDoc, deleteDoc, updateDoc,
+      collectionGroup, query, orderBy, limit,
+      serverTimestamp, Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // ─────────────────────────────────────────────
+    //  ADMIN GATE — only UIDs in /admins collection
+    // ─────────────────────────────────────────────
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = "/login.html"; return; }
+      const adminSnap = await getDoc(doc(db, "admins", user.uid));
+      if (!adminSnap.exists()) {
+        alert("Access denied. You are not an admin.");
+        window.location.href = "/dashboard.html";
+        return;
+      }
+      document.getElementById("sidebarAdminName").textContent =
+        (user.displayName || user.email || "Admin").split(" ")[0];
+      loadDashboardStats();
+      loadRecentPayments();
+    });
+
+    window.handleLogout = async () => { await logOut(); };
+
+    // ─────────────────────────────────────────────
+    //  PANEL SWITCHING
+    // ─────────────────────────────────────────────
+    const PANEL_TITLES = {
+      dashboard: "📊 Dashboard",
+      users:     "👥 Users",
+      payments:  "💳 Payments",
+      games:     "🎮 Games Manager",
+    };
+
+    window.switchPanel = (name) => {
+      document.querySelectorAll(".panel").forEach(p =>
+        p.classList.toggle("active", p.id === `panel-${name}`)
+      );
+      document.querySelectorAll(".nav-item").forEach((btn, i) => {
+        btn.classList.toggle("active",
+          ["dashboard","users","payments","games"][i] === name);
+      });
+      document.getElementById("pageTitle").textContent = PANEL_TITLES[name];
+
+      if (name === "users")    loadUsers();
+      if (name === "payments") loadPayments();
+      if (name === "games")    loadAdminGames();
+    };
+
+    // ─────────────────────────────────────────────
+    //  DASHBOARD STATS
+    // ─────────────────────────────────────────────
+    async function loadDashboardStats() {
+      const usersSnap = await getDocs(collection(db, "users"));
+      document.getElementById("statTotalUsers").textContent = usersSnap.size;
+
+      let totalPurchases = 0, totalRevenue = 0;
+      for (const userDoc of usersSnap.docs) {
+        const pSnap = await getDocs(
+          collection(db, "users", userDoc.id, "purchases")
+        );
+        pSnap.forEach(p => {
+          totalPurchases++;
+          totalRevenue += (p.data().amountPaid || 0);
+        });
+      }
+      document.getElementById("statTotalPayments").textContent = totalPurchases;
+      document.getElementById("statRevenue").textContent =
+        "₹" + totalRevenue.toLocaleString("en-IN");
+
+      // count games
+      let gameCount = 0;
+      const classes = ["pre-nursery","class-1","class-2","class-3","class-4",
+                       "class-5","class-6","class-7","class-8","class-9","class-10"];
+      const subjects = ["maths","english","science","social","hindi"];
+      for (const cls of classes) {
+        for (const sub of subjects) {
+          const gs = await getDocs(
+            collection(db, "classes", cls, "subjects", sub, "games")
+          );
+          gameCount += gs.size;
+        }
+      }
+      document.getElementById("statGames").textContent = gameCount;
+    }
+
+    async function loadRecentPayments() {
+      const usersSnap = await getDocs(collection(db, "users"));
+      const all = [];
+      for (const userDoc of usersSnap.docs) {
+        const ud = userDoc.data();
+        const pSnap = await getDocs(
+          collection(db, "users", userDoc.id, "purchases")
+        );
+        pSnap.forEach(p => {
+          all.push({ ...p.data(), userName: ud.name, userEmail: ud.email });
+        });
+      }
+      all.sort((a, b) => {
+        const ta = a.paidOn?.toDate ? a.paidOn.toDate() : new Date(0);
+        const tb = b.paidOn?.toDate ? b.paidOn.toDate() : new Date(0);
+        return tb - ta;
+      });
+      const recent = all.slice(0, 10);
+
+      const body = document.getElementById("recentPaymentsBody");
+      if (!recent.length) {
+        body.innerHTML = `<div class="loading-row">No purchases yet.</div>`;
+        return;
+      }
+      body.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>User</th><th>Class</th><th>Amount</th>
+              <th>Date</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${recent.map(p => {
+              const dt = p.paidOn?.toDate ? p.paidOn.toDate() : new Date();
+              const exp = p.expiresOn?.toDate ? p.expiresOn.toDate() : new Date();
+              const active = exp > new Date();
+              return `
+                <tr>
+                  <td>
+                    <div class="td-name">${p.userName || "—"}</div>
+                    <div class="td-email">${p.userEmail || "—"}</div>
+                  </td>
+                  <td>${p.className}</td>
+                  <td><strong>₹${(p.amountPaid||0).toLocaleString("en-IN")}</strong></td>
+                  <td>${dt.toLocaleDateString("en-IN")}</td>
+                  <td><span class="badge ${active ? 'badge-green':'badge-red'}">${active?'Active':'Expired'}</span></td>
+                </tr>`;
+            }).join("")}
+          </tbody>
+        </table>`;
+    }
+
+    // ─────────────────────────────────────────────
+    //  USERS
+    // ─────────────────────────────────────────────
+    let allUsers = [];
+
+    async function loadUsers() {
+      const body = document.getElementById("usersTableBody");
+      body.innerHTML = `<div class="loading-row"><div class="spinner-sm"></div> Loading...</div>`;
+      const snap = await getDocs(collection(db, "users"));
+      allUsers = [];
+      for (const d of snap.docs) {
+        const u = d.data();
+        const pSnap = await getDocs(collection(db, "users", d.id, "purchases"));
+        const classes = [];
+        pSnap.forEach(p => classes.push(p.data().className));
+        allUsers.push({ uid: d.id, ...u, classes });
+      }
+      renderUsers(allUsers);
+    }
+
+    function renderUsers(list) {
+      const body = document.getElementById("usersTableBody");
+      if (!list.length) {
+        body.innerHTML = `<div class="loading-row">No users found.</div>`; return;
+      }
+      body.innerHTML = `
+        <table>
+          <thead>
+            <tr><th>User</th><th>Joined</th><th>Classes Owned</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            ${list.map(u => `
+              <tr>
+                <td>
+                  <div class="td-avatar">
+                    <div class="td-av">${(u.name||"?")[0].toUpperCase()}</div>
+                    <div>
+                      <div class="td-name">${u.name||"—"}</div>
+                      <div class="td-email">${u.email||"—"}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>${u.createdAt?.toDate ? u.createdAt.toDate().toLocaleDateString("en-IN") : "—"}</td>
+                <td>
+                  ${u.classes.length
+                    ? u.classes.map(c => `<span class="badge badge-gold">${c}</span> `).join("")
+                    : "<span style='color:var(--muted)'>None</span>"}
+                </td>
+                <td>
+                  <button class="action-btn btn-extend"
+                    onclick="extendAccess('${u.uid}', '${u.name}')">Extend</button>
+                </td>
+              </tr>`).join("")}
+          </tbody>
+        </table>`;
+    }
+
+    window.filterUsers = () => {
+      const q = document.getElementById("userSearch").value.toLowerCase();
+      renderUsers(allUsers.filter(u =>
+        (u.name||"").toLowerCase().includes(q) ||
+        (u.email||"").toLowerCase().includes(q)
+      ));
+    };
+
+    window.extendAccess = async (uid, name) => {
+      showConfirm(
+        "Extend Access?",
+        `Extend all active purchases for ${name} by 30 days?`,
+        async () => {
+          const pSnap = await getDocs(collection(db, "users", uid, "purchases"));
+          for (const p of pSnap.docs) {
+            const data = p.data();
+            const exp  = data.expiresOn?.toDate ? data.expiresOn.toDate() : new Date();
+            exp.setDate(exp.getDate() + 30);
+            await updateDoc(doc(db, "users", uid, "purchases", p.id), {
+              expiresOn: Timestamp.fromDate(exp)
+            });
+          }
+          showToast("✅ Access extended by 30 days!", "success");
+          closeConfirm();
+          loadUsers();
+        }
+      );
+    };
+
+    // ─────────────────────────────────────────────
+    //  PAYMENTS
+    // ─────────────────────────────────────────────
+    let allPayments = [];
+
+    async function loadPayments() {
+      const body = document.getElementById("paymentsTableBody");
+      body.innerHTML = `<div class="loading-row"><div class="spinner-sm"></div> Loading...</div>`;
+      const usersSnap = await getDocs(collection(db, "users"));
+      allPayments = [];
+      for (const userDoc of usersSnap.docs) {
+        const u = userDoc.data();
+        const pSnap = await getDocs(
+          collection(db, "users", userDoc.id, "purchases")
+        );
+        pSnap.forEach(p => {
+          allPayments.push({
+            uid: userDoc.id, ...p.data(),
+            userName: u.name, userEmail: u.email
+          });
+        });
+      }
+      allPayments.sort((a, b) => {
+        const ta = a.paidOn?.toDate ? a.paidOn.toDate() : new Date(0);
+        const tb = b.paidOn?.toDate ? b.paidOn.toDate() : new Date(0);
+        return tb - ta;
+      });
+      renderPayments(allPayments);
+    }
+
+    function renderPayments(list) {
+      const body = document.getElementById("paymentsTableBody");
+      if (!list.length) {
+        body.innerHTML = `<div class="loading-row">No purchases found.</div>`; return;
+      }
+      body.innerHTML = `
+        <table>
+          <thead>
+            <tr><th>User</th><th>Class</th><th>Amount</th><th>Paid On</th><th>Expires</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            ${list.map(p => {
+              const dt  = p.paidOn?.toDate    ? p.paidOn.toDate().toLocaleDateString("en-IN")    : "—";
+              const exp = p.expiresOn?.toDate ? p.expiresOn.toDate()                              : new Date();
+              const active = exp > new Date();
+              const expStr = p.expiresOn?.toDate ? exp.toLocaleDateString("en-IN") : "—";
+              return `
+                <tr>
+                  <td>
+                    <div class="td-name">${p.userName||"—"}</div>
+                    <div class="td-email">${p.userEmail||"—"}</div>
+                  </td>
+                  <td><span class="badge badge-gold">${p.className}</span></td>
+                  <td><strong>₹${(p.amountPaid||0).toLocaleString("en-IN")}</strong></td>
+                  <td>${dt}</td>
+                  <td>${expStr}</td>
+                  <td><span class="badge ${active?'badge-green':'badge-red'}">${active?'Active':'Expired'}</span></td>
+                  <td>
+                    <button class="action-btn btn-revoke"
+                      onclick="revokeAccess('${p.uid}','${p.classId}','${p.className}')">Revoke</button>
+                  </td>
+                </tr>`;
+            }).join("")}
+          </tbody>
+        </table>`;
+    }
+
+    window.filterPayments = () => {
+      const q = document.getElementById("paySearch").value.toLowerCase();
+      renderPayments(allPayments.filter(p =>
+        (p.userName||"").toLowerCase().includes(q) ||
+        (p.className||"").toLowerCase().includes(q)
+      ));
+    };
+
+    window.revokeAccess = (uid, classId, className) => {
+      showConfirm(
+        "Revoke Access?",
+        `This will immediately remove access to ${className} for this user.`,
+        async () => {
+          await deleteDoc(doc(db, "users", uid, "purchases", classId));
+          showToast(`❌ Access to ${className} revoked.`, "error");
+          closeConfirm();
+          loadPayments();
+        }
+      );
+    };
+
+    // ─────────────────────────────────────────────
+    //  GAMES MANAGER
+    // ─────────────────────────────────────────────
+    window.loadAdminGames = async () => {
+      const classId  = document.getElementById("filterClass").value;
+      const subject  = document.getElementById("filterSubject").value;
+      const grid     = document.getElementById("adminGamesGrid");
+      grid.innerHTML = `<div class="loading-row"><div class="spinner-sm"></div> Loading...</div>`;
+
+      const snap = await getDocs(
+        collection(db, "classes", classId, "subjects", subject, "games")
+      );
+      const games = [];
+      snap.forEach(d => games.push({ id: d.id, ...d.data() }));
+
+      if (!games.length) {
+        grid.innerHTML = `
+          <div style="color:var(--muted);font-size:0.88rem;padding:1rem;font-weight:600">
+            No games yet for this class + subject. Add one below ↓
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = "";
+      games.forEach(g => {
+        const card = document.createElement("div");
+        card.className = "admin-game-card";
+        card.innerHTML = `
+          <div class="agc-top">
+            <div class="agc-emoji">${g.thumbEmoji||"🎮"}</div>
+            <div>
+              <div class="agc-title">${g.title||"Untitled"}</div>
+              <div class="agc-desc">${g.desc||""}</div>
+            </div>
+          </div>
+          <div class="agc-url">🔗 ${g.url||"No URL"}</div>
+          <div class="agc-actions">
+            <button class="action-btn btn-extend" onclick="previewGame('${g.url}','${g.title}')">▶ Preview</button>
+            <button class="action-btn btn-revoke" onclick="deleteGame('${classId}','${subject}','${g.id}','${g.title}')">🗑 Delete</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    };
+
+    window.addGame = async () => {
+      const classId   = document.getElementById("filterClass").value;
+      const subject   = document.getElementById("filterSubject").value;
+      const title     = document.getElementById("gameTitle").value.trim();
+      const url       = document.getElementById("gameUrl").value.trim();
+      const emoji     = document.getElementById("gameEmoji").value.trim()    || "🎮";
+      const desc      = document.getElementById("gameDesc").value.trim()     || "";
+      const titleAs   = document.getElementById("gameTitleAs").value.trim()  || "";
+      const titleHi   = document.getElementById("gameTitleHi").value.trim()  || "";
+      const thumbnail = document.getElementById("gameThumbnail").value.trim()|| "";
+
+      if (!title || !url) {
+        showToast("⚠️ Title and URL are required.", "error"); return;
+      }
+
+      const gameId = title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+
+      await setDoc(
+        doc(db, "classes", classId, "subjects", subject, "games", gameId),
+        {
+          title, url, thumbEmoji: emoji, desc, thumbnail,
+          title_as: titleAs, title_hi: titleHi,
+          addedAt: serverTimestamp()
+        }
+      );
+
+      // Clear form
+      ["gameTitle","gameUrl","gameEmoji","gameDesc",
+       "gameTitleAs","gameTitleHi","gameThumbnail"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+
+      showToast(`✅ "${title}" added to ${classId} → ${subject}!`, "success");
+      loadAdminGames();
+    };
+
+    window.deleteGame = (classId, subject, gameId, title) => {
+      showConfirm(
+        "Delete Game?",
+        `"${title}" will be permanently removed from this class.`,
+        async () => {
+          await deleteDoc(
+            doc(db, "classes", classId, "subjects", subject, "games", gameId)
+          );
+          showToast(`🗑 "${title}" deleted.`, "error");
+          closeConfirm();
+          loadAdminGames();
+        }
+      );
+    };
+
+    window.previewGame = (url, title) => {
+      if (!url) { showToast("No URL set for this game.", "error"); return; }
+      window.open(url, "_blank");
+    };
+
+    // ─────────────────────────────────────────────
+    //  CONFIRM MODAL
+    // ─────────────────────────────────────────────
+    window.showConfirm = (title, msg, onOk) => {
+      document.getElementById("confirmTitle").textContent = title;
+      document.getElementById("confirmMsg").textContent   = msg;
+      document.getElementById("confirmOkBtn").onclick     = onOk;
+      document.getElementById("confirmOverlay").classList.add("open");
+    };
+    window.closeConfirm = () => {
+      document.getElementById("confirmOverlay").classList.remove("open");
+    };
+
+    // ─────────────────────────────────────────────
+    //  TOAST
+    // ─────────────────────────────────────────────
+    window.showToast = (msg, type = "success") => {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.className   = `toast ${type} show`;
+      setTimeout(() => { t.className = "toast"; }, 3500);
+    };
+  </script>
+
+</body>
+</html>

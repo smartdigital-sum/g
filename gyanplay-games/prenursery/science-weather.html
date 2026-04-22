@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Weather Wizard 🌤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Baloo 2',cursive;
+    min-height:100vh;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    user-select:none;
+    transition:background 1.5s ease;
+  }
+  body.sunny{background:linear-gradient(180deg,#FF8C00 0%,#FFD700 20%,#87CEEB 50%,#90EE90 100%);}
+  body.rainy{background:linear-gradient(180deg,#2c3e50 0%,#4a6174 30%,#7f9aad 60%,#b0c4de 100%);}
+  body.cloudy{background:linear-gradient(180deg,#636e72 0%,#95a5a6 30%,#b2bec3 60%,#dfe6e9 100%);}
+  body.snowy{background:linear-gradient(180deg,#74b9ff 0%,#a8d8f0 30%,#dfe6e9 60%,#f0f8ff 100%);}
+  body.windy{background:linear-gradient(180deg,#00b894 0%,#55efc4 30%,#81ecec 60%,#b2f8f0 100%);}
+  body.stormy{background:linear-gradient(180deg,#1a1a2e 0%,#16213e 30%,#2d3436 60%,#636e72 100%);}
+
+  /* weather scene */
+  .scene-layer{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    transition:opacity 1s ease;
+  }
+  .rain-drop{
+    position:absolute;top:-20px;width:2px;border-radius:2px;
+    background:rgba(100,180,255,.7);
+    animation:rainFall linear infinite;
+  }
+  @keyframes rainFall{to{transform:translateY(110vh);}}
+  .snow-flake{
+    position:absolute;top:-20px;
+    animation:snowFall linear infinite;
+    font-size:1rem;
+  }
+  @keyframes snowFall{to{transform:translateY(110vh) rotate(360deg);}}
+  .lightning{
+    position:fixed;inset:0;background:rgba(255,255,255,.8);
+    opacity:0;animation:lightningFlash .1s ease;
+    z-index:50;pointer-events:none;
+  }
+  @keyframes lightningFlash{0%{opacity:0;}50%{opacity:1;}100%{opacity:0;}}
+
+  /* sun animation */
+  .big-sun{
+    position:fixed;top:clamp(40px,8vw,80px);right:clamp(20px,6vw,80px);
+    font-size:clamp(4rem,14vw,7rem);z-index:2;
+    animation:sunSpin 10s linear infinite, sunFloat 3s ease-in-out infinite;
+    transition:opacity 1s;
+  }
+  @keyframes sunSpin{to{transform:rotate(360deg) translateY(-8px);}}
+  @keyframes sunFloat{0%,100%{margin-top:0;}50%{margin-top:-10px;}}
+
+  .header{position:relative;z-index:10;text-align:center;padding:18px 20px 8px;width:100%;}
+  .title{font-size:clamp(1.4rem,5vw,2.2rem);color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.3);}
+
+  .score-bar{position:relative;z-index:10;display:flex;gap:16px;align-items:center;margin-top:8px;}
+  .score-box{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);border-radius:20px;padding:6px 18px;color:#fff;font-size:1rem;}
+  .score-box span{color:#FFD700;font-size:1.2rem;}
+
+  .progress{position:relative;z-index:10;display:flex;gap:8px;margin-top:8px;}
+  .dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.3);transition:all .3s;}
+  .dot.done{background:#FFD700;box-shadow:0 0 8px #FFD700;}
+  .dot.active{background:#fff;transform:scale(1.3);}
+
+  /* question */
+  .question-box{
+    position:relative;z-index:10;
+    background:rgba(255,255,255,.25);backdrop-filter:blur(12px);
+    border:3px solid rgba(255,255,255,.5);border-radius:24px;
+    padding:clamp(12px,3vw,20px) clamp(20px,5vw,36px);
+    margin:12px 20px;text-align:center;
+    box-shadow:0 8px 32px rgba(0,0,0,.2);
+  }
+  .q-weather-icon{font-size:clamp(3rem,12vw,6rem);animation:weatherBob 2s ease-in-out infinite;}
+  @keyframes weatherBob{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+  .q-text{color:#fff;font-size:clamp(1rem,4vw,1.5rem);font-weight:700;margin-top:8px;text-shadow:0 1px 4px rgba(0,0,0,.2);}
+
+  /* choices */
+  .choices{
+    position:relative;z-index:10;
+    display:flex;gap:clamp(10px,3vw,16px);
+    flex-wrap:wrap;justify-content:center;
+    padding:0 20px;
+    width:100%;max-width:700px;
+  }
+  .weather-btn{
+    background:rgba(255,255,255,.2);backdrop-filter:blur(8px);
+    border:3px solid rgba(255,255,255,.3);border-radius:20px;
+    padding:clamp(12px,3vw,20px) clamp(14px,4vw,24px);
+    cursor:pointer;transition:all .2s;
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    min-width:clamp(80px,18vw,110px);
+  }
+  .weather-btn:hover{transform:scale(1.08);border-color:rgba(255,215,0,.8);background:rgba(255,255,255,.3);}
+  .weather-btn .w-icon{font-size:clamp(1.8rem,7vw,3rem);}
+  .weather-btn .w-name{color:#fff;font-size:clamp(.75rem,2.5vw,.95rem);font-weight:700;}
+  .weather-btn.correct{border-color:#2ed573;background:rgba(46,213,115,.3);animation:correctPop .5s ease;}
+  .weather-btn.wrong{border-color:#FF4757;background:rgba(255,71,87,.2);animation:wrongShake .4s ease;}
+  @keyframes correctPop{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1);}}
+  @keyframes wrongShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-10px);}75%{transform:translateX(10px);}}
+
+  .celebration{
+    position:fixed;inset:0;z-index:200;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.7);backdrop-filter:blur(10px);animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .celeb-emoji{font-size:clamp(4rem,15vw,7rem);animation:celebBounce .5s ease infinite alternate;}
+  @keyframes celebBounce{from{transform:scale(1);}to{transform:scale(1.15);}}
+  .celebration h2{color:#FFD700;font-size:clamp(2rem,8vw,3.5rem);text-align:center;margin:16px 0 8px;}
+  .celebration p{color:#fff;font-size:clamp(1rem,4vw,1.4rem);margin-bottom:24px;}
+  .next-btn{
+    background:linear-gradient(135deg,#FF6B00,#FFB800);color:#fff;border:none;border-radius:50px;
+    padding:14px 40px;font-family:'Baloo 2',cursive;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;
+    cursor:pointer;box-shadow:0 6px 24px rgba(255,107,0,.4);transition:transform .2s;
+  }
+  .next-btn:hover{transform:scale(1.05);}
+  .confetti-piece{position:fixed;pointer-events:none;z-index:300;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.2s ease-in forwards;}
+  @keyframes confettiFall{0%{opacity:1;}100%{transform:translateY(300px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body class="sunny">
+
+<div class="big-sun" id="bigSun">☀️</div>
+<div class="scene-layer" id="sceneLayer"></div>
+
+<div class="header">
+  <div class="title">🌤️ Weather Wizard</div>
+</div>
+<div class="score-bar">
+  <div class="score-box">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="score-box">🎯 Round: <span id="roundVal">1</span>/10</div>
+</div>
+<div class="progress" id="progress"></div>
+
+<div class="question-box">
+  <div class="q-weather-icon" id="qIcon">☀️</div>
+  <div class="q-text" id="qText">What weather is this?</div>
+</div>
+
+<div class="choices" id="choices"></div>
+
+<script>
+const WEATHERS=[
+  {id:'sunny',icon:'☀️',name:'Sunny',bodyClass:'sunny',sound:'sunny',description:'bright sunny day',
+   animation:'sunny',speakHint:'The sun is shining bright!'},
+  {id:'rainy',icon:'🌧️',name:'Rainy',bodyClass:'rainy',sound:'rainy',description:'rainy day',
+   animation:'rain',speakHint:'It is raining! Water falls from the sky!'},
+  {id:'cloudy',icon:'☁️',name:'Cloudy',bodyClass:'cloudy',sound:'cloudy',description:'cloudy day',
+   animation:'clouds',speakHint:'The sky is full of grey clouds!'},
+  {id:'snowy',icon:'❄️',name:'Snowy',bodyClass:'snowy',sound:'snowy',description:'snowy day',
+   animation:'snow',speakHint:'Snow is falling from the sky!'},
+  {id:'windy',icon:'💨',name:'Windy',bodyClass:'windy',sound:'windy',description:'windy day',
+   animation:'wind',speakHint:'The wind is blowing hard!'},
+  {id:'stormy',icon:'⛈️',name:'Stormy',bodyClass:'stormy',sound:'stormy',description:'stormy day',
+   animation:'storm',speakHint:'Thunder and lightning in the sky!'},
+];
+
+let score=0,round=0,current=null,answered=false;
+const TOTAL=10;
+let audioCtx;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function playWeatherSound(weather){
+  const ctx=getAudio();
+  if(weather==='rainy'){
+    // rain drops
+    for(let i=0;i<8;i++){
+      setTimeout(()=>{
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.type='sine';o.frequency.value=800+Math.random()*400;
+        g.gain.setValueAtTime(.08,ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.1);
+        o.start();o.stop(ctx.currentTime+.1);
+      },i*80+Math.random()*60);
+    }
+  } else if(weather==='stormy'){
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sawtooth';o.frequency.value=60;
+    g.gain.setValueAtTime(.3,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.8);
+    o.start();o.stop(ctx.currentTime+.8);
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='lightning';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),200);
+    },300);
+  } else if(weather==='windy'){
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sine';
+    o.frequency.setValueAtTime(100,ctx.currentTime);
+    o.frequency.linearRampToValueAtTime(300,ctx.currentTime+.4);
+    o.frequency.linearRampToValueAtTime(80,ctx.currentTime+.8);
+    g.gain.setValueAtTime(.2,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.9);
+    o.start();o.stop(ctx.currentTime+.9);
+  } else if(weather==='sunny'){
+    [523,659,784].forEach((f,i)=>{
+      setTimeout(()=>{
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.frequency.value=f;o.type='sine';
+        g.gain.setValueAtTime(.2,ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.4);
+        o.start();o.stop(ctx.currentTime+.4);
+      },i*150);
+    });
+  }
+}
+
+function playCorrect(){
+  const ctx=getAudio();
+  [523,659,784,1047].forEach((f,i)=>{
+    setTimeout(()=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.4);
+      o.start();o.stop(ctx.currentTime+.4);
+    },i*100);
+  });
+}
+
+function playWrong(){
+  const ctx=getAudio();
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);
+  o.frequency.value=200;o.type='sine';
+  g.gain.setValueAtTime(.2,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
+  o.start();o.stop(ctx.currentTime+.3);
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.85;u.pitch=1.3;
+  window.speechSynthesis.speak(u);
+}
+
+function setSceneAnimation(weather){
+  const layer=document.getElementById('sceneLayer');
+  layer.innerHTML='';
+  // update body class
+  document.body.className=weather.bodyClass;
+  // sun visibility
+  document.getElementById('bigSun').style.opacity=(weather.id==='sunny'||weather.id==='cloudy')?'1':'0';
+
+  if(weather.id==='rainy'||weather.id==='stormy'){
+    for(let i=0;i<30;i++){
+      const d=document.createElement('div');
+      d.className='rain-drop';
+      d.style.cssText=`left:${Math.random()*100}%;height:${10+Math.random()*15}px;animation-duration:${.5+Math.random()*.3}s;animation-delay:${Math.random()*.5}s;`;
+      layer.appendChild(d);
+    }
+  }
+  if(weather.id==='snowy'){
+    const flakes=['❄️','🌨️','⛄'];
+    for(let i=0;i<15;i++){
+      const s=document.createElement('div');
+      s.className='snow-flake';
+      s.textContent=flakes[i%flakes.length];
+      s.style.cssText=`left:${Math.random()*100}%;animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*2}s;font-size:${.8+Math.random()*.8}rem;`;
+      layer.appendChild(s);
+    }
+  }
+  if(weather.id==='windy'){
+    const items=['🍃','🌿','🍂','💨'];
+    for(let i=0;i<8;i++){
+      const w=document.createElement('div');
+      w.className='rain-drop';
+      w.style.cssText=`left:${Math.random()*100}%;font-size:1.2rem;width:auto;height:auto;background:none;animation-duration:${.8+Math.random()*.4}s;animation-delay:${Math.random()*.6}s;`;
+      w.textContent=items[i%items.length];
+      layer.appendChild(w);
+    }
+  }
+}
+
+function makeDots(){
+  const p=document.getElementById('progress');p.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<round?' done':i===round?' active':'');
+    p.appendChild(d);
+  }
+}
+
+function spawnConfetti(){
+  const cols=['#FF4757','#FFD700','#2ed573','#1e90ff','#a55eea'];
+  for(let i=0;i<20;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`left:${Math.random()*100}%;top:20%;background:${cols[i%cols.length]};animation-duration:${.8+Math.random()*.6}s;`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1400);
+  }
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+
+  current=WEATHERS[Math.floor(Math.random()*WEATHERS.length)];
+  document.getElementById('qIcon').textContent=current.icon;
+  document.getElementById('qText').textContent='What weather is this?';
+
+  setSceneAnimation(current);
+  playWeatherSound(current.id);
+
+  // 4 choices
+  const others=WEATHERS.filter(w=>w.id!==current.id).sort(()=>Math.random()-.5).slice(0,3);
+  const allChoices=[current,...others].sort(()=>Math.random()-.5);
+
+  const choicesEl=document.getElementById('choices');
+  choicesEl.innerHTML='';
+  allChoices.forEach(w=>{
+    const btn=document.createElement('div');
+    btn.className='weather-btn';
+    btn.innerHTML=`<span class="w-icon">${w.icon}</span><span class="w-name">${w.name}</span>`;
+    btn.onclick=()=>checkAnswer(btn,w);
+    choicesEl.appendChild(btn);
+  });
+
+  setTimeout(()=>speak(`${current.speakHint} What weather is this?`),500);
+}
+
+function checkAnswer(btn,weather){
+  if(answered)return;
+  answered=true;
+  if(weather.id===current.id){
+    btn.classList.add('correct');
+    playCorrect();
+    spawnConfetti();
+    score+=10;
+    document.getElementById('scoreVal').textContent=score;
+    speak(`Yes! It is ${current.name}! Great job!`);
+    round++;
+    makeDots();
+    setTimeout(newRound,1800);
+  } else {
+    btn.classList.add('wrong');
+    playWrong();
+    speak(`Oops! Look at the sky! Is it ${current.name}?`);
+    setTimeout(()=>{btn.classList.remove('wrong');answered=false;},800);
+  }
+}
+
+function showCelebration(){
+  document.body.className='sunny';
+  document.getElementById('bigSun').style.opacity='1';
+  speak(`You are a Weather Wizard! Amazing!`);
+  const ov=document.createElement('div');
+  ov.className='celebration';
+  ov.innerHTML=`
+    <div class="celeb-emoji">🌈</div>
+    <h2>Weather Wizard!</h2>
+    <p>Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!</p>
+    <button class="next-btn" onclick="restartGame()">Play Again 🌤️</button>
+  `;
+  document.body.appendChild(ov);
+}
+
+function restartGame(){
+  document.querySelector('.celebration')?.remove();
+  score=0;round=0;
+  document.getElementById('scoreVal').textContent=0;
+  newRound();
+}
+
+window.addEventListener('load',()=>{
+  window.speechSynthesis.getVoices();
+  makeDots();
+  setTimeout(()=>{
+    speak('What is the weather today?');
+    setTimeout(newRound,1200);
+  },500);
+});
+</script>
+</body>
+</html>

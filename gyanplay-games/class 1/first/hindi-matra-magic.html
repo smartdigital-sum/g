@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>मात्रा Magic ✨ — Class 1 Hindi</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans+Devanagari:wght@700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#FFD700;--magenta:#E91E8C;--purple:#6A1B9A;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans Devanagari','Nunito',sans-serif;background:linear-gradient(160deg,#FCE4EC,#F8BBD0,#CE93D8,#FCE4EC);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;user-select:none;}
+
+/* MAGIC SPARKLES */
+.sparkle{position:fixed;pointer-events:none;z-index:1;animation:sparkleAnim 3s ease-in-out infinite;}
+@keyframes sparkleAnim{0%,100%{opacity:0;transform:scale(0);}50%{opacity:1;transform:scale(1.2);}}
+
+.header{position:relative;z-index:20;text-align:center;padding:14px 20px 4px;width:100%;}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,5vw,2.3rem);color:#4A148C;text-shadow:2px 2px 0 rgba(255,255,255,.5);}
+.lvchip{display:inline-block;background:rgba(255,255,255,.75);border-radius:50px;padding:5px 18px;font-size:.82rem;font-weight:800;color:#4A148C;margin-top:4px;}
+.score-bar{position:relative;z-index:20;display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+.spill{background:rgba(255,255,255,.75);border-radius:50px;padding:6px 18px;font-weight:800;font-size:.9rem;color:#4A148C;}
+.spill span{color:#E91E8C;}
+.progress-row{position:relative;z-index:20;display:flex;gap:6px;margin-top:6px;}
+.pdot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.pdot.done{background:#E91E8C;box-shadow:0 0 8px #E91E8C;}
+.pdot.active{background:#fff;transform:scale(1.3);}
+
+/* WORD DISPLAY */
+.word-display{
+  position:relative;z-index:20;
+  background:rgba(255,255,255,.85);backdrop-filter:blur(10px);
+  border:4px solid rgba(255,255,255,.95);border-radius:28px;
+  padding:clamp(12px,3vw,20px) clamp(16px,4vw,28px);
+  margin:8px 16px;text-align:center;
+  max-width:600px;width:calc(100% - 32px);
+  box-shadow:0 8px 28px rgba(0,0,0,.08);
+}
+.picture-emoji{font-size:clamp(3.5rem,13vw,6rem);animation:picFloat 2s ease-in-out infinite;display:block;}
+@keyframes picFloat{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.picture-label{color:#4A148C;font-size:clamp(.85rem,3.2vw,1.15rem);font-weight:700;margin-top:4px;}
+.incomplete-word{
+  font-size:clamp(2rem,8vw,3.5rem);font-weight:900;
+  color:#4A148C;letter-spacing:4px;margin:6px 0;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+}
+.base-letter{color:#4A148C;}
+.matra-blank{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:clamp(32px,8vw,48px);height:clamp(40px,9vw,56px);
+  border-bottom:4px solid #E91E8C;
+  color:#E91E8C;font-size:clamp(1.8rem,7vw,3rem);
+  animation:blinkBlank 1s ease-in-out infinite;
+}
+@keyframes blinkBlank{0%,100%{opacity:1;}50%{opacity:.3;}}
+.matra-blank.filled{border-bottom-color:#43A047;color:#43A047;animation:none;}
+.rest-word{color:#4A148C;}
+
+/* MATRA CHOICES */
+.matra-area{position:relative;z-index:20;background:rgba(255,255,255,.75);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,.92);border-radius:22px;padding:14px 14px;margin:8px 14px;max-width:660px;width:calc(100% - 28px);box-shadow:0 6px 20px rgba(0,0,0,.08);}
+.matra-label{font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(74,20,140,.35);margin-bottom:10px;text-align:center;}
+.matra-row{display:flex;gap:clamp(8px,2.5vw,14px);flex-wrap:wrap;justify-content:center;}
+
+.matra-card{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:clamp(10px,2.5vw,16px) clamp(12px,3vw,20px);
+  border-radius:18px;cursor:pointer;
+  border:3px solid rgba(255,255,255,.7);
+  box-shadow:0 5px 0 rgba(0,0,0,.15),0 8px 18px rgba(0,0,0,.1);
+  transition:all .15s;position:relative;top:0;
+  min-width:clamp(64px,16vw,90px);
+}
+.matra-card:hover{top:-3px;box-shadow:0 8px 0 rgba(0,0,0,.12);}
+.matra-card:active{top:3px;box-shadow:0 2px 0 rgba(0,0,0,.15);}
+.matra-card.correct-m{border-color:#43A047;background:rgba(67,160,71,.2);animation:mPop .45s ease;}
+@keyframes mPop{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1);}}
+.matra-card.wrong-m{border-color:#E53935;background:rgba(229,57,53,.15);animation:mShake .35s ease;opacity:.35;pointer-events:none;}
+@keyframes mShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
+.mc-symbol{font-size:clamp(1.6rem,6vw,2.4rem);font-weight:900;color:#4A148C;}
+.mc-name{font-size:clamp(.65rem,2.2vw,.85rem);font-weight:800;color:#7B1FA2;font-family:'Fredoka One',cursive;}
+.mc-sound{font-size:clamp(.58rem,2vw,.75rem);color:#9C27B0;font-weight:700;}
+
+/* MAGIC REVEAL */
+.magic-reveal{position:fixed;inset:0;z-index:160;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.mr-word{font-size:clamp(3rem,12vw,6rem);font-weight:900;color:#FFD700;text-shadow:0 0 30px rgba(255,215,0,.5);background:rgba(74,20,140,.88);padding:16px 28px;border-radius:20px;animation:mrIn .4s ease both,mrOut .35s 2s ease forwards;}
+@keyframes mrIn{from{transform:scale(0) rotate(-10deg);opacity:0;}to{transform:scale(1);opacity:1;}}
+@keyframes mrOut{to{transform:scale(1.4);opacity:0;}}
+
+/* FACT */
+.fact-box{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;background:rgba(74,20,140,.95);color:#FFD700;font-size:clamp(.88rem,3vw,1.05rem);font-weight:700;padding:12px 20px;border-radius:16px;max-width:400px;width:90%;text-align:center;animation:fIn .3s ease both,fOut .3s 3s ease forwards;border:2px solid rgba(255,215,0,.3);}
+@keyframes fIn{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes fOut{to{transform:translateX(-50%) translateY(10px);opacity:0;}}
+
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.ov-emoji{font-size:clamp(4rem,14vw,7rem);animation:oBounce .5s ease infinite alternate;}
+@keyframes oBounce{from{transform:scale(1);}to{transform:scale(1.12);}}
+.ov-title{font-family:'Fredoka One',cursive;color:var(--gold);font-size:clamp(2rem,7vw,3.2rem);margin:12px 0 6px;text-align:center;}
+.ov-sub{color:#fff;font-size:clamp(.85rem,3vw,1.05rem);margin-bottom:22px;text-align:center;padding:0 20px;line-height:2;}
+.ov-btn{background:linear-gradient(135deg,#E91E8C,#FFD700);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,4vw,1.5rem);cursor:pointer;box-shadow:0 6px 20px rgba(233,30,140,.4);transition:transform .2s;}
+.ov-btn:hover{transform:scale(1.05);}
+.conf{position:fixed;pointer-events:none;z-index:300;width:10px;height px;border-radius:2px;animation:cFall 1.3s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;}100%{transform:translateY(380px) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title">✨ मात्रा Magic</div>
+  <div class="lvchip" id="lvChip">Matras — आ इ ई उ ऊ ए ओ</div>
+</div>
+<div class="score-bar">
+  <div class="spill">⭐ Score: <span id="scoreVal">0</span></div>
+  <div class="spill">✨ Round: <span id="roundVal">1</span>/12</div>
+</div>
+<div class="progress-row" id="progRow"></div>
+
+<div class="word-display">
+  <span class="picture-emoji" id="picEmoji">🍁</span>
+  <div class="picture-label" id="picLabel">पत्ता — Leaf</div>
+  <div class="incomplete-word" id="incompleteWord">
+    <span class="base-letter">प</span><span class="matra-blank" id="matraBlank">?</span><span class="rest-word">ता</span>
+  </div>
+  <div style="font-size:.8rem;color:#7B1FA2;font-weight:700;margin-top:4px;" id="hintText">Which matra makes: प + ? + ता = पत्ता?</div>
+</div>
+
+<div class="matra-area">
+  <div class="matra-label">✨ Choose the right matra</div>
+  <div class="matra-row" id="matraRow"></div>
+</div>
+
+<script>
+const MATRAS=[
+  {symbol:'ा',name:'आ मात्रा',sound:'aa',color:'#E53935'},
+  {symbol:'ि',name:'इ मात्रा',sound:'i', color:'#1E88E5'},
+  {symbol:'ी',name:'ई मात्रा',sound:'ee',color:'#43A047'},
+  {symbol:'ु',name:'उ मात्रा',sound:'u', color:'#FB8C00'},
+  {symbol:'ू',name:'ऊ मात्रा',sound:'oo',color:'#8E24AA'},
+  {symbol:'े',name:'ए मात्रा',sound:'e', color:'#00897B'},
+  {symbol:'ो',name:'ओ मात्रा',sound:'o', color:'#F4511E'},
+  {symbol:'ै',name:'ऐ मात्रा',sound:'ai',color:'#3949AB'},
+  {symbol:'ौ',name:'औ मात्रा',sound:'au',color:'#039BE5'},
+];
+
+const WORDS=[
+  {pic:'🍁',label:'पत्ता — Leaf',      base:'प',matra:'ा',rest:'ता', full:'पत्ता',matraId:'ा',hint:'प + ा + ता = पत्ता'},
+  {pic:'🌸',label:'फूल — Flower',      base:'फ',matra:'ू',rest:'ल',  full:'फूल',  matraId:'ू',hint:'फ + ू + ल = फूल'},
+  {pic:'🐟',label:'मछली — Fish',       base:'म',matra:'',rest:'छली', full:'मछली', matraId:'_none',direct:true,directWord:'मछली'},
+  {pic:'🌙',label:'चाँद — Moon',       base:'च',matra:'ा',rest:'ँद', full:'चाँद', matraId:'ा',hint:'च + ा + ँद = चाँद'},
+  {pic:'🏠',label:'घर — House',        base:'घ',matra:'',rest:'र',   full:'घर',   matraId:'_none',direct:true,directWord:'घर'},
+  {pic:'☀️',label:'सूरज — Sun',        base:'स',matra:'ू',rest:'रज',  full:'सूरज', matraId:'ू',hint:'स + ू + रज = सूरज'},
+  {pic:'🐮',label:'गाय — Cow',         base:'ग',matra:'ा',rest:'य',  full:'गाय',  matraId:'ा',hint:'ग + ा + य = गाय'},
+  {pic:'🐘',label:'हाथी — Elephant',   base:'ह',matra:'ा',rest:'थी', full:'हाथी', matraId:'ा',hint:'ह + ा + थी = हाथी'},
+  {pic:'💧',label:'पानी — Water',      base:'प',matra:'ा',rest:'नी',  full:'पानी', matraId:'ा',hint:'प + ा + नी = पानी'},
+  {pic:'🌿',label:'नदी — River',       base:'न',matra:'',rest:'दी',  full:'नदी',  matraId:'ी',hint:'न + दी = नदी'},
+  {pic:'🐓',label:'मोर — Peacock',     base:'म',matra:'ो',rest:'र',  full:'मोर',  matraId:'ो',hint:'म + ो + र = मोर'},
+  {pic:'🍋',label:'नींबू — Lemon',    base:'न',matra:'ी',rest:'ंबू', full:'नींबू',matraId:'ी',hint:'न + ी + ंबू = नींबू'},
+];
+
+const TOTAL=12;
+let score=0,round=0,current=null,answered=false;
+
+let audioCtx;
+function ac(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playMagic(){const c=ac();[523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);},i*90));}
+function playWrong(){const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.value=180;g.gain.setValueAtTime(.14,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}
+function playChime(){const c=ac();[523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start();o.stop(c.currentTime+.45);},i*90));}
+function speak(t,lang='hi-IN'){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.8;u.pitch=1.3;u.lang=lang;window.speechSynthesis.speak(u);}
+function makeDots(){const p=document.getElementById('progRow');p.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='pdot'+(i<round?' done':i===round?' active':'');p.appendChild(d);}}
+function spawnConf(){const cols=['#E91E8C','#FFD700','#9C27B0','#43A047','#E53935'];for(let i=0;i<22;i++){const c=document.createElement('div');c.className='conf';c.style.cssText=`left:${Math.random()*100}%;top:10%;background:${cols[i%cols.length]};animation-duration:${.9+Math.random()*.5}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),1600);}}
+function showFact(txt){document.querySelector('.fact-box')?.remove();const el=document.createElement('div');el.className='fact-box';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),3200);}
+function showMagicReveal(word){const el=document.createElement('div');el.className='magic-reveal';el.innerHTML=`<div class="mr-word">✨ ${word} ✨</div>`;document.body.appendChild(el);setTimeout(()=>el.remove(),2500);}
+
+function makeSparkles(){
+  const emojis=['✨','⭐','🌟','💫'];
+  for(let i=0;i<10;i++){const el=document.createElement('div');el.className='sparkle';el.textContent=emojis[i%emojis.length];el.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${.8+Math.random()*1.2}rem;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*2}s;`;document.body.appendChild(el);}
+}
+
+function newRound(){
+  if(round>=TOTAL){showCelebration();return;}
+  answered=false;
+  document.getElementById('roundVal').textContent=round+1;
+  makeDots();
+  current=WORDS[round%WORDS.length];
+
+  if(current.direct){
+    // No matra needed — show full word and ask which matra sound it has
+    document.getElementById('picEmoji').textContent=current.pic;
+    document.getElementById('picLabel').textContent=current.label;
+    document.getElementById('incompleteWord').innerHTML=`<span style="color:#4A148C;font-size:clamp(2rem,8vw,3.5rem);font-weight:900;">${current.full}</span>`;
+    document.getElementById('hintText').textContent=`${current.full} — what sound does it have?`;
+  } else {
+    document.getElementById('picEmoji').textContent=current.pic;
+    document.getElementById('picLabel').textContent=current.label;
+    document.getElementById('incompleteWord').innerHTML=`<span class="base-letter">${current.base}</span><span class="matra-blank" id="matraBlank">?</span><span class="rest-word">${current.rest}</span>`;
+    document.getElementById('hintText').textContent=current.hint||`Add the matra to complete the word!`;
+  }
+
+  // Build matra choices
+  const correctMatra=MATRAS.find(m=>m.symbol===current.matraId)||MATRAS[0];
+  const others=MATRAS.filter(m=>m.symbol!==current.matraId).sort(()=>Math.random()-.5).slice(0,3);
+  const all=[correctMatra,...others].sort(()=>Math.random()-.5);
+  const row=document.getElementById('matraRow');row.innerHTML='';
+  all.forEach(m=>{
+    const card=document.createElement('div');card.className='matra-card';
+    card.style.background=`linear-gradient(135deg,${m.color}22,${m.color}44)`;
+    card.style.borderColor=`${m.color}66`;
+    card.innerHTML=`<span class="mc-symbol" style="color:${m.color};">${m.symbol||'–'}</span><span class="mc-name">${m.name}</span><span class="mc-sound">/${m.sound}/</span>`;
+    card.onclick=()=>pickMatra(card,m,correctMatra);
+    row.appendChild(card);
+  });
+
+  setTimeout(()=>speak(`${current.label.split('—')[0].trim()}! ${current.full}! कौन सी मात्रा लगती है?`,'hi-IN'),400);
+}
+
+function pickMatra(card,chosen,correct){
+  if(answered)return;
+  if(chosen.symbol===current.matraId||(current.direct&&chosen.symbol===current.matraId)){
+    answered=true;card.classList.add('correct-m');
+    playMagic();spawnConf();
+    if(!current.direct){
+      const blank=document.getElementById('matraBlank');
+      if(blank){blank.textContent=chosen.symbol;blank.classList.add('filled');}
+    }
+    showMagicReveal(current.full);
+    showFact(`✅ ${current.full} = ${current.base} + ${chosen.symbol||''} + ${current.rest} → ${current.label}`);
+    score+=10;document.getElementById('scoreVal').textContent=score;
+    speak(`${chosen.name}! ${current.full}! शाबाश!`,'hi-IN');
+    round++;makeDots();setTimeout(newRound,2600);
+  } else {
+    card.classList.add('wrong-m');playWrong();
+    speak(`यह ${chosen.name} है! ${correct.name} ढूंढो!`,'hi-IN');
+  }
+}
+
+function showCelebration(){
+  playChime();spawnConf();speak('शाबाश! सभी मात्राएं सीख लीं! Wonderful! You know all matras!','hi-IN');
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="ov-emoji">✨</div>
+    <div class="ov-title">मात्रा Master!</div>
+    <div class="ov-sub">
+      ा = aa (गाय, पानी)<br/>
+      ि ी = i/ee (मछली, नदी)<br/>
+      ु ू = u/oo (फूल, सूरज)<br/>
+      े ो = e/o (मोर)<br/><br/>
+      Score: <span style="color:#FFD700;font-size:1.4em;">${score}</span> points!
+    </div>
+    <button class="ov-btn" onclick="restart()">Play Again ✨</button>`;
+  document.body.appendChild(ov);
+}
+function restart(){document.querySelector('.overlay')?.remove();score=0;round=0;document.getElementById('scoreVal').textContent=0;newRound();}
+window.restart=restart;
+
+window.addEventListener('load',()=>{makeSparkles();window.speechSynthesis.getVoices();makeDots();setTimeout(()=>{speak('मात्रा सीखो! Add the right matra!','hi-IN');setTimeout(newRound,1400);},400);});
+</script>
+</body>
+</html>
