@@ -578,35 +578,30 @@
       return data.pricing;
     }
 
-    // ── PURCHASES (localStorage + admin override) ───────────────────
-    function getPurchases() {
-      const out = {};
-      CLASSES.forEach(c => {
-        if (isAccessible(c)) {
-          out[c.id] = { expiresOn: localStorage.getItem(`gyanplay_expiry_${c.id}`) || null };
-        }
-      });
-      return out;
-    }
+    // ── PURCHASES (Firestore — keyed by classId) ────────────────────
+    // Populated by loadPurchasesFromFirestore() after auth resolves.
+    let firestorePurchases = {}; // { classId: { expiresOn: Date|null } }
 
     function isAccessible(cls) {
-      // Admins get access to all classes
       if (isAdmin) return true;
-      // Pre-nursery is always free
       if (cls.id === 'pre-nursery' || cls.price === 0) return true;
-      return localStorage.getItem(`gyanplay_access_${cls.id}`) === 'true';
+      const p = firestorePurchases[cls.id];
+      if (!p) return false;
+      // null expiresOn means "never expires" (e.g. free class)
+      if (!p.expiresOn) return true;
+      return p.expiresOn >= new Date();
     }
 
     function formatExpiry(classId) {
-      const d = localStorage.getItem(`gyanplay_expiry_${classId}`);
-      if (!d) return '';
-      return new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+      const p = firestorePurchases[classId];
+      if (!p || !p.expiresOn) return '';
+      return p.expiresOn.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
     }
 
     function isExpiringSoon(classId) {
-      const d = localStorage.getItem(`gyanplay_expiry_${classId}`);
-      if (!d) return false;
-      const diff = (new Date(d) - new Date()) / (1000*60*60*24);
+      const p = firestorePurchases[classId];
+      if (!p || !p.expiresOn) return false;
+      const diff = (p.expiresOn - new Date()) / (1000*60*60*24);
       return diff > 0 && diff < 30;
     }
 
@@ -721,8 +716,9 @@
     }
 
     // ── INIT (called by auth module once user is confirmed) ────────
-    window.initDashboard = async function (displayName, adminFlag) {
+    window.initDashboard = async function (displayName, adminFlag, purchases) {
       isAdmin = !!adminFlag;
+      firestorePurchases = purchases || {};
 
       ['en','hi','as'].forEach(x => {
         document.getElementById(`lb${x.charAt(0).toUpperCase()+x.slice(1)}`).classList.toggle('active', x === lang);
@@ -747,7 +743,7 @@
   <script type="module">
     import { requireAuth, getUserProfile, logOut } from "./src/auth.js";
     import { db } from "./src/firebase.js";
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     requireAuth(async (user) => {
       // Check if user is admin in Firestore
@@ -757,9 +753,21 @@
         if (adminSnap.exists()) adminFlag = true;
       } catch(e) { /* ignore */ }
 
+      // Load purchases from Firestore
+      const purchases = {};
+      try {
+        const pSnap = await getDocs(collection(db, "users", user.uid, "purchases"));
+        pSnap.forEach(p => {
+          const data = p.data();
+          const expiresOn = data.expiresOn?.toDate ? data.expiresOn.toDate()
+                          : data.expiresOn ? new Date(data.expiresOn) : null;
+          purchases[p.id] = { expiresOn };
+        });
+      } catch(e) { console.error("Failed to load purchases:", e); }
+
       const profile     = await getUserProfile(user.uid);
       const displayName = profile?.studentName || profile?.name || user.displayName || 'Parent';
-      window.initDashboard(displayName, adminFlag);
+      window.initDashboard(displayName, adminFlag, purchases);
     });
 
     window.handleLogout = () => logOut();

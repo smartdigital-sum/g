@@ -1058,15 +1058,6 @@
           }
         }
       } catch(e) { console.warn("[Access] Firestore check failed:", e); }
-
-      // Fallback: localStorage (set by payment.html on successful payment)
-      const lsKey    = `gyanplay_access_${classId}`;
-      const lsExpKey = `gyanplay_expiry_${classId}`;
-      if (localStorage.getItem(lsKey) === "true") {
-        const expStr = localStorage.getItem(lsExpKey);
-        const expiry = expStr ? new Date(expStr) : null;
-        if (!expiry || expiry >= new Date()) { isPurchased = true; }
-      }
     }
 
     // ── LOAD PLAYED GAMES FROM FIRESTORE ──

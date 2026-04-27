@@ -18,11 +18,13 @@ service cloud.firestore {
       allow update: if request.auth != null && request.auth.uid == userId;
 
       // ── PURCHASES (subcollection) ──
-      // A user can read and write their own purchases
-      // TODO: restrict write to server/Cloud Function after Razorpay integration
+      // Users can read their own purchases.
+      // Writes are locked to server-side Cloud Functions only.
+      // When Razorpay is integrated, the webhook Cloud Function
+      // will verify the signature and write the purchase doc.
       match /purchases/{classId} {
-        allow read, write: if request.auth != null
-                           && request.auth.uid == userId;
+        allow read:  if request.auth != null && request.auth.uid == userId;
+        allow write: if false;  // only Cloud Function writes purchases
       }
 
       // ── PLAYED GAMES (subcollection) ──

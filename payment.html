@@ -472,9 +472,9 @@
         <button class="pay-btn" id="payBtn" onclick="handlePay()">
           <span id="payBtnContent">
             🔒
-            <span data-lang="en">Pay Securely with Razorpay</span>
-            <span data-lang="as" style="display:none">Razorpay ৰে সুৰক্ষিতভাৱে পেমেণ্ট কৰক</span>
-            <span data-lang="hi" style="display:none">Razorpay से सुरक्षित Payment करें</span>
+            <span data-lang="en">Confirm &amp; Get Access</span>
+            <span data-lang="as" style="display:none">নিশ্চিত কৰক আৰু প্ৰৱেশ পাওক</span>
+            <span data-lang="hi" style="display:none">Confirm करें और Access पाएं</span>
           </span>
         </button>
 
@@ -580,7 +580,7 @@
       restorePayBtn();
     };
 
-    // ── Payment stub (swap for Razorpay when deploying) ──
+    // ── Payment handler — calls Cloud Function (auto-approve mode) ──
     window.handlePay = async function () {
       const btn    = document.getElementById('payBtn');
       const errMsg = document.getElementById('errorMsg');
@@ -588,28 +588,46 @@
       document.getElementById('payBtnContent').innerHTML = '<div class="spinner"></div>';
       errMsg.className = 'error-msg';
 
-      // Simulate payment processing
-      await new Promise(r => setTimeout(r, 1400));
+      try {
+        // Get the Firebase ID token to authenticate the Cloud Function call
+        if (!window.__currentUser) {
+          throw new Error("Not signed in. Please refresh and try again.");
+        }
+        const idToken = await window.__currentUser.getIdToken();
 
-      const expiry = new Date();
-      expiry.setFullYear(expiry.getFullYear() + 1);
+        const res = await fetch(
+          "https://asia-south1-gyanplay-prod.cloudfunctions.net/grantAccess",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":  "application/json",
+              "Authorization": `Bearer ${idToken}`
+            },
+            body: JSON.stringify({ classId: window._classId })
+          }
+        );
 
-      // Grant access in localStorage (for dashboard)
-      localStorage.setItem('gyanplay_access_' + window._classId, 'true');
-      localStorage.setItem('gyanplay_expiry_' + window._classId, expiry.toISOString());
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || `Server error (${res.status})`);
+        }
 
-      // Grant access in Firestore (for classroom — checked by checkAccess)
-      if (window.__savePurchaseToFirestore) {
-        await window.__savePurchaseToFirestore(window._classId, expiry);
+        // Show success screen
+        const clsName = document.getElementById('previewClass').textContent;
+        document.getElementById('successClassName').textContent   = clsName;
+        document.getElementById('successClassNameAs').textContent = clsName;
+        document.getElementById('successClassNameHi').textContent = clsName;
+        document.getElementById('paymentWrapper').style.display   = 'none';
+        document.getElementById('successScreen').classList.add('show');
+
+      } catch (err) {
+        console.error("[Payment] grantAccess failed:", err);
+        errMsg.textContent = err.message || "Something went wrong. Please try again.";
+        errMsg.className   = 'error-msg show';
+        btn.disabled       = false;
+        document.getElementById('payBtnContent').innerHTML =
+          '🔒 <span data-lang="en">Pay Securely with Razorpay</span>';
       }
-
-      // Show success screen
-      const clsName = document.getElementById('previewClass').textContent;
-      document.getElementById('successClassName').textContent   = clsName;
-      document.getElementById('successClassNameAs').textContent = clsName;
-      document.getElementById('successClassNameHi').textContent = clsName;
-      document.getElementById('paymentWrapper').style.display   = 'none';
-      document.getElementById('successScreen').classList.add('show');
     };
 
     // ── Load class info from games.json ──
@@ -647,61 +665,15 @@
     });
   </script>
 
-  <!-- Module: write purchase to Firestore on payment success -->
+  <!-- Module: capture current user for Cloud Function auth -->
   <script type="module">
-    import { auth, db } from "./src/firebase.js";
+    import { auth } from "./src/firebase.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { doc, setDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    let currentUser = null;
 
     onAuthStateChanged(auth, (user) => {
       if (!user) { window.location.href = "login.html"; return; }
-      currentUser = user;
-      console.log("[Payment] Auth state changed, uid:", user.uid);
+      window.__currentUser = user;
     });
-
-    window.__savePurchaseToFirestore = async (classId, expiryDate) => {
-      // Wait for auth to resolve if needed
-      if (!currentUser) {
-        console.log("[Payment] Waiting for auth...");
-        await new Promise(resolve => {
-          const unsub = onAuthStateChanged(auth, (user) => {
-            unsub();
-            currentUser = user;
-            resolve();
-          });
-        });
-      }
-
-      if (!currentUser) {
-        console.error("[Payment] No authenticated user — cannot save purchase to Firestore");
-        return;
-      }
-
-      console.log("[Payment] Saving purchase to Firestore:", {
-        uid: currentUser.uid,
-        classId,
-        expiresOn: expiryDate
-      });
-
-      try {
-        await setDoc(doc(db, "users", currentUser.uid, "purchases", classId), {
-          classId,
-          className: classId.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase()),
-          amountPaid: 0, // will be replaced with actual amount in Razorpay callback
-          razorpayPaymentId: "stub",
-          paidOn:    Timestamp.now(),
-          expiresOn: Timestamp.fromDate(expiryDate),
-          active:    true,
-        }, { merge: false });
-
-        console.log("[Payment] Purchase saved successfully!");
-      } catch (err) {
-        console.error("[Payment] Failed to save purchase:", err);
-        throw err;
-      }
-    };
   </script>
 
 </body>
