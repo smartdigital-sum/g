@@ -27,7 +27,7 @@ setGlobalOptions({ region: "asia-south1", maxInstances: 10 });
 const GROQ_API_KEY = defineSecret("GROQ_API_KEY");
 
 const ALLOWED_ORIGINS = [
-  "https://smartdigital-sum.github.io/g",
+  "https://smartdigital-sum.github.io",
   "https://gyanplay-prod.web.app",
   "https://gyanplay-prod.firebaseapp.com",
   "http://localhost:5000",
