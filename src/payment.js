@@ -120,27 +120,3 @@ async function savePurchase({ uid, classId, className, amount, razorpayPaymentId
     { merge: false } // always overwrite (handles renewals too)
   );
 }
-
-// ────────────────────────────────────────────────────
-//  SAVE FREE CLASS (Pre-Nursery)
-//  Called automatically on first dashboard load
-//  if pre-nursery not already in purchases
-// ────────────────────────────────────────────────────
-export async function activateFreeClass(uid) {
-  const now    = new Date();
-  const expiry = new Date("2099-12-31"); // effectively never expires
-
-  await setDoc(
-    doc(db, "users", uid, "purchases", "pre-nursery"),
-    {
-      classId:           "pre-nursery",
-      className:         "Pre-Nursery",
-      amountPaid:        0,
-      razorpayPaymentId: "FREE",
-      paidOn:            Timestamp.fromDate(now),
-      expiresOn:         Timestamp.fromDate(expiry),
-      active:            true,
-    },
-    { merge: true }
-  );
-}

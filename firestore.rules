@@ -2,29 +2,40 @@
 //  GyanPlay — Firestore Security Rules
 //  Paste these into Firebase Console →
 //    Firestore Database → Rules
+//  (or run: firebase deploy --only firestore:rules)
 // ============================================================
 
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // ── ADMIN CHECK HELPER ──
+    // Add your UID to the admins collection in Firestore
+    function isAdmin() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
     // ── USER PROFILES ──
-    // A user can only read and write their OWN profile
+    // A user can read/write their OWN profile.
+    // Admins can read all profiles (for the admin dashboard).
     match /users/{userId} {
-      allow read:   if request.auth != null && request.auth.uid == userId;
+      allow read:   if request.auth != null
+                    && (request.auth.uid == userId || isAdmin());
       allow create: if request.auth != null
                     && request.auth.uid == userId
                     && request.resource.data.keys().hasAll(['email','studentName','phone','createdAt']);
       allow update: if request.auth != null && request.auth.uid == userId;
 
       // ── PURCHASES (subcollection) ──
-      // Users can read their own purchases.
-      // Writes are locked to server-side Cloud Functions only.
-      // When Razorpay is integrated, the webhook Cloud Function
-      // will verify the signature and write the purchase doc.
+      // Read: the user themselves, or an admin (admin panel).
+      // Write: admins only — the grantAccess Cloud Function uses the
+      //   Admin SDK which bypasses these rules, so it still works.
+      //   Regular users can never write purchases from the client.
       match /purchases/{classId} {
-        allow read:  if request.auth != null && request.auth.uid == userId;
-        allow write: if false;  // only Cloud Function writes purchases
+        allow read:  if request.auth != null
+                     && (request.auth.uid == userId || isAdmin());
+        allow write: if isAdmin();
       }
 
       // ── PLAYED GAMES (subcollection) ──
@@ -36,18 +47,18 @@ service cloud.firestore {
     }
 
     // ── CLASS CONTENT (games list) ──
-    // Any logged-in user can READ class metadata
-    // Only admin can WRITE
-    match /classes/{classId} {
-      allow read: if request.auth != null;
+    // Any logged-in user can READ class metadata + subjects + games.
+    // Only admin can WRITE anywhere under /classes.
+    match /classes/{classId}/{document=**} {
+      allow read:  if request.auth != null;
       allow write: if isAdmin();
     }
 
-    // ── ADMIN CHECK HELPER ──
-    // Add your UID to the admins collection in Firestore
-    function isAdmin() {
-      return request.auth != null &&
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    // ── ADMINS COLLECTION ──
+    // Locked down: only Firebase Console can add admin docs.
+    // Reads are guarded by the isAdmin() helper above.
+    match /admins/{uid} {
+      allow read, write: if false;
     }
 
   }

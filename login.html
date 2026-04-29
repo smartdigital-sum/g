@@ -577,17 +577,6 @@
       el.textContent = text;
     }
 
-    function setLoading(btnId, textId, loading) {
-      const btn = document.getElementById(btnId);
-      btn.disabled = loading;
-      document.getElementById(textId).innerHTML = loading
-        ? '<div class="spinner"></div>'
-        : document.getElementById(textId).innerHTML; // kept — lang re-applies on next setLang call
-      if (loading) {
-        document.getElementById(textId).innerHTML = '<div class="spinner"></div>';
-      }
-    }
-
     function normalizePhone(val) {
       // Strip non-digits, remove leading 91 country code, keep last 10 digits
       return val.replace(/\D/g, '').replace(/^91(\d{10})$/, '$1').slice(-10);

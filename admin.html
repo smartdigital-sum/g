@@ -627,48 +627,46 @@
       const usersSnap = await getDocs(collection(db, "users"));
       document.getElementById("statTotalUsers").textContent = usersSnap.size;
 
+      const purchaseSnaps = await Promise.all(
+        usersSnap.docs.map(u => getDocs(collection(db, "users", u.id, "purchases")))
+      );
       let totalPurchases = 0, totalRevenue = 0;
-      for (const userDoc of usersSnap.docs) {
-        const pSnap = await getDocs(
-          collection(db, "users", userDoc.id, "purchases")
-        );
+      purchaseSnaps.forEach(pSnap => {
         pSnap.forEach(p => {
           totalPurchases++;
           totalRevenue += (p.data().amountPaid || 0);
         });
-      }
+      });
       document.getElementById("statTotalPayments").textContent = totalPurchases;
       document.getElementById("statRevenue").textContent =
         "₹" + totalRevenue.toLocaleString("en-IN");
 
-      // count games
-      let gameCount = 0;
       const classes = ["pre-nursery","class-1","class-2","class-3","class-4",
                        "class-5","class-6","class-7","class-8","class-9","class-10"];
       const subjects = ["maths","english","science","social","hindi"];
-      for (const cls of classes) {
-        for (const sub of subjects) {
-          const gs = await getDocs(
-            collection(db, "classes", cls, "subjects", sub, "games")
-          );
-          gameCount += gs.size;
-        }
-      }
+      const gameSnaps = await Promise.all(
+        classes.flatMap(cls =>
+          subjects.map(sub =>
+            getDocs(collection(db, "classes", cls, "subjects", sub, "games"))
+          )
+        )
+      );
+      const gameCount = gameSnaps.reduce((sum, gs) => sum + gs.size, 0);
       document.getElementById("statGames").textContent = gameCount;
     }
 
     async function loadRecentPayments() {
       const usersSnap = await getDocs(collection(db, "users"));
+      const purchaseSnaps = await Promise.all(
+        usersSnap.docs.map(u => getDocs(collection(db, "users", u.id, "purchases")))
+      );
       const all = [];
-      for (const userDoc of usersSnap.docs) {
+      usersSnap.docs.forEach((userDoc, i) => {
         const ud = userDoc.data();
-        const pSnap = await getDocs(
-          collection(db, "users", userDoc.id, "purchases")
-        );
-        pSnap.forEach(p => {
+        purchaseSnaps[i].forEach(p => {
           all.push({ ...p.data(), userName: ud.name, userEmail: ud.email });
         });
-      }
+      });
       all.sort((a, b) => {
         const ta = a.paidOn?.toDate ? a.paidOn.toDate() : new Date(0);
         const tb = b.paidOn?.toDate ? b.paidOn.toDate() : new Date(0);
@@ -719,14 +717,14 @@
       const body = document.getElementById("usersTableBody");
       body.innerHTML = `<div class="loading-row"><div class="spinner-sm"></div> Loading...</div>`;
       const snap = await getDocs(collection(db, "users"));
-      allUsers = [];
-      for (const d of snap.docs) {
-        const u = d.data();
-        const pSnap = await getDocs(collection(db, "users", d.id, "purchases"));
+      const purchaseSnaps = await Promise.all(
+        snap.docs.map(d => getDocs(collection(db, "users", d.id, "purchases")))
+      );
+      allUsers = snap.docs.map((d, i) => {
         const classes = [];
-        pSnap.forEach(p => classes.push(p.data().className));
-        allUsers.push({ uid: d.id, ...u, classes });
-      }
+        purchaseSnaps[i].forEach(p => classes.push(p.data().className));
+        return { uid: d.id, ...d.data(), classes };
+      });
       renderUsers(allUsers);
     }
 
@@ -805,19 +803,19 @@
       const body = document.getElementById("paymentsTableBody");
       body.innerHTML = `<div class="loading-row"><div class="spinner-sm"></div> Loading...</div>`;
       const usersSnap = await getDocs(collection(db, "users"));
+      const purchaseSnaps = await Promise.all(
+        usersSnap.docs.map(u => getDocs(collection(db, "users", u.id, "purchases")))
+      );
       allPayments = [];
-      for (const userDoc of usersSnap.docs) {
+      usersSnap.docs.forEach((userDoc, i) => {
         const u = userDoc.data();
-        const pSnap = await getDocs(
-          collection(db, "users", userDoc.id, "purchases")
-        );
-        pSnap.forEach(p => {
+        purchaseSnaps[i].forEach(p => {
           allPayments.push({
             uid: userDoc.id, ...p.data(),
             userName: u.name, userEmail: u.email
           });
         });
-      }
+      });
       allPayments.sort((a, b) => {
         const ta = a.paidOn?.toDate ? a.paidOn.toDate() : new Date(0);
         const tb = b.paidOn?.toDate ? b.paidOn.toDate() : new Date(0);
