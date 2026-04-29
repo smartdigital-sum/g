@@ -1,4 +1,5 @@
 // ============================================================
+//  GyanPlay — Cloud Functions (Triggering redeployment)
 //  GyanPlay — Cloud Functions
 //  1. aiTeacherChat  — AI Teacher proxy (Groq key stays server-side)
 //  2. grantAccess    — Writes a purchase doc after payment is verified.
