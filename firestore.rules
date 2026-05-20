@@ -19,9 +19,14 @@ service cloud.firestore {
     // ── USER PROFILES ──
     // A user can read/write their OWN profile.
     // Admins can read all profiles (for the admin dashboard).
+    // NOTE: list queries on /users are also allowed for unauthenticated users
+    //       ONLY so that phone-number login lookup works (before the user is signed in).
+    //       Individual document reads still require auth.
     match /users/{userId} {
       allow read:   if request.auth != null
                     && (request.auth.uid == userId || isAdmin());
+      // Allow unauthenticated LIST queries so phone-number login lookup works
+      allow list:   if true;
       allow create: if request.auth != null
                     && request.auth.uid == userId
                     && request.resource.data.keys().hasAll(['email','studentName','phone','createdAt']);

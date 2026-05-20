@@ -121,11 +121,13 @@ export async function loginWithEmail(email, password) {
   } catch (err) {
     console.error("Login error:", err);
     const msgs = {
-      "auth/user-not-found":     "No account found with this email.",
-      "auth/wrong-password":     "Incorrect password.",
-      "auth/invalid-credential": "Incorrect email or password.",
-      "auth/too-many-requests":  "Too many attempts. Please try again later.",
-      "auth/invalid-email":      "Please enter a valid email address.",
+      "auth/user-not-found":          "No account found with this email.",
+      "auth/wrong-password":          "Incorrect password.",
+      "auth/invalid-credential":      "Incorrect email or password. Please check and try again.",
+      "auth/too-many-requests":       "Too many failed attempts. Please wait a few minutes and try again.",
+      "auth/invalid-email":           "Please enter a valid email address.",
+      "auth/user-disabled":           "This account has been disabled. Please contact support.",
+      "auth/network-request-failed":  "Network error. Please check your internet connection.",
     };
     return {
       success: false,
